@@ -4,10 +4,9 @@ However, other components are used by Paperwork and will be installed.
 All of them are licenced under GPLv3+ or less restrictive licences.
 It's hard (if not impossible) to list them all, but here is a non-exhaustive list
 with their corresponding licences:
-- Paperwork-backend  : https://github.com/jflesch/paperwork-backend (GPL v3+)
-- PyOCR : https://github.com/jflesch/pyocr (GPL v3+)
-- PyInsane : https://github.com/jflesch/pyinsane (GPL v3+)
-- Libpillowfight : https://github.com/jflesch/libpillowfight (GPL v3+)
+- PyOCR : https://gitlab.gnome.org/World/OpenPaperwork/pyocr (GPL v3+)
+- PyInsane : https://gitlab.gnome.org/World/OpenPaperwork/pyinsane (GPL v3+)
+- Libpillowfight : https://gitlab.gnome.org/World/OpenPaperwork/libpillowfight (GPL v3+)
 - Python interpreter : https://python.org/ (PSF)
 - GTK+ : https://www.gtk.org/ (LGPL v2.1)
 - Poppler : https://poppler.freedesktop.org/ (GPL v2 / GPL v3)

@@ -138,7 +138,7 @@ This is an entirely technical document.
 \end_layout
 
 \begin_layout Standard
-This document assumes you're already familiar with Git, Python 3, and GitHub.
+This document assumes you're already familiar with Git, Python 3, and Gitlab.
 \end_layout
 
 \begin_layout Standard
@@ -173,12 +173,12 @@ You can get suggestions.
 \end_layout
 
 \begin_layout Standard
-The easiest way is to open a ticket on GitHub
+The easiest way is to open a ticket on Gnome's Gitlab
 \begin_inset Foot
 status open
 
 \begin_layout Plain Layout
-https://github.com/jflesch/paperwork/issues
+https://gitlab.gnome.org/World/OpenPaperwork/paperwork/issues
 \end_layout
 
 \end_inset
@@ -394,12 +394,12 @@ advanced use
 \end_layout
 
 \begin_layout Standard
-Paperwork-backend source code is available on GitHub
+Paperwork-backend source code is available on Gnome's Gitlab
 \begin_inset Foot
 status open
 
 \begin_layout Plain Layout
-https://github.com/jflesch/paperwork-backend
+https://gitlab.gnome.org/World/OpenPaperwork/paperwork/tree/master/paperwork-backend
 \end_layout
 
 \end_inset
@@ -619,12 +619,12 @@ Paperwork-gui
 \end_layout
 
 \begin_layout Standard
-Paperwork-gui source code is available on GitHub
+Paperwork-gui source code is available on Gnome's Gitlab
 \begin_inset Foot
 status open
 
 \begin_layout Plain Layout
-https://github.com/jflesch/paperwork
+https://gitlab.gnome.org/World/OpenPaperwork/paperwork/tree/develop/paperwork-gtk
 \end_layout
 
 \end_inset
@@ -1048,7 +1048,7 @@ Installation
 
 \begin_layout Standard
 Documentation regarding the installation process is written using Markdown.
- This allows to show the documentation on GitHub
+ This allows to show the documentation on Gitlab
 \end_layout
 
 \begin_layout Subsection

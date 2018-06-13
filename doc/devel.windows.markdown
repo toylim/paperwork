@@ -16,7 +16,7 @@ It's hard to list all the dependencies here. Currently, the main ones are:
 
 They must be installed *before* the rest of Paperwork. Once everything is installed:
 
-* [Clone](https://git-for-windows.github.io/) ```https://github.com/jflesch/paperwork.git```
+* [Clone](https://git-for-windows.github.io/) ```https://gitlab.gnome.org/World/OpenPaperwork/paperwork.git```
 * You can run ```make install``` (GNU Makefile) to fetch all the Python dependencies
   not listed here. However, it won't create any shortcut or anything. Paperwork startup script
   is installed, but isn't of much help.
@@ -42,7 +42,8 @@ This directory can be stored in a .zip file and deploy wherever you wish.
 
 ## Adding Tesseract
 
-[PyOCR](https://github.com/jflesch/pyocr) has 2 ways to call Tesseract. Either
+[PyOCR](https://gitlab.gnome.org/World/OpenPaperwork/pyocr) has 2 ways to call
+Tesseract. Either
 by running its executable (module ```pyocr.tesseract```), or using its library
 (module ```pyocr.libtesseract```). Currently, for convenience reasons, the
 packaged version of Paperwork uses only ```pyocr.tesseract```.

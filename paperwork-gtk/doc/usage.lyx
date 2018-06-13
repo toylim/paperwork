@@ -3324,7 +3324,7 @@ You can then save the output to a file, and send this file to support (either
 \end_layout
 
 \begin_layout Subsection
-Github issue tracker
+Gnome's Gitlab issue tracker
 \end_layout
 
 \begin_layout Standard
@@ -3334,7 +3334,7 @@ status open
 
 \begin_layout Plain Layout
 
-https://github.com/jflesch/paperwork/issues
+https://gitlab.gnome.org/World/OpenPaperwork/paperwork/issues
 \end_layout
 
 \end_inset
@@ -3366,7 +3366,7 @@ status open
 
 \begin_layout Plain Layout
 
-https://github.com/jflesch/paperwork/wiki/Contact#mailing-list
+https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Contact
 \end_layout
 
 \end_inset

@@ -1,6 +1,6 @@
 ## Description
 
-[Paperwork](https://github.com/openpaperwork/paperwork#readme) is a GUI to make papers searchable.
+[Paperwork](https://gitlab.gnome.org/World/OpenPaperwork/paperwork#readme) is a GUI to make papers searchable.
 
 This is the backend part of Paperwork. It manages:
 - The work directory / Access to the documents
@@ -10,9 +10,10 @@ This is the backend part of Paperwork. It manages:
 - Import
 - Export
 
-There is no GUI here. The GUI is https://github.com/openpaperwork/paperwork/tree/master/paperwork-gtk .
+There is no GUI here. The GUI is located here: https://gitlab.gnome.org/World/OpenPaperwork/paperwork/tree/master/paperwork-gtk .
 
 Regarding the name "Paperwork", it can refer to both the GUI or the backend. If you want to be specific, you can call the gui "paperwork-gtk" instead of just Paperwork.
+
 
 ## Dependencies
 
@@ -72,15 +73,15 @@ print ("Page PIL Image object: {}".format(page.img))
 
 Developement is strongly related to Paperwork-gui.
 
-* [Mailing-list](https://github.com/openpaperwork/paperwork/wiki/Contact#mailing-list)
-* [Extra documentation / FAQ / Tips / Wiki](https://github.com/jflesch/paperwork-backend/wiki)
-* [Bug trackers](https://github.com/openpaperwork/paperwork/wiki/Contact#bug-trackers)
+* [Mailing-list](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Contact)
+* [Extra documentation / FAQ / Tips / Wiki](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/)
+* [Bug trackers](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Contact)
 
 
 ## Contact
 
-* [Mailing-list](https://github.com/openpaperwork/paperwork/wiki/Contact#mailing-list)
-* [Bug tracker](https://github.com/openpaperwork/paperwork/issues/)
+* [Mailing-list](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Contact)
+* [Bug tracker](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Contact)
 
 
 ## Licence
@@ -91,4 +92,4 @@ GPLv3 or later. See LICENSE.
 ## Development
 
 Developement is strongly related to Paperwork-gui.
-All the information can be found on [the wiki](https://github.com/openpaperwork/paperwork/wiki#for-developers)
+All the information can be found on [the wiki](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis).

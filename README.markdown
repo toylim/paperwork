@@ -17,28 +17,28 @@ In other words, let the machine do most of the work for you.
 ### Main Window
 
 <a href="http://youtu.be/RMazTTM6ltg">
-  <img src="https://raw.github.com/openpaperwork/paperwork-screenshots/master/0.3/main_window.png" width="447" height="262" />
+  <img src="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/1.0/main_window.png" width="447" height="280" />
 </a>
 
 
 ### Search Suggestions
 
-<a href="https://raw.github.com/openpaperwork/paperwork-screenshots/master/0.3/suggestions.png">
-  <img src="https://raw.github.com/openpaperwork/paperwork-screenshots/master/0.3/suggestions.png" width="155" height="313" />
+<a href="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/1.0/suggestions.png">
+  <img src="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/1.0/suggestions.png" width="155" height="313" />
 </a>
 
 
 ### Labels
 
-<a href="https://raw.github.com/openpaperwork/paperwork-screenshots/master/0.3/multiple_labels.png">
-  <img src="https://raw.github.com/openpaperwork/paperwork-screenshots/master/0.3/multiple_labels.png" width="187" height="262" />
+<a href="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/1.0/multiple_labels.png">
+  <img src="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/1.0/multiple_labels.png" width="187" height="262" />
 </a>
 
 
 ### Settings window
 
-<a href="https://raw.github.com/openpaperwork/paperwork-screenshots/master/0.3/settings.png">
-  <img src="https://raw.github.com/openpaperwork/paperwork-screenshots/master/0.3/settings.png" width="443" height="286" />
+<a href="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/1.0/settings.png">
+  <img src="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/1.0/settings.png" width="443" height="286" />
 </a>
 
 
@@ -100,22 +100,22 @@ If you installed it manually (for development), you can follow the same process 
 
 ## Contact/Help
 
-* [Extra documentation / FAQ / Tips / Wiki](https://github.com/openpaperwork/paperwork/wiki)
-* [Contributing to Paperwork](https://github.com/openpaperwork/paperwork/wiki/Contributing)
-* [IRC](https://github.com/openpaperwork/paperwork/wiki/Contact#irc) / [Mailing-list](https://github.com/openpaperwork/paperwork/wiki/Contact#mailing-list) (be careful: [By default, Google groups set your subscription to "no email"](https://productforums.google.com/forum/#!topic/apps/3OUlPmzKCi8))
-* [Bug trackers](https://github.com/openpaperwork/paperwork/wiki/Contact#bug-trackers)
+* [Extra documentation / FAQ / Tips / Wiki](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/)
+* [Contributing to Paperwork](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Contributing)
+* [IRC](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Contact#irc) / [Mailing-list](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Contact) (be careful: [By default, Google groups set your subscription to "no email"](https://productforums.google.com/forum/#!topic/apps/3OUlPmzKCi8))
+* [Bug trackers](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Contact)
 
 
 ## Details
 
 It mainly uses:
 
-* [Sane](http://www.sane-project.org/)/[Pyinsane](https://github.com/openpaperwork/pyinsane/#readme): To scan the pages
-* [Tesseract](https://github.com/tesseract-ocr)/[Pyocr](https://github.com/openpaperwork/pyocr/#readme): To extract the words from the pages (OCR)
+* [Sane](http://www.sane-project.org/)/[Pyinsane](https://gitlab.gnome.org/World/OpenPaperwork/pyinsane#readme): To scan the pages
+* [Tesseract](https://github.com/tesseract-ocr)/[Pyocr](https://gitlab.gnome.org/World/OpenPaperwork/pyocr#readme): To extract the words from the pages (OCR)
 * [GTK](http://www.gtk.org/): For the user interface
 * [Whoosh](https://pypi.python.org/pypi/Whoosh/): To index and search documents, and provide keyword suggestions
 * [Simplebayes](https://pypi.python.org/pypi/simplebayes/): To guess the labels
-* [Pillow](https://pypi.python.org/pypi/Pillow/)/[Libpillowfight](https://github.com/openpaperwork/libpillowfight#readme): Image manipulation
+* [Pillow](https://pypi.python.org/pypi/Pillow/)/[Libpillowfight](https://gitlab.gnome.org/World/OpenPaperwork/libpillowfight): Image manipulation
 
 
 ## Licence
@@ -125,4 +125,4 @@ GPLv3 or later. See COPYING.
 
 ## Development
 
-All the information can be found on [the wiki](https://github.com/openpaperwork/paperwork/wiki#for-developers)
+All the information can be found on [the wiki](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis).

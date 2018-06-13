@@ -6,7 +6,7 @@
 A package is available in [AUR](https://aur.archlinux.org/packages/paperwork/).
 
 If there is a problem with the package, please report it on
-[the mailing-list](https://github.com/jflesch/paperwork/wiki/Contact#mailing-list).
+[the mailing-list](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Contact).
 Please do **not** report issue with packages on Paperwork's bugtracker. It is
 **not** possible to assign issues to package maintainer on the bugtracker.
 
