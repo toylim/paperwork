@@ -122,9 +122,9 @@ Main features are:
 - PDF support
     """,
     keywords="scanner ocr gui",
-    url="https://github.com/openpaperwork/paperwork",
-    download_url=("https://github.com/openpaperwork/paperwork"
-                  "/archive/{}.tar.gz".format(version)),
+    url="https://gitlab.gnome.org/World/OpenPaperwork/paperwork",
+    download_url=("https://gitlab.gnome.org/World/OpenPaperwork/paperwork/-/"
+                  "archive/{}/paperwork-{}.tar.gz".format(version, version)),
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Environment :: X11 Applications :: GTK",

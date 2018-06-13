@@ -5,7 +5,7 @@
 Currently, there is no official Debian or Ubuntu package for Paperwork.
 
 Therefore on Debian or Ubuntu it is recommended to use the
-[Flatpak package](https://github.com/openpaperwork/paperwork/tree/master/flatpak#readme)
+[Flatpak package](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/blob/master/flatpak/README.markdown#readme)
 instead of the following instructions.
 
 The following instructions describe how to install Paperwork the Python way.

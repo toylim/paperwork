@@ -56,7 +56,8 @@ rm -f ~/.local/share/icons/hicolor/scalable/apps/work.openpaper.Paperwork.svg
 rm -f ~/.local/share/icons/hicolor/scalable/apps/paperwork_halo.svg
 ```
 
-*Old versions*: [Bug reports](https://github.com/jflesch/paperwork/issues/513) indicate that
+*Old versions*: [Bug reports](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/issues/513)
+indicate that
 Pip may loose track of data files and even not replace them later. So,
 just to be safe, you can also run:
 

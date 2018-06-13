@@ -155,7 +155,7 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://github.com/openpaperwork/pyinsane.git",
+                    "url": "https://gitlab.gnome.org/World/OpenPaperwork/pyinsane.git",
                     "branch": "master"
                 }
             ]
@@ -365,7 +365,7 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://github.com/openpaperwork/paperwork.git",
+                    "url": "https://gitlab.gnome.org/World/OpenPaperwork/paperwork.git",
                     "branch": "develop"
                 }
             ]

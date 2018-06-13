@@ -44,9 +44,14 @@ This is the backend part of Paperwork. It manages:
 There is no GUI here. The GUI is https://github.com/openpaperwork/paperwork .
     """,
     keywords="documents",
-    url="https://github.com/openpaperwork/paperwork-backend",
-    download_url=("https://github.com/openpaperwork/paperwork-backend"
-                  "/archive/{}.tar.gz".format(version)),
+    url=(
+        "https://gitlab.gnome.org/World/OpenPaperwork/paperwork/tree/master/"
+        "paperwork-backend"
+    ),
+    download_url=(
+        "https://gitlab.gnome.org/World/OpenPaperwork/paperwork/-"
+        "/archive/{}/paperwork-{}.tar.gz".format(version, version)
+    ),
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: End Users/Desktop",

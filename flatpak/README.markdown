@@ -106,7 +106,7 @@ flatpak run --command=paperwork-shell work.openpaper.Paperwork -bq import ~/tmp/
 ## Build
 
 ```shell
-git clone https://github.com/openpaperwork/paperwork
+git clone https://gitlab.gnome.org/World/OpenPaperwork/paperwork.git
 cd paperwork/flatpak
 flatpak --user remote-add --if-not-exists gnome https://sdk.gnome.org/gnome.flatpakrepo
 flatpak --user install gnome org.gnome.Sdk//3.26

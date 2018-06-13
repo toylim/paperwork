@@ -747,7 +747,7 @@ We hope that you'll enjoy this piece of software.
 \begin_inset CommandInset href
 LatexCommand href
 name "please tell us"
-target "https://github.com/jflesch/paperwork/wiki/Contact#mailing-list"
+target "https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Contact"
 
 \end_inset
 
@@ -759,7 +759,7 @@ target "https://github.com/jflesch/paperwork/wiki/Contact#mailing-list"
 \begin_inset CommandInset href
 LatexCommand href
 name "tell us why"
-target "https://github.com/jflesch/paperwork/wiki/Contact#bug-trackers"
+target "https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Contact"
 
 \end_inset
 
