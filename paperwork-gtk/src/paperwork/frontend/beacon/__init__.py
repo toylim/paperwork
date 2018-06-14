@@ -1,5 +1,4 @@
 import datetime
-import dateutil.parser
 import http
 import http.client
 import json
@@ -8,7 +7,6 @@ import multiprocessing
 import os
 import platform
 import ssl
-import re
 import threading
 import urllib
 
