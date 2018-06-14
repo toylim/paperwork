@@ -23,10 +23,6 @@ class Beacon(object):
 
     SSL_CONTEXT = ssl._create_unverified_context()
 
-    GITHUB_RELEASES = {
-        'host': 'api.github.com',
-        'path': '/repos/openpaperwork/paperwork/releases',
-    }
     OPENPAPERWORK_RELEASES = {
         'host': os.getenv("OPENPAPER_SERVER", 'openpaper.work'),
         'path': '/beacon/latest',
@@ -41,30 +37,6 @@ class Beacon(object):
         super().__init__()
         self.config = config
         self.flatpak = flatpak
-
-    def get_version_github(self):
-        logger.info("Querying GitHub ...")
-        h = http.client.HTTPSConnection(
-            host=self.GITHUB_RELEASES['host'],
-        )
-        h.request('GET', url=self.GITHUB_RELEASES['path'], headers={
-            'User-Agent': self.USER_AGENT
-        })
-        r = h.getresponse()
-        r = r.read().decode('utf-8')
-        r = json.loads(r)
-
-        last_tag_date = None
-        last_tag_name = None
-        for release in r:
-            date = dateutil.parser.parse(release['created_at'])
-            tag = release['tag_name']
-            if not re.match("\d+\.\d+(|\.\d+)", tag):
-                continue
-            if last_tag_date is None or last_tag_date < date:
-                last_tag_date = date
-                last_tag_name = tag
-        return last_tag_name
 
     def get_version_openpaperwork(self):
         logger.info("Querying OpenPaper.work ...")
@@ -105,18 +77,9 @@ class Beacon(object):
             version = self.get_version_openpaperwork()
         except Exception as exc:
             logger.exception(
-                "Failed to get latest Paperwork release from OpenPaper.work. "
-                "Falling back to Github ...",
+                "Failed to get latest Paperwork release from OpenPaper.work. ",
                 exc_info=exc
             )
-        if version is None:
-            try:
-                version = self.get_version_github()
-            except Exception as exc:
-                logger.exception(
-                    "Failed to get latest Paperwork from Github",
-                    exc_info=exc
-                )
         if version is None:
             return
 
