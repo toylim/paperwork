@@ -508,15 +508,16 @@ class Canvas(Gtk.DrawingArea, Gtk.Scrollable):
     def __on_mouse_leave(self, _, event):
         self.mouse_position = (0, 0)
 
+    SCROLLING_REDUCTION_FACTOR = 2
+
     def __apply_scrolling(self):
         if (self.__scroll_origin == (0, 0) or self.mouse_position == (0, 0)):
             # no scrolling for now
             return
-        SCROLLING_REDUCTION_FACTOR = 2
         scroll_x = self.mouse_position[0] - self.__scroll_origin[0]
         scroll_y = self.mouse_position[1] - self.__scroll_origin[1]
-        scroll_x /= SCROLLING_REDUCTION_FACTOR
-        scroll_y /= SCROLLING_REDUCTION_FACTOR
+        scroll_x /= self.SCROLLING_REDUCTION_FACTOR
+        scroll_y /= self.SCROLLING_REDUCTION_FACTOR
         scroll_x = max(min(scroll_x, 50), -50)
         scroll_y = max(min(scroll_y, 50), -50)
         return self.__scroll((scroll_x, scroll_y))

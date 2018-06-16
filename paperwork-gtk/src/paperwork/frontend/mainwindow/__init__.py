@@ -3954,15 +3954,16 @@ class MainWindow(object):
         self.img['canvas'].recompute_size(upd_scrollbar_values=True)
         self.img['canvas'].redraw()
 
+    ZOOM_INCREMENT = 0.02
+
     def __on_scroll_event_cb(self, widget, event):
-        ZOOM_INCREMENT = 0.02
         if event.state & Gdk.ModifierType.CONTROL_MASK:
             zoom_model = self.zoom_level['model']
             zoom = zoom_model.get_value()
             if event.direction == Gdk.ScrollDirection.UP:
-                zoom += ZOOM_INCREMENT
+                zoom += self.ZOOM_INCREMENT
             elif event.direction == Gdk.ScrollDirection.DOWN:
-                zoom -= ZOOM_INCREMENT
+                zoom -= self.ZOOM_INCREMENT
             else:
                 return False
             GLib.idle_add(self.__set_zoom_level_on_scroll, zoom)

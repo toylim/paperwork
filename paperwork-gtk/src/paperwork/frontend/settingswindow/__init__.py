@@ -138,6 +138,11 @@ class JobSourceFinder(Job):
 
     can_stop = False
     priority = 490
+    TRANSLATIONS = {
+        'auto': _("Automatic"),
+        'flatbed': _("Flatbed"),
+        'adf': _("Automatic Feeder"),
+    }
 
     def __init__(self, factory, id,
                  selected_source,
@@ -147,13 +152,8 @@ class JobSourceFinder(Job):
         self.__devid = devid
 
     def __get_source_name_translated(self, src_id):
-        TRANSLATIONS = {
-            'auto': _("Automatic"),
-            'flatbed': _("Flatbed"),
-            'adf': _("Automatic Feeder"),
-        }
-        if src_id.lower() in TRANSLATIONS:
-            return TRANSLATIONS[src_id.lower()]
+        if src_id.lower() in self.TRANSLATIONS:
+            return self.TRANSLATIONS[src_id.lower()]
         logger.warning("No translation for source [%s]" % src_id)
         return src_id
 
