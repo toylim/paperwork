@@ -34,8 +34,8 @@ class LabelColorButton(Gtk.ColorButton):
     def __new__(cls, *args, **kwargs):
         return Gtk.ColorButton.__new__(cls, *args, **kwargs)
 
-    def __init__(cls):
-        super(LabelColorButton, cls).__init__()
+    def __init__(self):
+        super(LabelColorButton, self).__init__()
 
     def do_clicked(self):
         """

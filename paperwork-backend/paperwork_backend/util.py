@@ -68,7 +68,7 @@ def strip_accents(string):
          if unicodedata.category(character) != 'Mn'))
 
 
-def __cleanup_word_array(keywords):
+def cleanup_word_array(keywords):
     """
     Yield all the keywords long enough to be used
     """
@@ -99,7 +99,7 @@ def split_words(sentence, modify=True, keep_shorts=False):
     if keep_shorts:
         word_iter = words
     else:
-        word_iter = __cleanup_word_array(words)
+        word_iter = cleanup_word_array(words)
     for word in word_iter:
         can_split = True
         can_yield = False

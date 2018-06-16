@@ -141,6 +141,7 @@ class ActionEndEditDoc(SimpleAction):
 
 
 class ActionScan(SimpleAction):
+    MARGIN = 10
 
     def __init__(self, multiscan_win, config, docsearch, main_win):
         SimpleAction.__init__(self, "Start multi-scan")
@@ -192,8 +193,7 @@ class ActionScan(SimpleAction):
 
         page_scans = []
 
-        MARGIN = 10
-        position = (MARGIN, MARGIN)
+        position = (self.MARGIN, self.MARGIN)
 
         rng = range(0, len(self.__multiscan_win.lists['docs']['model']))
         for line_idx in rng:
@@ -220,12 +220,12 @@ class ActionScan(SimpleAction):
                 page_scan.connect("scanworkflow-inst",
                                   drawer.set_scan_workflow)
                 page_scans.append(page_scan)
-                position = (position[0] + drawer.size[0] + MARGIN,
+                position = (position[0] + drawer.size[0] + self.MARGIN,
                             position[1])
-            new_height = position[1] + MARGIN
+            new_height = position[1] + self.MARGIN
             if drawer:
                 new_height += drawer.size[1]
-            position = (MARGIN, new_height)
+            position = (self.MARGIN, new_height)
 
         first_page_scan = page_scans[0]
         last_page_scan = None

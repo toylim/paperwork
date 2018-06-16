@@ -193,7 +193,7 @@ class _ImgOCRThread(threading.Thread):
         return (txt, score)
 
     def run(self):
-        SCORE_METHODS = [
+        score_methods = [
             ("spell_checker", self.__compute_ocr_score_with_spell_checking),
             ("lucky_guess", self.__compute_ocr_score_without_spell_checking),
             ("no_score", lambda txt: (txt, 0))
@@ -206,7 +206,7 @@ class _ImgOCRThread(threading.Thread):
 
         txt = self.__boxes_to_txt(self.boxes)
 
-        for score_method in SCORE_METHODS:
+        for score_method in score_methods:
             try:
                 logger.info("Evaluating score of page orientation (%s)"
                             " using method '%s' ..."
