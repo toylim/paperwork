@@ -78,6 +78,8 @@ class JobPageImgLoader(Job):
                 return
 
             use_thumbnail = True
+            if self.size[0] > (BasicPage.DEFAULT_THUMB_WIDTH * 1.5):
+                use_thumbnail = False
             if self.size[1] > (BasicPage.DEFAULT_THUMB_HEIGHT * 1.5):
                 use_thumbnail = False
             if not self.can_run:
