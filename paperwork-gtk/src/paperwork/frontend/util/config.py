@@ -302,7 +302,13 @@ def _get_scanner(config, devid, preferred_sources=None):
         logger.warning("Can't set the source on this scanner."
                        " Option not found")
     elif preferred_sources:
-        pyinsane2.set_scanner_opt(dev, 'source', preferred_sources)
+        # Favor the source from the configuration if it matches
+        # the preferred sources.
+        src = preferred_sources
+        for possible in preferred_sources:
+            if possible.lower() in config_source.lower():
+                src = [config_source]
+        pyinsane2.set_scanner_opt(dev, 'source', src)
     elif config_source:
         pyinsane2.set_scanner_opt(dev, 'source', [config_source])
 

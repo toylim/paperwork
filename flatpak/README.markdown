@@ -23,6 +23,24 @@ flatpak --user install https://builder.openpaper.work/paperwork_master.flatpakre
 flatpak run work.openpaper.Paperwork
 ```
 
+## Fedora 28
+
+```sh
+# Install Saned
+sudo dnf install sane-backends-daemon
+
+# Enable Saned (required for scanning ; allow connection from the loopback only)
+sudo sh -c "echo 127.0.0.1 >> /etc/sane.d/saned.conf"
+sudo systemctl enable saned.socket
+sudo systemctl start saned.socket
+
+# Install Paperwork (for the current user only)
+flatpak --user install https://builder.openpaper.work/paperwork_master.flatpakref
+
+# Start Paperwork
+flatpak run work.openpaper.Paperwork
+```
+
 # Updating Paperwork
 
 ```sh

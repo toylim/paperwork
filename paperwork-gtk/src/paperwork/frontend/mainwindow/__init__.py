@@ -944,6 +944,9 @@ class JobImporter(Job):
         def _on_page_ocr_done(self, scan_workflow, img, boxes, page):
             if page.can_edit:
                 page.img = img
+            if boxes is None:
+                logger.warning("No word found ?")
+                boxes = []
             page.boxes = boxes
 
             logger.info("OCR done on %s" % str(page))
