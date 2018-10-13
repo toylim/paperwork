@@ -62,7 +62,7 @@
   <url type="homepage">https://openpaper.work/</url>
   <url type="bugtracker">https://gitlab.gnome.org/World/OpenPaperwork/paperwork/issues</url>
   <url type="help">https://gitlab.gnome.org/World/OpenPaperwork/paperwork/#readme</url>
-  <url type="donation">https://openpaper.work/download#donate</url>
+  <url type="donation">https://www.patreon.com/openpaper</url>
   <launchable type="desktop-id">work.openpaper.Paperwork.desktop</launchable>
 
   <releases>
