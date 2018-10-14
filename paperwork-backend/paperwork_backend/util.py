@@ -44,10 +44,16 @@ try:
 except:
     GDK_AVAILABLE = False
 
+ENCHANT_AVAILABLE = False
+
 if os.name != "nt":
-    import enchant
-    import enchant.tokenize
-    import Levenshtein
+    try:
+        import enchant
+        import enchant.tokenize
+        import Levenshtein
+        ENCHANT_AVAILABLE = True
+    except ImportError:
+        pass
 
 
 logger = logging.getLogger(__name__)
@@ -152,6 +158,9 @@ def check_spelling(spelling_lang, txt):
     """
     if os.name == "nt":
         assert(not "check_spelling() not available on Windows")
+        return
+    if not ENCHANT_AVAILABLE:
+        assert(not "enchant is not available. Cannot check spelling")
         return
     with _ENCHANT_LOCK:
         # Maximum distance from the first suggestion from python-enchant
