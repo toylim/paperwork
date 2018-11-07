@@ -192,29 +192,6 @@ def find_missing_ocr(lang):
     return missing
 
 
-def find_missing_dict(lang):
-    if os.name == "nt":
-        return []
-    import enchant
-    missing = []
-    try:
-        enchant.request_dict(lang['aspell'])
-    except:  # noqa: E722
-        missing.append(
-            (
-                'Dictionary', '(none)',
-                {
-                    'debian': ('aspell-%s' % lang['aspell']),
-                    'fedora': ('aspell-%s' % lang['aspell']),
-                    'gentoo': ('aspell-%s' % lang['aspell']),
-                    'linuxmint': ('aspell-%s' % lang['aspell']),
-                    'ubuntu': ('aspell-%s' % lang['aspell']),
-                }
-            )
-        )
-    return missing
-
-
 def _check_cairo():
     class CheckCairo(object):
         def __init__(self):
@@ -319,7 +296,6 @@ def find_missing_dependencies():
     missing = []
     missing += find_missing_modules()
     missing += find_missing_ocr(lang)
-    missing += find_missing_dict(lang)
     missing += find_missing_data_files()
     missing += check_cairo()
     missing += check_sane()
