@@ -251,10 +251,14 @@ class JobPageBoxesLoader(Job):
             boxes = set()
             for line in line_boxes:
                 for word in line.word_boxes:
-                    if word.content.strip() == "":
+                    if word.content.strip() == "" or (word.position[0][0] == 0
+                                                      and word.position[0][1] == 0):
                         # XXX(Jflesch): Tesseract 3.03 (hOCR) returns big and
                         # empty word boxes sometimes (just a single space
                         # inside). They often match images, but not always.
+                        # XXX(jowlo): Tesseract returns large boxes containing
+                        # single letters (mostly special chars) that cover the
+                        # whole page. All of these start at (0 0)
                         continue
                     boxes.add(word)
 
