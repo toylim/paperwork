@@ -731,6 +731,9 @@ class SimplePageDrawer(Drawer):
         index = 0
         for line in self.boxes['lines']:
             for box in line.word_boxes:
+                if box.content.strip() == "" or (box.position[0][0] == 0
+                                                 and box.position[0][1] == 0):
+                    continue
                 rcx = (box.position[0][0] + box.position[1][0]) / 2
                 rcy = (box.position[0][1] + box.position[1][1]) / 2
                 w = box.position[1][0] - box.position[0][0]
@@ -767,6 +770,9 @@ class SimplePageDrawer(Drawer):
         selected = []
         for line in self.boxes['lines']:
             for box in line.word_boxes:
+                if box.content.strip() == "" or (box.position[0][0] == 0
+                                                 and box.position[0][1] == 0):
+                    continue
                 if box == box_start:
                     in_list = True
                 if in_list:
