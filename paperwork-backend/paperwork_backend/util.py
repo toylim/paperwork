@@ -371,45 +371,31 @@ def find_language(lang_str=None, allow_none=False):
         lang_str = lang_str.split("_")[0]
 
     try:
-        return pycountry.pycountry.languages.get(name=lang_str.title())
+        r = pycountry.pycountry.languages.get(name=lang_str.title())
+        if r is not None:
+            return r
     except (KeyError, UnicodeDecodeError):
         pass
-    try:
-        return pycountry.pycountry.languages.get(iso_639_3_code=lang_str)
-    except (KeyError, UnicodeDecodeError):
-        pass
-    try:
-        return pycountry.pycountry.languages.get(iso639_3_code=lang_str)
-    except (KeyError, UnicodeDecodeError):
-        pass
-    try:
-        return pycountry.pycountry.languages.get(iso639_2T_code=lang_str)
-    except (KeyError, UnicodeDecodeError):
-        pass
-    try:
-        return pycountry.pycountry.languages.get(iso639_1_code=lang_str)
-    except (KeyError, UnicodeDecodeError):
-        pass
-    try:
-        return pycountry.pycountry.languages.get(terminology=lang_str)
-    except (KeyError, UnicodeDecodeError):
-        pass
-    try:
-        return pycountry.pycountry.languages.get(bibliographic=lang_str)
-    except (KeyError, UnicodeDecodeError):
-        pass
-    try:
-        return pycountry.pycountry.languages.get(alpha_3=lang_str)
-    except (KeyError, UnicodeDecodeError):
-        pass
-    try:
-        return pycountry.pycountry.languages.get(alpha_2=lang_str)
-    except (KeyError, UnicodeDecodeError):
-        pass
-    try:
-        return pycountry.pycountry.languages.get(alpha2=lang_str)
-    except (KeyError, UnicodeDecodeError):
-        pass
+
+    ATTRS = (
+        'iso_639_3_code',
+        'iso639_3_code',
+        'iso639_2T_code',
+        'iso639_1_code',
+        'terminology',
+        'bibliographic',
+        'alpha_3',
+        'alpha_2',
+        'alpha2'
+    )
+    for attr in ATTRS:
+        try:
+            r = pycountry.pycountry.languages.get(**{attr: lang_str})
+            if r is not None:
+                return r
+        except (KeyError, UnicodeDecodeError):
+            pass
+
     if allow_none:
         logger.warning("Unknown language [{}]".format(lang_str))
         return None
