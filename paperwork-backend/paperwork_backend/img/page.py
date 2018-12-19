@@ -141,6 +141,7 @@ class ImgPage(BasicPage):
 
     def __set_img(self, img):
         with self.fs.open(self.__img_path, 'wb') as fd:
+            img = img.convert("RGB")
             img.save(fd, format="JPEG")
 
     img = property(__get_img, __set_img)
