@@ -56,7 +56,7 @@ def _install(icondir, datadir):
         datadir, 'applications', 'work.openpaper.Paperwork.desktop'
     )
     appdata_path = os.path.join(
-        datadir, "appdata", "work.openpaper.Paperwork.appdata.xml"
+        datadir, "metainfo", "work.openpaper.Paperwork.appdata.xml"
     )
 
     os.makedirs(os.path.dirname(desktop_path), exist_ok=True)
