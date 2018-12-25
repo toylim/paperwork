@@ -91,27 +91,27 @@
     <screenshot type="default">
       <caption>Home screen</caption>
       <image type="source">https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/1.2.1/paperwork_home.png</image>
-      <image type="thumbnail" width="384" height="216">https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/master/1.2.1/paperwork_home_thumb.png</image>
+      <image type="thumbnail" width="384" height="216">https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/1.2.1/paperwork_home_thumb.png</image>
     </screenshot>
     <screenshot>
       <caption>Paperwork document view</caption>
-      <image type="source">https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/master/1.2.1/paperwork_doc.png</image>
-      <image type="thumbnail" width="384" height="216">https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/master/1.2.1/paperwork_doc_thumb.png</image>
+      <image type="source">https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/1.2.1/paperwork_doc.png</image>
+      <image type="thumbnail" width="384" height="216">https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/1.2.1/paperwork_doc_thumb.png</image>
     </screenshot>
     <screenshot>
       <caption>Paperwork page view</caption>
-      <image type="source">https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/master/1.2.1/paperwork_page.png</image>
-      <image type="thumbnail" width="384" height="216">https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/master/1.2.1/paperwork_page_thumb.png</image>
+      <image type="source">https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/1.2.1/paperwork_page.png</image>
+      <image type="thumbnail" width="384" height="216">https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/1.2.1/paperwork_page_thumb.png</image>
     </screenshot>
     <screenshot>
       <caption>Paperwork import</caption>
-      <image type="source">https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/master/1.2.1/paperwork_import.png</image>
-      <image type="thumbnail" width="384" height="216">https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/master/1.2.1/paperwork_import_thumb.png</image>
+      <image type="source">https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/1.2.1/paperwork_import.png</image>
+      <image type="thumbnail" width="384" height="216">https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/1.2.1/paperwork_import_thumb.png</image>
     </screenshot>
     <screenshot>
       <caption>Paperwork export</caption>
-      <image type="source">https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/master/1.2.1/paperwork_export.png</image>
-      <image type="thumbnail" width="384" height="216">https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/master/1.2.1/paperwork_export_thumb.png</image>
+      <image type="source">https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/1.2.1/paperwork_export.png</image>
+      <image type="thumbnail" width="384" height="216">https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/1.2.1/paperwork_export_thumb.png</image>
     </screenshot>
   </screenshots>
 
