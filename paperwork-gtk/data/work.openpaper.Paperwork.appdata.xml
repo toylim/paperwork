@@ -31,25 +31,23 @@
     <p xml:lang="fr">Les principales fonctionnalités sont :</p>
     <ul>
       <li>Scanner support</li>
+      <li xml:lang="fr">Support des scanners</li>
       <li>PDF support</li>
+      <li xml:lang="fr">Support des PDFs</li>
       <li>Automatic detection of page orientation</li>
+      <li xml:lang="fr">Détection automatique de l'orientation des pages</li>
       <li>OCR</li>
+      <li xml:lang="fr">ROC</li>
       <li>Document labels</li>
+      <li xml:lang="fr">Labels pour trier les documents</li>
       <li>Automatic guessing of the labels to apply on new documents</li>
+      <li xml:lang="fr">Labelisation semi-automatique des documents</li>
       <li>Search</li>
+      <li xml:lang="fr">Recherche</li>
       <li>Keyword suggestions</li>
+      <li xml:lang="fr">Suggestions de mots-clés</li>
       <li>Quick edit of scans</li>
-    </ul>
-    <ul xml:lang="fr">
-      <li>Support des scanners</li>
-      <li>Support des PDFs</li>
-      <li>Détection automatique de l'orientation des pages</li>
-      <li>ROC</li>
-      <li>Labels pour trier les documents</li>
-      <li>Labelisation semi-automatique des documents</li>
-      <li>Recherche</li>
-      <li>Suggestions de mots-clés</li>
-      <li>Édition rapides des pages</li>
+      <li xml:lang="fr">Édition rapides des pages</li>
     </ul>
   </description>
   <categories>
