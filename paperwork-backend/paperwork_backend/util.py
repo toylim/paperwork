@@ -47,7 +47,7 @@ if os.name != "nt":
 
 logger = logging.getLogger(__name__)
 FORCED_SPLIT_KEYWORDS_REGEX = re.compile("[\n '()]", re.UNICODE)
-WISHED_SPLIT_KEYWORDS_REGEX = re.compile("[^\w!]", re.UNICODE)
+WISHED_SPLIT_KEYWORDS_REGEX = re.compile(r"[^\w!]", re.UNICODE)
 
 MIN_KEYWORD_LEN = 3
 
@@ -318,7 +318,7 @@ def find_language(lang_str=None, allow_none=False):
     except (KeyError, UnicodeDecodeError):
         pass
 
-    ATTRS = (
+    attrs = (
         'iso_639_3_code',
         'iso639_3_code',
         'iso639_2T_code',
@@ -329,7 +329,7 @@ def find_language(lang_str=None, allow_none=False):
         'alpha_2',
         'alpha2'
     )
-    for attr in ATTRS:
+    for attr in attrs:
         try:
             r = pycountry.pycountry.languages.get(**{attr: lang_str})
             if r is not None:
