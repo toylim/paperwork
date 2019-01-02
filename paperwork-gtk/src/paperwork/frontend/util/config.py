@@ -19,8 +19,6 @@ import datetime
 import logging
 import uuid
 
-import pyinsane2
-
 from paperwork_backend.config import PaperworkConfig
 from paperwork_backend.config import PaperworkSetting
 from paperwork_backend.config import paperwork_cfg_boolean
@@ -291,7 +289,7 @@ def load_config():
     return config
 
 
-def _get_scanner(config, devid, preferred_sources=None):
+def _get_scanner(config, libinsane, devid, preferred_sources=None):
     logger.info("Will scan using %s" % str(devid))
 
     dev = pyinsane2.Scanner(name=devid)
@@ -344,11 +342,11 @@ def _get_scanner(config, devid, preferred_sources=None):
     return (dev, resolution)
 
 
-def get_scanner(config, preferred_sources=None):
+def get_scanner(config, libinsane, preferred_sources=None):
     devid = config['scanner_devid'].value
 
     try:
-        return _get_scanner(config, devid, preferred_sources)
+        return _get_scanner(config, libinsane, devid, preferred_sources)
     except (KeyError, pyinsane2.PyinsaneException) as exc:
         logger.warning("Exception while configuring scanner: %s: %s"
                        % (type(exc), exc))

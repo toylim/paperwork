@@ -8,33 +8,11 @@ you are working, the build and runtime dependencies may not be the same.
 Setuptools and ```paperwork-shell chkdeps``` should take care of all of them.
 
 
-## System-wide installation
-
-```sh
-mkdir -p ~/git
-cd ~/git
-git clone https://gitlab.gnome.org/World/OpenPaperwork/paperwork.git
-git checkout develop  # or 'release-xxx'
-
-# will run 'python3 ./setup.py install' on all Paperwork components
-sudo make install  # or 'make install_py'
-
-# install non-Python dependencies
-paperwork-shell chkdeps paperwork_backend
-paperwork-shell chkdeps paperwork
-
-# if you want to add it in the menus
-paperwork-shell install
-```
-
-(see [the wiki as to why you probably want to work on the branch
-'develop'](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Branches))
-
-
 ## Paperwork in a Python Virtualenv
 
-If you intend to work on Paperwork, this is probably the most convenient way
-to install safely a development version of Paperwork.
+This is the recommended approach for development. If you intend to work on
+Paperwork (or just try it), this is probably the most convenient way to
+install safely a development version of Paperwork.
 
 Virtualenv allows to run Paperwork in a specific environment, with the latest
 versions of most of its dependencies. It also make it easier to remove it (you
@@ -51,20 +29,38 @@ You will have to install [python-virtualenv](https://pypi.python.org/pypi/virtua
 
 ### Installation
 
+Libinsane is scan library required by Paperwork. You need it in your
+development environment. Paperwork Makefile can take of that for you.
+
+
 ```sh
+mkdir -p ~/git
+cd ~/git
+
 git clone https://gitlab.gnome.org/World/OpenPaperwork/paperwork.git
 cd paperwork
-git checkout develop  # or 'release-xxx'
+git checkout develop  # or 'master', 'release-xxx', 'wip-xxx', etc
 
-virtualenv --system-site-packages -p python3 venv
-source venv/bin/activate
+# Create the Python virtualenv.
+# Compile Libinsane and set the correct environment variables to use it
+# without installing it.
+make venv
+
+# active\_test\_env.sh sets environment variables so you can use Libinsane
+# without installing it
+source ./activate_test_env.sh
+
 # you're now in a virtualenv
 
+# 'make install' will install Paperwork in the virtual environment
 make install  # or 'make install_py'
 
+# takes care of the dependencies that cannot be installed in the virtual
+# environment (Gtk, Tesseract, etc)
 paperwork-shell chkdeps paperwork_backend
 paperwork-shell chkdeps paperwork
 ```
+
 
 ### Note regarding the extra dependencies
 
@@ -81,7 +77,7 @@ manner.
 
 ```sh
 cd ~/git/paperwork
-source venv/bin/activate
+source ./activate_test_env.sh
 paperwork
 ```
 

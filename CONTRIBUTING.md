@@ -26,7 +26,7 @@
   * `paperwork-backend/deps.py`: backend ; for non-Python dependencies
   * `flatpak/develop.json`: Used to generate Flatpak packages (see `flatpak-builder`). To test your changes, you can generate standalone Paperwork Flatpak bundles with "cd flatpak ; make bundles" (it's quite long ; beware it will use your local `develop.json` but will package Paperwork from Github).
 
-Same rules apply for all the libraries in Openpaperwork: PyOCR, Pyinsane, etc.
+Same rules apply for all the libraries in Openpaperwork: PyOCR, Libinsane, etc.
 
 Regarding PEP-8, the following rules must be strictly followed:
 

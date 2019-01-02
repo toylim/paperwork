@@ -1,4 +1,5 @@
 xxxx/xx/xx - 1.3:
+- Switch from Pyinsane2 to Libinsane
 - Remove documentations 'hacking' and 'translating'. They are in the Wiki now.
 
 2018/03/01 - 1.2.4:

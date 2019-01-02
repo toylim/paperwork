@@ -18,19 +18,25 @@
 Bootstrapping code
 """
 
+import argparse
+import gettext
+import locale
+import logging
 import os
+import signal
 import sys
 
-import gettext
+import gi
+gi.require_version('Gdk', '3.0')
+gi.require_version('Gtk', '3.0')
+gi.require_version('Libinsane', '0.1')
+gi.require_version('Notify', '0.7')
+gi.require_version('Poppler', '0.18')
+gi.require_version('PangoCairo', '1.0')
 
 from gi.repository import GLib  # noqa: E402
+from gi.repository import Libinsane  # noqa: E402
 from gi.repository import Notify  # noqa: E402
-import locale  # noqa: E402
-import logging  # noqa: E402
-import signal  # noqa: E402
-import argparse  # noqa: E402
-
-import pyinsane2  # noqa: E402
 
 import paperwork_backend  # noqa: E402
 
@@ -149,44 +155,34 @@ class Main(object):
 
         backend_state = paperwork_backend.init()
 
-        logger.info("Initializing pyinsane ...")
-        pyinsane2.init()
-        try:
-            logger.info("Initializing libnotify ...")
-            Notify.init("Paperwork")
+        logger.info("Initializing libinsane ...")
+        libinsane = Libinsane.Api.new_safebet()
 
-            self.config = load_config()
-            self.config.read()
+        logger.info("Initializing libnotify ...")
+        Notify.init("Paperwork")
 
-            self.main_win = MainWindow(
-                self.config, self.main_loop, not skip_workdir_scan,
-                flatpak=backend_state['flatpak']
-            )
-            if hook_func:
-                hook_func(self.config, self.main_win)
+        self.config = load_config()
+        self.config.read()
 
-            self.main_loop.run()
+        self.main_win = MainWindow(
+            self.config, self.main_loop, libinsane,
+            not skip_workdir_scan,
+            flatpak=backend_state['flatpak']
+        )
+        if hook_func:
+            hook_func(self.config, self.main_win)
 
-            logger.info("Writing configuration ...")
-            self.config.write()
+        self.main_loop.run()
 
-            logger.info("Stopping libnotify ...")
-            Notify.uninit()
-        finally:
-            logger.info("Stopping Pyinsane ...")
-            pyinsane2.exit()
+        logger.info("Writing configuration ...")
+        self.config.write()
+
+        logger.info("Stopping libnotify ...")
+        Notify.uninit()
         logger.info("Good bye")
 
 
 def main(hook_func=None, skip_workdir_scan=False):
-    import gi
-
-    gi.require_version('Gdk', '3.0')
-    gi.require_version('Gtk', '3.0')
-    gi.require_version('Notify', '0.7')
-    gi.require_version('Poppler', '0.18')
-    gi.require_version('PangoCairo', '1.0')
-
     m = Main()
     m.main(hook_func, skip_workdir_scan)
 

@@ -5,13 +5,9 @@
 
 It's hard to list all the dependencies here. Currently, the main ones are:
 
+* [Msys2](https://www.msys2.org/)
 * [Python 3.4](https://www.python.org/downloads/windows/)
-* Windows SDK7.1 : See [Python wiki](https://wiki.python.org/moin/WindowsCompilers#Microsoft_Visual_C.2B-.2B-_10.0_standalone:_Windows_SDK_7.1_.28x86.2C_x64.2C_ia64.29)
-* [Windows DDK](https://www.microsoft.com/en-us/download/details.aspx?id=11800) (for Pyinsane ; required only if the no Python wheel is available)
-* [Pillow](http://www.lfd.uci.edu/~gohlke/pythonlibs/#pillow)
-* [Python-levenshtein](www.lfd.uci.edu/~gohlke/pythonlibs/#python-levenshtein)
-* [GObject Introspection, Gtk, Gdk, Libpoppler, & friends](https://sourceforge.net/projects/pygobjectwin32/)
-* Msys2 or Mingw shell
+* GObject Introspection, Gtk, Gdk, Libpoppler, & friends
 * GNU Makefile
 
 They must be installed *before* the rest of Paperwork. Once everything is installed:
