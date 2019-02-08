@@ -288,6 +288,11 @@ def image2surface(img, intermediate="pixbuf", quality=90):
     if not CAIRO_AVAILABLE:
         raise Exception("Cairo not available(). image2surface() cannot work.")
 
+    if intermediate == "jpeg":
+        # TODO(Jflesch): set_mime_data(JPEG) appears to be unstable
+        # --> must be reproduced in an example program and reported to Cairo
+        intermediate = "pixbuf"
+
     # TODO(Jflesch): Python 3 problem
     # cairo.ImageSurface.create_for_data() raises NotImplementedYet ...
 
