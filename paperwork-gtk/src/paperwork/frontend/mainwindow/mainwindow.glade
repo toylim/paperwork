@@ -274,7 +274,7 @@
                         </child>
                       </object>
                       <packing>
-                        <property name="pack_type">end</property>
+                        <property name="pack_type">start</property>
                       </packing>
                     </child>
                     <child>
@@ -291,7 +291,23 @@
                         <property name="pack_type">end</property>
                       </packing>
                     </child>
-
+                    <child>
+                      <object class="GtkMenuButton" id="primary_menu_button">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="menu_model">primary_menu</property>
+                        <child>
+                          <object class="GtkImage" id="menu_image">
+                            <property name="visible">True</property>
+                            <property name="icon_name">open-menu-symbolic</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="pack_type">end</property>
+                      </packing>
+                    </child>
                   </object>
                 </child>
               </object>
@@ -435,7 +451,7 @@
                 <child>
                   <object class="GtkImage" id="image_button_menu_window_advanced">
                     <property name="visible">True</property>
-                    <property name="icon_name">open-menu-symbolic</property>
+                    <property name="icon_name">view-more-symbolic</property>
                     <property name="can_focus">False</property>
                   </object>
                 </child>
@@ -969,6 +985,56 @@
       <widget name="menubuttonOtherScans"/>
     </widgets>
   </object>
+
+  <!-- start primary menu -->
+
+  <menu id="primary_menu">
+		<section>
+			<submenu id="advanced">
+				<attribute name="label" translatable="yes">_Advanced</attribute>
+				<item>
+					<attribute name="label" translatable="yes">_Diagnostic</attribute>
+					<attribute name="action">app.diag</attribute>
+				</item>
+				<item>
+					<attribute name="label" translatable="yes">Optimize index</attribute>
+					<attribute name="action">app.optimize_index</attribute>
+				</item>
+				<item>
+					<attribute name="label" translatable="yes">Reindex all the documents</attribute>
+					<attribute name="action">app.reindex_all</attribute>
+				</item>
+				<item>
+					<attribute name="label" translatable="yes">Redo OCR on all the documents</attribute>
+					<attribute name="action">app.redo_ocr_all</attribute>
+				</item>
+			</submenu>
+		</section>
+		<section>
+			<item>
+				<attribute name="label" translatable="yes">_Settings</attribute>
+				<attribute name="action">app.settings</attribute>
+			</item>
+			<submenu id="help">
+				<attribute name="label" translatable="yes">_Help</attribute>
+				<item>
+					<attribute name="label" translatable="yes">_Introduction</attribute>
+					<attribute name="action">app.help.introduction</attribute>
+				</item>
+				<item>
+					<attribute name="label" translatable="yes">User Manual</attribute>
+					<attribute name="action">app.help.manual</attribute>
+				</item>
+			</submenu>
+			<item>
+				<attribute name="label" translatable="yes">_About Paperwork</attribute>
+				<attribute name="action">app.about</attribute>
+			</item>
+		</section>
+	</menu>
+
+  <!-- end primary menu -->
+
 
   <object class="GtkPopover" id="view_settings_popover">
     <child>

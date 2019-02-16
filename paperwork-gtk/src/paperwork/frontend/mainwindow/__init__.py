@@ -2658,9 +2658,6 @@ class MainWindow(object):
 
         self.allow_multiselect = False
 
-        if g_must_init_app:
-            self.__advanced_app_menu = self.__init_app_menu(config, self.app)
-
         self.default_font = None
         self.__fix_css()
         load_cssfile("application.css")
@@ -3219,13 +3216,6 @@ class MainWindow(object):
             'index': JobScheduler("Index search / update"),
             'export': JobScheduler("Export"),
         }
-
-    def __init_app_menu(self, config, app):
-        app_menu = load_uifile(os.path.join("mainwindow", "appmenu.xml"))
-        advanced_menu = app_menu.get_object("advanced")
-
-        app.set_app_menu(app_menu.get_object("app-menu"))
-        return advanced_menu
 
     def __init_window(self, widget_tree, config):
         window = widget_tree.get_object("mainWindow")
