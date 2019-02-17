@@ -11,8 +11,60 @@
     <property name="page_increment">0.05</property>
   </object>
 
-  <menu id="scan_menu">
+  <object class="GtkPopoverMenu" id="new_document_popover">
+    <child>
+      <object class="GtkBox">
+        <property name="margin">12</property>
+        <property name="visible">True</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">6</property>
+        <property name="width_request">250</property>
+        <child>
+          <object class="GtkModelButton" id="new_from_flatbed">
+            <property name="visible">True</property>
+            <property name="label" translatable="yes">Scan single</property>
+            <property name="action-name">app.scan_single</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="new_from_feeder">
+            <property name="visible">True</property>
+            <property name="label" translatable="yes">Scan from feeder</property>
+            <property name="action-name">app.scan_from_feeder</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="new_from_file">
+            <property name="visible">True</property>
+            <property name="label" translatable="yes">Import file(s)</property>
+            <property name="action-name">app.import</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+
+  <menu id="new_document_menu">
     <section>
+      <item>
+        <attribute name="label" translatable="yes">Scan single</attribute>
+        <attribute name="action">app.scan_single</attribute>
+      </item>
       <item>
         <attribute name="label" translatable="yes">Scan from feeder</attribute>
         <attribute name="action">app.scan_from_feeder</attribute>
@@ -258,11 +310,12 @@
                       <class name="titlebar"/>
                     </style>
                     <child>
-                      <object class="GtkButton" id="toolbuttonNewDoc">
+                      <object class="GtkMenuButton" id="new_document_button">
                         <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
+                        <property name="use_popover">True</property>
+                        <property name="popover">new_document_popover</property>
                         <property name="use_underline">True</property>
                         <child>
                           <object class="GtkImage" id="image_button_new_doc">
@@ -377,6 +430,20 @@
             <!-- start -->
 
             <child>
+              <object class="GtkButton" id="buttonScan">
+                <property name="use_action_appearance">False</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Scan</property>
+              </object>
+              <packing>
+                <property name="pack_type">start</property>
+              </packing>
+            </child>
+
+            <!-- end -->
+
+            <child>
               <object class="GtkBox" id="box_page_nb">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -437,11 +504,10 @@
               </object>
 
               <packing>
-                <property name="pack_type">start</property>
+                <property name="pack_type">end</property>
               </packing>
             </child>
 
-            <!-- end -->
             <child>
               <object class="GtkMenuButton" id="menubuttonWindowAdvanced">
                 <property name="use_action_appearance">False</property>
@@ -457,44 +523,7 @@
                 </child>
               </object>
               <packing>
-                <property name="pack_type">end</property>
-              </packing>
-            </child>
-
-            <child>
-              <object class="GtkBox" id="scan_buttons">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <child>
-                  <object class="GtkButton" id="buttonScan">
-                    <property name="use_action_appearance">False</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Scan</property>
-                    <style>
-                      <class name="button-left"/>
-                    </style>
-                  </object>
-                  <packing>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkMenuButton" id="menubuttonOtherScans">
-                    <property name="use_action_appearance">False</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="menu_model">scan_menu</property>
-                    <style>
-                      <class name="button-right"/>
-                    </style>
-                  </object>
-                  <packing>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
+                <property name="position">0</property>
                 <property name="pack_type">end</property>
               </packing>
             </child>
@@ -975,14 +1004,13 @@
   <object class="GtkSizeGroup" id="header_bar_widgets">
     <property name="mode">vertical</property>
     <widgets>
-      <widget name="toolbuttonNewDoc"/>
+      <widget name="new_document_button"/>
       <widget name="toolbuttonValidateDocProperties"/>
       <widget name="entryPageNb"/>
       <widget name="labelTotalPages"/>
       <widget name="viewSettingsButton"/>
       <widget name="menubuttonWindowAdvanced"/>
       <widget name="buttonScan"/>
-      <widget name="menubuttonOtherScans"/>
     </widgets>
   </object>
 

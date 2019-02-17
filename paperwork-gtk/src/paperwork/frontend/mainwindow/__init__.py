@@ -1075,7 +1075,7 @@ class JobFactoryImporter(JobFactory):
 
 class ActionNewDocument(SimpleAction):
     """
-    Starts a new docume.
+    Starts a new document.
     """
     def __init__(self, doclist, main_win):
         SimpleAction.__init__(self, "New document")
@@ -1088,7 +1088,6 @@ class ActionNewDocument(SimpleAction):
         self.__main_win.allow_multiselect = False
         self.__doclist.open_new_doc()
         self.__doclist.gui['scrollbars'].get_vadjustment().set_value(0)
-
 
 class ActionUpdateSearchResults(SimpleAction):
     """
@@ -2826,6 +2825,7 @@ class MainWindow(object):
         self.searchbar = SearchBar(self)
 
         self.layouts = {
+            'new_document_button': widget_tree.get_object("new_document_button"),
             'settings_button': widget_tree.get_object("viewSettingsButton"),
             'grid': {
                 'button': widget_tree.get_object("show_grid_button"),
@@ -2855,7 +2855,9 @@ class MainWindow(object):
         self.actions = {
             'new_doc': (
                 [
-                    widget_tree.get_object("toolbuttonNewDoc"),
+                    widget_tree.get_object("new_from_flatbed"),
+                    widget_tree.get_object("new_from_feeder"),
+                    widget_tree.get_object("new_from_file"),
                 ],
                 ActionNewDocument(self.doclist, self),
             ),
@@ -3024,7 +3026,7 @@ class MainWindow(object):
 
         accelerators = [
             ('<Primary>n', 'clicked',
-             widget_tree.get_object("toolbuttonNewDoc")),
+             widget_tree.get_object("new_document_button")),
             ('<Primary>f', 'grab-focus',
              self.search_field),
         ]
