@@ -2659,7 +2659,6 @@ class MainWindow(object):
         self.allow_multiselect = False
 
         self.default_font = None
-        self.__fix_css()
         load_cssfile("application.css")
 
         widget_tree = load_uifile(
@@ -3135,37 +3134,6 @@ class MainWindow(object):
         widget_tree.get_object("labelTotalPages").set_size_request(1, 30)
         widget_tree.get_object("entryPageNb").set_size_request(1, 30)
         widget_tree.get_object("viewSettingsButton").set_size_request(1, 30)
-
-    def __fix_css(self):
-        """
-        Fix problem from adwaita theme: the application menu button
-        must have a border, like the others ! But it's painful to select
-        """
-        settings = Gtk.Settings.get_default()
-        theme = settings.get_property("gtk-theme-name")
-
-        css_fix = ""
-
-        if theme == "Adwaita":
-            css_fix += """
-            GtkHeaderBar GtkButton:first-child {
-                border: 1px solid @borders;
-            }
-            """
-
-        if css_fix.strip() != "":
-            try:
-                css_fix = css_fix.encode("utf-8")
-                css_provider = Gtk.CssProvider()
-                css_provider.load_from_data(css_fix)
-                Gtk.StyleContext.add_provider_for_screen(
-                    Gdk.Screen.get_default(),
-                    css_provider,
-                    Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-                )
-            except Exception as exc:
-                logger.warning("Failed to apply CSS theme fixes")
-                logger.exception(exc)
 
     def __init_app(self):
         if hasattr(GLib, 'set_application_name'):
