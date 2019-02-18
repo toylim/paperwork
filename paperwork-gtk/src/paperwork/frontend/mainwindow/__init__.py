@@ -2658,11 +2658,7 @@ class MainWindow(object):
 
         self.allow_multiselect = False
 
-        if g_must_init_app:
-            self.__advanced_app_menu = self.__init_app_menu(config, self.app)
-
         self.default_font = None
-        self.__fix_css()
         load_cssfile("application.css")
 
         widget_tree = load_uifile(
@@ -3139,37 +3135,6 @@ class MainWindow(object):
         widget_tree.get_object("entryPageNb").set_size_request(1, 30)
         widget_tree.get_object("viewSettingsButton").set_size_request(1, 30)
 
-    def __fix_css(self):
-        """
-        Fix problem from adwaita theme: the application menu button
-        must have a border, like the others ! But it's painful to select
-        """
-        settings = Gtk.Settings.get_default()
-        theme = settings.get_property("gtk-theme-name")
-
-        css_fix = ""
-
-        if theme == "Adwaita":
-            css_fix += """
-            GtkHeaderBar GtkButton:first-child {
-                border: 1px solid @borders;
-            }
-            """
-
-        if css_fix.strip() != "":
-            try:
-                css_fix = css_fix.encode("utf-8")
-                css_provider = Gtk.CssProvider()
-                css_provider.load_from_data(css_fix)
-                Gtk.StyleContext.add_provider_for_screen(
-                    Gdk.Screen.get_default(),
-                    css_provider,
-                    Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-                )
-            except Exception as exc:
-                logger.warning("Failed to apply CSS theme fixes")
-                logger.exception(exc)
-
     def __init_app(self):
         if hasattr(GLib, 'set_application_name'):
             GLib.set_application_name(_("Paperwork"))
@@ -3219,13 +3184,6 @@ class MainWindow(object):
             'index': JobScheduler("Index search / update"),
             'export': JobScheduler("Export"),
         }
-
-    def __init_app_menu(self, config, app):
-        app_menu = load_uifile(os.path.join("mainwindow", "appmenu.xml"))
-        advanced_menu = app_menu.get_object("advanced")
-
-        app.set_app_menu(app_menu.get_object("app-menu"))
-        return advanced_menu
 
     def __init_window(self, widget_tree, config):
         window = widget_tree.get_object("mainWindow")
