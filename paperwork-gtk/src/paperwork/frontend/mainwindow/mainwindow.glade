@@ -22,8 +22,9 @@
         <child>
           <object class="GtkModelButton" id="new_from_flatbed">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">Scan single</property>
+            <property name="text" translatable="yes">Scan</property>
             <property name="action-name">app.scan_single</property>
+            <property name="iconic">True</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -34,8 +35,9 @@
         <child>
           <object class="GtkModelButton" id="new_from_feeder">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">Scan from feeder</property>
+            <property name="text" translatable="yes">Scan from feeder</property>
             <property name="action-name">app.scan_from_feeder</property>
+            <property name="iconic">True</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -46,8 +48,9 @@
         <child>
           <object class="GtkModelButton" id="new_from_file">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">Import file(s)</property>
+            <property name="text" translatable="yes">Import file(s)</property>
             <property name="action-name">app.import</property>
+            <property name="iconic">True</property>
           </object>
           <packing>
             <property name="expand">False</property>
