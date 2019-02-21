@@ -624,7 +624,6 @@ class ActionDeleteDoc(SimpleAction):
                 self._on_doc_deleted_from_index, doc
             )
         )
-        self.__main_win.new_doc()
         self.__main_win.schedulers['main'].schedule(job)
 
     def _on_doc_deleted_from_index(self, doc):
@@ -1062,7 +1061,6 @@ class DocList(object):
         GLib.idle_add(self._set_docs, documents, all_docs)
 
     def _set_docs(self, documents, all_docs=True):
-        need_new_doc = all_docs
         display_count = not all_docs
 
         title = _("Documents") if all_docs else _("Matching papers")
@@ -1083,8 +1081,6 @@ class DocList(object):
         self.gui['list'].freeze_child_notify()
         try:
             self._add_boxes()
-            if need_new_doc:
-                self.insert_new_doc()
 
             self.gui['list'].set_visible(True)
         finally:
