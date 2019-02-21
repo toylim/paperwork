@@ -62,23 +62,6 @@
     </child>
   </object>
 
-  <menu id="new_document_menu">
-    <section>
-      <item>
-        <attribute name="label" translatable="yes">Scan single</attribute>
-        <attribute name="action">app.scan_single</attribute>
-      </item>
-      <item>
-        <attribute name="label" translatable="yes">Scan from feeder</attribute>
-        <attribute name="action">app.scan_from_feeder</attribute>
-      </item>
-      <item>
-        <attribute name="label" translatable="yes">Import file(s)</attribute>
-        <attribute name="action">app.import</attribute>
-      </item>
-    </section>
-  </menu>
-
   <menu id="advanced_window_menu">
     <section>
 
