@@ -1558,7 +1558,11 @@ class ActionImport(SimpleAction):
                        GLib.idle_add(self.__select_file_cb, dialog, response))
 
         self._select_file_dialog = dialog
-        dialog.show_all()
+        response = dialog.run()
+
+        if response == 1:
+            # Remove empty doc from list when import is canceled
+            self.__main_win.refresh_doc_list()
 
     def __select_importer(self, importers):
         widget_tree = load_uifile(
