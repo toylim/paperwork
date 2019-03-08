@@ -17,7 +17,7 @@ dist-clean: clean
 # Will export to the Flatpak repository $(REPO)
 %.app: %.json
 	@echo flatpak-builder $< --\> $@ \($(REPO) ${EXPORT_ARGS} ${ARCH_ARGS}\)
-	flatpak-builder --repo=$(REPO) -s "Build of Paperwork $(@:%.app=%) `date`" ${EXPORT_ARGS} ${ARCH_ARGS} $@ $<
+	flatpak-builder --disable-rofiles-fuse --repo=$(REPO) -s "Build of Paperwork $(@:%.app=%) `date`" ${EXPORT_ARGS} ${ARCH_ARGS} $@ $<
 
 upd_repo:
 	@echo flatpak build-update-repo $(REPO) \($(REPO) ${EXPORT_ARGS} ${ARCH_ARGS}\)
