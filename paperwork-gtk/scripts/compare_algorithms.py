@@ -10,7 +10,7 @@ import threading
 import gi
 gi.require_version('Gdk', '3.0')
 gi.require_version('Gtk', '3.0')
-gi.require_version('Libinsane', '0.1')
+gi.require_version('Libinsane', '1.0')
 gi.require_version('Pango', '1.0')
 gi.require_version('PangoCairo', '1.0')
 gi.require_version('Poppler', '0.18')

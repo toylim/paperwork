@@ -6,7 +6,7 @@ try:
     # suppress warnings from GI
     import gi
     gi.require_version('Gtk', '3.0')
-    gi.require_version('Libinsane', '0.1')
+    gi.require_version('Libinsane', '1.0')
     gi.require_version('Notify', '0.7')
     gi.require_version('PangoCairo', '1.0')
     gi.require_version('Poppler', '0.18')

@@ -5,6 +5,7 @@ build: $(ALL_COMPONENTS:%=%_build)
 
 clean: $(ALL_COMPONENTS:%=%_clean)
 	rm -rf venv
+	make -C sub/libinsane clean
 
 install: $(ALL_COMPONENTS:%=%_install)
 
@@ -130,7 +131,7 @@ help:
 venv:
 	echo "Building virtual env"
 	git submodule init
-	git submodule update --recursive --init
+	git submodule update --recursive --remote --init
 	make -C sub/libinsane build_c
 	virtualenv -p python3 --system-site-packages venv
 
