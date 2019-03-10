@@ -35,6 +35,7 @@ gi.require_version('Poppler', '0.18')
 gi.require_version('PangoCairo', '1.0')
 
 from gi.repository import GLib  # noqa: E402
+from gi.repository import GObject  # noqa: E402
 from gi.repository import Libinsane  # noqa: E402
 from gi.repository import Notify  # noqa: E402
 
@@ -115,6 +116,18 @@ def set_locale():
             module.textdomain('paperwork')
 
 
+class LibinsaneLogger(GObject.GObject, Libinsane.Logger):
+    CALLBACKS = {
+        Libinsane.LogLevel.ERROR: logger.error,
+        Libinsane.LogLevel.WARNING: logger.warning,
+        Libinsane.LogLevel.INFO: logger.info,
+        Libinsane.LogLevel.DEBUG: lambda msg: 0,
+    }
+
+    def do_log(self, lvl, msg):
+        self.CALLBACKS[lvl](msg)
+
+
 class Main(object):
     def __init__(self):
         self.main_win = None
@@ -156,6 +169,7 @@ class Main(object):
         backend_state = paperwork_backend.init()
 
         logger.info("Initializing libinsane ...")
+        Libinsane.register_logger(LibinsaneLogger())
         libinsane = Libinsane.Api.new_safebet()
 
         logger.info("Initializing libnotify ...")
