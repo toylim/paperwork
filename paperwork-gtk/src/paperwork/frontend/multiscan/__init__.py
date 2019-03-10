@@ -183,7 +183,7 @@ class ActionScan(SimpleAction):
             raise
 
         try:
-            scan_session = dev.scan(multiple=True)
+            scan_session = dev.scan_start()
         except Exception as exc:
             logger.error("Exception while scanning: {}".format(exc))
             logger.exception(exc)

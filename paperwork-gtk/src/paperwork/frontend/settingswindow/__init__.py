@@ -445,7 +445,6 @@ class JobCalibrationScan(Job):
                 chunk.extend(out)
 
             split = len(chunk) - (len(chunk) % line_length)
-            last_line += (split / line_length)
             next_chunk = chunk[split:]
             chunk = chunk[:split]
 
@@ -456,6 +455,7 @@ class JobCalibrationScan(Job):
             self.emit('calibration-scan-img', last_line, pixbuf)
 
             time.sleep(0)  # Give some CPU time to Gtk
+            last_line += (split / line_length)
             chunk = next_chunk
         if not self.can_run:
             self.emit('calibration-scan-canceled')

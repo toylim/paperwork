@@ -1448,7 +1448,7 @@ class ActionSingleScan(SimpleAction):
                 popup_no_scanner_found(self.__main_win.window, str(exc))
                 return
             try:
-                scan_session = dev.scan(multiple=False)
+                scan_session = dev.scan_start()
             except Exception as exc:
                 logger.warning("Error while scanning: {}".format(str(exc)))
                 self.__on_scan_error(None, exc)

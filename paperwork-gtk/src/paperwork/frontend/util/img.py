@@ -91,3 +91,11 @@ def raw2pixbuf(img_bytes, params):
     )
     logger.info("Pixbuf: Size: %dx%d", pixbuf.get_width(), pixbuf.get_height())
     return pixbuf
+
+
+def raw2pillow(img_bytes, params):
+    return PIL.Image.frombuffer(
+        "RGB",
+        (params.get_width(), int(len(img_bytes) / (params.get_width() * 3))),
+        bytes(img_bytes), "raw", "RGB", 0, 1
+    )

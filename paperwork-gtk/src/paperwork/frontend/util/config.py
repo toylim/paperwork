@@ -19,6 +19,8 @@ import datetime
 import logging
 import uuid
 
+from gi.repository import GLib
+
 from paperwork_backend.config import PaperworkConfig
 from paperwork_backend.config import PaperworkSetting
 from paperwork_backend.config import paperwork_cfg_boolean
@@ -292,53 +294,51 @@ def load_config():
 def _get_scanner(config, libinsane, devid, preferred_sources=None):
     logger.info("Will scan using %s" % str(devid))
 
-    dev = pyinsane2.Scanner(name=devid)
-
     config_source = config['scanner_source'].value
 
-    if 'source' not in dev.options:
-        logger.warning("Can't set the source on this scanner."
-                       " Option not found")
-    elif preferred_sources:
+    dev = libinsane.get_device(devid)
+    srcs = {src.get_name(): src for src in dev.get_children()}
+
+    if not preferred_sources:
+        src_name = config_source
+    else:
         # Favor the source from the configuration if it matches
         # the preferred sources.
-        src = preferred_sources
+        src_name = None
         for possible in preferred_sources:
             if possible.lower() in config_source.lower():
-                src = [config_source]
-        pyinsane2.set_scanner_opt(dev, 'source', src)
-    elif config_source:
-        pyinsane2.set_scanner_opt(dev, 'source', [config_source])
+                src_name = [config_source]
+                break
+        # else find a source that matches the preferred_sources requirement
+        if src_name is None:
+            for src in srcs.keys():
+                for possible in preferred_sources:
+                    if possible.lower() in src.lower():
+                        src_name = src
+                        break
+                if src_name is not None:
+                    break
+        # else default to the config
+        if src_name is None:
+            src_name = config_source
+
+    src = srcs[src_name]
 
     resolution = int(config['scanner_resolution'].value)
     logger.info("Will scan at a resolution of %d" % resolution)
 
-    if 'resolution' not in dev.options:
+    opts = {opt.get_name(): opt for opt in src.get_options()}
+    if 'resolution' not in opts:
         logger.warning("Can't set the resolution on this scanner."
                        " Option not found")
     else:
-        try:
-            pyinsane2.set_scanner_opt(dev, 'resolution', [resolution])
-        except pyinsane2.PyinsaneException as exc:
-            resolution = int(dev.options['resolution'].value)
-            logger.warning("Failed to set resolution. Will fall back to the"
-                           " current one: {}".format(resolution))
-            logger.exception(exc)
+        opts['resolution'].set_value(resolution)
 
-    if 'mode' not in dev.options:
+    if 'mode' not in opts:
         logger.warning("Can't set the mode on this scanner. Option not found")
     else:
-        try:
-            pyinsane2.set_scanner_opt(dev, 'mode', ['Color'])
-        except pyinsane2.PyinsaneException as exc:
-            logger.warning("Failed to set scan mode: {}".format(exc))
-            logger.exception(exc)
+        opts['mode'] = "Color"
 
-    try:
-        pyinsane2.maximize_scan_area(dev)
-    except pyinsane2.PyinsaneException as exc:
-        logger.warning("Failed to maximize scan area: {}".format(exc))
-        logger.exception(exc)
     return (dev, resolution)
 
 
@@ -347,22 +347,23 @@ def get_scanner(config, libinsane, preferred_sources=None):
 
     try:
         return _get_scanner(config, libinsane, devid, preferred_sources)
-    except (KeyError, pyinsane2.PyinsaneException) as exc:
+    except (KeyError, GLib.Error) as exc:
         logger.warning("Exception while configuring scanner: %s: %s"
                        % (type(exc), exc))
         logger.exception(exc)
         try:
             # we didn't find the scanner at the given ID
             # but maybe there is only one, so we can guess the scanner to use
-            devices = [
-                x for x in pyinsane2.get_devices()
-                if x.name[:4] != "v4l:"
-            ]
+            devices = libinsane.get_devices()
             if len(devices) != 1:
                 raise
-            logger.info("Will try another scanner id: %s" % devices[0].name)
-            return _get_scanner(config, devices[0].name, preferred_sources)
-        except pyinsane2.PyinsaneException:
+            logger.info(
+                "Will try another scanner id: %s" % devices[0].get_dev_id()
+            )
+            return _get_scanner(
+                config, devices[0].get_dev_id(), preferred_sources
+            )
+        except GLib.Error:
             # this is a fallback mechanism, but what interest us is the first
             # exception, not the one from the fallback
             raise exc
