@@ -156,7 +156,8 @@
                 {
                     "type": "git",
                     "url": "https://gitlab.gnome.org/World/OpenPaperwork/pyinsane.git",
-                    "branch": "master"
+                    "branch": "master",
+                    "disable-shallow-clone": true
                 }
             ]
         },
@@ -352,7 +353,8 @@
                 {
                     "type": "git",
                     "url": "https://gitlab.gnome.org/World/OpenPaperwork/paperwork.git",
-                    "branch": "master"
+                    "branch": "master",
+                    "disable-shallow-clone": true
                 }
             ]
         }
