@@ -43,7 +43,7 @@ def init_flatpak():
         logger.info("{} found".format(tessdata))
         os.symlink(tessdata, os.path.join(tessdatadir,
                                           os.path.basename(tessdata)))
-    os.environ['TESSDATA_PREFIX'] = os.path.dirname(tessdatadir)
+    os.environ['TESSDATA_PREFIX'] = tessdatadir
     logger.info("Tessdata directory ready")
     return True
 
