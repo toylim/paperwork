@@ -2777,10 +2777,12 @@ class MainWindow(object):
                     widget_tree.get_object("box_left_revealers"), 0,
                     widget_tree.get_object("box_left_loading_revealer"),
                 ),
+                # When loading, do not hide the default headerbar.
+                # Users may need it to access diagnostic or settings.
                 (
                     widget_tree.get_object("box_headerbar_left"), 0,
                     widget_tree.get_object(
-                        "box_left_headerbar_loading_revealer"
+                        "box_headerbar_left_doclist_revealer"
                     ),
                 ),
             ],
@@ -2790,7 +2792,7 @@ class MainWindow(object):
                     widget_tree.get_object("box_left_doclist_revealer")
                 ),
                 (
-                    widget_tree.get_object("box_headerbar_left"), 1,
+                    widget_tree.get_object("box_headerbar_left"), 0,
                     widget_tree.get_object(
                         "box_headerbar_left_doclist_revealer"
                     ),
@@ -2802,7 +2804,7 @@ class MainWindow(object):
                     widget_tree.get_object("box_left_docproperties_revealer")
                 ),
                 (
-                    widget_tree.get_object("box_headerbar_left"), 2,
+                    widget_tree.get_object("box_headerbar_left"), 1,
                     widget_tree.get_object(
                         "box_headerbar_left_docproperties_revealer"
                     ),
@@ -3368,26 +3370,39 @@ class MainWindow(object):
         self.doclist.clear()
 
     def switch_leftpane(self, to):
+        all_revealers = {}
+
         for (name, revealers) in self.left_revealers.items():
-            visible = (to == name)
+            must_be_visible = (to == name)
             for (parent, position, revealer) in revealers:
-                if parent is not None:
-                    is_visible = revealer in parent.get_children()
-                    if visible and not is_visible:
-                        parent.add(revealer)
-                    elif not visible and is_visible:
-                        # WORKAROUND(Jflesch):
-                        # We remove the GtkRevealers. It reduces the amount
-                        # of warnings of Gtk about GtkRevealers size
-                        # and it forces a redraw avoiding some other issues.
-                        # Remove only after transition
-                        if os.name == "nt":
-                            parent.remove(revealer)
-                        else:
-                            GLib.timeout_add(500, parent.remove, revealer)
-                    if visible:
-                        parent.reorder_child(revealer, position)
-                revealer.set_reveal_child(visible)
+                # Some revealers are used in many cases. If one of the cases
+                # is the target, then the revealer must be visible. If none
+                # of the cases of the revealer is the target, then only
+                # it must be invisible.
+                if revealer in all_revealers and not must_be_visible:
+                    continue
+                all_revealers[revealer] = (parent, position, must_be_visible)
+
+        for (revealer, (parent, position, must_be_visible)) \
+                    in all_revealers.items():
+            if parent is not None:
+                is_visible = revealer in parent.get_children()
+                if must_be_visible and not is_visible:
+                    parent.add(revealer)
+                elif not must_be_visible and is_visible:
+                    # WORKAROUND(Jflesch):
+                    # We remove the GtkRevealers. It reduces the amount
+                    # of warnings of Gtk about GtkRevealers size
+                    # and it forces a redraw avoiding some other issues.
+                    # Remove only after transition
+                    if os.name == "nt":
+                        parent.remove(revealer)
+                    else:
+                        GLib.timeout_add(500, parent.remove, revealer)
+                if must_be_visible:
+                    parent.reorder_child(revealer, position)
+            revealer.set_reveal_child(must_be_visible)
+
         self.search_box.set_visible(to != 'doc_properties')
 
     def on_search_results_cb(self, search, documents):
