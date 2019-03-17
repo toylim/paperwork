@@ -18,13 +18,16 @@
         <property name="visible">True</property>
         <property name="orientation">vertical</property>
         <property name="spacing">6</property>
-        <property name="width_request">250</property>
+        <!--property name="width_request">280</property-->
         <child>
-          <object class="GtkModelButton" id="new_from_flatbed">
+          <object class="GtkLabel" id="new_document_label">
             <property name="visible">True</property>
-            <property name="text" translatable="yes">Scan</property>
-            <property name="action-name">app.scan_single</property>
-            <property name="iconic">True</property>
+            <property name="can_focus">False</property>
+            <property name="receives_default">True</property>
+            <property name="label" translatable="yes">Add New Document</property>
+            <style>
+              <class name="popover_title"/>
+            </style>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -33,29 +36,86 @@
           </packing>
         </child>
         <child>
-          <object class="GtkModelButton" id="new_from_feeder">
+          <object class="GtkModelButton" id="new_from_flatbed">
             <property name="visible">True</property>
-            <property name="text" translatable="yes">Scan from feeder</property>
-            <property name="action-name">app.scan_from_feeder</property>
-            <property name="iconic">True</property>
+            <property name="label" translatable="yes">Scan</property>
+            <property name="action-name">app.scan_single</property>
+            <property name="image">new-from-flatbed</property>
+            <property name="always-show-image">True</property>
+            <property name="width_request">280</property>
+            <property name="xalign">0</property>
+            <style>
+              <class name="new_document_button"/>
+            </style>
+            <child>
+              <object class="GtkImage" id="new-from-flatbed">
+                <property name="visible">True</property>
+                <property name="icon_name">scanner-symbolic</property>
+                <property name="margin_right">6</property>
+              </object>
+              <packing>
+                <property name="pack_type">start</property>
+              </packing>
+            </child>
           </object>
           <packing>
-            <property name="expand">False</property>
+            <property name="expand">True</property>
             <property name="fill">True</property>
             <property name="position">1</property>
           </packing>
         </child>
         <child>
-          <object class="GtkModelButton" id="new_from_file">
+          <object class="GtkModelButton" id="new_from_feeder">
             <property name="visible">True</property>
-            <property name="text" translatable="yes">Import file(s)</property>
-            <property name="action-name">app.import</property>
-            <property name="iconic">True</property>
+            <property name="label" translatable="yes">Scan from feeder</property>
+            <property name="action-name">app.scan_from_feeder</property>
+            <property name="image">new-from-feeder</property>
+            <property name="always-show-image">True</property>
+            <property name="width_request">280</property>
+            <property name="xalign">0</property>
+            <style>
+              <class name="new_document_button"/>
+            </style>
+            <child>
+              <object class="GtkImage" id="new-from-feeder">
+                <property name="visible">True</property>
+                <property name="icon_name">emblem-documents-symbolic</property>
+                <property name="halign">start</property>
+                <property name="margin_right">6</property>
+              </object>
+            </child>
           </object>
           <packing>
-            <property name="expand">False</property>
+            <property name="expand">True</property>
             <property name="fill">True</property>
             <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="new_from_file">
+            <property name="visible">True</property>
+            <property name="label" translatable="yes">Import file(s)</property>
+            <property name="action-name">app.import</property>
+            <property name="halign">start</property>
+            <property name="image">new-from-file</property>
+            <property name="always-show-image">True</property>
+            <property name="width_request">280</property>
+            <property name="xalign">0</property>
+            <style>
+              <class name="new_document_button"/>
+            </style>
+            <child>
+              <object class="GtkImage" id="new-from-file">
+                <property name="visible">True</property>
+                <property name="icon_name">document-open-symbolic</property>
+                <property name="margin_right">6</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
           </packing>
         </child>
       </object>

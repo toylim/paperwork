@@ -35,6 +35,23 @@ GtkEntry.button-left, GtkEntry.button-center, entry.button-left, entry.button-ri
 
 /* Left Panel */
 
+/*
+*/
+.popover_title {
+  color: @insensitive_fg_color;
+  padding-bottom: 6px;
+  font-size: small;
+  font-weight: bold;
+}
+
+.new_document_button {
+  padding-left: 12px;
+  padding-right: 6px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  border: 1px solid @borders;
+}
+
 .box-left {
   border-right: 1px solid @borders;
 }
