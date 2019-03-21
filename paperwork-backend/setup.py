@@ -12,11 +12,14 @@ else:
         "python-Levenshtein",
     ]
 
+quiet = '--quiet' in sys.argv or '-q' in sys.argv
+
 try:
     with open("paperwork_backend/_version.py", "r") as file_descriptor:
         version = file_descriptor.read().strip()
         version = version.split(" ")[2][1:-1]
-    print("Paperwork-backend version: {}".format(version))
+    if not quiet:
+        print("Paperwork-backend version: {}".format(version))
     if "-" in version:
         version = version.split("-")[0]
 except FileNotFoundError:
@@ -87,6 +90,9 @@ There is no GUI here. The GUI is https://github.com/openpaperwork/paperwork .
         # (libpoppler, etc)
     ] + extra_deps
 )
+
+if quiet:
+    sys.exit(0)
 
 print("============================================================")
 print("============================================================")
