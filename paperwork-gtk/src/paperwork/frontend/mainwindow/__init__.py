@@ -3433,8 +3433,8 @@ class MainWindow(object):
         pass
 
     def __popup_menu_cb(self, ev_component, event, ui_component, popup_menu):
-        # we are only interested in right clicks
-        if event.button != 3 or event.type != Gdk.EventType.BUTTON_PRESS:
+        if (not event.triggers_context_menu() or
+                event.type != Gdk.EventType.BUTTON_PRESS):
             return
         popup_menu.popup(None, None, None, None, event.button, event.time)
 
