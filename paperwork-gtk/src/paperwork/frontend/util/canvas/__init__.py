@@ -422,7 +422,7 @@ class Canvas(Gtk.DrawingArea, Gtk.Scrollable):
         return AbsoluteEvent(event, (off_x, off_y))
 
     def __on_button_pressed(self, _, event):
-        if event.button == 2:  # middle button
+        if event.button == Gdk.BUTTON_MIDDLE:
             self.__scroll_origin = (event.x, event.y)
             logger.info("Start scrolling with 3rd button ({})".format(
                 self.__scroll_origin

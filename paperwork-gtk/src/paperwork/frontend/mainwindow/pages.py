@@ -1639,7 +1639,7 @@ class PageDrawer(Drawer, GObject.GObject):
             self.redraw()
 
     def _on_mouse_button_release(self, event):
-        if event.button != 1:
+        if event.button != Gdk.BUTTON_PRIMARY:
             return
 
         position = self.position
