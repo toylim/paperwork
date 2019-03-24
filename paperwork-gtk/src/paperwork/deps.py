@@ -192,6 +192,15 @@ def find_missing_ocr(lang):
     return missing
 
 
+def check_gtk():
+    missing = []
+    success = g_gtk_available and Gtk.check_version(3, 14, 0) is None
+    if not success:
+        missing.append(MODULES[0])
+
+    return missing
+
+
 def _check_cairo():
     class CheckCairo(object):
         def __init__(self):
@@ -297,6 +306,7 @@ def find_missing_dependencies():
     missing += find_missing_modules()
     missing += find_missing_ocr(lang)
     missing += find_missing_data_files()
+    missing += check_gtk()
     missing += check_cairo()
     missing += check_sane()
     return missing
