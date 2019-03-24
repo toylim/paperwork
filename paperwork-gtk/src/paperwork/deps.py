@@ -20,14 +20,14 @@ g_glib_available = False
 try:
     from gi.repository import GLib
     g_glib_available = True
-except Exception as exc:
+except Exception:
     pass
 
 try:
     if g_glib_available:
         from gi.repository import Gtk
         g_gtk_available = True
-except Exception as exc:
+except Exception:
     pass
 
 """
