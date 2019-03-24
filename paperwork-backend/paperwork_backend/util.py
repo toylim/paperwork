@@ -57,7 +57,7 @@ if os.name != "nt":
 
 
 logger = logging.getLogger(__name__)
-FORCED_SPLIT_KEYWORDS_REGEX = re.compile("[\n '()]", re.UNICODE)
+FORCED_SPLIT_KEYWORDS_REGEX = re.compile(r"[\n '()]", re.UNICODE)
 WISHED_SPLIT_KEYWORDS_REGEX = re.compile(r"[^\w!]", re.UNICODE)
 
 MIN_KEYWORD_LEN = 3

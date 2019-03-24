@@ -431,7 +431,7 @@ def main(args):
         download_uri = args[2]
     else:
         version = args[1]
-        m = re.match("([\d\.]+)", version)  # match everything but the suffix
+        m = re.match(r"([\d\.]+)", version)  # match everything but the suffix
         short_version = m.string[m.start():m.end()]
         download_uri = DEFAULT_DOWNLOAD_URI
 
