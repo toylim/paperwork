@@ -26,7 +26,9 @@ Regarding the name "Paperwork", it can refer to both the GUI or the backend. If 
 
 ## Usage
 
-You can find some examples in scripts/. You can also look at the code of [Paperwork](https://github.com/openpaperwork/paperwork#readme) for reference.
+You can find some examples in scripts/. You can also look at the code of
+[Paperwork](https://gitlab.gnome.org/World/OpenPaperwork/paperwork#readme) for
+reference.
 
 Here are some snippets:
 

@@ -2,8 +2,9 @@
 
 ## Dependencies
 
-Depending on which [branch](https://github.com/jflesch/paperwork/wiki/Branches) you
-are working, the build and runtime dependencies may not be the same.
+Depending on which
+[branch](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Branches)
+you are working, the build and runtime dependencies may not be the same.
 Setuptools and ```paperwork-shell chkdeps``` should take care of all of them.
 
 
@@ -12,7 +13,7 @@ Setuptools and ```paperwork-shell chkdeps``` should take care of all of them.
 ```sh
 mkdir -p ~/git
 cd ~/git
-git clone https://github.com/jflesch/paperwork.git
+git clone https://gitlab.gnome.org/World/OpenPaperwork/paperwork.git
 git checkout develop  # or 'release-xxx'
 
 # will run 'python3 ./setup.py install' on all Paperwork components
@@ -26,7 +27,8 @@ paperwork-shell chkdeps paperwork
 paperwork-shell install
 ```
 
-(see [the wiki as to why you probably want to work on the branch 'develop'](https://github.com/jflesch/paperwork/wiki/Branches))
+(see [the wiki as to why you probably want to work on the branch
+'develop'](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Branches))
 
 
 ## Paperwork in a Python Virtualenv
@@ -50,7 +52,7 @@ You will have to install [python-virtualenv](https://pypi.python.org/pypi/virtua
 ### Installation
 
 ```sh
-git clone https://github.com/jflesch/paperwork.git
+git clone https://gitlab.gnome.org/World/OpenPaperwork/paperwork.git
 cd paperwork
 git checkout develop  # or 'release-xxx'
 
