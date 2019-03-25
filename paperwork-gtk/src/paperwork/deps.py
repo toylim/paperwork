@@ -76,6 +76,7 @@ MODULES = [
         'Notify (GObject introspection bindings)', 'gi.repository.Notify',
         {
             'debian': 'gir1.2-notify-0.7',
+            'fedora': 'libnotify',
             'ubuntu': 'gir1.2-notify-0.7',
         }
     ),
@@ -247,6 +248,7 @@ def check_cairo():
                 'python-gi-cairo', '(none)',
                 {
                     'debian': 'python3-gi-cairo',
+                    'fedora': 'python3-gobject',
                     'linuxmint': 'python3-gi-cairo',
                     'ubuntu': 'python3-gi-cairo',
                 },
