@@ -715,7 +715,7 @@ Fedora
 
 \begin_layout Verbatim
 
-$ sudo yum install tesseract tesseract-langpack-<lang>
+$ sudo dnf install tesseract tesseract-langpack-<lang>
 \end_layout
 
 \begin_layout Subsubsection

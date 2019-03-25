@@ -25,7 +25,7 @@ except:
 
 PACKAGE_TOOLS = {
     'debian': 'apt install',
-    'fedora': 'yum install',
+    'fedora': 'dnf install',
     'gentoo': 'emerge',
     'linuxmint': 'apt install',
     'ubuntu': 'apt install',
