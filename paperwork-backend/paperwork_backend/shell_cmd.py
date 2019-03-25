@@ -115,6 +115,8 @@ def _chkdeps(module_name, distribution):
         if interactive:
             print("Do you want to run this command now ? [Y/n]")
             answer = sys.stdin.readline().strip().lower()
+        else:
+            sys.exit(1)
         if answer == "" or answer == "y":
             r = os.system(command)
             sys.exit(r)
