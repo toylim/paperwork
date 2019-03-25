@@ -194,6 +194,7 @@ def main():
                         action='store_true',
                         help="batch mode (never ask any question)")
     args = parser.parse_args()
+    global interactive, verbose_enabled
     verbose_enabled = not args.quiet
     interactive = not args.batch
 
