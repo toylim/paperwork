@@ -50,7 +50,8 @@ ICON_SIZES = [
 def _install(icondir, datadir):
     png_src_icon_pattern = "paperwork_{}.png"
     png_dst_icon_pattern = os.path.join(
-        icondir, "hicolor", "{}", "apps", "work.openpaper.Paperwork.png"
+        icondir, "hicolor", "{size}x{size}", "apps",
+        "work.openpaper.Paperwork.png"
     )
     desktop_path = os.path.join(
         datadir, 'applications', 'work.openpaper.Paperwork.desktop'
@@ -67,7 +68,7 @@ def _install(icondir, datadir):
                 'paperwork.frontend.data',
                 png_src_icon_pattern.format(size)
             ),
-            png_dst_icon_pattern.format(size),
+            png_dst_icon_pattern.format(size=size),
         ) for size in ICON_SIZES
     ]
     to_copy.append(
