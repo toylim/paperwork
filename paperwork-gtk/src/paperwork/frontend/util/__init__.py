@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #    Paperwork - Using OCR to grep dead trees the easy way
 #    Copyright (C) 2014  Jerome Flesch
 #
