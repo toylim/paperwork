@@ -70,6 +70,18 @@ def image2pixbuf(img):
 
 
 def raw2pixbuf(img_bytes, params):
+    """
+    Convert a raw image into a GdkPixbuf image.
+    ASSUMPTION: The image colors are on 24 bits (no padding)
+
+    Arguments:
+        img_bytes --- an object 'bytes'
+        params --- scan parameters (see Libinsane). Required to know the format
+            of the image
+
+    Returns:
+        a GdkPixbuf image
+    """
     nb_bytes = len(img_bytes)
     img_bytes = GLib.Bytes.new(img_bytes)
     fmt = params.get_format()
@@ -94,6 +106,18 @@ def raw2pixbuf(img_bytes, params):
 
 
 def raw2pillow(img_bytes, params):
+    """
+    Convert a raw image into a Pillow image.
+    ASSUMPTION: The image colors are on 24 bits (no padding)
+
+    Arguments:
+        img_bytes --- an object 'bytes'
+        params --- scan parameters (see Libinsane). Required to know the format
+            of the image
+
+    Returns:
+        a PIL.Image instance
+    """
     return PIL.Image.frombuffer(
         "RGB",
         (params.get_width(), int(len(img_bytes) / (params.get_width() * 3))),
