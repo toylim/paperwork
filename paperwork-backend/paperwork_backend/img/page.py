@@ -42,7 +42,7 @@ class ImgPage(BasicPage):
     EXT_IMG = "jpg"
     KEYWORD_HIGHLIGHT = 3
     FILE_REGEX = re.compile(
-        BasicPage.FILE_PREFIX + "[1-9][0-9]*\." + EXT_IMG,
+        re.escape(BasicPage.FILE_PREFIX) + r"[1-9][0-9]*\." + EXT_IMG,
         re.IGNORECASE
     )
 
