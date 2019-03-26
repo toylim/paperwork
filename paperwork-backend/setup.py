@@ -43,7 +43,8 @@ This is the backend part of Paperwork. It manages:
 - Import
 - Export
 
-There is no GUI here. The GUI is https://github.com/openpaperwork/paperwork .
+There is no GUI here. The GUI is
+<https://gitlab.gnome.org/World/OpenPaperwork/paperwork>.
     """,
     keywords="documents",
     url=(
