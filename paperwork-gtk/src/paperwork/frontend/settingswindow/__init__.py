@@ -22,14 +22,15 @@ import os
 import sys
 import time
 
-import gettext
+from gi.repository import Gdk
 from gi.repository import GLib
 from gi.repository import GObject
-from gi.repository import Gdk
 from gi.repository import Gtk
+from gi.repository import Libinsane
+import gettext
 import logging
+import PIL.Image
 import pycountry
-import pyinsane2
 import pyocr
 
 from paperwork_backend.util import find_language
@@ -41,6 +42,7 @@ from paperwork.frontend.util.canvas.animations import ScanAnimation
 from paperwork.frontend.util.canvas.drawers import PillowImageDrawer
 from paperwork.frontend.util.config import DEFAULT_CALIBRATION_RESOLUTION
 from paperwork.frontend.util.config import RECOMMENDED_SCAN_RESOLUTION
+from paperwork.frontend.util.img import raw2pixbuf
 from paperwork.frontend.util.imgcutting import ImgGripHandler
 from paperwork.frontend.util.jobs import Job, JobFactory, JobScheduler
 from paperwork.frontend.util.jobs import JobFactoryProgressUpdater
@@ -64,8 +66,9 @@ class JobDeviceFinder(Job):
     can_stop = False
     priority = 500
 
-    def __init__(self, factory, id, selected_devid):
+    def __init__(self, factory, id, libinsane, selected_devid):
         Job.__init__(self, factory, id)
+        self.libinsane = libinsane
         self.__selected_devid = selected_devid
 
     @staticmethod
@@ -76,7 +79,7 @@ class JobDeviceFinder(Job):
         Returns:
             A string
         """
-        return ("%s %s" % (dev.vendor, dev.model))
+        return ("%s %s" % (dev.get_dev_vendor(), dev.get_dev_model()))
 
     def do(self):
         self.emit("device-finding-start")
@@ -84,13 +87,17 @@ class JobDeviceFinder(Job):
         try:
             logger.info("Looking for scan devices ...")
             sys.stdout.flush()
-            devices = pyinsane2.get_devices()
+            devices = self.libinsane.list_devices(
+                Libinsane.DeviceLocations.ANY
+            )
             for device in devices:
-                selected = (self.__selected_devid == device.name)
+                selected = (self.__selected_devid == device.get_dev_id())
                 name = self.__get_dev_name(device)
-                logger.info("Device found: [%s] -> [%s]" % (name, device.name))
+                logger.info("Device found: [%s] -> [%s]" % (
+                    name, device.get_dev_id())
+                )
                 sys.stdout.flush()
-                self.emit('device-found', name, device.name, selected)
+                self.emit('device-found', name, device.get_dev_id(), selected)
             logger.info("End of scan for device")
         finally:
             self.emit("device-finding-end")
@@ -101,14 +108,17 @@ GObject.type_register(JobDeviceFinder)
 
 class JobFactoryDeviceFinder(JobFactory):
 
-    def __init__(self, settings_win, selected_devid):
+    def __init__(self, settings_win, libinsane, selected_devid):
         JobFactory.__init__(self, "DeviceFinder")
+        self.libinsane = libinsane
         self.__selected_devid = selected_devid
         self.__settings_win = settings_win
 
     def make(self):
-        job = JobDeviceFinder(self, next(self.id_generator),
-                              self.__selected_devid)
+        job = JobDeviceFinder(
+            self, next(self.id_generator),
+            self.libinsane, self.__selected_devid
+        )
         job.connect('device-finding-start',
                     lambda job: GLib.idle_add(
                         self.__settings_win.on_device_finding_start_cb))
@@ -142,12 +152,12 @@ class JobSourceFinder(Job):
         'auto': _("Automatic"),
         'flatbed': _("Flatbed"),
         'adf': _("Automatic Feeder"),
+        'feeder': _("Automatic Feeder"),
     }
 
-    def __init__(self, factory, id,
-                 selected_source,
-                 devid):
+    def __init__(self, factory, id, libinsane, selected_source, devid):
         Job.__init__(self, factory, id)
+        self.libinsane = libinsane
         self.__selected_source = selected_source
         self.__devid = devid
 
@@ -162,14 +172,9 @@ class JobSourceFinder(Job):
         try:
             logger.info("Looking for sources of device [%s]"
                         % (self.__devid))
-            device = pyinsane2.Scanner(name=self.__devid)
-            sys.stdout.flush()
-            if 'source' in device.options:
-                sources = device.options['source'].constraint
-            else:
-                sources = []
+            device = self.libinsane.get_device(self.__devid)
+            sources = [src.get_name() for src in device.get_children()]
             logger.info("Sources found: %s" % str(sources))
-            sys.stdout.flush()
             for source in sources:
                 name = self.__get_source_name_translated(source)
                 self.emit('source-found', name, source,
@@ -184,14 +189,15 @@ GObject.type_register(JobSourceFinder)
 
 class JobFactorySourceFinder(JobFactory):
 
-    def __init__(self, settings_win, selected_source):
+    def __init__(self, settings_win, libinsane, selected_source):
         JobFactory.__init__(self, "SourceFinder")
+        self.libinsane = libinsane
         self.__settings_win = settings_win
         self.__selected_source = selected_source
 
     def make(self, devid):
         job = JobSourceFinder(self, next(self.id_generator),
-                              self.__selected_source, devid)
+                              self.libinsane, self.__selected_source, devid)
         job.connect('source-finding-start',
                     lambda job: GLib.idle_add(
                         self.__settings_win.on_finding_start_cb,
@@ -228,13 +234,16 @@ class JobResolutionFinder(Job):
     priority = 490
 
     def __init__(self, factory, id,
+                 libinsane,
                  selected_resolution,
                  recommended_resolution,
-                 devid):
+                 devid, srcid):
         Job.__init__(self, factory, id)
+        self.libinsane = libinsane
         self.__selected_resolution = selected_resolution
         self.__recommended_resolution = recommended_resolution
         self.__devid = devid
+        self.__srcid = srcid
 
     def __get_resolution_name(self, resolution):
         """
@@ -253,10 +262,17 @@ class JobResolutionFinder(Job):
         try:
             logger.info("Looking for resolution of device [%s]"
                         % (self.__devid))
-            device = pyinsane2.Scanner(name=self.__devid)
-            sys.stdout.flush()
-            if 'resolution' in device.options:
-                resolutions = device.options['resolution'].constraint
+            device = self.libinsane.get_device(self.__devid)
+
+            sources = device.get_children()
+            sources = {src.get_name(): src for src in sources}
+            src = sources[self.__srcid]
+
+            opts = src.get_options()
+            opts = {opt.get_name(): opt for opt in opts}
+
+            if 'resolution' in opts:
+                resolutions = opts['resolution'].get_constraint()
             else:
                 resolutions = []
             if resolutions:
@@ -266,22 +282,6 @@ class JobResolutionFinder(Job):
                     "No possible resolutions specified. Assuming default"
                 )
                 resolutions = [75, 100, 150, 200, 300, 600, 1200]
-            sys.stdout.flush()
-            # Sometimes sane return the resolutions as a integer array,
-            # sometimes as a range (-> tuple). So if it is a range, we turn
-            # it into an array
-            if isinstance(resolutions, tuple):
-                if len(resolutions) <= 2:
-                    interval = 25
-                else:
-                    interval = resolutions[2]
-                if interval < 25:
-                    interval = 25
-                res_array = []
-                for res in range(resolutions[0], resolutions[1] + 1,
-                                 interval):
-                    res_array.append(res)
-                resolutions = res_array
 
             for resolution in resolutions:
                 name = self.__get_resolution_name(resolution)
@@ -297,17 +297,20 @@ GObject.type_register(JobResolutionFinder)
 
 class JobFactoryResolutionFinder(JobFactory):
 
-    def __init__(self, settings_win, selected_resolution,
+    def __init__(self, settings_win, libinsane, selected_resolution,
                  recommended_resolution):
         JobFactory.__init__(self, "ResolutionFinder")
         self.__settings_win = settings_win
+        self.libinsane = libinsane
         self.__selected_resolution = selected_resolution
         self.__recommended_resolution = recommended_resolution
 
-    def make(self, devid):
+    def make(self, devid, srcid):
         job = JobResolutionFinder(self, next(self.id_generator),
+                                  self.libinsane,
                                   self.__selected_resolution,
-                                  self.__recommended_resolution, devid)
+                                  self.__recommended_resolution,
+                                  devid, srcid)
         job.connect('resolution-finding-start',
                     lambda job: GLib.idle_add(
                         self.__settings_win.on_finding_start_cb,
@@ -335,10 +338,14 @@ class JobCalibrationScan(Job):
                                       GObject.TYPE_INT,
                                       GObject.TYPE_INT,
                                   )),
-        'calibration-scan-chunk': (GObject.SignalFlags.RUN_LAST, None,
-                                   # line where to put the image
-                                   (GObject.TYPE_INT,
-                                    GObject.TYPE_PYOBJECT, )),  # PIL image
+        'calibration-scan-img': (
+            GObject.SignalFlags.RUN_LAST, None,
+            (
+                # line where to put the image
+                GObject.TYPE_INT,
+                GObject.TYPE_PYOBJECT,
+            )
+        ),
         'calibration-scan-done': (GObject.SignalFlags.RUN_LAST, None,
                                   (GObject.TYPE_PYOBJECT,  # Pillow image
                                    GObject.TYPE_INT, )),  # scan resolution
@@ -351,8 +358,12 @@ class JobCalibrationScan(Job):
     can_stop = True
     priority = 495
 
-    def __init__(self, factory, id, resolutions_store, devid, source=None):
+    def __init__(
+                self, factory, id, libinsane,
+                resolutions_store, devid, source=None
+            ):
         Job.__init__(self, factory, id)
+        self.libinsane = libinsane
         self.__resolutions_store = resolutions_store
         self.__devid = devid
         self.__source = source
@@ -364,7 +375,7 @@ class JobCalibrationScan(Job):
 
         try:
             (img, resolution) = self._do()
-        except StopIteration as exc:
+        except StopIteration:
             logger.warning("Calibration scan failed: No paper to scan")
             self.emit('calibration-scan-error',
                       _("No paper to scan"))
@@ -376,6 +387,14 @@ class JobCalibrationScan(Job):
             raise
 
         self.emit('calibration-scan-done', img, resolution)
+
+    def _set_value(self, src, opt_name, opt_value):
+        opts = src.get_options()
+        opts = {opt.get_name(): opt for opt in opts}
+        opts[opt_name].set_value(opt_value)
+        logger.info(
+            "%s->%s set to %s", src.get_name(), opt_name, str(opt_value)
+        )
 
     def _do(self):
         # find the best resolution : the default calibration resolution
@@ -389,67 +408,69 @@ class JobCalibrationScan(Job):
                 break
             resolution = nresolution
 
-        logger.info("Will do the calibration scan with a resolution of %d"
-                    % resolution)
+        logger.info("Will do the calibration scan with a resolution of %d",
+                    resolution)
 
         # scan
-        dev = pyinsane2.Scanner(name=self.__devid)
+        dev = self.libinsane.get_device(self.__devid)
+        sources = dev.get_children()
+        sources = {source.get_name(): source for source in sources}
 
         if self.__source:
-            if dev.options['source'].capabilities.is_active():
-                dev.options['source'].value = self.__source
-            logger.info("Scanner source set to '%s'" % self.__source)
-        try:
-            pyinsane2.set_scanner_opt(dev, 'resolution', [resolution])
-        except pyinsane2.PyinsaneException as exc:
-            logger.warning(
-                "Unable to set scanner resolution to {}: {}".format(
-                    resolution, exc
-                )
-            )
-            logger.exception(exc)
-            resolution = int(dev.options['resolution'].value)
-            logger.warning("Falling back to current resolution: {}".format(
-                resolution
-            ))
-        try:
-            pyinsane2.set_scanner_opt(dev, 'mode', ["Color"])
-        except pyinsane2.PyinsaneException as exc:
-            logger.warning("Unable to set scanner mode !"
-                           " May be 'Lineart': {}".format(exc))
-            logger.exception(exc)
+            source = sources[self.__source]
+        else:
+            source = dev
+        logger.info("Scanner source set to '%s'", source.get_name())
+        self._set_value(source, 'resolution', resolution)
+        self._set_value(source, 'mode', 'Color')
 
-        try:
-            pyinsane2.maximize_scan_area(dev)
-        except pyinsane2.PyinsaneException as exc:
-            logger.warning("Failed to maximize the scan area."
-                           " May only scan part of the image: {}".format(exc))
-            logger.exception(exc)
+        scan_session = source.scan_start()
+        scan_parameters = scan_session.get_scan_parameters()
+        self.emit(
+            'calibration-scan-info',
+            scan_parameters.get_width(), scan_parameters.get_height()
+        )
 
-        scan_session = dev.scan(multiple=False)
-        scan_size = scan_session.scan.expected_size
-        self.emit('calibration-scan-info', scan_size[0], scan_size[1])
+        assert(scan_parameters.get_format() == Libinsane.ImgFormat.RAW_RGB_24)
+        line_length = scan_parameters.get_width() * 3
 
         last_line = 0
-        try:
-            while self.can_run:
-                scan_session.scan.read()
+        whole_image = bytearray()
+        chunk = bytearray()
+        while self.can_run and not scan_session.end_of_page():
+            r = 0
+            while r <= 128 * 1024 and not scan_session.end_of_page():
+                out = scan_session.read_bytes(64 * 1024).get_data()
+                r += len(out)
+                chunk.extend(out)
 
-                next_line = scan_session.scan.available_lines[1]
-                if (next_line > last_line + 50):
-                    chunk = scan_session.scan.get_image(last_line, next_line)
-                    self.emit('calibration-scan-chunk', last_line, chunk)
-                    last_line = next_line
+            split = len(chunk) - (len(chunk) % line_length)
+            next_chunk = chunk[split:]
+            chunk = chunk[:split]
 
-                time.sleep(0)  # Give some CPU time to PyGtk
-            if not self.can_run:
-                self.emit('calibration-scan-canceled')
-                scan_session.scan.cancel()
-                return
-        except EOFError:
-            pass
+            whole_image.extend(chunk)
+            pixbuf = raw2pixbuf(chunk, scan_parameters)
+            if pixbuf is None:
+                continue
+            self.emit('calibration-scan-img', last_line, pixbuf)
 
-        return (scan_session.images[-1], resolution)
+            time.sleep(0)  # Give some CPU time to Gtk
+            last_line += (split / line_length)
+            chunk = next_chunk
+        if not self.can_run:
+            self.emit('calibration-scan-canceled')
+            scan_session.scan.cancel()
+            return
+
+        image = PIL.Image.frombuffer(
+            "RGB",
+            (
+                scan_parameters.get_width(),
+                int(len(whole_image) / line_length)
+            ),
+            bytes(whole_image), "raw", "RGB", 0, 1
+        )
+        return (image, resolution)
 
     def stop(self, will_resume=False):
         assert(not will_resume)
@@ -462,13 +483,15 @@ GObject.type_register(JobCalibrationScan)
 
 class JobFactoryCalibrationScan(JobFactory):
 
-    def __init__(self, settings_win, resolutions_store):
+    def __init__(self, settings_win, libinsane, resolutions_store):
         JobFactory.__init__(self, "CalibrationScan")
+        self.libinsane = libinsane
         self.__settings_win = settings_win
         self.__resolutions_store = resolutions_store
 
     def make(self, devid, source):
         job = JobCalibrationScan(self, next(self.id_generator),
+                                 self.libinsane,
                                  self.__resolutions_store,
                                  devid, source)
         job.connect('calibration-scan-start',
@@ -478,10 +501,9 @@ class JobFactoryCalibrationScan(JobFactory):
                     lambda job, size_x, size_y:
                     GLib.idle_add(self.__settings_win.on_scan_info,
                                   (size_x, size_y)))
-        job.connect('calibration-scan-chunk',
+        job.connect('calibration-scan-img',
                     lambda job, line, img:
-                    GLib.idle_add(self.__settings_win.on_scan_chunk, line,
-                                  img))
+                    GLib.idle_add(self.__settings_win.on_scan_img, line, img))
         job.connect('calibration-scan-error',
                     lambda job, error:
                     GLib.idle_add(self.__settings_win.on_scan_error, error))
@@ -522,10 +544,6 @@ class ActionSelectScanner(SimpleAction):
         # no point in trying to stop the previous jobs, they are unstoppable
         job = self.__settings_win.job_factories['source_finder'].make(devid)
         self.__settings_win.schedulers['main'].schedule(job)
-        job = self.__settings_win.job_factories['resolution_finder'].make(
-            devid
-        )
-        self.__settings_win.schedulers['main'].schedule(job)
 
 
 class ActionSelectSource(SimpleAction):
@@ -548,6 +566,18 @@ class ActionSelectSource(SimpleAction):
             settings['gui'].set_model(settings['stores']['loaded'])
             settings['gui'].set_sensitive(False)
             return
+        dev_id = self.__settings_win.device_settings['devid']['active_id']
+        if dev_id == "":
+            logger.warning("No device selected")
+            return
+        source_id = self.__settings_win.device_settings['source']['active_id']
+        if source_id == "":
+            logger.warning("No source selected")
+            return
+        job = self.__settings_win.job_factories['resolution_finder'].make(
+            dev_id, source_id
+        )
+        self.__settings_win.schedulers['main'].schedule(job)
 
 
 class ActionToggleOCRState(SimpleAction):
@@ -666,7 +696,7 @@ class SettingsWindow(GObject.GObject):
         'config-changed': (GObject.SignalFlags.RUN_LAST, None, ()),
     }
 
-    def __init__(self, main_scheduler, mainwindow_gui, config):
+    def __init__(self, main_scheduler, mainwindow_gui, config, libinsane):
         super(SettingsWindow, self).__init__()
 
         self.schedulers = {
@@ -745,6 +775,7 @@ class SettingsWindow(GObject.GObject):
                 },
                 'nb_elements': 0,
                 'active_idx': -1,
+                'active_id': "",
             },
             "has_feeder": False,
             "source": {
@@ -754,6 +785,7 @@ class SettingsWindow(GObject.GObject):
                 },
                 'nb_elements': 0,
                 'active_idx': -1,
+                'active_id': "",
             },
             "resolution": {
                 'gui': widget_tree.get_object("comboboxResolution"),
@@ -762,6 +794,7 @@ class SettingsWindow(GObject.GObject):
                 },
                 'nb_elements': 0,
                 'active_idx': -1,
+                'active_id': "",
             },
         }
 
@@ -787,18 +820,18 @@ class SettingsWindow(GObject.GObject):
 
         self.job_factories = {
             "device_finder": JobFactoryDeviceFinder(
-                self, config['scanner_devid'].value
+                self, libinsane, config['scanner_devid'].value
             ),
             "source_finder": JobFactorySourceFinder(
-                self, config['scanner_source'].value
+                self, libinsane, config['scanner_source'].value
             ),
             "resolution_finder": JobFactoryResolutionFinder(
-                self,
+                self, libinsane,
                 config['scanner_resolution'].value,
                 RECOMMENDED_SCAN_RESOLUTION
             ),
             "scan": JobFactoryCalibrationScan(
-                self,
+                self, libinsane,
                 self.device_settings['resolution']['stores']['loaded']
             ),
             "progress_updater": JobFactoryProgressUpdater(self.progressbar),
@@ -906,6 +939,7 @@ class SettingsWindow(GObject.GObject):
         settings['stores']['loaded'].append(store_line)
         if active:
             settings['active_idx'] = settings['nb_elements']
+            settings['active_id'] = store_name
         settings['nb_elements'] += 1
 
     def on_finding_end_cb(self, settings):
@@ -956,8 +990,8 @@ class SettingsWindow(GObject.GObject):
         self.calibration['image_gui'].add_drawer(
             self.calibration['scan_drawer'])
 
-    def on_scan_chunk(self, line, img):
-        self.calibration['scan_drawer'].add_chunk(line, img)
+    def on_scan_img(self, previous_line, img):
+        self.calibration['scan_drawer'].add_chunk(previous_line, img)
 
     def _on_scan_end(self):
         self.progressbar.set_fraction(0.0)

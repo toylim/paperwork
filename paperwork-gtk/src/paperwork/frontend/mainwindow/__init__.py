@@ -1362,17 +1362,19 @@ class ActionPrintDoc(SimpleAction):
 
 
 class ActionOpenSettings(SimpleAction):
-    def __init__(self, main_window, config):
+    def __init__(self, main_window, config, libinsane):
         SimpleAction.__init__(self, "Open settings dialog")
         self.__main_win = main_window
         self.__config = config
+        self.__libinsane = libinsane
         # for tests only / prevent also the dialog from being GC
         self.dialog = None
 
     def do(self):
         SimpleAction.do(self)
         self.dialog = SettingsWindow(self.__main_win.schedulers['main'],
-                                     self.__main_win.window, self.__config)
+                                     self.__main_win.window, self.__config,
+                                     self.__libinsane)
         self.dialog.connect("need-reindex", self.__reindex_cb)
         self.dialog.connect("config-changed", self.__on_config_changed_cb)
 
@@ -1388,10 +1390,11 @@ class ActionOpenSettings(SimpleAction):
 
 
 class ActionSingleScan(SimpleAction):
-    def __init__(self, main_window, config):
+    def __init__(self, main_window, config, libinsane):
         SimpleAction.__init__(self, "Scan a single page")
         self.__main_win = main_window
         self.__config = config
+        self.__libinsane = libinsane
 
     def __on_scan_ocr_canceled(self, scan_workflow):
         docid = self.__main_win.remove_scan_workflow(scan_workflow)
@@ -1434,7 +1437,9 @@ class ActionSingleScan(SimpleAction):
                 return
 
             try:
-                (dev, resolution) = get_scanner(self.__config)
+                (dev, resolution) = get_scanner(
+                    self.__config, self.__libinsane
+                )
             except Exception as exc:
                 logger.warning("Exception while configuring scanner: %s: %s."
                                " Assuming scanner is not connected",
@@ -1443,7 +1448,7 @@ class ActionSingleScan(SimpleAction):
                 popup_no_scanner_found(self.__main_win.window, str(exc))
                 return
             try:
-                scan_session = dev.scan(multiple=False)
+                scan_session = dev.scan_start()
             except Exception as exc:
                 logger.warning("Error while scanning: {}".format(str(exc)))
                 self.__on_scan_error(None, exc)
@@ -1480,10 +1485,11 @@ class ActionSingleScan(SimpleAction):
 
 
 class ActionMultiScan(SimpleAction):
-    def __init__(self, main_window, config):
+    def __init__(self, main_window, config, libinsane):
         SimpleAction.__init__(self, "Scan multiples pages")
         self.__main_win = main_window
         self.__config = config
+        self.__libinsane = libinsane
         # for tests/screenshots only
         self.dialog = None
 
@@ -1491,7 +1497,9 @@ class ActionMultiScan(SimpleAction):
         SimpleAction.do(self)
         if not check_scanner(self.__main_win, self.__config):
             return
-        self.dialog = MultiscanDialog(self.__main_win, self.__config)
+        self.dialog = MultiscanDialog(
+            self.__main_win, self.__config, self.__libinsane
+        )
         self.dialog.connect("need-show-page",
                             lambda ms_dialog, page:
                             GLib.idle_add(self.__show_page, page))
@@ -2272,14 +2280,15 @@ class ActionOptimizeIndex(SimpleAction):
 
 
 class ActionOpenDiagnostic(SimpleAction):
-    def __init__(self, main_window):
+    def __init__(self, main_window, libinsane):
         SimpleAction.__init__(self, "Opening diagnostic dialog")
         self.__main_win = main_window
+        self.__libinsane = libinsane
         self.diag = None  # used to prevent gc
 
     def do(self):
         SimpleAction.do(self)
-        self.diag = DiagDialog(self.__main_win)
+        self.diag = DiagDialog(self.__main_win, self.__libinsane)
         self.diag.show()
 
 
@@ -2636,8 +2645,12 @@ class SearchBar(object):
 
 
 class MainWindow(object):
-    def __init__(self, config, main_loop, workdir_scan=True, flatpak=False):
+    def __init__(
+                self, config, main_loop, libinsane, workdir_scan=True,
+                flatpak=False
+            ):
         self.flatpak = flatpak
+        self.libinsane = libinsane
         self.ready = False
         self.docsearch = DummyDocSearch()
         self.workdir_scan_at_start = workdir_scan
@@ -2882,13 +2895,13 @@ class MainWindow(object):
                 [
                     widget_tree.get_object("buttonScan"),
                 ],
-                ActionSingleScan(self, config)
+                ActionSingleScan(self, config, libinsane)
             ),
             'multi_scan': (
                 [
                     gactions['scan_from_feeder'],
                 ],
-                ActionMultiScan(self, config)
+                ActionMultiScan(self, config, libinsane)
             ),
             'import': (
                 [
@@ -2918,7 +2931,7 @@ class MainWindow(object):
                 [
                     gactions['open_settings'],
                 ],
-                ActionOpenSettings(self, config)
+                ActionOpenSettings(self, config, libinsane)
             ),
             'open_help_introduction': (
                 [
@@ -3011,7 +3024,7 @@ class MainWindow(object):
                 [
                     gactions['diagnostic'],
                 ],
-                ActionOpenDiagnostic(self),
+                ActionOpenDiagnostic(self, libinsane),
             ),
             'about': (
                 [

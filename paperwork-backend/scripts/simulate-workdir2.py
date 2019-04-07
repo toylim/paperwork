@@ -5,6 +5,7 @@ import tempfile
 
 import gi
 gi.require_version('Gdk', '3.0')
+gi.require_version('Libinsane', '1.0')
 gi.require_version('Poppler', '0.18')
 
 from paperwork_backend import config  # noqa: E402

@@ -12,7 +12,7 @@ Pillow may conflict with the package python-imaging (aka PIL).
 ## Build dependencies
 
     # Python3 dependencies
-    $ sudo dnf install python3-pip python3-setuptools python3-devel 
+    $ sudo dnf install python3-pip python3-setuptools python3-devel
 
     # Pillow build dependencies
     $ sudo dnf install libjpeg-turbo-devel zlib-devel redhat-rpm-config
@@ -20,11 +20,14 @@ Pillow may conflict with the package python-imaging (aka PIL).
     # PyEnchant dependencies
     $ sudo dnf install python3-enchant enchant-devel
 
-Note that `yum` is deprecated since Fedora 22 and replaced by `dnf`. If
-you use an older Fedora, replace instances of `dnf` above by `yum`. The
-rest of the commands are the same.
 
 ## System-wide installation
+
+
+Prior to installing Paperwork, you have to install
+[Libinsane](https://doc.openpaper.work/libinsane/latest/libinsane/quickstart.html)
+manually.
+
 
     $ sudo python3 -m pip install paperwork
 

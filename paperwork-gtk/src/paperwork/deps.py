@@ -6,9 +6,10 @@ try:
     # suppress warnings from GI
     import gi
     gi.require_version('Gtk', '3.0')
-    gi.require_version('Poppler', '0.18')
-    gi.require_version('PangoCairo', '1.0')
+    gi.require_version('Libinsane', '1.0')
     gi.require_version('Notify', '0.7')
+    gi.require_version('PangoCairo', '1.0')
+    gi.require_version('Poppler', '0.18')
 except:  # noqa: E722
     pass
 
@@ -69,6 +70,10 @@ MODULES = [
             'ubuntu': 'gir1.2-gtk-3.0',
             'suse': 'python-gtk',
         },
+    ),
+    (
+        'Libinsane (scanner support)', 'gi.repository.Libinsane',
+        {},  # no known package yet
     ),
     (
         'Notify (GObject introspection bindings)', 'gi.repository.Notify',
@@ -263,27 +268,6 @@ def check_cairo():
     return missing
 
 
-def check_sane():
-    import pyinsane2
-    missing = []
-    try:
-        pyinsane2.init()
-        pyinsane2.exit()
-    except:  # noqa: E722
-        missing.append(
-            (
-                'libsane', '(none)',
-                {
-                    'debian': 'libsane',
-                    'fedora': 'sane-backends',
-                    'linuxmint': 'libsane',
-                    'ubuntu': 'libsane',
-                },
-            )
-        )
-    return missing
-
-
 def find_missing_data_files():
     missings = []
     for (user_name, file_paths, packages) in DATA_FILES:
@@ -306,5 +290,4 @@ def find_missing_dependencies():
     missing += find_missing_data_files()
     missing += check_gtk()
     missing += check_cairo()
-    missing += check_sane()
     return missing

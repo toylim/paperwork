@@ -109,7 +109,7 @@ If you installed it manually (for development), you can follow the same process 
 
 It mainly uses:
 
-* [Sane](http://www.sane-project.org/)/[Pyinsane](https://gitlab.gnome.org/World/OpenPaperwork/pyinsane#readme): To scan the pages
+* [Sane](http://www.sane-project.org/)/[Libinsane](https://gitlab.gnome.org/World/OpenPaperwork/libinsane#readme): To scan the pages
 * [Tesseract](https://github.com/tesseract-ocr)/[Pyocr](https://gitlab.gnome.org/World/OpenPaperwork/pyocr#readme): To extract the words from the pages (OCR)
 * [GTK](http://www.gtk.org/): For the user interface
 * [Whoosh](https://pypi.python.org/pypi/Whoosh/): To index and search documents, and provide keyword suggestions

@@ -17,6 +17,7 @@
 import logging
 import math
 
+from gi.repository import Gdk
 import cairo
 import PIL.Image
 
@@ -70,6 +71,7 @@ class ScanAnimation(Animation):
         )
         self.position = position
         self.surfaces = []
+        self.last_added_line = 0
         self.last_redraw_lines = 0
 
         self.anim = {
@@ -92,13 +94,24 @@ class ScanAnimation(Animation):
     def add_chunk(self, line, img_chunk):
         # big images take more time to draw
         # --> we resize it now
-        img_size = fit(img_chunk.size, self.size)
+        img_size = fit((
+            img_chunk.get_width(), img_chunk.get_height()), self.size
+        )
         if (img_size[0] <= 0 or img_size[1] <= 0):
             return
-        img_chunk = img_chunk.resize(img_size)
+        surface = cairo.ImageSurface(
+            cairo.FORMAT_RGB24, img_size[0], img_size[1]
+        )
+        context = cairo.Context(surface)
+        context.scale(
+            img_size[0] / img_chunk.get_width(),
+            img_size[1] / img_chunk.get_height()
+        )
+        Gdk.cairo_set_source_pixbuf(context, img_chunk, 0.0, 0.0)
+        context.paint()
 
-        surface = image2surface(img_chunk)
-        self.surfaces.append((line * self.ratio, surface))
+        self.surfaces.append((self.last_added_line, surface))
+        self.last_added_line += img_size[1]
         self.on_tick()
 
     def draw_chunks(self, cairo_ctx):
@@ -121,10 +134,11 @@ class ScanAnimation(Animation):
 
         for (line, surface) in self.surfaces:
             chunk_size = (surface.get_width(), surface.get_height())
-            self.draw_surface(cairo_ctx,
-                              surface, (float(self.position[0]),
-                                        float(self.position[1]) + line),
-                              chunk_size)
+            line = self.position[1] + line
+            self.draw_surface(
+                cairo_ctx, surface, (float(self.position[0]), line),
+                chunk_size
+            )
 
     def draw_animation(self, cairo_ctx):
         if len(self.surfaces) <= 0:

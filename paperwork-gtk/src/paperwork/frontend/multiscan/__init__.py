@@ -143,10 +143,11 @@ class ActionEndEditDoc(SimpleAction):
 class ActionScan(SimpleAction):
     MARGIN = 10
 
-    def __init__(self, multiscan_win, config, docsearch, main_win):
+    def __init__(self, multiscan_win, config, libinsane, docsearch, main_win):
         SimpleAction.__init__(self, "Start multi-scan")
         self.__multiscan_win = multiscan_win
         self.__config = config
+        self.__libinsane = libinsane
         self.__docsearch = docsearch
         self.__main_win = main_win
 
@@ -170,7 +171,7 @@ class ActionScan(SimpleAction):
 
         try:
             (dev, resolution) = get_scanner(
-                self.__config,
+                self.__config, self.__libinsane,
                 preferred_sources=["ADF", "Feeder"]
             )
         except Exception as exc:
@@ -182,7 +183,7 @@ class ActionScan(SimpleAction):
             raise
 
         try:
-            scan_session = dev.scan(multiple=True)
+            scan_session = dev.scan_start()
         except Exception as exc:
             logger.error("Exception while scanning: {}".format(exc))
             logger.exception(exc)
@@ -264,7 +265,7 @@ class MultiscanDialog(GObject.GObject):
                            (GObject.TYPE_PYOBJECT,)),
     }
 
-    def __init__(self, main_window, config):
+    def __init__(self, main_window, config, libinsane):
         GObject.GObject.__init__(self)
 
         self.main_window = main_window
@@ -331,7 +332,7 @@ class MultiscanDialog(GObject.GObject):
             ),
             'scan': (
                 [widget_tree.get_object("buttonOk")],
-                ActionScan(self, config, main_window.docsearch,
+                ActionScan(self, config, libinsane, main_window.docsearch,
                            main_window),
             ),
         }

@@ -4,11 +4,11 @@ import os
 import platform
 import sys
 
-import pyinsane2
 import gettext
 from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gtk
+from gi.repository import Libinsane
 
 from paperwork.frontend.util import load_uifile
 from paperwork.frontend.util.jobs import Job, JobFactory
@@ -34,9 +34,10 @@ class JobInfoGetter(Job):
     can_stop = True
     priority = 1000
 
-    def __init__(self, factory, id, main_win):
+    def __init__(self, factory, id, main_win, libinsane):
         super(JobInfoGetter, self).__init__(factory, id)
         self.main_win = main_win
+        self.libinsane = libinsane
         # update translations
         JobInfoGetter.STEP_SYSINFO = _("system's information")
         JobInfoGetter.STEP_PAPERWORK = _("document statistics")
@@ -85,7 +86,9 @@ class JobInfoGetter(Job):
         self.emit('scan-progression', self.STEP_PAPERWORK, 0.0)
         logger.info("====== START OF PAPERWORK INFO ======")
         logger.info("Paperwork version: {}".format(self.main_win.version))
-        logger.info("Scan library: Pyinsane2 {}".format(pyinsane2.__version__))
+        logger.info("Scan library: Libinsane {}".format(
+            Libinsane.get_version())
+        )
 
         nb_docs = 0
         nb_pages = 0
@@ -129,34 +132,50 @@ class JobInfoGetter(Job):
     def _get_scanner_info(self):
         self.emit('scan-progression', self.STEP_SCANNER, 0.0)
         logger.info("====== START OF SCANNER INFO ======")
-        devices = pyinsane2.get_devices()
+        devices = self.libinsane.list_devices(
+            Libinsane.DeviceLocations.ANY
+        )
         logger.info("{} scanners found".format(len(devices)))
 
         for device in devices:
-            logger.info("=== {} ===".format(str(device)))
+            logger.info("=== %s ===", device.get_dev_id())
+            try:
+                device = self.libinsane.get_device(device.get_dev_id())
+            except Exception as exc:
+                logger.error(
+                    "Failed to open device %s", device.get_dev_id(),
+                    exc_info=exc
+                )
+                continue
 
-            for opt in device.options.values():
-                logger.info("Option: {}".format(opt.name))
-                logger.info("  Title: {}".format(opt.title))
-                logger.info("  Desc: {}".format(opt.desc))
-                logger.info("  Type: {}".format(str(opt.val_type)))
-                logger.info("  Unit: {}".format(str(opt.unit)))
-                logger.info("  Size: {}".format(opt.size))
-                logger.info("  Capabilities: {}".format(
-                    str(opt.capabilities))
+            for source in device.get_children():
+                logger.info(
+                    "=== %s/%s ===", device.get_dev_id(), source.get_name()
                 )
-                logger.info("  Constraint type: {}".format(
-                    str(opt.constraint_type))
-                )
-                logger.info("  Constraint: {}".format(str(opt.constraint)))
-                try:
-                    logger.info("  Value: {}".format(str(opt.value)))
-                except pyinsane2.PyinsaneException as exc:
-                    # Some scanner allow changing a value, but not reading
-                    # it. For instance Canon Lide 110 allow setting the
-                    # resolution, but not reading it ...
-                    logger.warning("    Value: *FAILED*")
-                    logger.exception(exc)
+
+                for opt in source.get_options():
+                    logger.info("Option: {}".format(opt.get_name()))
+                    logger.info("  Title: {}".format(opt.get_title()))
+                    logger.info("  Desc: {}".format(opt.get_desc()))
+                    logger.info("  Type: {}".format(str(opt.get_value_type())))
+                    logger.info("  Unit: {}".format(str(opt.get_value_unit())))
+                    logger.info("  Is readable ? {}".format(
+                        str(opt.is_readable()))
+                    )
+                    logger.info("  Is writable ? {}".format(
+                        str(opt.is_writable()))
+                    )
+                    logger.info("  Capabilities: {}".format(
+                        str(opt.get_capabilities()))
+                    )
+                    logger.info("  Constraint type: {}".format(
+                        str(opt.get_constraint_type()))
+                    )
+                    logger.info("  Constraint: {}".format(
+                        str(opt.get_constraint()))
+                    )
+                    if opt.is_readable():
+                        logger.info("  Value: {}".format(str(opt.get_value())))
 
         logger.info("====== END OF SCANNER INFORMATIONS ======")
 
@@ -186,13 +205,16 @@ GObject.type_register(JobInfoGetter)
 
 class JobFactoryInfoGetter(JobFactory):
 
-    def __init__(self, diag_win, main_win):
+    def __init__(self, diag_win, main_win, libinsane):
         super(JobFactoryInfoGetter, self).__init__("InfoGetter")
         self.diag_win = diag_win
         self.main_win = main_win
+        self.libinsane = libinsane
 
     def make(self):
-        job = JobInfoGetter(self, next(self.id_generator), self.main_win)
+        job = JobInfoGetter(
+            self, next(self.id_generator), self.main_win, self.libinsane
+        )
         job.connect(
             'scan-progression',
             lambda job, step, progression: GLib.idle_add(
@@ -258,7 +280,7 @@ g_log_tracker = LogTracker()
 
 
 class DiagDialog(object):
-    def __init__(self, main_win):
+    def __init__(self, main_win, libinsane):
         widget_tree = load_uifile(
             os.path.join("diag", "diagdialog.glade"))
 
@@ -280,7 +302,7 @@ class DiagDialog(object):
         txt_view.connect("size-allocate", self.scroll_to_bottom)
 
         self.scheduler = main_win.schedulers['main']
-        self.factory = JobFactoryInfoGetter(self, main_win)
+        self.factory = JobFactoryInfoGetter(self, main_win, libinsane)
         job = self.factory.make()
         self.scheduler.schedule(job)
 

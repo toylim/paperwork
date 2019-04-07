@@ -3424,11 +3424,6 @@ sudo pip uninstall paperwork
 sudo pip uninstall pyocr
 \end_layout
 
-\begin_layout Verbatim
-
-sudo pip uninstall pyinsane
-\end_layout
-
 \begin_layout Standard
 (it's python-pip on some systems)
 \end_layout

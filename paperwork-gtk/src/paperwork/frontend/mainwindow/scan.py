@@ -22,23 +22,26 @@ import time
 
 from gi.repository import GLib
 from gi.repository import GObject
+from gi.repository import Libinsane
 import pyocr
 import pyocr.builders
 
-from paperwork_backend.util import check_spelling
 from paperwork.frontend.mainwindow.pages import SimplePageDrawer
-from paperwork.frontend.util.jobs import Job
-from paperwork.frontend.util.jobs import JobFactory
 from paperwork.frontend.util.canvas.animations import Animation
 from paperwork.frontend.util.canvas.animations import ScanAnimation
 from paperwork.frontend.util.canvas.animations import SpinnerAnimation
-from paperwork.frontend.util.canvas.animators import LinearSimpleAnimator
 from paperwork.frontend.util.canvas.animators import LinearCoordAnimator
+from paperwork.frontend.util.canvas.animators import LinearSimpleAnimator
 from paperwork.frontend.util.canvas.drawers import fit
 from paperwork.frontend.util.canvas.drawers import LineDrawer
 from paperwork.frontend.util.canvas.drawers import PillowImageDrawer
 from paperwork.frontend.util.canvas.drawers import RectangleDrawer
 from paperwork.frontend.util.canvas.drawers import TargetAreaDrawer
+from paperwork.frontend.util.img import raw2pillow
+from paperwork.frontend.util.img import raw2pixbuf
+from paperwork.frontend.util.jobs import Job
+from paperwork.frontend.util.jobs import JobFactory
+from paperwork_backend.util import check_spelling
 
 
 logger = logging.getLogger(__name__)
@@ -57,7 +60,7 @@ class JobScan(Job):
         'scan-chunk': (GObject.SignalFlags.RUN_LAST, None,
                        # line where to put the image
                        (GObject.TYPE_INT,
-                        GObject.TYPE_PYOBJECT,)),  # The PIL image
+                        GObject.TYPE_PYOBJECT,)),  # Pixbuf
         'scan-done': (GObject.SignalFlags.RUN_LAST, None,
                       (GObject.TYPE_PYOBJECT, )),  # Pillow image
         'scan-error': (GObject.SignalFlags.RUN_LAST, None,
@@ -80,37 +83,58 @@ class JobScan(Job):
         self.emit('scan-started')
 
         try:
-            size = self.scan_session.scan.expected_size
-            self.emit('scan-info', size[0], size[1])
+            params = self.scan_session.get_scan_parameters()
+            self.emit('scan-info', params.get_width(), params.get_height())
+
+            assert(params.get_format() == Libinsane.ImgFormat.RAW_RGB_24)
+            line_length = params.get_width() * 3
 
             last_line = 0
-            try:
-                while self.can_run:
-                    self.scan_session.scan.read()
+            whole_image = []
+            chunk = bytearray()
 
-                    next_line = self.scan_session.scan.available_lines[1]
-                    if (next_line > last_line + 50):
-                        chunk = self.scan_session.scan.get_image(
-                            last_line, next_line
-                        )
-                        self.emit('scan-chunk', last_line, chunk)
-                        last_line = next_line
+            while self.can_run and not self.scan_session.end_of_page():
+                r = 0
+                while (
+                            r <= 512 * 1024
+                            and not self.scan_session.end_of_page()
+                        ):
+                    out = self.scan_session.read_bytes(64 * 1024)
+                    out = out.get_data()
+                    r += len(out)
+                    chunk.extend(out)
 
-                    time.sleep(0)  # Give some CPU time to Gtk
-                if not self.can_run:
-                    logger.info("Scan canceled")
-                    self.emit('scan-canceled')
-                    return
-            except EOFError:
-                pass
+                split = len(chunk) - (len(chunk) % line_length)
+                next_chunk = chunk[split:]
+                chunk = chunk[:split]
+
+                whole_image.append(chunk)
+
+                pixbuf = raw2pixbuf(chunk, params)
+                if pixbuf is None:
+                    continue
+
+                self.emit('scan-chunk', last_line, pixbuf)
+
+                time.sleep(0)  # Give some CPU time to Gtk
+                last_line += (split / line_length)
+                chunk = next_chunk
+
+            if not self.scan_session.end_of_feed():
+                self.scan_session.cancel()
+
+            if not self.can_run:
+                logger.info("Scan canceled")
+                self.emit('scan-canceled')
+                return
+
+            whole_image = b"".join(whole_image)
+            image = raw2pillow(whole_image, params)
+            self.emit('scan-done', image)
+            logger.info("Scan done")
         except Exception as exc:
             self.emit('scan-error', exc)
             raise
-
-        img = self.scan_session.images[-1]
-        self.emit('scan-done', img)
-        logger.info("Scan done")
-        del self.scan_session
 
     def stop(self, will_resume=False):
         self.can_run = False

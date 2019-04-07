@@ -4,6 +4,8 @@ ALL_COMPONENTS = paperwork-backend paperwork-gtk
 build: $(ALL_COMPONENTS:%=%_build)
 
 clean: $(ALL_COMPONENTS:%=%_clean)
+	rm -rf venv
+	make -C sub/libinsane clean
 
 install: $(ALL_COMPONENTS:%=%_install)
 
@@ -125,5 +127,12 @@ help:
 %_windows_exe:
 	echo "Building Windows exe for $(@:%_windows_exe=%)"
 	$(MAKE) -C $(@:%_windows_exe=%) windows_exe
+
+venv:
+	echo "Building virtual env"
+	git submodule init
+	git submodule update --recursive --remote --init
+	make -C sub/libinsane build_c
+	virtualenv -p python3 --system-site-packages venv
 
 .PHONY: help build clean test check install install_py install_c uninstall uninstall_c uninstall_py release

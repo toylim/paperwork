@@ -15,10 +15,15 @@
 #    along with Paperwork.  If not, see <http://www.gnu.org/licenses/>.
 
 import io
+import logging
 
-from gi.repository import GLib
 from gi.repository import GdkPixbuf
+from gi.repository import GLib
+from gi.repository import Libinsane
 import PIL.ImageDraw
+
+
+logger = logging.getLogger(__name__)
 
 
 def add_img_border(img, color="#a6a5a4", width=1):
@@ -62,3 +67,59 @@ def image2pixbuf(img):
     finally:
         loader.close()
     return pixbuf
+
+
+def raw2pixbuf(img_bytes, params):
+    """
+    Convert a raw image into a GdkPixbuf image.
+    ASSUMPTION: The image colors are on 24 bits (no padding)
+
+    Arguments:
+        img_bytes --- an object 'bytes'
+        params --- scan parameters (see Libinsane). Required to know the format
+            of the image
+
+    Returns:
+        a GdkPixbuf image
+    """
+    nb_bytes = len(img_bytes)
+    img_bytes = GLib.Bytes.new(img_bytes)
+    fmt = params.get_format()
+    assert(fmt == Libinsane.ImgFormat.RAW_RGB_24)
+    (w, h) = (
+        params.get_width(),
+        int(nb_bytes / 3 / params.get_width())
+    )
+    if h <= 0:
+        # no enough data for even one single line
+        return None
+    logger.info("Mode: RGB : Size: %dx%d", w, h)
+    pixbuf = GdkPixbuf.Pixbuf.new_from_bytes(
+        img_bytes, GdkPixbuf.Colorspace.RGB,
+        False,  # !has_alpha
+        8,  # bits_per_sample
+        w, h,
+        w * 3,  # row_stride
+    )
+    logger.info("Pixbuf: Size: %dx%d", pixbuf.get_width(), pixbuf.get_height())
+    return pixbuf
+
+
+def raw2pillow(img_bytes, params):
+    """
+    Convert a raw image into a Pillow image.
+    ASSUMPTION: The image colors are on 24 bits (no padding)
+
+    Arguments:
+        img_bytes --- an object 'bytes'
+        params --- scan parameters (see Libinsane). Required to know the format
+            of the image
+
+    Returns:
+        a PIL.Image instance
+    """
+    return PIL.Image.frombuffer(
+        "RGB",
+        (params.get_width(), int(len(img_bytes) / (params.get_width() * 3))),
+        bytes(img_bytes), "raw", "RGB", 0, 1
+    )

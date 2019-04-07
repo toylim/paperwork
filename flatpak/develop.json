@@ -164,14 +164,12 @@
             ]
         },
         {
-            "name": "python-pyinsane2",
-            "make-install-args": ["PIP_ARGS=--prefix=/app"],
-            "no-autogen": true,
-            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
+            "name": "libinsane",
+            "buildsystem": "meson",
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://gitlab.gnome.org/World/OpenPaperwork/pyinsane.git",
+                    "url": "https://gitlab.gnome.org/World/OpenPaperwork/libinsane.git",
                     "branch": "master",
                     "disable-shallow-clone": true
                 }
