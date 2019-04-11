@@ -87,7 +87,7 @@ class JobInfoGetter(Job):
         logger.info("====== START OF PAPERWORK INFO ======")
         logger.info("Paperwork version: {}".format(self.main_win.version))
         logger.info("Scan library: Libinsane {}".format(
-            Libinsane.get_version())
+            Libinsane.Api.get_version())
         )
 
         nb_docs = 0
