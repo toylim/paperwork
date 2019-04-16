@@ -14,7 +14,7 @@ MODULES = [
         'Python GObject Introspection', 'gi',
         {
             'debian': 'python3-gi',
-            'fedora': 'pygobject3',
+            'fedora': 'python3-gobject-base',
             'gentoo': 'dev-python/pygobject',  # Python 3 ?
             'linuxmint': 'python3-gi',
             'ubuntu': 'python3-gi',
@@ -40,7 +40,7 @@ MODULES = [
         'Cairo', 'cairo',
         {
             'debian': 'python3-gi-cairo',
-            'fedora': 'pycairo',  # Python 3 ?
+            'fedora': 'python3-pycairo',
             'gentoo': 'dev-python/pycairo',  # Python 3 ?
             'linuxmint': 'python-gi-cairo',  # Python 3 ?
             'ubuntu': 'python3-gi-cairo',
