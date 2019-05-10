@@ -1,0 +1,55 @@
+image: debian:stable-slim
+
+check:
+  tags:
+    - linux
+    - volatile
+  script:
+    - apt-get update
+    - apt-get install -y -q make
+    - apt-get install -y -q pycodestyle flake8 python3-flake8
+    - make check
+
+windows_exe:
+  variables:
+    MSYSTEM: "MINGW32"
+    CHERE_INVOKING: "yes"
+  tags:
+    - windows
+    - msys2
+  script:
+    # Libinsane build dependencies
+    - c:\msys32\usr\bin\pacman --needed --noconfirm -S make
+    - c:\msys32\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-cunit
+    - c:\msys32\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-doxygen
+    - c:\msys32\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-gcc
+    - c:\msys32\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-gobject-introspection
+    - c:\msys32\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-meson
+    - c:\msys32\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-python3-gobject
+    - c:\msys32\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-vala
+    # Paperwork build dependencies
+    - c:\msys32\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-gdk-pixbuf2
+    - c:\msys32\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-cairo
+    - c:\msys32\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-python3-cairo
+    - c:\msys32\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-gtk3
+    - c:\msys32\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-python3-pillow
+    - c:\msys32\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-ca-certificates
+    - c:\msys32\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-python3-setuptools
+    - c:\msys32\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-python3-pip
+    - c:\msys32\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-libnotify
+    - c:\msys32\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-poppler
+    - c:\msys32\usr\bin\pacman --needed --noconfirm -S git  # for 'make version'
+    - c:\msys32\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-python3-cx_Freeze
+    - c:\msys32\usr\bin\pacman --needed --noconfirm -S zip
+    - c:\msys32\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-nsis
+    - c:\msys32\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-nsis-nsisunz
+    # Build
+    - git submodule init
+    - git submodule update --recursive --remote
+    - c:\msys32\usr\bin\bash -lc "make clean"
+    - c:\msys32\usr\bin\bash -lc "make windows_exe"
+#    - c:\msys32\usr\bin\bash -lc "./deliver.sh dist/paperwork_installer.exe windows .exe"
+#  artifacts:
+#    expire_in: 2 days
+#    paths:
+#      - dist/paperwork_installer.exe

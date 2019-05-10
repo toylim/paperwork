@@ -36,7 +36,22 @@ check:
 test:
 
 windows_exe:
-	pyinstaller --noconfirm pyinstaller/win64.spec
+	${PYTHON} /mingw32/bin/pip3-script.py install .
+	${PYTHON} ./setup_cx_freeze.py build_exe
+	mkdir -p ../build
+	mv $$(find build -name exe\*) ../build/exe
+	# a bunch of things are missing ...
+	cp -Ra /mingw32/lib/gdk-pixbuf-2.0 ../build/exe/lib
+	mkdir -p ../build/exe/share
+	cp -Ra /mingw32/share/icons ../build/exe/share
+	cp -Ra /mingw32/share/locale ../build/exe/share
+	cp -Ra /mingw32/share/themes ../build/exe/share
+	cp -Ra /mingw32/share/fontconfig ../build/exe/share
+	cp -Ra /mingw32/share/poppler ../build/exe/share
+	cp -Ra /mingw32/share/glib-2.0 ../build/exe/share
+	# makensis pyinstaller/self_extract.nsis
+	# mkdir -p dist
+	# mv pyinstaller/ironscanner.exe dist
 
 linux_exe:
 
