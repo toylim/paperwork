@@ -1,14 +1,15 @@
-# Paperwork development installation
+## Branches
 
-## Dependencies
+* branch `master` is the latest release with possibly some bug fixes. Never
+  submit a merge request for this branch. Only Paperwork maintainer(s)
+  push changes on this branch.
+* branch 'develop' is the development branch. It will be the next version
+  of Paperwork. Merge request should always go to this branch, even for bug
+  fixes. Maintainer(s) will cherry-pick commits in the branch 'master' if
+  required.
+`
 
-Depending on which
-[branch](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Branches)
-you are working, the build and runtime dependencies may not be the same.
-Setuptools and ```paperwork-shell chkdeps``` should take care of all of them.
-
-
-## Paperwork in a Python Virtualenv
+## Paperwork in a Virtualenv
 
 This is the recommended approach for development. If you intend to work on
 Paperwork (or just try it), this is probably the most convenient way to
@@ -21,16 +22,23 @@ that did the installation will be the only one able to run Paperwork. No
 shortcut will be installed in the menus of your window manager. Paperwork
 won't be available directly on your PATH.
 
+Libinsane is scan library required by Paperwork. You need it in your
+development environment. There are other dependencies that may required/
+
+To make things simpler, Paperwork repository includes a script
+(`activate_test_env.sh`) to create a Python virtualenv including Libinsane
+and any other possible dependencies. The Makefile (`make install`) can install
+most of the dependencies and Paperwork components in one shot.
+`paperwork-shell` can then take care of installing some dependencies that
+can only be installed system-wide.
+
 
 ### Requirements
 
-You will have to install [python-virtualenv](https://pypi.python.org/pypi/virtualenv).
+You will have to install [python3-virtualenv](https://pypi.python.org/pypi/virtualenv).
 
 
-### Installation
-
-Libinsane is scan library required by Paperwork. You need it in your
-development environment. Paperwork Makefile can take of that for you.
+### Setting up a development environment
 
 
 ```sh
@@ -41,12 +49,8 @@ git clone https://gitlab.gnome.org/World/OpenPaperwork/paperwork.git
 cd paperwork
 git checkout develop  # or 'master', 'release-xxx', 'wip-xxx', etc
 
-# Create the Python virtualenv.
-# Compile Libinsane and set the correct environment variables to use it
-# without installing it.
-make venv
-
-# active\_test\_env.sh sets environment variables so you can use Libinsane
+# Will create the Python virtualenv if it doesn't exist.
+# It will compile Libinsane and set the correct environment variables to use it
 # without installing it
 source ./activate_test_env.sh
 
@@ -61,23 +65,18 @@ paperwork-shell chkdeps paperwork_backend
 paperwork-shell chkdeps paperwork
 ```
 
-
-### Note regarding the extra dependencies
-
-Many dependencies can't be installed from Pypi or in a virtualenv. For
-instance, all the libraries accessed through GObject introspection have
-no package on Pypi. This is why they can only be installed in a system-wide
-manner.
-
-'paperwork-shell chkdeps paperwork_backend' and
-'paperwork-shell chkdeps paperwork' can find all the missing dependencies.
-
-
-### Running Paperwork
+### Using the virtual environment
 
 ```sh
 cd ~/git/paperwork
 source ./activate_test_env.sh
+
+# you're now in a virtualenv
+
+# 'make install' will install Paperwork in the virtual environment
+make install  # or 'make install_py'
+
+# Running your version of Paperwork:
 paperwork
 ```
 
