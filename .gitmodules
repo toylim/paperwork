@@ -1,3 +1,9 @@
 [submodule "sub/libinsane"]
 	path = sub/libinsane
 	url = https://gitlab.gnome.org/World/OpenPaperwork/libinsane.git
+[submodule "sub/pyocr"]
+	path = sub/pyocr
+	url = https://gitlab.gnome.org/World/OpenPaperwork/pyocr.git
+[submodule "sub/libpillowfight"]
+	path = sub/libpillowfight
+	url = https://gitlab.gnome.org/World/OpenPaperwork/libpillowfight.git
