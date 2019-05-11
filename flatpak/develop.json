@@ -181,9 +181,10 @@
             "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
             "sources": [
                 {
-                    "type": "archive",
-                    "url": "https://files.pythonhosted.org/packages/27/01/56adc4939fc96db5676d4a0ab8f8a048a9a40dedef0567a543e87198dd3c/pyocr-0.6.tar.gz",
-                    "sha256": "0857a814f5c74186f79b2080792f5a17b5e7c613696df23e0d1cdc5597cab2e3"
+                    "type": "git",
+                    "url": "https://gitlab.gnome.org/World/OpenPaperwork/pyocr.git",
+                    "branch": "master",
+                    "disable-shallow-clone": true
                 },
                 {
                     "type": "file",
@@ -198,9 +199,10 @@
             "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
             "sources": [
                 {
-                    "type": "archive",
-                    "url": "https://pypi.python.org/packages/90/70/575e3d04d581e04dccefd52cbb75e26aa07934147b2e85f3fa2896e61eed/pypillowfight-0.2.4.tar.gz",
-                    "sha256": "9208518494df900b8842b3d826c55ff673127634bdb2d2c85cca93b5017fd061"
+                    "type": "git",
+                    "url": "https://gitlab.gnome.org/World/OpenPaperwork/libpillowfight.git",
+                    "branch": "master",
+                    "disable-shallow-clone": true
                 },
                 {
                     "type": "file",
