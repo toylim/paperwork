@@ -58,6 +58,8 @@ libpillowfight_win32:
 	${MAKE} -C sub/libpillowfight install_py
 
 windows_exe: $(ALL_COMPONENTS:%=%_windows_exe)
+	mkdir -p dist
+	(cd build/exe ; zip -r ../../dist/paperwork.zip *)
 
 help:
 	@echo "make build: run 'python3 ./setup.py build' in all components"

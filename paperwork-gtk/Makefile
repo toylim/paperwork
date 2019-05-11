@@ -49,9 +49,6 @@ windows_exe:
 	cp -Ra /mingw32/share/fontconfig ../build/exe/share
 	cp -Ra /mingw32/share/poppler ../build/exe/share
 	cp -Ra /mingw32/share/glib-2.0 ../build/exe/share
-	# makensis pyinstaller/self_extract.nsis
-	# mkdir -p dist
-	# mv pyinstaller/ironscanner.exe dist
 
 linux_exe:
 
