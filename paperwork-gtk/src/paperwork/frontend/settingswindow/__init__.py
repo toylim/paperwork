@@ -19,7 +19,6 @@ Settings window.
 
 import platform
 import os
-import sys
 import time
 
 from gi.repository import Gdk
