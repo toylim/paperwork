@@ -49,7 +49,7 @@ windows_exe:
     - c:\msys32\usr\bin\bash -lc "make clean"
     - c:\msys32\usr\bin\bash -lc "make windows_exe"
     - c:\msys32\usr\bin\bash -lc "./deliver.sh dist/paperwork.zip windows .zip"
-   artifacts:
-     expire_in: 2 days
-     paths:
-       - dist/paperwork.zip
+  artifacts:
+    expire_in: 2 days
+    paths:
+      - dist/paperwork.zip
