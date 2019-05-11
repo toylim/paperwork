@@ -6,7 +6,9 @@ build: $(ALL_COMPONENTS:%=%_build)
 clean: $(ALL_COMPONENTS:%=%_clean)
 	rm -rf build dist
 	rm -rf venv
-	make -C sub/libinsane clean
+	make -C sub/libinsane clean || true
+	make -C sub/libpillowfight clean || true
+	make -C sub/pyocr clean || true
 
 install: $(ALL_COMPONENTS:%=%_install)
 
@@ -48,6 +50,12 @@ linux_exe: $(ALL_COMPONENTS:%=%_linux_exe)
 
 libinsane_win32:
 	${MAKE} -C sub/libinsane install PREFIX=/mingw32
+
+pyocr_win32:
+	${MAKE} -C sub/pyocr install
+
+libpillowfight_win32:
+	${MAKE} -C sub/libpillowfight install_py
 
 windows_exe: $(ALL_COMPONENTS:%=%_windows_exe)
 
@@ -128,7 +136,7 @@ help:
 	echo "Building Linux exe for $(@:%_linux_exe=%)"
 	$(MAKE) -C $(@:%_linux_exe=%) linux_exe
 
-%_windows_exe: version libinsane_win32
+%_windows_exe: version libinsane_win32 pyocr_win32 libpillowfight_win32
 	echo "Building Windows exe for $(@:%_windows_exe=%)"
 	$(MAKE) -C $(@:%_windows_exe=%) windows_exe
 
@@ -139,4 +147,6 @@ venv:
 	make -C sub/libinsane build_c
 	virtualenv -p python3 --system-site-packages venv
 
-.PHONY: help build clean test check install install_py install_c uninstall uninstall_c uninstall_py release libinsane_win32
+.PHONY: help build clean test check install install_py install_c uninstall \
+	uninstall_c uninstall_py release libinsane_win32 pyocr_win32 \
+	libpillowfight_win32
