@@ -937,7 +937,7 @@ class SettingsWindow(GObject.GObject):
         store_line = [user_name, store_name]
         logger.info("Got value [%s]" % store_line)
         settings['stores']['loaded'].append(store_line)
-        if active:
+        if active or settings['nb_elements'] == 0:
             settings['active_idx'] = settings['nb_elements']
             settings['active_id'] = store_name
         settings['nb_elements'] += 1
