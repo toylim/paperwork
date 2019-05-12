@@ -55,7 +55,8 @@ class Core(object):
         self.explicits = []
 
         self.plugins = {}
-        self._to_initialize = []  # because initialization order matters
+        self._to_initialize = set()
+        self._initialized = set()  # avoid double-init
         self.interfaces = collections.defaultdict(list)
         self.callbacks = collections.defaultdict(list)
 
@@ -74,6 +75,9 @@ class Core(object):
               by the user (used to track which modules must possibly be saved
               in a configuration file)
         """
+        if module_name in self.plugins:
+            return
+
         LOGGER.info(
             "Loading plugin '%s' (explicit=%b) ...",
             module_name, explicit
@@ -101,7 +105,7 @@ class Core(object):
         if explicit:
             self.explicits.append(module_name)
 
-        self._to_initialize.append(plugin)
+        self._to_initialize.add(plugin)
 
         LOGGER.info("Plugin '%s' loaded", module_name)
         return plugin
@@ -148,27 +152,27 @@ class Core(object):
                         to_examine.append(self.load(dep_default))
                     assert(len(self.interfaces[dep_interface]) > 0)
 
-    def _init(self, plugin, initialized=set()):
-        if plugin in initialized:
+    def _init(self, plugin):
+        if plugin in self._initialized:
             return
 
         deps = plugin.get_deps()
         if 'plugins' in deps:
             for dep_plugin in deps['plugins']:
                 assert(dep_plugin in self.plugins)
-                self._init(self.plugins[dep_plugin], initialized)
+                self._init(self.plugins[dep_plugin])
 
         if 'interfaces' in deps:
             for (dep_interface, _) in deps['interfaces']:
                 dep_plugins = self.interfaces[dep_interface]
                 assert(len(dep_plugins) > 0)
                 for dep_plugin in dep_plugins:
-                    self._init(dep_plugin, initialized)
+                    self._init(dep_plugin)
 
         LOGGER.info("Initializing plugin '%s' ...", type(plugin))
         plugin.init()
 
-        initialized.add(plugin)
+        self._initialized.add(plugin)
 
     def init(self):
         """
@@ -178,12 +182,12 @@ class Core(object):
 
         BEWARE of dependency loops !
         """
-        LOGGER.info("Initializing core")
+        LOGGER.info("Initializing all plugins")
         self._load_deps()
         for plugin in self._to_initialize:
             self._init(plugin)
-        self._to_initialize = []
-        LOGGER.info("Core initialized")
+        self._to_initialize = set()
+        LOGGER.info("All plugins initialized")
 
     def get(self, module_name):
         """
