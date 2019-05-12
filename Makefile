@@ -1,7 +1,17 @@
 # order matters (dependencies)
-ALL_COMPONENTS = paperwork-backend paperwork-gtk
+ALL_COMPONENTS = openpaperwork-core paperwork-backend paperwork-gtk
 
-build: $(ALL_COMPONENTS:%=%_build)
+build:
+
+
+openpaperwork-core_install_py:
+	echo "Installing openpaperwork-core"
+	$(MAKE) -C openpaperwork-core install_py
+
+%_install_py: openpaperwork-core_install_py
+	echo "Installing $(@:%_install_py=%)"
+	$(MAKE) -C $(@:%_install_py=%) install_py
+
 
 clean: $(ALL_COMPONENTS:%=%_clean)
 	rm -rf build dist
@@ -10,11 +20,9 @@ clean: $(ALL_COMPONENTS:%=%_clean)
 	make -C sub/libpillowfight clean || true
 	make -C sub/pyocr clean || true
 
-install: $(ALL_COMPONENTS:%=%_install)
-
 install_py: $(ALL_COMPONENTS:%=%_install_py)
 
-install_c: $(ALL_COMPONENTS:%=%_install_c)
+install: install_py
 
 uninstall: $(ALL_COMPONENTS:%=%_uninstall)
 
@@ -86,33 +94,9 @@ help:
 	echo "Checking $(@:%_doc=%)"
 	$(MAKE) -C $(@:%_doc=%) doc
 
-%_build:
-	echo "Building $(@:%_build=%)"
-	$(MAKE) -C $(@:%_build=%) build
-
 %_clean:
 	echo "Building $(@:%_clean=%)"
 	$(MAKE) -C $(@:%_clean=%) clean
-
-%_install:
-	echo "Installing $(@:%_install=%)"
-	$(MAKE) -C $(@:%_install=%) install
-
-%_build_py:
-	echo "Building $(@:%_build_py=%)"
-	$(MAKE) -C $(@:%_build=%) build_py
-
-%_install_py:
-	echo "Installing $(@:%_install_py=%)"
-	$(MAKE) -C $(@:%_build=%) install_py
-
-%_build_c:
-	echo "Building $(@:%_build_c=%)"
-	$(MAKE) -C $(@:%_build=%) build_c
-
-%_install_c:
-	echo "Installing $(@:%_install_c=%)"
-	$(MAKE) -C $(@:%_build=%) install_c
 
 %_uninstall:
 	echo "Uninstalling $(@:%_uninstall=%)"
@@ -144,8 +128,6 @@ help:
 
 venv:
 	echo "Building virtual env"
-	git submodule init
-	git submodule update --recursive --remote --init
 	make -C sub/libinsane build_c
 	virtualenv -p python3 --system-site-packages venv
 
