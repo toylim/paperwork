@@ -52,15 +52,13 @@ class Core(object):
     Manage plugins and their callbacks.
     """
     def __init__(self):
-        self.explicits = []
-
         self.plugins = {}
         self._to_initialize = set()
         self._initialized = set()  # avoid double-init
         self.interfaces = collections.defaultdict(list)
         self.callbacks = collections.defaultdict(list)
 
-    def load(self, module_name, explicit=False):
+    def load(self, module_name):
         """
         - Load the specified module
         - Instantiate the class 'Plugin()' of this module
@@ -71,17 +69,11 @@ class Core(object):
 
         Arguments:
             - module_name: name of the Python module to load
-            - explicit: this plugin loading has been explicitly requested
-              by the user (used to track which modules must possibly be saved
-              in a configuration file)
         """
         if module_name in self.plugins:
             return
 
-        LOGGER.info(
-            "Loading plugin '%s' (explicit=%b) ...",
-            module_name, explicit
-        )
+        LOGGER.info("Loading plugin '%s' ...", module_name)
         module = importlib.import_module(module_name)
 
         plugin = module.Plugin()
@@ -102,21 +94,10 @@ class Core(object):
             LOGGER.debug("- %s.%s()", module_name, attr_name)
             self.callbacks[attr_name].append(attr)
 
-        if explicit:
-            self.explicits.append(module_name)
-
         self._to_initialize.add(plugin)
 
         LOGGER.info("Plugin '%s' loaded", module_name)
         return plugin
-
-    def get_explicits(self):
-        """
-        Returns the list of module names that were loaded explicitly by user
-        request. Useful if you want to keep track of those modules in a
-        configuration file.
-        """
-        return tuple(self.explicits)  # makes it immutable
 
     def _load_deps(self):
         to_examine = list(self.plugins.values())
