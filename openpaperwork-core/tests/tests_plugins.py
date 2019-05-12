@@ -28,7 +28,7 @@ class TestLoading(unittest.TestCase):
         core.init()
         self.assertTrue(core.get('whatever_module').init_called)
 
-        core.call('test_method')
+        core.call_all('test_method')
         self.assertTrue(core.get('whatever_module').test_method_called)
 
     @unittest.mock.patch("importlib.import_module")
@@ -77,7 +77,7 @@ class TestLoading(unittest.TestCase):
         self.assertTrue(core.get('module_a').init_called)
         self.assertTrue(core.get('module_b').init_called)
 
-        core.call('test_method')
+        core.call_all('test_method')
         self.assertTrue(core.get('module_a').test_method_called)
 
 
@@ -207,6 +207,6 @@ class TestCall(unittest.TestCase):
         self.assertTrue(core.get('module_b').init_called_b)
         self.assertTrue(core.get('module_c').init_called_c)
 
-        core.call('test_method')
+        core.call_all('test_method')
         self.assertTrue(core.get('module_b').test_method_called_b)
         self.assertTrue(core.get('module_c').test_method_called_c)

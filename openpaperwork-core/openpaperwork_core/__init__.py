@@ -12,12 +12,15 @@ class PluginBase(object):
     managed by OpenPaperwork core. Also provides default implementations.
     """
 
+    # Convenience for the applications: Indicates if users should be able
+    # to enable/disable this plugin in the UI.
     USER_VISIBLE = False
 
     def __init__(self):
         """
         Called as soon as the module is loaded. Should be as minimal as
         possible. Most of the work should be done in `init()`.
+        You *must* *not* rely on any dependencies here.
         """
         pass
 
@@ -189,13 +192,27 @@ class Core(object):
         """
         return self.plugins[module_name]
 
-    def call(self, callback_name, *args, **kwargs):
+    def call_all(self, callback_name, *args, **kwargs):
         """
         Call all the methods of all the plugins that have `callback_name`
-        as name. Arguments are passed as is.
+        as name. Arguments are passed as is. Returned values are dropped
+        (use callbacks for return values if required)
         """
         callbacks = self.callbacks[callback_name]
         if len(callbacks) <= 0:
             LOGGER.warning("No method '%s' available !", callback_name)
         for callback in callbacks:
             callback(*args, **kwargs)
+
+    def call_one(self, callback_name, *args, **kwargs):
+        callbacks = self.callbacks[callback_name]
+        if len(callbacks) <= 0:
+            raise IndexError(
+                "No method '{}' available !".format(callback_name)
+            )
+        if len(callbacks) > 1:
+            LOGGER.warning(
+                "More than one method '%s' available ! [%s]", callback_name,
+                ", ".join([str(callback) for callback in callbacks])
+            )
+        return callbacks[0](*args, **kwargs)
