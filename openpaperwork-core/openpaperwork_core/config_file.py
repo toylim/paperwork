@@ -2,6 +2,7 @@
 Manages a configuration file using configparser.
 """
 
+import collections
 import configparser
 import logging
 import os
@@ -64,11 +65,14 @@ class Plugin(PluginBase):
         self.config_file_path_fmt = os.path.join(
             "{directory}", "{app_name}.conf"
         )
+        self.application_name = None
+        self.observers = collections.defaultdict(set)
 
     def get_interfaces(self):
         return ['configuration']
 
     def config_load(self, application_name):
+        self.application_name = application_name
         config_path = self.config_file_path_fmt.format(
             directory=self.base_path,
             app_name=application_name,
@@ -77,11 +81,16 @@ class Plugin(PluginBase):
         LOGGER.info("Loading configuration '%s' ...", config_path)
         with open(config_path, 'r') as fd:
             self.config.read_file(fd)
+        for observers in self.observers.values():
+            for observer in observers:
+                observer()
 
-    def config_save(self, application_name):
+    def config_save(self, application_name=None):
+        if application_name is not None:
+            self.application_name = application_name
         config_path = self.config_file_path_fmt.format(
             directory=self.base_path,
-            app_name=application_name,
+            app_name=self.application_name,
         )
         LOGGER.info("Writing configuration '%s' ...", config_path)
         with open(config_path, 'w') as fd:
@@ -125,6 +134,9 @@ class Plugin(PluginBase):
         else:
             self.config[section][key] = value
 
+        for observer in self.observers[section]:
+            observer()
+
     def config_get(self, section, key, default=None):
         try:
             value = self.config[section][key]
@@ -142,3 +154,9 @@ class Plugin(PluginBase):
                 section, key, str(default)
             )
             return default
+
+    def config_add_observer(self, section, callback):
+        self.observers[section].add(callback)
+
+    def config_remove_observer(self, section, callback):
+        self.observers[section].remove(callback)

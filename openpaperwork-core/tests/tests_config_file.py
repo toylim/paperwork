@@ -28,8 +28,8 @@ class TestReadWrite(unittest.TestCase):
         core = openpaperwork_core.Core()
         core.load('openpaperwork_core.config_file')
 
-        core.get('openpaperwork_core.config_file').base_path = tempfile.mkdtemp(
-            prefix='openpaperwork_core_config_tests'
+        core.get('openpaperwork_core.config_file').base_path = (
+            tempfile.mkdtemp(prefix='openpaperwork_core_config_tests')
         )
 
         core.init()
@@ -76,3 +76,38 @@ class TestReadWrite(unittest.TestCase):
 
         self.assertEqual(core.get('some_test_module').initialized, True)
         self.assertEqual(core.get('some_test_module_2').initialized, True)
+
+    def test_observers(self):
+        core = openpaperwork_core.Core()
+        core.load('openpaperwork_core.config_file')
+
+        core.get('openpaperwork_core.config_file').base_path = (
+            tempfile.mkdtemp(prefix='openpaperwork_core_config_tests')
+        )
+
+        core.init()
+
+        class Observer(object):
+            def __init__(self):
+                self.count = 0
+
+            def obs(self):
+                self.count += 1
+
+        obs = Observer()
+        core.call_all('config_add_observer', 'test_section', obs.obs)
+
+        core.call_all('config_put', 'other_section', 'test_key', 'test_value')
+        self.assertEqual(obs.count, 0)
+
+        core.call_all('config_put', 'test_section', 'test_key', 'test_value')
+        self.assertEqual(obs.count, 1)
+
+        core.call_all('config_add_plugin', 'some_test_module')
+        self.assertEqual(obs.count, 1)
+
+        core.call_all('config_save', 'openpaperwork_test')
+        self.assertEqual(obs.count, 1)
+
+        core.call_all('config_load', 'openpaperwork_test')
+        self.assertEqual(obs.count, 2)
