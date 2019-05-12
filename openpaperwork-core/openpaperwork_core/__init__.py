@@ -24,7 +24,7 @@ class PluginBase(object):
         """
         pass
 
-    def get_implemented_interfaces(self):
+    def get_interfaces(self):
         """
         Indicates the list of interfaces implemented by this plugin.
         Interface names are arbitrarily defined. Methods provided by each
@@ -83,7 +83,7 @@ class Core(object):
         plugin = module.Plugin()
         self.plugins[module_name] = plugin
 
-        for interface in plugin.get_implemented_interfaces():
+        for interface in plugin.get_interfaces():
             LOGGER.debug("- '%s' provides '%s'", module_name, interface)
             self.interfaces[interface].append(plugin)
 

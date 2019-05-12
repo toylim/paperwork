@@ -39,7 +39,7 @@ class TestLoading(unittest.TestCase):
                     self.init_called = False
                     self.test_method_called = False
 
-                def get_implemented_interfaces(self):
+                def get_interfaces(self):
                     return ["test_interface"]
 
                 def init(self):
@@ -157,7 +157,7 @@ class TestCall(unittest.TestCase):
                     self.init_called_b = False
                     self.test_method_called_b = False
 
-                def get_implemented_interfaces(self):
+                def get_interfaces(self):
                     return ["test_interface"]
 
                 def init(self):
