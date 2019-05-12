@@ -45,7 +45,7 @@ class Plugin(openpaperwork_core.PluginBase):
             ],
         }
 
-    def init(self):
+    def init(self, core):
         # all the dependnecies have loaded and initialized.
         # we can safely rely on them here.
         pass

@@ -63,7 +63,7 @@ class TestReadWrite(unittest.TestCase):
                 def __init__(self):
                     self.initialized = False
 
-                def init(self):
+                def init(self, core):
                     self.initialized = True
 
         core.call_all('config_add_plugin', 'some_test_module')
@@ -71,7 +71,7 @@ class TestReadWrite(unittest.TestCase):
 
         import_module.reset_mock()
         import_module.side_effect = [TestModule(), TestModule()]
-        core.call_all('config_load_plugins', core)
+        core.call_all('config_load_plugins')
         import_module.assert_called_with('some_test_module_2')
 
         self.assertEqual(core.get('some_test_module').initialized, True)

@@ -17,8 +17,8 @@ LOGGER = logging.getLogger(__name__)
 class ConfigList(object):
     SEPARATOR = ", "
 
-    def __init__(self, string=None):
-        self.elements = []
+    def __init__(self, string=None, elements=[]):
+        self.elements = elements
 
         if string is not None:
             elements = string.split(self.SEPARATOR, 1)
@@ -67,6 +67,10 @@ class Plugin(PluginBase):
         )
         self.application_name = None
         self.observers = collections.defaultdict(set)
+        self.core = None
+
+    def init(self, core):
+        self.core = core
 
     def get_interfaces(self):
         return ['configuration']
@@ -96,18 +100,18 @@ class Plugin(PluginBase):
         with open(config_path, 'w') as fd:
             self.config.write(fd)
 
-    def config_load_plugins(self, core):
+    def config_load_plugins(self, default=[]):
         """
         Load and init the plugin list from the configuration.
         """
-        modules = self.config_get("plugins", "modules", ConfigList())
+        modules = self.config_get("plugins", "modules", ConfigList(default))
         LOGGER.info(
-            "Loading plugins from configuration: %s",
+            "Loading and initializing plugins from configuration: %s",
             str(modules)
         )
         for module in modules:
-            core.load(module)
-        core.init()
+            self.core.load(module)
+        self.core.init()
 
     def config_add_plugin(self, module_name):
         LOGGER.info("Adding plugin '%s' to configuration", module_name)

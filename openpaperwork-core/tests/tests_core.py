@@ -13,7 +13,7 @@ class TestLoading(unittest.TestCase):
                     self.init_called = False
                     self.test_method_called = False
 
-                def init(self):
+                def init(self, core):
                     self.init_called = True
 
                 def test_method(self):
@@ -42,7 +42,7 @@ class TestLoading(unittest.TestCase):
                 def get_interfaces(self):
                     return ["test_interface"]
 
-                def init(self):
+                def init(self, core):
                     self.init_called = True
 
                 def test_method(self):
@@ -61,7 +61,7 @@ class TestLoading(unittest.TestCase):
                         ],
                     }
 
-                def init(self):
+                def init(self, core):
                     self.init_called = True
 
         core = openpaperwork_core.Core()
@@ -92,7 +92,7 @@ class TestInit(unittest.TestCase):
                 def __init__(self):
                     self.init_called_a = -1
 
-                def init(self):
+                def init(self, core):
                     global g_idx
                     self.init_called_a = g_idx
                     g_idx += 1
@@ -107,7 +107,7 @@ class TestInit(unittest.TestCase):
                         'plugins': ['module_a'],
                     }
 
-                def init(self):
+                def init(self, core):
                     global g_idx
                     self.init_called_b = g_idx
                     g_idx += 1
@@ -122,7 +122,7 @@ class TestInit(unittest.TestCase):
                         'plugins': ['module_b'],
                     }
 
-                def init(self):
+                def init(self, core):
                     global g_idx
                     self.init_called_c = g_idx
                     g_idx += 1
@@ -160,7 +160,7 @@ class TestCall(unittest.TestCase):
                 def get_interfaces(self):
                     return ["test_interface"]
 
-                def init(self):
+                def init(self, core):
                     self.init_called_b = True
 
                 def test_method(self):
@@ -183,7 +183,7 @@ class TestCall(unittest.TestCase):
                         ],
                     }
 
-                def init(self):
+                def init(self, core):
                     self.init_called_c = True
 
                 def test_method(self):

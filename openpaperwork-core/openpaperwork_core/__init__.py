@@ -16,7 +16,7 @@ class PluginBase(object):
     # to enable/disable this plugin in the UI.
     USER_VISIBLE = False
 
-    def __init__(self):
+    def __init__(self, core):
         """
         Called as soon as the module is loaded. Should be as minimal as
         possible. Most of the work should be done in `init()`.
@@ -43,7 +43,7 @@ class PluginBase(object):
             'interfaces': [],
         }
 
-    def init(self):
+    def init(self, core):
         pass
 
 
@@ -170,7 +170,7 @@ class Core(object):
                     self._init(dep_plugin)
 
         LOGGER.info("Initializing plugin '%s' ...", type(plugin))
-        plugin.init()
+        plugin.init(self)
 
         self._initialized.add(plugin)
 
