@@ -76,13 +76,6 @@ package_data = {
     'paperwork.frontend.doc': DOC_PATHS,
 }
 
-extra_deps = []
-
-if os.name == "nt":
-    extra_deps = [
-        "pycrypto"  # used to check the activation keys
-    ]
-
 # include icons
 packages.append("paperwork.frontend.data")
 package_dir['paperwork.frontend.data'] = 'data'
@@ -171,7 +164,7 @@ Main features are:
         # - Dependencies using gobject introspection
         # - Dependencies based on language (OCR data files, dictionaries, etc)
         # - Dependencies on data files (icons, etc)
-    ] + extra_deps
+    ]
 )
 
 if quiet:
