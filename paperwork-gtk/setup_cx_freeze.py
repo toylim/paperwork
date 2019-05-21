@@ -91,17 +91,7 @@ for locale in LOCALES:
     package_data[pkg] = [mo]
 
 
-executables = []
 common_include_files = []
-
-executables.append(
-    cx_Freeze.Executable(
-        script="src/launcher.py",
-        targetName="paperwork.exe",
-        base=("Console" if os.name != "nt" else "Win32GUI"),
-        # base="Console",
-    ),
-)
 
 required_dll_search_paths = os.getenv("PATH", os.defpath).split(os.pathsep)
 required_dlls = [
@@ -254,7 +244,13 @@ Main features are:
         "termcolor",  # used by paperwork-chkdeps
         "paperwork-backend>={}".format(version),
     ],
-    executables=executables,
+    executables=[
+        cx_Freeze.Executable(
+            script="src/launcher.py",
+            targetName="paperwork.exe",
+            base=("Console" if os.name != "nt" else "Win32GUI"),
+        ),
+    ],
     options={
         "build_exe": {
             'include_files': common_include_files,
