@@ -23,7 +23,7 @@ shortcut will be installed in the menus of your window manager. Paperwork
 won't be available directly on your PATH.
 
 Libinsane is scan library required by Paperwork. You need it in your
-development environment. There are other dependencies that may required/
+development environment. There are other dependencies that may be required.
 
 To make things simpler, Paperwork repository includes a script
 (`activate_test_env.sh`) to create a Python virtualenv including Libinsane
