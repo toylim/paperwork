@@ -137,20 +137,21 @@ class JobInfoGetter(Job):
         )
         logger.info("{} scanners found".format(len(devices)))
 
-        for device in devices:
-            logger.info("=== %s ===", device.get_dev_id())
+        for device_desc in devices:
+            logger.info("=== %s ===", device_desc.get_dev_id())
             try:
-                device = self.libinsane.get_device(device.get_dev_id())
+                device = self.libinsane.get_device(device_desc.get_dev_id())
             except Exception as exc:
                 logger.error(
-                    "Failed to open device %s", device.get_dev_id(),
+                    "Failed to open device %s", device_desc.get_dev_id(),
                     exc_info=exc
                 )
                 continue
 
             for source in device.get_children():
                 logger.info(
-                    "=== %s/%s ===", device.get_dev_id(), source.get_name()
+                    "=== %s/%s ===", device_desc.get_dev_id(),
+                    source.get_name()
                 )
 
                 for opt in source.get_options():

@@ -64,13 +64,13 @@ If you're upgrading from a previous version installed with pip, it is strongly r
 it first before installing the new version.
 
 * GNU/Linux:
-  * [Using Flatpak](flatpak/README.markdown)
   * Distribution-specific methods:
     * [GNU/Linux Archlinux](doc/install.archlinux.markdown)
     * [GNU/Linux Debian](doc/install.debian.markdown)
     * [GNU/Linux Fedora](doc/install.fedora.markdown)
     * [GNU/Linux Gentoo](doc/install.gentoo.markdown)
     * [GNU/Linux Ubuntu](doc/install.debian.markdown)
+  * [Using Flatpak](flatpak/README.markdown)
   * [GNU/Linux Development](doc/install.devel.markdown)
 * Microsoft Windows:
   * [Installation](https://openpaper.work)
