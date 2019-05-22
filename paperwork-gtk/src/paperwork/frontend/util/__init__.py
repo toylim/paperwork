@@ -107,7 +107,17 @@ def _get_resource_path(filename, pkg="paperwork.frontend"):
         if os.path.exists(path):
             return path
 
-    if getattr(sys, 'frozen', False):
+    if getattr(sys, 'frozen', False):  # cx_freeze
+        path = os.path.join(
+            os.path.dirname(sys.executable),
+            "lib",
+            pkg.replace(".", os.path.sep),
+            filename
+        )
+        if os.path.exists(path):
+            return path
+
+    if hasattr(sys, '_MEIPASS'):  # pyinstaller
         path = os.path.join(sys._MEIPASS, "data", filename)
         if os.path.exists(path):
             return path

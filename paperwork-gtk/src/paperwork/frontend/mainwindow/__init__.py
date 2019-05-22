@@ -3397,7 +3397,7 @@ class MainWindow(object):
                 all_revealers[revealer] = (parent, position, must_be_visible)
 
         for (revealer, (parent, position, must_be_visible)) \
-                    in all_revealers.items():
+                in all_revealers.items():
             if parent is not None:
                 is_visible = revealer in parent.get_children()
                 if must_be_visible and not is_visible:

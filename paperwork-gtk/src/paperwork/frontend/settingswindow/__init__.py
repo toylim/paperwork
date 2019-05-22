@@ -19,7 +19,6 @@ Settings window.
 
 import platform
 import os
-import sys
 import time
 
 from gi.repository import Gdk
@@ -86,7 +85,6 @@ class JobDeviceFinder(Job):
         self._wait(2.0)
         try:
             logger.info("Looking for scan devices ...")
-            sys.stdout.flush()
             devices = self.libinsane.list_devices(
                 Libinsane.DeviceLocations.ANY
             )
@@ -96,7 +94,6 @@ class JobDeviceFinder(Job):
                 logger.info("Device found: [%s] -> [%s]" % (
                     name, device.get_dev_id())
                 )
-                sys.stdout.flush()
                 self.emit('device-found', name, device.get_dev_id(), selected)
             logger.info("End of scan for device")
         finally:
