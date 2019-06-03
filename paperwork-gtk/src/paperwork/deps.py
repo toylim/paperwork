@@ -90,6 +90,8 @@ DATA_FILES = [
         "Gnome symbolic icons"
         " (/usr/share/icons/gnome/(...)/go-previous-symbolic.svg",
         [
+            "/usr/share/icons/Adwaita/scalable/actions/"
+            "go-previous-symbolic.svg",
             "/usr/share/icons/gnome/scalable/actions/go-previous-symbolic.svg",
             "/usr/local/share/icons/gnome/scalable/"
             "actions/go-previous-symbolic.svg",
