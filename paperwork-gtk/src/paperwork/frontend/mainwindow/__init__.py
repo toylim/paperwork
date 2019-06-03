@@ -3908,8 +3908,8 @@ class MainWindow(object):
         job = self.job_factories['doc_thumbnailer'].make(docs)
         self.schedulers['main'].schedule(job)
 
-    def __on_window_resized_cb(self, _, rectangle):
-        (w, h) = (rectangle.width, rectangle.height)
+    def __on_window_resized_cb(self, w, rectangle):
+        (w, h) = w.get_size()
         self.__config['main_win_size'].value = (w, h)
 
     def __on_window_realize_cb(self, _):
