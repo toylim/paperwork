@@ -255,10 +255,21 @@ class ImgGripHandler(GObject.GObject, Drawer):
 
         self.selected = None  # the grip being moved
 
+        cursor_hand1 = None
+        try:
+            cursor_hand1 = Gdk.Cursor.new(Gdk.CursorType.HAND1)
+        except Exception as exc:
+            logger.warning("Failed to load mouse cursor HAND1", exc_info=exc)
+        cursor_tcross = None
+        try:
+            cursor_tcross = Gdk.Cursor.new(Gdk.CursorType.TCROSS)
+        except Exception and exc:
+            logger.warning("Failed to load mouse cursor TCROSS", exc_info=exc)
+
         self.__cursors = {
-            'default': Gdk.Cursor.new(Gdk.CursorType.HAND1),
-            'visible': Gdk.Cursor.new(Gdk.CursorType.HAND1),
-            'on_grip': Gdk.Cursor.new(Gdk.CursorType.TCROSS)
+            'default': cursor_hand1,
+            'visible': cursor_hand1,
+            'on_grip': cursor_tcross,
         }
 
         if zoom_widget:
@@ -435,7 +446,8 @@ class ImgGripHandler(GObject.GObject, Drawer):
             cursor = self.__cursors['on_grip']
         else:
             cursor = self.__cursors['visible']
-        self.canvas.get_window().set_cursor(cursor)
+        if cursor is not None:
+            self.canvas.get_window().set_cursor(cursor)
 
     def __on_mouse_button_released_cb(self, widget, event):
         event_x = event.x - self.img_drawer.position[0]
