@@ -34,7 +34,7 @@ msgstr "Von:"
 
 #: src/paperwork/frontend/searchdialog/__init__.py:133
 msgid "to:"
-msgstr "An:"
+msgstr "Bis:"
 
 #: src/paperwork/frontend/searchdialog/__init__.py:239
 #: src/paperwork/frontend/mainwindow/mainwindow.glade.h:38
