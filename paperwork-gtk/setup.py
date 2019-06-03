@@ -53,10 +53,9 @@ ICON_SIZES = [
 ]
 
 DOC_PATHS = [
-    "doc/hacking.pdf",
-    "doc/intro_fr.pdf",
     "doc/intro.pdf",
-    "doc/translating.pdf",
+    "doc/intro_de.pdf",
+    "doc/intro_fr.pdf",
     "doc/usage.pdf",
 ]
 
