@@ -263,7 +263,7 @@ class ImgGripHandler(GObject.GObject, Drawer):
         cursor_tcross = None
         try:
             cursor_tcross = Gdk.Cursor.new(Gdk.CursorType.TCROSS)
-        except Exception and exc:
+        except Exception as exc:
             logger.warning("Failed to load mouse cursor TCROSS", exc_info=exc)
 
         self.__cursors = {
