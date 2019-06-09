@@ -209,8 +209,13 @@ class JobOCR(Job):
         if len(self.angles) == 1:
             orientation = {'angle': self.angles[0]}
         else:
-            orientation = self.ocr_tool.detect_orientation(
-                img, lang=self.langs['ocr'])
+            try:
+                orientation = self.ocr_tool.detect_orientation(
+                    img, lang=self.langs['ocr'])
+            except Exception as exc:
+                logger.error("OCR orientation detection failed", exc_info=exc)
+                # defaulting to default orientation
+                orientation = {'angle': self.angles[0]}
 
         if orientation['angle'] not in self.angles:
             raise Exception("OCR tool returned an unexpected orientation: %d"
