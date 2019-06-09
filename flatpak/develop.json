@@ -221,7 +221,7 @@
                 },
                 {
                     "type": "file",
-                    "path": "pip-Makefile",
+                    "path": "pypillowfight-Makefile",
                     "dest-filename": "Makefile"
                 }
             ]
