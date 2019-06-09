@@ -2,6 +2,7 @@ import logging
 import multiprocessing
 import os
 import platform
+import pyocr
 import sys
 
 import gettext
@@ -30,6 +31,7 @@ class JobInfoGetter(Job):
     STEP_SYSINFO = "a"
     STEP_PAPERWORK = "b"
     STEP_SCANNER = "c"
+    STEP_PYOCR = "d"
 
     can_stop = True
     priority = 1000
@@ -42,6 +44,7 @@ class JobInfoGetter(Job):
         JobInfoGetter.STEP_SYSINFO = _("system's information")
         JobInfoGetter.STEP_PAPERWORK = _("document statistics")
         JobInfoGetter.STEP_SCANNER = _("scanner's information")
+        JobInfoGetter.STEP_PYOCR = _("Pyocr's information")
 
     def _get_sysinfo(self):
         self.emit('scan-progression', self.STEP_SYSINFO, 0.0)
@@ -180,6 +183,20 @@ class JobInfoGetter(Job):
 
         logger.info("====== END OF SCANNER INFORMATIONS ======")
 
+    def _get_pyocr_info(self):
+        self.emit('scan-progression', self.STEP_PYOCR, 0.0)
+        logger.info("====== START OF PYOCR INFO ======")
+        logger.info("Pyocr version: %s", str(pyocr.VERSION))
+        for tool in pyocr.get_available_tools():
+            logger.info("Tool: %s", str(tool.get_name()))
+            logger.info("  Version: %s", str(tool.get_version()))
+            logger.info(
+                "  Can detect orientation: %s",
+                str(tool.can_detect_orientation())
+            )
+        logger.info("====== END OF PYOCR INFORMATIONS ======")
+        self.emit('scan-progression', self.STEP_PYOCR, 1.0)
+
     def do(self):
         # Simply log everything
         self.can_run = True
@@ -191,6 +208,7 @@ class JobInfoGetter(Job):
             if not self.can_run:
                 return
             self._get_scanner_info()
+            self._get_pyocr_info()
         except Exception as exc:
             logger.exception(exc)
         finally:
