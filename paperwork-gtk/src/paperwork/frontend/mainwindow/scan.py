@@ -15,9 +15,6 @@
 #    along with Paperwork.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-import os
-import re
-import threading
 import time
 
 from gi.repository import GLib
@@ -41,7 +38,6 @@ from paperwork.frontend.util.img import raw2pillow
 from paperwork.frontend.util.img import raw2pixbuf
 from paperwork.frontend.util.jobs import Job
 from paperwork.frontend.util.jobs import JobFactory
-from paperwork_backend.util import check_spelling
 
 
 logger = logging.getLogger(__name__)
@@ -176,79 +172,6 @@ class JobFactoryScan(JobFactory):
         return job
 
 
-class _ImgOCRThread(threading.Thread):
-    # we don't use jobs here, because we would need 1 scheduler for each job
-    # --> too painful and useless
-
-    def __init__(self, name, ocr_tool, langs, angle, img):
-        threading.Thread.__init__(self, name="OCR")
-        self.name = name
-        self.ocr_tool = ocr_tool
-        self.langs = langs
-        self.angle = angle
-        self.img = img
-        self.score = -1
-        self.boxes = None
-
-    def __compute_ocr_score_with_spell_checking(self, txt):
-        return check_spelling(self.langs['spelling'], txt)
-
-    @staticmethod
-    def __boxes_to_txt(boxes):
-        txt = u""
-        for line in boxes:
-            txt += line.content + u"\n"
-        return txt
-
-    @staticmethod
-    def __compute_ocr_score_without_spell_checking(txt):
-        """
-        Try to evaluate how well the OCR worked.
-        Current implementation:
-            The score is the number of words only made of 4 or more letters
-            ([a-zA-Z])
-        """
-        # TODO(Jflesch): i18n / l10n
-        score = 0
-        prog = re.compile(r'^[a-zA-Z]{4,}$')
-        for word in txt.split(" "):
-            if prog.match(word):
-                score += 1
-        return (txt, score)
-
-    def run(self):
-        score_methods = [
-            ("spell_checker", self.__compute_ocr_score_with_spell_checking),
-            ("lucky_guess", self.__compute_ocr_score_without_spell_checking),
-            ("no_score", lambda txt: (txt, 0))
-        ]
-
-        logger.info("Running OCR on page orientation %s" % self.name)
-        self.boxes = self.ocr_tool.image_to_string(
-            self.img, lang=self.langs['ocr'],
-            builder=pyocr.builders.LineBoxBuilder())
-
-        txt = self.__boxes_to_txt(self.boxes)
-
-        for score_method in score_methods:
-            try:
-                logger.info("Evaluating score of page orientation (%s)"
-                            " using method '%s' ..."
-                            % (self.name, score_method[0]))
-                (_, self.score) = score_method[1](txt)
-                # TODO(Jflesch): For now, we throw away the fixed version of
-                # the text:
-                # The original version may contain proper nouns, and spell
-                # checking could make them disappear
-                # However, it would be best if we could keep both versions
-                # without increasing too much indexation time
-                return
-            except Exception as exc:
-                logger.error("Scoring method '%s' on orientation %s failed !"
-                             % (score_method[0], self.name))
-                logger.error("Reason: %s" % exc)
-
-
 class JobOCR(Job):
     __gsignals__ = {
         'ocr-started': (GObject.SignalFlags.RUN_LAST, None,
@@ -315,61 +238,16 @@ class JobOCR(Job):
 
         return (orientation['angle'], img, boxes)
 
-    def do_ocr_with_custom_heuristic(self, img):
-        imgs = {angle: img.rotate(angle, expand=True) for angle in self.angles}
-        self.emit('ocr-angles', list(imgs.keys()))
-
-        if len(imgs) <= 0:
-            self.emit('ocr-score', 0, 0)
-            return (0, img, [])
-
-        max_threads = os.cpu_count()
-        threads = []
-        scores = []
-
-        if len(imgs) > 1:
-            logger.debug("Will use %d process(es) for OCR" % (max_threads))
-
-        # Run the OCR tools in as many threads as there are processors/core
-        # on the computer
-        nb = 0
-        while (len(imgs) > 0 or len(threads) > 0):
-            # look for finished threads
-            for thread in threads:
-                if not thread.is_alive():
-                    threads.remove(thread)
-                    logger.info("OCR done on angle %d: %f"
-                                % (thread.angle, thread.score))
-                    scores.append((thread.score, thread.angle,
-                                   thread.img, thread.boxes))
-                    self.emit('ocr-score', thread.angle, thread.score)
-            # start new threads if required
-            while (len(threads) < max_threads and len(imgs) > 0):
-                (angle, img) = imgs.popitem()
-                logger.info("Starting OCR on angle %d" % angle)
-                thread = _ImgOCRThread(str(nb), self.ocr_tool,
-                                       self.langs, angle, img)
-                thread.start()
-                threads.append(thread)
-                nb += 1
-            time.sleep(self.OCR_THREADS_POLLING_TIME)
-
-        # We want the higher score first
-        scores.sort(key=lambda x: x[0])
-
-        logger.info("Best: %f" % (scores[0][0]))
-        return scores[0][1:]
-
     def do(self):
         self.emit('ocr-started', self.img)
 
         try:
             best = self.do_ocr_with_tool_heuristic(self.img)
         except Exception as exc:
-            logger.info("Failed to use OCR tool heuristic for orientation"
-                        " detection: %s" % str(exc))
-            logger.info("Falling back on Paperwork's heuristic")
-            best = self.do_ocr_with_custom_heuristic(self.img)
+            logger.error(
+                "Failed to use OCR tool heuristic for orientation"
+                " detection", exc_info=exc
+            )
 
         self.emit('ocr-done', best[0], best[1], best[2])
 
