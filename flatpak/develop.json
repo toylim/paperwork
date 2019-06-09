@@ -60,7 +60,7 @@
         {
             "name": "python-setuptools-scm-git-archive",
             "no-autogen": true,
-            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
+            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
             "sources": [
                 {
                     "type": "archive",
