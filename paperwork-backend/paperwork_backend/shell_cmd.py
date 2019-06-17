@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
 import argparse
+import distro
 import json
 import logging
 import os
-import platform
 import sys
 
 import termcolor
@@ -59,7 +59,7 @@ def error(msg):
 
 
 def get_distribution():
-    distribution = platform.dist()
+    distribution = distro.linux_distribution(full_distribution_name=False)
     verbose("Detected system: {}".format(" ".join(distribution)))
     distribution = distribution[0].lower()
     if distribution not in PACKAGE_TOOLS:

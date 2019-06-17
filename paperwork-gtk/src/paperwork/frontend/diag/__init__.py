@@ -1,3 +1,4 @@
+import distro
 import logging
 import multiprocessing
 import os
@@ -65,10 +66,9 @@ class JobInfoGetter(Job):
                 platform.processor())
             )
             logger.info("platform.version: {}".format(platform.version()))
-            if hasattr(platform, 'linux_distribution'):
-                logger.info("platform.linux_distribution: {}".format(
-                    platform.linux_distribution()
-                ))
+            logger.info("distro.linux_distribution: {}".format(
+                distro.linux_distribution(full_distribution_name=False)
+            ))
             if hasattr(platform, 'win32_ver'):
                 logger.info("platform.win32_ver: {}".format(
                     platform.win32_ver()

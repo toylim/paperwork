@@ -149,6 +149,7 @@ Main features are:
     },
     zip_safe=True,
     install_requires=[
+        "distro",
         "python-dateutil",
         "python-Levenshtein",
         "Pillow",
