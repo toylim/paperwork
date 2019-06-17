@@ -517,12 +517,28 @@ class JobFactoryCalibrationScan(JobFactory):
 class ActionSelectScanner(SimpleAction):
     enabled = True
 
-    def __init__(self, settings_win):
+    def __init__(self, settings_win, flatpak):
         super(ActionSelectScanner, self).__init__("New scanner selected")
         self.__settings_win = settings_win
+        self.flatpak = flatpak
 
     def do(self):
+        GLib.idle_add(self._do)
+
+    def _do(self):
         devid_settings = self.__settings_win.device_settings['devid']
+        if len(devid_settings['stores']['loaded']) <= 0 and self.flatpak:
+            widget_tree = load_uifile(
+                os.path.join("settingswindow", "saned.glade")
+            )
+            dialog = widget_tree.get_object("sanedDialog")
+            dialog.set_transient_for(self.__settings_win.window)
+            dialog.set_modal(True)
+            widget_tree.get_object("buttonOk").connect(
+                "clicked", lambda button: dialog.destroy()
+            )
+            dialog.set_visible(True)
+
         idx = devid_settings['gui'].get_active()
         if idx < 0:
             # happens when the scanner list has been updated
@@ -693,7 +709,10 @@ class SettingsWindow(GObject.GObject):
         'config-changed': (GObject.SignalFlags.RUN_LAST, None, ()),
     }
 
-    def __init__(self, main_scheduler, mainwindow_gui, config, libinsane):
+    def __init__(
+                self, main_scheduler, mainwindow_gui, config, libinsane,
+                flatpak
+            ):
         super(SettingsWindow, self).__init__()
 
         self.schedulers = {
@@ -752,7 +771,7 @@ class SettingsWindow(GObject.GObject):
             ),
             "select_scanner": (
                 [widget_tree.get_object("comboboxDevices")],
-                ActionSelectScanner(self)
+                ActionSelectScanner(self, flatpak)
             ),
             "select_source": (
                 [widget_tree.get_object("comboboxScanSources")],
