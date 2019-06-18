@@ -1372,9 +1372,12 @@ class ActionOpenSettings(SimpleAction):
 
     def do(self):
         SimpleAction.do(self)
-        self.dialog = SettingsWindow(self.__main_win.schedulers['main'],
-                                     self.__main_win.window, self.__config,
-                                     self.__libinsane)
+        self.dialog = SettingsWindow(
+            self.__main_win.schedulers['main'],
+            self.__main_win.window, self.__config,
+            self.__libinsane,
+            self.__main_win.flatpak
+        )
         self.dialog.connect("need-reindex", self.__reindex_cb)
         self.dialog.connect("config-changed", self.__on_config_changed_cb)
 
