@@ -1,4 +1,5 @@
 import datetime
+import distro
 import http
 import http.client
 import json
@@ -87,9 +88,12 @@ class Beacon(object):
         self.config.write()
 
     def get_statistics(self, version, docsearch):
-        distribution = platform.linux_distribution()
-        if distribution[0] == '':
+        if os.name == 'nt':
             distribution = platform.win32_ver()
+        else:
+            distribution = distro.linux_distribution(
+                full_distribution_name=False
+            )
         processor = ""
         os_name = os.name
         if os_name != 'nt':  # contains too much infos on Windows

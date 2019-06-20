@@ -17,7 +17,6 @@
 Settings window.
 """
 
-import platform
 import os
 import time
 
@@ -727,16 +726,6 @@ class SettingsWindow(GObject.GObject):
             os.path.join("settingswindow", "settingswindow.glade"))
         # self.widget_tree is for tests/screenshots ONLY
         self.widget_tree = widget_tree
-
-        distrib = platform.dist()
-        if distrib:
-            distrib = distrib[0].lower()
-            logger.info("Distribution: [%s]" % distrib)
-            for widget in widget_tree.get_objects():
-                if type(widget) == Gtk.LinkButton:
-                    uri = widget.get_uri()
-                    uri += "#" + distrib
-                    widget.set_uri(uri)
 
         self.window = widget_tree.get_object("windowSettings")
         self.window.set_transient_for(mainwindow_gui)
