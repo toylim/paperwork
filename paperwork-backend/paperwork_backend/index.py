@@ -782,7 +782,7 @@ class MethodProxy(object):
 class PaperworkIndexClient(object):
     def __init__(self):
         self.server = PaperworkIndex()
-        self.pipe = server.pipe_client
+        self.pipe = self.server.pipe_client
         self.lock = threading.Lock()
 
     def remote_call(self, func_name, *args, **kwargs):
