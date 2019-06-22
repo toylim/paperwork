@@ -83,7 +83,8 @@ class PaperworkIndex(object):
         (self.pipe_client, self.pipe_server) = multiprocessing.Pipe()
         self.process = multiprocessing.Process(target=self.run)
         self.process.daemon = True
-        self.process.start()
+        # XXX(Jflesch): Disabled for now. Prevents debugging.
+        # self.process.start()
 
     def run(self):
         while self.running:
@@ -780,18 +781,20 @@ class MethodProxy(object):
 
 class PaperworkIndexClient(object):
     def __init__(self):
-        server = PaperworkIndex()
+        self.server = PaperworkIndex()
         self.pipe = server.pipe_client
         self.lock = threading.Lock()
 
     def remote_call(self, func_name, *args, **kwargs):
         with self.lock:
-            cmd = COMMAND(func=func_name, args=args, kwargs=kwargs)
-            self.pipe.send(cmd)
-            ret = self.pipe.recv()
-            if ret.exc:
-                raise ret.exc
-            return ret.ret
+            m = getattr(self.server, func_name)
+            return m(*args, **kwargs)
+            # cmd = COMMAND(func=func_name, args=args, kwargs=kwargs)
+            # self.pipe.send(cmd)
+            # ret = self.pipe.recv()
+            # if ret.exc:
+            #     raise ret.exc
+            # return ret.ret
 
     def __getattr__(self, name):
         return MethodProxy(self, name)
