@@ -147,7 +147,9 @@ Main features are:
             'paperwork = paperwork.paperwork:main',
         ]
     },
-    zip_safe=True,
+    # zip_safe: pkg_resources.resource_filename() is currently broken in MSYS2
+    # + setuptools 41.0.1-1
+    zip_safe=(os.name != 'nt'),
     install_requires=[
         "distro",
         "python-dateutil",
