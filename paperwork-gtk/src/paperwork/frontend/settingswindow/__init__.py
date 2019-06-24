@@ -256,8 +256,9 @@ class JobResolutionFinder(Job):
     def do(self):
         self.emit("resolution-finding-start")
         try:
-            logger.info("Looking for resolution of device [%s]"
-                        % (self.__devid))
+            logger.info(
+                "Looking for resolution of device [%s]", self.__devid
+            )
             device = self.libinsane.get_device(self.__devid)
 
             sources = device.get_children()
@@ -525,6 +526,8 @@ class ActionSelectScanner(SimpleAction):
         GLib.idle_add(self._do)
 
     def _do(self):
+        self.__settings_win.update_active_settings()
+
         devid_settings = self.__settings_win.device_settings['devid']
         if len(devid_settings['stores']['loaded']) <= 0 and self.flatpak:
             widget_tree = load_uifile(
@@ -538,8 +541,8 @@ class ActionSelectScanner(SimpleAction):
             )
             dialog.set_visible(True)
 
-        idx = devid_settings['gui'].get_active()
-        if idx < 0:
+        dev_id = devid_settings['active_id']
+        if dev_id == "":
             # happens when the scanner list has been updated
             # but no scanner has been found
             for setting in ['resolution', 'source']:
@@ -549,12 +552,10 @@ class ActionSelectScanner(SimpleAction):
                 settings['gui'].set_sensitive(False)
             self.__settings_win.calibration["scan_button"].set_sensitive(False)
             return
-        logger.info("Selected scanner: %d" % idx)
-
-        devid = devid_settings['stores']['loaded'][idx][1]
+        logger.info("Selected scanner: %s", dev_id)
 
         # no point in trying to stop the previous jobs, they are unstoppable
-        job = self.__settings_win.job_factories['source_finder'].make(devid)
+        job = self.__settings_win.job_factories['source_finder'].make(dev_id)
         self.__settings_win.schedulers['main'].schedule(job)
 
 
@@ -566,11 +567,16 @@ class ActionSelectSource(SimpleAction):
         self.__settings_win = settings_win
 
     def do(self):
-        source_settings = self.__settings_win.device_settings['source']
-        idx = source_settings['gui'].get_active()
-        self.__settings_win.calibration["scan_button"].set_sensitive(True)
-        logger.info("Selected source: %d" % idx)
-        if idx < 0:
+        self.__settings_win.update_active_settings()
+
+        dev_id = self.__settings_win.device_settings['devid']['active_id']
+        logger.info("Selected device: %s", dev_id)
+        if dev_id == "":
+            logger.warning("No device selected")
+            return
+        src_id = self.__settings_win.device_settings['source']['active_id']
+        logger.info("Selected source: %s", src_id)
+        if src_id == "":
             # happens when the scanner list has been updated
             # but no source has been found
             settings = self.__settings_win.device_settings['resolution']
@@ -578,16 +584,9 @@ class ActionSelectSource(SimpleAction):
             settings['gui'].set_model(settings['stores']['loaded'])
             settings['gui'].set_sensitive(False)
             return
-        dev_id = self.__settings_win.device_settings['devid']['active_id']
-        if dev_id == "":
-            logger.warning("No device selected")
-            return
-        source_id = self.__settings_win.device_settings['source']['active_id']
-        if source_id == "":
-            logger.warning("No source selected")
-            return
+        self.__settings_win.calibration["scan_button"].set_sensitive(True)
         job = self.__settings_win.job_factories['resolution_finder'].make(
-            dev_id, source_id
+            dev_id, src_id
         )
         self.__settings_win.schedulers['main'].schedule(job)
 
@@ -613,6 +612,8 @@ class ActionApplySettings(SimpleAction):
         self.__config = config
 
     def do(self):
+        self.__settings_win.update_active_settings()
+
         need_reindex = False
         workdir = self.__settings_win.workdir_chooser.get_uri()
         if workdir != self.__config['workdir'].value:
@@ -621,25 +622,21 @@ class ActionApplySettings(SimpleAction):
 
         try:
             setting = self.__settings_win.device_settings['devid']
-            idx = setting['gui'].get_active()
-            if idx >= 0:
-                devid = setting['stores']['loaded'][idx][1]
-                self.__config['scanner_devid'].value = devid
+            if setting['active_id'] != "":
+                self.__config['scanner_devid'].value = setting['active_id']
 
             setting = self.__settings_win.device_settings['source']
-            idx = setting['gui'].get_active()
-            if idx >= 0:
-                source = setting['stores']['loaded'][idx][1]
-                self.__config['scanner_source'].value = source
+            if setting['active_id'] != "":
+                self.__config['scanner_source'].value = setting['active_id']
 
             has_feeder = self.__settings_win.device_settings['has_feeder']
             self.__config['scanner_has_feeder'].value = has_feeder
 
             setting = self.__settings_win.device_settings['resolution']
-            idx = setting['gui'].get_active()
-            if idx >= 0:
-                resolution = setting['stores']['loaded'][idx][1]
-                self.__config['scanner_resolution'].value = resolution
+            if setting['active_id'] != "":
+                self.__config['scanner_resolution'].value = (
+                    setting['active_id']
+                )
         except Exception as exc:
             logger.warning("Failed to update scanner settings: %s" % str(exc))
 
@@ -681,21 +678,13 @@ class ActionScanCalibration(SimpleAction):
         super(ActionScanCalibration, self).__init__("Scan calibration sheet")
 
     def do(self):
-        win = self.settings_win
-        setting = win.device_settings['devid']
-        idx = setting['gui'].get_active()
-        assert(idx >= 0)
-        devid = setting['stores']['loaded'][idx][1]
+        self.settings_win.update_active_settings()
 
-        setting = win.device_settings['source']
-        idx = setting['gui'].get_active()
-        if idx >= 0:
-            source = setting['stores']['loaded'][idx][1]
-        else:
-            source = None
+        devid = self.settings_win.device_settings['devid']['active_id']
+        source = self.settings_win.device_settings['source']['active_id']
 
-        job = win.job_factories['scan'].make(devid, source)
-        win.schedulers['main'].schedule(job)
+        job = self.settings_win.job_factories['scan'].make(devid, source)
+        self.settings_win.schedulers['main'].schedule(job)
 
 
 class SettingsWindow(GObject.GObject):
@@ -781,6 +770,7 @@ class SettingsWindow(GObject.GObject):
                 'nb_elements': 0,
                 'active_idx': -1,
                 'active_id': "",
+                'children': ['devid', 'source'],
             },
             "has_feeder": False,
             "source": {
@@ -791,6 +781,7 @@ class SettingsWindow(GObject.GObject):
                 'nb_elements': 0,
                 'active_idx': -1,
                 'active_id': "",
+                'children': ['resolution'],
             },
             "resolution": {
                 'gui': widget_tree.get_object("comboboxResolution"),
@@ -800,6 +791,7 @@ class SettingsWindow(GObject.GObject):
                 'nb_elements': 0,
                 'active_idx': -1,
                 'active_id': "",
+                'children': [],
             },
         }
 
@@ -924,11 +916,31 @@ class SettingsWindow(GObject.GObject):
         except KeyError:
             return None
 
+    def update_active_settings(self):
+        for s in self.device_settings.values():
+            if not isinstance(s, dict):
+                continue
+            idx = s['gui'].get_active()
+            try:
+                s['active_idx'] = idx
+                if idx < 0:
+                    raise ValueError()
+                else:
+                    s['active_id'] = s['stores']['loaded'][idx][1]
+            except (ValueError, IndexError):
+                s['active_idx'] = -1
+                s['active_id'] = ""
+
     def on_finding_start_cb(self, settings):
         settings['gui'].set_sensitive(False)
-        settings['stores']['loaded'].clear()
-        settings['nb_elements'] = 0
-        settings['active_idx'] = -1
+        for s in (
+                    [settings]
+                    + [self.device_settings[x] for x in settings['children']]
+                ):
+            s['nb_elements'] = 0
+            s['active_idx'] = -1
+            s['active_id'] = ""
+            s['stores']['loaded'].clear()
 
     def on_device_finding_start_cb(self):
         self.calibration["scan_button"].set_sensitive(False)
