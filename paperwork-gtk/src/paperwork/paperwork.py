@@ -48,7 +48,7 @@ if getattr(sys, 'frozen', False):
     multiprocessing.freeze_support()
 
 
-import gi
+import gi  # noqa E402
 gi.require_version('Gdk', '3.0')
 gi.require_version('Gtk', '3.0')
 gi.require_version('Libinsane', '1.0')
