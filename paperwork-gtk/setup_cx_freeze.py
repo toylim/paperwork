@@ -105,7 +105,7 @@ required_dlls = [
     'libpangocairo-1.0-0.dll',
     'libpangoft2-1.0-0.dll',
     'libpangowin32-1.0-0.dll',
-    'libpoppler-86.dll',
+    'libpoppler-87.dll',
     'libpoppler-glib-8.dll',
     'librsvg-2-2.dll',
     'libxml2-2.dll',

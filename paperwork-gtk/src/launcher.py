@@ -22,26 +22,12 @@ import multiprocessing
 import sys
 
 
-def set_meipass():
-    # If sys.frozen, then Pyocr needs MEIPASS to be set
-    # *before* importing it
-    if getattr(sys, '_MEIPASS', False):
-        # Pyinstaller case
-        return
-    # Cx_Freeze case
-    sys._MEIPASS = os.path.dirname(os.path.realpath(sys.executable))
-
-
 if __name__ == "__main__":
-    if getattr(sys, 'frozen', False):
-        set_meipass()
-        multiprocessing.freeze_support()
-    else:
-        sys.path += ['src']
-        data_base_path = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)), ".."
-        )
-        os.chdir(data_base_path)
+    sys.frozen = True
+    data_base_path = os.path.join(
+        os.path.dirname(os.path.realpath(__file__)), ".."
+    )
+    os.chdir(data_base_path)
 
     from paperwork.paperwork import main
     main()

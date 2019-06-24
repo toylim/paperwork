@@ -22,9 +22,31 @@ import argparse
 import gettext
 import locale
 import logging
+import multiprocessing
 import os
 import signal
 import sys
+
+
+def set_meipass():
+    # If sys.frozen, then Pyocr needs MEIPASS to be set
+    # *before* importing it
+    if getattr(sys, '_MEIPASS', False):
+        # Pyinstaller case
+        return
+    # Cx_Freeze case
+    if "python" not in sys.executable:
+        sys._MEIPASS = os.path.dirname(os.path.realpath(sys.executable))
+    else:
+        sys._MEIPASS = os.path.realpath(os.path.join(
+            os.path.dirname(os.path.realpath(__file__)), "..", ".."
+        ))
+
+
+if getattr(sys, 'frozen', False):
+    set_meipass()
+    multiprocessing.freeze_support()
+
 
 import gi
 gi.require_version('Gdk', '3.0')
@@ -57,7 +79,7 @@ LOCALE_PATHS = get_locale_dirs()
 
 def set_locale_windows(locales_dir):
     if not getattr(sys, 'frozen', False):
-        logger.warning("Gtk locales only supported with Pyinstaller")
+        logger.warning("Gtk locales only supported with Pyinstaller/Cx_freeze")
         return
     import ctypes
     libintl_path = os.path.abspath(os.path.join(sys._MEIPASS, "libintl-8.dll"))
@@ -106,7 +128,6 @@ def set_locale():
             set_locale_windows(locales_path)
         except Exception as exc:
             logger.exception("Failed to set windows locale: {}".format(exc))
-            raise
 
     logger.info("Using locales in '%s'" % locales_path)
     for module in (gettext, locale):
