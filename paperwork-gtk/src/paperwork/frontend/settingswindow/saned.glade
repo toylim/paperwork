@@ -3,7 +3,7 @@
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkTextBuffer" id="textbuffer1">
-    <property name="text" translatable="yes">sudo apt install sane-utils
+    <property name="text" translatable="no">sudo apt install sane-utils
 sudo sh -c "echo 127.0.0.1 &gt;&gt; /etc/sane.d/saned.conf"
 sudo systemctl enable saned.socket
 sudo systemctl start saned.socket</property>
