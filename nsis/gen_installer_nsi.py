@@ -11,8 +11,7 @@ from paperwork_backend.util import find_language
 
 
 DEFAULT_DOWNLOAD_URI = (
-    "https://download.openpaper.work/windows/amd64/"
-    "paperwork-master-${PRODUCT_VERSION}.zip"
+    "https://download.openpaper.work/windows/x86/paperwork-master-latest.zip"
 )
 
 ALL_LANGUAGES = [
@@ -120,7 +119,7 @@ ALL_LANGUAGES = [
 UNKNOWN_LANGUAGE = {
     'download_section': """
         Section /o "{long}" SEC_{upper}
-            inetc::get "https://download.openpaper.work/tesseract/3.05.00/tessdata/{lower}.traineddata" "$INSTDIR\\Data\\Tessdata\\{lower}.traineddata" /END
+            inetc::get "https://download.openpaper.work/tesseract/4.0.0/tessdata/{lower}.traineddata" "$INSTDIR\\Data\\Tessdata\\{lower}.traineddata" /END
             Pop $0
             StrCmp $0 "OK" +3
                 MessageBox MB_OK "Download of {lower}.traineddata failed: $0"
@@ -138,7 +137,7 @@ KNOWN_LANGUAGES = {
     'deu': {
         "download_section": """
         Section /o "German / Deutsch" SEC_DEU
-          inetc::get "https://download.openpaper.work/tesseract/3.05.00/tessdata/{lower}.traineddata" "$INSTDIR\\Data\\Tessdata\\{lower}.traineddata" /END
+          inetc::get "https://download.openpaper.work/tesseract/4.0.0/tessdata/{lower}.traineddata" "$INSTDIR\\Data\\Tessdata\\{lower}.traineddata" /END
           Pop $0
           StrCmp $0 "OK" +3
         MessageBox MB_OK "Download of {lower}.traineddata failed: $0"
@@ -156,7 +155,7 @@ LangString DESC_SEC_DEU ${{LANG_GERMAN}} "Data files required to run OCR on Germ
         Section "English / English" SEC_ENG
             SectionIn RO ; Mandatory section
 
-            inetc::get "https://download.openpaper.work/tesseract/3.05.00/tessdata_eng_3_05_00dev.zip" "$PLUGINSDIR\\tess_eng.zip" /END
+            inetc::get "https://download.openpaper.work/tesseract/4.0.0/tessdata_eng_4_0_0.zip" "$PLUGINSDIR\\tess_eng.zip" /END
             Pop $0
             StrCmp $0 "OK" +3
                 MessageBox MB_OK "Download of {lower}.traineddata failed: $0"
@@ -173,7 +172,7 @@ LangString DESC_SEC_ENG ${{LANG_GERMAN}} "Data files required to run OCR on Engl
     'fra': {
         "download_section": """
         Section /o "French / Français" SEC_FRA
-            inetc::get "https://download.openpaper.work/tesseract/3.05.00/tessdata/{lower}.traineddata" "$INSTDIR\\Data\\Tessdata\\{lower}.traineddata" /END
+            inetc::get "https://download.openpaper.work/tesseract/4.0.0/tessdata/{lower}.traineddata" "$INSTDIR\\Data\\Tessdata\\{lower}.traineddata" /END
             Pop $0
             StrCmp $0 "OK" +3
                 MessageBox MB_OK "Download of {lower}.traineddata failed: $0"
@@ -263,13 +262,13 @@ Section "Paperwork" SEC_PAPERWORK
     MessageBox MB_OK "Download of ${PRODUCT_DOWNLOAD_URI} failed: $0"
     Quit
 
-  inetc::get "https://download.openpaper.work/tesseract/3.05.00/tesseract_3_05_00dev.zip" "$PLUGINSDIR\\tesseract.zip" /END
+  inetc::get "https://download.openpaper.work/tesseract/4.0.0/tesseract_4_0_0.zip" "$PLUGINSDIR\\tesseract.zip" /END
   Pop $0
   StrCmp $0 "OK" +3
   MessageBox MB_OK "Download failed: $0"
     Quit
 
-  inetc::get "https://download.openpaper.work/tesseract/3.05.00/tessconfig_3_05_00dev.zip" "$PLUGINSDIR\\tessconfig.zip" /END
+  inetc::get "https://download.openpaper.work/tesseract/4.0.0/tessconfig_4_0_0.zip" "$PLUGINSDIR\\tessconfig.zip" /END
   Pop $0
   StrCmp $0 "OK" +3
   MessageBox MB_OK "Download failed: $0"
@@ -480,6 +479,7 @@ SectionGroupEnd
 
         out_fd.write(FOOTER)
     print ("out.nsi written")
+
 
 if __name__ == "__main__":
     main(sys.argv)
