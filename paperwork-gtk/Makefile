@@ -49,6 +49,7 @@ windows_exe:
 	cp -Ra /mingw32/share/fontconfig ../build/exe/share
 	cp -Ra /mingw32/share/poppler ../build/exe/share
 	cp -Ra /mingw32/share/glib-2.0 ../build/exe/share
+	cp -Ra data ../build/exe
 
 linux_exe:
 
