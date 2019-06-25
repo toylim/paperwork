@@ -35,7 +35,7 @@ def set_meipass():
         # Pyinstaller case
         return
     # Cx_Freeze case
-    if "python" not in sys.executable:
+    if "python" not in sys.executable or '__file__' not in globals():
         sys._MEIPASS = os.path.dirname(os.path.realpath(sys.executable))
     else:
         sys._MEIPASS = os.path.realpath(os.path.join(

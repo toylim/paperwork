@@ -23,7 +23,6 @@ import sys
 
 
 if __name__ == "__main__":
-    sys.frozen = True
     data_base_path = os.path.join(
         os.path.dirname(os.path.realpath(__file__)), ".."
     )
