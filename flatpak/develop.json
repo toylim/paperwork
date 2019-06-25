@@ -77,7 +77,7 @@
         {
             "name": "python-distro",
             "no-autogen": true,
-            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
+            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
             "sources": [
                 {
                     "type": "archive",
@@ -94,7 +94,7 @@
         {
             "name": "python-dateutil",
             "no-autogen": true,
-            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
+            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
             "sources": [
                 {
                     "type": "archive",
@@ -111,7 +111,7 @@
         {
             "name": "python-Levenshtein",
             "no-autogen": true,
-            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
+            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
             "sources": [
                 {
                     "type": "archive",
@@ -128,7 +128,7 @@
         {
             "name": "python-pillow",
             "no-autogen": true,
-            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
+            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
             "sources": [
                 {
                     "type": "archive",
@@ -145,7 +145,7 @@
                 {
                     "name": "python-olefile",
                     "no-autogen": true,
-                    "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
+                    "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
                     "sources": [
                         {
                             "type": "archive",
@@ -164,7 +164,7 @@
         {
             "name": "python-pycountry",
             "no-autogen": true,
-            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
+            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
             "sources": [
                 {
                     "type": "archive",
@@ -181,7 +181,7 @@
         {
             "name": "python-nose",
             "no-autogen": true,
-            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
+            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
             "sources": [
                 {
                     "type": "archive",
@@ -210,7 +210,7 @@
         {
             "name": "python-pyocr",
             "no-autogen": true,
-            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
+            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
             "sources": [
                 {
                     "type": "git",
@@ -228,7 +228,7 @@
         {
             "name": "python-pypillowfight",
             "no-autogen": true,
-            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
+            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
             "sources": [
                 {
                     "type": "git",
@@ -280,7 +280,7 @@
         {
                 "name": "python-natsort",
                 "no-autogen": true,
-                "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
+                "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
                 "sources": [
                         {
                                 "type": "archive",
@@ -297,7 +297,7 @@
         {
                 "name": "python-simplebayes",
                 "no-autogen": true,
-                "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
+                "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
                 "sources": [
                         {
                                 "type": "archive",
@@ -314,7 +314,7 @@
         {
                 "name": "python-whoosh",
                 "no-autogen": true,
-                "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
+                "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
                 "sources": [
                         {
                                 "type": "archive",
@@ -331,7 +331,7 @@
         {
                 "name": "python-termcolor",
                 "no-autogen": true,
-                "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
+                "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
                 "sources": [
                         {
                                 "type": "archive",
