@@ -9,7 +9,8 @@ LOGGER = logging.getLogger(__name__)
 class PluginBase(object):
     """
     Indicates all the methods that must be implemented by any plugin
-    managed by OpenPaperwork core. Also provides default implementations.
+    managed by OpenPaperwork core. Also provides default implementations
+    for each method.
     """
 
     # Convenience for the applications: Indicates if users should be able
@@ -190,6 +191,16 @@ class Core(object):
             callback(*args, **kwargs)
 
     def call_one(self, callback_name, *args, **kwargs):
+        """
+        Look for a plugin method called `callback_name` and calls it.
+        Raises an error if no such method exists. If many exists,
+        raises a warning and call one at random.
+        Returns the value return by the callback.
+
+        You're advised to use `call_all()` instead whenever possible.
+        This method is only provided as convenience for when you're
+        fairly sure there should be only one plugin with such callback.
+        """
         callbacks = self.callbacks[callback_name]
         if len(callbacks) <= 0:
             raise IndexError(
