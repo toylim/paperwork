@@ -210,3 +210,58 @@ class TestCall(unittest.TestCase):
         core.call_all('test_method')
         self.assertTrue(core.get('module_b').test_method_called_b)
         self.assertTrue(core.get('module_c').test_method_called_c)
+
+    @unittest.mock.patch("importlib.import_module")
+    def test_call_success(self, import_module):
+        class TestModuleB(object):
+            class Plugin(openpaperwork_core.PluginBase):
+                def __init__(self):
+                    self.test_method_called_b = False
+
+                def test_method(self):
+                    self.test_method_called_b = True
+                    return None
+
+        class TestModuleC(object):
+            class Plugin(openpaperwork_core.PluginBase):
+                def __init__(self):
+                    self.test_method_called_c = False
+
+                def test_method(self):
+                    self.test_method_called_c = True
+                    return "value"
+
+        class TestModuleD(object):
+            class Plugin(openpaperwork_core.PluginBase):
+                def __init__(self):
+                    self.test_method_called_d = False
+
+                def test_method(self):
+                    self.test_method_called_d = True
+                    return None
+
+        core = openpaperwork_core.Core()
+
+        import_module.return_value = TestModuleB()
+        core.load('module_b')
+        import_module.assert_called_once_with('module_b')
+
+        import_module.reset_mock()
+        import_module.return_value = TestModuleC()
+        core.load('module_c')
+        import_module.assert_called_once_with('module_c')
+
+        import_module.reset_mock()
+        import_module.return_value = TestModuleD()
+        core.load('module_d')
+        import_module.assert_called_once_with('module_d')
+
+        import_module.reset_mock()
+        # interface already satisfied --> won't load 'module_a'
+        core.init()
+
+        r = core.call_success('test_method')
+        self.assertEqual(r, "value")
+        self.assertTrue(core.get('module_b').test_method_called_b)
+        self.assertTrue(core.get('module_c').test_method_called_c)
+        self.assertFalse(core.get('module_d').test_method_called_d)

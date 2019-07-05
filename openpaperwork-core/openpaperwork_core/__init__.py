@@ -212,3 +212,21 @@ class Core(object):
                 ", ".join([str(callback) for callback in callbacks])
             )
         return callbacks[0](*args, **kwargs)
+
+    def call_success(self, callback_name, *args, **kwargs):
+        """
+        Call methods of all the plugins that have `callback_name`
+        as name until one of them return a value that is not None.
+        Arguments are passed as is. First value to be different
+        from None is returned. If none of the callbacks returned
+        a value different from None or if no callback has the
+        specified name, this method will return None.
+        """
+        callbacks = self.callbacks[callback_name]
+        if len(callbacks) <= 0:
+            LOGGER.warning("No method '%s' available !", callback_name)
+        for callback in callbacks:
+            r = callback(*args, **kwargs)
+            if r is not None:
+                return r
+        return None
