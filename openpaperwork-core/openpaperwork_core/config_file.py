@@ -21,7 +21,7 @@ class ConfigList(object):
         self.elements = elements
 
         if string is not None:
-            elements = string.split(self.SEPARATOR, 1)
+            elements = string.split(self.SEPARATOR)
             for i in elements:
                 (t, v) = i.split(_TYPE_SEPARATOR, 1)
                 self.elements.append(_STR_TO_TYPE[t](v))
@@ -104,7 +104,9 @@ class Plugin(PluginBase):
         """
         Load and init the plugin list from the configuration.
         """
-        modules = self.config_get("plugins", "modules", ConfigList(default))
+        modules = self.config_get(
+            "plugins", "modules", ConfigList(None, default)
+        )
         LOGGER.info(
             "Loading and initializing plugins from configuration: %s",
             str(modules)
