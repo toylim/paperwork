@@ -251,7 +251,7 @@ msgstr "Réecriture de l'index ..."
 
 #: src/paperwork/frontend/mainwindow/__init__.py:1547
 msgid "All supported file formats"
-msgstr "Tout les formats supportés"
+msgstr "Tous les formats supportés"
 
 #: src/paperwork/frontend/mainwindow/__init__.py:1551
 msgid "Any file"
@@ -759,11 +759,11 @@ msgstr "Optimizer l'index"
 
 #: src/paperwork/frontend/mainwindow/mainwindow.glade.h:42
 msgid "Reindex all the documents"
-msgstr "Reindexer tout les documents"
+msgstr "Reindexer tous les documents"
 
 #: src/paperwork/frontend/mainwindow/mainwindow.glade.h:43
 msgid "Redo OCR on all the documents"
-msgstr "Refaire l'OCR sur tout les documents"
+msgstr "Refaire l'OCR sur tous les documents"
 
 #: src/paperwork/frontend/mainwindow/mainwindow.glade.h:44
 msgid "_Settings"
