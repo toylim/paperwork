@@ -26,7 +26,7 @@ Libinsane is scan library required by Paperwork. You need it in your
 development environment. There are other dependencies that may be required.
 
 To make things simpler, Paperwork repository includes a script
-(`activate_test_env.sh`) to create a Python virtualenv including Libinsane
+(`activate\_test\_env.sh`) to create a Python virtualenv including Libinsane
 and any other possible dependencies. The Makefile (`make install`) can install
 most of the dependencies and Paperwork components in one shot.
 `paperwork-shell` can then take care of installing some dependencies that
@@ -35,7 +35,26 @@ can only be installed system-wide.
 
 ### Requirements
 
-You will have to install [python3-virtualenv](https://pypi.python.org/pypi/virtualenv).
+For Paperwork, you will have to install
+[python3-virtualenv](https://pypi.python.org/pypi/virtualenv):
+
+```sh
+sudo apt install python3-virtualenv virtualenv python3-dev
+```
+
+You will also need to build Libinsane [from
+sources](https://doc.openpaper.work/libinsane/latest/libinsane/install.html):
+
+```sh
+sudo apt install \
+        make \
+        meson \
+        build-essential \
+        libsane-dev \
+        libgirepository1.0-dev gobject-introspection \
+        python3-gi \
+        valac
+```
 
 
 ### Setting up a development environment
