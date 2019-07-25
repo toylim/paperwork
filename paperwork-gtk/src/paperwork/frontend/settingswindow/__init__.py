@@ -356,9 +356,8 @@ class JobCalibrationScan(Job):
     priority = 495
 
     def __init__(
-                self, factory, id, libinsane,
-                resolutions_store, devid, source=None
-            ):
+            self, factory, id, libinsane,
+            resolutions_store, devid, source=None):
         Job.__init__(self, factory, id)
         self.libinsane = libinsane
         self.__resolutions_store = resolutions_store
@@ -698,9 +697,8 @@ class SettingsWindow(GObject.GObject):
     }
 
     def __init__(
-                self, main_scheduler, mainwindow_gui, config, libinsane,
-                flatpak
-            ):
+            self, main_scheduler, mainwindow_gui, config, libinsane,
+            flatpak):
         super(SettingsWindow, self).__init__()
 
         self.schedulers = {
@@ -933,10 +931,13 @@ class SettingsWindow(GObject.GObject):
 
     def on_finding_start_cb(self, settings):
         settings['gui'].set_sensitive(False)
-        for s in (
-                    [settings]
-                    + [self.device_settings[x] for x in settings['children']]
-                ):
+        ss = (
+            [settings] + [
+                self.device_settings[x]
+                for x in settings['children']
+            ]
+        )
+        for s in ss:
             s['nb_elements'] = 0
             s['active_idx'] = -1
             s['active_id'] = ""

@@ -2649,9 +2649,8 @@ class SearchBar(object):
 
 class MainWindow(object):
     def __init__(
-                self, config, main_loop, libinsane, workdir_scan=True,
-                flatpak=False
-            ):
+            self, config, main_loop, libinsane, workdir_scan=True,
+            flatpak=False):
         self.flatpak = flatpak
         self.libinsane = libinsane
         self.ready = False

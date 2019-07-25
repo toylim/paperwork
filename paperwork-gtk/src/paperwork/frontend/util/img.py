@@ -32,9 +32,16 @@ def add_img_border(img, color="#a6a5a4", width=1):
     """
     img_draw = PIL.ImageDraw.Draw(img)
     for line in range(0, width):
-        img_draw.rectangle([(line, line), (img.size[0]-1-line,
-                                           img.size[1]-1-line)],
-                           outline=color)
+        img_draw.rectangle(
+            [
+                (line, line),
+                (
+                    img.size[0] - 1 - line,
+                    img.size[1] - 1 - line
+                )
+            ],
+            outline=color
+        )
     del img_draw
     return img
 

@@ -91,10 +91,8 @@ class JobScan(Job):
 
             while self.can_run and not self.scan_session.end_of_page():
                 r = 0
-                while (
-                            r <= 512 * 1024
-                            and not self.scan_session.end_of_page()
-                        ):
+                while (r <= 512 * 1024 and
+                        not self.scan_session.end_of_page()):
                     out = self.scan_session.read_bytes(64 * 1024)
                     out = out.get_data()
                     r += len(out)

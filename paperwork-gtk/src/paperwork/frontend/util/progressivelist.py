@@ -174,13 +174,13 @@ class ProgressiveList(GObject.GObject):
         if l_model > 0:
             doc = self.model[-1][2]
             if doc is None or doc == 0:
-                line_iter = self.model.get_iter(l_model-1)
+                line_iter = self.model.get_iter(l_model - 1)
                 self.model.remove(line_iter)
 
         newly_displayed = []
         for line_idx in range(self.nb_displayed, nb_elements):
-            if (self.nb_displayed >= nb_elements
-                    or line_idx >= len(self.model_content)):
+            if (self.nb_displayed >= nb_elements or
+                    line_idx >= len(self.model_content)):
                 break
             newly_displayed.append((line_idx, self.model_content[line_idx][2]))
             self.model.append(self.model_content[line_idx])

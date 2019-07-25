@@ -74,8 +74,8 @@ def ask_confirmation(parent, next_func, msg=None, **kwargs):
 
     logger.info("Asking user confirmation")
     confirm = Gtk.MessageDialog(parent=parent,
-                                flags=Gtk.DialogFlags.MODAL
-                                | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                                flags=Gtk.DialogFlags.MODAL |
+                                Gtk.DialogFlags.DESTROY_WITH_PARENT,
                                 message_type=Gtk.MessageType.WARNING,
                                 buttons=Gtk.ButtonsType.YES_NO,
                                 text=msg)
@@ -101,8 +101,8 @@ def show_msg(parent, title, msg, notify_type="document-save"):
 
     # fallback on classical ugly popups
     popup = Gtk.MessageDialog(parent=parent,
-                              flags=Gtk.DialogFlags.MODAL
-                              | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                              flags=Gtk.DialogFlags.MODAL |
+                              Gtk.DialogFlags.DESTROY_WITH_PARENT,
                               message_type=Gtk.MessageType.INFO,
                               buttons=Gtk.ButtonsType.OK,
                               text=msg)

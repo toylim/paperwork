@@ -94,8 +94,7 @@ class ActionRemoveDoc(SimpleAction):
             return
         model.remove(selection_iter)
         for (line_idx, line) in enumerate(
-                    self.__dialog.lists['docs']['model']
-                ):
+                self.__dialog.lists['docs']['model']):
             if not self.__dialog.lists['docs']['include_current_doc']:
                 line[0] = _("Document %d") % (line_idx + 1)
             elif line_idx != 0:
