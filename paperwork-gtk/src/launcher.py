@@ -23,10 +23,15 @@ import sys
 
 
 if __name__ == "__main__":
-    data_base_path = os.path.join(
-        os.path.dirname(os.path.realpath(__file__)), ".."
-    )
-    os.chdir(data_base_path)
+    if "python" not in sys.executable or '__file__' not in globals():
+        filepath = sys.executable
+    else:
+        filepath = __file__
+    if filepath is not None:
+        data_base_path = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)), ".."
+        )
+        os.chdir(data_base_path)
 
     from paperwork.paperwork import main
     main()
