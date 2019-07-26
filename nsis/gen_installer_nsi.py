@@ -18,93 +18,118 @@ ALL_LANGUAGES = [
     "eng",  # English (always first)
 
     "afr",
-    "sqi",  # Albanian
     "amh",
     "ara",
     "asm",
     "aze",
     {"lower": "aze_cyrl", "upper": "AZECYRL", "long": "Azerbaijani - Cyrilic"},
-    "eus",  # Basque
     "bel",
     "ben",
+    "bod",  # Tibetan
     "bos",
+    "bre",
     "bul",
-    "mya",  # Burmese
     "cat",
     "ceb",
-    {"lower": "chi_sim", "upper": "CHISIM", "long": "Chinese (simplified)"},
-    {"lower": "chi_tra", "upper": "CHITRA", "long": "Chinese (traditional)"},
-    "chr",
-    "hrv",  # Croatian
     "ces",  # Czech
+    {"lower": "chi_sim", "upper": "CHISIM", "long": "Chinese (simplified)"},
+    {
+        "lower": "chi_sim_vert",
+        "upper": "CHISIMVERT",
+        "long": "Chinese (simplified, vertical)"
+    },
+    {"lower": "chi_tra", "upper": "CHITRA", "long": "Chinese (traditional)"},
+    {
+        "lower": "chi_tra_vert",
+        "upper": "CHITRAVERT",
+        "long": "Chinese (traditional, vertical)"
+    },
+    "chr",
+    "cos",
+    "cym",  # Welsh
     "dan",
-    "nld",  # Dutch
+    "deu",  # German
+    "div",
     "dzo",
+    {"lower": "ell", "upper": "ELL", "long": "Greek (modern)"},
     "enm",
     "epo",  # Esperanto
     "est",
+    "eus",  # Basque
+    "fao",
+    {"lower": "fas", "upper": "FAS", "long": "Persian"},
+    "fil",
     "fin",
-    "frk",  # Frankish
     "fra",  # French
+    "frk",  # Frankish
     "frm",
-    "kat",  # Georgian
-    "deu",  # German
+    "fry",
+    "gla",
+    "gle",  # Irish
     "glg",
     {"lower": "grc", "upper": "GRC", "long": "Greek (ancient)"},
-    {"lower": "ell", "upper": "ELL", "long": "Greek (modern)"},
     "guj",
     "hat",
     "heb",
     "hin",
+    "hrv",  # Croatian
     "hun",
-    "isl",  # Icelandic
-    "ind",
+    "hye",
     "iku",  # Inuktitut
-    "gle",  # Irish
+    "ind",
+    "isl",  # Icelandic
     "ita",
-    "jpn",  # Japanese
+    {"lower": "ita_old", "upper": "ITAOLD", "long": "Italian (old)"},
     "jav",
+    "jpn",  # Japanese
     "kan",
+    "kat",  # Georgian
     "khm",
     "kir",
     "kor",
-    "kur",
     "lao",
     "lat",
     "lav",
     "lit",
+    "ltz",
     "mal",
-    "mkd",  # Macedonian
-    "msa",  # Malay
-    "mlt",  # Maltese
     "mar",
+    "mkd",  # Macedonian
+    "mlt",  # Maltese
+    "mon",
+    "mri",
+    "msa",  # Malay
+    "mya",  # Burmese
     "nep",
+    "nld",  # Dutch
     "nor",
+    "oci",
     "ori",
     "pan",
-    {"lower": "fas", "upper": "FAS", "long": "Persian"},
     "pol",
     "por",
     "pus",
+    "que",
     {"lower": "ron", "upper": "RON", "long": "Romanian"},
     "rus",
     "san",
-    "srp",  # Serbian
-    {"lower": "srp_latn", "upper": "SRPLATN", "long": "Serbian (Latin)"},
     "sin",
     "slk",
     "slv",
     "spa",  # Spanish
+    "sqi",  # Albanian
+    "srp",  # Serbian
+    {"lower": "srp_latn", "upper": "SRPLATN", "long": "Serbian (Latin)"},
     "swa",
     "swe",
     "syr",
-    "tgk",  # Tajik
-    "tgl",  # Tagalog
     "tam",
+    "tat",
     "tel",
+    "tgk",  # Tajik
     {"lower": "tha", "upper": "THA", "long": "Thai"},
-    "bod",  # Tibetan
     "tir",
+    "ton",
     "tur",
     "uig",
     "ukr",
@@ -112,8 +137,8 @@ ALL_LANGUAGES = [
     "uzb",
     {"lower": "uzb_cyrl", "upper": "UZBCYRL", "long": "Uzbek - Cyrilic"},
     "vie",
-    "cym",  # Welsh
     "yid",
+    "yor",
  ]
 
 UNKNOWN_LANGUAGE = {
@@ -440,14 +465,20 @@ def main(args):
         out_fd.write("""
 SectionGroup /e "Tesseract OCR data files" SEC_OCR_FILES
 """)
+
+        langs = {}
         for lang_name in ALL_LANGUAGES:
             print ("Adding download section {}".format(lang_name))
             lang = UNKNOWN_LANGUAGE
             if isinstance(lang_name, str) and lang_name in KNOWN_LANGUAGES:
                 lang = KNOWN_LANGUAGES[lang_name]
             txt = lang['download_section']
-            txt = txt.format(**get_lang_infos(lang_name))
-            out_fd.write(txt)
+            infos = get_lang_infos(lang_name)
+            txt = txt.format(**infos)
+            langs[infos['long']] = txt
+        lang_sorted = sorted(langs.keys())
+        for lang_name in lang_sorted:
+            out_fd.write(langs[lang_name])
         out_fd.write("""
 SectionGroupEnd
 """)
