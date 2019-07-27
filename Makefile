@@ -52,7 +52,7 @@ libinsane_win32:
 	${MAKE} -C sub/libinsane install PREFIX=/mingw32
 
 pyocr_win32:
-	(cd sub/pyocr ; ${PYTHON} /mingw32/bin/pip3-script.py install .)
+	${MAKE} -C sub/pyocr install
 
 libpillowfight_win32:
 	${MAKE} -C sub/libpillowfight install_py
