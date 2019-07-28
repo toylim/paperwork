@@ -320,9 +320,7 @@ def main():
     core.load("paperwork_backend.fs.gio")
 
     print("Loading documents list ...")
-    pconfig = config.PaperworkConfig(core)
-    pconfig.read()
-    work_dir = pconfig.settings['workdir'].value
+    work_dir = core.call_success("paperwork_config_get", "workdir")
     dsearch = docsearch.DocSearch(work_dir)
     dsearch.reload_index()
     print("Documents loaded")

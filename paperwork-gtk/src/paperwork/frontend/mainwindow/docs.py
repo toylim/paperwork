@@ -683,7 +683,8 @@ class DocList(object):
             # keep the thumbnails in cache
             'thumbnails': {}  # docid: pixbuf
         }
-        workdir = self.core.call_success("fs_safe", config['workdir'].value)
+        workdir = self.core.call_success("paperwork_config_get", "workdir")
+        workdir = self.core.call_success("fs_safe", workdir)
         self.new_doc = ImgDoc(self.core, workdir)
 
         self.job_factories = {
