@@ -14,6 +14,23 @@ from . import PluginBase
 LOGGER = logging.getLogger(__name__)
 
 
+class ConfigBool(object):
+    def __init__(self, value=False):
+        if isinstance(value, str):
+            self.value = (value.lower() == 'true')
+        else:
+            self.value = value
+
+    def __eq__(self, o):
+        return (self.value == o)
+
+    def __bool__(self):
+        return self.value
+
+    def __str__(self):
+        return str(self.value)
+
+
 class ConfigList(object):
     SEPARATOR = ", "
 
@@ -31,7 +48,7 @@ class ConfigList(object):
             elif hasattr(value, 'elements'):
                 self.elements = value.elements[:]
             else:
-                self.elements = value
+                self.elements = list(value)
 
     def __iter__(self):
         return iter(self.elements)
@@ -77,7 +94,7 @@ class ConfigDict(object):
             elif hasattr(value, 'elements'):
                 self.elements = value.elements[:]
             else:
-                self.elements = value
+                self.elements = dict(value)
 
     def __iter__(self):
         return iter(self.elements)
@@ -106,6 +123,7 @@ class ConfigDict(object):
 
 _TYPE_TO_STR = {
     bool: "bool",
+    ConfigBool: "bool",
     ConfigDict: "dict",
     ConfigList: "list",
     dict: "dict",
@@ -113,9 +131,10 @@ _TYPE_TO_STR = {
     int: "int",
     list: "list",
     str: "str",
+    tuple: "list",
 }
 _STR_TO_TYPE = {
-    "bool": bool,
+    "bool": ConfigBool,
     "dict": ConfigDict,
     "list": ConfigList,
     "float": float,
