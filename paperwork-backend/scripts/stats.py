@@ -2,17 +2,22 @@
 
 import sys
 
+import openpaperwork_core
+
 import paperwork_backend.config as config
 import paperwork_backend.docsearch as docsearch
 import paperwork_backend.util as util
 
 
 def main():
-    pconfig = config.PaperworkConfig()
+    core = openpaperwork_core.Core()
+    core.load("paperwork_backend.fs.gio")
+
+    pconfig = config.PaperworkConfig(core)
     pconfig.read()
     print("Opening docs (%s)" % pconfig.settings['workdir'].value)
     print("====================")
-    dsearch = docsearch.DocSearch(pconfig.settings['workdir'].value)
+    dsearch = docsearch.DocSearch(core, pconfig.settings['workdir'].value)
     dsearch.reload_index()
 
     nb_words = 0

@@ -13,7 +13,6 @@ import whoosh.query
 import whoosh.sorting
 
 from .common.page import BasicPage
-from .fs import GioFileSystem
 from .labels import LabelGuesser
 from .img.doc import ImgDoc
 from .img.doc import is_img_doc
@@ -56,9 +55,8 @@ class PaperworkIndex(object):
         last_read=whoosh.fields.DATETIME(stored=True),
     )
 
-    def __init__(self):
-        self.fs = GioFileSystem()
-
+    def __init__(self, core):
+        self.core = core
         self.indexdir = None
         self.index = None
         self.label_guesser_dir = None
@@ -99,7 +97,7 @@ class PaperworkIndex(object):
 
     def open(self, localdir, base_data_dir, index_path, label_guesser_path,
              rootdir, language=None):
-        self.rootdir = self.fs.safe(rootdir)
+        self.rootdir = self.core.call_success("fs_safe", rootdir)
         self.indexdir = index_path
         self.label_guesser_dir = label_guesser_path
 
@@ -180,7 +178,7 @@ class PaperworkIndex(object):
         )
         self.label_guesser.set_language(language)
 
-        self.fs.mkdir_p(self.rootdir)
+        self.core.call_success("fs_mkdir_p", self.rootdir)
         self.opened = True
 
     def set_language(self, language):
@@ -206,14 +204,14 @@ class PaperworkIndex(object):
         The information are taken from the whoosh index.
         """
         doc = None
-        docpath = self.fs.join(self.rootdir, docid)
-        if not self.fs.exists(docpath):
+        docpath = self.core.call_success("fs_join", self.rootdir, docid)
+        if not self.core.call_success("fs_exists", docpath):
             return None
         if doc_type_name is not None:
             # if we already know the doc type name
             for (is_doc_type, doc_type_name_b, doc_type) in DOC_TYPE_LIST:
                 if (doc_type_name_b == doc_type_name):
-                    doc = doc_type(self.fs, docpath, docid)
+                    doc = doc_type(self.core, docpath, docid)
             if not doc:
                 logger.warning(
                     ("Warning: unknown doc type found in the index: %s") %
@@ -222,8 +220,8 @@ class PaperworkIndex(object):
         # otherwise we guess the doc type
         if not doc:
             for (is_doc_type, doc_type_name, doc_type) in DOC_TYPE_LIST:
-                if is_doc_type(self.fs, docpath):
-                    doc = doc_type(self.fs, docpath, docid)
+                if is_doc_type(self.core, docpath):
+                    doc = doc_type(self.core, docpath, docid)
                     break
         if not doc:
             logger.warning("Warning: unknown doc type for doc '%s'" % docid)
@@ -269,7 +267,9 @@ class PaperworkIndex(object):
             old_doc_infos[result['docid']] = (
                 result['doctype'], result['last_read']
             )
-        docdirs = [x for x in self.fs.listdir(self.rootdir)]
+        docdirs = [
+            x for x in self.core.call_success("fs_listdir", self.rootdir)
+        ]
         self.examine_rootdir_data['old_doc_list'] = old_doc_list
         self.examine_rootdir_data['old_doc_infos'] = old_doc_infos
         self.examine_rootdir_data['docdirs'] = docdirs
@@ -302,7 +302,7 @@ class PaperworkIndex(object):
             )
             return ('end', None)
 
-        docdir = self.fs.basename(docpath)
+        docdir = self.core.call_success("fs_basename", docpath)
         old_infos = self.examine_rootdir_data['old_doc_infos'].get(docdir)
         doctype = None
         if old_infos is not None:
@@ -329,8 +329,8 @@ class PaperworkIndex(object):
         except StopIteration:
             return ('end', None)
 
-        docpath = self.fs.join(self.rootdir, old_doc)
-        return ('deleted', ImgDoc(self.fs, docpath, old_doc))
+        docpath = self.core.call_success("fs_join", self.rootdir, old_doc)
+        return ('deleted', ImgDoc(self.core, docpath, old_doc))
 
     def end_examine_rootdir(self):
         self.examine_rootdir_data = {}
@@ -780,8 +780,8 @@ class MethodProxy(object):
 
 
 class PaperworkIndexClient(object):
-    def __init__(self):
-        self.server = PaperworkIndex()
+    def __init__(self, core):
+        self.server = PaperworkIndex(core)
         self.pipe = self.server.pipe_client
         self.lock = threading.Lock()
 

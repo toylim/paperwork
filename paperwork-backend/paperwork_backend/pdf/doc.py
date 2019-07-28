@@ -32,11 +32,14 @@ logger = logging.getLogger(__name__)
 class PdfDocExporter(Exporter):
     def __init__(self, doc, page_nb):
         super().__init__(doc, 'PDF')
+        self.core = doc.core
         self.can_select_format = False
         self.can_change_quality = False
         self.doc = doc
         self.page = doc.pages[page_nb]
-        self.pdfpath = doc.fs.join(doc.path, PDF_FILENAME)
+        self.pdfpath = self.core.call_success(
+            "fs_join", doc.path, PDF_FILENAME
+        )
 
     def get_mime_type(self):
         return 'application/pdf'
@@ -45,14 +48,14 @@ class PdfDocExporter(Exporter):
         return ['pdf']
 
     def save(self, target_path, progress_cb=dummy_export_progress_cb):
-        target_path = self.doc.fs.safe(target_path)
+        target_path = self.core.call_success("fs_safe", target_path)
         progress_cb(0, 1)
-        self.doc.fs.copy(self.pdfpath, target_path)
+        self.core.call_success("fs_copy", self.pdfpath, target_path)
         progress_cb(1, 1)
         return target_path
 
     def estimate_size(self):
-        return self.doc.fs.getsize(self.pdfpath)
+        return self.core.call_success("fs_getsize", self.pdfpath)
 
     def get_img(self):
         return self.page.img
@@ -103,9 +106,9 @@ class _CommonPdfDoc(BasicDoc):
     can_edit = False
     doctype = u"PDF"
 
-    def __init__(self, fs, pdfpath, docpath, docid=None, on_disk_cache=False):
-        super().__init__(fs, docpath, docid)
-        self.pdfpath = fs.safe(pdfpath)
+    def __init__(self, core, pdfpath, docpath, docid=None, on_disk_cache=False):
+        super().__init__(core, docpath, docid)
+        self.pdfpath = self.core.call_success("fs_safe", pdfpath)
         self._on_disk_cache = on_disk_cache
         # number of pages never change --> we can keep it in memory safely
         self._nb_pages = -1
@@ -116,7 +119,7 @@ class _CommonPdfDoc(BasicDoc):
         assert()
 
     def _get_last_mod(self):
-        last_mod = self.fs.getmtime(self.pdfpath)
+        last_mod = self.core.call_success("fs_getmtime", self.pdfpath)
         for page in self.pages:
             if page.last_mod > last_mod:
                 last_mod = page.last_mod
@@ -175,7 +178,7 @@ class _CommonPdfDoc(BasicDoc):
         return super().build_exporter('pdf', preview_page_nb)
 
     def get_docfilehash(self):
-        return super().hash_file(self.fs, "%s/%s" % (self.path, PDF_FILENAME))
+        return super().hash_file(self.core, "%s/%s" % (self.path, PDF_FILENAME))
 
 
 class PdfDoc(_CommonPdfDoc):
@@ -186,29 +189,37 @@ class PdfDoc(_CommonPdfDoc):
     can_edit = False
     doctype = u"PDF"
 
-    def __init__(self, fs, docpath, docid=None):
+    def __init__(self, core, docpath, docid=None):
         super().__init__(
-            fs,
-            fs.join(docpath, PDF_FILENAME),
+            core,
+            core.call_success("fs_join", docpath, PDF_FILENAME),
             docpath, docid,
             on_disk_cache=True
         )
 
     def clone(self):
-        return PdfDoc(self.fs, self.path, self.docid)
+        return PdfDoc(self.core, self.path, self.docid)
 
     def _get_last_mod(self):
         last_mod = super()._get_last_mod()
-        labels_path = self.fs.join(self.path, self.LABEL_FILE)
+        labels_path = self.core.call_success(
+            "fs_join", self.path, self.LABEL_FILE
+        )
         try:
-            file_last_mod = self.fs.getmtime(labels_path)
+            file_last_mod = self.core.call_success(
+                "fs_getmtime", labels_path
+            )
             if file_last_mod > last_mod:
                 last_mod = file_last_mod
         except OSError:
             pass
-        extra_txt_path = self.fs.join(self.path, self.EXTRA_TEXT_FILE)
+        extra_txt_path = self.core.call_success(
+            "fs_join", self.path, self.EXTRA_TEXT_FILE
+        )
         try:
-            file_last_mod = self.fs.getmtime(extra_txt_path)
+            file_last_mod = self.core.call_success(
+                "fs_getmtime", extra_txt_path
+            )
             if file_last_mod > last_mod:
                 last_mod = file_last_mod
         except OSError:
@@ -263,11 +274,12 @@ class ExternalPdfDoc(_CommonPdfDoc):
     extra_text = ""
     has_ocr = False
 
-    def __init__(self, fs, filepath):
+    def __init__(self, core, filepath):
         super().__init__(
-            fs,
+            core,
             filepath,
-            fs.dirname(filepath), fs.basename(filepath),
+            core.call_success("fs_dirname", filepath),
+            core.call_success("fs_basename", filepath),
             on_disk_cache=False
         )
         self.filepath = filepath
@@ -293,12 +305,15 @@ class ExternalPdfDoc(_CommonPdfDoc):
         assert()
 
 
-def is_pdf_doc(fs, docpath):
-    if not fs.isdir(docpath):
+def is_pdf_doc(core, docpath):
+    if not core.call_success("fs_isdir", docpath):
         return False
     try:
-        filelist = fs.listdir(docpath)
-        filelist = [fs.basename(filepath) for filepath in filelist]
+        filelist = core.call_success("fs_listdir", docpath)
+        filelist = [
+            core.call_success("fs_basename", filepath)
+            for filepath in filelist
+        ]
     except OSError as exc:
         logger.exception("Warning: Failed to list files in %s: %s"
                          % (docpath, str(exc)))

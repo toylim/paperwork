@@ -1,4 +1,17 @@
 #!/usr/bin/env python3
+"""
+Create a work directory progressively, like a user would.
+Uses an existing work directory for reference.
+Compute statistics regarding label guessing
+
+Scenario tested here:
+
+for each document:
+    - the user scan the first page
+    - labels are guessed and added
+    - user fixes the labels
+    - user scans the remaining pages of the document
+"""
 
 import csv
 import os
@@ -15,24 +28,12 @@ gi.require_version('Libinsane', '1.0')
 gi.require_version('PangoCairo', '1.0')
 gi.require_version('Poppler', '0.18')
 
+import openpaperwork_core
+
 from paperwork_backend import config  # noqa: E402
 from paperwork_backend import docimport  # noqa: E402
 from paperwork_backend import docsearch  # noqa: E402
 from paperwork_backend.util import rm_rf  # noqa: E402
-
-"""
-Create a work directory progressively, like a user would.
-Uses an existing work directory for reference.
-Compute statistics regarding label guessing
-
-Scenario tested here:
-
-for each document:
-    - the user scan the first page
-    - labels are guessed and added
-    - user fixes the labels
-    - user scans the remaining pages of the document
-"""
 
 
 g_lock = threading.Lock()
@@ -250,12 +251,15 @@ def main():
     min_yeses = eval(sys.argv[1])
     out_csv_file = sys.argv[2]
 
-    pconfig = config.PaperworkConfig()
+    core = openpaperwork_core.Core()
+    core.load("paperwork_backend.fs.gio")
+
+    pconfig = config.PaperworkConfig(core)
     pconfig.read()
 
     src_dir = pconfig.settings['workdir'].value
     print("Source work directory : {}".format(src_dir))
-    src_dsearch = docsearch.DocSearch(src_dir)
+    src_dsearch = docsearch.DocSearch(core, src_dir)
     src_dsearch.reload_index()
 
     nb_threads = multiprocessing.cpu_count()

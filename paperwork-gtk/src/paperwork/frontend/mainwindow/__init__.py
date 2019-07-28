@@ -75,7 +75,6 @@ from ..util.jobs import JobFactory
 from ..util.jobs import JobScheduler
 from paperwork_backend import docexport
 from paperwork_backend import docimport
-from paperwork_backend import fs
 from paperwork_backend.common.page import BasicPage
 from paperwork_backend.common.page import DummyPage
 from paperwork_backend.docsearch import DocSearch
@@ -126,8 +125,9 @@ class JobIndexLoader(Job):
     can_stop = True
     priority = 100
 
-    def __init__(self, factory, job_id, config):
+    def __init__(self, factory, job_id, core, config):
         Job.__init__(self, factory, job_id)
+        self.core = core
         self.__config = config
         self.started = False
         self.done = False
@@ -162,7 +162,9 @@ class JobIndexLoader(Job):
                     self.__config['index_version'].value):
                 logger.info("Index structure is obsolete."
                             " Must rebuild from scratch")
-                docsearch = DocSearch(self.__config['workdir'].value)
+                docsearch = DocSearch(
+                    self.core, self.__config['workdir'].value
+                )
                 # we destroy the index to force its rebuilding
                 docsearch.destroy_index()
                 self.__config['index_version'].value = \
@@ -173,6 +175,7 @@ class JobIndexLoader(Job):
                 return
 
             docsearch = DocSearch(
+                self.core,
                 self.__config['workdir'].value,
                 index_in_workdir=self.__config['index_in_workdir'].value
             )
@@ -198,13 +201,16 @@ GObject.type_register(JobIndexLoader)
 
 
 class JobFactoryIndexLoader(JobFactory):
-    def __init__(self, main_window, config):
+    def __init__(self, core, main_window, config):
         JobFactory.__init__(self, "IndexLoader")
+        self.core = core
         self.__main_window = main_window
         self.__config = config
 
     def make(self):
-        job = JobIndexLoader(self, next(self.id_generator), self.__config)
+        job = JobIndexLoader(
+            self, next(self.id_generator), self.core, self.__config
+        )
         job.connect('index-loading-start',
                     lambda job: GLib.idle_add(
                         self.__main_window.on_index_loading_start_cb, job))
@@ -1298,15 +1304,17 @@ class ActionToggleLabel(object):
 
 
 class ActionOpenDocDir(SimpleAction):
-    def __init__(self, main_window):
+    def __init__(self, core, main_window):
         SimpleAction.__init__(self, "Open doc dir")
+        self.core = core
         self.__main_win = main_window
 
     def do(self):
         SimpleAction.do(self)
         if os.name == 'nt':
-            os.startfile(self.__main_win.docsearch.fs.unsafe(
-                self.__main_win.doc.path))
+            os.startfile(self.core.call_success(
+                "fs_unsafe", self.__main_win.doc.path
+            ))
             return
         if self.__main_win.flatpak:
             launch_dbus_filebrowser(self.__main_win.doc.path)
@@ -2057,7 +2065,8 @@ class BasicActionOpenExportDialog(SimpleAction):
 
 
 class MultipleExportTarget(object):
-    def __init__(self, doclist):
+    def __init__(self, core, doclist):
+        self.core = core
         self.doclist = []
         for doc in doclist:
             if doc.is_new:
@@ -2068,7 +2077,7 @@ class MultipleExportTarget(object):
         return [_("Multiple PDF in a folder")]
 
     def build_exporter(self, format, preview_page_nb=0):
-        return docexport.MultipleDocExporter(self.doclist)
+        return docexport.MultipleDocExporter(self.core, self.doclist)
 
 
 class ActionOpenExportPageDialog(BasicActionOpenExportDialog):
@@ -2085,7 +2094,8 @@ class ActionOpenExportPageDialog(BasicActionOpenExportDialog):
 
 
 class ActionOpenExportDocDialog(BasicActionOpenExportDialog):
-    def __init__(self, main_window):
+    def __init__(self, core, main_window):
+        self.core = core
         BasicActionOpenExportDialog.__init__(self, main_window,
                                              "Displaying page export dialog")
 
@@ -2102,7 +2112,7 @@ class ActionOpenExportDocDialog(BasicActionOpenExportDialog):
                 _("Export document")
             )
         else:
-            target = MultipleExportTarget(docs)
+            target = MultipleExportTarget(self.core, docs)
             self.main_win.export['buttons']['ok'].set_label(
                 _("Export documents")
             )
@@ -2423,16 +2433,17 @@ class ActionRefreshIndex(SimpleAction):
 
 
 class ActionOpenHelp(SimpleAction):
-    def __init__(self, main_window, help_name):
+    def __init__(self, core, main_window, help_name):
         super().__init__("Open Help {}".format(help_name))
+        self.core = core
         self.__main_win = main_window
         self.help_name = help_name
 
     def do(self):
         super().do()
         docpath = get_documentation(self.help_name)
-        docpath = self.__main_win.docsearch.fs.safe(docpath)
-        doc = ExternalPdfDoc(self.__main_win.docsearch.fs, docpath)
+        docpath = self.core.call_success("fs_safe", docpath)
+        doc = ExternalPdfDoc(self.__main_win.docsearch.core, docpath)
         self.__main_win.show_page(doc.pages[0], force_refresh=True)
         self.__main_win.doclist.unselect_all()
 
@@ -2649,8 +2660,9 @@ class SearchBar(object):
 
 class MainWindow(object):
     def __init__(
-            self, config, main_loop, libinsane, workdir_scan=True,
+            self, core, config, main_loop, libinsane, workdir_scan=True,
             flatpak=False):
+        self.core = core
         self.flatpak = flatpak
         self.libinsane = libinsane
         self.ready = False
@@ -2685,7 +2697,7 @@ class MainWindow(object):
 
         self.window = self.__init_window(widget_tree, config)
 
-        self.doclist = DocList(self, config, widget_tree)
+        self.doclist = DocList(core, self, config, widget_tree)
 
         self.__config = config
         self.__scan_start = 0.0
@@ -2858,7 +2870,7 @@ class MainWindow(object):
             'export_previewer': JobFactoryExportPreviewer(self),
             'img_processer': JobFactoryImgProcesser(self),
             'importer': JobFactoryImporter(self, config),
-            'index_reloader': JobFactoryIndexLoader(self, config),
+            'index_reloader': JobFactoryIndexLoader(core, self, config),
             'index_updater': JobFactoryIndexUpdater(self, config),
             'label_predictor_on_new_doc': JobFactoryLabelPredictorOnNewDoc(
                 self
@@ -2921,7 +2933,7 @@ class MainWindow(object):
                 [
                     gactions['export_doc'],
                 ],
-                ActionOpenExportDocDialog(self)
+                ActionOpenExportDocDialog(self.core, self)
             ),
             'open_export_page_dialog': (
                 [
@@ -2939,13 +2951,13 @@ class MainWindow(object):
                 [
                     gactions['open_help_introduction'],
                 ],
-                ActionOpenHelp(self, "intro")
+                ActionOpenHelp(core, self, "intro")
             ),
             'open_help_manual': (
                 [
                     gactions['open_help_manual'],
                 ],
-                ActionOpenHelp(self, "usage")
+                ActionOpenHelp(core, self, "usage")
             ),
             'quit': (
                 [
@@ -2957,7 +2969,7 @@ class MainWindow(object):
                 [
                     gactions['open_doc_dir']
                 ],
-                ActionOpenDocDir(self),
+                ActionOpenDocDir(core, self),
             ),
             'optimize_index': (
                 [
@@ -3332,7 +3344,7 @@ class MainWindow(object):
 
         # no document --> add the introduction document
         docpath = get_documentation('intro')
-        docuri = fs.GioFileSystem().safe(docpath)
+        docuri = self.core.call_success("fs_safe", docpath)
         importers = docimport.get_possible_importers([docuri], self.doc)
         job_importer = self.job_factories['importer']
         job_importer = job_importer.make(importers[0], [docuri])

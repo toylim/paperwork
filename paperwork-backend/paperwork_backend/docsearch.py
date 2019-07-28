@@ -26,7 +26,6 @@ import os.path
 import gi
 from gi.repository import GObject
 
-from . import fs
 from .index import PaperworkIndexClient
 from .util import dummy_progress_cb
 
@@ -34,9 +33,6 @@ gi.require_version('PangoCairo', '1.0')
 gi.require_version('Poppler', '0.18')
 
 logger = logging.getLogger(__name__)
-
-
-DEFAULT_INDEX_CLIENT = PaperworkIndexClient()
 
 
 class DummyDocSearch(object):
@@ -51,7 +47,7 @@ class DummyDocSearch(object):
     label_list = []
 
     def __init__(self):
-        self.fs = fs.GioFileSystem()
+        pass
 
     @staticmethod
     def get_doc_examiner(*args, **kwargs):
@@ -252,20 +248,16 @@ class DocSearch(object):
     LABEL_STEP_UPDATING = "label updating"
     LABEL_STEP_DESTROYING = "label deletion"
 
-    def __init__(self, rootdir, indexdir=None, language=None,
-                 use_default_index_client=True, index_in_workdir=False):
+    def __init__(self, core, rootdir, indexdir=None, language=None,
+            index_in_workdir=False):
         """
         Index files in rootdir (see constructor)
         """
-        if use_default_index_client:
-            self.index = DEFAULT_INDEX_CLIENT
-        else:
-            self.index = PaperworkIndexClient()
+        self.index = PaperworkIndexClient(core)
 
-        self.fs = fs.GioFileSystem()
-        self.rootdir = self.fs.safe(rootdir)
+        self.rootdir = core.call_success("fs_safe", rootdir)
         localdir = os.path.expanduser("~/.local")
-        base_data_dir = self.fs.unsafe(rootdir)
+        base_data_dir = core.call_success("fs_unsafe", rootdir)
 
         if index_in_workdir:
             localdir = base_data_dir

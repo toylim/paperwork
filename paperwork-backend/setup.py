@@ -79,6 +79,7 @@ There is no GUI here. The GUI is
     },
     zip_safe=True,
     install_requires=[
+        "openpaperwork-core",
         "distro",
         "natsort",
         "Pillow",

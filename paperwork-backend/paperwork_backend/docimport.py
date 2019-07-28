@@ -29,7 +29,7 @@ from PIL import Image
 
 from .pdf.doc import PdfDoc
 from .img.doc import ImgDoc
-from . import fs
+
 
 _ = gettext.gettext
 logger = logging.getLogger(__name__)
@@ -106,8 +106,8 @@ class ImportResult(object):
 
 
 class BaseImporter(object):
-    def __init__(self, fs, file_extensions):
-        self.fs = fs
+    def __init__(self, core, file_extensions):
+        self.core = core
         self.file_extensions = file_extensions
 
     @staticmethod
@@ -127,7 +127,7 @@ class BaseImporter(object):
         return []
 
     def check_file_type(self, file_uri):
-        # TODO(Jflesch): should use fs.py
+        # TODO(Jflesch): should use fs plugin
         lfile_uri = file_uri.lower()
         for extension in self.file_extensions:
             if lfile_uri.endswith(extension):
@@ -145,8 +145,8 @@ class PdfImporter(BaseImporter):
     Import a single PDF file as a document
     """
 
-    def __init__(self, fs):
-        super().__init__(fs, [".pdf"])
+    def __init__(self, core):
+        super().__init__(core, [".pdf"])
 
     def can_import(self, file_uris, current_doc=None):
         """
@@ -155,7 +155,7 @@ class PdfImporter(BaseImporter):
         if len(file_uris) <= 0:
             return False
         for uri in file_uris:
-            uri = self.fs.safe(uri)
+            uri = self.core.call_success("fs_safe", uri)
             if not self.check_file_type(uri):
                 return False
         return True
@@ -168,10 +168,13 @@ class PdfImporter(BaseImporter):
         docs = []
         pages = []
 
-        file_uris = [self.fs.safe(uri) for uri in file_uris]
+        file_uris = [
+            self.core.call_success("fs_safe", uri)
+            for uri in file_uris
+        ]
         imported = []
         for file_uri in file_uris:
-            if docsearch.is_hash_in_index(PdfDoc.hash_file(self.fs, file_uri)):
+            if docsearch.is_hash_in_index(PdfDoc.hash_file(self.core, file_uri)):
                 logger.info("Document %s already found in the index. Skipped"
                             % (file_uri))
                 continue
@@ -219,8 +222,8 @@ class PdfDirectoryImporter(BaseImporter):
     Import a directory containing many PDF files as many documents
     """
 
-    def __init__(self, fs):
-        super().__init__(fs, [".pdf"])
+    def __init__(self, core):
+        super().__init__(core, [".pdf"])
 
     def can_import(self, file_uris, current_doc=None):
         """
@@ -231,13 +234,13 @@ class PdfDirectoryImporter(BaseImporter):
             return False
 
         for file_uri in file_uris:
-            if not self.fs.isdir(file_uri):
+            if not self.core.call_success("fs_isdir", file_uri):
                 return False
 
         try:
             for file_uri in file_uris:
-                file_uri = self.fs.safe(file_uri)
-                for child in self.fs.recurse(file_uri):
+                file_uri = self.core.call_success("fs_safe", file_uri)
+                for child in self.core.call_success("fs_recurse", file_uri):
                     if self.check_file_type(child):
                         return True
         except GLib.GError:
@@ -253,17 +256,17 @@ class PdfDirectoryImporter(BaseImporter):
         docs = []
         pages = []
 
-        file_uris = [self.fs.safe(uri) for uri in file_uris]
+        file_uris = [self.core.call_success("fs_safe", uri) for uri in file_uris]
         imported = []
         for file_uri in file_uris:
             logger.info("Importing PDF from '%s'" % (file_uri))
             idx = 0
 
-            for child in self.fs.recurse(file_uri):
+            for child in self.core.call_success("fs_recurse", file_uri):
                 gc.collect()
                 if not self.check_file_type(child):
                     continue
-                h = PdfDoc.hash_file(self.fs, child)
+                h = PdfDoc.hash_file(self.core, child)
                 if docsearch.is_hash_in_index(h):
                     logger.info(
                         "Document %s already found in the index. Skipped",
@@ -271,7 +274,7 @@ class PdfDirectoryImporter(BaseImporter):
                     )
                     continue
                 imported.append(child)
-                doc = PdfDoc(self.fs, docsearch.rootdir)
+                doc = PdfDoc(self.core, docsearch.rootdir)
                 error = doc.import_pdf(child)
                 if error:
                     continue
@@ -310,8 +313,8 @@ class ImageDirectoryImporter(BaseImporter):
     Import many PDF files as many documents
     """
 
-    def __init__(self, fs):
-        super().__init__(fs, ImgDoc.IMPORT_IMG_EXTENSIONS)
+    def __init__(self, core):
+        super().__init__(core, ImgDoc.IMPORT_IMG_EXTENSIONS)
 
     def can_import(self, file_uris, current_doc=None):
         """
@@ -322,13 +325,13 @@ class ImageDirectoryImporter(BaseImporter):
             return False
 
         for file_uri in file_uris:
-            if not self.fs.isdir(file_uri):
+            if not self.core.call_success("fs_isdir", file_uri):
                 return False
 
         try:
             for file_uri in file_uris:
-                file_uri = self.fs.safe(file_uri)
-                for child in self.fs.recurse(file_uri):
+                file_uri = self.core.call_success("fs_safe", file_uri)
+                for child in self.core.call_success("fs_recurse", file_uri):
                     if self.check_file_type(child):
                         return True
         except GLib.GError:
@@ -343,7 +346,7 @@ class ImageDirectoryImporter(BaseImporter):
                 current_doc.is_new or
                 not current_doc.can_edit):
             if not current_doc or not current_doc.can_edit:
-                current_doc = ImgDoc(self.fs, docsearch.rootdir)
+                current_doc = ImgDoc(self.core, docsearch.rootdir)
             new_docs = [current_doc]
             upd_docs = []
         else:
@@ -357,10 +360,10 @@ class ImageDirectoryImporter(BaseImporter):
         imported = []
 
         for file_uri in file_uris:
-            file_uri = self.fs.safe(file_uri)
+            file_uri = self.core.call_success("fs_safe", file_uri)
             logger.info("Importing images from '%s'" % (file_uri))
 
-            for child in self.fs.recurse(file_uri):
+            for child in self.core.call_success("fs_recurse", file_uri):
                 if ".thumb." in child:
                     # We are re-importing an old document --> ignore thumbnails
                     logger.info("{} ignored".format(child))
@@ -368,7 +371,7 @@ class ImageDirectoryImporter(BaseImporter):
                 if not self.check_file_type(child):
                     continue
                 imported.append(child)
-                with self.fs.open(child, "rb") as fd:
+                with self.core.call_success("fs_open", child, "rb") as fd:
                     img = Image.open(fd)
                     img.load()
                 page = current_doc.add_page(img, [])
@@ -413,8 +416,8 @@ class ImageImporter(BaseImporter):
     single page)
     """
 
-    def __init__(self, fs):
-        super().__init__(fs, ImgDoc.IMPORT_IMG_EXTENSIONS)
+    def __init__(self, core):
+        super().__init__(core, ImgDoc.IMPORT_IMG_EXTENSIONS)
 
     def can_import(self, file_uris, current_doc=None):
         """
@@ -423,7 +426,7 @@ class ImageImporter(BaseImporter):
         if len(file_uris) <= 0:
             return False
         for file_uri in file_uris:
-            file_uri = self.fs.safe(file_uri)
+            file_uri = self.core.call_success("fs_safe", file_uri)
             if not self.check_file_type(file_uri):
                 return False
         return True
@@ -436,7 +439,7 @@ class ImageImporter(BaseImporter):
                 current_doc.is_new or
                 not current_doc.can_edit):
             if not current_doc or not current_doc.can_edit:
-                current_doc = ImgDoc(self.fs, docsearch.rootdir)
+                current_doc = ImgDoc(self.core, docsearch.rootdir)
             new_docs = [current_doc]
             upd_docs = []
         else:
@@ -446,11 +449,14 @@ class ImageImporter(BaseImporter):
         upd_docs_pages = []
         page = None
 
-        file_uris = [self.fs.safe(uri) for uri in file_uris]
+        file_uris = [
+            self.core.call_success("fs_safe", uri)
+            for uri in file_uris
+        ]
         for file_uri in file_uris:
             logger.info("Importing image '%s'" % (file_uri))
 
-            with self.fs.open(file_uri, "rb") as fd:
+            with self.core.call_success("fs_open", file_uri, "rb") as fd:
                 img = Image.open(fd)
                 img.load()
             page = current_doc.add_page(img, [])
@@ -485,23 +491,20 @@ class ImageImporter(BaseImporter):
         return _("Append the image to the current document")
 
 
-FS = fs.GioFileSystem()
-IMPORTERS = [
-    PdfDirectoryImporter(FS),
-    PdfImporter(FS),
-    ImageDirectoryImporter(FS),
-    ImageImporter(FS),
-]
-
-
-def get_possible_importers(file_uris, current_doc=None):
+def get_possible_importers(core, file_uris, current_doc=None):
     """
     Return all the importer objects that can handle the specified files.
 
     Possible imports may vary depending on the currently active document
     """
-    importers = []
-    for importer in IMPORTERS:
+    all_importers = [
+        PdfDirectoryImporter(core),
+        PdfImporter(core),
+        ImageDirectoryImporter(core),
+        ImageImporter(core),
+    ]
+
+    for importer in all_importers:
         if importer.can_import(file_uris, current_doc):
             importers.append(importer)
     logger.debug("Files {}: {} possible importers".format(

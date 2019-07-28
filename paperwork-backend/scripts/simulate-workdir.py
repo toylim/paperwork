@@ -8,10 +8,11 @@ gi.require_version('Libinsane', '1.0')
 gi.require_version('Poppler', '0.18')
 gi.require_version('PangoCairo', '1.0')
 
+import openpaperwork_core
+
 from paperwork_backend import config  # noqa: E402
 from paperwork_backend import docimport  # noqa: E402
 from paperwork_backend import docsearch  # noqa: E402
-from paperwork_backend import fs  # noqa: E402
 from paperwork_backend.util import rm_rf  # noqa: E402
 
 """
@@ -27,8 +28,6 @@ for each document:
     - user fixes the labels
     - user scans the remaining pages of the document
 """
-
-g_fs = fs.GioFileSystem()
 
 g_correct_guess = 0
 g_missing_guess = 0
@@ -170,13 +169,16 @@ def enable_logging():
 
 
 def main():
+    core = openpaperwork_core.Core()
+    core.load("paperwork_backend.fs.gio")
+
     # enable_logging()
-    pconfig = config.PaperworkConfig()
+    pconfig = config.PaperworkConfig(core)
     pconfig.read()
 
     src_dir = pconfig.settings['workdir'].value
     print("Source work directory : {}".format(src_dir))
-    src_dsearch = docsearch.DocSearch(src_dir, use_default_index_client=False)
+    src_dsearch = docsearch.DocSearch(core, src_dir)
     src_dsearch.reload_index()
 
     dst_doc_dir = tempfile.mkdtemp(suffix="paperwork-simulate-docs")
@@ -184,8 +186,9 @@ def main():
     print(
         "Destination directories : {} | {}".format(dst_doc_dir, dst_index_dir)
     )
-    dst_dsearch = docsearch.DocSearch(dst_doc_dir, indexdir=dst_index_dir,
-                                      use_default_index_client=False)
+    dst_dsearch = docsearch.DocSearch(
+        core, dst_doc_dir, indexdir=dst_index_dir
+    )
     dst_dsearch.reload_index()
 
     print("Testing ...")
@@ -198,13 +201,13 @@ def main():
 
         for src_doc in documents:
             print("Document [{}] | [{}]".format(src_doc.docid, src_doc.path))
-            files = [x for x in g_fs.listdir(src_doc.path)]
+            files = [x for x in core.call_success("fs_listdir", src_doc.path)]
             files.sort()
 
             current_doc = None
             for filepath in files:
                 print("File: {}".format(filepath))
-                filename = g_fs.basename(filepath)
+                filename = core.call_success("fs_basename", filepath)
                 if "thumb" in filename or "labels" == filename:
                     continue
                 importers = docimport.get_possible_importers(

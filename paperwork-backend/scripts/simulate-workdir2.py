@@ -1,18 +1,4 @@
 #!/usr/bin/env python3
-
-import os
-import tempfile
-
-import gi
-gi.require_version('Gdk', '3.0')
-gi.require_version('Libinsane', '1.0')
-gi.require_version('Poppler', '0.18')
-
-from paperwork_backend import config  # noqa: E402
-from paperwork_backend import docimport  # noqa: E402
-from paperwork_backend import docsearch  # noqa: E402
-from paperwork_backend.util import rm_rf  # noqa: E402
-
 """
 Create a work directory progressively, like a user would.
 Uses an existing work directory for reference.
@@ -26,6 +12,22 @@ for each document:
     - user scans the remaining pages of the document
     - user fixes the labels
 """
+
+import os
+import tempfile
+
+import gi
+gi.require_version('Gdk', '3.0')
+gi.require_version('Libinsane', '1.0')
+gi.require_version('Poppler', '0.18')
+
+import openpaperwork_core
+
+from paperwork_backend import config  # noqa: E402
+from paperwork_backend import docimport  # noqa: E402
+from paperwork_backend import docsearch  # noqa: E402
+from paperwork_backend.util import rm_rf  # noqa: E402
+
 
 g_correct_guess = 0
 g_missing_guess = 0
@@ -159,12 +161,15 @@ def print_stats():
 
 
 def main():
-    pconfig = config.PaperworkConfig()
+    core = openpaperwork_core.Core()
+    core.load("paperwork_backend.fs.gio")
+
+    pconfig = config.PaperworkConfig(core)
     pconfig.read()
 
     src_dir = pconfig.settings['workdir'].value
     print("Source work directory : {}".format(src_dir))
-    src_dsearch = docsearch.DocSearch(src_dir)
+    src_dsearch = docsearch.DocSearch(core, src_dir)
     src_dsearch.reload_index()
 
     dst_doc_dir = tempfile.mkdtemp(suffix="paperwork-simulate-docs")
@@ -172,7 +177,9 @@ def main():
     print(
         "Destination directories : {} | {}".format(dst_doc_dir, dst_index_dir)
     )
-    dst_dsearch = docsearch.DocSearch(dst_doc_dir, indexdir=dst_index_dir)
+    dst_dsearch = docsearch.DocSearch(
+        core, dst_doc_dir, indexdir=dst_index_dir
+    )
     dst_dsearch.reload_index()
 
     try:

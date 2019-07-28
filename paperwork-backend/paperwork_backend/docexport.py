@@ -1,19 +1,14 @@
 from .common.export import Exporter
 from .common.export import dummy_export_progress_cb
-from . import fs
-
-
-FS = fs.GioFileSystem()
 
 
 class MultipleDocExporter(Exporter):
     can_select_format = False
     can_change_quality = False
 
-    def __init__(self, doclist):
+    def __init__(self, core, doclist):
         super().__init__(doclist, 'PDF')
-        global FS
-        self.fs = FS
+        self.core = core
         self.doclist = doclist
         self.exporters = [doc.build_exporter() for doc in doclist]
         self.ref_exporter = self.exporters[0]
@@ -74,13 +69,13 @@ class MultipleDocExporter(Exporter):
         return self.ref_exporter.get_img()
 
     def save(self, target_path, progress_cb=dummy_export_progress_cb):
-        target_path = self.fs.safe(target_path)
+        target_path = self.core.call_success("fs_safe", target_path)
         progress_cb(0, len(self.exporters))
         for (idx, exporter) in enumerate(self.exporters):
             progress_cb(idx, len(self.exporters))
             doc = exporter.doc
             filename = "{}.pdf".format(doc.docid)
-            filepath = self.fs.join(target_path, filename)
+            filepath = self.core.call_success("fs_join", target_path, filename)
             exporter.save(filepath, dummy_export_progress_cb)
         progress_cb(len(self.exporters), len(self.exporters))
         return target_path

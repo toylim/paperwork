@@ -17,10 +17,6 @@ from . import config  # noqa: E402
 from . import docimport  # noqa: E402
 from . import docsearch  # noqa: E402
 from .labels import Label  # noqa: E402
-from . import fs  # noqa: E402
-
-
-FS = fs.GioFileSystem()
 
 
 def is_verbose():
@@ -46,13 +42,14 @@ def reply(data):
     ))
 
 
-def get_docsearch():
-    pconfig = config.PaperworkConfig()
+def get_docsearch(core):
+    pconfig = config.PaperworkConfig(core)
     pconfig.read()
 
     verbose("Work directory: {}".format(pconfig.settings['workdir'].value))
 
     dsearch = docsearch.DocSearch(
+        core,
         pconfig.settings['workdir'].value,
         index_in_workdir=pconfig.settings['index_in_workdir'].value
     )
@@ -68,7 +65,7 @@ def _dump_page(page):
         print(out.strip())
 
 
-def cmd_add_label(docid, label_name, color=None):
+def cmd_add_label(core, docid, label_name, color=None):
     """
     Arguments: <document_id> <label_name> [<label_color>]
 
@@ -87,7 +84,7 @@ def cmd_add_label(docid, label_name, color=None):
             "reason": "xxxx", "args": "(xxxx, )"
         }
     """
-    dsearch = get_docsearch()
+    dsearch = get_docsearch(core)
     doc = dsearch.get(docid)
     if doc is None:
         raise Exception(
@@ -122,7 +119,7 @@ def cmd_add_label(docid, label_name, color=None):
     })
 
 
-def cmd_delete_doc(docid):
+def cmd_delete_doc(core, docid):
     """
     Arguments: <document_id>
 
@@ -137,7 +134,7 @@ def cmd_delete_doc(docid):
             "reason": "xxxx", "args": "(xxxx, )"
         }
     """
-    dsearch = get_docsearch()
+    dsearch = get_docsearch(core)
     doc = dsearch.get(docid)
     if doc is None:
         raise Exception(
@@ -155,7 +152,7 @@ def cmd_delete_doc(docid):
     })
 
 
-def cmd_dump(docid, page_nb=None):
+def cmd_dump(core, docid, page_nb=None):
     """
     Arguments: <document id> [<page number>]
 
@@ -166,7 +163,7 @@ def cmd_dump(docid, page_nb=None):
     Replies with page content.
     Beware: This is the only command not replying in JSON format.
     """
-    dsearch = get_docsearch()
+    dsearch = get_docsearch(core)
     doc = dsearch.get(docid)
     pages = doc.pages
     pages = [page for page in pages]
@@ -213,7 +210,7 @@ def _get_export_params(args):
     return tuple(args) + (quality, page_format)
 
 
-def cmd_export_all(*args):
+def cmd_export_all(core, *args):
     """
     Arguments:
         <output folder> [-- [--quality <0-100>] [--page_format <page_format>]]
@@ -242,7 +239,7 @@ def cmd_export_all(*args):
     """
     (output_dir, quality, page_format) = _get_export_params(args)
 
-    dsearch = get_docsearch()
+    dsearch = get_docsearch(core)
 
     try:
         os.mkdir(output_dir)
@@ -253,9 +250,11 @@ def cmd_export_all(*args):
 
     docs = [d for d in dsearch.docs]
     docs.sort(key=lambda doc: doc.docid)
-    output_dir = FS.safe(output_dir)
+    output_dir = core.call_success("fs_safe", output_dir)
     for (doc_idx, doc) in enumerate(docs):
-        output_pdf = FS.join(output_dir, doc.docid + ".pdf")
+        output_pdf = core.call_success(
+            "fs_safe", join(output_dir, doc.docid + ".pdf"
+        )
 
         exporter = doc.build_exporter(file_format="pdf")
         if exporter.can_change_quality:
@@ -279,7 +278,7 @@ def cmd_export_all(*args):
     })
 
 
-def cmd_export_doc(*args):
+def cmd_export_doc(core, *args):
     """
     Arguments:
         <document id> <output PDF file path>
@@ -307,7 +306,7 @@ def cmd_export_doc(*args):
     """
     (docid, output_pdf, quality, page_format) = _get_export_params(args)
 
-    dsearch = get_docsearch()
+    dsearch = get_docsearch(core)
     doc = dsearch.get(docid)
 
     exporter = doc.build_exporter(file_format="pdf")
@@ -316,7 +315,7 @@ def cmd_export_doc(*args):
     if exporter.can_select_format:
         exporter.set_page_format(page_format)
     verbose("Exporting {} --> {} ...".format(docid, output_pdf))
-    output_pdf = FS.safe(output_pdf)
+    output_pdf = core.call_success("fs_safe", output_pdf)
     exporter.save(output_pdf)
     verbose("Done")
     r = {
@@ -330,7 +329,7 @@ def cmd_export_doc(*args):
     reply(r)
 
 
-def cmd_guess_labels(*args):
+def cmd_guess_labels(core, *args):
     """
     Arguments: <document id> [-- [--apply]]
 
@@ -360,7 +359,7 @@ def cmd_guess_labels(*args):
         args.remove("--apply")
     docid = args[0]
 
-    dsearch = get_docsearch()
+    dsearch = get_docsearch(core)
     doc = dsearch.get(docid)
     if doc is None:
         raise Exception(
@@ -416,8 +415,10 @@ def cmd_guess_labels(*args):
     reply(r)
 
 
-def _get_importer(fileuris, doc):
-    importers = docimport.get_possible_importers(fileuris, current_doc=doc)
+def _get_importer(core, fileuris, doc):
+    importers = docimport.get_possible_importers(
+        core, fileuris, current_doc=doc
+    )
 
     if len(importers) <= 0:
         raise Exception("Don't know how to import {}".format(fileuris))
@@ -485,18 +486,18 @@ def _do_ocr_thread(ocr_lang, ocr, input_queue, output_queue):
         pass
 
 
-def _do_import(filepaths, dsearch, doc, ocr=None, ocr_lang=None,
+def _do_import(core, filepaths, dsearch, doc, ocr=None, ocr_lang=None,
                guess_labels=True, name=None, labels=[]):
     index_updater = dsearch.get_index_updater(optimize=False)
 
-    fileuris = [FS.safe(f) for f in filepaths]
+    fileuris = [core.call_success("fs_safe", f) for f in filepaths]
 
     for fileuri in fileuris:
         # safety checks first
-        if not FS.exists(fileuri):
+        if not core.call_success("fs_exists", fileuri):
             raise FileNotFoundError(fileuri)  # NOQA (Python 3.x only)
 
-    importer = _get_importer(fileuris, doc)
+    importer = _get_importer(core, fileuris, doc)
     verbose("Files {}: Importer = {}".format(fileuris, importer))
     import_result = importer.import_doc(
         fileuris, dsearch, current_doc=doc
@@ -570,7 +571,7 @@ def _do_import(filepaths, dsearch, doc, ocr=None, ocr_lang=None,
     reply(r)
 
 
-def cmd_import(*args):
+def cmd_import(core, *args):
     """
     Arguments:
         <file_or_folder> [<file_or_folder> [...]]
@@ -641,7 +642,7 @@ def cmd_import(*args):
     doc = None
     name = None
     labels = []
-    dsearch = get_docsearch()
+    dsearch = get_docsearch(core)
 
     args = list(args)
 
@@ -675,7 +676,7 @@ def cmd_import(*args):
         sys.stderr.write("Nothing to import.\n")
         return
 
-    dsearch = get_docsearch()
+    dsearch = get_docsearch(core)
 
     if docid:
         doc = dsearch.get(docid)
@@ -685,15 +686,15 @@ def cmd_import(*args):
 
     ocr_lang = None
     if ocr is not None:
-        pconfig = config.PaperworkConfig()
+        pconfig = config.PaperworkConfig(core)
         pconfig.read()
         ocr_lang = pconfig.settings['ocr_lang'].value
     return _do_import(
-        args, dsearch, doc, ocr, ocr_lang, guess_labels, name, labels
+        core, args, dsearch, doc, ocr, ocr_lang, guess_labels, name, labels
     )
 
 
-def cmd_ocr(*args):
+def cmd_ocr(core, *args):
     """
     Arguments:
         <document id or page id> [<document id or page id> [...]]
@@ -751,11 +752,11 @@ def cmd_ocr(*args):
         args.remove("--empty_only")
 
     if ocr_lang is None:
-        pconfig = config.PaperworkConfig()
+        pconfig = config.PaperworkConfig(core)
         pconfig.read()
         ocr_lang = pconfig.settings['ocr_lang'].value
 
-    dsearch = get_docsearch()
+    dsearch = get_docsearch(core)
     pages = set()
     docs = set()
 
@@ -783,7 +784,7 @@ def cmd_ocr(*args):
     })
 
 
-def cmd_remove_label(docid, label_name):
+def cmd_remove_label(core, docid, label_name):
     """
     Arguments: <document_id> <label_name>
 
@@ -805,7 +806,7 @@ def cmd_remove_label(docid, label_name):
             "labels": ["aaa", "bbb", "ccc"],  # after deletion
         }
     """
-    dsearch = get_docsearch()
+    dsearch = get_docsearch(core)
     doc = dsearch.get(docid)
     if doc is None:
         raise Exception(
@@ -828,7 +829,7 @@ def cmd_remove_label(docid, label_name):
     })
 
 
-def cmd_rename(old_docid, new_docid):
+def cmd_rename(core, old_docid, new_docid):
     """
     Arguments: <current document_id> <new document_id>
 
@@ -851,7 +852,7 @@ def cmd_rename(old_docid, new_docid):
             "new_docid": "yyyy",
         }
     """
-    dsearch = get_docsearch()
+    dsearch = get_docsearch(core)
     doc = dsearch.get(old_docid)
     if doc is None:
         raise Exception(
@@ -880,8 +881,8 @@ def cmd_rename(old_docid, new_docid):
 
 
 class RescanManager(object):
-    def __init__(self):
-        self.dsearch = get_docsearch()
+    def __init__(self, core):
+        self.dsearch = get_docsearch(core)
         self.dexaminer = self.dsearch.get_doc_examiner()
         self.index_updater = self.dsearch.get_index_updater()
         self.reply = {
@@ -946,7 +947,7 @@ class RescanManager(object):
         verbose("Done")
 
 
-def cmd_rescan():
+def cmd_rescan(core):
     """
     Rescan the work directory. Look for new, updated or deleted documents
     and update the index accordingly.
@@ -965,7 +966,7 @@ def cmd_rescan():
             "deleted_docs": ["xxx", "yyy"],
         }
     """
-    rm = RescanManager()
+    rm = RescanManager(core)
     rm.rescan()
     reply(rm.reply)
 
@@ -985,7 +986,7 @@ def _get_first_line(doc):
     return out
 
 
-def cmd_show(docid):
+def cmd_show(core, docid):
     """
     Arguments: <doc_id>
 
@@ -1012,7 +1013,7 @@ def cmd_show(docid):
             "first_line": "vwklsd wldkwq",
         }
     """
-    dsearch = get_docsearch()
+    dsearch = get_docsearch(core)
     doc = dsearch.get(docid)
     r = {
         'type': str(type(doc)),
@@ -1035,7 +1036,7 @@ def cmd_show(docid):
     reply(r)
 
 
-def cmd_search(*args):
+def cmd_search(core, *args):
     """
     Arguments: <keyword1> [<keyword2> [<keyword3> [...]]]
 
@@ -1062,7 +1063,7 @@ def cmd_search(*args):
             ],
         }
     """
-    dsearch = get_docsearch()
+    dsearch = get_docsearch(core)
 
     verbose("Search: {}".format(" ".join(args)))
 
@@ -1079,7 +1080,7 @@ def cmd_search(*args):
     reply(r)
 
 
-def cmd_switch_workdir(new_workdir):
+def cmd_switch_workdir(core, new_workdir):
     """
     Arguments: <new work directory path>
 
@@ -1101,13 +1102,14 @@ def cmd_switch_workdir(new_workdir):
             "new_workdir": "file:///tmp/papers",
         }
     """
-    new_workdir = FS.safe(new_workdir)
-    if not FS.exists(new_workdir) or not FS.isdir(new_workdir):
+    new_workdir = core.call_success("fs_safe", new_workdir)
+    if (not core.call_success("fs_exists", new_workdir)
+            or not core.call_success("fs_isdir", new_workdir):
         sys.stderr.write("New work directory {} doesn't exists".format(
             new_workdir
         ))
         return
-    pconfig = config.PaperworkConfig()
+    pconfig = config.PaperworkConfig(core)
     pconfig.read()
     r = {
         'old_workdir': pconfig.settings['workdir'].value,

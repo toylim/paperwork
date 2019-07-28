@@ -33,7 +33,7 @@ def _hook_scan(config, main_window):
     GLib.timeout_add(1000, _wait_for_main_win, _do_scan, config, main_window)
 
 
-def scan():
+def cmd_scan(core):
     """
     Start Paperwork and immediately scan a page.
     """
@@ -114,7 +114,7 @@ def _install(icondir, datadir):
     print("Done")
 
 
-def install():
+def cmd_install(core):
     """
     Install Paperwork icons and shortcut.
     Files are installed in the home directory of the current user. No root
@@ -126,7 +126,7 @@ def install():
     )
 
 
-def install_system(icon_basedir="/usr/share/icons", data_basedir="/usr/share"):
+def cmd_install_system(core, icon_basedir="/usr/share/icons", data_basedir="/usr/share"):
     """
     Install Paperwork icons and shortcut.
     Files are installed system-wide. Root access is required.
@@ -141,7 +141,7 @@ def install_system(icon_basedir="/usr/share/icons", data_basedir="/usr/share"):
 
 
 COMMANDS = {
-    'install': install,
-    'install_system': install_system,
-    'scan': scan,
+    'install': cmd_install,
+    'install_system': cmd_install_system,
+    'scan': cmd_scan,
 }

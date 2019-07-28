@@ -116,7 +116,9 @@ class PdfPage(BasicPage):
 
     def __get_last_mod(self):
         try:
-            return self.fs.getmtime(self.__get_box_path())
+            return self.core.call_success(
+                "fs_getmtime", self.__get_box_path()
+            )
         except OSError:
             return 0.0
 
@@ -125,11 +127,11 @@ class PdfPage(BasicPage):
     def _get_text(self):
         txtfile = self.__get_txt_path()
 
-        if self.fs.exists(txtfile):
+        if self.core.call_success("fs_exists", txtfile):
             txt = []
             try:
-                with self.fs.open(txtfile, 'r') as file_desc:
-                    for line in file_desc.readlines():
+                with self.core.call_success("fs_open", txtfile, 'r') as fd:
+                    for line in fd.readlines():
                         line = line.strip()
                         txt.append(line)
             except IOError as exc:
@@ -137,7 +139,7 @@ class PdfPage(BasicPage):
             return txt
 
         boxfile = self.__get_box_path()
-        if self.fs.exists(boxfile):
+        if self.core.call_success("fs_exists", boxfile):
             # reassemble text based on boxes
             boxes = self.boxes
             txt = []
@@ -160,12 +162,12 @@ class PdfPage(BasicPage):
 
         # Check first if there is an OCR file available
         boxfile = self.__get_box_path()
-        if self.fs.exists(boxfile):
+        if self.core.call_success("fs_exists", boxfile):
             box_builder = pyocr.builders.LineBoxBuilder()
 
             try:
-                with self.fs.open(boxfile, 'r') as file_desc:
-                    self.__boxes = box_builder.read_file(file_desc)
+                with self.core.call_success("fs_open", boxfile, 'r') as fd:
+                    self.__boxes = box_builder.read_file(fd)
                 return self.__boxes
             except IOError as exc:
                 logger.error("Unable to get boxes for '%s': %s"
@@ -198,7 +200,7 @@ class PdfPage(BasicPage):
 
     def __set_boxes(self, boxes):
         boxfile = self.__get_box_path()
-        with self.fs.open(boxfile, 'w') as file_desc:
+        with self.core.call_success("fs_open", boxfile, 'w') as file_desc:
             pyocr.builders.LineBoxBuilder().write_file(file_desc, boxes)
 
     boxes = property(__get_boxes, __set_boxes)

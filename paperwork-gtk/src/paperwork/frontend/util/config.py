@@ -231,8 +231,8 @@ def get_default_spellcheck_lang(ocr_lang):
     return lang.alpha_2
 
 
-def load_config():
-    config = PaperworkConfig()
+def load_config(core):
+    config = PaperworkConfig(core)
 
     settings = {
         'main_win_size': _PaperworkSize("GUI", "main_win_size"),

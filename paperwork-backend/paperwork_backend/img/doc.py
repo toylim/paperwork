@@ -101,33 +101,39 @@ class ImgDoc(BasicDoc):
     can_edit = True
     doctype = u"Img"
 
-    def __init__(self, fs, docpath, docid=None):
+    def __init__(self, core, docpath, docid=None):
         """
         Arguments:
             docpath --- For an existing document, the path to its folder. For
                 a new one, the rootdir of all documents
             docid --- Document Id (ie folder name). Use None for a new document
         """
-        BasicDoc.__init__(self, fs, docpath, docid)
+        BasicDoc.__init__(self, core, docpath, docid)
 
     def clone(self):
-        return ImgDoc(self.fs, self.path, self.docid)
+        return ImgDoc(self.core, self.path, self.docid)
 
     def __get_last_mod(self):
         last_mod = 0.0
         for page in self.pages:
             if last_mod < page.last_mod:
                 last_mod = page.last_mod
-        labels_path = self.fs.join(self.path, BasicDoc.LABEL_FILE)
+        labels_path = self.core.call_success(
+            "fs_join", self.path, BasicDoc.LABEL_FILE
+        )
         try:
-            file_last_mod = self.fs.getmtime(labels_path)
+            file_last_mod = self.core.call_success("fs_getmtime", labels_path)
             if file_last_mod > last_mod:
                 last_mod = file_last_mod
         except OSError:
             pass
-        extra_txt_path = self.fs.join(self.path, BasicDoc.EXTRA_TEXT_FILE)
+        extra_txt_path = self.core.call_success(
+            "fs_join", self.path, BasicDoc.EXTRA_TEXT_FILE
+        )
         try:
-            file_last_mod = self.fs.getmtime(extra_txt_path)
+            file_last_mod = self.core.call_success(
+                "fs_getmtime", extra_txt_path
+            )
             if file_last_mod > last_mod:
                 last_mod = file_last_mod
         except OSError:
@@ -146,10 +152,10 @@ class ImgDoc(BasicDoc):
         how many JPG files there are in the document.
         """
         try:
-            filelist = self.fs.listdir(self.path)
+            filelist = self.core.call_success("fs_listdir", self.path)
             count = 0
             for filepath in filelist:
-                filename = self.fs.basename(filepath)
+                filename = self.core.call_success("fs_basename", filepath)
                 if not ImgPage.FILE_REGEX.match(filename):
                     continue
                 count += 1
@@ -178,7 +184,7 @@ class ImgDoc(BasicDoc):
         """
         if page.doc == self:
             return
-        self.fs.mkdir_p(self.path)
+        self.core.call_success("fs_mkdir_p", self.path)
 
         new_page = ImgPage(self, self.nb_pages)
         logger.info("%s --> %s" % (str(page), str(new_page)))
@@ -195,7 +201,7 @@ class ImgDoc(BasicDoc):
         return dochash
 
     def add_page(self, img, boxes):
-        self.fs.mkdir_p(self.path)
+        self.core.call_success("fs_mkdir_p", self.path)
         logger.info("Adding page %d to %s (%s)",
                     self.nb_pages, str(self), self.path)
         page = ImgPage(self, self.nb_pages)
@@ -204,7 +210,7 @@ class ImgDoc(BasicDoc):
         return self.pages[-1]
 
     def insert_page(self, img, boxes, page_nb):
-        self.fs.mkdir_p(self.path)
+        self.core.call_success("fs_mkdir_p", self.path)
 
         logger.info("Inserting page %d to %s" % (page_nb, str(self)))
 
@@ -224,11 +230,11 @@ class ImgDoc(BasicDoc):
         return self.pages[page_nb]
 
 
-def is_img_doc(fs, docpath):
-    if not fs.isdir(docpath):
+def is_img_doc(core, docpath):
+    if not core.call_success("fs_isdir", docpath):
         return False
     try:
-        filelist = fs.listdir(docpath)
+        filelist = core.call_success("fs_listdir", docpath)
     except OSError as exc:
         logger.warn("Warning: Failed to list files in %s: %s"
                     % (docpath, str(exc)))

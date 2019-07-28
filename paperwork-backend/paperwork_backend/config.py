@@ -24,12 +24,10 @@ import os
 import pyocr
 
 from . import util
-from . import fs
 from .util import find_language
 
 
 logger = logging.getLogger(__name__)
-FS = fs.GioFileSystem()
 
 DEFAULT_OCR_LANG = "eng"  # if really we can't guess anything
 
@@ -67,7 +65,8 @@ class PaperworkSetting(object):
 
 
 class PaperworkURI(object):
-    def __init__(self, section, token, default_value_func=lambda: None):
+    def __init__(self, core, section, token, default_value_func=lambda: None):
+        self.core = core
         self.section = section
         self.token = token
         self.default_value_func = default_value_func
@@ -86,7 +85,7 @@ class PaperworkURI(object):
                         "Failed to decode work dir path ({})".format(value),
                         exc_info=exc
                     )
-                value = FS.safe(value)
+                value = self.core.call_success("fs_safe", value)
             else:
                 value = None
             self.value = value
@@ -96,7 +95,7 @@ class PaperworkURI(object):
         self.value = self.default_value_func()
 
     def update(self, config):
-        value = FS.safe(str(self.value))
+        value = self.core.call_success("fs_safe", str(self.value))
         try:
             value = base64.encodebytes(value.encode('utf-8')).decode('utf-8')
         except Exception as exc:
@@ -129,9 +128,10 @@ class PaperworkConfig(object):
     """
     CURRENT_INDEX_VERSION = "8"
 
-    def __init__(self):
+    def __init__(self, core):
         self.settings = {
             'workdir': PaperworkURI(
+                core,
                 "Global", "WorkDirectory",
                 lambda: os.path.expanduser("~/papers")),
             'index_version': PaperworkSetting(

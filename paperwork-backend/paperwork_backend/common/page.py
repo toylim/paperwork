@@ -34,6 +34,7 @@ class PageExporter(Exporter):
     def __init__(self, page, img_format='PNG', mime='image/png',
                  valid_exts=['png']):
         super().__init__(page, img_format)
+        self.core = page.core
         self.can_change_quality = True
         self.can_select_format = False
         self.page = page
@@ -51,7 +52,7 @@ class PageExporter(Exporter):
         return self.valid_exts
 
     def save(self, target_path, progress_cb=dummy_export_progress_cb):
-        target_path = self.page.fs.safe(target_path)
+        target_path = self.core.call_success("fs_safe", target_path)
 
         progress_cb(0, 4)
 
@@ -74,7 +75,7 @@ class PageExporter(Exporter):
             img = self.__postprocess_func(img)
             progress_cb(3, 4)
 
-        with self.page.fs.open(target_path, 'wb') as fd:
+        with self.core.call_success("fs_open", target_path, 'wb') as fd:
             img.save(fd, self.img_format, quality=quality)
         progress_cb(4, 4)
 
@@ -88,7 +89,7 @@ class PageExporter(Exporter):
         os.close(tmpfd)
 
         path = self.save(tmppath)
-        with self.page.fs.open(path, 'rb') as fd:
+        with self.core.call_success("fs_open", path, 'rb') as fd:
             img = PIL.Image.open(fd)
             img.load()
 
@@ -105,7 +106,7 @@ class PageExporter(Exporter):
     def estimate_size(self):
         if self.__img is None:
             self.refresh()
-        return self.page.fs.getsize(self.__img[0])
+        return self.core.call_success("fs_getsize", self.__img[0])
 
     def get_img(self):
         if self.__img is None:
@@ -147,7 +148,7 @@ class BasicPage(object):
         """
         Don't create directly. Please use ImgDoc.get_page()
         """
-        self.fs = doc.fs
+        self.core = doc.core
         self.doc = doc
         self.page_nb = page_nb
 
@@ -168,7 +169,7 @@ class BasicPage(object):
         Returns a file path relative to this page
         """
         filename = ("%s%d.%s" % (self.FILE_PREFIX, self.page_nb + 1, ext))
-        return self.fs.join(self.doc.path, filename)
+        return self.core.call_success("fs_join", self.doc.path, filename)
 
     def __make_thumbnail(self, width, height):
         """
@@ -195,11 +196,13 @@ class BasicPage(object):
         try:
             doc_file_path = self.get_doc_file_path()
 
-            if (self.fs.exists(thumb_path) and
-                    (self.fs.getmtime(doc_file_path) <
-                        self.fs.getmtime(thumb_path) or not
-                        self.fs.writable(thumb_path))):
-                with self.fs.open(thumb_path, 'rb') as fd:
+            if (self.core.call_success("fs_exists", thumb_path) and
+                    (self.core.call_success("fs_getmtime", doc_file_path) <
+                        self.core.call_success("fs_getmtime", thumb_path) or
+                        not self.core.call_success(
+                            "fs_iswritable", thumb_path
+                        ))):
+                with self.core.call_success("fs_open", thumb_path, 'rb') as fd:
                     thumbnail = PIL.Image.open(fd)
                     thumbnail.load()
                 if thumbnail.size[0] == width or thumbnail.size[1] == height:
@@ -219,7 +222,7 @@ class BasicPage(object):
 
         logger.info("[%s] Updating thumbnail ...", str(self.doc.docid))
         thumbnail = self.__make_thumbnail(width, height)
-        with self.fs.open(thumb_path, 'wb') as fd:
+        with self.core.call_success("fs_open", thumb_path, 'wb') as fd:
             thumbnail.save(fd, format="JPEG")
 
         return thumbnail
@@ -285,7 +288,9 @@ class BasicPage(object):
     keywords = property(__get_keywords)
 
     def has_ocr(self):
-        return self.fs.exists(self._get_filepath(self.EXT_BOX))
+        return self.core.call_success(
+            "fs_exists", self._get_filepath(self.EXT_BOX)
+        )
 
     def __hash__(self):
         return hash(self.pageid)

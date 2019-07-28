@@ -77,7 +77,7 @@ class ImgPage(BasicPage):
 
     def __get_last_mod(self):
         try:
-            return self.fs.getmtime(self.__get_box_path())
+            return self.core.call_success("fs_getmtime", self.__get_box_path())
         except OSError:
             return 0.0
 
@@ -104,14 +104,14 @@ class ImgPage(BasicPage):
 
         try:
             box_builder = pyocr.builders.LineBoxBuilder()
-            with self.fs.open(boxfile, 'r') as file_desc:
+            with self.core.call_success("fs_open", boxfile, 'r') as file_desc:
                 boxes = box_builder.read_file(file_desc)
             if boxes != []:
                 return boxes
             # fallback: old format: word boxes
             # shouldn't be used anymore ...
             box_builder = pyocr.builders.WordBoxBuilder()
-            with self.fs.open(boxfile, 'r') as file_desc:
+            with self.core.call_success("fs_open", boxfile, 'r') as file_desc:
                 boxes = box_builder.read_file(file_desc)
             if len(boxes) <= 0:
                 return []
@@ -125,7 +125,7 @@ class ImgPage(BasicPage):
 
     def __set_boxes(self, boxes):
         boxfile = self.__box_path
-        with self.fs.open(boxfile, 'w') as file_desc:
+        with self.core.call_success("fs_open", boxfile, 'w') as file_desc:
             pyocr.builders.LineBoxBuilder().write_file(file_desc, boxes)
 
     boxes = property(__get_boxes, __set_boxes)
@@ -134,13 +134,13 @@ class ImgPage(BasicPage):
         """
         Returns an image object corresponding to the page
         """
-        with self.fs.open(self.__img_path, 'rb') as fd:
+        with self.core.call_success("fs_open", self.__img_path, 'rb') as fd:
             img = PIL.Image.open(fd)
             img.load()
             return img
 
     def __set_img(self, img):
-        with self.fs.open(self.__img_path, 'wb') as fd:
+        with self.core.call_success("fs_open", self.__img_path, 'wb') as fd:
             img = img.convert("RGB")
             img.save(fd, format="JPEG")
 
@@ -151,7 +151,7 @@ class ImgPage(BasicPage):
         return img.resize(size, PIL.Image.ANTIALIAS)
 
     def __get_size(self):
-        with self.fs.open(self.__img_path, 'rb') as fd:
+        with self.core.call_success("fs_open", self.__img_path, 'rb') as fd:
             img = PIL.Image.open(fd)
             return img.size
 
@@ -230,11 +230,11 @@ class ImgPage(BasicPage):
         dst["thumb"] = self._get_thumb_path()
 
         for key in src.keys():
-            if self.fs.exists(src[key]):
-                if self.fs.exists(dst[key]):
+            if self.core.call_success("fs_exists", src[key]):
+                if self.core.call_success("fs_exists", dst[key]):
                     logger.error("Error: file already exists: %s" % dst[key])
                     assert(0)
-                self.fs.rename(src[key], dst[key])
+                self.core.call_success("fs_rename", src[key], dst[key])
 
     def destroy(self):
         """
@@ -253,8 +253,8 @@ class ImgPage(BasicPage):
             self._get_thumb_path(),
         ]
         for path in paths:
-            if self.fs.exists(path):
-                self.fs.unlink(path)
+            if self.core.call_success("fs_exists", path):
+                self.core.call_success("fs_unlink", path)
         for page_nb in range(self.page_nb + 1, current_doc_nb_pages):
             page = doc_pages[page_nb]
             page.change_index(offset=-1)
@@ -275,12 +275,12 @@ class ImgPage(BasicPage):
         ]
         for (src, dst) in to_move:
             # sanity check
-            if self.fs.exists(dst):
+            if self.core.call_success("fs_exists", dst):
                 logger.error("Error, file already exists: %s" % dst)
                 assert(0)
         for (src, dst) in to_move:
             logger.info("%s --> %s" % (src, dst))
-            self.fs.rename(src, dst)
+            self.core.call_success("fs_rename", src, dst)
 
         if (other_doc_nb_pages <= 1):
             other_doc.destroy()
@@ -290,7 +290,7 @@ class ImgPage(BasicPage):
                 page.change_index(offset=-1)
 
     def get_docfilehash(self):
-        return self.doc.hash_file(self.fs, self.__get_img_path())
+        return self.doc.hash_file(self.core, self.__get_img_path())
 
     def has_ocr(self):
         # always act as if images have OCR file attached

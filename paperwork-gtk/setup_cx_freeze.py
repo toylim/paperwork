@@ -234,6 +234,7 @@ Main features are:
     },
     zip_safe=True,
     install_requires=[
+        "openpaperwork-core",
         "python-dateutil",
         "python-Levenshtein",
         "Pillow",

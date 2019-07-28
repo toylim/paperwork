@@ -28,6 +28,9 @@ import signal
 import sys
 
 
+import openpaperwork_core
+
+
 def set_meipass():
     # If sys.frozen, then Pyocr needs MEIPASS to be set
     # *before* importing it
@@ -187,6 +190,9 @@ class Main(object):
             GLib.unix_signal_add(GLib.PRIORITY_DEFAULT, signal.SIGTERM,
                                  self.quit_nicely, None)
 
+        core = openpaperwork_core.Core()
+        core.load("paperwork_backend.fs.gio")
+
         backend_state = paperwork_backend.init()
 
         logger.info("Initializing libinsane ...")
@@ -196,10 +202,11 @@ class Main(object):
         logger.info("Initializing libnotify ...")
         Notify.init("Paperwork")
 
-        self.config = load_config()
+        self.config = load_config(core)
         self.config.read()
 
         self.main_win = MainWindow(
+            core,
             self.config, self.main_loop, libinsane,
             not skip_workdir_scan,
             flatpak=backend_state['flatpak']

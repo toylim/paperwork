@@ -21,6 +21,8 @@ import Levenshtein  # noqa: E402
 import pillowfight  # noqa: E402
 import pyocr  # noqa: E402
 
+import openpaperwork_core
+
 from paperwork_backend import config  # noqa: E402
 from paperwork_backend import docsearch  # noqa: E402
 
@@ -315,8 +317,11 @@ def main():
         g_tknzr = enchant.tokenize.get_tokenizer()
     print("Done")
 
+    core = openpaperwork_core.Core()
+    core.load("paperwork_backend.fs.gio")
+
     print("Loading documents list ...")
-    pconfig = config.PaperworkConfig()
+    pconfig = config.PaperworkConfig(core)
     pconfig.read()
     work_dir = pconfig.settings['workdir'].value
     dsearch = docsearch.DocSearch(work_dir)

@@ -6,7 +6,10 @@ import urllib
 from gi.repository import Gio
 from gi.repository import GLib
 
-logger = logging.getLogger(__name__)
+from . import CommonFsPluginBase
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 class GioFileAdapter(io.RawIOBase):
@@ -29,7 +32,7 @@ class GioFileAdapter(io.RawIOBase):
                     Gio.FILE_ATTRIBUTE_STANDARD_SIZE
                 )
             except GLib.GError as exc:
-                logger.warning("Gio.Gerror", exc_info=exc)
+                LOGGER.warning("Gio.Gerror", exc_info=exc)
                 raise IOError(str(exc))
 
         self.gfd = None
@@ -78,7 +81,7 @@ class GioFileAdapter(io.RawIOBase):
         raise OSError("readline() not supported on Gio.File objects")
 
     def readlines(self, hint=-1):
-        logger.warning("readlines() shouldn't be called on a binary file"
+        LOGGER.warning("readlines() shouldn't be called on a binary file"
                        " descriptor. This is not cross-platform")
         return [(x + b"\n") for x in self.readall().split(b"\n")]
 
@@ -221,53 +224,42 @@ class GioUTF8FileAdapter(io.RawIOBase):
         self.close()
 
 
-class CommonFs(object):
-    def __init__(self):
-        pass
-
-    def join(self, base, url):
-        if not base.endswith("/"):
-            base += "/"
-        return urllib.parse.urljoin(base, url)
-
-    def basename(self, url):
-        url = urllib.parse.urlparse(url)
-        basename = os.path.basename(url.path)
-        # Base name can be safely unquoted
-        return urllib.parse.unquote(basename)
-
-    def dirname(self, url):
-        # dir name should not be unquoted. It could mess up the URI
-        return os.path.dirname(url)
-
-
-class GioFileSystem(CommonFs):
+class Plugin(CommonFsPluginBase):
     def __init__(self):
         super().__init__()
 
-    def safe(self, uri):
-        logger.debug("safe: %s", uri)
+    def fs_safe(self, uri):
+        """
+        Make sure the specified URI is actually an URI and not a Unix path.
+        Returns:
+            - An URI
+        """
+        LOGGER.debug("safe: %s", uri)
         if uri[:2] == "\\\\" or "://" in uri:
-            logger.debug("safe: --> %s", uri)
+            LOGGER.debug("safe: --> %s", uri)
             return uri
         if os.name != "nt":
             uri = os.path.abspath(uri)
             uri = "file://" + urllib.parse.quote(uri)
-            logger.debug("safe: --> %s", uri)
+            LOGGER.debug("safe: --> %s", uri)
             return uri
         else:
             gf = Gio.File.new_for_path(uri)
             uri = gf.get_uri()
-            logger.debug("safe: --> %s", uri)
+            LOGGER.debug("safe: --> %s", uri)
             return uri
 
-    def unsafe(self, uri):
-        logger.debug("unsafe: %s", uri)
+    def fs_unsafe(self, uri):
+        """
+        Turn an URI into an Unix path, whenever possible.
+        Shouldn't be used at all.
+        """
+        LOGGER.debug("unsafe: %s", uri)
         if "://" not in uri and uri[:2] != "\\\\":
-            logger.debug("unsafe: --> %s", uri)
+            LOGGER.debug("unsafe: --> %s", uri)
             return uri
         if not uri.startswith("file://"):
-            logger.debug("unsafe: --> EXC")
+            LOGGER.debug("unsafe: --> EXC")
             raise Exception("TARGET URI SHOULD BE A LOCAL FILE")
         uri = uri[len("file://"):]
         if os.name == 'nt' and uri[0] == '/':
@@ -275,10 +267,10 @@ class GioFileSystem(CommonFs):
             # "file:///C:\..." instead of "file://C:\..."
             uri = uri[1:]
         uri = urllib.parse.unquote(uri)
-        logger.debug("unsafe: --> %s", uri)
+        LOGGER.debug("unsafe: --> %s", uri)
         return uri
 
-    def open(self, uri, mode='rb'):
+    def fs_open(self, uri, mode='rb'):
         f = Gio.File.new_for_uri(uri)
         if ('w' not in mode and 'a' not in mode) and not f.query_exists():
             raise IOError("File does not exist")
@@ -288,18 +280,18 @@ class GioFileSystem(CommonFs):
                 return raw
             return GioUTF8FileAdapter(raw)
         except GLib.GError as exc:
-            logger.warning("Gio.Gerror", exc_info=exc)
+            LOGGER.warning("Gio.Gerror", exc_info=exc)
             raise IOError(str(exc))
 
-    def exists(self, url):
+    def fs_exists(self, url):
         try:
             f = Gio.File.new_for_uri(url)
             return f.query_exists()
         except GLib.GError as exc:
-            logger.warning("Gio.Gerror", exc_info=exc)
+            LOGGER.warning("Gio.Gerror", exc_info=exc)
             raise IOError(str(exc))
 
-    def listdir(self, url):
+    def fs_listdir(self, url):
         try:
             f = Gio.File.new_for_uri(url)
             children = f.enumerate_children(
@@ -310,56 +302,56 @@ class GioFileSystem(CommonFs):
                 child = f.get_child(child.get_name())
                 yield child.get_uri()
         except GLib.GError as exc:
-            logger.warning("Gio.Gerror", exc_info=exc)
+            LOGGER.warning("Gio.Gerror", exc_info=exc)
             raise IOError(str(exc))
 
-    def rename(self, old_url, new_url):
+    def fs_rename(self, old_url, new_url):
         try:
             old = Gio.File.new_for_uri(old_url)
             new = Gio.File.new_for_uri(new_url)
             assert(not old.equal(new))
             old.move(new, Gio.FileCopyFlags.NONE)
         except GLib.GError as exc:
-            logger.warning("Gio.Gerror", exc_info=exc)
+            LOGGER.warning("Gio.Gerror", exc_info=exc)
             raise IOError(str(exc))
 
-    def unlink(self, url):
+    def fs_unlink(self, url):
         try:
-            logger.info("Deleting %s ...", url)
+            LOGGER.info("Deleting %s ...", url)
             f = Gio.File.new_for_uri(url)
             deleted = False
             try:
                 deleted = f.trash()
             except Exception as exc:
-                logger.warning("Failed to trash %s. Will try to delete it"
+                LOGGER.warning("Failed to trash %s. Will try to delete it"
                                " instead", f.get_uri(), exc_info=exc)
             if not deleted:
                 try:
                     deleted = f.delete()
                 except Exception as exc:
-                    logger.warning("Failed to deleted %s", f.get_uri(),
+                    LOGGER.warning("Failed to deleted %s", f.get_uri(),
                                    exc_info=exc)
             if not deleted:
                 raise IOError("Failed to delete %s" % url)
         except GLib.GError as exc:
-            logger.warning("Gio.Gerror", exc_info=exc)
+            LOGGER.warning("Gio.Gerror", exc_info=exc)
             raise IOError(str(exc))
 
-    def rm_rf(self, url):
+    def fs_rm_rf(self, url):
         try:
-            logger.info("Deleting %s ...", url)
+            LOGGER.info("Deleting %s ...", url)
             f = Gio.File.new_for_uri(url)
             deleted = False
             try:
                 deleted = f.trash()
             except Exception as exc:
-                logger.warning("Failed to trash %s. Will try to delete it"
+                LOGGER.warning("Failed to trash %s. Will try to delete it"
                                " instead", f.get_uri(), exc_info=exc)
             if not deleted:
                 self._rm_rf(f)
-            logger.info("%s deleted", url)
+            LOGGER.info("%s deleted", url)
         except GLib.GError as exc:
-            logger.warning("Gio.Gerror", exc_info=exc)
+            LOGGER.warning("Gio.Gerror", exc_info=exc)
             raise IOError(str(exc))
 
     def _rm_rf(self, gfile):
@@ -369,10 +361,10 @@ class GioFileSystem(CommonFs):
                 if not f.delete():
                     raise IOError("Failed to delete %s" % f.get_uri())
         except GLib.GError as exc:
-            logger.warning("Gio.Gerror", exc_info=exc)
+            LOGGER.warning("Gio.Gerror", exc_info=exc)
             raise IOError(str(exc))
 
-    def getmtime(self, url):
+    def fs_getmtime(self, url):
         try:
             f = Gio.File.new_for_uri(url)
             if not f.query_exists():
@@ -382,10 +374,10 @@ class GioFileSystem(CommonFs):
             )
             return fi.get_attribute_uint64(Gio.FILE_ATTRIBUTE_TIME_CHANGED)
         except GLib.GError as exc:
-            logger.warning("Gio.Gerror", exc_info=exc)
+            LOGGER.warning("Gio.Gerror", exc_info=exc)
             raise IOError(str(exc))
 
-    def writable(self, url):
+    def fs_iswritable(self, url):
         try:
             f = Gio.File.new_for_uri(url)
             fi = f.query_info(
@@ -399,7 +391,7 @@ class GioFileSystem(CommonFs):
             logger.warning("Gio.Gerror", exc_info=exc)
             raise IOError(str(exc))
 
-    def getsize(self, url):
+    def fs_getsize(self, url):
         try:
             f = Gio.File.new_for_uri(url)
             fi = f.query_info(
@@ -407,10 +399,10 @@ class GioFileSystem(CommonFs):
             )
             return fi.get_attribute_uint64(Gio.FILE_ATTRIBUTE_STANDARD_SIZE)
         except GLib.GError as exc:
-            logger.warning("Gio.Gerror", exc_info=exc)
+            LOGGER.warning("Gio.Gerror", exc_info=exc)
             raise IOError(str(exc))
 
-    def isdir(self, url):
+    def fs_isdir(self, url):
         try:
             f = Gio.File.new_for_uri(url)
             fi = f.query_info(
@@ -418,10 +410,10 @@ class GioFileSystem(CommonFs):
             )
             return fi.get_file_type() == Gio.FileType.DIRECTORY
         except GLib.GError as exc:
-            logger.warning("Gio.Gerror", exc_info=exc)
+            LOGGER.warning("Gio.Gerror", exc_info=exc)
             raise IOError(str(exc))
 
-    def copy(self, old_url, new_url):
+    def fs_copy(self, old_url, new_url):
         try:
             old = Gio.File.new_for_uri(old_url)
             new = Gio.File.new_for_uri(new_url)
@@ -429,16 +421,16 @@ class GioFileSystem(CommonFs):
                 new.delete()
             old.copy(new, Gio.FileCopyFlags.ALL_METADATA)
         except GLib.GError as exc:
-            logger.warning("Gio.Gerror", exc_info=exc)
+            LOGGER.warning("Gio.Gerror", exc_info=exc)
             raise IOError(str(exc))
 
-    def mkdir_p(self, url):
+    def fs_mkdir_p(self, url):
         try:
             f = Gio.File.new_for_uri(url)
             if not f.query_exists():
                 f.make_directory_with_parents()
         except GLib.GError as exc:
-            logger.warning("Gio.Gerror", exc_info=exc)
+            LOGGER.warning("Gio.Gerror", exc_info=exc)
             raise IOError(str(exc))
 
     def _recurse(self, parent, dir_included=False):
@@ -468,7 +460,7 @@ class GioFileSystem(CommonFs):
         if dir_included:
             yield parent
 
-    def recurse(self, parent_uri, dir_included=False):
+    def fs_recurse(self, parent_uri, dir_included=False):
         parent = Gio.File.new_for_uri(parent_uri)
         for f in self._recurse(parent, dir_included):
             yield f.get_uri()

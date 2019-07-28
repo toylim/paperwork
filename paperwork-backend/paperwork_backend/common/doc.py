@@ -47,6 +47,7 @@ logger = logging.getLogger(__name__)
 class ImgToPdfDocExporter(Exporter):
     def __init__(self, doc, page_nb):
         super().__init__(doc, 'PDF')
+        self.core = doc.core
         self.can_change_quality = True
         self.can_select_format = True
         self.valid_exts = ['pdf']
@@ -139,7 +140,7 @@ class ImgToPdfDocExporter(Exporter):
         # XXX(Jflesch): This is a problem. It will fails if someone tries
         # to export to a non-local directory. We should use
         # cairo_pdf_surface_create_for_stream()
-        target_path = self.doc.fs.unsafe(target_path)
+        target_path = self.core.call_success("fs_unsafe", target_path)
 
         pdf_surface = cairo.PDFSurface(target_path,
                                        self.__page_format[0],
@@ -166,7 +167,7 @@ class ImgToPdfDocExporter(Exporter):
             logger.info("Page {} ready".format(page))
 
         progress_cb(len(pages), len(pages))
-        return self.doc.fs.safe(target_path)
+        return self.core.call_success("fs_safe", target_path)
 
     def save(self, target_path, progress_cb=dummy_export_progress_cb):
         return self.__save(target_path, (0, self.doc.nb_pages), progress_cb)
@@ -215,7 +216,10 @@ class ImgToPdfDocExporter(Exporter):
     def estimate_size(self):
         if self.__preview is None:
             self.refresh()
-        return self.doc.fs.getsize(self.__preview[0]) * self.doc.nb_pages
+        return (
+            self.core.call_success("fs_getsize", self.__preview[0])
+            * self.doc.nb_pages
+        )
 
     def get_img(self):
         if self.__preview is None:
@@ -234,7 +238,7 @@ class BasicDoc(object):
     pages = []
     can_edit = False
 
-    def __init__(self, fs, docpath, docid=None):
+    def __init__(self, core, docpath, docid=None):
         """
         Basic init of common parts of doc.
 
@@ -242,19 +246,19 @@ class BasicDoc(object):
         content in __init__(). It would reduce in a huge performance loose
         and thread-safety issues. Load the content on-the-fly when requested.
         """
-        self.fs = fs
-        docpath = fs.safe(docpath)
+        self.core = core
+        docpath = self.core.call_success("fs_safe", docpath)
         if docid is None:
             # new empty doc
             # we must make sure we use an unused id
             basic_docid = time.strftime(self.DOCNAME_FORMAT)
             extra = 0
             docid = basic_docid
-            path = self.fs.join(docpath, docid)
-            while self.fs.exists(path):
+            path = self.core.call_success("fs_join", docpath, docid)
+            while self.core.call_success("fs_exists", path):
                 extra += 1
                 docid = "%s_%d" % (basic_docid, extra)
-                path = self.fs.join(docpath, docid)
+                path = self.core.call_success("fs_join", docpath, docid)
 
             self.__docid = docid
             self.path = path
@@ -315,7 +319,7 @@ class BasicDoc(object):
         Delete the document. The *whole* document. There will be no survivors.
         """
         logger.info("Destroying doc: %s" % self.path)
-        self.fs.rm_rf(self.path)
+        self.core.call_success("fs_rm_rf", self.path)
         logger.info("Done")
 
     def add_label(self, label):
@@ -324,8 +328,8 @@ class BasicDoc(object):
         """
         if label in self.labels:
             return
-        with self.fs.open(self.fs.join(self.path, self.LABEL_FILE), 'a') \
-                as file_desc:
+        path = self.core.call_success("fs_join", self.path, self.LABEL_FILE)
+        with self.core.call_success("fs_open", path, 'a') as file_desc:
             file_desc.write("%s,%s\n" % (label.name, label.get_color_str()))
 
     def remove_label(self, to_remove):
@@ -336,11 +340,12 @@ class BasicDoc(object):
             return
         labels = self.labels
         labels.remove(to_remove)
-        with self.fs.open(self.fs.join(self.path, self.LABEL_FILE), 'w') \
-                as file_desc:
+        path = self.core.call_success("fs_join", self.path, self.LABEL_FILE)
+        with self.core.call_success("fs_open", path, 'w') as file_desc:
             for label in labels:
-                file_desc.write("%s,%s\n" % (label.name,
-                                             label.get_color_str()))
+                file_desc.write(
+                    "%s,%s\n" % (label.name, label.get_color_str())
+                )
 
     def __get_labels(self):
         """
@@ -351,8 +356,10 @@ class BasicDoc(object):
         """
         labels = []
         try:
-            with self.fs.open(self.fs.join(self.path, self.LABEL_FILE),
-                              'r') as file_desc:
+            path = self.core.call_success(
+                "fs_join", self.path, self.LABEL_FILE
+            )
+            with self.core.call_success("fs_open", path, 'r') as file_desc:
                 for line in file_desc.readlines():
                     line = line.strip()
                     (label_name, label_color) = line.split(",", 1)
@@ -366,11 +373,12 @@ class BasicDoc(object):
         """
         Add a label on the document.
         """
-        with self.fs.open(self.fs.join(self.path, self.LABEL_FILE), 'w') \
-                as file_desc:
+        path = self.core.call_success("fs_join", self.path, self.LABEL_FILE)
+        with self.core.call_success("fs_open", path, 'w') as file_desc:
             for label in labels:
-                file_desc.write("%s,%s\n" % (label.name,
-                                             label.get_color_str()))
+                file_desc.write(
+                    "%s,%s\n" % (label.name, label.get_color_str())
+                )
 
     labels = property(__get_labels, __set_labels)
 
@@ -421,11 +429,12 @@ class BasicDoc(object):
         logger.info("%s : Updating label ([%s] -> [%s])"
                     % (str(self), old_label.name, new_label.name))
         labels.append(new_label)
-        with self.fs.open(self.fs.join(self.path, self.LABEL_FILE), 'w') \
-                as file_desc:
+        path = self.core.call_success("fs_join", self.path, self.LABEL_FILE)
+        with self.core.call_success("fs_open", path, 'w') as file_desc:
             for label in labels:
-                file_desc.write("%s,%s\n" % (label.name,
-                                             label.get_color_str()))
+                file_desc.write(
+                    "%s,%s\n" % (label.name, label.get_color_str())
+                )
 
     @staticmethod
     def get_export_formats():
@@ -487,7 +496,7 @@ class BasicDoc(object):
         return hash(self.__docid)
 
     def __is_new(self):
-        return not self.fs.exists(self.path)
+        return not self.core.call_success("fs_exists", self.path)
 
     is_new = property(__is_new)
 
@@ -523,20 +532,20 @@ class BasicDoc(object):
         return self.__docid
 
     def _set_docid(self, new_base_docid):
-        workdir = self.fs.dirname(self.path)
+        workdir = self.core.call_success("fs_dirname", self.path)
         new_docid = new_base_docid
-        new_docpath = self.fs.join(workdir, new_docid)
+        new_docpath = self.core.call_success("fs_join", workdir, new_docid)
         idx = 0
 
-        while self.fs.exists(new_docpath):
+        while self.core.call_success("fs_exists", new_docpath):
             idx += 1
             new_docid = new_base_docid + ("_%02d" % idx)
-            new_docpath = self.fs.join(workdir, new_docid)
+            new_docpath = self.core.call_success("fs_join", workdir, new_docid)
 
         self.__docid = new_docid
         if self.path != new_docpath:
             logger.info("Changing docid: %s -> %s", self.path, new_docpath)
-            self.fs.rename(self.path, new_docpath)
+            self.core.call_success("fs_rename", self.path, new_docpath)
             self.path = new_docpath
 
     docid = property(__get_docid, _set_docid)
@@ -561,28 +570,31 @@ class BasicDoc(object):
     date = property(__get_date, __set_date)
 
     def __get_extra_text(self):
-        extra_txt_file = self.fs.join(self.path, self.EXTRA_TEXT_FILE)
-        if not self.fs.exists(extra_txt_file):
+        extra_txt_file = self.core.call_success(
+            "fs_join", self.path, self.EXTRA_TEXT_FILE
+        )
+        if not self.core.call_success("fs_exists", extra_txt_file):
             return u""
-        with self.fs.open(extra_txt_file, 'r') as file_desc:
-            text = file_desc.read()
-            return text
+        with self.core.call_success("fs_open", extra_txt_file, 'r') as fd:
+            return fd.read()
 
     def __set_extra_text(self, txt):
-        extra_txt_file = self.fs.join(self.path, self.EXTRA_TEXT_FILE)
+        extra_txt_file = self.core.call_success(
+            "fs_join", self.path, self.EXTRA_TEXT_FILE
+        )
 
         txt = txt.strip()
         if txt == u"":
-            self.fs.unlink(extra_txt_file)
+            self.core.call_success("fs_unlink", extra_txt_file)
         else:
-            with self.fs.open(extra_txt_file, 'w') as file_desc:
-                file_desc.write(txt)
+            with self.core.call_success("fs_open", extra_txt_file, 'w') as fd:
+                fd.write(txt)
 
     extra_text = property(__get_extra_text, __set_extra_text)
 
     @staticmethod
-    def hash_file(fs, path):
-        with fs.open(path, 'rb') as fd:
+    def hash_file(core, path):
+        with core.call_success("fs_open", path, 'rb') as fd:
             content = fd.read()
             dochash = hashlib.sha256(content).hexdigest()
         return int(dochash, 16)

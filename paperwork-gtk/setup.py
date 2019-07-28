@@ -151,6 +151,7 @@ Main features are:
     # + setuptools 41.0.1-1
     zip_safe=(os.name != 'nt'),
     install_requires=[
+        "openpaperwork-core",
         "distro",
         "python-dateutil",
         "python-Levenshtein",

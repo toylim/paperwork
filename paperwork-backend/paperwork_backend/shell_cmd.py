@@ -11,6 +11,9 @@ import termcolor
 
 from . import init
 
+import openpaperwork_core
+
+
 try:
     import paperwork.frontend.shell
     FRONTEND_COMMANDS = paperwork.frontend.shell.COMMANDS
@@ -124,7 +127,7 @@ def _chkdeps(module_name, distribution):
             sys.exit(r)
 
 
-def chkdeps(*args):
+def cmd_chkdeps(core, *args):
     """
     Arguments: <component1> [<component2> [...]]]
 
@@ -145,7 +148,7 @@ def chkdeps(*args):
         _chkdeps(module_name, distribution)
 
 
-def cmd_help(*args):
+def cmd_help(core, *args):
     """
     Arguments: [<command>]
     List available commands
@@ -205,18 +208,21 @@ def main():
     os.environ['PAPERWORK_SHELL_VERBOSE'] = "True" if verbose_enabled else ""
     os.environ['PAPERWORK_INTERACTIVE'] = "True" if interactive else ""
 
+    core = openpaperwork_core.Core()
+    core.load("paperwork_backend.fs.gio")
+
     if not verbose_enabled:
         # hide warnings. They could mess output parsing
         logging.getLogger().setLevel(logging.ERROR)
 
     if args.cmd not in COMMANDS:
         print("Unknown command {}".format(args.cmd))
-        cmd_help()
+        cmd_help(core)
         sys.exit(1)
 
     try:
         init()
-        sys.exit(COMMANDS[args.cmd](*args.cmd_args))
+        sys.exit(COMMANDS[args.cmd](core, *args.cmd_args))
     except Exception as exc:
         print(json.dumps(
             {

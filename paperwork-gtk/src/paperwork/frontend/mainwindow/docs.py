@@ -637,7 +637,8 @@ class ActionDeleteDoc(SimpleAction):
 class DocList(object):
     LIST_CHUNK = 50
 
-    def __init__(self, main_win, config, widget_tree):
+    def __init__(self, core, main_win, config, widget_tree):
+        self.core = core
         self.__main_win = main_win
         self.__config = config
         self.enabled = True
@@ -683,10 +684,8 @@ class DocList(object):
             # keep the thumbnails in cache
             'thumbnails': {}  # docid: pixbuf
         }
-        workdir = self.__main_win.docsearch.fs.safe(
-            config['workdir'].value
-        )
-        self.new_doc = ImgDoc(self.__main_win.docsearch.fs, workdir)
+        workdir = self.core.call_success("fs_safe", config['workdir'].value)
+        self.new_doc = ImgDoc(self.core, workdir)
 
         self.job_factories = {
             'doc_thumbnailer': JobFactoryDocThumbnailer(self),
@@ -913,10 +912,10 @@ class DocList(object):
     def get_new_doc(self):
         if self.new_doc.is_new:
             return self.new_doc
-        workdir = self.__main_win.docsearch.fs.safe(
-            self.__config['workdir'].value
+        workdir = self.core.call_success(
+            "fs_safe", self.__config['workdir'].value
         )
-        self.new_doc = ImgDoc(self.__main_win.docsearch.fs, workdir)
+        self.new_doc = ImgDoc(self.core, workdir)
         return self.new_doc
 
     def insert_new_doc(self):
