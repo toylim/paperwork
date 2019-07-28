@@ -248,10 +248,6 @@ class Plugin(PluginBase):
             LOGGER.debug("Configuration: %s:%s --> %s", section, key, str(r))
             return r
         except KeyError:
-            if default is None:
-                raise KeyError(
-                    "Configuration: {}:{} not found".format(section, key)
-                )
             LOGGER.debug(
                 "Configuration: %s:%s --> %s (default value)",
                 section, key, str(default)

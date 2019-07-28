@@ -19,8 +19,9 @@ class TestReadWrite(unittest.TestCase):
         v = core.call_one('config_get', 'wrong_section', 'test_key', 'default')
         self.assertEqual(v, 'default')
 
-        with self.assertRaises(KeyError):
-            core.call_one('config_get', 'test_section', 'wrong_key')
+        self.assertIsNone(
+            core.call_success('config_get', 'test_section', 'wrong_key')
+        )
 
         core.call_all('config_add_plugin', 'some_test_module')
 
@@ -56,8 +57,9 @@ class TestReadWrite(unittest.TestCase):
         self.assertEqual(v, 'test_value')
         v = core.call_one('config_get', 'wrong_section', 'test_key', 'default')
         self.assertEqual(v, 'default')
-        with self.assertRaises(KeyError):
-            core.call_one('config_get', 'test_section', 'wrong_key')
+        self.assertIsNone(
+            core.call_success('config_get', 'test_section', 'wrong_key')
+        )
 
     @unittest.mock.patch("importlib.import_module")
     def test_simple_load_module(self, import_module):
