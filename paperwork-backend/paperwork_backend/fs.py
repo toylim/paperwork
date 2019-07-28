@@ -247,7 +247,7 @@ class GioFileSystem(CommonFs):
 
     def safe(self, uri):
         logger.debug("safe: %s", uri)
-        if "://" in uri:
+        if uri[:2] == "\\\\" or "://" in uri:
             logger.debug("safe: --> %s", uri)
             return uri
         if os.name != "nt":
@@ -263,7 +263,7 @@ class GioFileSystem(CommonFs):
 
     def unsafe(self, uri):
         logger.debug("unsafe: %s", uri)
-        if "://" not in uri:
+        if "://" not in uri and uri[:2] != "\\\\":
             logger.debug("unsafe: --> %s", uri)
             return uri
         if not uri.startswith("file://"):
