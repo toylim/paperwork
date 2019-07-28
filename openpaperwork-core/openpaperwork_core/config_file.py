@@ -172,8 +172,14 @@ class Plugin(PluginBase):
         )
         self.config = configparser.RawConfigParser()
         LOGGER.info("Loading configuration '%s' ...", config_path)
-        with open(config_path, 'r') as fd:
-            self.config.read_file(fd)
+        if os.path.exists(config_path):
+            with open(config_path, 'r') as fd:
+                self.config.read_file(fd)
+        else:
+            LOGGER.warning(
+                "Cannot load configuration '%s'. File does not exist",
+                config_path
+            )
         for observers in self.observers.values():
             for observer in observers:
                 observer()

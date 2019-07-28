@@ -24,6 +24,19 @@ class TestReadWrite(unittest.TestCase):
 
         core.call_all('config_add_plugin', 'some_test_module')
 
+    def test_no_config_file(self):
+        core = openpaperwork_core.Core()
+        core.load('openpaperwork_core.config_file')
+
+        core.get('openpaperwork_core.config_file').base_path = (
+            tempfile.mkdtemp(prefix='openpaperwork_core_config_tests')
+        )
+
+        core.init()
+
+        # must not throw an exception
+        core.call_all('config_load', 'openpaperwork_test')
+
     def test_simple_readwrite(self):
         core = openpaperwork_core.Core()
         core.load('openpaperwork_core.config_file')
