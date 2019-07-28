@@ -354,7 +354,7 @@ def get_scanner(config, libinsane, preferred_sources=None):
         try:
             # we didn't find the scanner at the given ID
             # but maybe there is only one, so we can guess the scanner to use
-            devices = libinsane.get_devices()
+            devices = libinsane.list_devices()
             if len(devices) != 1:
                 raise
             logger.info(
