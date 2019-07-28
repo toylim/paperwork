@@ -382,7 +382,6 @@ class Plugin(CommonFsPluginBase):
             return fi.get_attribute_uint64(Gio.FILE_ATTRIBUTE_TIME_CHANGED)
         except GLib.GError as exc:
             LOGGER.warning("Gio.Gerror", exc_info=exc)
-            raise IOError(str(exc))
 
     def fs_iswritable(self, url):
         try:
@@ -396,7 +395,6 @@ class Plugin(CommonFsPluginBase):
             )
         except GLib.GError as exc:
             logger.warning("Gio.Gerror", exc_info=exc)
-            raise IOError(str(exc))
 
     def fs_getsize(self, url):
         try:

@@ -509,9 +509,8 @@ def get_possible_importers(core, file_uris=None, current_doc=None):
         ImageImporter(core),
     ]
 
-    importers = []
     for importer in all_importers:
-        if file_uris is None or importer.can_import(file_uris, current_doc):
+        if importer.can_import(file_uris, current_doc):
             importers.append(importer)
     logger.debug(
         "Files %s: %s possible importers", file_uris, len(importers)
