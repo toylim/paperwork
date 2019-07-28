@@ -111,3 +111,86 @@ class TestReadWrite(unittest.TestCase):
 
         core.call_all('config_load', 'openpaperwork_test')
         self.assertEqual(obs.count, 2)
+
+    def test_simple_readwrite_list(self):
+        core = openpaperwork_core.Core()
+        core.load('openpaperwork_core.config_file')
+
+        core.get('openpaperwork_core.config_file').base_path = (
+            tempfile.mkdtemp(prefix='openpaperwork_core_config_tests')
+        )
+
+        core.init()
+
+        v = core.call_success(
+            'config_get', 'test_section', 'test_key',
+            default=["test_value_a", "test_value_b"]
+        )
+        self.assertNotEqual(v, None)
+        self.assertEqual(len(v), 2)
+
+        v[1] = 'test_value_c'
+        core.call_all('config_put', 'test_section', 'test_key', v)
+
+        v = core.call_success(
+            'config_get', 'test_section', 'test_key',
+            default=["test_value_a", "test_value_b"]
+        )
+        self.assertEqual(len(v), 2)
+        self.assertEqual(v[1], "test_value_c")
+
+        core.call_all('config_save', 'openpaperwork_test')
+        core.call_all('config_load', 'openpaperwork_test')
+
+        v = core.call_success(
+            'config_get', 'test_section', 'test_key',
+            default=["test_value_a", "test_value_b"]
+        )
+        self.assertEqual(len(v), 2)
+        self.assertEqual(v[1], "test_value_c")
+
+    def test_simple_readwrite_dict(self):
+        core = openpaperwork_core.Core()
+        core.load('openpaperwork_core.config_file')
+
+        core.get('openpaperwork_core.config_file').base_path = (
+            tempfile.mkdtemp(prefix='openpaperwork_core_config_tests')
+        )
+
+        core.init()
+
+        v = core.call_success(
+            'config_get', 'test_section', 'test_key',
+            default={
+                "test_key_a": "test_key_b",
+                "test_key_b": "test_value_b"
+            }
+        )
+        self.assertNotEqual(v, None)
+        self.assertEqual(len(v), 2)
+
+        v['test_key_b'] = 'test_value_c'
+        core.call_all('config_put', 'test_section', 'test_key', v)
+
+        v = core.call_success(
+            'config_get', 'test_section', 'test_key',
+            default={
+                "test_key_a": "test_key_b",
+                "test_key_b": "test_value_b"
+            }
+        )
+        self.assertEqual(len(v), 2)
+        self.assertEqual(v['test_key_b'], "test_value_c")
+
+        core.call_all('config_save', 'openpaperwork_test')
+        core.call_all('config_load', 'openpaperwork_test')
+
+        v = core.call_success(
+            'config_get', 'test_section', 'test_key',
+            default={
+                "test_key_a": "test_key_b",
+                "test_key_b": "test_value_b"
+            }
+        )
+        self.assertEqual(len(v), 2)
+        self.assertEqual(v['test_key_b'], "test_value_c")

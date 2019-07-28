@@ -17,14 +17,21 @@ LOGGER = logging.getLogger(__name__)
 class ConfigList(object):
     SEPARATOR = ", "
 
-    def __init__(self, string=None, elements=[]):
+    def __init__(self, value=None, elements=None):
+        if elements is None:
+            elements = []
         self.elements = elements
 
-        if string is not None:
-            elements = string.split(self.SEPARATOR)
-            for i in elements:
-                (t, v) = i.split(_TYPE_SEPARATOR, 1)
-                self.elements.append(_STR_TO_TYPE[t](v))
+        if value is not None:
+            if isinstance(value, str):
+                elements = value.split(self.SEPARATOR)
+                for i in elements:
+                    (t, v) = i.split(_TYPE_SEPARATOR, 1)
+                    self.elements.append(_STR_TO_TYPE[t](v))
+            elif hasattr(value, 'elements'):
+                self.elements = value.elements[:]
+            else:
+                self.elements = value
 
     def __iter__(self):
         return iter(self.elements)
@@ -32,8 +39,17 @@ class ConfigList(object):
     def __contains__(self, o):
         return o in self.elements
 
-    def __get_item__(self, *args, **kwargs):
-        return self.elements.__get_items__(*args, **kwargs)
+    def __getitem__(self, *args, **kwargs):
+        return self.elements.__getitem__(*args, **kwargs)
+
+    def __setitem__(self, *args, **kwargs):
+        return self.elements.__setitem__(*args, **kwargs)
+
+    def __len__(self):
+        return len(self.elements)
+
+    def append(self, value):
+        self.elements.append(value)
 
     def __str__(self):
         out = []
@@ -44,14 +60,68 @@ class ConfigList(object):
         return self.SEPARATOR.join(out)
 
 
+class ConfigDict(object):
+    SEPARATOR_ITEMS = ", "
+    SEPARATOR_KEYVALS = "="
+
+    def __init__(self, value=None, elements={}):
+        self.elements = elements
+
+        if value is not None:
+            if isinstance(value, str):
+                elements = value.split(self.SEPARATOR_ITEMS)
+                for i in elements:
+                    (k, v) = i.split(self.SEPARATOR_KEYVALS, 1)
+                    (t, v) = v.split(_TYPE_SEPARATOR, 1)
+                    self.elements[k] = _STR_TO_TYPE[t](v)
+            elif hasattr(value, 'elements'):
+                self.elements = value.elements[:]
+            else:
+                self.elements = value
+
+    def __iter__(self):
+        return iter(self.elements)
+
+    def __contains__(self, o):
+        return o in self.elements
+
+    def __getitem__(self, *args, **kwargs):
+        return self.elements.__getitem__(*args, **kwargs)
+
+    def __setitem__(self, *args, **kwargs):
+        return self.elements.__setitem__(*args, **kwargs)
+
+    def __len__(self):
+        return len(self.elements)
+
+    def __str__(self):
+        out = []
+        for (k, v) in self.elements.items():
+            out.append("{}{}{}{}{}".format(
+                k, self.SEPARATOR_KEYVALS,
+                _TYPE_TO_STR[type(v)], _TYPE_SEPARATOR, str(v)
+            ))
+        return self.SEPARATOR_ITEMS.join(out)
+
+
+_TYPE_TO_STR = {
+    bool: "bool",
+    ConfigDict: "dict",
+    ConfigList: "list",
+    dict: "dict",
+    float: "float",
+    int: "int",
+    list: "list",
+    str: "str",
+}
 _STR_TO_TYPE = {
     "bool": bool,
-    "int": int,
-    "float": float,
-    "str": str,
+    "dict": ConfigDict,
     "list": ConfigList,
+    "float": float,
+    "int": int,
+    "str": str,
 }
-_TYPE_TO_STR = {v: k for (k, v) in _STR_TO_TYPE.items()}
 _TYPE_SEPARATOR = ":"
 
 
@@ -133,8 +203,10 @@ class Plugin(PluginBase):
         Key must be a string.
         """
         LOGGER.debug("Configuration: %s:%s <-- %s", section, key, str(value))
-        t = _TYPE_TO_STR[type(value)]
-        value = "{}{}{}".format(t, _TYPE_SEPARATOR, str(value))
+        t_str = _TYPE_TO_STR[type(value)]
+        t = _STR_TO_TYPE[t_str]
+        value = t(value)
+        value = "{}{}{}".format(t_str, _TYPE_SEPARATOR, str(value))
         if section not in self.config:
             self.config[section] = {key: value}
         else:
