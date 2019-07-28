@@ -49,14 +49,13 @@ class PageScan(GObject.GObject):
     }
 
     def __init__(self,
-                 main_win, multiscan_win, config,
+                 main_win, multiscan_win,
                  resolution, scan_session,
                  line_idx, doc_scan,
                  page_nb, total_pages):
         GObject.GObject.__init__(self)
         self.__main_win = main_win
         self.__multiscan_win = multiscan_win
-        self.__config = config
         self.resolution = resolution
         self.__scan_session = scan_session
         self.line_idx = line_idx

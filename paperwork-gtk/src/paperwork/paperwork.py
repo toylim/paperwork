@@ -71,7 +71,6 @@ from .frontend.diag import LogTracker  # noqa: E402
 from .frontend.mainwindow import ActionRealQuit  # noqa: E402
 from .frontend.mainwindow import MainWindow  # noqa: E402
 from .frontend.util import get_locale_dirs  # noqa: E402
-from .frontend.util.config import load_config  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
@@ -155,11 +154,10 @@ class LibinsaneLogger(GObject.GObject, Libinsane.Logger):
 class Main(object):
     def __init__(self):
         self.main_win = None
-        self.config = None
         self.main_loop = GLib.MainLoop()
 
     def quit_nicely(self, *args, **kwargs):
-        a = ActionRealQuit(self.main_win, self.config, self.main_loop)
+        a = ActionRealQuit(self.main_win, self.main_loop)
         a.do()
 
     def main(self, hook_func=None, skip_workdir_scan=False):
@@ -191,7 +189,15 @@ class Main(object):
                                  self.quit_nicely, None)
 
         core = openpaperwork_core.Core()
-        core.load("paperwork_backend.fs.gio")
+        core.load("paperwork.frontend.util.config")
+        core.init()
+        core.call_all(
+            "paperwork_config_load",
+            application="paperwork-gtk",
+            default_plugins=[
+                "paperwork_backend.fs.gio",
+            ],
+        )
 
         backend_state = paperwork_backend.init()
 
@@ -202,22 +208,18 @@ class Main(object):
         logger.info("Initializing libnotify ...")
         Notify.init("Paperwork")
 
-        self.config = load_config(core)
-        self.config.read()
-
         self.main_win = MainWindow(
-            core,
-            self.config, self.main_loop, libinsane,
+            core, self.main_loop, libinsane,
             not skip_workdir_scan,
             flatpak=backend_state['flatpak']
         )
         if hook_func:
-            hook_func(self.config, self.main_win)
+            hook_func(self.main_win)
 
         self.main_loop.run()
 
         logger.info("Writing configuration ...")
-        self.config.write()
+        core.call_all("paperwork_config_save")
 
         logger.info("Stopping libnotify ...")
         Notify.uninit()

@@ -179,7 +179,7 @@ class PdfImporter(BaseImporter):
                             % (file_uri))
                 continue
 
-            doc = PdfDoc(self.fs, docsearch.rootdir)
+            doc = PdfDoc(self.core, docsearch.rootdir)
             logger.info("Importing doc '%s' ..." % file_uri)
             error = doc.import_pdf(file_uri)
             if error:
@@ -491,9 +491,10 @@ class ImageImporter(BaseImporter):
         return _("Append the image to the current document")
 
 
-def get_possible_importers(core, file_uris, current_doc=None):
+def get_possible_importers(core, file_uris=None, current_doc=None):
     """
     Return all the importer objects that can handle the specified files.
+    If no file is specified, all importers are returned.
 
     Possible imports may vary depending on the currently active document
     """
@@ -504,9 +505,11 @@ def get_possible_importers(core, file_uris, current_doc=None):
         ImageImporter(core),
     ]
 
+    importers = []
     for importer in all_importers:
-        if importer.can_import(file_uris, current_doc):
+        if file_uris is None or importer.can_import(file_uris, current_doc):
             importers.append(importer)
-    logger.debug("Files {}: {} possible importers".format(
-        file_uris, len(importers)))
+    logger.debug(
+        "Files %s: %s possible importers", file_uris, len(importers)
+    )
     return importers

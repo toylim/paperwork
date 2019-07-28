@@ -32,9 +32,9 @@ class Beacon(object):
     }
     PROTOCOL = os.getenv("OPENPAPER_PROTOCOL", "https")
 
-    def __init__(self, config, flatpak):
+    def __init__(self, core, flatpak):
         super().__init__()
-        self.config = config
+        self.core = core
         self.flatpak = flatpak
 
     def get_version_openpaperwork(self):
@@ -57,12 +57,17 @@ class Beacon(object):
         return r['paperwork'][os.name]
 
     def check_update(self):
-        if not self.config['check_for_update'].value:
+        check_for_update = self.core.call_success(
+            "paperwork_config_get", 'check_for_update'
+        )
+        if not check_for_update:
             logger.info("Update checking is disabled")
             return
 
         now = datetime.datetime.now()
-        last_check = self.config['last_update_check'].value
+        last_check = self.core.call_success(
+            "paperwork_config_get", 'last_update_check'
+        )
 
         logger.info("Updates were last checked: {}".format(last_check))
         if (last_check is not None and
@@ -83,9 +88,13 @@ class Beacon(object):
             return
 
         logger.info("Latest Paperwork release: {}".format(version))
-        self.config['last_update_found'].value = version
-        self.config['last_update_check'].value = now
-        self.config.write()
+        self.core.call_all(
+            "paperwork_config_put", 'last_update_found', version
+        )
+        self.core.call_all(
+            "paperwork_config_put", 'last_update_check', now
+        )
+        self.core.call_all("paperwork_config_save")
 
     def get_statistics(self, version, docsearch):
         if os.name == 'nt':
@@ -101,7 +110,7 @@ class Beacon(object):
             if self.flatpak:
                 os_name += " (flatpak)"
         return {
-            'uuid': int(self.config['uuid'].value),
+            'uuid': self.core.call_success("paperwork_config_get", 'uuid'),
             'paperwork_version': str(version),
             'nb_documents': int(docsearch.nb_docs),
             'os_name': str(os_name),
@@ -112,12 +121,17 @@ class Beacon(object):
         }
 
     def send_statistics(self, version, docsearch):
-        if not self.config['send_statistics'].value:
+        send = self.core.call_success(
+            "paperwork_config_get", 'send_statistics'
+        )
+        if not send:
             logger.info("Anonymous statistics are disabled")
             return
 
         now = datetime.datetime.now()
-        last_post = self.config['last_statistics_post'].value
+        last_post = self.core.call_success(
+            "paperwork_config_get", 'last_statistics_post'
+        )
 
         logger.info("Statistics were last posted: {}".format(last_post))
         logger.info("Next post date: {}".format(
@@ -162,8 +176,8 @@ class Beacon(object):
             ))
             logger.warning("Openpaper.work: {}".format(reply))
 
-        self.config['last_statistics_post'].value = now
-        self.config.write()
+        self.core.call_all("paperwork_config_put", 'last_statistics_post', now)
+        self.core.call_all("paperwork_config_save")
 
 
 def check_update(beacon):

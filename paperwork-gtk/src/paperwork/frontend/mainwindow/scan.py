@@ -259,10 +259,9 @@ GObject.type_register(JobOCR)
 
 
 class JobFactoryOCR(JobFactory):
-
-    def __init__(self, scan_workflow, config):
+    def __init__(self, core, scan_workflow):
         JobFactory.__init__(self, "OCR")
-        self.__config = config
+        self.core = core
         self.scan_workflow = scan_workflow
 
     def make(self, img, nb_angles):
@@ -274,8 +273,9 @@ class JobFactoryOCR(JobFactory):
             ocr_tool = ocr_tools[0]
             logger.info("Will use tool '%s'" % (ocr_tool.get_name()))
 
+        langs = self.core.call_success("paperwork_config_get", "langs")
         job = JobOCR(self, next(self.id_generator), ocr_tool,
-                     self.__config['langs'].value, angles, img)
+                     langs, angles, img)
         job.connect("ocr-started", lambda job, img:
                     GLib.idle_add(self.scan_workflow.on_ocr_started, img))
         job.connect("ocr-angles", lambda job, imgs:
@@ -740,9 +740,9 @@ class ScanWorkflow(GObject.GObject):
     STEP_SCAN = 0
     STEP_OCR = 1
 
-    def __init__(self, config, scan_scheduler, ocr_scheduler):
+    def __init__(self, core, scan_scheduler, ocr_scheduler):
         GObject.GObject.__init__(self)
-        self.__config = config
+        self.core = core
         self.schedulers = {
             'scan': scan_scheduler,
             'ocr': ocr_scheduler,
@@ -752,7 +752,7 @@ class ScanWorkflow(GObject.GObject):
 
         self.factories = {
             'scan': JobFactoryScan(self),
-            'ocr': JobFactoryOCR(self, config),
+            'ocr': JobFactoryOCR(core, self),
         }
         self.__resolution = -1
         self.calibration = None
@@ -764,7 +764,9 @@ class ScanWorkflow(GObject.GObject):
         """
         self.__resolution = resolution
 
-        calibration = self.__config['scanner_calibration'].value
+        calibration = self.core.call_success(
+            "paperwork_config_get", "scanner_calibration"
+        )
         if calibration:
             (calib_resolution, calibration) = calibration
 
@@ -812,8 +814,8 @@ class ScanWorkflow(GObject.GObject):
         Returns immediately.
         Listen for the signal ocr-done to get the result
         """
-        if (not self.__config['ocr_enabled'].value or
-                len(pyocr.get_available_tools()) == 0):
+        enabled = self.core.call_success("paperwork_config_get", "ocr_enabled")
+        if not enabled or len(pyocr.get_available_tools()) == 0:
             angles = 0
         elif angles is None:
             angles = 4

@@ -38,8 +38,6 @@ from paperwork.frontend.util.actions import SimpleAction
 from paperwork.frontend.util.canvas import Canvas
 from paperwork.frontend.util.canvas.animations import ScanAnimation
 from paperwork.frontend.util.canvas.drawers import PillowImageDrawer
-from paperwork.frontend.util.config import DEFAULT_CALIBRATION_RESOLUTION
-from paperwork.frontend.util.config import RECOMMENDED_SCAN_RESOLUTION
 from paperwork.frontend.util.img import raw2pixbuf
 from paperwork.frontend.util.imgcutting import ImgGripHandler
 from paperwork.frontend.util.jobs import Job, JobFactory, JobScheduler
@@ -48,6 +46,9 @@ from paperwork.frontend.util.jobs import JobFactoryProgressUpdater
 
 _ = gettext.gettext
 logger = logging.getLogger(__name__)
+
+
+DEFAULT_CALIBRATION_RESOLUTION = 200
 
 
 class JobDeviceFinder(Job):
@@ -230,16 +231,18 @@ class JobResolutionFinder(Job):
     priority = 490
 
     def __init__(self, factory, id,
-                 libinsane,
+                 core, libinsane,
                  selected_resolution,
-                 recommended_resolution,
                  devid, srcid):
         Job.__init__(self, factory, id)
+        self.core = core
         self.libinsane = libinsane
         self.__selected_resolution = selected_resolution
-        self.__recommended_resolution = recommended_resolution
         self.__devid = devid
         self.__srcid = srcid
+        self.recommended = self.core.call_success(
+            "paperwork_config_get_default", "scanner_resolution"
+        )
 
     def __get_resolution_name(self, resolution):
         """
@@ -249,7 +252,7 @@ class JobResolutionFinder(Job):
             resolution --- the resolution (integer)
         """
         txt = ("%d" % (resolution))
-        if (resolution == self.__recommended_resolution):
+        if (resolution == self.recommended):
             txt += _(' (recommended)')
         return txt
 
@@ -294,19 +297,17 @@ GObject.type_register(JobResolutionFinder)
 
 class JobFactoryResolutionFinder(JobFactory):
 
-    def __init__(self, settings_win, libinsane, selected_resolution,
-                 recommended_resolution):
+    def __init__(self, core, settings_win, libinsane, selected_resolution):
         JobFactory.__init__(self, "ResolutionFinder")
+        self.core = core
         self.__settings_win = settings_win
         self.libinsane = libinsane
         self.__selected_resolution = selected_resolution
-        self.__recommended_resolution = recommended_resolution
 
     def make(self, devid, srcid):
         job = JobResolutionFinder(self, next(self.id_generator),
-                                  self.libinsane,
+                                  self.core, self.libinsane,
                                   self.__selected_resolution,
-                                  self.__recommended_resolution,
                                   devid, srcid)
         job.connect('resolution-finding-start',
                     lambda job: GLib.idle_add(
@@ -605,62 +606,78 @@ class ActionToggleOCRState(SimpleAction):
 class ActionApplySettings(SimpleAction):
     enabled = True
 
-    def __init__(self, settings_win, config):
+    def __init__(self, core, settings_win):
         super(ActionApplySettings, self).__init__("Apply settings")
+        self.core = core
         self.__settings_win = settings_win
-        self.__config = config
 
     def do(self):
         self.__settings_win.update_active_settings()
 
         need_reindex = False
         workdir = self.__settings_win.workdir_chooser.get_uri()
-        if workdir != self.__config['workdir'].value:
-            self.__config['workdir'].value = workdir
+        current_workdir = self.core.call_success(
+            "paperwork_config_get", "workdir"
+        )
+        if workdir != current_workdir:
+            self.core.call_all("paperwork_config_put", 'workdir', workdir)
             need_reindex = True
 
         try:
             setting = self.__settings_win.device_settings['devid']
             if setting['active_id'] != "":
-                self.__config['scanner_devid'].value = setting['active_id']
+                self.core.call_all(
+                    "paperwork_config_put", 'scanner_devid',
+                    setting['active_id']
+                )
 
             setting = self.__settings_win.device_settings['source']
             if setting['active_id'] != "":
-                self.__config['scanner_source'].value = setting['active_id']
+                self.core.call_all(
+                    "paperwork_config_put", 'scanner_source',
+                    setting['active_id']
+                )
 
             has_feeder = self.__settings_win.device_settings['has_feeder']
-            self.__config['scanner_has_feeder'].value = has_feeder
+            self.core.call_all(
+                "paperwork_config_put", 'scanner_has_feeder', has_feeder
+            )
 
             setting = self.__settings_win.device_settings['resolution']
             if setting['active_id'] != "":
-                self.__config['scanner_resolution'].value = (
+                self.core.call_all(
+                    "paperwork_config_put", 'scanner_resolution',
                     setting['active_id']
                 )
         except Exception as exc:
-            logger.warning("Failed to update scanner settings: %s" % str(exc))
+            logger.warning(
+                "Failed to update scanner settings: %s", str(exc),
+                exc_info=exc
+            )
 
         setting = self.__settings_win.ocr_settings['enabled']
         enabled = setting['gui'].get_active()
-        self.__config['ocr_enabled'].value = enabled
+        self.core.call_all('paperwork_config_put', 'ocr_enabled', enabled)
 
         setting = self.__settings_win.ocr_settings['lang']
         idx = setting['gui'].get_active()
         if idx >= 0:
             lang = setting['store'][idx][1]
-            self.__config['ocr_lang'].value = lang
+            self.core.call_all('paperwork_config_put', 'ocr_lang', lang)
 
         update = self.__settings_win.network_settings['update'].get_active()
-        self.__config['check_for_update'].value = update
+        self.core.call_all('paperwork_config_put', 'check_for_update', update)
 
         stats = self.__settings_win.network_settings['statistics'].get_active()
-        self.__config['send_statistics'].value = stats
+        self.core.call_all('paperwork_config_put', 'send_statistics', stats)
 
         if self.__settings_win.grips is not None:
             coords = self.__settings_win.grips.get_coords()
-            self.__config['scanner_calibration'].value = (
-                self.__settings_win.calibration['resolution'], coords)
+            self.core.call_all('paperwork_config_put', 'scanner_calibration',
+                (self.__settings_win.calibration['resolution'], coords)
+            )
 
-        self.__config.write()
+        self.core.call_all("paperwork_config_save")
 
         self.__settings_win.hide()
 
@@ -697,10 +714,11 @@ class SettingsWindow(GObject.GObject):
     }
 
     def __init__(
-            self, main_scheduler, mainwindow_gui, config, libinsane,
+            self, core, main_scheduler, mainwindow_gui, libinsane,
             flatpak):
         super(SettingsWindow, self).__init__()
 
+        self.core = core
         self.schedulers = {
             'main': main_scheduler,
             'progress': JobScheduler('progress'),
@@ -716,8 +734,6 @@ class SettingsWindow(GObject.GObject):
 
         self.window = widget_tree.get_object("windowSettings")
         self.window.set_transient_for(mainwindow_gui)
-
-        self.__config = config
 
         self.workdir_chooser = widget_tree.get_object("filechooserbutton")
 
@@ -739,7 +755,7 @@ class SettingsWindow(GObject.GObject):
         actions = {
             "delete-event": (
                 [self.window],
-                ActionApplySettings(self, config),
+                ActionApplySettings(core, self),
             ),
             "toggle_ocr": (
                 [self.ocr_settings['enabled']['gui']],
@@ -815,15 +831,18 @@ class SettingsWindow(GObject.GObject):
 
         self.job_factories = {
             "device_finder": JobFactoryDeviceFinder(
-                self, libinsane, config['scanner_devid'].value
+                self, libinsane,
+                core.call_success("paperwork_config_get", 'scanner_devid')
             ),
             "source_finder": JobFactorySourceFinder(
-                self, libinsane, config['scanner_source'].value
+                self, libinsane,
+                core.call_success("paperwork_config_get", 'scanner_source')
             ),
             "resolution_finder": JobFactoryResolutionFinder(
-                self, libinsane,
-                config['scanner_resolution'].value,
-                RECOMMENDED_SCAN_RESOLUTION
+                self.core, self, libinsane,
+                core.call_success(
+                    "paperwork_config_get", 'scanner_resolution'
+                ),
             ),
             "scan": JobFactoryCalibrationScan(
                 self, libinsane,
@@ -876,7 +895,7 @@ class SettingsWindow(GObject.GObject):
 
         self.window.connect("destroy", self.__on_destroy)
 
-        self.display_config(config)
+        self.display_config()
 
         self.window.set_visible(True)
 
@@ -998,7 +1017,10 @@ class SettingsWindow(GObject.GObject):
 
         self.__scan_progress_job = self.job_factories['progress_updater'].make(
             value_min=0.0, value_max=1.0,
-            total_time=self.__config['scan_time'].value['calibration'])
+            total_time=self.core.call_success(
+                "paperwork_config_get", "scan_time"
+            )['calibration']
+        )
         self.schedulers['progress'].schedule(self.__scan_progress_job)
 
     def on_scan_info(self, size):
@@ -1034,15 +1056,17 @@ class SettingsWindow(GObject.GObject):
 
     def on_scan_done(self, img, scan_resolution):
         scan_stop = time.time()
-        self.__config['scan_time'].value['calibration'] = (
-            scan_stop - self.__scan_start
-        )
+        t = self.core.call_success("paperwork_config_get", 'scan_time')
+        t['calibration'] = (scan_stop - self.__scan_start)
+        self.core.call_all("paperwork_config_put", "scan_time", t)
 
         self._on_scan_end()
 
         self.calibration['image'] = img
         self.calibration['resolution'] = scan_resolution
-        calibration = self.__config['scanner_calibration'].value
+        calibration = self.core.call_success(
+            "paperwork_config_get", 'scanner_calibration'
+        )
         if calibration:
             calibration = calibration[1]
         img_drawer = PillowImageDrawer((0, 0), self.calibration['image'])
@@ -1066,27 +1090,31 @@ class SettingsWindow(GObject.GObject):
         self.set_mouse_cursor("Normal")
         self.calibration["scan_button"].set_sensitive(True)
 
-    def display_config(self, config):
-        self.workdir_chooser.set_current_folder_uri(config['workdir'].value)
+    def display_config(self):
+        self.workdir_chooser.set_current_folder_uri(
+            self.core.call_success("paperwork_config_get", 'workdir')
+        )
 
-        ocr_enabled = config['ocr_enabled'].value
-        if config['ocr_lang'].value is None:
+        ocr_enabled = self.core.call_success(
+            "paperwork_config_get", 'ocr_enabled'
+        )
+        ocr_lang = self.core.call_success("paperwork_config_get", "ocr_lang")
+        if ocr_lang is None:
             ocr_enabled = False
         self.ocr_settings['enabled']['gui'].set_active(ocr_enabled)
 
         idx = 0
-        current_ocr_lang = config['ocr_lang'].value
         for (long_lang, short_lang) in self.ocr_settings['lang']['store']:
-            if short_lang == current_ocr_lang:
+            if short_lang == ocr_lang:
                 self.ocr_settings['lang']['gui'].set_active(idx)
             idx += 1
         self.set_ocr_opts_state()
 
         self.network_settings['update'].set_active(
-            config['check_for_update'].value
+            self.core.call_success("paperwork_config_get", 'check_for_update')
         )
         self.network_settings['statistics'].set_active(
-            config['send_statistics'].value
+            self.core.call_success("paperwork_config_get", 'send_statistics')
         )
 
     def set_ocr_opts_state(self):

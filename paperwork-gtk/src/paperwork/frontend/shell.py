@@ -15,22 +15,22 @@ def _do_quit(main_window):
     return False
 
 
-def _do_scan(config, main_window):
+def _do_scan(main_window):
     main_window.actions['single_scan'][1].do(
         lambda: GLib.timeout_add(1000, _do_quit, main_window)
     )
     return False
 
 
-def _wait_for_main_win(callback, config, main_window):
+def _wait_for_main_win(callback, main_window):
     if not main_window.ready:
         return True
-    GLib.timeout_add(2000, callback, config, main_window)
+    GLib.timeout_add(2000, callback, main_window)
     return False
 
 
-def _hook_scan(config, main_window):
-    GLib.timeout_add(1000, _wait_for_main_win, _do_scan, config, main_window)
+def _hook_scan(main_window):
+    GLib.timeout_add(1000, _wait_for_main_win, _do_scan, main_window)
 
 
 def cmd_scan(core):

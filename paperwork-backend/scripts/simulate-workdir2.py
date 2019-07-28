@@ -23,7 +23,6 @@ gi.require_version('Poppler', '0.18')
 
 import openpaperwork_core
 
-from paperwork_backend import config  # noqa: E402
 from paperwork_backend import docimport  # noqa: E402
 from paperwork_backend import docsearch  # noqa: E402
 from paperwork_backend.util import rm_rf  # noqa: E402
@@ -162,12 +161,10 @@ def print_stats():
 
 def main():
     core = openpaperwork_core.Core()
+    core.load("paperwork_backend.config")
     core.load("paperwork_backend.fs.gio")
 
-    pconfig = config.PaperworkConfig(core)
-    pconfig.read()
-
-    src_dir = pconfig.settings['workdir'].value
+    src_dir = core.call_success("paperwork_config_get", "workdir")
     print("Source work directory : {}".format(src_dir))
     src_dsearch = docsearch.DocSearch(core, src_dir)
     src_dsearch.reload_index()
@@ -199,7 +196,7 @@ def main():
                 filepath = os.path.join(src_doc.path, filename)
                 fileuri = "file://" + filepath
                 importers = docimport.get_possible_importers(
-                    fileuri, current_doc=current_doc
+                    core, fileuri, current_doc=current_doc
                 )
                 if len(importers) <= 0:
                     continue

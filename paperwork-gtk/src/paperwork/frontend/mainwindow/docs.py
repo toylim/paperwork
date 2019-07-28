@@ -384,10 +384,10 @@ class ActionOpenSelectedDocument(SimpleAction):
     """
     Starts a new document.
     """
-    def __init__(self, main_window, config, doclist):
+    def __init__(self, core, main_window, doclist):
         SimpleAction.__init__(self, "Open selected document")
+        self.core = core
         self.__main_win = main_window
-        self.__config = config
         self.__doclist = doclist
 
     def do(self):
@@ -637,10 +637,9 @@ class ActionDeleteDoc(SimpleAction):
 class DocList(object):
     LIST_CHUNK = 50
 
-    def __init__(self, core, main_win, config, widget_tree):
+    def __init__(self, core, main_win, widget_tree):
         self.core = core
         self.__main_win = main_win
-        self.__config = config
         self.enabled = True
 
         self.default_thumbnail = self.__init_default_thumbnail(
@@ -671,7 +670,7 @@ class DocList(object):
                 [
                     self.gui['list'],
                 ],
-                ActionOpenSelectedDocument(main_win, config, self)
+                ActionOpenSelectedDocument(core, main_win, self)
             ),
         }
         connect_actions(self.actions)
@@ -684,7 +683,8 @@ class DocList(object):
             # keep the thumbnails in cache
             'thumbnails': {}  # docid: pixbuf
         }
-        workdir = self.core.call_success("fs_safe", config['workdir'].value)
+        workdir = self.core.call_success("paperwork_config_get", "workdir")
+        workdir = self.core.call_success("fs_safe", workdir)
         self.new_doc = ImgDoc(self.core, workdir)
 
         self.job_factories = {
@@ -912,9 +912,8 @@ class DocList(object):
     def get_new_doc(self):
         if self.new_doc.is_new:
             return self.new_doc
-        workdir = self.core.call_success(
-            "fs_safe", self.__config['workdir'].value
-        )
+        workdir = self.core.call_success("paperwork_config_get", "workdir")
+        workdir = self.core.call_success("fs_safe", workdir)
         self.new_doc = ImgDoc(self.core, workdir)
         return self.new_doc
 

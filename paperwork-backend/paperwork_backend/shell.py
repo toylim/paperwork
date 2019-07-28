@@ -13,7 +13,6 @@ gi.require_version('Gdk', '3.0')
 gi.require_version('PangoCairo', '1.0')
 gi.require_version('Poppler', '0.18')
 
-from . import config  # noqa: E402
 from . import docimport  # noqa: E402
 from . import docsearch  # noqa: E402
 from .labels import Label  # noqa: E402
@@ -43,15 +42,15 @@ def reply(data):
 
 
 def get_docsearch(core):
-    pconfig = config.PaperworkConfig(core)
-    pconfig.read()
-
-    verbose("Work directory: {}".format(pconfig.settings['workdir'].value))
+    work_dir = core.call_success("paperwork_config_get", "workdir")
+    index_in_workdir = core.call_success(
+        "paperwork_config_get", "index_in_workdir"
+    )
+    verbose("Work directory: {}".format(work_dir))
 
     dsearch = docsearch.DocSearch(
-        core,
-        pconfig.settings['workdir'].value,
-        index_in_workdir=pconfig.settings['index_in_workdir'].value
+        core, work_dir,
+        index_in_workdir=index_in_workdir,
     )
     dsearch.reload_index()
     return dsearch
@@ -253,7 +252,7 @@ def cmd_export_all(core, *args):
     output_dir = core.call_success("fs_safe", output_dir)
     for (doc_idx, doc) in enumerate(docs):
         output_pdf = core.call_success(
-            "fs_safe", join(output_dir, doc.docid + ".pdf"
+            "fs_safe", join(output_dir, doc.docid + ".pdf")
         )
 
         exporter = doc.build_exporter(file_format="pdf")
@@ -686,9 +685,7 @@ def cmd_import(core, *args):
 
     ocr_lang = None
     if ocr is not None:
-        pconfig = config.PaperworkConfig(core)
-        pconfig.read()
-        ocr_lang = pconfig.settings['ocr_lang'].value
+        ocr_lang = core.call_success("paperwork_config_get", "ocr_lang")
     return _do_import(
         core, args, dsearch, doc, ocr, ocr_lang, guess_labels, name, labels
     )
@@ -752,9 +749,7 @@ def cmd_ocr(core, *args):
         args.remove("--empty_only")
 
     if ocr_lang is None:
-        pconfig = config.PaperworkConfig(core)
-        pconfig.read()
-        ocr_lang = pconfig.settings['ocr_lang'].value
+        ocr_lang = core.call_success("paperwork_config_get", "ocr_lang")
 
     dsearch = get_docsearch(core)
     pages = set()
@@ -1104,19 +1099,17 @@ def cmd_switch_workdir(core, new_workdir):
     """
     new_workdir = core.call_success("fs_safe", new_workdir)
     if (not core.call_success("fs_exists", new_workdir)
-            or not core.call_success("fs_isdir", new_workdir):
+            or not core.call_success("fs_isdir", new_workdir)):
         sys.stderr.write("New work directory {} doesn't exists".format(
             new_workdir
         ))
         return
-    pconfig = config.PaperworkConfig(core)
-    pconfig.read()
     r = {
-        'old_workdir': pconfig.settings['workdir'].value,
+        'old_workdir': core.call_success("paperwork_config_get", "workdir"),
         'new_workdir': new_workdir
     }
-    pconfig.settings['workdir'].value = new_workdir
-    pconfig.write()
+    core.call_all("paperwork_config_put", "workdir", new_workdir)
+    core.call_all("paperwork_config_save")
     reply(r)
 
 

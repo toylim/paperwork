@@ -38,11 +38,9 @@ logger = logging.getLogger(__name__)
 
 
 class ActionAddDoc(SimpleAction):
-
-    def __init__(self, multiscan_dialog, config):
+    def __init__(self, multiscan_dialog):
         SimpleAction.__init__(self, "Add doc to the multi-scan list")
         self.__dialog = multiscan_dialog
-        self.__config = config
 
     def do(self):
         SimpleAction.do(self)
@@ -61,7 +59,6 @@ class ActionAddDoc(SimpleAction):
 
 
 class ActionSelectDoc(SimpleAction):
-
     def __init__(self, multiscan_dialog):
         SimpleAction.__init__(self, "Doc selected in multi-scan list")
         self.__dialog = multiscan_dialog
@@ -142,10 +139,10 @@ class ActionEndEditDoc(SimpleAction):
 class ActionScan(SimpleAction):
     MARGIN = 10
 
-    def __init__(self, multiscan_win, config, libinsane, docsearch, main_win):
+    def __init__(self, core, multiscan_win, libinsane, docsearch, main_win):
         SimpleAction.__init__(self, "Start multi-scan")
+        self.core = core
         self.__multiscan_win = multiscan_win
-        self.__config = config
         self.__libinsane = libinsane
         self.__docsearch = docsearch
         self.__main_win = main_win
@@ -170,7 +167,7 @@ class ActionScan(SimpleAction):
 
         try:
             (dev, resolution) = get_scanner(
-                self.__config, self.__libinsane,
+                self.core, self.__libinsane,
                 preferred_sources=["ADF", "Feeder"]
             )
         except Exception as exc:
@@ -210,11 +207,12 @@ class ActionScan(SimpleAction):
             doc_scan = DocScan(doc)
             drawer = None
             for page_nb in range(doc_nb_pages, doc_nb_pages + nb_pages):
-                page_scan = PageScan(self.__main_win, self.__multiscan_win,
-                                     self.__config,
-                                     resolution, scan_session,
-                                     line_idx, doc_scan,
-                                     page_nb, total_pages)
+                page_scan = PageScan(
+                    self.__main_win, self.__multiscan_win,
+                    resolution, scan_session,
+                    line_idx, doc_scan,
+                    page_nb, total_pages
+                )
                 drawer = PageScanDrawer(position)
                 self.__multiscan_win.scan_canvas.add_drawer(drawer)
                 page_scan.connect("scanworkflow-inst",
@@ -264,7 +262,7 @@ class MultiscanDialog(GObject.GObject):
                            (GObject.TYPE_PYOBJECT,)),
     }
 
-    def __init__(self, main_window, config, libinsane):
+    def __init__(self, core, main_window, libinsane):
         GObject.GObject.__init__(self)
 
         self.main_window = main_window
@@ -274,8 +272,6 @@ class MultiscanDialog(GObject.GObject):
         }
 
         self.scanned_pages = 0
-
-        self.__config = config
 
         widget_tree = load_uifile(
             os.path.join("multiscan", "multiscan.glade"))
@@ -307,7 +303,7 @@ class MultiscanDialog(GObject.GObject):
         self.actions = {
             'add_doc': (
                 [widget_tree.get_object("buttonAddDoc")],
-                ActionAddDoc(self, config),
+                ActionAddDoc(self),
             ),
             'select_doc': (
                 [widget_tree.get_object("treeviewScanList")],
@@ -331,7 +327,7 @@ class MultiscanDialog(GObject.GObject):
             ),
             'scan': (
                 [widget_tree.get_object("buttonOk")],
-                ActionScan(self, config, libinsane, main_window.docsearch,
+                ActionScan(core, self, libinsane, main_window.docsearch,
                            main_window),
             ),
         }

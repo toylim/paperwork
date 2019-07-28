@@ -18,10 +18,11 @@ Paperwork configuration management code
 """
 
 import base64
-import configparser
 import logging
 import os
 import pyocr
+
+import openpaperwork_core
 
 from . import util
 from .util import find_language
@@ -32,76 +33,26 @@ logger = logging.getLogger(__name__)
 DEFAULT_OCR_LANG = "eng"  # if really we can't guess anything
 
 
-def paperwork_cfg_boolean(string):
-    if string.lower() == "true":
-        return True
-    return False
-
-
 class PaperworkSetting(object):
-    def __init__(self, section, token, default_value_func=lambda: None,
-                 constructor=str):
-        self.section = section
-        self.token = token
-        self.default_value_func = default_value_func
-        self.constructor = constructor
-        self.value = None
-
-    def load(self, config):
-        try:
-            value = config.get(self.section, self.token)
-            if value != "None":
-                value = self.constructor(value)
-            else:
-                value = None
-            self.value = value
-            return
-        except (configparser.NoOptionError, configparser.NoSectionError):
-            pass
-        self.value = self.default_value_func()
-
-    def update(self, config):
-        config.set(self.section, self.token, str(self.value))
-
-
-class PaperworkURI(object):
-    def __init__(self, core, section, token, default_value_func=lambda: None):
+    def __init__(self, core, section, token, default_value_func):
         self.core = core
         self.section = section
         self.token = token
         self.default_value_func = default_value_func
-        self.value = None
 
-    def load(self, config):
-        try:
-            value = config.get(self.section, self.token)
-            value = value.strip()
-            if value != "None":
-                try:
-                    value = base64.decodebytes(value.encode("utf-8")).decode(
-                        'utf-8')
-                except Exception as exc:
-                    logger.warning(
-                        "Failed to decode work dir path ({})".format(value),
-                        exc_info=exc
-                    )
-                value = self.core.call_success("fs_safe", value)
-            else:
-                value = None
-            self.value = value
-            return
-        except (configparser.NoOptionError, configparser.NoSectionError):
-            pass
-        self.value = self.default_value_func()
+    def get(self):
+        value = self.core.call_success(
+            "config_get", self.section, self.token, None
+        )
+        if value is None:
+            return self.default_value_func()
+        else:
+            return value
 
-    def update(self, config):
-        value = self.core.call_success("fs_safe", str(self.value))
-        try:
-            value = base64.encodebytes(value.encode('utf-8')).decode('utf-8')
-        except Exception as exc:
-            logger.warning("Failed to encode work dir path ({})".format(value),
-                           exc_info=exc)
-        config.set(self.section, self.token, value.strip())
+    def put(self, value):
+        self.core.call_all(
+            "config_put", self.section, self.token, value
+        )
 
 
 def get_default_ocr_lang():
@@ -121,106 +72,75 @@ def get_default_ocr_lang():
     return DEFAULT_OCR_LANG
 
 
-class PaperworkConfig(object):
+class Plugin(openpaperwork_core.PluginBase):
     """
-    Paperwork config. See each accessor to know for what purpose each value is
-    used.
+    Translate values from the configuration into more usable ones.
+    Provides default values (except for plugins).
     """
-    CURRENT_INDEX_VERSION = "8"
 
-    def __init__(self, core):
+    def __init__(self):
+        self.core = None
+        self.settings = {}
+        self.values = {}
+
+    def get_interfaces(self):
+        return ['paperwork_config']
+
+    def get_deps(self):
+        return {
+            'interfaces': [
+                ('configuration', ['openpaperwork_core.config_file']),
+            ],
+        }
+
+    def init(self, core):
+        self.core = core
         self.settings = {
-            'workdir': PaperworkURI(
-                core,
-                "Global", "WorkDirectory",
-                lambda: os.path.expanduser("~/papers")),
+            'workdir': PaperworkSetting(
+                core, "Global", "WorkDirectory",
+                lambda: self.core.call_one(
+                    "fs_safe", os.path.expanduser("~/papers")
+                )
+            ),
             'index_version': PaperworkSetting(
-                "Global", "IndexVersion", lambda: "-1"),
+                core, "Global", "IndexVersion", lambda: "-1"
+            ),
             'ocr_lang': PaperworkSetting(
-                "OCR", "Lang", get_default_ocr_lang
+                core, "OCR", "Lang", get_default_ocr_lang
             ),
             'index_in_workdir': PaperworkSetting(
-                "Global", "index_in_workdir",
-                lambda: False, paperwork_cfg_boolean
+                core, "Global", "index_in_workdir",
+                lambda: False
             ),
         }
 
-        self._configparser = None
+    def paperwork_config_load(self, application, default_plugins=[]):
+        self.core.call_all('config_load', application)
+        self.core.call_all('config_load_plugins', default_plugins)
 
-        # Possible config files are evaluated in the order they are in the
-        # array. The last one of the list is the default one.
-        configfiles = [
-            "./paperwork.conf",
-            os.path.expanduser("~/.paperwork.conf"),
-            ("%s/paperwork.conf"
-             % (os.getenv("XDG_CONFIG_HOME",
-                          os.path.expanduser("~/.config"))))
-        ]
+    def paperwork_config_save(self):
+        self.core.call_all('config_save')
 
-        for self.__configfile in configfiles:
-            if os.access(self.__configfile, os.R_OK):
-                logger.info("Config file found: %s" % self.__configfile)
-                break
-        else:
-            logger.info("Config file not found. Will use '%s'"
-                        % self.__configfile)
-        util.mkdir_p(os.path.dirname(self.__configfile))
+    def paperwork_config_register(self, key, setting):
+        self.settings[key] = setting
 
-    def read(self):
-        """
-        (Re)read the configuration.
+    def paperwork_config_get_setting(self, key):
+        return self.settings[key]
 
-        Beware that the current work directory may affect this operation:
-        If there is a 'paperwork.conf' in the current directory, it will be
-        read instead of '~/.paperwork.conf', see __init__())
-        """
-        logger.info("Reloading %s ..." % self.__configfile)
+    def paperwork_config_get(self, key):
+        if key not in self.values:
+            self.values[key] = self.settings[key].get()
+        return self.values[key]
 
-        # smash the previous config
-        self._configparser = configparser.SafeConfigParser()
-        self._configparser.read([self.__configfile])
+    def paperwork_config_get_default(self, key):
+        return self.settings[key].default_value_func()
 
-        sections = set()
-        for setting in self.settings.values():
-            sections.add(setting.section)
-        for section in sections:
-            # make sure that all the sections exist
-            if not self._configparser.has_section(section):
-                self._configparser.add_section(section)
+    def paperwork_config_put(self, key, value):
+        self.settings[key].put(value)
+        self.values[key] = value
 
-        for setting in self.settings.values():
-            setting.load(self._configparser)
+    def paperwork_add_plugin(self, plugin):
+        self.core.call_all('config_add_plugin', plugin)
 
-    def write(self):
-        """
-        Rewrite the configuration file. It rewrites the same file than
-        PaperworkConfig.read() read.
-        """
-        logger.info("Updating %s ..." % self.__configfile)
-
-        for setting in self.settings.values():
-            setting.update(self._configparser)
-
-        file_path = self.__configfile
-        try:
-            with open(file_path, 'w') as file_descriptor:
-                self._configparser.write(file_descriptor)
-            logger.info("Done")
-        except IOError as e:
-            logger.warn(
-                "Cannot write to configuration file %s : %s"
-                % (self.__configfile, e.strerror)
-            )
-            return False
-
-        try:
-            # Windows support
-            util.hide_file(os.path.expanduser(os.path.join("~", ".config")))
-        except Exception as exc:
-            logger.warn("Failed to hide configuration file")
-            logger.exception(exc)
-
-        return True
-
-    def __getitem__(self, item):
-        return self.settings[item]
+    def paperwork_remove_plugin(self, plugin):
+        self.core.call_all('config_remove_plugin', plugin)

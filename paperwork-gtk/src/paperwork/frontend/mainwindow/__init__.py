@@ -92,8 +92,8 @@ logger = logging.getLogger(__name__)
 g_must_init_app = True
 
 
-def check_scanner(main_win, config):
-    if config['scanner_devid'].value is not None:
+def check_scanner(core, main_win):
+    if core.call_success("paperwork_config_get", 'scanner_devid') is not None:
         return True
     main_win.actions['open_settings'][1].do()
     return False
@@ -125,10 +125,9 @@ class JobIndexLoader(Job):
     can_stop = True
     priority = 100
 
-    def __init__(self, factory, job_id, core, config):
+    def __init__(self, factory, job_id, core):
         Job.__init__(self, factory, job_id)
         self.core = core
-        self.__config = config
         self.started = False
         self.done = False
 
@@ -158,28 +157,19 @@ class JobIndexLoader(Job):
             self.emit('index-loading-start')
             self.started = True
         try:
-            if (self.__config.CURRENT_INDEX_VERSION !=
-                    self.__config['index_version'].value):
-                logger.info("Index structure is obsolete."
-                            " Must rebuild from scratch")
-                docsearch = DocSearch(
-                    self.core, self.__config['workdir'].value
-                )
-                # we destroy the index to force its rebuilding
-                docsearch.destroy_index()
-                self.__config['index_version'].value = \
-                    self.__config.CURRENT_INDEX_VERSION
-                self.__config.write()
-
             if not self.can_run:
                 return
 
             docsearch = DocSearch(
                 self.core,
-                self.__config['workdir'].value,
-                index_in_workdir=self.__config['index_in_workdir'].value
+                self.core.call_success("paperwork_config_get", 'workdir'),
+                index_in_workdir=self.core.call_success(
+                    "paperwork_config_get", 'index_in_workdir'
+                )
             )
-            docsearch.set_language(self.__config['ocr_lang'].value)
+            docsearch.set_language(self.core.call_success(
+                "paperwork_config_get", "ocr_lang"
+            ))
             docsearch.reload_index(progress_cb=self.__progress_cb)
 
             if not self.can_run:
@@ -201,15 +191,14 @@ GObject.type_register(JobIndexLoader)
 
 
 class JobFactoryIndexLoader(JobFactory):
-    def __init__(self, core, main_window, config):
+    def __init__(self, core, main_window):
         JobFactory.__init__(self, "IndexLoader")
         self.core = core
         self.__main_window = main_window
-        self.__config = config
 
     def make(self):
         job = JobIndexLoader(
-            self, next(self.id_generator), self.core, self.__config
+            self, next(self.id_generator), self.core
         )
         job.connect('index-loading-start',
                     lambda job: GLib.idle_add(
@@ -242,10 +231,10 @@ class JobDocExaminer(Job):
     can_stop = False
     priority = 50
 
-    def __init__(self, factory, id, main_win, config, docsearch):
+    def __init__(self, factory, id, core, main_win, docsearch):
         Job.__init__(self, factory, id)
+        self.core = core
         self.__main_win = main_win
-        self.__config = config
         self.docsearch = docsearch
         self.done = False
         self.started = False
@@ -321,15 +310,15 @@ GObject.type_register(JobDocExaminer)
 
 
 class JobFactoryDocExaminer(JobFactory):
-    def __init__(self, main_win, config):
+    def __init__(self, core, main_win):
         JobFactory.__init__(self, "DocExaminer")
+        self.core = core
         self.__main_win = main_win
-        self.__config = config
 
     def make(self, docsearch):
         job = JobDocExaminer(self, next(self.id_generator),
-                             self.__main_win,
-                             self.__config, docsearch)
+                             self.core, self.__main_win,
+                             docsearch)
         job.connect(
             'doc-examination-start',
             lambda job: GLib.idle_add(
@@ -363,12 +352,12 @@ class JobIndexUpdater(Job):
     can_stop = True
     priority = 15
 
-    def __init__(self, factory, id, config, docsearch,
+    def __init__(self, factory, id, core, docsearch,
                  new_docs=set(), upd_docs=set(), del_docs=set(),
                  optimize=True):
         Job.__init__(self, factory, id)
+        self.core = core
         self.__docsearch = docsearch
-        self.__config = config
 
         self.__condition = threading.Condition()
 
@@ -471,17 +460,20 @@ GObject.type_register(JobIndexUpdater)
 
 
 class JobFactoryIndexUpdater(JobFactory):
-    def __init__(self, main_win, config):
+    def __init__(self, core, main_win):
         JobFactory.__init__(self, "IndexUpdater")
+        self.core = core
         self.__main_win = main_win
-        self.__config = config
 
     def make(self, docsearch,
              new_docs=set(), upd_docs=set(), del_docs=set(),
              optimize=True, reload_list=False):
-        job = JobIndexUpdater(self, next(self.id_generator), self.__config,
-                              docsearch, new_docs, upd_docs, del_docs,
-                              optimize)
+        job = JobIndexUpdater(
+            self, next(self.id_generator),
+            self.core,
+            docsearch, new_docs, upd_docs, del_docs,
+            optimize
+        )
         job.connect('index-update-start',
                     lambda updater:
                     GLib.idle_add(self.__main_win.on_index_update_start_cb,
@@ -530,14 +522,14 @@ class JobDocSearcher(Job):
     can_stop = True
     priority = 500
 
-    def __init__(self, factory, id, config, docsearch, sort_func,
+    def __init__(self, factory, id, core, docsearch, sort_func,
                  search_type, search):
         Job.__init__(self, factory, id)
+        self.core = core
         self.search = search
         self.__search_type = search_type
         self.__docsearch = docsearch
         self.__sort_func = sort_func
-        self.__config = config
 
     def do(self):
         self.can_run = True
@@ -585,13 +577,13 @@ GObject.type_register(JobDocSearcher)
 
 
 class JobFactoryDocSearcher(JobFactory):
-    def __init__(self, main_win, config):
+    def __init__(self, core, main_win):
         JobFactory.__init__(self, "Search")
+        self.core = core
         self.__main_win = main_win
-        self.__config = config
 
     def make(self, docsearch, sort_func, search_type, search):
-        job = JobDocSearcher(self, next(self.id_generator), self.__config,
+        job = JobDocSearcher(self, next(self.id_generator), self.core,
                              docsearch, sort_func, search_type, search)
         job.connect('search-start', lambda searcher, search:
                     GLib.idle_add(self.__main_win.on_search_start_cb, search))
@@ -877,10 +869,10 @@ class JobImporter(Job):
     can_stop = False
     priority = 150
 
-    def __init__(self, factory, id, main_win, config, importer, file_uris):
+    def __init__(self, factory, id, core, main_win, importer, file_uris):
         Job.__init__(self, factory, id)
+        self.core = core
         self.__main_win = main_win
-        self.__config = config
         self.importer = importer
         self.file_uris = file_uris
 
@@ -1068,14 +1060,14 @@ GObject.type_register(JobImporter)
 
 
 class JobFactoryImporter(JobFactory):
-    def __init__(self, main_win, config):
+    def __init__(self, core, main_win):
         JobFactory.__init__(self, "Importer")
+        self.core = core
         self._main_win = main_win
-        self._config = config
 
     def make(self, importer, file_uris):
         return JobImporter(self, next(self.id_generator),
-                           self._main_win, self._config,
+                           self.core, self._main_win,
                            importer, file_uris)
 
 
@@ -1164,23 +1156,6 @@ class ActionShowDocumentAsGrid(SimpleAction):
     def do(self):
         SimpleAction.do(self)
         self.__main_win.set_layout('grid')
-
-
-class ActionSwitchSorting(SimpleAction):
-    def __init__(self, main_window, config):
-        SimpleAction.__init__(self, "Switch sorting")
-        self.__main_win = main_window
-        self.__config = config
-        self.__upd_search_results_action = \
-            ActionUpdateSearchResults(main_window, refresh_pages=False)
-
-    def do(self):
-        SimpleAction.do(self)
-        (sorting_name, unused) = self.__main_win.get_doc_sorting()
-        logger.info("Document sorting: %s" % sorting_name)
-        self.__config['result_sorting'].value = sorting_name
-        self.__config.write()
-        self.__upd_search_results_action.do()
 
 
 class ActionMovePageIndex(SimpleAction):
@@ -1370,10 +1345,10 @@ class ActionPrintDoc(SimpleAction):
 
 
 class ActionOpenSettings(SimpleAction):
-    def __init__(self, main_window, config, libinsane):
+    def __init__(self, core, main_window, libinsane):
         SimpleAction.__init__(self, "Open settings dialog")
+        self.core = core
         self.__main_win = main_window
-        self.__config = config
         self.__libinsane = libinsane
         # for tests only / prevent also the dialog from being GC
         self.dialog = None
@@ -1381,8 +1356,9 @@ class ActionOpenSettings(SimpleAction):
     def do(self):
         SimpleAction.do(self)
         self.dialog = SettingsWindow(
+            self.core,
             self.__main_win.schedulers['main'],
-            self.__main_win.window, self.__config,
+            self.__main_win.window,
             self.__libinsane,
             self.__main_win.flatpak
         )
@@ -1393,18 +1369,22 @@ class ActionOpenSettings(SimpleAction):
         self.__main_win.actions['reindex'][1].do()
 
     def __on_config_changed_cb(self, setttings_window):
-        self.__main_win.docsearch.set_language(self.__config['ocr_lang'].value)
+        self.__main_win.docsearch.set_language(
+            self.core.call_success("paperwork_config_get", 'ocr_lang')
+        )
         set_widget_state(
             self.__main_win.actions['multi_scan'][0],
-            self.__config['scanner_has_feeder'].value
+            self.core.call_success(
+                "paperwork_config_get", 'scanner_has_feeder'
+            )
         )
 
 
 class ActionSingleScan(SimpleAction):
-    def __init__(self, main_window, config, libinsane):
+    def __init__(self, core, main_window, libinsane):
         SimpleAction.__init__(self, "Scan a single page")
+        self.core = core
         self.__main_win = main_window
-        self.__config = config
         self.__libinsane = libinsane
 
     def __on_scan_ocr_canceled(self, scan_workflow):
@@ -1444,12 +1424,12 @@ class ActionSingleScan(SimpleAction):
         self.__main_win.set_mouse_cursor("Busy")
 
         try:
-            if not check_scanner(self.__main_win, self.__config):
+            if not check_scanner(self.core, self.__main_win):
                 return
 
             try:
                 (dev, resolution) = get_scanner(
-                    self.__config, self.__libinsane
+                    self.core, self.__libinsane
                 )
             except Exception as exc:
                 logger.warning("Exception while configuring scanner: %s: %s."
@@ -1496,20 +1476,20 @@ class ActionSingleScan(SimpleAction):
 
 
 class ActionMultiScan(SimpleAction):
-    def __init__(self, main_window, config, libinsane):
+    def __init__(self, core, main_window, libinsane):
         SimpleAction.__init__(self, "Scan multiples pages")
+        self.core = core
         self.__main_win = main_window
-        self.__config = config
         self.__libinsane = libinsane
         # for tests/screenshots only
         self.dialog = None
 
     def do(self):
         SimpleAction.do(self)
-        if not check_scanner(self.__main_win, self.__config):
+        if not check_scanner(self.core, self.__main_win):
             return
         self.dialog = MultiscanDialog(
-            self.__main_win, self.__config, self.__libinsane
+            self.core, self.__main_win, self.__libinsane
         )
         self.dialog.connect("need-show-page",
                             lambda ms_dialog, page:
@@ -1521,10 +1501,10 @@ class ActionMultiScan(SimpleAction):
 
 
 class ActionImport(SimpleAction):
-    def __init__(self, main_window, config):
+    def __init__(self, core, main_window):
         SimpleAction.__init__(self, "Import file(s)")
+        self.core = core
         self.__main_win = main_window
-        self.__config = config
         self._select_file_dialog = None
         self.notification = None
 
@@ -1542,7 +1522,7 @@ class ActionImport(SimpleAction):
         all_mimes = []
 
         filters = []
-        for importer in docimport.IMPORTERS:
+        for importer in docimport.get_possible_importers(self.core):
             mimes = importer.get_select_mime_types()
             for (name, mime) in mimes:
                 all_mimes.append(mime)
@@ -1720,7 +1700,8 @@ class ActionImport(SimpleAction):
                 Gtk.RecentManager().add_item(parent.get_uri())
 
         importers = docimport.get_possible_importers(
-            file_uris, self.__main_win.doc)
+            self.core, file_uris, self.__main_win.doc
+        )
         if len(importers) <= 0:
             self.__no_importer(file_uris)
             return
@@ -2321,10 +2302,10 @@ class ActionQuit(SimpleAction):
     """
     Quit
     """
-    def __init__(self, main_window, config):
+    def __init__(self, core, main_window):
         SimpleAction.__init__(self, "Quit")
+        self.core = core
         self.__main_win = main_window
-        self.__config = config
 
     def do(self):
         SimpleAction.do(self)
@@ -2338,10 +2319,9 @@ class ActionRealQuit(SimpleAction):
     """
     Quit
     """
-    def __init__(self, main_window, config, main_loop):
+    def __init__(self, main_window, main_loop):
         SimpleAction.__init__(self, "Quit (real)")
         self.__main_win = main_window
-        self.__config = config
         self.__main_loop = main_loop
 
     def do(self):
@@ -2366,11 +2346,11 @@ class ActionRealQuit(SimpleAction):
 
 
 class ActionRefreshIndex(SimpleAction):
-    def __init__(self, main_window, config, force=False,
+    def __init__(self, core, main_window, force=False,
                  skip_examination=False):
         SimpleAction.__init__(self, "Refresh index")
+        self.core = core
         self.__main_win = main_window
-        self.__config = config
         self.__force = force
         self.__connect_handler_id = None
         self.__skip_examination = skip_examination
@@ -2660,7 +2640,7 @@ class SearchBar(object):
 
 class MainWindow(object):
     def __init__(
-            self, core, config, main_loop, libinsane, workdir_scan=True,
+            self, core, main_loop, libinsane, workdir_scan=True,
             flatpak=False):
         self.core = core
         self.flatpak = flatpak
@@ -2695,11 +2675,10 @@ class MainWindow(object):
 
         self.__init_headerbars(widget_tree)
 
-        self.window = self.__init_window(widget_tree, config)
+        self.window = self.__init_window(core, widget_tree)
 
-        self.doclist = DocList(core, self, config, widget_tree)
+        self.doclist = DocList(core, self, widget_tree)
 
-        self.__config = config
         self.__scan_start = 0.0
         self.__scan_progress_job = None
 
@@ -2864,14 +2843,14 @@ class MainWindow(object):
         }
 
         self.job_factories = {
-            'doc_examiner': JobFactoryDocExaminer(self, config),
-            'doc_searcher': JobFactoryDocSearcher(self, config),
+            'doc_examiner': JobFactoryDocExaminer(core, self),
+            'doc_searcher': JobFactoryDocSearcher(core, self),
             'export': JobFactoryExport(self),
             'export_previewer': JobFactoryExportPreviewer(self),
             'img_processer': JobFactoryImgProcesser(self),
-            'importer': JobFactoryImporter(self, config),
-            'index_reloader': JobFactoryIndexLoader(core, self, config),
-            'index_updater': JobFactoryIndexUpdater(self, config),
+            'importer': JobFactoryImporter(core, self),
+            'index_reloader': JobFactoryIndexLoader(core, self),
+            'index_updater': JobFactoryIndexUpdater(core, self),
             'label_predictor_on_new_doc': JobFactoryLabelPredictorOnNewDoc(
                 self
             ),
@@ -2909,19 +2888,19 @@ class MainWindow(object):
                 [
                     widget_tree.get_object("buttonScan"),
                 ],
-                ActionSingleScan(self, config, libinsane)
+                ActionSingleScan(core, self, libinsane)
             ),
             'multi_scan': (
                 [
                     gactions['scan_from_feeder'],
                 ],
-                ActionMultiScan(self, config, libinsane)
+                ActionMultiScan(core, self, libinsane)
             ),
             'import': (
                 [
                     gactions['import']
                 ],
-                ActionImport(self, config)
+                ActionImport(core, self)
             ),
             'print': (
                 [
@@ -2945,7 +2924,7 @@ class MainWindow(object):
                 [
                     gactions['open_settings'],
                 ],
-                ActionOpenSettings(self, config, libinsane)
+                ActionOpenSettings(core, self, libinsane)
             ),
             'open_help_introduction': (
                 [
@@ -2963,7 +2942,7 @@ class MainWindow(object):
                 [
                     gactions['quit'],
                 ],
-                ActionQuit(self, config),
+                ActionQuit(core, self),
             ),
             'open_doc_dir': (
                 [
@@ -3023,15 +3002,15 @@ class MainWindow(object):
                 [
                     gactions['reindex_all'],
                 ],
-                ActionRefreshIndex(self, config, force=True),
+                ActionRefreshIndex(core, self, force=True),
             ),
             'reindex': (
                 [],
-                ActionRefreshIndex(self, config, force=False),
+                ActionRefreshIndex(core, self, force=False),
             ),
             'reload': (
                 [],
-                ActionRefreshIndex(self, config, force=False,
+                ActionRefreshIndex(core, self, force=False,
                                    skip_examination=True),
             ),
             'diagnostic': (
@@ -3085,7 +3064,7 @@ class MainWindow(object):
         set_widget_state(self.need_doc_widgets, False)
         set_widget_state(
             self.actions['multi_scan'][0],
-            self.__config['scanner_has_feeder'].value
+            core.call_success("paperwork_config_get", "scanner_has_feeder")
         )
 
         for (popup_menu_name, popup_menu) in self.popup_menus.items():
@@ -3098,7 +3077,7 @@ class MainWindow(object):
 
         self.window.connect(
             "destroy",
-            ActionRealQuit(self, config, main_loop).on_window_close_cb
+            ActionRealQuit(self, main_loop).on_window_close_cb
         )
 
         self.img['scrollbar'].connect("size-allocate",
@@ -3119,10 +3098,10 @@ class MainWindow(object):
         for scheduler in self.schedulers.values():
             scheduler.start()
 
-        GLib.idle_add(self.__init_canvas, config)
+        GLib.idle_add(self.__init_canvas, core)
         GLib.idle_add(self.window.set_visible, True)
 
-        self.beacon = beacon.Beacon(config, flatpak)
+        self.beacon = beacon.Beacon(core, flatpak)
         beacon.check_update(self.beacon)
 
     def __init_headerbars(self, widget_tree):
@@ -3214,12 +3193,12 @@ class MainWindow(object):
             'export': JobScheduler("Export"),
         }
 
-    def __init_window(self, widget_tree, config):
+    def __init_window(self, core, widget_tree):
         window = widget_tree.get_object("mainWindow")
         if g_must_init_app:
             window.set_application(self.app)
-        window.set_default_size(config['main_win_size'].value[0],
-                                config['main_win_size'].value[1])
+        win_size = core.call_success("paperwork_config_get", "main_win_size")
+        window.set_default_size(win_size[0], win_size[1])
 
         # before loading the main window, load the icon, so Gtk can access
         # it too
@@ -3228,7 +3207,7 @@ class MainWindow(object):
         window.set_icon(logo)
         return window
 
-    def __init_canvas(self, config):
+    def __init_canvas(self, core):
         logo = "paperwork_100.png"
         pkg = "paperwork.frontend.data"
 
@@ -3247,7 +3226,7 @@ class MainWindow(object):
             logger.warning("Failed to display logo: {}".format(exc))
             raise
 
-        update = config['last_update_found'].value
+        update = core.call_success("paperwork_config_get", 'last_update_found')
         version = self.version.split("-")[0]
 
         lines = [
@@ -3345,7 +3324,9 @@ class MainWindow(object):
         # no document --> add the introduction document
         docpath = get_documentation('intro')
         docuri = self.core.call_success("fs_safe", docpath)
-        importers = docimport.get_possible_importers([docuri], self.doc)
+        importers = docimport.get_possible_importers(
+            self.core, [docuri], self.doc
+        )
         job_importer = self.job_factories['importer']
         job_importer = job_importer.make(importers[0], [docuri])
 
@@ -3924,7 +3905,7 @@ class MainWindow(object):
 
     def __on_window_resized_cb(self, w, rectangle):
         (w, h) = w.get_size()
-        self.__config['main_win_size'].value = (w, h)
+        self.core.call_all("paperwork_config_put", 'main_win_size', (w, h))
 
     def __on_window_realize_cb(self, _):
         action = 'reindex' if self.workdir_scan_at_start else 'reload'
@@ -4034,7 +4015,7 @@ class MainWindow(object):
         self.__select_page(page)
 
     def make_scan_workflow(self):
-        return ScanWorkflow(self.__config,
+        return ScanWorkflow(self.core,
                             self.schedulers['scan'],
                             self.schedulers['ocr'])
 
