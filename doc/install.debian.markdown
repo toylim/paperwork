@@ -1,16 +1,6 @@
 # Paperwork installation on GNU/Linux Debian or GNU/Linux Ubuntu
 
 
-**BEWARE** (2018/06/19)
-
-Current version of Debian testing (>= buster) and Ubuntu (>= 18.04) are shipped
-with Tesseract 4.00 beta (there is no stable version of Tesseract 4 yet).
-This version of Tesseract does *not* work yet with Paperwork nor PyOCR.
-If you want to use Paperwork on those systems, you will have to
-either downgrade to [Tesseract 3.05](https://packages.debian.org/search?keywords=tesseract-ocr&searchon=names&suite=stretch)
-or use the [Flatpak version](/flatpak/README.markdown).
-
-
 ## Package
 
 Currently, there is no official Debian or Ubuntu package for Paperwork.
