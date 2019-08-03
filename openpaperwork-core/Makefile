@@ -30,6 +30,7 @@ test: install
 linux_exe:
 
 windows_exe:
+	${PYTHON} /mingw32/bin/pip3-script.py install .
 
 release:
 ifeq (${RELEASE}, )
