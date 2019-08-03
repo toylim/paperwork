@@ -24,8 +24,8 @@ doc:
 check:
 	flake8 openpaperwork_core
 
-test: ${VERSION_FILE}
-	tox
+test: install
+	python3 -m unittest discover --verbose -s tests
 
 linux_exe:
 

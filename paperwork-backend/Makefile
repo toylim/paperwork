@@ -24,7 +24,8 @@ doc:
 check:
 	flake8 paperwork_backend
 
-test:
+test: install
+	python3 -m unittest discover --verbose -s tests
 
 linux_exe:
 
