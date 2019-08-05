@@ -1,3 +1,4 @@
+import shutil
 import tempfile
 import unittest
 import unittest.mock
@@ -33,10 +34,13 @@ class TestReadWrite(unittest.TestCase):
             tempfile.mkdtemp(prefix='openpaperwork_core_config_tests')
         )
 
-        core.init()
+        try:
+            core.init()
 
-        # must not throw an exception
-        core.call_all('config_load', 'openpaperwork_test')
+            # must not throw an exception
+            core.call_all('config_load', 'openpaperwork_test')
+        finally:
+            shutil.rmtree(core.get('openpaperwork_core.config_file').base_path)
 
     def test_simple_readwrite(self):
         core = openpaperwork_core.Core()
@@ -46,20 +50,27 @@ class TestReadWrite(unittest.TestCase):
             tempfile.mkdtemp(prefix='openpaperwork_core_config_tests')
         )
 
-        core.init()
+        try:
+            core.init()
 
-        core.call_all('config_put', 'test_section', 'test_key', 'test_value')
-        core.call_all('config_add_plugin', 'some_test_module')
-        core.call_all('config_save', 'openpaperwork_test')
+            core.call_all(
+                'config_put', 'test_section', 'test_key', 'test_value'
+            )
+            core.call_all('config_add_plugin', 'some_test_module')
+            core.call_all('config_save', 'openpaperwork_test')
 
-        core.call_all('config_load', 'openpaperwork_test')
-        v = core.call_one('config_get', 'test_section', 'test_key')
-        self.assertEqual(v, 'test_value')
-        v = core.call_one('config_get', 'wrong_section', 'test_key', 'default')
-        self.assertEqual(v, 'default')
-        self.assertIsNone(
-            core.call_success('config_get', 'test_section', 'wrong_key')
-        )
+            core.call_all('config_load', 'openpaperwork_test')
+            v = core.call_one('config_get', 'test_section', 'test_key')
+            self.assertEqual(v, 'test_value')
+            v = core.call_one(
+                'config_get', 'wrong_section', 'test_key', 'default'
+            )
+            self.assertEqual(v, 'default')
+            self.assertIsNone(
+                core.call_success('config_get', 'test_section', 'wrong_key')
+            )
+        finally:
+            shutil.rmtree(core.get('openpaperwork_core.config_file').base_path)
 
     @unittest.mock.patch("importlib.import_module")
     def test_simple_load_module(self, import_module):
@@ -100,8 +111,6 @@ class TestReadWrite(unittest.TestCase):
             tempfile.mkdtemp(prefix='openpaperwork_core_config_tests')
         )
 
-        core.init()
-
         class Observer(object):
             def __init__(self):
                 self.count = 0
@@ -109,23 +118,28 @@ class TestReadWrite(unittest.TestCase):
             def obs(self):
                 self.count += 1
 
-        obs = Observer()
-        core.call_all('config_add_observer', 'test_section', obs.obs)
+        try:
+            core.init()
 
-        core.call_all('config_put', 'other_section', 'test_key', 'test_value')
-        self.assertEqual(obs.count, 0)
+            obs = Observer()
+            core.call_all('config_add_observer', 'test_section', obs.obs)
 
-        core.call_all('config_put', 'test_section', 'test_key', 'test_value')
-        self.assertEqual(obs.count, 1)
+            core.call_all('config_put', 'other_section', 'test_key', 'test_value')
+            self.assertEqual(obs.count, 0)
 
-        core.call_all('config_add_plugin', 'some_test_module')
-        self.assertEqual(obs.count, 1)
+            core.call_all('config_put', 'test_section', 'test_key', 'test_value')
+            self.assertEqual(obs.count, 1)
 
-        core.call_all('config_save', 'openpaperwork_test')
-        self.assertEqual(obs.count, 1)
+            core.call_all('config_add_plugin', 'some_test_module')
+            self.assertEqual(obs.count, 1)
 
-        core.call_all('config_load', 'openpaperwork_test')
-        self.assertEqual(obs.count, 2)
+            core.call_all('config_save', 'openpaperwork_test')
+            self.assertEqual(obs.count, 1)
+
+            core.call_all('config_load', 'openpaperwork_test')
+            self.assertEqual(obs.count, 2)
+        finally:
+            shutil.rmtree(core.get('openpaperwork_core.config_file').base_path)
 
     def test_simple_readwrite_list(self):
         core = openpaperwork_core.Core()
@@ -135,34 +149,37 @@ class TestReadWrite(unittest.TestCase):
             tempfile.mkdtemp(prefix='openpaperwork_core_config_tests')
         )
 
-        core.init()
+        try:
+            core.init()
 
-        v = core.call_success(
-            'config_get', 'test_section', 'test_key',
-            default=["test_value_a", "test_value_b"]
-        )
-        self.assertNotEqual(v, None)
-        self.assertEqual(len(v), 2)
+            v = core.call_success(
+                'config_get', 'test_section', 'test_key',
+                default=["test_value_a", "test_value_b"]
+            )
+            self.assertNotEqual(v, None)
+            self.assertEqual(len(v), 2)
 
-        v[1] = 'test_value_c'
-        core.call_all('config_put', 'test_section', 'test_key', v)
+            v[1] = 'test_value_c'
+            core.call_all('config_put', 'test_section', 'test_key', v)
 
-        v = core.call_success(
-            'config_get', 'test_section', 'test_key',
-            default=["test_value_a", "test_value_b"]
-        )
-        self.assertEqual(len(v), 2)
-        self.assertEqual(v[1], "test_value_c")
+            v = core.call_success(
+                'config_get', 'test_section', 'test_key',
+                default=["test_value_a", "test_value_b"]
+            )
+            self.assertEqual(len(v), 2)
+            self.assertEqual(v[1], "test_value_c")
 
-        core.call_all('config_save', 'openpaperwork_test')
-        core.call_all('config_load', 'openpaperwork_test')
+            core.call_all('config_save', 'openpaperwork_test')
+            core.call_all('config_load', 'openpaperwork_test')
 
-        v = core.call_success(
-            'config_get', 'test_section', 'test_key',
-            default=["test_value_a", "test_value_b"]
-        )
-        self.assertEqual(len(v), 2)
-        self.assertEqual(v[1], "test_value_c")
+            v = core.call_success(
+                'config_get', 'test_section', 'test_key',
+                default=["test_value_a", "test_value_b"]
+            )
+            self.assertEqual(len(v), 2)
+            self.assertEqual(v[1], "test_value_c")
+        finally:
+            shutil.rmtree(core.get('openpaperwork_core.config_file').base_path)
 
     def test_simple_readwrite_dict(self):
         core = openpaperwork_core.Core()
@@ -172,40 +189,43 @@ class TestReadWrite(unittest.TestCase):
             tempfile.mkdtemp(prefix='openpaperwork_core_config_tests')
         )
 
-        core.init()
+        try:
+            core.init()
 
-        v = core.call_success(
-            'config_get', 'test_section', 'test_key',
-            default={
-                "test_key_a": "test_key_b",
-                "test_key_b": "test_value_b"
-            }
-        )
-        self.assertNotEqual(v, None)
-        self.assertEqual(len(v), 2)
+            v = core.call_success(
+                'config_get', 'test_section', 'test_key',
+                default={
+                    "test_key_a": "test_key_b",
+                    "test_key_b": "test_value_b"
+                }
+            )
+            self.assertNotEqual(v, None)
+            self.assertEqual(len(v), 2)
 
-        v['test_key_b'] = 'test_value_c'
-        core.call_all('config_put', 'test_section', 'test_key', v)
+            v['test_key_b'] = 'test_value_c'
+            core.call_all('config_put', 'test_section', 'test_key', v)
 
-        v = core.call_success(
-            'config_get', 'test_section', 'test_key',
-            default={
-                "test_key_a": "test_key_b",
-                "test_key_b": "test_value_b"
-            }
-        )
-        self.assertEqual(len(v), 2)
-        self.assertEqual(v['test_key_b'], "test_value_c")
+            v = core.call_success(
+                'config_get', 'test_section', 'test_key',
+                default={
+                    "test_key_a": "test_key_b",
+                    "test_key_b": "test_value_b"
+                }
+            )
+            self.assertEqual(len(v), 2)
+            self.assertEqual(v['test_key_b'], "test_value_c")
 
-        core.call_all('config_save', 'openpaperwork_test')
-        core.call_all('config_load', 'openpaperwork_test')
+            core.call_all('config_save', 'openpaperwork_test')
+            core.call_all('config_load', 'openpaperwork_test')
 
-        v = core.call_success(
-            'config_get', 'test_section', 'test_key',
-            default={
-                "test_key_a": "test_key_b",
-                "test_key_b": "test_value_b"
-            }
-        )
-        self.assertEqual(len(v), 2)
-        self.assertEqual(v['test_key_b'], "test_value_c")
+            v = core.call_success(
+                'config_get', 'test_section', 'test_key',
+                default={
+                    "test_key_a": "test_key_b",
+                    "test_key_b": "test_value_b"
+                }
+            )
+            self.assertEqual(len(v), 2)
+            self.assertEqual(v['test_key_b'], "test_value_c")
+        finally:
+            shutil.rmtree(core.get('openpaperwork_core.config_file').base_path)
