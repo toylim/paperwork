@@ -10,6 +10,12 @@ check:
     - apt-get install -y -q pycodestyle flake8 python3-flake8
     - make check
 
+linux_flatpak:
+  tags:
+    - flatpak
+  script:
+    - ./update_flatpak_repo.sh
+
 windows_exe:
   variables:
     MSYSTEM: "MINGW32"
