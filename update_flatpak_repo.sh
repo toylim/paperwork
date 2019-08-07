@@ -5,7 +5,7 @@ git log -1
 LOCKDIR=/tmp/build.lock.d
 PIDFILE=${LOCKDIR}/pid
 
-branch=$(git rev-parse --abbrev-ref HEAD)
+branch="${CI_COMMIT_REF_NAME}"
 
 echo "Branch: ${branch}"
 
