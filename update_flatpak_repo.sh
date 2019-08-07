@@ -41,7 +41,24 @@ mkdir -p ${LOCKDIR}
 msg "PID: $$ \> ${PIDFILE}"
 echo $$ > ${PIDFILE}
 
-mkdir -p ~/flatpak
+# We make our own copy of the repository: there will be a big .flatpak-builder
+# created in it with a lot of cache files we want to reuse later.
+mkdir -p ~/git
+cd ~/git
+if ! [ -d paperwork ] ; then
+	if ! git clone https://gitlab.gnome.org/World/OpenPaperwork/paperwork.git ;
+	then
+		echo "Clone failed !"
+		exit 1
+	fi
+fi
+cd paperwork
+if ! git checkout "${branch}" or ! git pull ; then
+	echo "Git pull failed !"
+	exit 1
+fi
+
+mkdir -p ~/flatpak  # directory that contains the repository directory
 
 cd flatpak/
 
