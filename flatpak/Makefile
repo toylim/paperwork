@@ -1,7 +1,7 @@
 REPO ?= repo
 APP = work.openpaper.Paperwork
 ALL_TARGETS = $(patsubst %.json,%,$(wildcard *.json))
-ALL_BRANCHES = master develop
+ALL_BRANCHES = master testing develop
 
 all: upd_branches
 
