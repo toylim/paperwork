@@ -53,7 +53,7 @@ if ! [ -d paperwork ] ; then
 	fi
 fi
 cd paperwork
-if ! git checkout "${branch}" or ! git pull ; then
+if ! git checkout "${branch}" || ! git pull ; then
 	echo "Git pull failed !"
 	exit 1
 fi
