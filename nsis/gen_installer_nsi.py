@@ -386,7 +386,7 @@ FunctionEnd
 
 Function un.onInit
 !insertmacro MUI_UNGETLANGUAGE
-  MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "Are you sure you want to deinstall $(^Name) ? (your documents won't be deleted)" IDYES +2
+  MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "Are you sure you want to uninstall $(^Name) ? (your documents won't be deleted)" IDYES +2
   Abort
 FunctionEnd
 
