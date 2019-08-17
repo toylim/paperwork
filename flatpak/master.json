@@ -2,32 +2,87 @@
     "app-id": "work.openpaper.Paperwork",
     "branch": "master",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "3.26",
+    "runtime-version": "3.30",
     "sdk": "org.gnome.Sdk",
     "command": "paperwork",
     "copy-icon": true,
     "finish-args": [
         "--share=ipc",
         "--share=network",
-        "--socket=x11",
+        "--socket=fallback-x11",
         "--socket=wayland",
         "--filesystem=home",
+        "--persist=.python-eggs",
         "--talk-name=org.freedesktop.Notifications",
+        "--talk-name=org.freedesktop.FileManager1",
         "--own-name=work.openpaper.paperwork",
         "--filesystem=xdg-run/dconf", "--filesystem=~/.config/dconf:ro",
-        "--talk-name=ca.desrt.dconf", "--env=DCONF_USER_CONFIG_DIR=.config/dconf"
+        "--talk-name=ca.desrt.dconf", "--env=DCONF_USER_CONFIG_DIR=.config/dconf",
+        "--device=all"
     ],
     "modules": [
-        "shared-modules/tesseract-3.05.01.json",
+        "shared-modules/tesseract-4.0.0.json",
         "shared-modules/sane-backends-1.0.27.json",
         {
-            "name": "python-six",
+            "name": "python-setuptools",
             "no-autogen": true,
+            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://pypi.python.org/packages/b3/b2/238e2590826bfdd113244a40d9d3eb26918bd798fc187e2360a8367068db/six-1.10.0.tar.gz",
-                    "sha256": "105f8d68616f8248e24bf0e9372ef04d3cc10104f1980f54d57b2ce73a5ad56a"
+                    "url": "https://files.pythonhosted.org/packages/c2/f7/c7b501b783e5a74cf1768bc174ee4fb0a8a6ee5af6afa92274ff964703e0/setuptools-40.8.0.zip",
+                    "sha256": "6e4eec90337e849ade7103723b9a99631c1f0d19990d6e8412dc42f5ae8b304d"
+                },
+                {
+                    "type": "file",
+                    "path": "pip-Makefile",
+                    "dest-filename": "Makefile"
+                }
+            ]
+        },
+        {
+            "name": "python-setuptools-scm",
+            "no-autogen": true,
+            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://files.pythonhosted.org/packages/54/85/514ba3ca2a022bddd68819f187ae826986051d130ec5b972076e4f58a9f3/setuptools_scm-3.2.0.tar.gz",
+                    "sha256": "52ab47715fa0fc7d8e6cd15168d1a69ba995feb1505131c3e814eb7087b57358"
+                },
+                {
+                    "type": "file",
+                    "path": "pip-Makefile",
+                    "dest-filename": "Makefile"
+                }
+            ]
+        },
+        {
+            "name": "python-setuptools-scm-git-archive",
+            "no-autogen": true,
+            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://files.pythonhosted.org/packages/7e/2c/0c15b29a1b5940250bfdc4a4f53272e35cd7cf8a34159291b6b4ec9eb291/setuptools_scm_git_archive-1.1.tar.gz",
+                    "sha256": "6026f61089b73fa1b5ee737e95314f41cb512609b393530385ed281d0b46c062"
+                },
+                {
+                    "type": "file",
+                    "path": "pip-Makefile",
+                    "dest-filename": "Makefile"
+                }
+            ]
+        },
+        {
+            "name": "python-distro",
+            "no-autogen": true,
+            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://files.pythonhosted.org/packages/ca/e3/78443d739d7efeea86cbbe0216511d29b2f5ca8dbf51a6f2898432738987/distro-1.4.0.tar.gz",
+                    "sha256": "362dde65d846d23baee4b5c058c8586f219b5a54be1cf5fc6ff55c4578392f57"
                 },
                 {
                     "type": "file",
@@ -39,12 +94,12 @@
         {
             "name": "python-dateutil",
             "no-autogen": true,
-            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
+            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://pypi.python.org/packages/51/fc/39a3fbde6864942e8bb24c93663734b74e281b984d1b8c4f95d64b0c21f6/python-dateutil-2.6.0.tar.gz",
-                    "sha256": "62a2f8df3d66f878373fd0072eacf4ee52194ba302e00082828e0d263b0418d2"
+                    "url": "https://files.pythonhosted.org/packages/ad/99/5b2e99737edeb28c71bcbec5b5dda19d0d9ef3ca3e92e3e925e7c0bb364c/python-dateutil-2.8.0.tar.gz",
+                    "sha256": "c89805f6f4d64db21ed966fda138f8a5ed7a4fdbc1a8ee329ce1b74e3c74da9e"
                 },
                 {
                     "type": "file",
@@ -56,7 +111,7 @@
         {
             "name": "python-Levenshtein",
             "no-autogen": true,
-            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
+            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
             "sources": [
                 {
                     "type": "archive",
@@ -73,36 +128,29 @@
         {
             "name": "python-pillow",
             "no-autogen": true,
-            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
+            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://pypi.python.org/packages/93/73/66854f63b1941aad9af18a1de59f9cf95ad1a87c801540222e332f6688d7/Pillow-4.1.1.tar.gz",
-                    "sha256": "00b6a5f28d00f720235a937ebc2f50f4292a5c7e2d6ab9a8b26153b625c4f431"
+                    "url": "https://files.pythonhosted.org/packages/3c/7e/443be24431324bd34d22dd9d11cc845d995bcd3b500676bcf23142756975/Pillow-5.4.1.tar.gz",
+                    "sha256": "5233664eadfa342c639b9b9977190d64ad7aca4edc51a966394d7e08e7f38a9f"
                 },
                 {
                     "type": "file",
                     "path": "pip-Makefile",
                     "dest-filename": "Makefile"
-                },
-                {
-                    "type": "patch",
-                    "path": "python-pillow-disable-multithreaded-compilation.diff",
-                    "strip-components": 0,
-                    "dest": ".",
-                    "use-git": false
                 }
             ],
             "modules": [
                 {
                     "name": "python-olefile",
                     "no-autogen": true,
-                    "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
+                    "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
                     "sources": [
                         {
                             "type": "archive",
-                            "url": "https://pypi.python.org/packages/35/17/c15d41d5a8f8b98cc3df25eb00c5cee76193114c78e5674df6ef4ac92647/olefile-0.44.zip",
-                            "sha256": "61f2ca0cd0aa77279eb943c07f607438edf374096b66332fae1ee64a6f0f73ad"
+                            "url": "https://files.pythonhosted.org/packages/34/81/e1ac43c6b45b4c5f8d9352396a14144bba52c8fec72a80f425f6a4d653ad/olefile-0.46.zip",
+                            "sha256": "133b031eaf8fd2c9399b78b8bc5b8fcbe4c31e85295749bb17a87cba8f3c3964"
                         },
                         {
                             "type": "file",
@@ -116,12 +164,12 @@
         {
             "name": "python-pycountry",
             "no-autogen": true,
-            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
+            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://pypi.python.org/packages/4b/51/9155a48faed108db64a0ff45227c752fda8126f3585475cef30b7abaa536/pycountry-17.1.8.tar.gz",
-                    "sha256": "c5ccad49e47caee92779bf83da81565159b1fe3d8f48b063068ac118b73dd1f8"
+                    "url": "https://files.pythonhosted.org/packages/87/c7/c2c76c3ae4ac79c74c1871ae775ed97b70d475dd90d1e824b1d2fc0cd54f/pycountry-18.12.8.tar.gz",
+                    "sha256": "8ec4020b2b15cd410893d573820d42ee12fe50365332e58c0975c953b60a16de"
                 },
                 {
                     "type": "file",
@@ -133,7 +181,7 @@
         {
             "name": "python-nose",
             "no-autogen": true,
-            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
+            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
             "sources": [
                 {
                     "type": "archive",
@@ -148,14 +196,12 @@
             ]
         },
         {
-            "name": "python-pyinsane2",
-            "make-install-args": ["PIP_ARGS=--prefix=/app"],
-            "no-autogen": true,
-            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
+            "name": "libinsane",
+            "buildsystem": "meson",
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://gitlab.gnome.org/World/OpenPaperwork/pyinsane.git",
+                    "url": "https://gitlab.gnome.org/World/OpenPaperwork/libinsane.git",
                     "branch": "master",
                     "disable-shallow-clone": true
                 }
@@ -164,12 +210,13 @@
         {
             "name": "python-pyocr",
             "no-autogen": true,
-            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
+            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
             "sources": [
                 {
-                    "type": "archive",
-                    "url": "https://pypi.python.org/packages/08/ba/2f3a9f05db05826831b7df5d3c5b3b6d0705819414b2bb5ecfb10c737cf1/pyocr-0.5.1.tar.gz",
-                    "sha256": "9ee8b5f38dd966ca531115fc5fe4715f7fa8961a9f14cd5109c2d938c17a2043"
+                    "type": "git",
+                    "url": "https://gitlab.gnome.org/World/OpenPaperwork/pyocr.git",
+                    "branch": "master",
+                    "disable-shallow-clone": true
                 },
                 {
                     "type": "file",
@@ -181,16 +228,17 @@
         {
             "name": "python-pypillowfight",
             "no-autogen": true,
-            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
+            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
             "sources": [
                 {
-                    "type": "archive",
-                    "url": "https://pypi.python.org/packages/90/70/575e3d04d581e04dccefd52cbb75e26aa07934147b2e85f3fa2896e61eed/pypillowfight-0.2.4.tar.gz",
-                    "sha256": "9208518494df900b8842b3d826c55ff673127634bdb2d2c85cca93b5017fd061"
+                    "type": "git",
+                    "url": "https://gitlab.gnome.org/World/OpenPaperwork/libpillowfight.git",
+                    "branch": "master",
+                    "disable-shallow-clone": true
                 },
                 {
                     "type": "file",
-                    "path": "pip-Makefile",
+                    "path": "pypillowfight-Makefile",
                     "dest-filename": "Makefile"
                 }
             ]
@@ -202,8 +250,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://pypi.python.org/packages/26/28/ee953bd2c030ae5a9e9a0ff68e5912bd90ee50ae766871151cd2572ca570/pyxdg-0.25.tar.gz",
-                    "sha256": "81e883e0b9517d624e8b0499eb267b82a815c0b7146d5269f364988ae031279d"
+                    "url": "https://files.pythonhosted.org/packages/47/6e/311d5f22e2b76381719b5d0c6e9dc39cd33999adae67db71d7279a6d70f4/pyxdg-0.26.tar.gz",
+                    "sha256": "fe2928d3f532ed32b39c32a482b54136fe766d19936afc96c8f00645f9da1a06"
                 },
                 {
                     "type": "file",
@@ -219,7 +267,7 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://pypi.python.org/packages/58/56/3e84f2c1f2e39b9ea132460183f123af41e3b9c8befe222a35636baa6a5a/pydbus-0.6.0.tar.gz",
+                    "url": "https://files.pythonhosted.org/packages/58/56/3e84f2c1f2e39b9ea132460183f123af41e3b9c8befe222a35636baa6a5a/pydbus-0.6.0.tar.gz",
                     "sha256": "4207162eff54223822c185da06c1ba8a34137a9602f3da5a528eedf3f78d0f2c"
                 },
                 {
@@ -232,12 +280,12 @@
         {
                 "name": "python-natsort",
                 "no-autogen": true,
-                "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
+                "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
                 "sources": [
                         {
                                 "type": "archive",
-                                "url": "https://pypi.python.org/packages/8e/6b/a4e3031e573ef29a251984ac0a6bd26cedac6f5e67a7607c9746bd64b3fe/natsort-5.0.3.tar.gz",
-                                "sha256": "d57b7a0156f16f49c6c010c9ce97e2125956697846f31bba7cd544cd24b007c1"
+                                "url": "https://files.pythonhosted.org/packages/b3/5d/c0fbee4ed688fe2ed6533dd4a0124e1470d6692bc29e1da06bc0861ed4ab/natsort-6.0.0.tar.gz",
+                                "sha256": "ff3effb5618232866de8d26e5af4081a4daa9bb0dfed49ac65170e28e45f2776"
                         },
                         {
                                 "type": "file",
@@ -249,7 +297,7 @@
         {
                 "name": "python-simplebayes",
                 "no-autogen": true,
-                "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
+                "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
                 "sources": [
                         {
                                 "type": "archive",
@@ -266,11 +314,11 @@
         {
                 "name": "python-whoosh",
                 "no-autogen": true,
-                "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
+                "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
                 "sources": [
                         {
                                 "type": "archive",
-                                "url": "https://pypi.python.org/packages/25/2b/6beed2107b148edc1321da0d489afc4617b9ed317ef7b72d4993cad9b684/Whoosh-2.7.4.tar.gz",
+                                "url": "https://files.pythonhosted.org/packages/25/2b/6beed2107b148edc1321da0d489afc4617b9ed317ef7b72d4993cad9b684/Whoosh-2.7.4.tar.gz",
                                 "sha256": "7ca5633dbfa9e0e0fa400d3151a8a0c4bec53bd2ecedc0a67705b17565c31a83"
                         },
                         {
@@ -283,7 +331,7 @@
         {
                 "name": "python-termcolor",
                 "no-autogen": true,
-                "ensure-writable": ["/lib/python*/site-packages/easy-install.pth"],
+                "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
                 "sources": [
                         {
                                 "type": "archive",
@@ -298,45 +346,27 @@
                 ]
         },
         {
-                "name": "python-setuptools",
-                "no-autogen": true,
-                "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
-                "sources": [
-                        {
-                                "type": "archive",
-                                "url": "https://pypi.python.org/packages/a9/23/720c7558ba6ad3e0f5ad01e0d6ea2288b486da32f053c73e259f7c392042/setuptools-36.0.1.zip",
-                                "sha256": "e17c4687fddd6d70a6604ac0ad25e33324cec71b5137267dd5c45e103c4b288a"
-                        },
-                        {
-                                "type": "file",
-                                "path": "pip-Makefile",
-                                "dest-filename": "Makefile"
-                        }
-                ]
-        },
-        {
             "name": "poppler-data",
-            "buildsystem": "cmake",
+            "buildsystem": "cmake-ninja",
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://poppler.freedesktop.org/poppler-data-0.4.7.tar.gz",
-                    "sha256": "e752b0d88a7aba54574152143e7bf76436a7ef51977c55d6bd9a48dccde3a7de"
+                    "url": "https://poppler.freedesktop.org/poppler-data-0.4.9.tar.gz",
+                    "sha256": "1f9c7e7de9ecd0db6ab287349e31bf815ca108a5a175cf906a90163bdbe32012"
                 }
             ]
         },
         {
             "name": "poppler",
-            "buildsystem": "autotools",
+            "buildsystem": "cmake-ninja",
             "config-opts": [
-                "--enable-libopenjpeg=none",
-                "--enable-xpdf-headers"
+                "-DENABLE_LIBOPENJPEG:STRING=none"
             ],
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://poppler.freedesktop.org/poppler-0.55.0.tar.xz",
-                    "sha256": "537f2bc60d796525705ad9ca8e46899dcc99c2e9480b80051808bae265cdc658"
+                    "url": "https://poppler.freedesktop.org/poppler-0.74.0.tar.xz",
+                    "sha256": "92e09fd3302567fd36146b36bb707db43ce436e8841219025a82ea9fb0076b2f"
                 }
             ]
         },
@@ -344,10 +374,7 @@
             "name": "python-paperwork",
             "make-install-args": ["PIP_ARGS=--prefix=/app"],
             "no-autogen": true,
-            "ensure-writable": [
-                    "/lib/python*/site-packages/easy-install.pth",
-                    "/lib/python*/site-packages/setuptools.pth"
-            ],
+            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
             "post-install": ["paperwork-shell install_system /app/share/icons /app/share"],
             "sources": [
                 {
