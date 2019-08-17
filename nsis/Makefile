@@ -1,4 +1,4 @@
-all: paperwork_installer.exe
+all: paperwork_stable_installer.exe paperwork_testing_installer.exe paperwork_develop_installer.exe
 
 dll/INetC.dll:
 	mkdir -p dll
@@ -24,12 +24,30 @@ out.nsi: gen_installer_nsi.py
 	echo Download URI: ${DOWNLOAD_URI}
 	python3 ./gen_installer_nsi.py ${RELEASE} ${DOWNLOAD_URI}
 
-paperwork_installer.exe: dll/INetC.dll dll/nsisunz.dll out.nsi
+paperwork_stable_installer.exe: dll/INetC.dll dll/nsisunz.dll
+	rm -f out.nsi
+	$(MAKE) out.nsi RELEASE=stable DOWNLOAD_URI=https://download.openpaper.work/windows/x86/paperwork-master-latest.zip
 	makensis ./out.nsi
+	mv -f paperwork_installer.exe paperwork_stable_installer.exe
+
+paperwork_testing_installer.exe: dll/INetC.dll dll/nsisunz.dll
+	rm -f out.nsi
+	$(MAKE) out.nsi RELEASE=testing DOWNLOAD_URI=https://download.openpaper.work/windows/x86/paperwork-testing-latest.zip
+	makensis ./out.nsi
+	mv -f paperwork_installer.exe paperwork_testing_installer.exe
+
+paperwork_develop_installer.exe: dll/INetC.dll dll/nsisunz.dll
+	rm -f out.nsi
+	$(MAKE) out.nsi RELEASE=develop DOWNLOAD_URI=https://download.openpaper.work/windows/x86/paperwork-testing-latest.zip
+	makensis ./out.nsi
+	mv -f paperwork_installer.exe paperwork_develop_installer.exe
 
 clean:
 	rm -rf dll
 	rm -f out.nsi
 	rm -f paperwork_installer.exe
+	rm -f paperwork_stable_installer.exe
+	rm -f paperwork_testing_installer.exe
+	rm -f paperwork_develop_installer.exe
 
 .PHONY = all
