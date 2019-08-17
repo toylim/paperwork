@@ -1414,7 +1414,11 @@ class DocPropertiesPanel(object):
             date = BasicDoc.parse_name(date_txt)
         except ValueError:
             logger.warning("Invalid date format: {}".format(date_txt))
-            msg = _("Invalid date format: {}").format(date_txt)
+            msg = _("Invalid date format: {}\nExpected format: {}").format(
+                date_txt,
+                # TODO(Jflesch): Ugly. Example should come from the backend.
+                datetime.datetime(2019, 8, 17, 12, 0, 0, 0).strftime("%x")
+            )
             dialog = Gtk.MessageDialog(
                 parent=self.__main_win.window,
                 flags=Gtk.DialogFlags.MODAL,
