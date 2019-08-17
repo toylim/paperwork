@@ -1,4 +1,4 @@
-2019/06/24 - 1.3.0:
+2019/08/17 - 1.3.0:
 - Switch from Pyinsane2 to Libinsane
 - Replace application menu by primary menu (new Gnome recommendation)
 (thanks to Mathieu Jourdan)
