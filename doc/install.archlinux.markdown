@@ -3,7 +3,7 @@
 
 ## Package
 
-A package is available in [AUR](https://aur.archlinux.org/packages/paperwork/).
+A package is available in [AUR](https://www.archlinux.org/packages/community/any/paperwork/).
 
 If there is a problem with the package, please report it on
 [the mailing-list](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Contact).
