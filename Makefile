@@ -51,7 +51,7 @@ else
 	make version
 	make release_pypi
 	@echo "All done"
-	@echo "IMPORTANT: Don't forgot to add the latest release in the Flatpak repo and on Flathub !"
+	@echo "IMPORTANT: Don't forgot to add the latest release on Flathub !"
 endif
 
 linux_exe: $(ALL_COMPONENTS:%=%_linux_exe)
