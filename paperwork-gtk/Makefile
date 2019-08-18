@@ -66,7 +66,8 @@ endif
 
 release_pypi:
 	@echo "Releasing paperwork-gtk (paperwork) ..."
-	${PYTHON} ./setup.py sdist upload
+	${PYTHON} ./setup.py sdist
+	twine upload dist/paperwork-1.3.0.tar.gz
 	@echo "All done"
 
 clean:

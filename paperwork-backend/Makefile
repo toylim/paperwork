@@ -42,7 +42,8 @@ endif
 
 release_pypi:
 	@echo "Releasing paperwork-backend ..."
-	${PYTHON} ./setup.py sdist upload
+	${PYTHON} ./setup.py sdist
+	twine upload dist/paperwork-backend-1.3.0.tar.gz
 	@echo "All done"
 
 clean:
