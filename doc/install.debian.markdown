@@ -1,6 +1,5 @@
 # Paperwork installation on GNU/Linux Debian or GNU/Linux Ubuntu
 
-
 ## Package
 
 Currently, there is no official Debian or Ubuntu package for Paperwork.
@@ -10,6 +9,15 @@ Therefore on Debian or Ubuntu it is recommended to use the
 instead of the following instructions.
 
 The following instructions describe how to install Paperwork the Python way.
+
+
+## Libinsane
+
+If you want to install Paperwork, you must first
+[install Libinsane](https://doc.openpaper.work/libinsane/latest/libinsane/install.html).
+Libinsane is *not* a Python module but a C library. It cannot be found on
+pypi.org and *cannot* be installed automatically with the command `pip`.
+
 
 ## Build dependencies
 
@@ -21,6 +29,7 @@ The following instructions describe how to install Paperwork the Python way.
 
     # Not a build dependency, but recommended anyway
     sudo apt install python3-whoosh
+
 
 ## System-wide installation
 

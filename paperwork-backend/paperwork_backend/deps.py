@@ -5,6 +5,7 @@ try:
     import gi
     gi.require_version('Poppler', '0.18')
     gi.require_version('PangoCairo', '1.0')
+    gi.require_version('Libinsane', '1.0')
 except:
     pass
 
@@ -45,6 +46,12 @@ MODULES = [
             'linuxmint': 'python-gi-cairo',  # Python 3 ?
             'ubuntu': 'python3-gi-cairo',
             'suse': 'python-cairo',  # Python 3 ?
+        },
+    ),
+
+    (
+        'Libinsane', 'gi.repository.Libinsane',
+        {
         },
     ),
 ]
