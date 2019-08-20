@@ -53,7 +53,7 @@ if ! rsync -tz "${binary}" "${DELIVERY_USER}@${DELIVERY_SERVER}:${DELIVERY_PATH}
   exit 1
 fi
 
-if ! ssh "${DELIVERY_USER}@${DELIVERY_SERVER}" -- ln -fs \
+if ! ssh "${DELIVERY_USER}@${DELIVERY_SERVER}" -- ln -nfs \
     ${out_name} \
     ${DELIVERY_PATH}/${os}/${arch}/${latest_name} ; then
   echo ln failed
