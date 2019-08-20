@@ -1,6 +1,9 @@
 image: debian:stable-slim
 
 check:
+  only:
+    - branches@World/OpenPaperwork/paperwork
+    - tags@World/OpenPaperwork/paperwork
   tags:
     - linux
     - volatile
@@ -11,12 +14,18 @@ check:
     - make check
 
 linux_flatpak:
+  only:
+    - branches@World/OpenPaperwork/paperwork
+    - tags@World/OpenPaperwork/paperwork
   tags:
     - flatpak
   script:
     - ./update_flatpak_repo.sh
 
 windows_exe:
+  only:
+    - branches@World/OpenPaperwork/paperwork
+    - tags@World/OpenPaperwork/paperwork
   variables:
     MSYSTEM: "MINGW32"
     CHERE_INVOKING: "yes"
