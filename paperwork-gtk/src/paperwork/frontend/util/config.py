@@ -53,7 +53,7 @@ class _ScanTimes(object):
             )
             values[k] = value
 
-    def put(self, value):
+    def put(self, values):
         for (k, v) in values.items():
             if k not in self.__ITEM_2_CONFIG:
                 logger.warning(
@@ -71,17 +71,17 @@ class _PaperworkScannerCalibration(object):
 
     def get(self):
         pts = [None] * 4
-        pt[0] = self.core.call_success("config_get",
-            "Scanner", "Calibration_Pt_A_X", None
+        pts[0] = self.core.call_success(
+            "config_get", "Scanner", "Calibration_Pt_A_X", None
         )
-        pt[1] = self.core.call_success("config_get",
-            "Scanner", "Calibration_Pt_A_Y", None
+        pts[1] = self.core.call_success(
+            "config_get", "Scanner", "Calibration_Pt_A_Y", None
         )
-        pt[2] = self.core.call_success("config.get",
-            "Scanner", "Calibration_Pt_B_X", None
+        pts[2] = self.core.call_success(
+            "config_get", "Scanner", "Calibration_Pt_B_X", None
         )
-        pt[3] = config.get(
-            "Scanner", "Calibration_Pt_B_Y", None
+        pts[3] = self.core.call_success(
+            "config_get", "Scanner", "Calibration_Pt_B_Y", None
         )
         if None in pts:
             # no calibration yet
