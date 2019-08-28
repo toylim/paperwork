@@ -68,7 +68,9 @@ class TestOpen(unittest.TestCase):
             fd.write(b"content")
         try:
             safe_file_name = self.core.call_one('fs_safe', file_name)
-            with self.core.call_one('fs_open', safe_file_name, mode='rb') as fd:
+            with self.core.call_one(
+                        'fs_open', safe_file_name, mode='rb'
+                    ) as fd:
                 content = fd.read()
                 self.assertEqual(content, b"content")
         finally:
@@ -80,7 +82,9 @@ class TestOpen(unittest.TestCase):
             file_name = fd.name
         try:
             safe_file_name = self.core.call_one('fs_safe', file_name)
-            with self.core.call_one('fs_open', safe_file_name, mode='wb') as fd:
+            with self.core.call_one(
+                        'fs_open', safe_file_name, mode='wb'
+                    ) as fd:
                 fd.write(b"content\n")
             with open(file_name, 'rb') as fd:
                 content = fd.read()
@@ -268,8 +272,6 @@ class TestGetsize(unittest.TestCase):
         self.core.init()
 
     def test_getsize(self):
-        now = time.time()
-
         file_name = None
         with tempfile.NamedTemporaryFile(mode='w', delete=False) as fd:
             file_name = fd.name
