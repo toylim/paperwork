@@ -120,7 +120,26 @@ class Plugin(openpaperwork_core.PluginBase):
     def paperwork_config_save(self):
         self.core.call_all('config_save')
 
+    def paperwork_config_build_simple(
+                self, section, token, default_value_func
+            ):
+        """
+        Provide a default simple implementation for a new setting that can
+        be registered using 'paperwork_config_register'.
+
+        Arguments:
+        - section: Section in which option must be stored (see ConfigParser)
+        - token: token name for the option (see ConfigParser)
+        - default_value_func: function to call to get the default value if
+          none is stored in the file.
+        """
+        return PaperworkSetting(self.core, section, token, default_value_func)
+
     def paperwork_config_register(self, key, setting):
+        """
+        Add another setting to manage. Make this setting available to other
+        components.
+        """
         self.settings[key] = setting
 
     def paperwork_config_get_setting(self, key):
