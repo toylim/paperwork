@@ -17,14 +17,12 @@
 Paperwork configuration management code
 """
 
-import base64
 import logging
 import os
 import pyocr
 
 import openpaperwork_core
 
-from . import util
 from .util import find_language
 
 
@@ -89,6 +87,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return {
             'interfaces': [
+                ('fs', ['paperwork_backend.fs.gio']),
                 ('configuration', ['openpaperwork_core.config_file']),
             ],
         }

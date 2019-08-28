@@ -76,7 +76,12 @@ class Core(object):
 
         LOGGER.info("Loading plugin '%s' ...", module_name)
         module = importlib.import_module(module_name)
+        return self._load_module(module_name, module)
 
+    def _load_module(self, module_name, module):
+        """
+        should be called from outside for testing only
+        """
         plugin = module.Plugin()
         self.plugins[module_name] = plugin
 
