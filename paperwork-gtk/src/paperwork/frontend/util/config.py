@@ -23,7 +23,6 @@ from gi.repository import Libinsane
 
 import openpaperwork_core
 
-from paperwork_backend.config import PaperworkSetting
 from paperwork_backend.util import find_language
 
 
@@ -190,18 +189,24 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def init(self, core):
         core.call_all(
-            'paperwork_config_register', 'main_win_size', PaperworkSetting(
-                core, "GUI", "main_win_size", lambda: [1024, 768]
+            'paperwork_config_register', 'main_win_size',
+            core.call_success(
+                "paperwork_config_build_simple",
+                "GUI", "main_win_size", lambda: [1024, 768]
             )
         )
         core.call_all(
-            'paperwork_config_register', 'ocr_enabled', PaperworkSetting(
-                core, "OCR", "Enabled", lambda: True
+            'paperwork_config_register', 'ocr_enabled',
+            core.call_success(
+                "paperwork_config_build_simple",
+                "OCR", "Enabled", lambda: True
             )
         )
         core.call_all(
-            'paperwork_config_register', 'result_sorting', PaperworkSetting(
-                core, "GUI", "Sorting", lambda: "scan_date"
+            'paperwork_config_register', 'result_sorting',
+            core.call_success(
+                "paperwork_config_build",
+                "GUI", "Sorting", lambda: "scan_date"
             )
         )
         core.call_all(
@@ -210,36 +215,51 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         core.call_all(
             'paperwork_config_register', 'scanner_devid',
-            PaperworkSetting(core, "Scanner", "Device", lambda: None)
+            core.call_success(
+                "paperwork_config_build_simple",
+                "Scanner", "Device", lambda: None
+            )
         )
         core.call_all(
             'paperwork_config_register', 'scanner_resolution',
-            PaperworkSetting(
-                core, "Scanner", "Resolution",
+            core.call_success(
+                "paperwork_config_build_simple",
+                "Scanner", "Resolution",
                 lambda: RECOMMENDED_SCAN_RESOLUTION
             )
         )
         core.call_all(
             'paperwork_config_register', 'scanner_source',
-            PaperworkSetting(core, "Scanner", "Source", lambda: None)
+            core.call_success(
+                "paperwork_config_build_simple",
+                "Scanner", "Source", lambda: None
+            )
         )
         core.call_all(
             'paperwork_config_register', 'scanner_has_feeder',
-            PaperworkSetting(core, "Scanner", "Has_Feeder", lambda: False)
+            core.call_success(
+                "paperwork_config_build_simple",
+                "Scanner", "Has_Feeder", lambda: False
+            )
         )
         core.call_all(
             'paperwork_config_register', 'scan_time', _ScanTimes(core)
         )
         core.call_all(
-            'paperwork_config_register', 'zoom_level', PaperworkSetting(
-                core, "GUI", "zoom_level", lambda: 0.0
+            'paperwork_config_register', 'zoom_level',
+            core.call_success(
+                "paperwork_config_build_simple",
+                "GUI", "zoom_level", lambda: 0.0
             )
         )
 
         # update detection
         core.call_all(
             'paperwork_config_register', 'check_for_update',
-            PaperworkSetting(core, "Update", "check", lambda: False)
+            core.call_success(
+                "paperwork_config_build_simple",
+                "Update", "check", lambda: False
+            )
         )
         core.call_all(
             'paperwork_config_register', 'last_update_check',
@@ -250,13 +270,19 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         core.call_all(
             'paperwork_config_register', 'last_update_found',
-            PaperworkSetting(core, "Update", "last_update_found", lambda: None)
+            core.call_success(
+                "paperwork_config_build_simple",
+                "Update", "last_update_found", lambda: None
+            )
         )
 
         # statistics
         core.call_all(
             'paperwork_config_register', 'send_statistics',
-            PaperworkSetting(core, "Statistics", "send", lambda: False)
+            core.call_success(
+                "paperwork_config_build_simple",
+                "Statistics", "send", lambda: False
+            )
         )
         core.call_all(
             'paperwork_config_register', 'last_statistics_post',
@@ -267,23 +293,27 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         core.call_all(
             'paperwork_config_register', 'uuid',
-            PaperworkSetting(
-                core, "Statistics", "uuid", lambda: uuid.getnode()
+            core.call_success(
+                "paperwork_config_build_simple",
+                "Statistics", "uuid", lambda: uuid.getnode()
             )
         )
-        ocr_lang = get_default_spellcheck_lang
-        spelling_lang = PaperworkSetting(
-            core, "SpellChecking", "Lang",
-            lambda: ocr_lang(config.settings['ocr_lang'])
+
+        spelling_lang_setting = core.call_success(
+            "paperwork_config_build_simple",
+            "SpellChecking", "Lang",
+            lambda: get_default_spellcheck_lang(
+                core.call_success("paperwork_config_get", "ocr_lang")
+            )
         )
         core.call_all(
-            'paperwork_config_register', 'spelling_lang', spelling_lang
+            'paperwork_config_register', 'spelling_lang', spelling_lang_setting
         )
         core.call_all(
             'paperwork_config_register', 'langs',
             _PaperworkLangs(
                 core.call_success("paperwork_config_get_setting", 'ocr_lang'),
-                spelling_lang
+                spelling_lang_setting
             )
         )
 
