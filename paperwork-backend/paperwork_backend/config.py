@@ -26,7 +26,7 @@ import openpaperwork_core
 from .util import find_language
 
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 DEFAULT_OCR_LANG = "eng"  # if really we can't guess anything
 
