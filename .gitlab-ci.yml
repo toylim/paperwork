@@ -13,6 +13,26 @@ check:
     - apt-get install -y -q pycodestyle flake8 python3-flake8
     - make check
 
+test:
+  only:
+    - branches@World/OpenPaperwork/libinsane
+    - tags@World/OpenPaperwork/libinsane
+  tags:
+    - linux
+    - volatile
+  script:
+    - apt-get update
+    - apt-get install -y -qq make meson build-essential gcc
+    - apt-get install -y -qq libsane-dev
+    - apt-get install -y -qq libgirepository1.0-dev gobject-introspection
+    - apt-get install -y -qq libcunit1-ncurses-dev
+    - apt-get install -y -qq valgrind valac
+    - apt-get install -y -qq pycodestyle flake8 python3-flake8 tox
+    - apt-get install -y -qq python3-dev
+    - apt-get install -y -qq zlib1g-dev libjpeg-dev
+    - source ./activate_test_env.sh && make test
+
+
 linux_flatpak:
   only:
     - branches@World/OpenPaperwork/paperwork
