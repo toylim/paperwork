@@ -28,7 +28,7 @@ test:
     - apt-get install -y -qq libcunit1-ncurses-dev
     - apt-get install -y -qq valgrind valac
     - apt-get install -y -qq pycodestyle flake8 python3-flake8 tox
-    - apt-get install -y -qq python3-dev
+    - apt-get install -y -qq python3-dev git
     - apt-get install -y -qq zlib1g-dev libjpeg-dev
     - source ./activate_test_env.sh && make test
 
