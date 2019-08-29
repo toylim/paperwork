@@ -15,8 +15,8 @@ check:
 
 test:
   only:
-    - branches@World/OpenPaperwork/libinsane
-    - tags@World/OpenPaperwork/libinsane
+    - branches@World/OpenPaperwork/paperwork
+    - tags@World/OpenPaperwork/paperwork
   tags:
     - linux
     - volatile
