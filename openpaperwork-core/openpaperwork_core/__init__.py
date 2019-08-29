@@ -13,6 +13,10 @@ class PluginBase(object):
     for each method.
     """
 
+    # Priority defines in which order callbacks will be called.
+    # Plugins with higher priorities will have their callbacks called first.
+    PRIORITY = 0
+
     # Convenience for the applications: Indicates if users should be able
     # to enable/disable this plugin in the UI.
     USER_VISIBLE = False
@@ -23,7 +27,7 @@ class PluginBase(object):
         possible. Most of the work should be done in `init()`.
         You *must* *not* rely on any dependencies here.
         """
-        pass
+        self.core = None
 
     def get_interfaces(self):
         """
@@ -45,7 +49,8 @@ class PluginBase(object):
         }
 
     def init(self, core):
-        pass
+        # default implementation
+        self.core = core
 
 
 class Core(object):
@@ -94,11 +99,14 @@ class Core(object):
                 continue
             if attr_name in dir(PluginBase):  # ignore base methods of plugins
                 continue
-            attr = getattr(plugin, attr_name)
-            if not hasattr(attr, '__call__'):
+            callback = getattr(plugin, attr_name)
+            if not hasattr(callback, '__call__'):
                 continue
             LOGGER.debug("- %s.%s()", module_name, attr_name)
-            self.callbacks[attr_name].append(attr)
+            self.callbacks[attr_name].append((
+                plugin.PRIORITY, str(type(plugin)), callback
+            ))
+            self.callbacks[attr_name].sort(reverse=True)
 
         self._to_initialize.add(plugin)
 
@@ -192,7 +200,7 @@ class Core(object):
         callbacks = self.callbacks[callback_name]
         if len(callbacks) <= 0:
             LOGGER.warning("No method '%s' available !", callback_name)
-        for callback in callbacks:
+        for (priority, plugin, callback) in callbacks:
             callback(*args, **kwargs)
 
     def call_one(self, callback_name, *args, **kwargs):
@@ -214,9 +222,9 @@ class Core(object):
         if len(callbacks) > 1:
             LOGGER.warning(
                 "More than one method '%s' available ! [%s]", callback_name,
-                ", ".join([str(callback) for callback in callbacks])
+                ", ".join([callback[1] for callback in callbacks])
             )
-        return callbacks[0](*args, **kwargs)
+        return callbacks[0][2](*args, **kwargs)
 
     def call_success(self, callback_name, *args, **kwargs):
         """
@@ -230,7 +238,7 @@ class Core(object):
         callbacks = self.callbacks[callback_name]
         if len(callbacks) <= 0:
             LOGGER.warning("No method '%s' available !", callback_name)
-        for callback in callbacks:
+        for (priority, plugin, callback) in callbacks:
             r = callback(*args, **kwargs)
             if r is not None:
                 return r

@@ -212,9 +212,11 @@ class TestCall(unittest.TestCase):
         self.assertTrue(core.get('module_c').test_method_called_c)
 
     @unittest.mock.patch("importlib.import_module")
-    def test_call_success(self, import_module):
+    def test_call_success_priority(self, import_module):
         class TestModuleB(object):
             class Plugin(openpaperwork_core.PluginBase):
+                PRIORITY = 33
+
                 def __init__(self):
                     self.test_method_called_b = False
 
@@ -224,6 +226,8 @@ class TestCall(unittest.TestCase):
 
         class TestModuleC(object):
             class Plugin(openpaperwork_core.PluginBase):
+                PRIORITY = 22
+
                 def __init__(self):
                     self.test_method_called_c = False
 
@@ -233,6 +237,8 @@ class TestCall(unittest.TestCase):
 
         class TestModuleD(object):
             class Plugin(openpaperwork_core.PluginBase):
+                PRIORITY = 11
+
                 def __init__(self):
                     self.test_method_called_d = False
 
@@ -265,3 +271,36 @@ class TestCall(unittest.TestCase):
         self.assertTrue(core.get('module_b').test_method_called_b)
         self.assertTrue(core.get('module_c').test_method_called_c)
         self.assertFalse(core.get('module_d').test_method_called_d)
+
+    @unittest.mock.patch("importlib.import_module")
+    def test_priority(self, import_module):
+        class TestModuleA(object):
+            class Plugin(openpaperwork_core.PluginBase):
+                PRIORITY = 22
+
+                def test_method(self):
+                    return "A"
+
+        class TestModuleB(object):
+            class Plugin(openpaperwork_core.PluginBase):
+                PRIORITY = 33
+
+                def test_method(self):
+                    return "B"
+
+        core = openpaperwork_core.Core()
+
+        import_module.return_value = TestModuleA()
+        core.load('module_a')
+        import_module.assert_called_once_with('module_a')
+
+        import_module.reset_mock()
+        import_module.return_value = TestModuleB()
+        core.load('module_b')
+        import_module.assert_called_once_with('module_b')
+
+        import_module.reset_mock()
+        core.init()
+
+        r = core.call_success('test_method')
+        self.assertEqual(r, "B")

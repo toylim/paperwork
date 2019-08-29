@@ -34,22 +34,40 @@ they do.
 import openpaperwork_core
 
 class Plugin(openpaperwork_core.PluginBase):
+    # callbacks will always be run before those of priority <= 21
+    # but after those of priority >= 23
+    PRIORITY = 22
+
     def __init__(self):
         # do something, but the least possible
         # cannot rely on dependencies here.
         pass
 
-    def get_implementated_interfaces(self):
+    def get_interfaces(self):
         return ['interface_name_toto', 'interface_name_tutu']
 
     def get_deps(self):
         return {
             'plugins': [
+                # specify that some plugins are explicitely required
+                # (not recommended)
                 'module_name_a',
                 'module_name_b',
             ],
             'interfaces': [
-                'interface_name_a',
+                # specify that we are looking for plugins implemented the
+                # specified interface(s) (recommended). Provide also
+                # some default plugins to load if no plugins provide the
+                # requested interface yet. Core will try to load them one
+                # after the other until the interface is available.
+                ('interface_name_a', [
+                    'suggested_default_plugin_a',
+                    'suggested_default_plugin_b',
+                ])
+                ('interface_name_b', [
+                    'suggested_default_plugin_d',
+                    'suggested_default_plugin_e',
+                ])
             ],
         }
 
@@ -90,3 +108,12 @@ core.call_all('some_method_a', "random_argument")
 # callback is returned as it.
 return_value = core.call_one('some_method_a', "random_argument")
 ```
+
+
+## Convention
+
+### `call_success()`
+
+Callbacks that are expected to be called with `call_success()` try to do their
+job. If they can't, they return `None` hoping that another callback can
+do the job.
