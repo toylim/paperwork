@@ -110,10 +110,19 @@ return_value = core.call_one('some_method_a', "random_argument")
 ```
 
 
-## Convention
+## Conventions
 
 ### `call_success()`
 
 Callbacks that are expected to be called with `call_success()` try to do their
-job. If they can't, they return `None` hoping that another callback can
-do the job.
+job. If they can't, they should always return `None` hoping that another
+callback can do the job. They should not raise an exception. They can however
+log things as they want.
+
+
+### `call_all()`
+
+When we need a return value from callbacks, since many of them are going to be
+called, all of them should expect as first parameter a parameter called 'out'.
+This parameter is a list, instantiated by the caller and usually empty. Plugin
+callbacks must not assume it's empty and should only call `.append()` on it.
