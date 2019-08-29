@@ -272,8 +272,9 @@ class Plugin(CommonFsPluginBase):
 
     def fs_open(self, uri, mode='rb'):
         f = Gio.File.new_for_uri(uri)
-        if ('w' not in mode and 'a' not in mode) and not f.query_exists():
-            raise IOError("File does not exist")
+        if ('w' not in mode and 'a' not in mode):
+            if self.fs_exists(uri) is None:
+                return None
         try:
             raw = GioFileAdapter(f, mode)
             if 'b' in mode:
@@ -286,7 +287,12 @@ class Plugin(CommonFsPluginBase):
     def fs_exists(self, url):
         try:
             f = Gio.File.new_for_uri(url)
-            return f.query_exists()
+            if not f.query_exists():
+                # this file does not exist for us, but it does not mean
+                # another implementation of the plugin interface 'fs'
+                # cannot handle it
+                return None
+            return True
         except GLib.GError as exc:
             LOGGER.warning("Gio.Gerror", exc_info=exc)
             raise IOError(str(exc))
