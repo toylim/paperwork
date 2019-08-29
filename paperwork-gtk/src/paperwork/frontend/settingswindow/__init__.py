@@ -673,7 +673,8 @@ class ActionApplySettings(SimpleAction):
 
         if self.__settings_win.grips is not None:
             coords = self.__settings_win.grips.get_coords()
-            self.core.call_all('paperwork_config_put', 'scanner_calibration',
+            self.core.call_all(
+                'paperwork_config_put', 'scanner_calibration',
                 (self.__settings_win.calibration['resolution'], coords)
             )
 

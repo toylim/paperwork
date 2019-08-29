@@ -126,7 +126,8 @@ def cmd_install(core):
     )
 
 
-def cmd_install_system(core, icon_basedir="/usr/share/icons", data_basedir="/usr/share"):
+def cmd_install_system(
+        core, icon_basedir="/usr/share/icons", data_basedir="/usr/share"):
     """
     Install Paperwork icons and shortcut.
     Files are installed system-wide. Root access is required.

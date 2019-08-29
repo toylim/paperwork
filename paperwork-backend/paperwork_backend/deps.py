@@ -6,7 +6,7 @@ try:
     gi.require_version('Poppler', '0.18')
     gi.require_version('PangoCairo', '1.0')
     gi.require_version('Libinsane', '1.0')
-except:
+except:  # noqa: E722
     pass
 
 

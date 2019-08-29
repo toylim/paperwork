@@ -106,7 +106,10 @@ class _CommonPdfDoc(BasicDoc):
     can_edit = False
     doctype = u"PDF"
 
-    def __init__(self, core, pdfpath, docpath, docid=None, on_disk_cache=False):
+    def __init__(
+                self, core, pdfpath, docpath, docid=None,
+                on_disk_cache=False
+            ):
         super().__init__(core, docpath, docid)
         self.pdfpath = self.core.call_success("fs_safe", pdfpath)
         self._on_disk_cache = on_disk_cache
@@ -178,7 +181,9 @@ class _CommonPdfDoc(BasicDoc):
         return super().build_exporter('pdf', preview_page_nb)
 
     def get_docfilehash(self):
-        return super().hash_file(self.core, "%s/%s" % (self.path, PDF_FILENAME))
+        return super().hash_file(
+            self.core, "%s/%s" % (self.path, PDF_FILENAME)
+        )
 
 
 class PdfDoc(_CommonPdfDoc):

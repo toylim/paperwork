@@ -17,12 +17,12 @@ import openpaperwork_core
 try:
     import paperwork.frontend.shell
     FRONTEND_COMMANDS = paperwork.frontend.shell.COMMANDS
-except:
+except:  # noqa: E722
     FRONTEND_COMMANDS = {}
 try:
     import paperwork_backend.shell
     BACKEND_COMMANDS = paperwork_backend.shell.COMMANDS
-except:
+except:  # noqa: E722
     BACKEND_COMMANDS = {}
 
 
@@ -171,7 +171,7 @@ def cmd_help(core, *args):
 
 
 COMMANDS = {
-    "chkdeps": chkdeps,
+    "chkdeps": cmd_chkdeps,
     "help": cmd_help,
 }
 COMMANDS.update(FRONTEND_COMMANDS)

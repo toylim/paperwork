@@ -248,8 +248,10 @@ class DocSearch(object):
     LABEL_STEP_UPDATING = "label updating"
     LABEL_STEP_DESTROYING = "label deletion"
 
-    def __init__(self, core, rootdir, indexdir=None, language=None,
-            index_in_workdir=False):
+    def __init__(
+                self, core, rootdir, indexdir=None, language=None,
+                index_in_workdir=False
+            ):
         """
         Index files in rootdir (see constructor)
         """

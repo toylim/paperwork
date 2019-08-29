@@ -28,7 +28,7 @@ try:
     from gi.repository import Pango
     from gi.repository import PangoCairo
     PANGO_AVAILABLE = True
-except:
+except:  # noqa: E722
     PANGO_AVAILABLE = False
 from gi.repository import Poppler
 import PIL.Image

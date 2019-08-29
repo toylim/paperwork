@@ -174,7 +174,8 @@ class PdfImporter(BaseImporter):
         ]
         imported = []
         for file_uri in file_uris:
-            if docsearch.is_hash_in_index(PdfDoc.hash_file(self.core, file_uri)):
+            h = PdfDoc.hash_file(self.core, file_uri)
+            if docsearch.is_hash_in_index(h):
                 logger.info("Document %s already found in the index. Skipped"
                             % (file_uri))
                 continue
@@ -256,7 +257,10 @@ class PdfDirectoryImporter(BaseImporter):
         docs = []
         pages = []
 
-        file_uris = [self.core.call_success("fs_safe", uri) for uri in file_uris]
+        file_uris = [
+            self.core.call_success("fs_safe", uri)
+            for uri in file_uris
+        ]
         imported = []
         for file_uri in file_uris:
             logger.info("Importing PDF from '%s'" % (file_uri))

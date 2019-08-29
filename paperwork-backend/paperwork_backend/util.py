@@ -30,7 +30,7 @@ import PIL.Image
 try:
     import cairo
     CAIRO_AVAILABLE = True
-except:
+except:  # noqa: E722
     CAIRO_AVAILABLE = False
 
 try:
@@ -41,7 +41,7 @@ try:
     from gi.repository import Gdk
     from gi.repository import GdkPixbuf
     GDK_AVAILABLE = True
-except:
+except:  # noqa: E722
     GDK_AVAILABLE = False
 
 ENCHANT_AVAILABLE = False

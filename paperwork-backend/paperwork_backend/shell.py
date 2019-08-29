@@ -252,7 +252,7 @@ def cmd_export_all(core, *args):
     output_dir = core.call_success("fs_safe", output_dir)
     for (doc_idx, doc) in enumerate(docs):
         output_pdf = core.call_success(
-            "fs_safe", join(output_dir, doc.docid + ".pdf")
+            "fs_safe", os.path.join(output_dir, doc.docid + ".pdf")
         )
 
         exporter = doc.build_exporter(file_format="pdf")
