@@ -86,6 +86,8 @@
   <project_license>GPL-3.0+</project_license>
   <developer_name>Openpaper.work</developer_name>
 
+  <content_rating type="oars-1.0"></content_rating>
+
   <screenshots>
     <screenshot type="default">
       <caption>Home screen</caption>
