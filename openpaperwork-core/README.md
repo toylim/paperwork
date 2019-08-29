@@ -1,7 +1,19 @@
 # OpenPaperwork Core
 
-
 Manages Plugins, Callbacks and Interfaces.
+
+## Basic concepts
+
+The idea behind OpenPaperwork's plugins is similar to
+[Python duck typing](https://en.wikipedia.org/wiki/Duck_typing): When you
+request something, it does not matter who does the job as long as it's done. To
+that end, plugins provide callbacks and any code that needs something done
+calls them. They have no idea what plugins they are calling exactly and it
+doesn't matter.
+
+Calling code can call all the callbacks one with a given name on after the
+other(`core.call_all()`) or just call them until one of them reply with a
+value != `None` (`core.call_success()`).
 
 A plugin is a Python module providing a class `Plugin`.
 Callbacks are all the methods provided by the class `Plugin` (with some
@@ -22,10 +34,6 @@ they do.
 import openpaperwork_core
 
 class Plugin(openpaperwork_core.PluginBase):
-    # indicates that users should be able to disable/enable this plugin in
-    # the UI (if available/possible in the application)
-    USER_VISIBLE = True
-
     def __init__(self):
         # do something, but the least possible
         # cannot rely on dependencies here.
