@@ -199,7 +199,8 @@ class Core(object):
         """
         callbacks = self.callbacks[callback_name]
         if len(callbacks) <= 0:
-            LOGGER.warning("No method '%s' available !", callback_name)
+            LOGGER.warning("No method '%s' found", callback_name)
+            return
         for (priority, plugin, callback) in callbacks:
             callback(*args, **kwargs)
 
@@ -217,11 +218,11 @@ class Core(object):
         callbacks = self.callbacks[callback_name]
         if len(callbacks) <= 0:
             raise IndexError(
-                "No method '{}' available !".format(callback_name)
+                "No method '{}' found !".format(callback_name)
             )
         if len(callbacks) > 1:
             LOGGER.warning(
-                "More than one method '%s' available ! [%s]", callback_name,
+                "More than one method '%s' found ! [%s]", callback_name,
                 ", ".join([callback[1] for callback in callbacks])
             )
         return callbacks[0][2](*args, **kwargs)
@@ -237,9 +238,13 @@ class Core(object):
         """
         callbacks = self.callbacks[callback_name]
         if len(callbacks) <= 0:
-            LOGGER.warning("No method '%s' available !", callback_name)
+            LOGGER.warning("No method '%s' found", callback_name)
         for (priority, plugin, callback) in callbacks:
-            r = callback(*args, **kwargs)
+            try:
+                r = callback(*args, **kwargs)
+            except Exception as exc:
+                LOGGER.error("Callback '{}' failed", str(callback))
+                raise
             if r is not None:
                 return r
         return None
