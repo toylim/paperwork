@@ -1,3 +1,4 @@
+import ctypes
 import io
 import logging
 import os
@@ -470,3 +471,15 @@ class Plugin(CommonFsPluginBase):
         parent = Gio.File.new_for_uri(parent_uri)
         for f in self._recurse(parent, dir_included):
             yield f.get_uri()
+
+    def fs_hide(self, uri):
+        if os.name != 'nt':
+            LOGGER.warning("fs_hide('%s') can only works on Windows", uri)
+            return
+        filepath = self.fs_unsafe(uri)
+        LOGGER.info("Hiding file: {}".format(filepath))
+        ret = ctypes.windll.kernel32.SetFileAttributesW(
+            filepath, 0x02  # hidden
+        )
+        if not ret:
+            raise ctypes.WinError()

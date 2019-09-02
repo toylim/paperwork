@@ -204,3 +204,6 @@ class Plugin(CommonFsPluginBase):
 
     def fs_recurse(self, parent_uri, dir_included=False):
         raise NotImplementedError()
+
+    def fs_hide(self, uri):
+        pass
