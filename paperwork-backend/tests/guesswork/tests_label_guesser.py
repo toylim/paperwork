@@ -103,8 +103,17 @@ class TestIndex(unittest.TestCase):
             }
         ]
 
-        self.core.call_all("on_doc_imported", "new_doc")
-        self.core.call_all("on_doc_imported", "new_doc_2")
+        # make a transaction to make the plugin label_guesser add labels
+        # on them.
+        transactions = []
+        self.core.call_all("doc_transaction_start", transactions)
+        self.assertEqual(len(transactions), 1)
+        for transaction in transactions:
+            transaction.add_obj("new_doc")
+        for transaction in transactions:
+            transaction.add_obj("new_doc_2")
+        for transaction in transactions:
+            transaction.commit()
 
         self.assertEqual(len(self.fake_storage.docs[4]['labels']), 0)
 
@@ -140,18 +149,22 @@ class TestIndex(unittest.TestCase):
         ]
 
         core = self.core
+        mainloop = False
 
         class FakeModuleToStopMainLoop(object):
             class Plugin(openpaperwork_core.PluginBase):
                 def on_label_guesser_updated(self):
-                    core.call_all("mainloop_quit")
+                    if mainloop:  # avoid double call at next transaction
+                        core.call_all("mainloop_quit")
 
         self.core._load_module(
             "mainloop_stopper", FakeModuleToStopMainLoop()
         )
 
         self.core.call_all('sync')
+        mainloop = True
         self.core.call_one('mainloop')
+        mainloop = False
 
         self.fake_storage.docs = [
             {  # old doc
@@ -191,8 +204,17 @@ class TestIndex(unittest.TestCase):
             }
         ]
 
-        self.core.call_all("on_doc_imported", "new_doc")
-        self.core.call_all("on_doc_imported", "new_doc_2")
+        # make a transaction to make the plugin label_guesser add labels
+        # on them.
+        transactions = []
+        self.core.call_all("doc_transaction_start", transactions)
+        self.assertEqual(len(transactions), 1)
+        for transaction in transactions:
+            transaction.add_obj("new_doc")
+        for transaction in transactions:
+            transaction.add_obj("new_doc_2")
+        for transaction in transactions:
+            transaction.commit()
 
         self.assertEqual(len(self.fake_storage.docs[4]['labels']), 0)
 
