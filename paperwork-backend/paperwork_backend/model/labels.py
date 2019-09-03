@@ -32,7 +32,7 @@ class LabelLoader(object):
         labels = []
         self.plugin.doc_get_labels_by_url(labels, doc_url)
         for label in labels:
-            self.plugin.all_labels.add(label)
+            self.plugin.all_labels[label[0]] = label[1]
 
     def notify_done(self):
         self.core.call_all("on_label_loading_end")
@@ -40,8 +40,8 @@ class LabelLoader(object):
 
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
-        # {(label_name, color), (label_name, color), ...}
-        self.all_labels = set()
+        # {label_name: color, label_name: color, ...}
+        self.all_labels = {}
 
     def get_interfaces(self):
         return [
@@ -64,7 +64,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         if self.core.call_success("fs_exists", labels_url) is None:
             return
-        with self.core.call_success("fs_open", labels_url) as file_desc:
+        with self.core.call_success("fs_open", labels_url, 'r') as file_desc:
             for line in file_desc.readlines():
                 line = line.strip()
                 if line == "":
@@ -72,16 +72,33 @@ class Plugin(openpaperwork_core.PluginBase):
                 # Expected: ('label', '#rrrrggggbbbb')
                 out.append(tuple(x.strip() for x in line.split(",")))
 
-    def doc_add_label(self, doc_url, label_name):
-        LOGGER.info("Adding label '%s' on document '%s'", label_name, doc_url)
-        pass
+    def doc_add_label(self, doc_url, label, color=None):
+        assert("," not in label)
+        assert(color is None or "," not in color)
+
+        if color is not None:
+            assert(
+                label not in self.all_labels
+                or self.all_labels[label] == color
+            )
+            self.all_labels[label] = color
+        else:
+            color = self.all_labels[label]
+
+        LOGGER.info("Adding label '%s' on document '%s'", label, doc_url)
+
+        labels_url = self.core.call_success(
+            "fs_join", doc_url, LABELS_FILENAME
+        )
+        with self.core.call_success("fs_open", labels_url, 'a') as file_desc:
+            file_desc.write("{},{}".format(label, color))
 
     def labels_get_all(self, out):
-        for label in self.all_labels:
-            out.add(label)
+        for (label, color) in self.all_labels.items():
+            out.add((label, color))
 
     def sync(self):
-        self.all_labels = set()
+        self.all_labels = {}
 
         storage_all_docs = []
         self.core.call_all("storage_get_all_docs", storage_all_docs)

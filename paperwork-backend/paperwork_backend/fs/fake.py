@@ -95,6 +95,11 @@ class FakeFileAdapter(io.RawIOBase):
         raise NotImplementedError()
 
     def close(self):
+        if 'a' in self.mode or 'w' in self.mode:
+            d = self.fs_plugin.fs
+            for p in self.path[:-1]:
+                d = d[p]
+            d[self.path[-1]] = self.content
         self.flush()
         super().close()
 
