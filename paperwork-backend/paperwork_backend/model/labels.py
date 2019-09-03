@@ -58,6 +58,14 @@ class Plugin(openpaperwork_core.PluginBase):
             ]
         }
 
+    def doc_get_mtime_by_url(self, out, doc_url):
+        labels_url = self.core.call_success(
+            "fs_join", doc_url, LABELS_FILENAME
+        )
+        if self.core.call_success("fs_exists", labels_url) is None:
+            return
+        out.append(self.core.call_success("fs_get_mtime", labels_url))
+
     def doc_get_labels_by_url(self, out, doc_url):
         labels_url = self.core.call_success(
             "fs_join", doc_url, LABELS_FILENAME
