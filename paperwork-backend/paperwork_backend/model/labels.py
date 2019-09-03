@@ -29,7 +29,7 @@ class LabelLoader(object):
         self.promise.schedule()
 
     def load_labels(self, doc_url):
-        labels = []
+        labels = set()
         self.plugin.doc_get_labels_by_url(labels, doc_url)
         for label in labels:
             self.plugin.all_labels[label[0]] = label[1]
@@ -70,7 +70,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 if line == "":
                     continue
                 # Expected: ('label', '#rrrrggggbbbb')
-                out.append(tuple(x.strip() for x in line.split(",")))
+                out.add(tuple(x.strip() for x in line.split(",")))
 
     def doc_add_label(self, doc_url, label, color=None):
         assert("," not in label)

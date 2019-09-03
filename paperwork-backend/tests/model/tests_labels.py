@@ -30,10 +30,13 @@ class TestLabels(unittest.TestCase):
             },
         }
 
-        labels = []
+        labels = set()
         self.core.call_success(
             "doc_get_labels_by_url", labels, "file:///some_work_dir/some_doc"
         )
+        labels = list(labels)
+        labels.sort()
+
         self.assertEqual(
             labels,
             [
@@ -106,10 +109,13 @@ class TestLabels(unittest.TestCase):
             label="label C", color="#123412341234"
         )
 
-        labels = []
+        labels = set()
         self.core.call_success(
             "doc_get_labels_by_url", labels, "file:///some_work_dir/some_doc"
         )
+        labels = list(labels)
+        labels.sort()
+
         self.assertEqual(
             labels,
             [

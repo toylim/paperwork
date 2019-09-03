@@ -19,12 +19,12 @@ class TestIndex(unittest.TestCase):
 
         self.fake_storage = self.core.get("paperwork_backend.model.fake")
 
+        self.core.init()
+
     def tearDown(self):
         shutil.rmtree(self.tmp_index_dir)
 
     def test_transaction(self):
-        self.core.init()
-
         results = []
         self.core.call_all("index_search", results, "flesch")
         self.assertEqual(results, [])
@@ -35,6 +35,7 @@ class TestIndex(unittest.TestCase):
                 'url': 'file:///somewhere/test_doc',
                 'mtime': 123,
                 'text': 'Whoosh and Flesch are\nthe best',
+                'labels': set(),
             }
         ]
 
@@ -50,8 +51,6 @@ class TestIndex(unittest.TestCase):
         self.assertEqual(results, ['test_doc'])
 
     def test_sync(self):
-        self.core.init()
-
         results = []
         self.core.call_all("index_search", results, "flesch")
         self.assertEqual(results, [])
@@ -62,6 +61,7 @@ class TestIndex(unittest.TestCase):
                 'url': 'file:///somewhere/test_doc',
                 'mtime': 123,
                 'text': 'Whoosh and Flesch are\nthe best',
+                'labels': set(),
             }
         ]
 

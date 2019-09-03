@@ -90,7 +90,7 @@ class WhooshTransaction(object):
         doc_text = "\n\n".join(doc_text)
         doc_text = util.strip_accents(doc_text)
 
-        doc_labels = []
+        doc_labels = set()
         self.core.call_all("doc_get_labels_by_url", doc_labels, doc_url)
         doc_labels = ",".join([label[0] for label in doc_labels])
         doc_labels = util.strip_accents(doc_labels)

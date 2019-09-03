@@ -12,6 +12,7 @@ class Plugin(openpaperwork_core.PluginBase):
             "doc_type",
             "doc_hash",
             "doc_text",
+            "doc_labels",
         ]
 
     def storage_get_all_docs(self, out):
@@ -53,3 +54,31 @@ class Plugin(openpaperwork_core.PluginBase):
         for doc in self.docs:
             if doc['url'] == doc_url:
                 out.append(doc['text'])
+
+    def doc_get_labels_by_url(self, out, doc_url):
+        for doc in self.docs:
+            if doc['url'] == doc_url:
+                out.update(doc['labels'])
+
+    def doc_add_label(self, doc_url, label, color=None):
+        if color is None:
+            all_labels = set()
+            self.labels_get_all(all_labels)
+
+            for (l, c) in all_labels:
+                if l == label:
+                    color = c
+                    break
+            else:
+                raise Exception(
+                    "label {} provided without color,"
+                    " but label is unknown".format(label)
+                )
+
+        for doc in self.docs:
+            if doc['url'] == doc_url:
+                doc['labels'].add((label, color))
+
+    def labels_get_all(self, out):
+        for doc in self.docs:
+            out.update(doc['labels'])
