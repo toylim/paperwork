@@ -23,7 +23,7 @@ import pyocr
 
 import openpaperwork_core
 
-from .util import find_language
+from ..util import find_language
 
 
 LOGGER = logging.getLogger(__name__)

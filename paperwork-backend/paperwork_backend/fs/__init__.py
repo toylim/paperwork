@@ -1,7 +1,11 @@
+import logging
 import os
 import urllib
 
 import openpaperwork_core
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 class CommonFsPluginBase(openpaperwork_core.PluginBase):

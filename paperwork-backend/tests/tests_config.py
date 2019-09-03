@@ -7,8 +7,8 @@ import openpaperwork_core
 class MockConfigFileModule(object):
     """
     Plugin paperwork_backend.config uses openpaperwork.config_file.
-    This mock mocks openpaperwork.config so we can test
-    paperwork_backend.config
+    This mock mocks openpaperwork.config_file so we can test
+    paperwork_backend.config.file
     """
     class Plugin(openpaperwork_core.PluginBase):
         def __init__(self):
@@ -70,7 +70,7 @@ class TestConfig(unittest.TestCase):
         self.core._load_module(
             "openpaperwork_core.config_file", MockConfigFileModule()
         )
-        self.core.load("paperwork_backend.config")
+        self.core.load("paperwork_backend.config.file")
         self.core.init()
 
     def test_config_load(self):

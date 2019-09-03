@@ -3,27 +3,19 @@ import unittest
 import openpaperwork_core
 
 
-class MockConfigModule(object):
-    class Plugin(openpaperwork_core.PluginBase):
-        def get_interfaces(self):
-            return ["paperwork_config"]
-
-        def paperwork_config_get(self, opt_name):
-            assert(opt_name == "workdir")
-            return "file:///some_work_dir"
-
-
 class TestWorkdir(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core()
-        self.core._load_module(
-            "paperwork_backend.config", MockConfigModule()
-        )
+        self.core.load("paperwork_backend.config.fake")
         self.core.load("paperwork_backend.fs.fake")
         self.core.load("paperwork_backend.model.img")
         self.core.load("paperwork_backend.model.workdir")
         self.core.init()
 
+        self.config = self.core.get("paperwork_backend.config.fake")
+        self.config.settings = {
+            "workdir": "file:///some_work_dir"
+        }
         self.fs = self.core.get("paperwork_backend.fs.fake")
 
     def test_storage_get_all_docs(self):
