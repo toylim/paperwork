@@ -1,5 +1,6 @@
 import datetime
 import functools
+import gettext
 import logging
 import os
 import shutil
@@ -17,7 +18,7 @@ from .. import (
     util
 )
 
-
+_ = gettext.gettext
 LOGGER = logging.getLogger(__name__)
 
 WHOOSH_SCHEMA = whoosh.fields.Schema(
@@ -114,36 +115,46 @@ class WhooshTransaction(object):
     def _get_progression(self):
         if self.total_expected <= 0:
             return 0
-        return sum(self.counts.values()) / self.total_expected
+        total = sum(self.counts.values())
+        return total / self.total_expected
 
     def add_obj(self, doc_id):
         LOGGER.info("Adding document '%s' to index", doc_id)
         self.counts['add'] += 1
-        self.core.call_all("on_index_add", self._get_progression(), doc_id)
+        self.core.call_all(
+            "on_progress", "index_update", self._get_progression(),
+            _("Indexing new document %s") % doc_id
+        )
         self._update_doc_in_index(doc_id)
 
     def del_obj(self, doc_id):
         LOGGER.info("Removing document '%s' from index", doc_id)
         self.counts['del'] += 1
-        self.core.call_all("on_index_del", self._get_progression(), doc_id)
+        self.core.call_all(
+            "on_progress", "index_update", self._get_progression(),
+            _("Removing document %s from index") % doc_id
+        )
         query = whoosh.query.Term("docid", doc_id)
         self.writer.delete_by_query(query)
 
     def upd_obj(self, doc_id):
-        LOGGER.info("Updaging document '%s' in index", doc_id)
+        LOGGER.info("Updating document '%s' in index", doc_id)
         self.counts['upd'] += 1
-        self.core.call_all('on_index_upd', self._get_progression(), doc_id)
+        self.core.call_all(
+            "on_progress", "index_update", self._get_progression(),
+            _("Indexing updated document %s") % doc_id
+        )
         self._update_doc_in_index(doc_id)
 
     def cancel(self):
         if self.writer is None:
             return
 
-        self.core.call_all('on_index_cancel', 0.99)
+        self.core.call_all('on_index_cancel')
         LOGGER.info("Canceling transaction")
         self.writer.cancel()
         self.writer = None
-        self.core.call_all("on_index_updated", 1.0)
+        self.core.call_all("on_index_updated")
 
     def commit(self):
         total = sum(self.counts.values())
@@ -158,6 +169,7 @@ class WhooshTransaction(object):
         self.core.call_all('on_index_commit')
         self.writer.commit()
         self.writer = None
+        self.core.call_all('on_progress', 'index_update', 1.0, None)
         self.core.call_all('on_index_updated')
 
 
