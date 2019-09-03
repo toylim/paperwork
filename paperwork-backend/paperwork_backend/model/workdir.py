@@ -21,7 +21,7 @@ class Plugin(openpaperwork_core.PluginBase):
             ]
         }
 
-    def storage_get_all_docs(self, out):
+    def storage_get_all_docs(self, out: list):
         """
         Returns all document IDs and URLs in the work directory
         """

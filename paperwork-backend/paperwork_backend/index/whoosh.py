@@ -277,10 +277,10 @@ class Plugin(openpaperwork_core.PluginBase):
         shutil.rmtree(self.index_dir)
         LOGGER.warning("Index destroyed")
 
-    def doc_transaction_start(self, out, total_expected=-1):
+    def doc_transaction_start(self, out: list, total_expected=-1):
         out.append(WhooshTransaction(self, total_expected))
 
-    def index_search(self, out, query, limit=None, search_type='fuzzy'):
+    def index_search(self, out: list, query, limit=None, search_type='fuzzy'):
         query = query.strip()
         query = util.strip_accents(query)
         if query == "":

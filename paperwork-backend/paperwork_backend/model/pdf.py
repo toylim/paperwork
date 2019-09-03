@@ -108,7 +108,7 @@ class Plugin(openpaperwork_core.PluginBase):
             return None
         return True
 
-    def doc_get_hash_by_url(self, out, doc_url):
+    def doc_get_hash_by_url(self, out: list, doc_url):
         pdf_url = self._get_pdf_url(doc_url)
         if pdf_url is None:
             return
@@ -117,7 +117,7 @@ class Plugin(openpaperwork_core.PluginBase):
         dochash = hashlib.sha256(content).hexdigest()
         out.append(int(dochash, 16))
 
-    def doc_get_mtime_by_url(self, out, doc_url):
+    def doc_get_mtime_by_url(self, out: list, doc_url):
         pdf_url = self._get_pdf_url(doc_url)
         if pdf_url is None:
             return None
@@ -157,7 +157,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 rects.append(rect)
             yield(letters, rects)
 
-    def doc_get_text_by_url(self, out, doc_url):
+    def doc_get_text_by_url(self, out: list, doc_url):
         (pdf_url, pdf) = self._open_pdf(doc_url)
         for page_idx in range(0, pdf.get_n_pages()):
             page = pdf.get_page(page_idx)

@@ -15,7 +15,7 @@ class Plugin(openpaperwork_core.PluginBase):
             "doc_labels",
         ]
 
-    def storage_get_all_docs(self, out):
+    def storage_get_all_docs(self, out: list):
         out += [
             (doc['id'], doc['url'])
             for doc in self.docs
@@ -36,13 +36,13 @@ class Plugin(openpaperwork_core.PluginBase):
     def is_doc(self, doc_url):
         return True
 
-    def doc_get_hash_by_url(self, out, doc_url):
+    def doc_get_hash_by_url(self, out: list, doc_url):
         for doc in self.docs:
             if doc['url'] == doc_url:
                 if 'hash' in doc:
                     out.append(doc['hash'])
 
-    def doc_get_mtime_by_url(self, out, doc_url):
+    def doc_get_mtime_by_url(self, out: list, doc_url):
         for doc in self.docs:
             if doc['url'] == doc_url:
                 out.append(doc['mtime'])
@@ -50,12 +50,12 @@ class Plugin(openpaperwork_core.PluginBase):
     def doc_get_nb_pages_by_url(self, doc_url):
         raise NotImplementedError()
 
-    def doc_get_text_by_url(self, out, doc_url):
+    def doc_get_text_by_url(self, out: list, doc_url):
         for doc in self.docs:
             if doc['url'] == doc_url:
                 out.append(doc['text'])
 
-    def doc_get_labels_by_url(self, out, doc_url):
+    def doc_get_labels_by_url(self, out: set, doc_url):
         for doc in self.docs:
             if doc['url'] == doc_url:
                 out.update(doc['labels'])
@@ -79,6 +79,6 @@ class Plugin(openpaperwork_core.PluginBase):
             if doc['url'] == doc_url:
                 doc['labels'].add((label, color))
 
-    def labels_get_all(self, out):
+    def labels_get_all(self, out: set):
         for doc in self.docs:
             out.update(doc['labels'])

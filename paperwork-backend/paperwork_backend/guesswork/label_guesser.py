@@ -283,7 +283,7 @@ class Plugin(openpaperwork_core.PluginBase):
         for label in labels:
             self.core.call_all("doc_add_label", doc_url, label)
 
-    def doc_transaction_start(self, out, total_expected=-1):
+    def doc_transaction_start(self, out: list, total_expected=-1):
         out.append(LabelGuesserTransaction(self))
 
     def sync(self):

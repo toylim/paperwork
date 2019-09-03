@@ -32,7 +32,7 @@ class Plugin(openpaperwork_core.PluginBase):
             return None
         return True
 
-    def doc_get_mtime_by_url(self, out, doc_url):
+    def doc_get_mtime_by_url(self, out: list, doc_url):
         page_idx = 0
         while self.page_get_img_url(doc_url, page_idx) is not None:
             out.append(self.core.call_success(
