@@ -4,15 +4,15 @@ import logging
 import openpaperwork_core
 import openpaperwork_core.promise
 
-from . import BaseImporter
 from . import FileImport
+from . import DirectFileImporter
 
 
 _ = gettext.gettext
 LOGGER = logging.getLogger(__name__)
 
 
-class _SingleImport(object):
+class SingleImgImporter(object):
     def __init__(self, core, file_import, src_file_uri, transactions):
         self.core = core
         self.file_import = file_import
@@ -48,25 +48,30 @@ class _SingleImport(object):
         return promise
 
 
-class ImgImporter(BaseImporter):
-    def __init__(self, plugin, file_import):
-        super().__init__(plugin, file_import, _SingleImport)
+class SingleImgImporterFactory(object):
+    def __init__(self, core):
+        self.core = core
 
-    def _get_importables(self):
-        mimes = [mime[1] for mime in self.plugin.IMG_MIME_TYPES]
-
-        for file_uri in self.file_import.ignored_files:
-            mime = self.core.call_success("fs_get_mime", file_uri)
-            if mime is not None:
-                if mime in mimes:
-                    yield file_uri
-                continue
-            file_ext = file_uri.split(".")[-1].lower()
-            if file_ext in self.plugin.FILE_EXTENSIONS:
-                yield file_uri
-
-    def __str__(self):
+    @staticmethod
+    def get_name():
         return _("Append the image to the current document")
+
+    @staticmethod
+    def is_importable(core, file_uri):
+        mime = core.call_success("fs_get_mime", file_uri)
+        if mime is not None:
+            mimes = [mime[1] for mime in Plugin.IMG_MIME_TYPES]
+            if mime in mimes:
+                return True
+            return False
+        file_ext = file_uri.split(".")[-1].lower()
+        if file_ext in self.plugin.FILE_EXTENSIONS:
+            return True
+
+    def make_importer(self, file_import, file_uri, transactions):
+        return SingleImgImporter(
+            self.core, file_import, file_uri, transactions
+        )
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -87,6 +92,9 @@ class Plugin(openpaperwork_core.PluginBase):
         "tiff",
     ]
 
+    def __init__(self):
+        super().__init__()
+
     def get_interfaces(self):
         return [
             "import"
@@ -105,7 +113,9 @@ class Plugin(openpaperwork_core.PluginBase):
         out += self.IMG_MIME_TYPES
 
     def get_importer(self, out: list, file_import: FileImport):
-        importer = ImgImporter(self, file_import)
+        importer = DirectFileImporter(
+            self.core, file_import, SingleImgImporterFactory(self.core)
+        )
         if not importer.can_import():
             return
         out.append(importer)

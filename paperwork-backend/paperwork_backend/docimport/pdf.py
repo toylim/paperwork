@@ -4,15 +4,18 @@ import logging
 import openpaperwork_core
 import openpaperwork_core.promise
 
-from . import BaseImporter
-from . import FileImport
+from . import (
+    DirectFileImporter,
+    FileImport,
+    RecursiveFileImporter
+)
 
 
 _ = gettext.gettext
 LOGGER = logging.getLogger(__name__)
 
 
-class _SingleImport(object):
+class SinglePdfImporter(object):
     def __init__(self, core, file_import, src_file_uri, transactions):
         self.core = core
         self.file_import = file_import
@@ -41,22 +44,28 @@ class _SingleImport(object):
         return promise
 
 
-class PdfImporter(BaseImporter):
-    def __init__(self, plugin, file_import):
-        super().__init__(plugin, file_import, _SingleImport)
+class SinglePdfImporterFactory(object):
+    def __init__(self, core):
+        self.core = core
 
-    def _get_importables(self):
-        for file_uri in self.file_import.ignored_files:
-            mime = self.core.call_success("fs_get_mime", file_uri)
-            if mime is not None:
-                if mime == self.plugin.MIME_TYPE:
-                    yield file_uri
-                continue
-            if file_uri.lower().endswith(self.plugin.FILE_EXTENSION):
-                yield file_uri
-
-    def __str__(self):
+    @staticmethod
+    def get_name():
         return _("Import PDF")
+
+    @staticmethod
+    def is_importable(core, file_uri):
+        mime = core.call_success("fs_get_mime", file_uri)
+        if mime is not None:
+            if mime == Plugin.MIME_TYPE:
+                return True
+            return False
+        if file_uri.lower().endswith(self.plugin.FILE_EXTENSION):
+            return True
+
+    def make_importer(self, file_import, file_uri, transactions):
+        return SinglePdfImporter(
+            self.core, file_import, file_uri, transactions
+        )
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -79,9 +88,17 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_import_mime_type(self, out: list):
         out.append(("PDF", self.MIME_TYPE))
+        out.append((_("PDF folder"), "inode/directory"))
 
     def get_importer(self, out: list, file_import: FileImport):
-        importer = PdfImporter(self, file_import)
-        if not importer.can_import():
-            return
-        out.append(importer)
+        importer = DirectFileImporter(
+            self.core, file_import, SinglePdfImporterFactory(self.core)
+        )
+        if importer.can_import():
+            out.append(importer)
+
+        importer = RecursiveFileImporter(
+            self.core, file_import, SinglePdfImporterFactory(self.core)
+        )
+        if importer.can_import():
+            out.append(importer)
