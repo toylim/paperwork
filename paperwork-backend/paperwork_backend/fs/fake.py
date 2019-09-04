@@ -201,7 +201,7 @@ class Plugin(CommonFsPluginBase):
     def fs_mkdir_p(self, url):
         path = self._get_path(url)
         f = self.fs
-        for p in path[-1]:
+        for p in path[:-1]:
             f = f[p]
         name = url.split("/")[-1]
         assert(name not in f)
@@ -211,4 +211,7 @@ class Plugin(CommonFsPluginBase):
         raise NotImplementedError()
 
     def fs_hide(self, uri):
+        pass
+
+    def fs_get_mime(self, uri):
         pass

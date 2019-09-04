@@ -24,15 +24,17 @@ class Promise(object):
         self._catch = []
 
     def __str__(self):
-        return "Promise<{}>".format(str(self.func))
+        return "Promise<{}>({})".format(str(self.func), id(self))
 
     def __repr__(self):
-        return "Promise<{}>".format(str(self.func))
+        return str(self)
 
     def then(self, callback, *args, **kwargs):
         if isinstance(callback, Promise):
             assert(args is None or len(args) <= 0)
             assert(kwargs is None or len(kwargs) <= 0)
+            while callback.parent is not None:
+                callback = callback.parent
             promise = callback
             promise.parent = self
         else:

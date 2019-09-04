@@ -1,10 +1,24 @@
+import time
+
 import openpaperwork_core
 
 
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
+        # expected in self.docs:
+        # [
+        #   {
+        #     'id': 'some_id',
+        #     'url': 'file:///some_work_dir/some_id',
+        #     'mtime': 12345,  # unix timestamp
+        #     'labels': [(label_name, label_color), ...]
+        #     'hash': 12345, # optional
+        #   },
+        #   (...)
+        # ]
         self.docs = []
+        self.new_doc_idx = 0
 
     def get_interfaces(self):
         return [
@@ -82,3 +96,14 @@ class Plugin(openpaperwork_core.PluginBase):
     def labels_get_all(self, out: set):
         for doc in self.docs:
             out.update(doc['labels'])
+
+    def storage_get_new_doc(self):
+        self.new_doc_idx += 1
+        doc = {
+            'url': 'file:///some_work_dir/{}'.format(self.new_doc_idx),
+            'id': str(self.new_doc_idx),
+            'mtime': time.time(),
+            'labels': [],
+        }
+        self.docs.append(doc)
+        return (doc['id'], doc['url'])

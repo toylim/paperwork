@@ -229,6 +229,10 @@ class Plugin(CommonFsPluginBase):
     def __init__(self):
         super().__init__()
 
+    @staticmethod
+    def _is_file_uri(uri):
+        return uri.startswith("file://")
+
     def fs_safe(self, uri):
         """
         Make sure the specified URI is actually an URI and not a Unix path.
@@ -419,15 +423,18 @@ class Plugin(CommonFsPluginBase):
             raise IOError(str(exc))
 
     def fs_copy(self, old_url, new_url):
+        if not self._is_file_uri(old_url) or not self._is_file_uri(new_url):
+            return None
         try:
             old = Gio.File.new_for_uri(old_url)
             new = Gio.File.new_for_uri(new_url)
             if new.query_exists():
                 new.delete()
             old.copy(new, Gio.FileCopyFlags.ALL_METADATA)
+            return new_url
         except GLib.GError as exc:
             LOGGER.warning("Gio.Gerror", exc_info=exc)
-            raise IOError(str(exc))
+            return None
 
     def fs_mkdir_p(self, url):
         try:
@@ -481,3 +488,10 @@ class Plugin(CommonFsPluginBase):
         )
         if not ret:
             raise ctypes.WinError()
+
+    def fs_get_mime(self, uri):
+        gfile = Gio.File.new_for_uri(file_uri)
+        info = gfile.query_info(
+            "standard::content-type", Gio.FileQueryInfoFlags.NONE
+        )
+        return info.get_content_type()
