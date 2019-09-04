@@ -4,8 +4,11 @@ import logging
 import openpaperwork_core
 import openpaperwork_core.promise
 
-from . import FileImport
-from . import DirectFileImporter
+from . import (
+    DirectFileImporter,
+    FileImport,
+    RecursiveFileImporter
+)
 
 
 _ = gettext.gettext
@@ -13,8 +16,9 @@ LOGGER = logging.getLogger(__name__)
 
 
 class SingleImgImporter(object):
-    def __init__(self, core, file_import, src_file_uri, transactions):
-        self.core = core
+    def __init__(self, factory, file_import, src_file_uri, transactions):
+        self.factory = factory
+        self.core = factory.core
         self.file_import = file_import
         self.src_file_uri = src_file_uri
         self.transactions = transactions
@@ -70,7 +74,7 @@ class SingleImgImporterFactory(object):
 
     def make_importer(self, file_import, file_uri, transactions):
         return SingleImgImporter(
-            self.core, file_import, file_uri, transactions
+            self, file_import, file_uri, transactions
         )
 
 
@@ -116,6 +120,11 @@ class Plugin(openpaperwork_core.PluginBase):
         importer = DirectFileImporter(
             self.core, file_import, SingleImgImporterFactory(self.core)
         )
-        if not importer.can_import():
-            return
-        out.append(importer)
+        if importer.can_import():
+            out.append(importer)
+
+        importer = RecursiveFileImporter(
+            self.core, file_import, SingleImgImporterFactory(self.core)
+        )
+        if importer.can_import():
+            out.append(importer)
