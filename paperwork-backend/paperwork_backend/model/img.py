@@ -1,5 +1,7 @@
 import logging
 
+import PIL.Image
+
 import openpaperwork_core
 
 
@@ -13,6 +15,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_interfaces(self):
         return [
+            "doc_img_import",
             "doc_type",
             "page_img",
         ]
@@ -56,3 +59,28 @@ class Plugin(openpaperwork_core.PluginBase):
         if self.core.call_success("fs_exists", page_url) is None:
             return None
         return page_url
+
+    def doc_img_import_by_id(self, src_file_uri, doc_id=None):
+        # make sure the image is valid before making a mess in the work
+        # directory
+        with self.core.call_success("fs_open", src_file_uri) as file_desc:
+            img = PIL.Image.open(file_desc)
+            img.load()
+            del img
+
+        if doc_id is None:
+            # new document
+            (doc_id, doc_url) = self.core.call_success("storage_get_new_doc")
+        else:
+            # update existing one
+            doc_url = self.core.call_success("doc_id_to_url", doc_id)
+
+        nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)
+        if nb_pages is None:
+            nb_pages = 0
+
+        page_url = self.core.call_success(
+            "fs_join", doc_url, PAGE_FILENAME_FMT.format(nb_pages + 1)
+        )
+        self.core.call_success("fs_copy", src_file_uri, page_url)
+        return (doc_id, doc_url)

@@ -62,7 +62,12 @@ class Plugin(openpaperwork_core.PluginBase):
                 out.append(doc['mtime'])
 
     def doc_get_nb_pages_by_url(self, doc_url):
-        raise NotImplementedError()
+        for doc in self.docs:
+            if doc['url'] == doc_url:
+                if 'pages' not in doc:
+                    return None
+                return len(doc['pages'])
+        return None
 
     def doc_get_text_by_url(self, out: list, doc_url):
         for doc in self.docs:

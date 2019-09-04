@@ -93,3 +93,4 @@ class TestPdfImport(unittest.TestCase):
         self.assertEqual(file_import.new_doc_ids, {'1'})
         self.assertEqual(file_import.upd_doc_ids, set())
         self.assertEqual(file_import.stats['PDF'], 1)
+        self.assertEqual(file_import.stats['Documents'], 1)
