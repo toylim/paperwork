@@ -56,13 +56,17 @@ class Promise(object):
         else:
             raise
 
-    def do(self):
+    def do(self, r=None):
         try:
             if self.func is not None:
-                self.func(*self.args, **self.kwargs)
+                if r is not None:
+                    args = (r,) + self.args
+                else:
+                    args = self.args
+                r = self.func(*args, **self.kwargs)
 
             for t in self._then:
-                self.core.call_one("schedule", t.do)
+                self.core.call_one("schedule", t.do, r)
         except Exception as exc:
             self.on_error(exc)
             return
