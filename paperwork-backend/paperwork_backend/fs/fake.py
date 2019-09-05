@@ -133,7 +133,8 @@ class Plugin(CommonFsPluginBase):
         else:
             self.fs = fs
 
-    def _get_path(self, url):
+    @staticmethod
+    def _get_path(url):
         assert(url.lower().startswith("file:///"))
         url = url[len('file:///'):]
         return url.split('/')
