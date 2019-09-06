@@ -243,7 +243,7 @@ class Core(object):
             try:
                 r = callback(*args, **kwargs)
             except Exception as exc:
-                LOGGER.error("Callback '{}' failed", str(callback))
+                LOGGER.error("Callback '%s' failed", str(callback))
                 raise
             if r is not None:
                 return r
