@@ -54,4 +54,4 @@ class Plugin(openpaperwork_core.PluginBase):
                     self.halt_cause = exc
                     self.mainloop_quit()
 
-        self.loop.call_soon(decorator, (args, kwargs))
+        self.loop.call_soon_threadsafe(decorator, (args, kwargs))
