@@ -74,6 +74,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return [
             "doc_hash",
             "doc_pdf_import",
+            "doc_pdf_url",
             "doc_text",
             "doc_type",
             "page_boxes",
@@ -107,6 +108,9 @@ class Plugin(openpaperwork_core.PluginBase):
         if pdf_url is None:
             return None
         return True
+
+    def doc_get_pdf_url_by_url(self, doc_url):
+        return self._get_pdf_url(doc_url)
 
     def doc_get_hash_by_url(self, out: list, doc_url):
         pdf_url = self._get_pdf_url(doc_url)
