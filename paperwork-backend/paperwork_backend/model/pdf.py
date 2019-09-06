@@ -4,7 +4,6 @@ import logging
 
 import gi
 gi.require_version('Poppler', '0.18')
-
 from gi.repository import Gio
 from gi.repository import Poppler
 
@@ -160,6 +159,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def doc_get_text_by_url(self, out: list, doc_url):
         (pdf_url, pdf) = self._open_pdf(doc_url)
+        if pdf is None:
+            return
         for page_idx in range(0, pdf.get_n_pages()):
             page = pdf.get_page(page_idx)
             txt = page.get_text()
@@ -170,6 +171,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def page_get_boxes_by_url(self, doc_url, page_idx):
         (pdf_url, pdf) = self._open_pdf(doc_url)
+        if pdf is None:
+            return
+
         pdf_page = pdf.get_page(page_idx)
 
         txt = pdf_page.get_text()
