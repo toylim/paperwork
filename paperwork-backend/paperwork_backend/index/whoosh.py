@@ -4,6 +4,7 @@ import gettext
 import logging
 import os
 import shutil
+import unicodedata
 
 import whoosh.fields
 import whoosh.index

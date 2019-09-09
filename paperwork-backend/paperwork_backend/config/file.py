@@ -19,16 +19,11 @@ Paperwork configuration management code
 
 import logging
 import os
-import pyocr
 
 import openpaperwork_core
 
-from ..util import find_language
-
 
 LOGGER = logging.getLogger(__name__)
-
-DEFAULT_OCR_LANG = "eng"  # if really we can't guess anything
 
 
 class PaperworkSetting(object):
@@ -51,23 +46,6 @@ class PaperworkSetting(object):
         self.core.call_all(
             "config_put", self.section, self.token, value
         )
-
-
-def get_default_ocr_lang():
-    # Try to guess based on the system locale what would be
-    # the best OCR language
-
-    ocr_tools = pyocr.get_available_tools()
-    if len(ocr_tools) == 0:
-        return DEFAULT_OCR_LANG
-    ocr_langs = ocr_tools[0].get_available_languages()
-
-    lang = find_language()
-    if hasattr(lang, 'iso639_3_code') and lang.iso639_3_code in ocr_langs:
-        return lang.iso639_3_code
-    if hasattr(lang, 'terminology') and lang.terminology in ocr_langs:
-        return lang.terminology
-    return DEFAULT_OCR_LANG
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -103,9 +81,6 @@ class Plugin(openpaperwork_core.PluginBase):
             ),
             'index_version': PaperworkSetting(
                 core, "Global", "IndexVersion", lambda: "-1"
-            ),
-            'ocr_lang': PaperworkSetting(
-                core, "OCR", "Lang", get_default_ocr_lang
             ),
             'index_in_workdir': PaperworkSetting(
                 core, "Global", "index_in_workdir",

@@ -121,7 +121,7 @@ class TestImgImport(unittest.TestCase):
                 'mtime': 123,
                 'text': 'Flesch Simplebayes\nbest',
                 'labels': {("some_label", "#123412341234")},
-                'pages': [
+                'page_boxes': [
                     'some_content_for_page_1',
                     'some_content_for_page_2',
                 ]

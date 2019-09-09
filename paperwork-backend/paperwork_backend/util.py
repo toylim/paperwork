@@ -17,13 +17,10 @@
 import ctypes
 import errno
 import io
-import locale
 import logging
-import pycountry
 import os
 import re
 import threading
-import unicodedata
 
 import PIL.Image
 
@@ -350,57 +347,6 @@ def image2surface(img, intermediate="pixbuf", quality=90):
             return cairo.ImageSurface.create_from_png(img_io)
         else:
             raise Exception("image2surface(): unknown intermediate")
-
-
-def find_language(lang_str=None, allow_none=False):
-    if lang_str is None:
-        lang_str = locale.getdefaultlocale()[0]
-        if lang_str is None and not allow_none:
-            logger.warning("Unable to figure out locale. Assuming english !")
-            return find_language('eng')
-        if lang_str is None:
-            logger.warning("Unable to figure out locale !")
-            return None
-
-    lang_str = lang_str.lower()
-    if "_" in lang_str:
-        lang_str = lang_str.split("_")[0]
-
-    try:
-        r = pycountry.pycountry.languages.get(name=lang_str.title())
-        if r is not None:
-            return r
-    except (KeyError, UnicodeDecodeError):
-        pass
-
-    attrs = (
-        'iso_639_3_code',
-        'iso639_3_code',
-        'iso639_2T_code',
-        'iso639_1_code',
-        'terminology',
-        'bibliographic',
-        'alpha_3',
-        'alpha_2',
-        'alpha2'
-    )
-    for attr in attrs:
-        try:
-            r = pycountry.pycountry.languages.get(**{attr: lang_str})
-            if r is not None:
-                return r
-        except (KeyError, UnicodeDecodeError):
-            pass
-
-    if allow_none:
-        logger.warning("Unknown language [{}]".format(lang_str))
-        return None
-    if lang_str is not None and lang_str == 'eng':
-        raise Exception("Unable to find language !")
-    logger.warning("Unknown language [{}]. Switching back to english".format(
-        lang_str
-    ))
-    return find_language('eng')
 
 
 def hide_file(filepath):

@@ -12,7 +12,7 @@ class PaperworkSetting(object):
         return self.value
 
     def put(self, v):
-        sel.value = v
+        self.value = v
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -46,7 +46,7 @@ class Plugin(openpaperwork_core.PluginBase):
         raise NotImplementedError()
 
     def paperwork_config_build_simple(self, section, token, default):
-        return PaperworkSetting(None, None, default)
+        return PaperworkSetting(None, default)
 
     def paperwork_config_register(self, key, setting):
         self._settings[key] = setting

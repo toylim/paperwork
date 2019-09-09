@@ -77,3 +77,8 @@ class Plugin(openpaperwork_core.PluginBase):
                     doc_url, page_idx
                 )
                 return boxes
+
+    def page_set_boxes_by_url(self, doc_url, page_idx, boxes):
+        page_url = doc_url + "/" + PAGE_FILENAME_FMT.format(page_idx + 1)
+        with self.core.call_success("fs_open", page_url, 'w') as file_desc:
+            pyocr.builders.LineBoxBuilder().write_file(file_desc, boxes)
