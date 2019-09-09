@@ -65,15 +65,6 @@ MIN_KEYWORD_LEN = 3
 g_lock = threading.Lock()
 
 
-def strip_accents(string):
-    """
-    Strip all the accents from the string
-    """
-    return u''.join(
-        (character for character in unicodedata.normalize('NFD', string)
-         if unicodedata.category(character) != 'Mn'))
-
-
 def cleanup_word_array(keywords):
     """
     Yield all the keywords long enough to be used
