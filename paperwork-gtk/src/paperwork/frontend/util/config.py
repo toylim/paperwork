@@ -20,6 +20,7 @@ import logging
 import uuid
 
 from gi.repository import GLib
+from gi.repository import Libinsane
 
 from paperwork_backend.config import PaperworkConfig
 from paperwork_backend.config import PaperworkSetting
@@ -354,7 +355,9 @@ def get_scanner(config, libinsane, preferred_sources=None):
         try:
             # we didn't find the scanner at the given ID
             # but maybe there is only one, so we can guess the scanner to use
-            devices = libinsane.list_devices()
+            devices = libinsane.list_devices(
+                Libinsane.DeviceLocations.ANY
+            )
             if len(devices) != 1:
                 raise
             logger.info(
