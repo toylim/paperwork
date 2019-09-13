@@ -1,5 +1,7 @@
+import glob
 import locale
 import logging
+import os
 
 import pycountry
 import pyocr
@@ -11,6 +13,43 @@ import openpaperwork_core
 LOGGER = logging.getLogger(__name__)
 
 DEFAULT_OCR_LANG = "eng"  # if really we can't guess anything
+
+
+def init_flatpak():
+    """
+    If we are in Flatpak, we must build a tessdata/ directory using the
+    .traineddata files from each locale directory
+    """
+    tessdata_files = glob.glob("/app/share/locale/*/*.traineddata")
+    if len(tessdata_files) <= 0:
+        return
+
+    localdir = os.path.expanduser("~/.local")
+    base_data_dir = os.getenv(
+        "XDG_DATA_HOME",
+        os.path.join(localdir, "share")
+    )
+    tessdatadir = os.path.join(base_data_dir, "paperwork", "tessdata")
+
+    LOGGER.info("Assuming we are running in Flatpak."
+                " Building tessdata directory {} ...".format(tessdatadir))
+    util.rm_rf(tessdatadir)
+    util.mkdir_p(tessdatadir)
+
+    os.symlink("/app/share/tessdata/eng.traineddata",
+               os.path.join(tessdatadir, "eng.traineddata"))
+    os.symlink("/app/share/tessdata/osd.traineddata",
+               os.path.join(tessdatadir, "osd.traineddata"))
+    os.symlink("/app/share/tessdata/configs",
+               os.path.join(tessdatadir, "configs"))
+    os.symlink("/app/share/tessdata/tessconfigs",
+               os.path.join(tessdatadir, "tessconfigs"))
+    for tessdata in tessdata_files:
+        LOGGER.info("{} found".format(tessdata))
+        os.symlink(tessdata, os.path.join(tessdatadir,
+                                          os.path.basename(tessdata)))
+    os.environ['TESSDATA_PREFIX'] = tessdatadir
+    LOGGER.info("Tessdata directory ready")
 
 
 def find_language(lang_str=None, allow_none=False):
@@ -125,6 +164,9 @@ class OcrTransaction(object):
 
 class Plugin(openpaperwork_core.PluginBase):
     PRIORITY = 1000
+
+    def __init__(self):
+        init_flatpak()
 
     def get_interfaces(self):
         return [
