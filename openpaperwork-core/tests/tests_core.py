@@ -40,7 +40,10 @@ class TestLoading(unittest.TestCase):
                     self.test_method_called = False
 
                 def get_interfaces(self):
-                    return ["test_interface"]
+                    return [
+                        "test_interface",
+                        "some_interface",
+                    ]
 
                 def init(self, core):
                     self.init_called = True
@@ -52,6 +55,9 @@ class TestLoading(unittest.TestCase):
             class Plugin(openpaperwork_core.PluginBase):
                 def __init__(self):
                     self.init_called = False
+
+                def get_interfaces(self):
+                    return ['some_interface']
 
                 def get_deps(self):
                     return {
@@ -79,6 +85,15 @@ class TestLoading(unittest.TestCase):
 
         core.call_all('test_method')
         self.assertTrue(core.get_by_name('module_a').test_method_called)
+
+        self.assertEqual(
+            core.get_by_interface('some_interface'),
+            [
+                core.get_by_name('module_b'),
+                core.get_by_name('module_a'),
+            ]
+        )
+        self.assertEqual(core.get_by_interface('unknown_interface'), [])
 
 
 class TestInit(unittest.TestCase):

@@ -191,6 +191,9 @@ class Core(object):
         """
         return self.plugins[module_name]
 
+    def get_by_interface(self, interface_name):
+        return self.interfaces[interface_name]
+
     def call_all(self, callback_name, *args, **kwargs):
         """
         Call all the methods of all the plugins that have `callback_name`
