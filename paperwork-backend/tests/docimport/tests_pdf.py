@@ -51,7 +51,9 @@ class TestPdfImport(unittest.TestCase):
         self.core.load("paperwork_backend.model.fake")
         self.core.load("paperwork_backend.docimport.pdf")
 
-        self.fake_storage = self.core.get("paperwork_backend.model.fake")
+        self.fake_storage = self.core.get_by_name(
+            "paperwork_backend.model.fake"
+        )
 
         self.core.init()
 
@@ -152,7 +154,9 @@ class TestRecursivePdfImport(unittest.TestCase):
         self.core.load("paperwork_backend.model.fake")
         self.core.load("paperwork_backend.docimport.pdf")
 
-        self.fake_storage = self.core.get("paperwork_backend.model.fake")
+        self.fake_storage = self.core.get_by_name(
+            "paperwork_backend.model.fake"
+        )
 
         self.core.init()
 

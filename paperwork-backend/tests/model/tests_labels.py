@@ -11,12 +11,12 @@ class TestLabels(unittest.TestCase):
         self.core.load("paperwork_backend.model.labels")
         self.core.init()
 
-        self.config = self.core.get("paperwork_backend.config.fake")
+        self.config = self.core.get_by_name("paperwork_backend.config.fake")
         self.config.settings = {
             "workdir": "file:///some_work_dir"
         }
 
-        self.fs = self.core.get("paperwork_backend.fs.fake")
+        self.fs = self.core.get_by_name("paperwork_backend.fs.fake")
 
     def test_doc_get_labels(self):
         self.fs.fs = {

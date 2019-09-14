@@ -15,11 +15,13 @@ class TestIndex(unittest.TestCase):
         self.core = openpaperwork_core.Core()
         self.core.load("paperwork_backend.model.fake")
         self.core.load("paperwork_backend.guesswork.label_guesser")
-        self.core.get("paperwork_backend.guesswork.label_guesser").bayes_dir = (
-            self.tmp_index_dir
-        )
+        self.core.get_by_name(
+            "paperwork_backend.guesswork.label_guesser"
+        ).bayes_dir = self.tmp_index_dir
 
-        self.fake_storage = self.core.get("paperwork_backend.model.fake")
+        self.fake_storage = self.core.get_by_name(
+            "paperwork_backend.model.fake"
+        )
 
         self.core.init()
 

@@ -10,7 +10,7 @@ class TestImg(unittest.TestCase):
         self.core.load("paperwork_backend.model.img")
         self.core.init()
 
-        self.fs = self.core.get("paperwork_backend.fs.fake")
+        self.fs = self.core.get_by_name("paperwork_backend.fs.fake")
 
     def test_get_img_urls(self):
         self.fs.fs = {

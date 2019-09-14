@@ -21,7 +21,7 @@ class TestPyocr(unittest.TestCase):
         self.core.load("paperwork_backend.ocr.pyocr")
         self.core.init()
 
-        self.model = self.core.get("paperwork_backend.model.fake")
+        self.model = self.core.get_by_name("paperwork_backend.model.fake")
 
         self.core.call_all("paperwork_config_put", "ocr_lang", "eng")
 
