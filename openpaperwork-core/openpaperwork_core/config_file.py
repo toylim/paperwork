@@ -4,6 +4,7 @@ Manages a configuration file using configparser.
 
 import collections
 import configparser
+import datetime
 import logging
 import os
 import os.path
@@ -29,6 +30,26 @@ class ConfigBool(object):
 
     def __str__(self):
         return str(self.value)
+
+
+class ConfigDate(object):
+    DATE_FORMAT = "%Y-%m-%d"
+
+    def __init__(self, value=datetime.datetime(year=1970, month=1, day=1)):
+        if isinstance(value, str):
+            self.value = (
+                datetime.datetime
+                .strptime(value, self.DATE_FORMAT)
+                .date()
+            )
+        else:
+            self.value = value
+
+    def __eq__(self, o):
+        return (self.value == o)
+
+    def __str__(self):
+        return self.value.strftime(self.DATE_FORMAT)
 
 
 class ConfigList(object):
@@ -124,8 +145,10 @@ class ConfigDict(object):
 _TYPE_TO_STR = {
     bool: "bool",
     ConfigBool: "bool",
+    ConfigDate: "date",
     ConfigDict: "dict",
     ConfigList: "list",
+    datetime.date: "date",
     dict: "dict",
     float: "float",
     int: "int",
@@ -135,6 +158,7 @@ _TYPE_TO_STR = {
 }
 _STR_TO_TYPE = {
     "bool": ConfigBool,
+    "date": ConfigDate,
     "dict": ConfigDict,
     "list": ConfigList,
     "float": float,
