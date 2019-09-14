@@ -32,7 +32,7 @@ def init_flatpak():
     tessdatadir = os.path.join(base_data_dir, "paperwork", "tessdata")
 
     LOGGER.info("Assuming we are running in Flatpak."
-                " Building tessdata directory {} ...".format(tessdatadir))
+                " Building tessdata directory %s ...", tessdatadir)
     util.rm_rf(tessdatadir)
     util.mkdir_p(tessdatadir)
 
@@ -45,7 +45,7 @@ def init_flatpak():
     os.symlink("/app/share/tessdata/tessconfigs",
                os.path.join(tessdatadir, "tessconfigs"))
     for tessdata in tessdata_files:
-        LOGGER.info("{} found".format(tessdata))
+        LOGGER.info("%s found", tessdata)
         os.symlink(tessdata, os.path.join(tessdatadir,
                                           os.path.basename(tessdata)))
     os.environ['TESSDATA_PREFIX'] = tessdatadir
