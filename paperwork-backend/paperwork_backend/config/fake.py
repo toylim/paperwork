@@ -43,7 +43,7 @@ class Plugin(openpaperwork_core.PluginBase):
         pass
 
     def paperwork_config_save(self):
-        raise NotImplementedError()
+        pass
 
     def paperwork_config_build_simple(self, section, token, default):
         return PaperworkSetting(None, default)
