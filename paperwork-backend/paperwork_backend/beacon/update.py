@@ -5,7 +5,10 @@ import os
 import openpaperwork_core
 import openpaperwork_core.promise
 
-from . import common
+from . import (
+    OpenpaperHttp,
+    PeriodicTask
+)
 from .. import _version
 
 
@@ -18,13 +21,13 @@ UPDATE_PATH = "/beacon/latest"
 
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
-        self.periodic = common.PeriodicTask(
+        self.periodic = PeriodicTask(
             "update",
             datetime.timedelta(days=7),
             self.update_check,
             self.update_compare
         )
-        self.http = common.OpenpaperHttp(
+        self.http = OpenpaperHttp(
             "update", "https", "openpaper.work", "/beacon/latest"
         )
 

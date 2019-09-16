@@ -4,7 +4,10 @@ import uuid
 
 import openpaperwork_core
 
-from . import common
+from . import (
+    OpenpaperHttp,
+    PeriodicTask
+)
 from .. import _version
 
 
@@ -17,12 +20,12 @@ POST_STATS_PATH = "/beacon/post_statistics"
 
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
-        self.periodic = common.PeriodicTask(
+        self.periodic = PeriodicTask(
             "statistics",
             datetime.timedelta(days=7),
             self.stats_send
         )
-        self.http = common.OpenpaperHttp(
+        self.http = OpenpaperHttp(
             "statistics", "https", "openpaper.work", "/beacon/post_statistics"
         )
 
