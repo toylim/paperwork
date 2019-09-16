@@ -6,6 +6,7 @@ import json
 import unittest
 import threading
 import time
+import urllib
 
 import openpaperwork_core
 
@@ -32,7 +33,7 @@ class TestStats(unittest.TestCase):
                     data = cgi.parse_multipart(s.rfile, pdict)
                 elif ctype == 'application/x-www-form-urlencoded':
                     length = int(s.headers['Content-Length'])
-                    data = cgi.parse_qs(
+                    data = urllib.parse.parse_qs(
                         s.rfile.read(length), keep_blank_values=1
                     )
                 else:
