@@ -95,7 +95,6 @@ class TestPyocr(unittest.TestCase):
         self.assertNotIn('text', self.model.docs[0])
 
         # but OCR should be run on the other doc
-        print(self.model.docs)
         self.assertNotEqual(len(self.model.docs[1]['page_boxes']), 0)
         self.assertEqual(
             self.model.docs[1]['text'],

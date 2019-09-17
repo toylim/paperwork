@@ -136,7 +136,6 @@ class Plugin(openpaperwork_core.PluginBase):
                     for line_boxes in page_boxes:
                         text += line_boxes.content + "\n"
                 doc['text'] = text
-                print(doc)
         return None
 
     def page_get_img_url(self, doc_url, page_idx):
