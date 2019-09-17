@@ -13,7 +13,7 @@ class Plugin(openpaperwork_base.PluginBase):
             ]
         }
 
-    def stats_get(self, stats):
+    def stats_get(self, out: dict):
         flatpak = os.path.exists("/app")
 
         if os.name == 'nt':
@@ -29,8 +29,8 @@ class Plugin(openpaperwork_base.PluginBase):
             if flatpak:
                 os_name += " (flatpak)"
 
-        stats['os_name'] = os_name
-        stats['platform_architecture'] = str(platform.architecture())
-        stats['platform_processor'] = processor
-        stats['platform_distribution'] = distribution
-        stats['cpu_count'] = os.cpu_count()
+        out['os_name'] = os_name
+        out['platform_architecture'] = str(platform.architecture())
+        out['platform_processor'] = processor
+        out['platform_distribution'] = distribution
+        out['cpu_count'] = os.cpu_count()
