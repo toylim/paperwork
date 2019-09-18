@@ -38,7 +38,9 @@ class SinglePdfImporter(object):
         promise = promise.then(self._basic_import, self.src_file_uri)
         for transaction in self.transactions:
             promise = promise.then(
-                lambda: transaction.add_obj(self.doc_id)
+                openpaperwork_core.promise.ThreadedPromise(
+                    self.core, lambda: transaction.add_obj(self.doc_id)
+                )
             )
 
         return promise

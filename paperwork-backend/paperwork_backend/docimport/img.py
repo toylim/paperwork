@@ -27,7 +27,8 @@ class SingleImgImporter(object):
 
     def _basic_import(self, file_uri):
         (self.doc_id, self.doc_url) = self.core.call_success(
-            "doc_img_import_by_id", file_uri, self.file_import.active_doc_id
+            "doc_img_import_file_by_id",
+            file_uri, self.file_import.active_doc_id
         )
         self.file_import.stats[_("Images")] += 1
         if self.file_import.active_doc_id is None:
@@ -43,11 +44,15 @@ class SingleImgImporter(object):
         for transaction in self.transactions:
             if self.file_import.active_doc_id is None:
                 promise = promise.then(
-                    lambda: transaction.add_obj(self.doc_id)
+                    openpaperwork_core.promise.ThreadedPromise(
+                        self.core, lambda: transaction.add_obj(self.doc_id)
+                    )
                 )
             else:
                 promise = promise.then(
-                    lambda: transaction.upd_obj(self.doc_id)
+                    openpaperwork_core.promise.ThreadPromise(
+                        self.core, lambda: transaction.upd_obj(self.doc_id)
+                    )
                 )
         return promise
 
