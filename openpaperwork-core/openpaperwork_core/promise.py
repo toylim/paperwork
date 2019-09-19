@@ -8,11 +8,15 @@ LOGGER = logging.getLogger(__name__)
 
 
 class BasePromise(object):
-    def __init__(self, core, func=None, args=None, kwargs=None, parent=None):
+    def __init__(
+                self, core, func=None, args=None, kwargs=None, parent=None,
+                hide_catched_exceptions=False
+            ):
         # we allow dummy Promise with not function provided. It allows to
         # write cleaner code in some cases.
         self.core = core
         self.func = func
+        self.hide_catched_exceptions = hide_catched_exceptions
         if args is None:
             self.args = ()
         else:
@@ -56,29 +60,40 @@ class BasePromise(object):
 
     def on_error(self, exc):
         if len(self._catch) > 0:
-            for c in self._catch:
-                self.core.call_one("schedule", c, exc)
+            if self.hide_catched_exceptions:
+                trace = lambda *args, **kwargs: None
+            else:
+                trace = LOGGER.warning
+            catched = "catched"
         elif len(self._then) > 0:
             for t in self._then:
                 t.on_error(exc)
+            return
         else:
-            LOGGER.error(
-                "=== Uncatched exception in promise ===", exc_info=exc
+            trace = LOGGER.error
+            catched = "uncatched"
+
+        trace("=== %s exception in promise ===", catched, exc_info=exc)
+        trace("promise.func=%s", self.func)
+        trace("promise.args=%s", self.args)
+        trace("promise.kwargs=%s", self.kwargs)
+        trace("promise.parent=%s", self.parent)
+        trace(
+            "promise.parent_promise_return=%s", self.parent_promise_return
+        )
+        trace("=== Promise was created by ===")
+        for (idx, stack_el) in enumerate(self.created_by):
+            trace(
+                "%2d: %20s: L%5d: %s",
+                idx, stack_el[0], stack_el[1], stack_el[2]
             )
-            LOGGER.error("promise.func=%s", self.func)
-            LOGGER.error("promise.args=%s", self.args)
-            LOGGER.error("promise.kwargs=%s", self.kwargs)
-            LOGGER.error("promise.parent=%s", self.parent)
-            LOGGER.error(
-                "promise.parent_promise_return=%s", self.parent_promise_return
-            )
-            LOGGER.error("=== Promise was created by ===")
-            for (idx, stack_el) in enumerate(self.created_by):
-                LOGGER.error(
-                    "%2d: %20s: L%5d: %s",
-                    idx, stack_el[0], stack_el[1], stack_el[2]
-                )
-            raise exc
+
+        if len(self._catch) > 0:
+            for c in self._catch:
+                self.core.call_one("schedule", c, exc)
+            return
+
+        raise exc
 
     def schedule(self, *args):
         if self.parent is not None:
@@ -113,7 +128,6 @@ class Promise(BasePromise):
                 self.core.call_one("schedule", t.do, our_r)
         except Exception as exc:
             self.on_error(exc)
-            return
 
 
 class ThreadedPromise(BasePromise):
@@ -147,7 +161,6 @@ class ThreadedPromise(BasePromise):
                 self.core.call_one("schedule", t.do, our_r)
         except Exception as exc:
             self.on_error(exc)
-            return
         finally:
             self.core.call_all("mainloop_unref", self)
 
