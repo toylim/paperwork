@@ -80,9 +80,6 @@ class Plugin(openpaperwork_core.PluginBase):
             doc_id = "{}_{}".format(base_doc_id, doc_idx)
             doc_url = "{}_{}".format(base_doc_url, doc_idx)
 
-        # reserve the doc_id by creating the directory
-        self.core.call_all("fs_mkdir_p", doc_url)
-
         return (doc_id, doc_url)
 
     def stats_get(self, stats):

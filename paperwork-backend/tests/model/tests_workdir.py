@@ -66,7 +66,6 @@ class TestWorkdir(unittest.TestCase):
         )
         self.assertEqual(doc_id, "20190904_1327_10")
         self.assertEqual(doc_url, "file:///some_work_dir/20190904_1327_10")
-        self.assertIn('20190904_1327_10', self.fs.fs['some_work_dir'])
 
     def test_storage_get_new_doc_2(self):
         now = lambda: datetime.datetime(
@@ -90,4 +89,3 @@ class TestWorkdir(unittest.TestCase):
         )
         self.assertEqual(doc_id, "20190904_1327_10_2")
         self.assertEqual(doc_url, "file:///some_work_dir/20190904_1327_10_2")
-        self.assertIn('20190904_1327_10_2', self.fs.fs['some_work_dir'])

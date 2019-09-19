@@ -37,6 +37,9 @@ class TestPdfImport(unittest.TestCase):
                         return "inode/directory"
                     return "application/pdf"
 
+                def fs_mkdir_p(s, dir_uri):
+                    return True
+
                 def fs_copy(s, src_uri, dst_uri):
                     self.copies.append((src_uri, dst_uri))
                     return dst_uri
@@ -139,6 +142,9 @@ class TestRecursivePdfImport(unittest.TestCase):
                     if s.fs_isdir(file_uri):
                         return "inode/directory"
                     return "application/pdf"
+
+                def fs_mkdir_p(self, dir_uri):
+                    return True
 
                 def fs_copy(s, src_uri, dst_uri):
                     self.copies.append((src_uri, dst_uri))

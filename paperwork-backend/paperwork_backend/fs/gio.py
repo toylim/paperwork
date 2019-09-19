@@ -436,6 +436,8 @@ class Plugin(CommonFsPluginBase):
             LOGGER.warning("Gio.Gerror", exc_info=exc)
             raise IOError(str(exc))
 
+        return True
+
     def _recurse(self, parent, dir_included=False):
         """
         Yield all the children (depth first), but not the parent.

@@ -75,6 +75,8 @@ class Plugin(openpaperwork_core.PluginBase):
             # update existing one
             doc_url = self.core.call_success("doc_id_to_url", doc_id)
 
+        self.core.call_success("fs_mkdir_p", doc_url)
+
         nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)
         if nb_pages is None:
             nb_pages = 0

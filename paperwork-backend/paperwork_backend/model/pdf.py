@@ -209,5 +209,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         (doc_id, doc_url) = self.core.call_success("storage_get_new_doc")
         pdf_url = self.core.call_success("fs_join", doc_url, PDF_FILENAME)
+
+        self.core.call_success("fs_mkdir_p", doc_url)
         self.core.call_success("fs_copy", src_file_uri, pdf_url)
         return (doc_id, doc_url)
