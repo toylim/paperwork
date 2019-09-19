@@ -41,8 +41,10 @@ class Plugin(openpaperwork_core.PluginBase):
         self.schedule(self._mainloop_quit_graceful)
 
     def _mainloop_quit_graceful(self):
-        if self.task_count > 1:
-            LOGGER.info("Quit graceful: Remaining tasks: %d", self.task_count)
+        if self.task_count > 1:  # keep in mind this function is in a task too
+            LOGGER.info(
+                "Quit graceful: Remaining tasks: %d", self.task_count - 1
+            )
             self.schedule(self.mainloop_quit_graceful, delay_s=0.2)
             return
 
