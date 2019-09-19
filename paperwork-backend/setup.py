@@ -74,14 +74,12 @@ There is no GUI here. The GUI is
     zip_safe=True,
     install_requires=[
         "distro",
-        "natsort",
         "openpaperwork-core",
         "Pillow",
         "pycountry",
         "pyocr",
         "pypillowfight",
         "simplebayes",
-        "termcolor",  # used by paperwork-chkdeps
         "Whoosh",
         # paperwork-shell chkdeps take care of all the dependencies that can't
         # be handled here. Mainly, dependencies using gobject introspection
