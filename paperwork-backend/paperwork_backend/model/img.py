@@ -63,8 +63,8 @@ class Plugin(openpaperwork_core.PluginBase):
     def doc_img_import_by_id(self, src_file_uri, doc_id=None):
         # make sure the image is valid before making a mess in the work
         # directory
-        with self.core.call_success("fs_open", src_file_uri) as file_desc:
-            img = PIL.Image.open(file_desc)
+        with self.core.call_success("fs_open", src_file_url, 'rb') as fd:
+            img = PIL.Image.open(fd)
             img.load()
             del img
 

@@ -234,7 +234,7 @@ class Plugin(CommonFsPluginBase):
     def _is_file_uri(uri):
         return uri.startswith("file://")
 
-    def fs_open(self, uri, mode='rb'):
+    def fs_open(self, uri, mode='r'):
         if not self._is_file_uri(uri):
             return None
 
