@@ -22,9 +22,12 @@ class FakeFileAdapter(io.RawIOBase):
         super().__init__()
         self.fs_plugin = fs_plugin
         self.path = path
-        self.content = content if 'w' not in mode else ''
+        self.content = content if 'w' not in mode else None
         self.pos = len(self.content) if 'a' in mode else 0
         self.mode = mode
+
+        if self.content is None:
+            self.content = b'' if 'b' in mode else ''
 
     def readable(self):
         return True
@@ -78,9 +81,6 @@ class FakeFileAdapter(io.RawIOBase):
         pass
 
     def truncate(self, size=None):
-        raise NotImplementedError()
-
-    def fileno(self):
         raise NotImplementedError()
 
     def isatty(self):
@@ -143,9 +143,15 @@ class Plugin(CommonFsPluginBase):
         path = self._get_path(url)
 
         f = self.fs
-        for p in path:
+        for p in path[:-1]:
             f = f[p]
-        assert(isinstance(f, str) or isinstance(f, bytes))
+        if path[-1] in f:
+            f = f[path[-1]]
+            assert(isinstance(f, str) or isinstance(f, bytes))
+        elif 'b' in mode:
+            f = b""
+        else:
+            f = ""
         return FakeFileAdapter(self, path, f, mode)
 
     def fs_exists(self, url):
@@ -203,10 +209,12 @@ class Plugin(CommonFsPluginBase):
         path = self._get_path(url)
         f = self.fs
         for p in path[:-1]:
+            if p not in f:
+                f[p] = {}
             f = f[p]
         name = url.split("/")[-1]
         assert(name not in f)
-        f[name] = dict()
+        f[name] = {}
 
     def fs_recurse(self, parent_uri, dir_included=False):
         raise NotImplementedError()
