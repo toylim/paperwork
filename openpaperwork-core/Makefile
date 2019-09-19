@@ -1,4 +1,4 @@
-VERSION_FILE = openpaperwork_core/_version.py
+VERSION_FILE = src/openpaperwork_core/_version.py
 PYTHON ?= python3
 
 build: build_c build_py
@@ -22,7 +22,7 @@ ${VERSION_FILE}:
 doc:
 
 check:
-	flake8 openpaperwork_core
+	flake8 src/openpaperwork_core
 
 test: install
 	python3 -m unittest discover --verbose -s tests

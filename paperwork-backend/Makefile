@@ -22,7 +22,7 @@ ${VERSION_FILE}:
 doc:
 
 check:
-	flake8 paperwork_backend
+	flake8 src/paperwork_backend
 
 test: install
 	python3 -m unittest discover --verbose -s tests
