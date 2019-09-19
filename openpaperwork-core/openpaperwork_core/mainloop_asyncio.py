@@ -35,6 +35,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.loop.run_forever()
         if self.halt_cause is not None:
             LOGGER.error("Main loop stopped because %s", str(self.halt_cause))
+            raise self.halt_cause
 
     def mainloop_quit_graceful(self):
         self.schedule(self._mainloop_quit_graceful)
