@@ -72,11 +72,6 @@ There is no GUI here. The GUI is
     author="Jerome Flesch",
     author_email="jflesch@openpaper.work",
     packages=find_packages(),
-    entry_points={
-        'console_scripts': [
-            'paperwork-shell = paperwork_backend.shell_cmd:main',
-        ],
-    },
     zip_safe=True,
     install_requires=[
         "distro",
