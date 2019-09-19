@@ -42,9 +42,11 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _mainloop_quit_graceful(self):
         if self.task_count > 1:
-            self.schedule(self.mainloop_quit_graceful, delay_s=0.1)
+            LOGGER.info("Quit graceful: Remaining tasks: %d", self.task_count)
+            self.schedule(self.mainloop_quit_graceful, delay_s=0.2)
             return
 
+        LOGGER.info("Quit graceful: Quitting")
         self.mainloop_quit_now()
 
     def mainloop_quit_now(self):
@@ -70,10 +72,17 @@ class Plugin(openpaperwork_core.PluginBase):
                 func(*args, **kwargs)
                 self.task_count -= 1
             except Exception as exc:
-                LOGGER.error("Main loop: Uncatched exception !", exc_info=exc)
                 if self.halt_on_uncatched_exception:
+                    LOGGER.error(
+                        "Main loop: Uncatched exception ! Quitting",
+                        exc_info=exc
+                    )
                     self.halt_cause = exc
                     self.mainloop_quit_now()
+                else:
+                    LOGGER.error(
+                        "Main loop: Uncatched exception !", exc_info=exc
+                    )
 
         coroutine = decorator(args, kwargs)
 
