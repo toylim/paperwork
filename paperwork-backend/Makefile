@@ -1,4 +1,4 @@
-VERSION_FILE = paperwork_backend/_version.py
+VERSION_FILE = src/paperwork_backend/_version.py
 PYTHON ?= python3
 
 build: build_c build_py
