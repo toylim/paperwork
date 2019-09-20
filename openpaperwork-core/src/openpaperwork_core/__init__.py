@@ -203,9 +203,10 @@ class Core(object):
         callbacks = self.callbacks[callback_name]
         if len(callbacks) <= 0:
             LOGGER.warning("No method '%s' found", callback_name)
-            return
+            return 0
         for (priority, plugin, callback) in callbacks:
             callback(*args, **kwargs)
+        return len(callbacks)
 
     def call_one(self, callback_name, *args, **kwargs):
         """
