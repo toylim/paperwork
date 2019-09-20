@@ -214,9 +214,10 @@ class Core(object):
         raises a warning and call one at random.
         Returns the value return by the callback.
 
-        You're advised to use `call_all()` instead whenever possible.
-        This method is only provided as convenience for when you're
-        fairly sure there should be only one plugin with such callback.
+        You're advised to use `call_all()` or `call_success` instead
+        whenever possible. This method is only provided as convenience for
+        when you're fairly sure there should be only one plugin with such
+        callback (example: mainloop plugins).
         """
         callbacks = self.callbacks[callback_name]
         if len(callbacks) <= 0:

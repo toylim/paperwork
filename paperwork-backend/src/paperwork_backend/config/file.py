@@ -17,6 +17,7 @@
 Paperwork configuration management code
 """
 
+import gettext
 import logging
 import os
 
@@ -24,6 +25,16 @@ import openpaperwork_core
 
 
 LOGGER = logging.getLogger(__name__)
+
+_ = gettext.gettext
+
+# Only basic types are handled by shell commands
+CMD_VALUE_TYPES = {
+    'str': str,
+    'int': int,
+    'float': float,
+    'bool': bool,
+}
 
 
 class PaperworkSetting(object):
@@ -58,6 +69,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core = None
         self.settings = {}
         self.values = {}
+        self.application = None
 
     def get_interfaces(self):
         return ['paperwork_config']
@@ -75,7 +87,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.settings = {
             'workdir': PaperworkSetting(
                 core, "Global", "WorkDirectory",
-                lambda: self.core.call_one(
+                lambda: self.core.call_success(
                     "fs_safe", os.path.expanduser("~/papers")
                 )
             ),
@@ -89,8 +101,12 @@ class Plugin(openpaperwork_core.PluginBase):
         }
 
     def paperwork_config_load(self, application, default_plugins=[]):
-        self.core.call_all('config_load', application)
-        self.core.call_all('config_load_plugins', default_plugins)
+        self.application = application
+        self.core.call_all('config_load', 'paperwork')
+        self.core.call_all('config_load_plugins', application, default_plugins)
+
+    def paperwork_get_application_name(self):
+        return self.application
 
     def paperwork_config_save(self):
         self.core.call_all('config_save')
@@ -121,6 +137,8 @@ class Plugin(openpaperwork_core.PluginBase):
         return self.settings[key]
 
     def paperwork_config_get(self, key):
+        if key not in self.settings:
+            return None
         if key not in self.values:
             self.values[key] = self.settings[key].get()
         return self.values[key]
@@ -133,7 +151,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.values[key] = value
 
     def paperwork_add_plugin(self, plugin):
-        self.core.call_all('config_add_plugin', plugin)
+        self.core.call_all('config_add_plugin', self.application, plugin)
 
     def paperwork_remove_plugin(self, plugin):
-        self.core.call_all('config_remove_plugin', plugin)
+        self.core.call_all('config_remove_plugin', self.application, plugin)

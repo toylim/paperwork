@@ -181,6 +181,7 @@ class Plugin(PluginBase):
         self.application_name = None
         self.observers = collections.defaultdict(set)
         self.core = None
+        self.default_plugins = []
 
     def init(self, core):
         self.core = core
@@ -219,12 +220,13 @@ class Plugin(PluginBase):
         with open(config_path, 'w') as fd:
             self.config.write(fd)
 
-    def config_load_plugins(self, default=[]):
+    def config_load_plugins(self, opt_name, default=[]):
         """
         Load and init the plugin list from the configuration.
         """
+        self.default_plugins = default
         modules = self.config_get(
-            "plugins", "modules", ConfigList(None, default)
+            "plugins", opt_name, ConfigList(None, self.default_plugins)
         )
         LOGGER.info(
             "Loading and initializing plugins from configuration: %s",
@@ -234,17 +236,22 @@ class Plugin(PluginBase):
             self.core.load(module)
         self.core.init()
 
-    def config_add_plugin(self, module_name):
-        LOGGER.info("Adding plugin '%s' to configuration", module_name)
-        modules = self.config_get("plugins", "modules", ConfigList())
-        modules.elements.append(module_name)
-        self.config_put("plugins", "modules", modules)
+    def config_list_active_plugins(self, opt_name):
+        return self.config_get(
+            "plugins", opt_name, ConfigList(None, self.default_plugins)
+        )
 
-    def config_remove_plugin(self, module_name):
+    def config_add_plugin(self, opt_name, module_name):
+        LOGGER.info("Adding plugin '%s' to configuration", module_name)
+        modules = self.config_get("plugins", opt_name, ConfigList())
+        modules.elements.append(module_name)
+        self.config_put("plugins", opt_name, modules)
+
+    def config_remove_plugin(self, opt_name, module_name):
         LOGGER.info("Removing plugin '%s' from configuration", module_name)
-        modules = self.config_get("plugins", "modules", ConfigList())
+        modules = self.config_get("plugins", opt_name, ConfigList())
         modules.elements.remove(module_name)
-        self.config_put("plugins", "modules", modules)
+        self.config_put("plugins", opt_name, modules)
 
     def config_put(self, section, key, value):
         """

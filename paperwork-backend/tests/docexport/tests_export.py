@@ -5,7 +5,7 @@ import openpaperwork_core
 import openpaperwork_core.promise
 
 
-class TestConfig(unittest.TestCase):
+class TestExport(unittest.TestCase):
     def setUp(self):
         self.test_doc_pdf_url = (
             "file://{}/test_pdf_doc".format(
