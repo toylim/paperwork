@@ -64,7 +64,7 @@ class Plugin(PluginBase):
     }
     DEFAULT_LOG_LEVEL = 'info'
     DEFAULT_LOG_FILES = 'stderr' + CONFIG_FILE_SEPARATOR + 'temp'
-    DEFAULT_LOG_FORMAT = '%(levelname)-6s %(name)-30s %(message)s\n'
+    DEFAULT_LOG_FORMAT = '[%(levelname)-6s] [%(name)-30s] %(message)s\n'
 
     SPECIAL_FILES = {
         'stderr': lambda: open("/dev/stderr", "w"),
