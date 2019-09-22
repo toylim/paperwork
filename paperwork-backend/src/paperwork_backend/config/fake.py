@@ -64,8 +64,11 @@ class Plugin(openpaperwork_core.PluginBase):
     def paperwork_config_put(self, key, value):
         self._settings[key].put(value)
 
-    def paperwork_add_plugin(self, plugin):
+    def paperwork_config_add_plugin(self, plugin):
         raise NotImplementedError()
 
-    def paperwork_remove_plugin(self, plugin):
+    def paperwork_config_remove_plugin(self, plugin):
+        raise NotImplementedError()
+
+    def paperwork_config_list_plugins(self):
         raise NotImplementedError()
