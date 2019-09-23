@@ -94,7 +94,8 @@ class TestConfig(unittest.TestCase):
         args = parser.parse_args(
             ['config', 'put', 'workdir', 'str', 'file:///pouet/path']
         )
-        r = self.core.call_success("cmd_run", args, interactive=False)
+        self.core.call_all("cmd_set_interactive", False)
+        r = self.core.call_success("cmd_run", args)
         self.assertTrue(r)
         self.assertEqual(
             self.core.get_by_name('openpaperwork_core.config_file').calls,
@@ -109,7 +110,7 @@ class TestConfig(unittest.TestCase):
         )
 
         args = parser.parse_args(['config', 'get', 'workdir'])
-        r = self.core.call_success("cmd_run", args, interactive=False)
+        r = self.core.call_success("cmd_run", args)
         self.assertEqual(r, {"workdir": "file:///pouet/path"})
         self.assertEqual(
             self.core.get_by_name('openpaperwork_core.config_file').calls,
@@ -151,7 +152,8 @@ class TestConfig(unittest.TestCase):
         args = parser.parse_args(
             ['config', 'add_plugin', 'plugin_c']
         )
-        r = self.core.call_success("cmd_run", args, interactive=False)
+        self.core.call_all("cmd_set_interactive", False)
+        r = self.core.call_success("cmd_run", args)
         self.assertTrue(r)
         self.assertEqual(
             self.core.get_by_name('openpaperwork_core.config_file').calls,
@@ -164,7 +166,7 @@ class TestConfig(unittest.TestCase):
         )
 
         args = parser.parse_args(['config', 'list_plugins'])
-        r = self.core.call_success("cmd_run", args, interactive=False)
+        r = self.core.call_success("cmd_run", args)
         self.assertEqual(sorted(r), ['plugin_a', 'plugin_b', 'plugin_c'])
         self.assertEqual(
             self.core.get_by_name('openpaperwork_core.config_file').calls,
@@ -180,7 +182,7 @@ class TestConfig(unittest.TestCase):
         args = parser.parse_args(
             ['config', 'remove_plugin', 'plugin_b']
         )
-        r = self.core.call_success("cmd_run", args, interactive=False)
+        r = self.core.call_success("cmd_run", args)
         self.assertTrue(r)
         self.assertEqual(
             self.core.get_by_name('openpaperwork_core.config_file').calls,
@@ -196,7 +198,7 @@ class TestConfig(unittest.TestCase):
         )
 
         args = parser.parse_args(['config', 'list_plugins'])
-        r = self.core.call_success("cmd_run", args, interactive=False)
+        r = self.core.call_success("cmd_run", args)
         self.assertEqual(sorted(r), ['plugin_a', 'plugin_c'])
         self.assertEqual(
             self.core.get_by_name('openpaperwork_core.config_file').calls,

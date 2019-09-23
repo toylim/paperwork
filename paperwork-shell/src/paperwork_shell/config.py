@@ -33,6 +33,9 @@ CMD_VALUE_TYPES = {
 
 
 class Plugin(openpaperwork_core.PluginBase):
+    def __init__(self):
+        self.interactive = True
+
     def get_interfaces(self):
         return ['shell']
 
@@ -59,7 +62,7 @@ class Plugin(openpaperwork_core.PluginBase):
             'put', help=_("Set a value in Paperwork's configuration")
         )
         put_parser.add_argument('opt_name')
-        put_parser.add_argument('type')
+        put_parser.add_argument('type', help=_("See 'config list_type'"))
         put_parser.add_argument('value')
 
         subparser.add_parser(
@@ -92,75 +95,78 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         remove_plugin_parser.add_argument('plugin_name')
 
-    def cmd_run(self, args, **kwargs):
+    def cmd_set_interactive(self, interactive):
+        self.interactive = interactive
+
+    def cmd_run(self, args):
         if args.command != 'config':
             return None
         if args.subcommand == "get":
-            return self._cmd_get(args.opt_name, **kwargs)
+            return self._cmd_get(args.opt_name)
         elif args.subcommand == "put":
-            return self._cmd_put(args.opt_name, args.type, args.value, **kwargs)
+            return self._cmd_put(args.opt_name, args.type, args.value)
         elif args.subcommand == "show":
-            return self._cmd_show(**kwargs)
+            return self._cmd_show()
         elif args.subcommand == "list_types":
-            return self._cmd_list_types(**kwargs)
+            return self._cmd_list_types()
         elif args.subcommand == "list_plugins":
-            return self._cmd_list_plugins(**kwargs)
+            return self._cmd_list_plugins()
         elif args.subcommand == "add_plugin":
-            return self._cmd_add_plugin(args.plugin_name, **kwargs)
+            return self._cmd_add_plugin(args.plugin_name)
         elif args.subcommand == "remove_plugin":
-            return self._cmd_remove_plugin(args.plugin_name, **kwargs)
+            return self._cmd_remove_plugin(args.plugin_name)
         else:
             return None
 
-    def _cmd_get(self, opt_name, interactive=False):
+    def _cmd_get(self, opt_name):
         v = self.core.call_success("paperwork_config_get", opt_name)
         if v is None:
             LOGGER.warning("No such option '%s'", opt_name)
             return None
-        if interactive:
+        if self.interactive:
             print("{} = {}".format(opt_name, v))
         return {opt_name: v}
 
-    def _cmd_put(self, opt_name, vtype, value, interactive=False):
+    def _cmd_put(self, opt_name, vtype, value):
         value = CMD_VALUE_TYPES[vtype](value)
-        if interactive:
+        if self.interactive:
             print("{} = {}".format(opt_name, value))
         self.core.call_all("paperwork_config_put", opt_name, value)
         self.core.call_all("paperwork_config_save")
         return {opt_name: value}
 
-    def _cmd_show(self, interactive=False):
+    def _cmd_show(self):
         opts = self.core.call_success("paperwork_config_list_options")
         out = {}
         for opt in opts:
             out[opt] = self.core.call_success("paperwork_config_get", opt)
-            if interactive:
+            if self.interactive:
                 print("{} = {}".format(opt, out[opt]))
         return out
 
-    def _cmd_list_types(self, interactive=False):
+    def _cmd_list_types(self):
         r = list(CMD_VALUE_TYPES.keys())
-        if interactive:
+        if self.interactive:
             print(r)
         return r
 
-    def _cmd_add_plugin(self, plugin_name, interactive=False):
+    def _cmd_add_plugin(self, plugin_name):
         self.core.call_all("paperwork_config_add_plugin", plugin_name)
         self.core.call_all("paperwork_config_save")
-        if interactive:
+        if self.interactive:
             print(_("Plugin {} added").format(plugin_name))
         return True
 
-    def _cmd_remove_plugin(self, plugin_name, interactive=False):
+    def _cmd_remove_plugin(self, plugin_name):
         self.core.call_all("paperwork_config_remove_plugin", plugin_name)
         self.core.call_all("paperwork_config_save")
-        if interactive:
+        if self.interactive:
             print(_("Plugin {} removed").format(plugin_name))
         return True
 
-    def _cmd_list_plugins(self, interactive=False):
+    def _cmd_list_plugins(self):
         plugins = self.core.call_success("paperwork_config_list_plugins")
-        if interactive:
+        if self.interactive:
             print("  " + _("Active plugins:"))
             for plugin in plugins:
                 print(plugin)

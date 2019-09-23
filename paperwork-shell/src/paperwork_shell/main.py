@@ -12,9 +12,12 @@ _ = gettext.gettext
 
 DEFAULT_SHELL_PLUGINS = paperwork_backend.DEFAULT_SHELL_PLUGINS + [
     'paperwork_shell.config',
+    'paperwork_shell.sync',
 ]
 
-DEFAULT_CLI_PLUGINS = DEFAULT_SHELL_PLUGINS
+DEFAULT_CLI_PLUGINS = DEFAULT_SHELL_PLUGINS + [
+    'paperwork_shell.progress_display',
+]
 DEFAULT_JSON_PLUGINS = DEFAULT_SHELL_PLUGINS
 
 
@@ -42,7 +45,9 @@ def main_main(in_args, application_name, default_plugins, interactive):
     core.call_all("cmd_complete_argparse", cmd_parser)
     args = parser.parse_args(in_args)
 
-    r = core.call_success("cmd_run", args, interactive=interactive)
+    core.call_all("cmd_set_interactive", interactive)
+
+    r = core.call_success("cmd_run", args)
     if r is None:
         print("Unknown command or argument(s): {}".format(in_args))
         sys.exit(1)
