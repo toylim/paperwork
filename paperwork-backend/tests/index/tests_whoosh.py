@@ -78,7 +78,13 @@ class TestIndex(unittest.TestCase):
             "mainloop_stopper", FakeModuleToStopMainLoop()
         )
 
-        self.core.call_all('sync')
+        promises = []
+        self.core.call_all('sync', promises)
+        promise = promises[0]
+        for p in promises[1:]:
+            promise = promise.then(p)
+        promise.schedule()
+
         self.core.call_one('mainloop')
 
         results = []

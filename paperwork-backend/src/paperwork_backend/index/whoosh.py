@@ -331,7 +331,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 return None
             return results[0]
 
-    def sync(self):
+    def sync(self, promises: list):
         """
         Requests the document list from the document storage plugin
         and updates the index accordingly.
@@ -341,7 +341,8 @@ class Plugin(openpaperwork_core.PluginBase):
         storage_all_docs = []
         self.core.call_all("storage_get_all_docs", storage_all_docs)
         storage_all_docs = [
-            sync.StorageDoc(doc[0], doc[1]) for doc in storage_all_docs
+            sync.StorageDoc(self.core, doc[0], doc[1])
+            for doc in storage_all_docs
         ]
 
         with self.index.searcher() as searcher:
@@ -362,6 +363,6 @@ class Plugin(openpaperwork_core.PluginBase):
             self, abs(len(storage_all_docs) - len(index_all_docs))
         )
 
-        sync.Syncer(
+        promises.append(sync.Syncer(
             self.core, storage_all_docs, index_all_docs, transaction
-        ).run()
+        ).get_promise())

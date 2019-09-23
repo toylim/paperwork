@@ -292,11 +292,12 @@ class Plugin(openpaperwork_core.PluginBase):
     def doc_transaction_start(self, out: list, total_expected=-1):
         out.append(LabelGuesserTransaction(self, guess_labels=True))
 
-    def sync(self):
+    def sync(self, promises: list):
         storage_all_docs = []
         self.core.call_all("storage_get_all_docs", storage_all_docs)
         storage_all_docs = [
-            sync.StorageDoc(doc[0], doc[1]) for doc in storage_all_docs
+            sync.StorageDoc(self.core, doc[0], doc[1])
+            for doc in storage_all_docs
         ]
 
         bayes_all_docs = self.sql.cursor()
@@ -311,6 +312,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
         transaction = LabelGuesserTransaction(self, guess_labels=False)
 
-        sync.Syncer(
-            self.core, storage_all_docs, bayes_all_docs, transaction
-        ).run()
+        promises.append(sync.Syncer(
+            self.core, storage_all_docs, bayes_docs, transaction
+        ).get_promise())

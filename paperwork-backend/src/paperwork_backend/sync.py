@@ -2,6 +2,8 @@ import datetime
 import logging
 import time
 
+import openpaperwork_core.promise
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -55,7 +57,8 @@ def diff_lists(list_old, list_new):
 
 
 class StorageDoc(object):
-    def __init__(self, doc_id, doc_url):
+    def __init__(self, core, doc_id, doc_url):
+        self.core = core
         self.key = doc_id
         self.doc_url = doc_url
 
@@ -87,35 +90,32 @@ class Syncer(object):
         self.start = None
         self.nb_compared = 0
 
+    def get_promise(self):
+        return openpaperwork_core.promise.ThreadedPromise(
+            self.core, self.run
+        )
+
     def run(self):
         self.start = time.time()
         self.diff_generator = diff_lists(self.old_all, self.new_all)
-        self.core.call_one("schedule", self.eval_next_diff)
 
-    def eval_next_diff(self):
-        try:
-            diff = next(self.diff_generator)
-            self.diff.add(diff)
-            self.core.call_one("schedule", self.eval_next_diff)
-        except StopIteration:
-            self.core.call_one("schedule", self.apply_next_diff)
+        while True:
+            try:
+                diff = next(self.diff_generator)
+                self.diff.add(diff)
+            except StopIteration:
+                break
 
-    def apply_next_diff(self):
-        if len(self.diff) <= 0:
-            self.core.call_one("schedule", self.commit)
-            return
+        while len(self.diff) > 0:
+            (action, key) = self.diff.pop()
+            self.nb_compared += 1
+            if action == "add":
+                self.transaction.add_obj(key)
+            elif action == "upd":
+                self.transaction.upd_obj(key)
+            elif action == "del":
+                self.transaction.del_obj(key)
 
-        (action, key) = self.diff.pop()
-        self.nb_compared += 1
-        if action == "add":
-            self.transaction.add_obj(key)
-        elif action == "upd":
-            self.transaction.upd_obj(key)
-        elif action == "del":
-            self.transaction.del_obj(key)
-        self.core.call_one("schedule", self.apply_next_diff)
-
-    def commit(self):
         self.transaction.commit()
         stop = time.time()
         LOGGER.info(

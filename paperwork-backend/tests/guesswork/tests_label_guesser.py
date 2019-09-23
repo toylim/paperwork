@@ -6,7 +6,7 @@ import unittest
 import openpaperwork_core
 
 
-class TestIndex(unittest.TestCase):
+class TestLabelGuesser(unittest.TestCase):
     def setUp(self):
         self.tmp_index_dir = tempfile.mkdtemp(
             prefix="paperwork_backend_labels"
@@ -163,7 +163,13 @@ class TestIndex(unittest.TestCase):
             "mainloop_stopper", FakeModuleToStopMainLoop()
         )
 
-        self.core.call_all('sync')
+        promises = []
+        self.core.call_all('sync', promises)
+        promise = promises[0]
+        for p in promises[1:]:
+            promise = promise.then(p)
+        promise.schedule()
+
         mainloop = True
         self.core.call_one('mainloop')
         mainloop = False

@@ -221,7 +221,7 @@ class Plugin(openpaperwork_core.PluginBase):
         # added documents.
         out.append(OcrTransaction(self))
 
-    def sync(self):
+    def sync(self, promises):
         # Nothing to do in that case, just here to satisfy the interface
         # 'syncable'
         pass
