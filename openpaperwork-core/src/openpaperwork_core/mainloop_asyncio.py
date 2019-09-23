@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import threading
 
 import openpaperwork_core
 
@@ -16,6 +17,7 @@ class Plugin(openpaperwork_core.PluginBase):
         super().__init__()
         self.halt_on_uncatched_exception = True
         self.loop = None
+        self.loop_ident = None
         self.halt_cause = None
         self.task_count = 0
 
@@ -32,10 +34,18 @@ class Plugin(openpaperwork_core.PluginBase):
     def mainloop(self, halt_on_uncatched_exception=True):
         self._check_mainloop_instantiated()
         self.halt_on_uncatched_exception = halt_on_uncatched_exception
-        self.loop.run_forever()
+
+        self.loop_ident = threading.current_thread().ident
+        try:
+            self.loop.run_forever()
+        finally:
+            self.loop_ident = None
         if self.halt_cause is not None:
             LOGGER.error("Main loop stopped because %s", str(self.halt_cause))
             raise self.halt_cause
+
+    def mainloop_get_thread_id(self):
+        return self.loop_ident
 
     def mainloop_quit_graceful(self):
         self.schedule(self._mainloop_quit_graceful)
@@ -76,14 +86,15 @@ class Plugin(openpaperwork_core.PluginBase):
             except Exception as exc:
                 if self.halt_on_uncatched_exception:
                     LOGGER.error(
-                        "Main loop: Uncatched exception ! Quitting",
-                        exc_info=exc
+                        "Main loop: Uncatched exception (%s) ! Quitting",
+                        func, exc_info=exc
                     )
                     self.halt_cause = exc
                     self.mainloop_quit_now()
                 else:
                     LOGGER.error(
-                        "Main loop: Uncatched exception !", exc_info=exc
+                        "Main loop: Uncatched exception (%s) !",
+                        func, exc_info=exc
                     )
 
         coroutine = decorator(args, kwargs)
@@ -92,3 +103,30 @@ class Plugin(openpaperwork_core.PluginBase):
         if delay_s != 0:
             args = (self.loop.call_later, delay_s) + args
         self.loop.call_soon_threadsafe(args[0], *(args[1:]))
+
+    def mainloop_execute(self, func, *args, **kwargs):
+        """
+        Ensure a function is run on the main loop, even if called from
+        a thread
+        """
+        current = threading.current_thread().ident
+
+        # XXX(Jflesch):
+        # if self.loop_ident is None, it means the mainloop hasn't been started
+        # yet --> we cannot run the function on the mainloop anyway, so
+        # we assume we are on the same thread that will later run the main
+        # loop.
+        if self.loop_ident is None or current == self.loop_ident:
+            return func(*args, **kwargs)
+
+        event = threading.Event()
+        out = [None]
+
+        def get_result():
+            out[0] = func(*args, **kwargs)
+            event.set()
+
+        self.schedule(get_result)
+        event.wait()
+
+        return out[0]
