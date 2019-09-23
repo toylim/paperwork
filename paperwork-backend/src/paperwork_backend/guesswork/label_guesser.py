@@ -16,6 +16,7 @@ can be untrained.
 
 import base64
 import datetime
+import gettext
 import hashlib
 import logging
 import os
@@ -36,6 +37,7 @@ from .. import sync
 
 
 LOGGER = logging.getLogger(__name__)
+_ = gettext.gettext
 
 CREATE_TABLES = [
     (
@@ -60,10 +62,11 @@ CREATE_TABLES = [
 
 
 class LabelGuesserTransaction(object):
-    def __init__(self, plugin, guess_labels=False):
+    def __init__(self, plugin, guess_labels=False, total_expected=-1):
         self.plugin = plugin
         self.core = plugin.core
         self.guess_labels = guess_labels
+        self.total_expected = total_expected
 
         # use a dedicated connection to ensure thread-safety regarding
         # SQL transactions
@@ -75,6 +78,7 @@ class LabelGuesserTransaction(object):
         # rollback command --> we track from what documents we have to train
         # and only train once `commit()` has been called.
         self.todo = []
+        self.count = 0
 
     def __enter__(self):
         pass
@@ -82,7 +86,22 @@ class LabelGuesserTransaction(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.cancel()
 
+    def _get_progression(self):
+        if self.total_expected <= 0:
+            return 0
+        return self.count / self.total_expected
+
     def add_obj(self, doc_id):
+        self._add_obj(doc_id)
+        self.count += 1
+
+    def _add_obj(self, doc_id):
+        self.core.call_one(
+            "schedule", self.core.call_all,
+            "on_progress", "label_guesser_update", self._get_progression(),
+            _("Updating label guesser with document %s (add)") % doc_id
+        )
+
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
 
         if self.guess_labels:
@@ -112,6 +131,10 @@ class LabelGuesserTransaction(object):
         })
 
     def del_obj(self, doc_id):
+        self._del_obj(doc_id)
+        self.count += 1
+
+    def _del_obj(self, doc_id):
         self.core.call_one(
             "schedule", self.core.call_all,
             "on_progress", "label_guesser_update", self._get_progression(),
@@ -142,8 +165,9 @@ class LabelGuesserTransaction(object):
         })
 
     def upd_obj(self, doc_id):
-        self.del_obj(doc_id)
-        self.add_obj(doc_id)
+        self._del_obj(doc_id)
+        self._add_obj(doc_id)
+        self.count += 1
 
     def cancel(self):
         self.core.call_all("on_label_guesser_canceled")
@@ -153,6 +177,7 @@ class LabelGuesserTransaction(object):
         self.cursor = None
 
     def commit(self):
+        self.core.call_all("on_label_guesser_commit_start")
         all_labels = set()
         self.core.call_all("labels_get_all", all_labels)
         all_labels = [l[0] for l in all_labels]
@@ -269,7 +294,7 @@ class Plugin(openpaperwork_core.PluginBase):
             data_dir = os.getenv(
                 "XDG_DATA_HOME", os.path.join(self.local_dir, "share")
             )
-            self.bayes_dir = os.path.join(data_dir, "paperwork", "index")
+            self.bayes_dir = os.path.join(data_dir, "paperwork", "bayes")
 
         os.makedirs(self.bayes_dir, mode=0o700, exist_ok=True)
         if os.name == 'nt':  # hide ~/.local on Windows
@@ -328,7 +353,9 @@ class Plugin(openpaperwork_core.PluginBase):
             self.core.call_all("doc_add_label", doc_url, label)
 
     def doc_transaction_start(self, out: list, total_expected=-1):
-        out.append(LabelGuesserTransaction(self, guess_labels=True))
+        out.append(LabelGuesserTransaction(
+            self, guess_labels=True, total_expected=total_expected
+        ))
 
     def sync(self, promises: list):
         storage_all_docs = []
@@ -354,7 +381,9 @@ class Plugin(openpaperwork_core.PluginBase):
             bayes_all_docs
         )
 
-        transaction = LabelGuesserTransaction(self, guess_labels=False)
+        transaction = LabelGuesserTransaction(
+            self, guess_labels=False, total_expected=len(storage_all_docs)
+        )
 
         promises.append(sync.Syncer(
             self.core, storage_all_docs, bayes_docs, transaction

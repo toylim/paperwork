@@ -129,7 +129,8 @@ class WhooshTransaction(object):
     def add_obj(self, doc_id):
         LOGGER.info("Adding document '%s' to index", doc_id)
         self.counts['add'] += 1
-        self.core.call_all(
+        self.core.call_one(
+            "schedule", self.core.call_all,
             "on_progress", "index_update", self._get_progression(),
             _("Indexing new document %s") % doc_id
         )
@@ -138,7 +139,8 @@ class WhooshTransaction(object):
     def del_obj(self, doc_id):
         LOGGER.info("Removing document '%s' from index", doc_id)
         self.counts['del'] += 1
-        self.core.call_all(
+        self.core.call_one(
+            "schedule", self.core.call_all,
             "on_progress", "index_update", self._get_progression(),
             _("Removing document %s from index") % doc_id
         )
@@ -148,7 +150,8 @@ class WhooshTransaction(object):
     def upd_obj(self, doc_id):
         LOGGER.info("Updating document '%s' in index", doc_id)
         self.counts['upd'] += 1
-        self.core.call_all(
+        self.core.call_one(
+            "schedule", self.core.call_all,
             "on_progress", "index_update", self._get_progression(),
             _("Indexing updated document %s") % doc_id
         )
@@ -177,8 +180,14 @@ class WhooshTransaction(object):
         self.core.call_all('on_index_commit')
         self.writer.commit()
         self.writer = None
-        self.core.call_all('on_progress', 'index_update', 1.0, None)
-        self.core.call_all('on_index_updated')
+        self.core.call_one(
+            "schedule", self.core.call_all,
+            'on_progress', 'index_update', 1.0
+        )
+        self.core.call_all(
+            "schedule", self.core.call_all,
+            'on_index_updated'
+        )
 
 
 class Plugin(openpaperwork_core.PluginBase):

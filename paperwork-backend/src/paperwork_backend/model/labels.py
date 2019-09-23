@@ -38,7 +38,10 @@ class LabelLoader(object):
                 self.plugin.all_labels[label[0]] = label[1]
 
     def notify_done(self):
-        self.core.call_all("on_label_loading_end")
+        self.core.call_one(
+            "schedule",
+            self.core.call_all, "on_label_loading_end"
+        )
 
 
 class Plugin(openpaperwork_core.PluginBase):

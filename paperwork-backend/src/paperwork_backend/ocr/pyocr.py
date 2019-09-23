@@ -1,3 +1,4 @@
+import gettext
 import glob
 import locale
 import logging
@@ -11,6 +12,7 @@ import openpaperwork_core
 
 
 LOGGER = logging.getLogger(__name__)
+_ = gettext.gettext
 
 DEFAULT_OCR_LANG = "eng"  # if really we can't guess anything
 
@@ -121,15 +123,23 @@ def get_default_ocr_lang():
 
 
 class OcrTransaction(object):
-    def __init__(self, plugin):
+    def __init__(self, plugin, total_expected=-1):
         self.plugin = plugin
         self.core = plugin.core
+        self.total_expected = total_expected
+        self.count = 0
 
     def __enter__(self):
         pass
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         pass
+
+    def _get_progression(self):
+        if self.total_expected <= 0:
+            return 0
+        total = sum(self.counts.values())
+        return total / self.total_expected
 
     def add_obj(self, doc_id):
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
@@ -145,21 +155,41 @@ class OcrTransaction(object):
                     doc_id, page_idx
                 )
                 continue
+            self.core.call_one(
+                "schedule", self.core.call_all,
+                "on_progress", "ocr", self._get_progression(),
+                _("Running OCR on document %s page %d") % (
+                    doc_id, page_idx
+                )
+            )
+            self.core.call_one(
+                "schedule", self.core.call_all,
+                "on_ocr_start", doc_id, page_idx
+            )
             self.plugin.ocr_page_by_url(doc_url, page_idx)
+            self.core.call_one(
+                "schedule", self.core.call_all,
+                "on_ocr_end", doc_id, page_idx
+            )
+
+        self.count += 1
 
     def upd_obj(self, doc_id):
         # not used here
-        pass
+        self.count += 1
 
     def del_obj(self, doc_id):
         # not used here
-        pass
+        self.count += 1
 
     def cancel(self):
         pass
 
     def commit(self):
-        pass
+        self.core.call_one(
+            "schedule", self.core.call_all,
+            "on_progress", "ocr", 1.0
+        )
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -178,6 +208,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return {
             'interfaces': [
                 ('document_storage', ['paperwork_backend.model.workdir',]),
+                ('mainloop', ['openpaperwork_core.mainloop_asyncio',]),
                 ('paperwork_config', ['paperwork_backend.config.file',]),
                 ('pillow', [
                     'paperwork_backend.pillow.img',
@@ -219,7 +250,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def doc_transaction_start(self, out: list, total_expected=-1):
         # we monitor document transactions just so we can OCR freshly
         # added documents.
-        out.append(OcrTransaction(self))
+        out.append(OcrTransaction(self, total_expected))
 
     def sync(self, promises):
         # Nothing to do in that case, just here to satisfy the interface
