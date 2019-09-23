@@ -57,7 +57,7 @@ class Plugin(openpaperwork_core.PluginBase):
         # Doc id is expected to have this format:
         # YYYYMMDD_hhmm_ss_NN_something_else
         doc_id = doc_id.split("_", 3)
-        doc_id = "_".join(split[:3])
+        doc_id = "_".join(doc_id[:3])
         try:
             return datetime.datetime.strptime(doc_id, self.DOCNAME_FORMAT)
         except ValueError:
