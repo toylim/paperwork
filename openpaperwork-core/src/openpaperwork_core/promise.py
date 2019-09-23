@@ -103,6 +103,23 @@ class BasePromise(object):
                 args = None
             self.core.call_one("schedule", self.do, args)
 
+    def wait(self):
+        assert(
+            # must never be called from main loop.
+            threading.current_thread().ident !=
+            self.core.call_success("mainloop_get_thread_id")
+        )
+        event = threading.Event()
+        out = [None]
+
+        def wakeup(r=None):
+            out[0] = r
+            event.set()
+
+        self.then(event.set)
+        event.wait()
+        return r[0]
+
 
 class Promise(BasePromise):
     def do(self, parent_r=None):
