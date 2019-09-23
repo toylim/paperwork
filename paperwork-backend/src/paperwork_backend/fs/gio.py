@@ -354,7 +354,7 @@ class Plugin(CommonFsPluginBase):
             LOGGER.warning("Gio.Gerror", exc_info=exc)
             raise IOError(str(exc))
 
-    def fs_getmtime(self, url):
+    def fs_get_mtime(self, url):
         if not self._is_file_uri(url):
             return None
 

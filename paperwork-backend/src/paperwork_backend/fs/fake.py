@@ -185,7 +185,7 @@ class Plugin(CommonFsPluginBase):
         assert(isinstance(f, dict))
         f.pop(url.split("/")[-1])
 
-    def fs_getmtime(self, url):
+    def fs_get_mtime(self, url):
         return 0
 
     def fs_getsize(self, url):

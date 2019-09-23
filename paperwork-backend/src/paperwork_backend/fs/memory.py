@@ -163,7 +163,7 @@ class Plugin(CommonFsPluginBase):
 
         return True
 
-    def fs_getmtime(self, url):
+    def fs_get_mtime(self, url):
         mem_id = self.get_memory_id(url)
         if mem_id is None:
             return

@@ -241,13 +241,13 @@ class TestUnlink(unittest.TestCase):
                 os.unlink(file_name)
 
 
-class TestGetmtime(unittest.TestCase):
+class TestGetMtime(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core()
         self.core.load("paperwork_backend.fs.gio")
         self.core.init()
 
-    def test_getmtime(self):
+    def test_get_mtime(self):
         now = time.time()
 
         file_name = None
@@ -258,7 +258,7 @@ class TestGetmtime(unittest.TestCase):
         try:
             safe_file_name = self.core.call_one('fs_safe', file_name)
 
-            mtime = self.core.call_one('fs_getmtime', safe_file_name)
+            mtime = self.core.call_one('fs_get_mtime', safe_file_name)
             self.assertTrue(int(now) <= mtime)
             self.assertTrue(mtime <= now + 2)
         finally:
