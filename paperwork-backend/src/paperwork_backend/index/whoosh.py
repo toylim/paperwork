@@ -293,9 +293,10 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _destroy(self):
         self._close()
-        LOGGER.warning("Destroying the index ...")
-        shutil.rmtree(self.index_dir)
-        LOGGER.warning("Index destroyed")
+        if os.path.exists(self.index_dir):
+            LOGGER.warning("Destroying the index ...")
+            shutil.rmtree(self.index_dir)
+            LOGGER.warning("Index destroyed")
 
     def doc_transaction_start(self, out: list, total_expected=-1):
         out.append(WhooshTransaction(self, total_expected))
