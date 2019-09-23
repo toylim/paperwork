@@ -1,3 +1,4 @@
+import datetime
 import logging
 import time
 
@@ -40,7 +41,10 @@ def diff_lists(list_old, list_new):
 
         if obj_new.key not in list_old:
             yield ('add', obj_new.key)
-        elif obj_new.extra != obj_old.extra:
+            continue
+
+        obj_old = list_old[obj_new.key]
+        if obj_new.extra != obj_old.extra:
             yield ('upd', obj_new.key)
         else:
             yield ('same', obj_new.key)
