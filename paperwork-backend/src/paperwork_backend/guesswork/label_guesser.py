@@ -15,6 +15,7 @@ can be untrained.
 """
 
 import base64
+import datetime
 import hashlib
 import logging
 import os
@@ -345,7 +346,7 @@ class Plugin(openpaperwork_core.PluginBase):
         class BayesDoc(object):
             def __init__(self, result):
                 self.key = result[0]
-                self.extra = result[1]
+                self.extra = datetime.datetime.fromtimestamp(result[1])
 
         bayes_docs = self.core.call_success(
             "mainloop_execute",

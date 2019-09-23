@@ -355,8 +355,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         class IndexDoc(object):
             def __init__(self, index_result):
-                self.key = index_result['docid']
-                self.extra = index_result['last_read']
+                (self.key, self.extra) = index_result
 
         index_all_docs = [IndexDoc(r) for r in index_all_docs]
 
