@@ -29,6 +29,11 @@ import openpaperwork_core.promise
 from .. import sync
 
 
+# Beware that we use Sqlite, but sqlite python module is not thread-safe
+# --> all the calls to sqlite module functions must happen on the main loop,
+# even those in the transactions (which are run in a thread)
+
+
 LOGGER = logging.getLogger(__name__)
 
 CREATE_TABLES = [
@@ -61,7 +66,9 @@ class LabelGuesserTransaction(object):
 
         # use a dedicated connection to ensure thread-safety regarding
         # SQL transactions
-        self.sql = plugin.sql.cursor()
+        self.cursor = self.core.call_success(
+            "mainloop_execute", plugin.sql.cursor
+        )
 
         # Training bayesian filter is quite fast, but there is no
         # rollback command --> we track from what documents we have to train
@@ -104,15 +111,26 @@ class LabelGuesserTransaction(object):
         })
 
     def del_obj(self, doc_id):
-        text = self.sql.execute(
+        self.core.call_one(
+            "schedule", self.core.call_all,
+            "on_progress", "label_guesser_update", self._get_progression(),
+            _("Updating label guesser with document %s (del)") % doc_id
+        )
+        text = self.core.call_success(
+            "mainloop_execute", self.cursor.execute,
             "SELECT text FROM documents WHERE doc_id = ? LIMIT 1", (doc_id,)
         )
-        text = next(text)[0]
+        text = self.core.call_success("mainloop_execute", next, text)[0]
 
-        labels = self.sql.execute(
+        labels = self.core.call_success(
+            "mainloop_execute", self.cursor.execute,
             "SELECT label FROM labels WHERE doc_id = ?", (doc_id,)
         )
-        labels= [l[0] for l in labels]
+        labels = self.core.call_success(
+            "mainloop_execute",
+            lambda ls: [l[0] for l in ls],
+            labels
+        )
 
         LOGGER.info("Will untrain label '%s' from doc '%s'", labels, doc_id)
         self.todo.append({
@@ -127,14 +145,39 @@ class LabelGuesserTransaction(object):
         self.add_obj(doc_id)
 
     def cancel(self):
-        self.sql = None
+        self.core.call_all("on_label_guesser_canceled")
+        self.core.call_one("mainloop_execute", self.cursor.execute, "ROLLBACK")
+        if self.cursor is not None:
+            self.core.call_one("mainloop_execute", self.cursor.close)
+        self.cursor = None
 
     def commit(self):
         all_labels = set()
         self.core.call_all("labels_get_all", all_labels)
         all_labels = [l[0] for l in all_labels]
 
-        self.sql.execute("BEGIN TRANSACTION")
+        self.core.call_one(
+            "mainloop_execute", self.cursor.execute, "BEGIN TRANSACTION"
+        )
+        for todo in self.todo:
+            if todo['action'] == "del":
+                for label in all_labels:
+                    LOGGER.info(
+                        "Untraining label '%s' from doc '%s'",
+                        label, todo['doc_id']
+                    )
+                    baye = self.plugin._get_baye(label)
+                    baye.untrain(
+                        "yes" if label in todo['labels'] else "no",
+                        todo['text']
+                    )
+                # thanks to 'ON DELETE CASCADE', only SQL query is required
+                self.core.call_one(
+                    "mainloop_execute", self.cursor.execute,
+                    "DELETE FROM documents WHERE doc_id = ?",
+                    (todo['doc_id'],)
+                )
+
         for todo in self.todo:
             if todo['action'] == "add":
                 for label in all_labels:
@@ -147,38 +190,32 @@ class LabelGuesserTransaction(object):
                         "yes" if label in todo['labels'] else "no",
                         todo['text']
                     )
-                self.sql.execute(
+                self.core.call_one(
+                    "mainloop_execute", self.cursor.execute,
                     "INSERT INTO documents(doc_id, text, mtime)"
                     " VALUES (?, ?, ?)",
                     (todo['doc_id'], todo['text'], todo['mtime'])
                 )
-                self.sql.executemany(
+                self.core.call_one(
+                    "mainloop_execute", self.cursor.executemany,
                     "INSERT INTO labels (doc_id, label) VALUES (?, ?)",
                     ((todo['doc_id'], label) for label in todo['labels'])
-                )
-            elif todo['action'] == "del":
-                for label in all_labels:
-                    LOGGER.info(
-                        "Untraining label '%s' from doc '%s'",
-                        label, todo['doc_id']
-                    )
-                    baye = self.plugin._get_baye(label)
-                    baye.untrain(
-                        "yes" if label in todo['labels'] else "no",
-                        todo['text']
-                    )
-                # thanks to 'ON DELETE CASCADE', only SQL query is required
-                self.sql.execute(
-                    "DELETE FROM documents WHERE doc_id = ?",
-                    (todo['doc_id'],)
                 )
 
         for label in all_labels:
             baye = self.plugin._get_baye(label)
             baye.cache_persist()
-        self.sql.execute("COMMIT")
-        self.sql = None
-        self.core.call_all('on_label_guesser_updated')
+
+        self.core.call_one("mainloop_execute", self.cursor.execute, "COMMIT")
+        if self.cursor is not None:
+            self.core.call_one("mainloop_execute", self.cursor.close)
+        self.cursor = None
+        self.core.call_one("schedule",
+            self.core.call_all, "on_progress", "label_guesser_update", 1.0
+        )
+        self.core.call_one("schedule",
+            self.core.call_all, 'on_label_guesser_updated'
+        )
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -300,7 +337,9 @@ class Plugin(openpaperwork_core.PluginBase):
             for doc in storage_all_docs
         ]
 
-        bayes_all_docs = self.sql.cursor()
+        bayes_all_docs = self.core.call_success(
+            "mainloop_execute", self.sql.cursor
+        )
         bayes_all_docs.execute("SELECT doc_id, mtime FROM documents")
 
         class BayesDoc(object):
@@ -308,7 +347,11 @@ class Plugin(openpaperwork_core.PluginBase):
                 self.key = result[0]
                 self.extra = result[1]
 
-        bayes_docs = (BayesDoc(r) for r in bayes_all_docs)
+        bayes_docs = self.core.call_success(
+            "mainloop_execute",
+            lambda docs: [BayesDoc(r) for r in docs],
+            bayes_all_docs
+        )
 
         transaction = LabelGuesserTransaction(self, guess_labels=False)
 
