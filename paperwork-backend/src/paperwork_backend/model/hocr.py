@@ -28,7 +28,9 @@ class Plugin(openpaperwork_core.PluginBase):
         }
 
     def doc_get_mtime_by_url(self, out: list, doc_url):
-        doc_nb_pages = self.core.call_success("doc_get_nb_pages", doc_url)
+        doc_nb_pages = self.core.call_success(
+            "doc_get_nb_pages_by_url", doc_url
+        )
 
         page_idx = 0
         for page_idx in range(0, doc_nb_pages):
@@ -38,7 +40,9 @@ class Plugin(openpaperwork_core.PluginBase):
             out.append(self.core.call_success("fs_get_mtime", page_url))
 
     def doc_get_text_by_url(self, out: list, doc_url):
-        doc_nb_pages = self.core.call_success("doc_get_nb_pages", doc_url)
+        doc_nb_pages = self.core.call_success(
+            "doc_get_nb_pages_by_url", doc_url
+        )
 
         # The following is ugly to read, but generating the whole text from
         # word boxes is a CPU-expensive process that happens often when
