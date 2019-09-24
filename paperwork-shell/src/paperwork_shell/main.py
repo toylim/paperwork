@@ -2,6 +2,7 @@ import argparse
 import gettext
 import json
 import sys
+import traceback
 
 import openpaperwork_core
 
@@ -12,6 +13,7 @@ _ = gettext.gettext
 
 DEFAULT_SHELL_PLUGINS = paperwork_backend.DEFAULT_SHELL_PLUGINS + [
     'paperwork_shell.cmd.config',
+    'paperwork_shell.cmd.show',
     'paperwork_shell.cmd.sync',
 ]
 
@@ -67,12 +69,14 @@ def json_main():
             sort_keys=True
         ))
     except Exception as exc:
+        stack = traceback.format_exc().splitlines()
         print(json.dumps(
             {
                 "status": "error",
                 "exception": str(type(exc)),
                 "args": str(exc.args),
                 "reason": str(exc),
+                "stack": stack,
             },
             indent=4,
             separators=(',', ': '),
