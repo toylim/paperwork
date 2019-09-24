@@ -93,7 +93,7 @@ class Plugin(openpaperwork_core.PluginBase):
             if doc['url'] == doc_url:
                 out.update(doc['labels'])
 
-    def doc_add_label(self, doc_url, label, color=None):
+    def doc_add_label_by_url(self, doc_url, label, color=None):
         if color is None:
             all_labels = set()
             self.labels_get_all(all_labels)

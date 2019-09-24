@@ -111,7 +111,7 @@ class TestLabels(unittest.TestCase):
         }
 
         self.core.call_success(
-            "doc_add_label", "file:///some_work_dir/some_doc",
+            "doc_add_label_by_url", "file:///some_work_dir/some_doc",
             label="label C", color="#123412341234"
         )
 

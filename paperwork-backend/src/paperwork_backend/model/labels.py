@@ -86,7 +86,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 # Expected: ('label', '#rrrrggggbbbb')
                 out.add(tuple(x.strip() for x in line.split(",")))
 
-    def doc_add_label(self, doc_url, label, color=None):
+    def doc_add_label_by_url(self, doc_url, label, color=None):
         assert("," not in label)
         assert(color is None or "," not in color)
 
