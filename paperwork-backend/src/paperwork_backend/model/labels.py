@@ -84,7 +84,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 if line == "":
                     continue
                 # Expected: ('label', '#rrrrggggbbbb')
-                out.add(tuple(x.strip() for x in line.split(",")))
+                out.add(tuple(x.strip() for x in line.split(",", 1)))
 
     def doc_add_label_by_url(self, doc_url, label, color=None):
         assert("," not in label)
@@ -110,6 +110,26 @@ class Plugin(openpaperwork_core.PluginBase):
     def labels_get_all(self, out: set):
         for (label, color) in self.all_labels.items():
             out.add((label, color))
+
+    def label_color_to_rgb(self, color):
+        if color[0] == '#':
+            return (
+                int(color[1:3], 16),
+                int(color[5:7], 16),
+                int(color[9:11], 16),
+            )
+        elif color.startswith("rgb("):
+            color = color[len("rgb("):-1]
+            color = color.split(",")
+            return tuple([int(x) for x in color])
+
+    def label_color_from_rgb(self, color):
+        return (
+            "#"
+            + format(color[0], 'x') + "00"
+            + format(color[1], 'x') + "00"
+            + format(color[2], 'x') + "00"
+        )
 
     def sync(self, promises: list):
         self.all_labels = {}
