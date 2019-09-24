@@ -42,18 +42,18 @@ def diff_lists(list_old, list_new):
         examined_new.add(obj_new.key)
 
         if obj_new.key not in list_old:
-            yield ('add', obj_new.key)
+            yield ('added', obj_new.key)
             continue
 
         obj_old = list_old[obj_new.key]
         if obj_new.extra != obj_old.extra:
-            yield ('upd', obj_new.key)
+            yield ('updated', obj_new.key)
         else:
-            yield ('same', obj_new.key)
+            yield ('unchanged', obj_new.key)
 
     for obj_old in list_old.values():
         if obj_old.key not in examined_new:
-            yield ('del', obj_old.key)
+            yield ('deleted', obj_old.key)
 
 
 class StorageDoc(object):
@@ -74,14 +74,14 @@ class StorageDoc(object):
 
 class Syncer(object):
     """
-    Looking for mtime on files takes time.
-    This object allows to look for them progressively. It then calls
-    progressively the methods `add`, `del`, `upd` and `commit`
-    on the object `transaction`.
+    This object allows to compare mtimes progressively. It then calls
+    the methods `add`, `del`, `upd` and `commit` on the given object
+    `transaction`.
     """
 
-    def __init__(self, core, new_all, old_all, transaction):
+    def __init__(self, core, name, new_all, old_all, transaction):
         self.core = core
+        self.name = name
         self.new_all = new_all
         self.old_all = old_all
         self.transaction = transaction
@@ -109,11 +109,16 @@ class Syncer(object):
         while len(self.diff) > 0:
             (action, key) = self.diff.pop()
             self.nb_compared += 1
-            if action == "add":
+            if action != 'unchanged':
+                self.core.call_one(
+                    "schedule", self.core.call_all,
+                    "on_sync", self.name, action, key
+                )
+            if action == "added":
                 self.transaction.add_obj(key)
-            elif action == "upd":
+            elif action == "updated":
                 self.transaction.upd_obj(key)
-            elif action == "del":
+            elif action == "deleted":
                 self.transaction.del_obj(key)
 
         self.transaction.commit()

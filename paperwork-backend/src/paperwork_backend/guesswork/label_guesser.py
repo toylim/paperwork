@@ -360,6 +360,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def sync(self, promises: list):
         storage_all_docs = []
         self.core.call_all("storage_get_all_docs", storage_all_docs)
+        storage_all_docs.sort()
         storage_all_docs = [
             sync.StorageDoc(self.core, doc[0], doc[1])
             for doc in storage_all_docs
@@ -386,5 +387,6 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
         promises.append(sync.Syncer(
-            self.core, storage_all_docs, bayes_docs, transaction
+            self.core, "label_guesser", storage_all_docs, bayes_docs,
+            transaction
         ).get_promise())

@@ -13,6 +13,7 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with Paperwork.  If not, see <http://www.gnu.org/licenses/>.
+import collections
 import gettext
 
 import openpaperwork_core
@@ -23,6 +24,7 @@ _ = gettext.gettext
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         self.interactive = True
+        self.changes = None
 
     def get_interfaces(self):
         return ['shell']
@@ -45,12 +47,20 @@ class Plugin(openpaperwork_core.PluginBase):
     def cmd_complete_argparse(self, parser):
         parser.add_parser('sync')
 
+    def on_sync(self, name, status, key):
+        self.changes[name][status].append(key)
+
     def cmd_run(self, args):
         if args.command != 'sync':
             return None
 
-        print(_("Synchronizing with work directory ..."))
+        if self.interactive:
+            print(_("Synchronizing with work directory ..."))
 
+        self.changes = collections.defaultdict(
+            # we cannot use sets here because sets are not JSON-serializable
+            lambda: collections.defaultdict(list)
+        )
         promises = []
         self.core.call_all("sync", promises)
         promise = promises[0]
@@ -58,10 +68,8 @@ class Plugin(openpaperwork_core.PluginBase):
             promise = promise.then(p)
 
         self.core.call_one("schedule", p.schedule)
-        self.core.call_one(
-            "schedule", self.core.call_all, "mainloop_quit_graceful"
-        )
+        self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
         if self.interactive:
             print(_("All done !"))
-        return True
+        return dict(self.changes)
