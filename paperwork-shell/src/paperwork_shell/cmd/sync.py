@@ -72,4 +72,10 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_one("mainloop")
         if self.interactive:
             print(_("All done !"))
+
+        # ensure order of documents to make testing easier and ensure
+        # behaviour consistency
+        for actions in self.changes.values():
+            for docs in actions.values():
+                docs.sort()
         return dict(self.changes)
