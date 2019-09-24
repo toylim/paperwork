@@ -75,7 +75,7 @@ class TestConfig(unittest.TestCase):
         self.core._load_module(
             "openpaperwork_core.config_file", MockConfigFileModule()
         )
-        self.core.load("paperwork_shell.config")
+        self.core.load("paperwork_shell.cmd.config")
         self.core.init()
 
     def test_get_put(self):

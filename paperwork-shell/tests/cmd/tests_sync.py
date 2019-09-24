@@ -41,7 +41,7 @@ class TestSync(unittest.TestCase):
         core.load("paperwork_backend.model.img")
         core.load("paperwork_backend.model.hocr")
         core.load("paperwork_backend.model.pdf")
-        core.load("paperwork_shell.sync")
+        core.load("paperwork_shell.cmd.sync")
         core.init()
 
         parser = argparse.ArgumentParser()

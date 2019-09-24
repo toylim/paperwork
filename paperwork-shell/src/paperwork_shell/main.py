@@ -11,12 +11,12 @@ import paperwork_backend
 _ = gettext.gettext
 
 DEFAULT_SHELL_PLUGINS = paperwork_backend.DEFAULT_SHELL_PLUGINS + [
-    'paperwork_shell.config',
-    'paperwork_shell.sync',
+    'paperwork_shell.cmd.config',
+    'paperwork_shell.cmd.sync',
 ]
 
 DEFAULT_CLI_PLUGINS = DEFAULT_SHELL_PLUGINS + [
-    'paperwork_shell.progress_display',
+    'paperwork_shell.display.progress',
 ]
 DEFAULT_JSON_PLUGINS = DEFAULT_SHELL_PLUGINS
 
