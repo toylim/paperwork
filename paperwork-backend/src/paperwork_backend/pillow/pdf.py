@@ -11,6 +11,7 @@ import PIL.Image
 
 import openpaperwork_core
 
+# TODO(Jflesch): bad
 import paperwork_backend.model.pdf
 
 
