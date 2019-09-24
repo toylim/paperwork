@@ -42,32 +42,17 @@ class Plugin(openpaperwork_core.PluginBase):
     def cmd_run(self, args):
         pass
 
-    def on_label_loading_start(self, *args, **kwargs):
-        pass
-
-    def on_label_loading_end(self, *args, **kwargs):
-        pass
-
     def on_label_guesser_commit_start(self, *args, **kwargs):
         if self.nb_written > 0:
             sys.stdout.write("\n")
         self.nb_written = 0
         print(_("Updating label guesser database ..."))
 
-    def on_label_guesser_updated(self, *args, **kwargs):
-        pass
-
-    def on_label_guesser_del_end(self, *args, **kwargs):
-        pass
-
     def on_index_commit(self, *args, **kwargs):
         if self.nb_written > 0:
             sys.stdout.write("\n")
         self.nb_written = 0
         print(_("Updating index ..."))
-
-    def on_index_updated(self, *args, **kwargs):
-        pass
 
     def on_progress(self, upd_type, progress, description=None):
         if not self.interactive:

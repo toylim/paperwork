@@ -202,7 +202,13 @@ class Core(object):
         """
         callbacks = self.callbacks[callback_name]
         if len(callbacks) <= 0:
-            LOGGER.warning("No method '%s' found", callback_name)
+            if callback_name.startswith("on_"):
+                # those are 'observer' callback. If nobody is observing,
+                # it's usually fine.
+                l = LOGGER.debug
+            else:
+                l = LOGGER.warning
+            l("No method '%s' found", callback_name)
             return 0
         for (priority, plugin, callback) in callbacks:
             callback(*args, **kwargs)
