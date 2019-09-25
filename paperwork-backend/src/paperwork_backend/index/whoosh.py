@@ -177,7 +177,7 @@ class WhooshTransaction(object):
             self.cancel()
             return
         LOGGER.info("Committing changes to Whoosh index: %s", str(self.counts))
-        self.core.call_all('on_index_commit')
+        self.core.call_all('on_index_commit_start')
         self.writer.commit()
         self.writer = None
         self.core.call_one(
@@ -186,7 +186,7 @@ class WhooshTransaction(object):
         )
         self.core.call_all(
             "schedule", self.core.call_all,
-            'on_index_updated'
+            'on_index_commit_end'
         )
 
 

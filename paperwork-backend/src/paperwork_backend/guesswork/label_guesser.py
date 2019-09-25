@@ -240,7 +240,7 @@ class LabelGuesserTransaction(object):
             self.core.call_all, "on_progress", "label_guesser_update", 1.0
         )
         self.core.call_one("schedule",
-            self.core.call_all, 'on_label_guesser_updated'
+            self.core.call_all, 'on_label_guesser_commit_end'
         )
 
 

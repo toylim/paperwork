@@ -43,13 +43,29 @@ class Plugin(openpaperwork_core.PluginBase):
         if self.nb_written > 0:
             sys.stdout.write("\n")
         self.nb_written = 0
-        print(_("Updating label guesser database ..."))
+        sys.stdout.write(
+            _("Committing changes in label guesser database ...") + " "
+        )
+        sys.stdout.flush()
 
-    def on_index_commit(self, *args, **kwargs):
+    def on_label_guesser_commit_end(self, *args, **kwargs):
         if self.nb_written > 0:
             sys.stdout.write("\n")
         self.nb_written = 0
-        print(_("Updating index ..."))
+        sys.stdout.write(_("Done") + "\n")
+
+    def on_index_commit_start(self, *args, **kwargs):
+        if self.nb_written > 0:
+            sys.stdout.write("\n")
+        self.nb_written = 0
+        sys.stdout.write(_("Committing changes in the index ...") + " ")
+        sys.stdout.flush()
+
+    def on_index_commit_end(self, *args, **kwargs):
+        if self.nb_written > 0:
+            sys.stdout.write("\n")
+        self.nb_written = 0
+        sys.stdout.write(_("Done") + "\n")
 
     def on_progress(self, upd_type, progress, description=None):
         if not self.interactive:
@@ -71,6 +87,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
         term_width = shutil.get_terminal_size((500, 25)).columns
         line = line[:term_width - 1]
-        sys.stdout.write(line + "\r")
+        sys.stdout.write("\033[K" + line + "\r")
 
         self.nb_written += 1
