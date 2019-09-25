@@ -20,9 +20,7 @@ class TextRenderer(object):
         else:
             out = self.parent.get_doc_output(doc_id, doc_url, terminal_size)
 
-        header = _("Document id: %s") % doc_id
-
-        return out + [header, "=" * len(header)]
+        return out
 
     def _get_page_text(self, doc_url, page_nb):
         out = []
@@ -59,8 +57,7 @@ class TextRenderer(object):
             out = self.parent.get_page_output(doc_id, doc_url, terminal_size)
         text = self._get_page_text(doc_url, page_nb)
         text = self._rearrange_lines(text, terminal_size[0])
-        header = _("Page %d") % page_nb
-        return out + [header, "-" * len(header)] + text
+        return out + text
 
     def get_doc_infos(self, doc_id, doc_url):
         out = {}

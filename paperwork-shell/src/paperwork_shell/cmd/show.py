@@ -32,12 +32,6 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return {
             'interfaces': [
-                ('syncable', [
-                    "paperwork_backend.guesswork.label_guesser",
-                    "paperwork_backend.index.whoosh",
-                    "paperwork_backend.model.labels",
-                    "paperwork_backend.ocr.pyocr",
-                ]),
                 ('doc_renderer', [
                     "paperwork_shell.display.docrendering.img",
                     "paperwork_shell.display.docrendering.labels",
@@ -88,6 +82,10 @@ class Plugin(openpaperwork_core.PluginBase):
         renderer = renderers[-1]
 
         if self.interactive:
+            header = _("Document id: %s") % doc_id
+            self.core.call_all("print", header + "\n")
+            self.core.call_all("print", "=" * len(header) + "\n")
+
             lines = renderer.get_doc_output(
                 doc_id, doc_url,
                 shutil.get_terminal_size((80, 25))
@@ -97,6 +95,10 @@ class Plugin(openpaperwork_core.PluginBase):
             self.core.call_all("print", "\n")
 
             for page_nb in pages:
+                self.core.call_all("print", "\n")
+                header = _("Page %d") % page_nb
+                self.core.call_all("print", header + "\n")
+                self.core.call_all("print", ("-" * len(header)) + "\n\n")
                 lines = renderer.get_page_output(
                     doc_id, doc_url, page_nb,
                     shutil.get_terminal_size((80, 25))
