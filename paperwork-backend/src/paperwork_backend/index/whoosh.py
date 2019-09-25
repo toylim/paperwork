@@ -315,7 +315,6 @@ class Plugin(openpaperwork_core.PluginBase):
         query = strip_accents(query)
         if query == "":
             queries = [whoosh.query.Every()]
-            limit = limit
         else:
             queries = []
             for parser in self.query_parsers[search_type]:
@@ -323,11 +322,13 @@ class Plugin(openpaperwork_core.PluginBase):
 
         with self.index.searcher() as searcher:
             for query in queries:
-                results = searcher.search(query, limit=None, sortedby='docid')
+                results = searcher.search(query, limit=limit, sortedby='docid')
                 has_results = False
                 for result in results:
                     has_results = True
                     out.append(result['docid'])
+                    if len(out) >= limit:
+                        return
                 if has_results:
                     return
 
