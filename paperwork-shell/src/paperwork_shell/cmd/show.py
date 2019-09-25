@@ -93,8 +93,8 @@ class Plugin(openpaperwork_core.PluginBase):
                 shutil.get_terminal_size((80, 25))
             )
             for line in lines:
-                sys.stdout.write(line + "\n")
-            sys.stdout.write("\n")
+                self.core.call_all("print", line + "\n")
+            self.core.call_all("print", "\n")
 
             for page_nb in pages:
                 lines = renderer.get_page_output(
@@ -102,8 +102,10 @@ class Plugin(openpaperwork_core.PluginBase):
                     shutil.get_terminal_size((80, 25))
                 )
                 for line in lines:
-                    sys.stdout.write(line + "\n")
-                sys.stdout.write("\n")
+                    self.core.call_all("print", line + "\n")
+                self.core.call_all("print", "\n")
+
+            self.core.call_all("print_flush")
 
         return {
             'document': renderer.get_doc_infos(doc_id, doc_url),

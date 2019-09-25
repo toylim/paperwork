@@ -18,6 +18,7 @@ DEFAULT_SHELL_PLUGINS = paperwork_backend.DEFAULT_SHELL_PLUGINS + [
 ]
 
 DEFAULT_CLI_PLUGINS = DEFAULT_SHELL_PLUGINS + [
+    'paperwork_shell.display.print',
     'paperwork_shell.display.progress',
 ]
 DEFAULT_JSON_PLUGINS = DEFAULT_SHELL_PLUGINS

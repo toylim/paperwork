@@ -27,9 +27,6 @@ class Plugin(openpaperwork_core.PluginBase):
         self.interactive = True
         self.nb_written = 0
 
-    def init(self, core):
-        super().init(core)
-
     def get_interfaces(self):
         return ['shell']
 
