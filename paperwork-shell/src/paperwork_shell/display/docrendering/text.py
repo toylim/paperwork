@@ -4,23 +4,13 @@ import openpaperwork_core
 
 _ = gettext.gettext
 
+PREVIEW_MAX_LINES = 25
+
 
 class TextRenderer(object):
     def __init__(self, core):
         self.core = core
         self.parent = None
-
-    def get_preview_output(self, doc_id, doc_url, terminal_size=(80, 25)):
-        # TODO
-        return []
-
-    def get_doc_output(self, doc_id, doc_url, terminal_size=(80, 25)):
-        if self.parent is None:
-            out = []
-        else:
-            out = self.parent.get_doc_output(doc_id, doc_url, terminal_size)
-
-        return out
 
     def _get_page_text(self, doc_url, page_nb):
         out = []
@@ -47,6 +37,26 @@ class TextRenderer(object):
             if len(new_line.strip()) > 0:
                 out.append(new_line)
         return [l.strip() for l in out]
+
+    def get_preview_output(self, doc_id, doc_url, terminal_size=(80, 25)):
+        if self.parent is None:
+            out = []
+        else:
+            out = self.parent.get_preview_output(
+                doc_id, doc_url, terminal_size
+            )
+        text = self._get_page_text(doc_url, 0)
+        text = self._rearrange_lines(text, terminal_size[0])
+        text = text[:PREVIEW_MAX_LINES]
+        return out + text
+
+    def get_doc_output(self, doc_id, doc_url, terminal_size=(80, 25)):
+        if self.parent is None:
+            out = []
+        else:
+            out = self.parent.get_doc_output(doc_id, doc_url, terminal_size)
+
+        return out
 
     def get_page_output(
                 self, doc_id, doc_url, page_nb, terminal_size=(80, 25)

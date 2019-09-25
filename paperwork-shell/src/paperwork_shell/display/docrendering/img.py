@@ -16,12 +16,40 @@ class FabulousRenderer(object):
         self.parent = None
 
     def get_preview_output(self, doc_id, doc_url, terminal_size=(80, 25)):
-        out = []
+        w_split = int(terminal_size[0] / 3)
+
+        parent = []
         if self.parent is not None:
-            out = self.parent.get_preview_output(
-                doc_id, doc_url, terminal_size
+            parent = self.parent.get_preview_output(
+                doc_id, doc_url,
+                (terminal_size[0] - w_split - 2, terminal_size[1])
             )
-        # TODO
+
+        thumbnail = self.core.call_success("thumbnail_get_doc", doc_url)
+
+        with tempfile.NamedTemporaryFile(
+                    prefix='paperwork-shell', suffix='.jpeg',
+                    delete=False
+                ) as fd:
+            thumbnail.save(fd, format="JPEG")
+            thumbnail_file = fd.name
+        try:
+            thumbnail = fabulous.image.Image(thumbnail_file, width=w_split)
+            thumbnail = thumbnail.reduce(thumbnail.convert())
+            thumbnail = list(thumbnail)
+        finally:
+            os.unlink(thumbnail_file)
+
+        if len(parent) < len(thumbnail):
+            parent.extend([""] * (len(thumbnail) - len(parent)))
+        elif len(parent) > len(thumbnail):
+            parent = parent[:len(thumbnail)]
+
+        out = [
+            (i + " " + t)
+            for (i, t) in zip(thumbnail, parent)
+        ]
+
         return out
 
     def get_doc_output(self, doc_id, doc_url, terminal_size=(80, 25)):
@@ -90,6 +118,9 @@ class Plugin(openpaperwork_core.PluginBase):
                 ("pillow", [
                     'paperwork_backend.pillow.img',
                     'paperwork_backend.pillow.pdf',
+                ]),
+                ("thumbnail", [
+                    'paperwork_backend.model.thumbnail',
                 ]),
             ]
         }

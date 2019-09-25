@@ -13,6 +13,7 @@ _ = gettext.gettext
 
 DEFAULT_SHELL_PLUGINS = paperwork_backend.DEFAULT_SHELL_PLUGINS + [
     'paperwork_shell.cmd.config',
+    'paperwork_shell.cmd.search',
     'paperwork_shell.cmd.show',
     'paperwork_shell.cmd.sync',
 ]
