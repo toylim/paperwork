@@ -138,8 +138,7 @@ class OcrTransaction(object):
     def _get_progression(self):
         if self.total_expected <= 0:
             return 0
-        total = sum(self.counts.values())
-        return total / self.total_expected
+        return self.count / self.total_expected
 
     def add_obj(self, doc_id):
         doc_url = self.core.call_success("doc_id_to_url", doc_id)

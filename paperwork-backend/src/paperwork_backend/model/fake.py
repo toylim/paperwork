@@ -1,6 +1,9 @@
+import datetime
 import time
 
 import openpaperwork_core
+
+from . import workdir
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -167,3 +170,13 @@ class Plugin(openpaperwork_core.PluginBase):
         }
         self.docs.append(doc)
         return (doc['id'], doc['url'])
+
+    def doc_get_date_by_id(self, doc_id):
+        # Doc id is expected to have this format:
+        # YYYYMMDD_hhmm_ss_NN_something_else
+        doc_id = doc_id.split("_", 3)
+        doc_id = "_".join(doc_id[:3])
+        try:
+            return datetime.datetime.strptime(doc_id, workdir.DOCNAME_FORMAT)
+        except ValueError:
+            return None

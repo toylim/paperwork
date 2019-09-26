@@ -336,7 +336,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 for result in results:
                     has_results = True
                     out.append(result['docid'])
-                    if len(out) >= limit:
+                    if limit is not None and len(out) >= limit:
                         return
                 if has_results:
                     return

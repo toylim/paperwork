@@ -6,10 +6,10 @@ import openpaperwork_core
 
 LOGGER = logging.getLogger(__name__)
 
+DOCNAME_FORMAT = "%Y%m%d_%H%M_%S"
+
 
 class Plugin(openpaperwork_core.PluginBase):
-    DOCNAME_FORMAT = "%Y%m%d_%H%M_%S"
-
     def get_interfaces(self):
         return [
             "document_storage",
@@ -59,7 +59,7 @@ class Plugin(openpaperwork_core.PluginBase):
         doc_id = doc_id.split("_", 3)
         doc_id = "_".join(doc_id[:3])
         try:
-            return datetime.datetime.strptime(doc_id, self.DOCNAME_FORMAT)
+            return datetime.datetime.strptime(doc_id, DOCNAME_FORMAT)
         except ValueError:
             return None
 
@@ -68,7 +68,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def storage_get_new_doc(self, now_func=datetime.datetime.now):
         workdir = self.core.call_success('paperwork_config_get', 'workdir')
 
-        base_doc_id = now_func().strftime(self.DOCNAME_FORMAT)
+        base_doc_id = now_func().strftime(DOCNAME_FORMAT)
         base_doc_url = self.core.call_success("fs_join", workdir, base_doc_id)
 
         doc_id = base_doc_id

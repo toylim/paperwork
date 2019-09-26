@@ -155,7 +155,7 @@ class TestLabelGuesser(unittest.TestCase):
 
         class FakeModuleToStopMainLoop(object):
             class Plugin(openpaperwork_core.PluginBase):
-                def on_label_guesser_updated(self):
+                def on_label_guesser_commit_end(self):
                     if mainloop:  # avoid double call at next transaction
                         core.call_all("mainloop_quit_graceful")
 
