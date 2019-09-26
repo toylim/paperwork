@@ -170,14 +170,20 @@ class LabelGuesserTransaction(object):
         self.count += 1
 
     def cancel(self):
-        self.core.call_all("on_label_guesser_canceled")
+        self.core.call_one(
+            "schedule", self.core.call_all,
+            "on_label_guesser_canceled"
+        )
         self.core.call_one("mainloop_execute", self.cursor.execute, "ROLLBACK")
         if self.cursor is not None:
             self.core.call_one("mainloop_execute", self.cursor.close)
         self.cursor = None
 
     def commit(self):
-        self.core.call_all("on_label_guesser_commit_start")
+        self.core.call_all(
+            "schedule", self.core.call_all,
+            "on_label_guesser_commit_start"
+        )
         all_labels = set()
         self.core.call_all("labels_get_all", all_labels)
         all_labels = [l[0] for l in all_labels]
@@ -236,11 +242,13 @@ class LabelGuesserTransaction(object):
         if self.cursor is not None:
             self.core.call_one("mainloop_execute", self.cursor.close)
         self.cursor = None
-        self.core.call_one("schedule",
-            self.core.call_all, "on_progress", "label_guesser_update", 1.0
+        self.core.call_one(
+            "schedule", self.core.call_all,
+            "on_progress", "label_guesser_update", 1.0
         )
-        self.core.call_one("schedule",
-            self.core.call_all, 'on_label_guesser_commit_end'
+        self.core.call_one(
+            "schedule", self.core.call_all,
+            'on_label_guesser_commit_end'
         )
 
 

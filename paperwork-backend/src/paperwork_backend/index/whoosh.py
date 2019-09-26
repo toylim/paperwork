@@ -161,11 +161,17 @@ class WhooshTransaction(object):
         if self.writer is None:
             return
 
-        self.core.call_all('on_index_cancel')
+        self.core.call_one(
+            "schedule", self.core.call_all,
+            'on_index_cancel'
+        )
         LOGGER.info("Canceling transaction")
         self.writer.cancel()
         self.writer = None
-        self.core.call_all("on_index_updated")
+        self.core.call_one(
+            "schedule", self.core.call_all,
+            "on_index_updated"
+        )
 
     def commit(self):
         total = sum(self.counts.values())
@@ -177,7 +183,10 @@ class WhooshTransaction(object):
             self.cancel()
             return
         LOGGER.info("Committing changes to Whoosh index: %s", str(self.counts))
-        self.core.call_all('on_index_commit_start')
+        self.core.call_one(
+            "schedule", self.core.call_all,
+            'on_index_commit_start'
+        )
         self.writer.commit()
         self.writer = None
         self.core.call_one(
