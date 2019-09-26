@@ -169,6 +169,14 @@ class LabelGuesserTransaction(object):
         self._add_obj(doc_id)
         self.count += 1
 
+    def unchanged_obj(self, doc_id):
+        self.count += 1
+        self.core.call_one(
+            "schedule", self.core.call_all,
+            "on_progress", "label_guesser_update", self._get_progression(),
+            _("Document %s unchanged") % doc_id
+        )
+
     def cancel(self):
         self.core.call_one(
             "schedule", self.core.call_all,

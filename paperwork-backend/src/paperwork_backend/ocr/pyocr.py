@@ -153,6 +153,13 @@ class OcrTransaction(object):
                     "Page %s p%d has already some text. No OCR run",
                     doc_id, page_idx
                 )
+                self.core.call_one(
+                    "schedule", self.core.call_all,
+                    "on_progress", "ocr", self._get_progression(),
+                    _("Document %s p%d has already some text. No OCR run") % (
+                        doc_id, page_idx
+                    )
+                )
                 continue
             self.core.call_one(
                 "schedule", self.core.call_all,
@@ -178,6 +185,10 @@ class OcrTransaction(object):
         self.count += 1
 
     def del_obj(self, doc_id):
+        # not used here
+        self.count += 1
+
+    def unchanged_obj(self, doc_id):
         # not used here
         self.count += 1
 

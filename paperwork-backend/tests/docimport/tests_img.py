@@ -23,8 +23,14 @@ class TestImgImport(unittest.TestCase):
             def add_obj(s, doc_id):
                 self.add_docs.append(doc_id)
 
+            def del_obj(s, doc_id):
+                pass
+
             def upd_obj(s, doc_id):
                 self.upd_docs.append(doc_id)
+
+            def unchanged_obj(s, doc_id):
+                pass
 
             def commit(s):
                 self.nb_commits += 1

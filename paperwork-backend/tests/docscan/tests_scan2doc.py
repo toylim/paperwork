@@ -24,6 +24,12 @@ class TestScan2Doc(unittest.TestCase):
                 self.assertIsNone(self.transaction_type)
                 self.transaction_type = "upd"
 
+            def del_obj(s, doc_id):
+                pass
+
+            def unchanged_obj(s, doc_id):
+                pass
+
             def commit(s):
                 self.nb_commits += 1
 

@@ -64,6 +64,7 @@ class WhooshTransaction(object):
             'upd': 0,
             'del': 0,
         }
+        self.unchanged = 0
         self.total_expected = total_expected
 
     def __enter__(self):
@@ -123,7 +124,7 @@ class WhooshTransaction(object):
     def _get_progression(self):
         if self.total_expected <= 0:
             return 0
-        total = sum(self.counts.values())
+        total = sum(self.counts.values()) + self.unchanged
         return total / self.total_expected
 
     def add_obj(self, doc_id):
@@ -156,6 +157,14 @@ class WhooshTransaction(object):
             _("Indexing updated document %s") % doc_id
         )
         self._update_doc_in_index(doc_id)
+
+    def unchanged_obj(self, doc_id):
+        self.unchanged += 1
+        self.core.call_one(
+            "schedule", self.core.call_all,
+            "on_progress", "index_update", self._get_progression(),
+            _("Document unchanged %s") % doc_id
+        )
 
     def cancel(self):
         if self.writer is None:

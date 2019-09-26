@@ -120,6 +120,8 @@ class Syncer(object):
                 self.transaction.upd_obj(key)
             elif action == "deleted":
                 self.transaction.del_obj(key)
+            else:
+                self.transaction.unchanged_obj(key)
 
         self.transaction.commit()
         stop = time.time()
