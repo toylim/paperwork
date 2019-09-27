@@ -340,7 +340,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
         with self.index.searcher() as searcher:
             for query in queries:
-                results = searcher.search(query, limit=limit, sortedby='docid')
+                facet = whoosh.sorting.FieldFacet("docid", reverse=True)
+                results = searcher.search(query, limit=limit, sortedby=facet)
                 has_results = False
                 for result in results:
                     has_results = True
