@@ -328,6 +328,9 @@ class Plugin(CommonFsPluginBase):
         if not self._is_file_uri(url):
             return None
 
+        if self.fs_exists(url) is None:
+            return None
+
         try:
             LOGGER.info("Deleting %s ...", url)
             f = Gio.File.new_for_uri(url)

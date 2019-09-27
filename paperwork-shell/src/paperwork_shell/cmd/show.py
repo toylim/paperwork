@@ -66,22 +66,9 @@ class Plugin(openpaperwork_core.PluginBase):
         if nb_pages is None or nb_pages <= 0:
             return False
 
-        if hasattr(args, 'pages') and args.pages is not None:
-            if "-" in args.pages:
-                pages = args.pages.split("-", 1)
-                pages = range(
-                    int(pages[0]) - 1,
-                    min(int(pages[1]), nb_pages)
-                )
-            else:
-                pages = [
-                    (int(p) - 1) for p in args.pages.split(",")
-                    if p >= 1 and p <= nb_pages
-                ]
-        else:
-            pages = range(
-                0, self.core.call_success("doc_get_nb_pages_by_url", doc_url)
-            )
+        pages = util.parse_page_list(args)
+        if pages is None:
+            pages = range(0, nb_pages)
 
         renderers = []
         self.core.call_all("doc_renderer_get", renderers)
