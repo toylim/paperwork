@@ -53,7 +53,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         p.add_argument(
             'keywords', nargs='*', default=[],
-            help=_("Search keywords (none means all documents")
+            help=_("Search keywords (none means all documents)")
         )
 
     def cmd_run(self, args):
