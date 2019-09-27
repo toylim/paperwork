@@ -19,6 +19,9 @@ import sys
 
 import openpaperwork_core
 
+from . import util
+
+
 _ = gettext.gettext
 
 
@@ -57,7 +60,11 @@ class Plugin(openpaperwork_core.PluginBase):
 
         doc_id = args.doc_id
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
+        if doc_url is None:
+            return False
         nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)
+        if nb_pages is None or nb_pages <= 0:
+            return False
 
         if hasattr(args, 'pages') and args.pages is not None:
             if "-" in args.pages:
@@ -96,7 +103,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
             for page_nb in pages:
                 self.core.call_all("print", "\n")
-                header = _("Page %d") % page_nb
+                header = _("Page %d") % (page_nb + 1)
                 self.core.call_all("print", header + "\n")
                 self.core.call_all("print", ("-" * len(header)) + "\n\n")
                 lines = renderer.get_page_output(
