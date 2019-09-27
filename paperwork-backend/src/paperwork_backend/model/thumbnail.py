@@ -65,10 +65,7 @@ class Plugin(openpaperwork_core.PluginBase):
             LOGGER.debug("Loading thumbnail for %s page %d", doc_url, page_idx)
             return self.core.call_success("url_to_pillow", thumbnail_url)
 
-        LOGGER.info(
-            "Generating thumbnail for %s page %d",
-            doc_url, page_idx
-        )
+        LOGGER.info("Generating thumbnail for %s page %d", doc_url, page_idx)
         start = time.time()
         page = self.core.call_success("url_to_pillow", page_url)
 
@@ -91,7 +88,7 @@ class Plugin(openpaperwork_core.PluginBase):
             "Thumbnail for %s page %d generated in %f seconds",
             doc_url, page_idx, stop - start
         )
-        return page
+        return thumbnail
 
     def thumbnail_get_page_promise(self, doc_url, page_idx):
         return openpaperwork_core.promise.ThreadedPromise(

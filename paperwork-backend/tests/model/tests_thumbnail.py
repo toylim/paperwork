@@ -1,0 +1,38 @@
+import io
+import os
+import unittest
+
+import PIL.Image
+
+import openpaperwork_core
+
+
+class TestImg(unittest.TestCase):
+    def setUp(self):
+        self.core = openpaperwork_core.Core()
+        self.core.load("paperwork_backend.fs.fake")
+        self.core.load("paperwork_backend.model.thumbnail")
+        self.core.init()
+
+        with io.BytesIO() as fd:
+            img = PIL.Image.open(
+                os.path.dirname(os.path.abspath(__file__)) + "/test_img.png"
+            )
+            img = img.convert("RGB")
+            img.save(fd, format="JPEG")
+            fd.seek(0)
+            self.raw_img = fd.read()
+
+        self.fs = self.core.get_by_name("paperwork_backend.fs.fake")
+
+    def test_get_img_urls(self):
+        self.fs.fs = {
+            "some_doc": {
+                "paper.1.jpg": self.raw_img,
+            },
+        }
+
+        thumbnail = self.core.call_success(
+            "thumbnail_get_doc", "file:///some_doc"
+        )
+        self.assertEqual(thumbnail.size, (64, 32))
