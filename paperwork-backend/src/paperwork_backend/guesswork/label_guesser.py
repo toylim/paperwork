@@ -73,6 +73,9 @@ class LabelGuesserTransaction(object):
         self.cursor = self.core.call_success(
             "mainloop_execute", plugin.sql.cursor
         )
+        self.core.call_one(
+            "mainloop_execute", self.cursor.execute, "BEGIN TRANSACTION"
+        )
 
         # Training bayesian filter is quite fast, but there is no
         # rollback command --> we track from what documents we have to train
@@ -92,8 +95,15 @@ class LabelGuesserTransaction(object):
         return self.count / self.total_expected
 
     def add_obj(self, doc_id):
-        self._add_obj(doc_id)
         self.count += 1
+
+        if self.guess_labels:
+            doc_url = self.core.call_success("doc_id_to_url", doc_id)
+            # we have a higher priority than index plugins, so it is a good
+            # time to update the document labels
+            self.plugin._set_guessed_labels(doc_url)
+
+        self._add_obj(doc_id)
 
     def _add_obj(self, doc_id):
         self.core.call_one(
@@ -103,11 +113,6 @@ class LabelGuesserTransaction(object):
         )
 
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
-
-        if self.guess_labels:
-            # we have a higher priority than index plugins, so it is a good
-            # time to update the document labels
-            self.plugin._set_guessed_labels(doc_url)
 
         mtime = []
         self.core.call_all("doc_get_mtime_by_url", mtime, doc_url)
@@ -121,13 +126,26 @@ class LabelGuesserTransaction(object):
         self.core.call_all("doc_get_labels_by_url", labels, doc_url)
         labels = [label[0] for label in labels]
 
+        self.core.call_one(
+            "mainloop_execute", self.cursor.execute,
+            "INSERT OR REPLACE INTO documents(doc_id, text, mtime)"
+            " VALUES (?, ?, ?)",
+            (doc_id, text, mtime)
+        )
+        for label in labels:
+            self.core.call_one(
+                "mainloop_execute", self.cursor.executemany,
+                "INSERT OR REPLACE INTO labels (doc_id, label)"
+                " VALUES (?, ?)",
+                ((doc_id, label) for label in labels)
+            )
+
         LOGGER.info("Will train label '%s' from doc '%s'", labels, doc_id)
         self.todo.append({
             "action": "add",
             "doc_id": doc_id,
             "text": text,
             "labels": labels,
-            "mtime": mtime
         })
 
     def del_obj(self, doc_id):
@@ -154,6 +172,13 @@ class LabelGuesserTransaction(object):
             "mainloop_execute",
             lambda ls: [l[0] for l in ls],
             labels
+        )
+
+        # thanks to 'ON DELETE CASCADE', only SQL query is required
+        self.core.call_one(
+            "mainloop_execute", self.cursor.execute,
+            "DELETE FROM documents WHERE doc_id = ?",
+            (doc_id,)
         )
 
         LOGGER.info("Will untrain label '%s' from doc '%s'", labels, doc_id)
@@ -196,9 +221,6 @@ class LabelGuesserTransaction(object):
         self.core.call_all("labels_get_all", all_labels)
         all_labels = [l[0] for l in all_labels]
 
-        self.core.call_one(
-            "mainloop_execute", self.cursor.execute, "BEGIN TRANSACTION"
-        )
         for todo in self.todo:
             if todo['action'] == "del":
                 for label in all_labels:
@@ -211,12 +233,6 @@ class LabelGuesserTransaction(object):
                         "yes" if label in todo['labels'] else "no",
                         todo['text']
                     )
-                # thanks to 'ON DELETE CASCADE', only SQL query is required
-                self.core.call_one(
-                    "mainloop_execute", self.cursor.execute,
-                    "DELETE FROM documents WHERE doc_id = ?",
-                    (todo['doc_id'],)
-                )
 
         for todo in self.todo:
             if todo['action'] == "add":
@@ -230,17 +246,6 @@ class LabelGuesserTransaction(object):
                         "yes" if label in todo['labels'] else "no",
                         todo['text']
                     )
-                self.core.call_one(
-                    "mainloop_execute", self.cursor.execute,
-                    "INSERT INTO documents(doc_id, text, mtime)"
-                    " VALUES (?, ?, ?)",
-                    (todo['doc_id'], todo['text'], todo['mtime'])
-                )
-                self.core.call_one(
-                    "mainloop_execute", self.cursor.executemany,
-                    "INSERT INTO labels (doc_id, label) VALUES (?, ?)",
-                    ((todo['doc_id'], label) for label in todo['labels'])
-                )
 
         for label in all_labels:
             baye = self.plugin._get_baye(label)
