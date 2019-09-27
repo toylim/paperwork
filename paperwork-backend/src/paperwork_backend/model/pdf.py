@@ -213,3 +213,9 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_success("fs_mkdir_p", doc_url)
         self.core.call_success("fs_copy", src_file_uri, pdf_url)
         return (doc_id, doc_url)
+
+    def page_delete(self, doc_url, page_idx):
+        if self.is_doc(doc_url):
+            LOGGER.warning(
+                "Cannot delete page from PDF file (doc=%s)", doc_url
+            )

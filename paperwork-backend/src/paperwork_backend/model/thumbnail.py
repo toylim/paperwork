@@ -8,6 +8,8 @@ import PIL.Image
 import openpaperwork_core
 import openpaperwork_core.promise
 
+from . import util
+
 
 THUMBNAIL_WIDTH = 64
 THUMBNAIL_HEIGHT = 80
@@ -96,3 +98,7 @@ class Plugin(openpaperwork_core.PluginBase):
             self.core, self.thumbnail_get_page, args=(doc_url, page_idx)
         )
 
+    def page_delete(self, doc_url, page_idx):
+        return util.delete_page_file(
+            self.core, doc_url, PAGE_THUMBNAIL_FILENAME, page_idx
+        )

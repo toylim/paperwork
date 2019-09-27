@@ -5,6 +5,8 @@ import pyocr.builders
 
 import openpaperwork_core
 
+from . import util
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -34,7 +36,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
         page_idx = 0
         for page_idx in range(0, doc_nb_pages):
-            page_url = doc_url + "/" + PAGE_FILENAME_FMT.format(page_idx + 1)
+            page_url = self.core.call_success(
+                "fs_join", doc_url, PAGE_FILENAME_FMT.format(page_idx + 1)
+            )
             if self.core.call_success("fs_exists", page_url) is None:
                 continue
             out.append(self.core.call_success("fs_get_mtime", page_url))
@@ -62,7 +66,9 @@ class Plugin(openpaperwork_core.PluginBase):
             out.append(page_txt_generator(line_boxes))
 
     def page_get_boxes_by_url(self, doc_url, page_idx):
-        page_url = doc_url + "/" + PAGE_FILENAME_FMT.format(page_idx + 1)
+        page_url = self.core.call_success(
+            "fs_join", doc_url, PAGE_FILENAME_FMT.format(page_idx + 1)
+        )
         if self.core.call_success("fs_exists", page_url) is None:
             return None
         with self.core.call_success("fs_open", page_url) as file_desc:
@@ -83,6 +89,13 @@ class Plugin(openpaperwork_core.PluginBase):
                 return boxes
 
     def page_set_boxes_by_url(self, doc_url, page_idx, boxes):
-        page_url = doc_url + "/" + PAGE_FILENAME_FMT.format(page_idx + 1)
+        page_url = self.core.call_success(
+            "fs_join", doc_url, PAGE_FILENAME_FMT.format(page_idx + 1)
+        )
         with self.core.call_success("fs_open", page_url, 'w') as file_desc:
             pyocr.builders.LineBoxBuilder().write_file(file_desc, boxes)
+
+    def page_delete(self, doc_url, page_idx):
+        return util.delete_page_file(
+            self.core, doc_url, PAGE_FILENAME_FMT, page_idx
+        )

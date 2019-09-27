@@ -10,6 +10,8 @@ DOCNAME_FORMAT = "%Y%m%d_%H%M_%S"
 
 
 class Plugin(openpaperwork_core.PluginBase):
+    PRIORITY = -1000  # see page_delete()
+
     def get_interfaces(self):
         return [
             "document_storage",
@@ -91,3 +93,13 @@ class Plugin(openpaperwork_core.PluginBase):
         all_docs = []
         self.storage_get_all_docs(all_docs)
         self.stats['nb_documents'] += len(all_docs)
+
+    def page_delete(self, doc_url, page_idx):
+        nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)
+        if nb_pages is not None and nb_pages > 0:
+            return
+        LOGGER.warning(
+            "All pages of document %s have been removed. Removing document",
+            doc_url
+        )
+        self.core.call_all("fs_rm_rf", doc_url)

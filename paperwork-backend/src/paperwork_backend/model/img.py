@@ -4,6 +4,8 @@ import PIL.Image
 
 import openpaperwork_core
 
+from . import util
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -109,3 +111,8 @@ class Plugin(openpaperwork_core.PluginBase):
         with self.core.call_success("fs_open", page_url, mode='wb') as fd:
             img.save(fd, format=PAGE_FILE_FORMAT, quality=PAGE_QUALITY)
         return (doc_id, doc_url)
+
+    def page_delete(self, doc_url, page_idx):
+        return util.delete_page_file(
+            self.core, doc_url, PAGE_FILENAME_FMT, page_idx
+        )

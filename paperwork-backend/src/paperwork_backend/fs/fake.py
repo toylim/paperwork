@@ -172,7 +172,18 @@ class Plugin(CommonFsPluginBase):
         return [url + "/" + k for k in f.keys()]
 
     def fs_rename(self, old_url, new_url):
-        raise NotImplementedError()
+        old_path = self._get_path(old_url)
+        old_dir = self.fs
+        for p in old_path[:-1]:
+            old_dir = old_dir[p]
+
+        new_path = self._get_path(new_url)
+        new_dir = self.fs
+        for p in new_path[:-1]:
+            new_dir = new_dir[p]
+
+        old_file = old_dir.pop(old_path[-1])
+        new_dir[new_path[-1]] = old_file
 
     def fs_unlink(self, url):
         self.fs_rm_rf(url)

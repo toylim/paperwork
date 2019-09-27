@@ -180,3 +180,12 @@ class Plugin(openpaperwork_core.PluginBase):
             return datetime.datetime.strptime(doc_id, workdir.DOCNAME_FORMAT)
         except ValueError:
             return None
+
+    def storage_delete_doc_id(self, doc_id):
+        for (idx, doc) in enumerate(self.docs[:]):
+            if doc['id'] == doc_id:
+                self.docs.pop(idx)
+                return True
+
+    def page_delete(self, doc_url, page_idx):
+        raise NotImplementedError()
