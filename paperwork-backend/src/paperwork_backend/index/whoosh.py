@@ -184,20 +184,23 @@ class WhooshTransaction(object):
 
     def commit(self):
         total = sum(self.counts.values())
+        self.core.call_one(
+            "schedule", self.core.call_all,
+            'on_index_commit_start'
+        )
         if total == 0:
             LOGGER.info(
                 "commit() called but nothing to commit."
                 " Cancelling transaction"
             )
-            self.cancel()
-            return
-        LOGGER.info("Committing changes to Whoosh index: %s", str(self.counts))
-        self.core.call_one(
-            "schedule", self.core.call_all,
-            'on_index_commit_start'
-        )
-        self.writer.commit()
-        self.writer = None
+            self.writer.cancel()
+            self.writer = None
+        else:
+            LOGGER.info(
+                "Committing changes to Whoosh index: %s", str(self.counts)
+            )
+            self.writer.commit()
+            self.writer = None
         self.core.call_one(
             "schedule", self.core.call_all,
             'on_progress', 'index_update', 1.0

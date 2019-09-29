@@ -71,7 +71,6 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
         if self.interactive:
-            print()
             print(_("All done !"))
 
         # ensure order of documents to make testing easier and ensure
