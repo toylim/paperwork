@@ -94,6 +94,7 @@ class Plugin(openpaperwork_core.PluginBase):
             "doc_type",
             "page_boxes",
             "page_img",
+            'pages',
         ]
 
     def get_deps(self):
@@ -248,8 +249,18 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_success("fs_copy", src_file_uri, pdf_url)
         return (doc_id, doc_url)
 
-    def page_delete(self, doc_url, page_idx):
+    def page_delete_by_url(self, doc_url, page_idx):
         if self.is_doc(doc_url):
             LOGGER.warning(
                 "Cannot delete page from PDF file (doc=%s)", doc_url
+            )
+
+    def page_move_by_url(
+                self,
+                source_doc_url, source_page_idx,
+                dest_doc_url, dest_page_idx
+            ):
+        if self.is_doc(source_doc_url):
+            LOGGER.warning(
+                "Cannot move page from PDF file (doc=%s)", doc_url
             )

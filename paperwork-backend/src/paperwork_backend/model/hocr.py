@@ -20,6 +20,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return [
             "doc_text",
             "page_boxes",
+            'pages',
         ]
 
     def get_deps(self):
@@ -95,7 +96,18 @@ class Plugin(openpaperwork_core.PluginBase):
         with self.core.call_success("fs_open", page_url, 'w') as file_desc:
             pyocr.builders.LineBoxBuilder().write_file(file_desc, boxes)
 
-    def page_delete(self, doc_url, page_idx):
+    def page_delete_by_url(self, doc_url, page_idx):
         return util.delete_page_file(
-            self.core, doc_url, PAGE_FILENAME_FMT, page_idx
+            self.core, PAGE_FILENAME_FMT, doc_url, page_idx
+        )
+
+    def page_move_by_url(
+                self,
+                source_doc_url, source_page_idx,
+                dest_doc_url, dest_page_idx
+            ):
+        return util.move_page_file(
+            self.core, PAGE_FILENAME_FMT,
+            source_doc_url, source_page_idx,
+            dest_doc_url, dest_page_idx
         )
