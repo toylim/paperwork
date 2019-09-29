@@ -36,6 +36,11 @@ class Plugin(openpaperwork_core.PluginBase):
         return {
             'interfaces': [
                 ('document_storage', ['paperwork_backend.model.workdir',]),
+                ('pages', [
+                    'paperwork_backend.model.hocr',
+                    'paperwork_backend.model.img',
+                    'paperwork_backend.model.thumbnail',
+                ])
             ],
         }
 
