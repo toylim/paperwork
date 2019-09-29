@@ -119,3 +119,6 @@ class Plugin(openpaperwork_core.PluginBase):
             source_doc_url
         )
         self.core.call_all("fs_rm_rf", source_doc_url)
+
+    def doc_rename_by_url(self, src_doc_url, dst_doc_url):
+        self.core.call_all("fs_rename", src_doc_url, dst_doc_url)

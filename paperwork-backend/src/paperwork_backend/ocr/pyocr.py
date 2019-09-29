@@ -168,6 +168,8 @@ class OcrTransaction(object):
             current_boxes = self.core.call_success(
                 "page_get_boxes_by_url", doc_url, page_idx
             )
+            if current_boxes is not None:
+                current_boxes = list(current_boxes)
             if current_boxes is not None and len(current_boxes) > 0:
                 # there is already some text on this page
                 LOGGER.info(
