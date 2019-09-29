@@ -368,6 +368,12 @@ class Plugin(openpaperwork_core.PluginBase):
                 yield label_name
 
     def _set_guessed_labels(self, doc_url):
+        has_labels = (
+            self.core.call_success("doc_has_labels_by_url", doc_url)
+            is not None
+        )
+        if has_labels:
+            return
         labels = self._guess(doc_url)
         labels = list(labels)
         for label in labels:
