@@ -3,9 +3,6 @@ import logging
 import os
 import urllib
 
-from gi.repository import Gio
-from gi.repository import GLib
-
 from . import CommonFsPluginBase
 
 """

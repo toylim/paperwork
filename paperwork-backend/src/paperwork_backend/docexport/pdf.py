@@ -3,15 +3,40 @@ import gettext
 import io
 import logging
 
-import cairo
-import gi
-gi.require_version('Pango', '1.0')
-gi.require_version('PangoCairo', '1.0')
-gi.require_version('Poppler', '0.18')
-from gi.repository import Gio
-from gi.repository import Pango
-from gi.repository import PangoCairo
-from gi.repository import Poppler
+try:
+    import cairo
+    CAIRO_AVAILABLE = True
+except ImportError:
+    CAIRO_AVAILABLE = False
+
+try:
+    import gi
+    gi.require_version('Pango', '1.0')
+    gi.require_version('PangoCairo', '1.0')
+    gi.require_version('Poppler', '0.18')
+    GI_AVAILABLE = True
+except ImportError:
+    GI_AVAILABLE = False
+
+try:
+    from gi.repository import Gio
+    GLIB_AVAILABLE = True
+except ImportError:
+    GLIB_AVAILABLE = False
+
+try:
+    from gi.repository import Pango
+    from gi.repository import PangoCairo
+    PANGO_AVAILABLE = True
+except ImportError:
+    PANGO_AVAILABLE = False
+
+try:
+    from gi.repository import Poppler
+    POPPLER_AVAILABLE = True
+except ImportError:
+    POPPLER_AVAILABLE = False
+
 import PIL
 import PIL.Image
 
@@ -301,3 +326,35 @@ class Plugin(AbstractExportPipePlugin):
             PdfDocUrlToPdfUrlExportPipe(core),
             PagesToPdfUrlExportPipe(core),
         ]
+
+    def get_interfaces(self):
+        return super().get_interfaces() + ['chkdeps']
+
+    def chkdeps(self, out: dict):
+        if not CAIRO_AVAILABLE:
+            out['cairo']['debian'] = 'python3-gi-cairo'
+            out['cairo']['fedora'] = 'python3-pycairo'
+            out['cairo']['gentoo'] = 'dev-python/pycairo'  # Python 3 ?
+            out['cairo']['linuxmint'] = 'python-gi-cairo'  # Python 3 ?
+            out['cairo']['ubuntu'] = 'python3-gi-cairo'
+            out['cairo']['suse'] = 'python-cairo'  # Python 3 ?
+        if not GI_AVAILABLE:
+            out['gi']['debian'] = 'python3-gi'
+            out['gi']['fedora'] = 'python3-gobject-base'
+            out['gi']['gentoo'] = 'dev-python/pygobject'  # Python 3 ?
+            out['gi']['linuxmint'] = 'python3-gi'
+            out['gi']['ubuntu'] = 'python3-gi'
+            out['gi']['suse'] = 'python-gobject'  # Python 3 ?
+        if not GLIB_AVAILABLE:
+            out['gi.repository.GLib']['debian'] = 'gir1.2-glib-2.0'
+            out['gi.repository.GLib']['ubuntu'] = 'gir1.2-glib-2.0'
+        if not PANGO_AVAILABLE:
+            out['gi.repository.Pango']['debian'] = 'gir1.2-pango-1.0'
+            out['gi.repository.Pango']['ubuntu'] = 'gir1.2-pango-1.0'
+        if not POPPLER_AVAILABLE:
+            out['gi.repository.Poppler']['debian'] = 'gir1.2-poppler-0.18'
+            out['gi.repository.Poppler']['fedora'] = 'poppler-glib'
+            out['gi.repository.Poppler']['gentoo'] = 'app-text/poppler'
+            out['gi.repository.Poppler']['linuxmint'] = 'gir1.2-poppler-0.18'
+            out['gi.repository.Poppler']['ubuntu'] = 'gir1.2-poppler-0.18'
+            out['gi.repository.Poppler']['suse'] = 'typelib-1_0-Poppler-0_18'

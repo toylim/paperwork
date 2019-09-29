@@ -2,10 +2,24 @@ import hashlib
 import itertools
 import logging
 
-import gi
-gi.require_version('Poppler', '0.18')
-from gi.repository import Gio
-from gi.repository import Poppler
+try:
+    import gi
+    gi.require_version('Poppler', '0.18')
+    GI_AVAILABLE = True
+except ImportError:
+    GI_AVAILABLE = False
+
+try:
+    from gi.repository import Gio
+    GLIB_AVAILABLE = True
+except ImportError:
+    GLIB_AVAILABLE = False
+
+try:
+    from gi.repository import Poppler
+    POPPLER_AVAILABLE = True
+except ImportError:
+    POPPLER_AVAILABLE = False
 
 import openpaperwork_core
 
@@ -72,6 +86,7 @@ class PdfLineBox(object):
 class Plugin(openpaperwork_core.PluginBase):
     def get_interfaces(self):
         return [
+            "chkdeps",
             "doc_hash",
             "doc_pdf_import",
             "doc_pdf_url",
@@ -87,6 +102,25 @@ class Plugin(openpaperwork_core.PluginBase):
                 ('fs', ['paperwork_backend.fs.gio']),
             ]
         }
+
+    def chkdeps(self, out: dict):
+        if not GI_AVAILABLE:
+            out['gi']['debian'] = 'python3-gi'
+            out['gi']['fedora'] = 'python3-gobject-base'
+            out['gi']['gentoo'] = 'dev-python/pygobject'  # Python 3 ?
+            out['gi']['linuxmint'] = 'python3-gi'
+            out['gi']['ubuntu'] = 'python3-gi'
+            out['gi']['suse'] = 'python-gobject'  # Python 3 ?
+        if not GLIB_AVAILABLE:
+            out['gi.repository.GLib']['debian'] = 'gir1.2-glib-2.0'
+            out['gi.repository.GLib']['ubuntu'] = 'gir1.2-glib-2.0'
+        if not POPPLER_AVAILABLE:
+            out['gi.repository.Poppler']['debian'] = 'gir1.2-poppler-0.18'
+            out['gi.repository.Poppler']['fedora'] = 'poppler-glib'
+            out['gi.repository.Poppler']['gentoo'] = 'app-text/poppler'
+            out['gi.repository.Poppler']['linuxmint'] = 'gir1.2-poppler-0.18'
+            out['gi.repository.Poppler']['ubuntu'] = 'gir1.2-poppler-0.18'
+            out['gi.repository.Poppler']['suse'] = 'typelib-1_0-Poppler-0_18'
 
     def _get_pdf_url(self, doc_url):
         pdf_url = doc_url + "/" + PDF_FILENAME

@@ -105,21 +105,42 @@ def find_language(lang_str=None, allow_none=False):
     return find_language(DEFAULT_OCR_LANG)
 
 
-def get_default_ocr_lang():
+def pycountry_to_tesseract(ocr_lang, possibles=None):
+    attrs = [
+        'iso639_3_code',
+        'terminology',
+        'alpha_3',
+    ]
+    for attr in attrs:
+        if not hasattr(ocr_lang, attr):
+            continue
+        if possibles is None or getattr(ocr_lang, attr) in possibles:
+            return getattr(ocr_lang, attr)
+    return None
+
+
+def get_default_ocr_lang(allow_none=False):
     # Try to guess based on the system locale what would be
     # the best OCR language
 
     ocr_tools = pyocr.get_available_tools()
     if len(ocr_tools) == 0:
-        return DEFAULT_OCR_LANG
+        if allow_none:
+            return None
+        else:
+            return DEFAULT_OCR_LANG
     ocr_langs = ocr_tools[0].get_available_languages()
 
-    lang = find_language()
-    if hasattr(lang, 'iso639_3_code') and lang.iso639_3_code in ocr_langs:
-        return lang.iso639_3_code
-    if hasattr(lang, 'terminology') and lang.terminology in ocr_langs:
-        return lang.terminology
-    return DEFAULT_OCR_LANG
+    lang = find_language(allow_none=True)
+    if lang is None:
+        return None
+    lang = pycountry_to_tesseract(lang, ocr_langs)
+    if lang is not None:
+        return lang
+    if allow_none:
+        return None
+    else:
+        return DEFAULT_OCR_LANG
 
 
 class OcrTransaction(object):
@@ -210,6 +231,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_interfaces(self):
         return [
+            "chkdeps",
             "ocr",
             "syncable",
         ]
@@ -239,6 +261,29 @@ class Plugin(openpaperwork_core.PluginBase):
             "OCR", "Lang", get_default_ocr_lang
         )
         self.core.call_all("paperwork_config_register", "ocr_lang", ocr_lang)
+
+    def chkdeps(self, out: dict):
+        ocr_tools = pyocr.get_available_tools()
+        if len(ocr_tools) <= 0:
+            out['tesseract']['debian'] = 'tesseract-ocr'
+            out['tesseract']['fedora'] = 'tesseract'
+            out['tesseract']['gentoo'] = 'app-text/tesseract'
+            out['tesseract']['linuxmint'] = 'tesseract-ocr'
+            out['tesseract']['ubuntu'] = 'tesseract-ocr'
+        ocr_lang = get_default_ocr_lang(allow_none=True)
+        if ocr_lang is None:
+            ocr_lang = find_language(allow_none=True)
+            if ocr_lang is None:
+                ocr_lang = "UNKNOWN"
+            else:
+                ocr_lang = pycountry_to_tesseract(ocr_lang)
+                if ocr_lang is None:
+                    ocr_lang = "<PYCOUNTRY ERROR>"
+            name = 'tesseract-data-{}'.format(ocr_lang)
+            out[name]['debian'] = 'tesseract-ocr-{}'.format(ocr_lang)
+            out[name]['fedora'] = 'tesseract-langpack-{}'.format(ocr_lang)
+            out[name]['linuxmint'] = 'tesseract-ocr-{}'.format(ocr_lang)
+            out[name]['ubuntu'] = 'tesseract-ocr-{}'.format(ocr_lang)
 
     def ocr_page_by_url(self, doc_url, page_idx):
         page_img_url = self.core.call_success(

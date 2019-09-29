@@ -5,8 +5,12 @@ import os
 import tempfile
 import urllib
 
-from gi.repository import Gio
-from gi.repository import GLib
+try:
+    from gi.repository import Gio
+    from gi.repository import GLib
+    GLIB_AVAILABLE = True
+except ImportError:
+    GLIB_AVAILABLE = False
 
 from . import CommonFsPluginBase
 
@@ -229,6 +233,14 @@ class GioUTF8FileAdapter(io.RawIOBase):
 class Plugin(CommonFsPluginBase):
     def __init__(self):
         super().__init__()
+
+    def get_interfaces(self):
+        return super().get_interfaces() + ['chkdeps']
+
+    def chkdeps(self, out: dict):
+        if not GLIB_AVAILABLE:
+            out['gi.repository.GLib']['debian'] = 'gir1.2-glib-2.0'
+            out['gi.repository.GLib']['ubuntu'] = 'gir1.2-glib-2.0'
 
     @staticmethod
     def _is_file_uri(uri):

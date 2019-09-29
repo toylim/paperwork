@@ -12,6 +12,7 @@ import paperwork_backend
 _ = gettext.gettext
 
 DEFAULT_SHELL_PLUGINS = paperwork_backend.DEFAULT_SHELL_PLUGINS + [
+    'paperwork_shell.cmd.chkdeps',
     'paperwork_shell.cmd.config',
     'paperwork_shell.cmd.delete',
     'paperwork_shell.cmd.search',

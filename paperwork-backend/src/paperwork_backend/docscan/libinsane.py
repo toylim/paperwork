@@ -1,10 +1,20 @@
 import itertools
 import logging
 
-import gi
-gi.require_version('Libinsane', '1.0')
-from gi.repository import GObject
-from gi.repository import Libinsane
+try:
+    import gi
+    gi.require_version('Libinsane', '1.0')
+    from gi.repository import GObject
+    GI_AVAILABLE = True
+except ImportError:
+    GI_AVAILABLE = False
+
+try:
+    from gi.repository import Libinsane
+    LIBINSANE_AVAILABLE = True
+except ImportError:
+    LIBINSANE_AVAILABLE = False
+
 import PIL
 import PIL.Image
 
@@ -291,7 +301,10 @@ class Plugin(openpaperwork_core.PluginBase):
         LOGGER.info("Libinsane %s initialized", self.libinsane.get_version())
 
     def get_interfaces(self):
-        return ["scan"]
+        return [
+            "chkdeps",
+            "scan"
+        ]
 
     def get_deps(self):
         return {
@@ -322,6 +335,17 @@ class Plugin(openpaperwork_core.PluginBase):
             self.core.call_all(
                 "paperwork_config_register", k, setting
             )
+
+    def chkdeps(self, out: dict):
+        if not GI_AVAILABLE:
+            out['gi']['debian'] = 'python3-gi'
+            out['gi']['fedora'] = 'python3-gobject-base'
+            out['gi']['gentoo'] = 'dev-python/pygobject'  # Python 3 ?
+            out['gi']['linuxmint'] = 'python3-gi'
+            out['gi']['ubuntu'] = 'python3-gi'
+            out['gi']['suse'] = 'python-gobject'  # Python 3 ?
+        if not LIBINSANE_AVAILABLE:
+            out['gi.repository.Libinsane'] = {}
 
     def scan_list_scanners_promise(self):
         def list_scanners():
