@@ -138,10 +138,10 @@ class Core(object):
                             dep_interface, len(self.interfaces[dep_interface])
                         )
                         continue
-                    LOGGER.info(
-                        "Loading default plugins for interface '%s'"
-                        " (%d plugins)",
-                        dep_interface, len(dep_defaults)
+                    LOGGER.warning(
+                        "Loading plugins %s to satisfy dependency."
+                        " Required by '%s' for interface '%s'",
+                        dep_defaults, type(plugin), dep_interface
                     )
                     for dep_default in dep_defaults:
                         to_examine.append(self.load(dep_default))
