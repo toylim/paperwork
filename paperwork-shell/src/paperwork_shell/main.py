@@ -24,6 +24,9 @@ DEFAULT_SHELL_PLUGINS = paperwork_backend.DEFAULT_SHELL_PLUGINS + [
 ]
 
 DEFAULT_CLI_PLUGINS = DEFAULT_SHELL_PLUGINS + [
+    "paperwork_shell.display.docrendering.img",
+    "paperwork_shell.display.docrendering.labels",
+    "paperwork_shell.display.docrendering.text",
     'paperwork_shell.display.print',
     'paperwork_shell.display.progress',
 ]
@@ -42,7 +45,8 @@ def main_main(in_args, application_name, default_plugins, interactive):
     core.call_all("set_log_output", sys.stderr)
     core.call_all("set_log_level", 'warning')
 
-    core.load(paperwork_backend.DEFAULT_CONFIG_PLUGIN)
+    for module_name in paperwork_backend.DEFAULT_CONFIG_PLUGINS:
+        core.load(module_name)
     core.init()
     core.call_all("paperwork_config_load", application_name, default_plugins)
 

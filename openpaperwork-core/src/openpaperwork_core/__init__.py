@@ -87,6 +87,10 @@ class Core(object):
         """
         should be called from outside for testing only
         """
+        if module_name in self.plugins:
+            LOGGER.debug("Module %s already loaded", module_name)
+            return
+
         plugin = module.Plugin()
         self.plugins[module_name] = plugin
 

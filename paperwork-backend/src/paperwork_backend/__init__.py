@@ -1,4 +1,8 @@
-DEFAULT_CONFIG_PLUGIN = 'paperwork_backend.config.file'
+DEFAULT_CONFIG_PLUGINS = [
+    'openpaperwork_core.config_file',
+    'paperwork_backend.fs.gio',
+    'paperwork_backend.config.file'
+]
 
 DEFAULT_PLUGINS = [
     'openpaperwork_core.config_file',
@@ -18,6 +22,7 @@ DEFAULT_PLUGINS = [
     'paperwork_backend.model.labels',
     'paperwork_backend.model.pdf',
     'paperwork_backend.model.workdir',
+    'paperwork_backend.model.thumbnail',
     'paperwork_backend.ocr.pyocr',
     'paperwork_backend.pillow.img',
     'paperwork_backend.pillow.pdf',

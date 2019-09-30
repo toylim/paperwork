@@ -34,9 +34,9 @@ class Plugin(openpaperwork_core.PluginBase):
         return {
             'interfaces': [
                 ('doc_renderer', [
-                    "paperwork_shell.display.docrendering.img",
-                    "paperwork_shell.display.docrendering.labels",
-                    "paperwork_shell.display.docrendering.text",
+                    # if there are none loaded, nothing it displayed, which
+                    # may be fine.
+                    # (see paperwork-json)
                 ]),
                 ('document_storage', ['paperwork_backend.model.workdir',]),
                 ('index', ['paperwork_backend.index.shell',])
