@@ -34,6 +34,7 @@ CMD_VALUE_TYPES = {
 
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
+        super().__init__()
         self.interactive = True
 
     def get_interfaces(self):

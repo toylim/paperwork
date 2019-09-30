@@ -23,6 +23,7 @@ _ = gettext.gettext
 
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
+        super().__init__()
         self.interactive = True
         self.changes = None
 
@@ -67,7 +68,7 @@ class Plugin(openpaperwork_core.PluginBase):
         for p in promises[1:]:
             promise = promise.then(p)
 
-        self.core.call_one("schedule", p.schedule)
+        self.core.call_one("schedule", promise.schedule)
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
         if self.interactive:

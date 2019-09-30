@@ -27,6 +27,7 @@ _ = gettext.gettext
 
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
+        super().__init__()
         self.interactive = False
 
     def get_interfaces(self):
