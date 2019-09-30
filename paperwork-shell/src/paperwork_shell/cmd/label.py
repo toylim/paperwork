@@ -50,13 +50,18 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
         subcmd_parser.add_parser('list')
-        subcmd_parser.add_parser('show')
+        p = subcmd_parser.add_parser('show')
+        p.add_argument(
+            'doc_ids', nargs='*', default=[],
+            help=_("Target documents")
+        )
 
     def cmd_run(self, args):
         if args.command != 'label':
             return None
 
         if args.sub_command == 'list':
+
             if self.interactive:
                 sys.stdout.write(_("Loading all labels ... "))
                 sys.stdout.flush()
@@ -80,8 +85,24 @@ class Plugin(openpaperwork_core.PluginBase):
                 print()
                 self.core.call_all("print_labels", labels)
             return labels
+
         elif args.sub_command == 'show':
-            pass
+
+            out = {}
+            for doc_id in args.doc_ids:
+                doc_url = self.core.call_success("doc_id_to_url", doc_id)
+                labels = set()
+                self.core.call_all("doc_get_labels_by_url", labels, doc_url)
+                labels = list(labels)
+                labels.sort()
+                out[doc_id] = labels
+
+                if self.interactive:
+                    sys.stdout.write("{}: ".format(doc_id))
+                    self.core.call_all("print_labels", labels, separator=" ")
+
+            return out
+
         else:
             if self.interactive:
                 print("Unknown label command: {}".format(args.sub_command))
