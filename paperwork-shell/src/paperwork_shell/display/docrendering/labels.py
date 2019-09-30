@@ -8,6 +8,14 @@ def color_labels(core, labels):
         (label, core.call_success("label_color_to_rgb", color))
         for (label, color) in labels
     ]
+    labels = [
+        (label, (
+            int(color[0] * 0xFF),
+            int(color[1] * 0xFF),
+            int(color[2] * 0xFF)
+        ))
+        for (label, color) in labels
+    ]
 
     for (label, bg_color) in labels:
         brightness = (

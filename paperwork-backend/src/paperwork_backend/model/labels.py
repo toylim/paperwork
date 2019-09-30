@@ -121,22 +121,31 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def label_color_to_rgb(self, color):
         if color[0] == '#':
-            return (
-                int(color[1:3], 16),
-                int(color[5:7], 16),
-                int(color[9:11], 16),
-            )
+            if len(color) == 13:
+                return (
+                    int(color[1:5], 16) / 0xFFFF,
+                    int(color[5:9], 16) / 0xFFFF,
+                    int(color[9:13], 16) / 0xFFFF,
+                )
+            else:
+                return (
+                    int(color[1:3], 16) / 0xFF,
+                    int(color[3:5], 16) / 0xFF,
+                    int(color[5:7], 16) / 0xFF,
+                )
         elif color.startswith("rgb("):
             color = color[len("rgb("):-1]
             color = color.split(",")
-            return tuple([int(x) for x in color])
+            color = tuple([int(x) for x in color])
+            color = (color[0] / 0xFF, color[1] / 0xFF, color[2] / 0xFF)
+            return color
 
     def label_color_from_rgb(self, color):
         return (
             "#"
-            + format(color[0], 'x') + "00"
-            + format(color[1], 'x') + "00"
-            + format(color[2], 'x') + "00"
+            + format(int(color[0] * 0xFF), 'x') + "00"
+            + format(int(color[1] * 0xFF), 'x') + "00"
+            + format(int(color[2] * 0xFF), 'x') + "00"
         )
 
     def label_load_all(self, promises: list):
