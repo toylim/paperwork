@@ -3,6 +3,29 @@ import fabulous.color
 import openpaperwork_core
 
 
+def color_labels(core, labels):
+    labels = [
+        (label, core.call_success("label_color_to_rgb", color))
+        for (label, color) in labels
+    ]
+
+    for (label, bg_color) in labels:
+        brightness = (
+            (bg_color[0] * 0.299)
+            + (bg_color[1] * 0.587)
+            + (bg_color[2] * 0.114)
+        )
+        if brightness > 186:
+            fg_color = (0, 0, 0)  # black
+        else:
+            fg_color = (255, 255, 255)  # white
+
+        l_label = len(label)
+        label = fabulous.color.fg256(fg_color, label)
+        label = fabulous.color.bg256(bg_color, label)
+        yield (l_label, str(label))
+
+
 class LabelsRenderer(object):
     def __init__(self, core):
         self.core = core
@@ -11,27 +34,7 @@ class LabelsRenderer(object):
     def _get_labels(self, doc_url):
         labels = set()
         self.core.call_all("doc_get_labels_by_url", labels, doc_url)
-        return {
-            (label, self.core.call_success("label_color_to_rgb", color))
-            for (label, color) in labels
-        }
-
-    def _color_labels(self, labels):
-        for (label, bg_color) in labels:
-            brightness = (
-                (bg_color[0] * 0.299)
-                + (bg_color[1] * 0.587)
-                + (bg_color[2] * 0.114)
-            )
-            if brightness > 186:
-                fg_color = (0, 0, 0)  # black
-            else:
-                fg_color = (255, 255, 255)  # white
-
-            l_label = len(label)
-            label = fabulous.color.fg256(fg_color, label)
-            label = fabulous.color.bg256(bg_color, label)
-            yield (l_label, str(label))
+        return labels
 
     def _rearrange_labels(self, labels, terminal_width):
         out = []
@@ -53,7 +56,7 @@ class LabelsRenderer(object):
             )
 
         labels = self._get_labels(doc_url)
-        labels = self._color_labels(labels)
+        labels = color_labels(self.core, labels)
         labels = self._rearrange_labels(labels, terminal_size[0])
         return labels + out
 
@@ -65,7 +68,7 @@ class LabelsRenderer(object):
             )
 
         labels = self._get_labels(doc_url)
-        labels = self._color_labels(labels)
+        labels = color_labels(self.core, labels)
         labels = self._rearrange_labels(labels, terminal_size[0])
         return labels + out
 
@@ -112,6 +115,12 @@ class Plugin(openpaperwork_core.PluginBase):
                 ]),
             ]
         }
+
+    def print_labels(self, labels, separator='\n'):
+        labels = color_labels(self.core, labels)
+        labels = [label for (l_label, label) in labels]
+        labels = separator.join(labels)
+        print(labels)
 
     def doc_renderer_get(self, out):
         r = LabelsRenderer(self.core)

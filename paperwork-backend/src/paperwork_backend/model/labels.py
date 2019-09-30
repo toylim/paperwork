@@ -139,9 +139,12 @@ class Plugin(openpaperwork_core.PluginBase):
             + format(color[2], 'x') + "00"
         )
 
-    def sync(self, promises: list):
+    def label_load_all(self, promises: list):
         self.all_labels = {}
 
         storage_all_docs = []
         self.core.call_all("storage_get_all_docs", storage_all_docs)
         promises.append(LabelLoader(self, storage_all_docs).get_promise())
+
+    def sync(self, promises: list):
+        self.label_load_all(promises)
