@@ -98,6 +98,15 @@ class Plugin(openpaperwork_core.PluginBase):
         assert("," not in label)
         assert(color is None or "," not in color)
 
+        current = set()
+        self.doc_get_labels_by_url(current, doc_url)
+        current = {k: v for (k, v) in current}
+        if label in current:
+            LOGGER.warning(
+                "Label '%s' already on document '%s'", label, doc_url
+            )
+            return
+
         if color is not None:
             assert(
                 label not in self.all_labels
@@ -105,6 +114,11 @@ class Plugin(openpaperwork_core.PluginBase):
             )
             self.all_labels[label] = color
         else:
+            if label not in self.all_labels:
+                LOGGER.error(
+                    "Label '%s' unknown. Cannot figure out its color", label
+                )
+                return None
             color = self.all_labels[label]
 
         LOGGER.info("Adding label '%s' on document '%s'", label, doc_url)
@@ -113,7 +127,31 @@ class Plugin(openpaperwork_core.PluginBase):
             "fs_join", doc_url, LABELS_FILENAME
         )
         with self.core.call_success("fs_open", labels_url, 'a') as file_desc:
-            file_desc.write("{},{}".format(label, color))
+            file_desc.write("{},{}\n".format(label, color))
+
+    def doc_remove_label_by_url(self, doc_url, label):
+        LOGGER.info("Removing label '%s' from document '%s'", label, doc_url)
+
+        labels_url = self.core.call_success(
+            "fs_join", doc_url, LABELS_FILENAME
+        )
+
+        with self.core.call_success("fs_open", labels_url, 'r') as file_desc:
+            labels = file_desc.readlines()
+
+        labels = [l.split(",", 1) for l in labels if len(l.strip()) > 0]
+        labels = {l: c for (l, c) in labels}
+        try:
+            labels.pop(label)
+        except KeyError:
+            LOGGER.warning(
+                "Tried to remove label '%s' from document '%s', but label"
+                " was not found on the document"
+            )
+
+        with self.core.call_success("fs_open", labels_url, "w") as file_desc:
+            for (label, color) in labels.items():
+                file_desc.write("{},{}\n".format(label, color))
 
     def labels_get_all(self, out: set):
         for (label, color) in self.all_labels.items():

@@ -130,3 +130,34 @@ class TestLabels(unittest.TestCase):
                 ("label C", "#123412341234"),
             ]
         )
+
+    def test_doc_remove_labels(self):
+        self.fs.fs = {
+            "some_work_dir": {
+                "some_doc": {
+                    "labels": (
+                        "label A,#aaaabbbbcccc\n"
+                        "label B,#ccccbbbbaaaa\n"
+                    )
+                },
+            },
+        }
+
+        self.core.call_success(
+            "doc_remove_label_by_url", "file:///some_work_dir/some_doc",
+            label="label A"
+        )
+
+        labels = set()
+        self.core.call_success(
+            "doc_get_labels_by_url", labels, "file:///some_work_dir/some_doc"
+        )
+        labels = list(labels)
+        labels.sort()
+
+        self.assertEqual(
+            labels,
+            [
+                ("label B", "#ccccbbbbaaaa"),
+            ]
+        )

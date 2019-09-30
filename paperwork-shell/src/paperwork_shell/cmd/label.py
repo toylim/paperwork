@@ -56,25 +56,64 @@ class Plugin(openpaperwork_core.PluginBase):
             help=_("Target documents")
         )
 
+        p = subcmd_parser.add_parser('add')
+        p.add_argument('doc_id', help=_("Target document"))
+        p.add_argument('label_name', help=_("Label to add"))
+        p.add_argument(
+            '--color', '-c', default=None,
+            help=_("Label color (ex: '#aa22cc')"), required=False
+        )
+
+        p = subcmd_parser.add_parser('remove')
+        p.add_argument('doc_id', help=_("Target document"))
+        p.add_argument('label_name', help=_("Label to remove"))
+
+    def _load_all_labels(self):
+        if self.interactive:
+            sys.stdout.write(_("Loading all labels ... "))
+            sys.stdout.flush()
+        promises = []
+        self.core.call_all("label_load_all", promises)
+        promise = promises[0]
+        for p in promises[1:]:
+            promise = promise.then(p)
+        self.core.call_one("schedule", promise.schedule)
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+        if self.interactive:
+            sys.stdout.write(_("Done") + "\n")
+
+    def _upd_doc(self, doc_id):
+        transactions = []
+        self.core.call_all(
+            "doc_transaction_start", transactions, 1
+        )
+        for transaction in transactions:
+            transaction.upd_obj(doc_id)
+        for transaction in transactions:
+            transaction.commit()
+
+    def _show(self, doc_ids):
+        out = {}
+        for doc_id in doc_ids:
+            doc_url = self.core.call_success("doc_id_to_url", doc_id)
+            labels = set()
+            self.core.call_all("doc_get_labels_by_url", labels, doc_url)
+            labels = list(labels)
+            labels.sort()
+            out[doc_id] = labels
+
+            if self.interactive:
+                sys.stdout.write("{}: ".format(doc_id))
+                self.core.call_all("print_labels", labels, separator=" ")
+        return out
+
     def cmd_run(self, args):
         if args.command != 'label':
             return None
 
         if args.sub_command == 'list':
-
-            if self.interactive:
-                sys.stdout.write(_("Loading all labels ... "))
-                sys.stdout.flush()
-            promises = []
-            self.core.call_all("label_load_all", promises)
-            promise = promises[0]
-            for p in promises[1:]:
-                promise = promise.then(p)
-            self.core.call_one("schedule", promise.schedule)
-            self.core.call_all("mainloop_quit_graceful")
-            self.core.call_one("mainloop")
-            if self.interactive:
-                sys.stdout.write(_("Done") + "\n")
+            self._load_all_labels()
 
             labels = set()
             self.core.call_all("labels_get_all", labels)
@@ -88,22 +127,35 @@ class Plugin(openpaperwork_core.PluginBase):
 
         elif args.sub_command == 'show':
 
-            out = {}
-            for doc_id in args.doc_ids:
-                doc_url = self.core.call_success("doc_id_to_url", doc_id)
-                labels = set()
-                self.core.call_all("doc_get_labels_by_url", labels, doc_url)
-                labels = list(labels)
-                labels.sort()
-                out[doc_id] = labels
+            return self._show(args.doc_ids)
 
-                if self.interactive:
-                    sys.stdout.write("{}: ".format(doc_id))
-                    self.core.call_all("print_labels", labels, separator=" ")
+        elif args.sub_command == "add":
 
-            return out
+            color = args.color
+            if color is not None:
+                # make sure the color is valid
+                color = self.core.call_success("label_color_to_rgb", color)
+                color = self.core.call_success("label_color_from_rgb", color)
 
-        else:
-            if self.interactive:
-                print("Unknown label command: {}".format(args.sub_command))
-            return None
+            self._load_all_labels()
+            doc_url = self.core.call_success("doc_id_to_url", args.doc_id)
+            self.core.call_all(
+                "doc_add_label_by_url", doc_url, args.label_name, color
+            )
+
+            self._upd_doc(args.doc_id)
+
+            return self._show([args.doc_id])
+
+        elif args.sub_command == "remove":
+
+            doc_url = self.core.call_success("doc_id_to_url", args.doc_id)
+            self.core.call_all(
+                "doc_remove_label_by_url", doc_url, args.label_name
+            )
+            self._upd_doc(args.doc_id)
+            return self._show([args.doc_id])
+
+        if self.interactive:
+            print("Unknown label command: {}".format(args.sub_command))
+        return None
