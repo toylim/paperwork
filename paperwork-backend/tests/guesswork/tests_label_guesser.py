@@ -23,6 +23,18 @@ class TestLabelGuesser(unittest.TestCase):
             "paperwork_backend.model.fake"
         )
 
+        class FakeModule(object):
+            class Plugin(openpaperwork_core.PluginBase):
+                PRIORITY = -9999999
+
+                def fs_exists(s, url):
+                    for doc in self.fake_storage.docs:
+                        if doc['url'] == url:
+                            return True
+                    return None
+
+        self.core._load_module("fake_module", FakeModule())
+
         self.core.init()
 
     def tearDown(self):

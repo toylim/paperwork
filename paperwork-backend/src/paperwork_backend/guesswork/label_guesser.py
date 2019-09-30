@@ -29,6 +29,7 @@ import openpaperwork_core
 import openpaperwork_core.promise
 
 from .. import sync
+from .. import util
 
 
 # Beware that we use Sqlite, but sqlite python module is not thread-safe
@@ -83,6 +84,16 @@ class LabelGuesserTransaction(object):
         self.todo = []
         self.count = 0
 
+        all_labels = self.core.call_success(
+            "mainloop_execute", self.cursor.execute,
+            "SELECT DISTINCT label FROM labels"
+        )
+        self.all_labels = self.core.call_success(
+            "mainloop_execute",
+            lambda all_labels: {l[0] for l in all_labels},
+            all_labels
+        )
+
     def __enter__(self):
         pass
 
@@ -103,96 +114,176 @@ class LabelGuesserTransaction(object):
             # time to update the document labels
             self.plugin._set_guessed_labels(doc_url)
 
-        self._add_obj(doc_id)
-
-    def _add_obj(self, doc_id):
         self.core.call_one(
             "schedule", self.core.call_all,
             "on_progress", "label_guesser_update", self._get_progression(),
-            _("Updating label guesser with document %s (add)") % doc_id
+            _("Updating label guesser with added document %s") % doc_id
         )
-
-        doc_url = self.core.call_success("doc_id_to_url", doc_id)
-
-        mtime = []
-        self.core.call_all("doc_get_mtime_by_url", mtime, doc_url)
-        mtime = max(mtime)
-
-        text = []
-        self.core.call_all("doc_get_text_by_url", text, doc_url)
-        text = "\n\n".join(text)
-
-        labels = set()
-        self.core.call_all("doc_get_labels_by_url", labels, doc_url)
-        labels = [label[0] for label in labels]
-
-        self.core.call_one(
-            "mainloop_execute", self.cursor.execute,
-            "INSERT OR REPLACE INTO documents(doc_id, text, mtime)"
-            " VALUES (?, ?, ?)",
-            (doc_id, text, mtime)
-        )
-        for label in labels:
-            self.core.call_one(
-                "mainloop_execute", self.cursor.executemany,
-                "INSERT OR REPLACE INTO labels (doc_id, label)"
-                " VALUES (?, ?)",
-                ((doc_id, label) for label in labels)
-            )
-
-        LOGGER.info("Will train label '%s' from doc '%s'", labels, doc_id)
-        self.todo.append({
-            "action": "add",
-            "doc_id": doc_id,
-            "text": text,
-            "labels": labels,
-        })
+        self._upd_doc(doc_id)
 
     def del_obj(self, doc_id):
-        self._del_obj(doc_id)
         self.count += 1
 
-    def _del_obj(self, doc_id):
         self.core.call_one(
             "schedule", self.core.call_all,
             "on_progress", "label_guesser_update", self._get_progression(),
-            _("Updating label guesser with document %s (del)") % doc_id
+            _("Updating label guesser due to deleted document %s") % doc_id
         )
-        text = self.core.call_success(
+        self._upd_doc(doc_id)
+
+    def upd_obj(self, doc_id):
+        self.count += 1
+        self.core.call_one(
+            "schedule", self.core.call_all,
+            "on_progress", "label_guesser_update", self._get_progression(),
+            _("Updating label guesser with updated document %s") % doc_id
+        )
+        self._upd_doc(doc_id)
+
+    def _check_label_exists_in_db(self, label):
+        r = self.core.call_success(
+            "mainloop_execute", self.cursor.execute,
+            "SELECT COUNT(label) FROM labels WHERE label = ? LIMIT 1",
+            (label,)
+        )
+        r = self.core.call_success("mainloop_execute", next, r)[0]
+        return r > 0
+
+    def _get_actual_doc_data(self, doc_id, doc_url):
+        if (
+                    doc_url is not None
+                    and self.core.call_success("fs_exists", doc_url)
+                    is not None
+                ):
+            mtime = []
+            self.core.call_all("doc_get_mtime_by_url", mtime, doc_url)
+            mtime = max(mtime)
+
+            doc_text = []
+            self.core.call_all("doc_get_text_by_url", doc_text, doc_url)
+            doc_text = "\n\n".join(doc_text)
+        else:
+            mtime = 0
+            doc_text = None
+
+        doc_labels = set()
+        self.core.call_all("doc_get_labels_by_url", doc_labels, doc_url)
+        doc_labels = {label[0] for label in doc_labels}
+
+        return {
+            'mtime': mtime,
+            'text': doc_text,
+            'labels': doc_labels,
+        }
+
+    def _get_db_doc_data(self, doc_id, doc_url):
+        db_text = self.core.call_success(
             "mainloop_execute", self.cursor.execute,
             "SELECT text FROM documents WHERE doc_id = ? LIMIT 1", (doc_id,)
         )
-        text = self.core.call_success("mainloop_execute", next, text)[0]
+        db_text = self.core.call_success("mainloop_execute", list, db_text)
+        if len(db_text) <= 0:
+            db_text = None
+        else:
+            db_text = db_text[0]
 
-        labels = self.core.call_success(
+        db_labels = self.core.call_success(
             "mainloop_execute", self.cursor.execute,
             "SELECT label FROM labels WHERE doc_id = ?", (doc_id,)
         )
-        labels = self.core.call_success(
-            "mainloop_execute",
-            lambda ls: [l[0] for l in ls],
-            labels
-        )
+        db_labels = self.core.call_success("mainloop_execute", list, db_labels)
+        db_labels = {l[0] for l in db_labels}
 
-        # thanks to 'ON DELETE CASCADE', only SQL query is required
-        self.core.call_one(
-            "mainloop_execute", self.cursor.execute,
-            "DELETE FROM documents WHERE doc_id = ?",
-            (doc_id,)
-        )
+        return {
+            'text': db_text,
+            'labels': db_labels,
+        }
 
-        LOGGER.info("Will untrain label '%s' from doc '%s'", labels, doc_id)
-        self.todo.append({
-            "action": "del",
-            "doc_id": doc_id,
-            "text": text,
-            "labels": labels,
-        })
+    def _check_for_new_labels(self, doc_id, doc_url, actual, db):
+        for doc_label in actual['labels']:
+            if doc_label in db['labels']:
+                continue
+            LOGGER.info("Label '%s' added on document '%s'", doc_label, doc_id)
+            # check if this label is a new one
+            if not self._check_label_exists_in_db(doc_label):
+                LOGGER.info(
+                    "New label '%s' detected on document '%s'",
+                    doc_label, doc_id
+                )
+                # we need to figure out the known documents at this very
+                # moment to train first on those documents only.
+                doc_ids = self.core.call_success(
+                    "mainloop_execute", self.cursor.execute,
+                    "SELECT doc_id FROM documents"
+                )
+                doc_ids = self.core.call_success(
+                    "mainloop_execute", list, doc_ids
+                )
+                doc_ids = [d[0] for d in doc_ids]
+                self.todo.append({
+                    "action": "new",
+                    "label": doc_label,
+                    "doc_ids": doc_ids,
+                })
+            else:
+                self.todo.append({
+                    "action": "add",
+                    "doc_id": doc_id,
+                    "text": actual['text'],
+                    "labels": [doc_label],
+                })
+            self.core.call_one(
+                "mainloop_execute", self.cursor.execute,
+                "INSERT OR REPLACE INTO labels (doc_id, label)"
+                " VALUES (?, ?)",
+                (doc_id, doc_label)
+            )
 
-    def upd_obj(self, doc_id):
-        self._del_obj(doc_id)
-        self._add_obj(doc_id)
-        self.count += 1
+    def _check_for_removed_labels(self, doc_id, doc_url, actual, db):
+        for db_label in db['labels']:
+            if db_label in actual['labels']:
+                continue
+            LOGGER.info(
+                "Label '%s' removed from document '%s'", db_label, doc_id
+            )
+            self.core.call_one(
+                "mainloop_execute", self.cursor.execute,
+                "DELETE FROM labels WHERE doc_id = ? AND label = ?",
+                (doc_id, db_label)
+            )
+            self.todo.append({
+                "action": "remove",
+                "doc_id": doc_id,
+                "text": db['text'],
+                "labels": [db_label],
+            })
+
+    def _upd_doc(self, doc_id):
+        # collect data about the document from the document itself and from
+        # the sqlite database and compare them
+        # --> deduce the actions that must be done when running commit()
+
+        doc_url = self.core.call_success("doc_id_to_url", doc_id)
+
+        actual = self._get_actual_doc_data(doc_id, doc_url)
+        db = self._get_db_doc_data(doc_id, doc_url)
+
+        if actual['text'] is not None:
+            self.core.call_one(
+                "mainloop_execute", self.cursor.execute,
+                "INSERT OR REPLACE INTO documents(doc_id, text, mtime)"
+                " VALUES (?, ?, ?)",
+                (doc_id, actual['text'], actual['mtime'])
+            )
+
+        self._check_for_new_labels(doc_id, doc_url, actual, db)
+        self._check_for_removed_labels(doc_id, doc_url, actual, db)
+
+        if actual['text'] is None:
+            self.core.call_one(
+                "mainloop_execute", self.cursor.execute,
+                "DELETE FROM documents WHERE doc_id = ?", (doc_id,)
+            )
 
     def unchanged_obj(self, doc_id):
         self.count += 1
@@ -217,41 +308,82 @@ class LabelGuesserTransaction(object):
             "schedule", self.core.call_all,
             "on_label_guesser_commit_start"
         )
-        all_labels = set()
-        self.core.call_all("labels_get_all", all_labels)
-        all_labels = [l[0] for l in all_labels]
+
+        all_labels = self.core.call_success(
+            "mainloop_execute", self.cursor.execute,
+            "SELECT DISTINCT label FROM labels"
+        )
+        all_labels = self.core.call_success(
+            "mainloop_execute",
+            lambda all_labels: {l[0] for l in all_labels},
+            all_labels
+        )
+        self.all_labels.update(all_labels)
+        del all_labels
 
         for todo in self.todo:
-            if todo['action'] == "del":
-                for label in all_labels:
-                    LOGGER.info(
-                        "Untraining label '%s' from doc '%s'",
-                        label, todo['doc_id']
-                    )
-                    baye = self.plugin._get_baye(label)
-                    baye.untrain(
-                        "yes" if label in todo['labels'] else "no",
-                        todo['text']
-                    )
+            if todo['action'] != "new":
+                continue
+            LOGGER.info(
+                "Training from all already-known docs for new label '%s'",
+                todo['label']
+            )
+            baye = self.plugin._get_baye(todo['label'])
+
+            for doc_id in todo['doc_ids']:
+                text = self.core.call_success(
+                    "mainloop_execute", self.cursor.execute,
+                    "SELECT text FROM documents WHERE doc_id = ?",
+                    (doc_id,)
+                )
+                text = self.core.call_success("mainloop_execute", list, text)
+                if len(text) <= 0:
+                    continue
+                text = text[0]
+                baye.train("no", text)
 
         for todo in self.todo:
-            if todo['action'] == "add":
-                for label in all_labels:
-                    LOGGER.info(
-                        "Training label '%s' from doc '%s'",
-                        label, todo['doc_id']
-                    )
-                    baye = self.plugin._get_baye(label)
-                    baye.train(
-                        "yes" if label in todo['labels'] else "no",
-                        todo['text']
-                    )
+            if todo['action'] != "remove":
+                continue
+            for label in self.all_labels:
+                LOGGER.info(
+                    "Untraining label '%s' from doc '%s'",
+                    label, todo['doc_id']
+                )
+                baye = self.plugin._get_baye(label)
+                baye.untrain(
+                    "yes" if label in todo['labels'] else "no",
+                    todo['text']
+                )
 
-        for label in all_labels:
+        for todo in self.todo:
+            if todo['action'] != "add":
+                continue
+            for label in self.all_labels:
+                LOGGER.info(
+                    "Training label '%s' from doc '%s'",
+                    label, todo['doc_id']
+                )
+                baye = self.plugin._get_baye(label)
+                baye.train(
+                    "yes" if label in todo['labels'] else "no",
+                    todo['text']
+                )
+
+        for label in self.all_labels:
             baye = self.plugin._get_baye(label)
             baye.cache_persist()
 
         self.core.call_one("mainloop_execute", self.cursor.execute, "COMMIT")
+
+        for label in self.all_labels:
+            if self._check_label_exists_in_db(label):
+                continue
+            LOGGER.warning(
+                "Dropping baye training for label '%s'", label
+            )
+            self.plugin._delete_baye(label)
+
         if self.cursor is not None:
             self.core.call_one("mainloop_execute", self.cursor.close)
         self.cursor = None
@@ -302,7 +434,7 @@ class Plugin(openpaperwork_core.PluginBase):
         instance). --> we use the hash of the label name instead of the label
         name.
         """
-        label_bytes = label_name.encode("utf-8")
+        label_bytes = ("label_" + label_name).encode("utf-8")
         label_hash = hashlib.sha1(label_bytes).digest()
         label_hash = base64.encodebytes(label_hash).decode('utf-8').strip()
         label_hash = label_hash.replace('/', '_')
@@ -342,6 +474,12 @@ class Plugin(openpaperwork_core.PluginBase):
         self.bayes[label] = simplebayes.SimpleBayes(cache_path=baye_dir)
         self.bayes[label].cache_train()
         return self.bayes[label]
+
+    def _delete_baye(self, label):
+        if label in self.bayes:
+            self.bayes.pop(label)
+        baye_dir = self._get_baye_dir(label)
+        util.rm_rf(baye_dir)
 
     def _score(self, doc_url):
         doc_txt = []
