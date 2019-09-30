@@ -149,7 +149,6 @@ class Core(object):
                     )
                     for dep_default in dep_defaults:
                         to_examine.append(self.load(dep_default))
-                    assert(len(self.interfaces[dep_interface]) > 0)
 
     def _init(self, plugin):
         if plugin in self._initialized:
