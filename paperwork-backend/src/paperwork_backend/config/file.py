@@ -77,28 +77,13 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return {
             'interfaces': [
-                ('fs', ['paperwork_backend.fs.gio']),
                 ('configuration', ['openpaperwork_core.config_file']),
             ],
         }
 
     def init(self, core):
         self.core = core
-        self.settings = {
-            'workdir': PaperworkSetting(
-                core, "Global", "WorkDirectory",
-                lambda: self.core.call_success(
-                    "fs_safe", os.path.expanduser("~/papers")
-                )
-            ),
-            'index_version': PaperworkSetting(
-                core, "Global", "IndexVersion", lambda: "-1"
-            ),
-            'index_in_workdir': PaperworkSetting(
-                core, "Global", "index_in_workdir",
-                lambda: False
-            ),
-        }
+        self.settings = {}
 
     def paperwork_config_load(self, application, default_plugins=[]):
         self.application = application

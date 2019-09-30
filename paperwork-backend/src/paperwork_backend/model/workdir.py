@@ -1,5 +1,6 @@
 import datetime
 import logging
+import os
 
 import openpaperwork_core
 
@@ -25,6 +26,16 @@ class Plugin(openpaperwork_core.PluginBase):
                 ('paperwork_config', ['paperwork_backend.config.file']),
             ]
         }
+
+    def init(self, core):
+        super().init(core)
+        setting = self.core.call_success(
+            "paperwork_config_build_simple", "Global", "WorkDirectory",
+            lambda: self.core.call_success(
+                "fs_safe", os.path.expanduser("~/papers")
+            )
+        )
+        self.core.call_all("paperwork_config_register", "workdir", setting)
 
     def storage_get_all_docs(self, out: list):
         """

@@ -1,6 +1,5 @@
 DEFAULT_CONFIG_PLUGINS = [
     'openpaperwork_core.config_file',
-    'paperwork_backend.fs.gio',
     'paperwork_backend.config.file'
 ]
 

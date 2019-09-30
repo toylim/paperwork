@@ -78,6 +78,12 @@ class TestConfig(unittest.TestCase):
         self.core.load("paperwork_shell.cmd.config")
         self.core.init()
 
+        setting = self.core.call_success(
+            "paperwork_config_build_simple", "Global", "WorkDirectory",
+            lambda: "file:///home/toto/papers"
+        )
+        self.core.call_all("paperwork_config_register", "workdir", setting)
+
     def test_get_put(self):
         self.core.get_by_name('openpaperwork_core.config_file').returns = {
             'config_put': [None],

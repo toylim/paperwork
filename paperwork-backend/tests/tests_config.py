@@ -73,6 +73,12 @@ class TestConfig(unittest.TestCase):
         self.core.load("paperwork_backend.config.file")
         self.core.init()
 
+        setting = self.core.call_success(
+            "paperwork_config_build_simple", "Global", "WorkDirectory",
+            lambda: "file:///home/toto/papers"
+        )
+        self.core.call_all("paperwork_config_register", "workdir", setting)
+
     def test_config_load(self):
         self.core.call_all(
             'paperwork_config_load', 'paperwork-gtk', default_plugins=['pouet']
@@ -95,7 +101,7 @@ class TestConfig(unittest.TestCase):
                 ('config_get', ('Global', "WorkDirectory", None), {}),
             ]
         )
-        self.assertEqual(default, "file://" + os.path.expanduser("~/papers"))
+        self.assertEqual(default, "file:///home/toto/papers")
 
     def test_get_nondefault(self):
         self.core.get_by_name('openpaperwork_core.config_file').rets = {
