@@ -121,12 +121,18 @@ class Plugin(openpaperwork_core.PluginBase):
 
         event = threading.Event()
         out = [None]
+        exc = [None]
 
         def get_result():
-            out[0] = func(*args, **kwargs)
+            try:
+                out[0] = func(*args, **kwargs)
+            except Exception as e:
+                exc[0] = e
             event.set()
 
         self.schedule(get_result)
         event.wait()
 
+        if exc[0] is not None:
+            raise exc[0]
         return out[0]
