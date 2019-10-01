@@ -49,7 +49,9 @@ class Plugin(openpaperwork_core.PluginBase):
         self.interactive = interactive
 
     def cmd_complete_argparse(self, parser):
-        p = parser.add_parser('delete')
+        p = parser.add_parser(
+            'delete', help=_("Delete a document or a page")
+        )
         p.add_argument(
             '--pages', '-p', type=str, required=False,
             help=_(

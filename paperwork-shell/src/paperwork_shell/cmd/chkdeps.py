@@ -51,7 +51,10 @@ class Plugin(openpaperwork_core.PluginBase):
         self.interactive = interactive
 
     def cmd_complete_argparse(self, parser):
-        parser.add_parser('chkdeps')
+        parser.add_parser(
+            'chkdeps',
+            help=_("Check that all required dependencies are installed")
+        )
 
     def cmd_run(self, args):
         if args.command != 'chkdeps':

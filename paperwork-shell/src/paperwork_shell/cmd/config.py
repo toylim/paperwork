@@ -50,7 +50,9 @@ class Plugin(openpaperwork_core.PluginBase):
     def cmd_complete_argparse(self, parser):
         application = self.core.call_success("paperwork_get_application_name")
 
-        config_parser = parser.add_parser('config')
+        config_parser = parser.add_parser(
+            'config', help=_("Manage Paperwork configuration")
+        )
         subparser = config_parser.add_subparsers(
             help=_("sub-command"), dest='subcommand', required=True
         )

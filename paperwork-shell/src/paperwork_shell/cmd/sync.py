@@ -46,7 +46,9 @@ class Plugin(openpaperwork_core.PluginBase):
         self.interactive = interactive
 
     def cmd_complete_argparse(self, parser):
-        parser.add_parser('sync')
+        parser.add_parser('sync', help=_(
+            "Synchronize the index(es) with the content of the work directory"
+        ))
 
     def on_sync(self, name, status, key):
         self.changes[name][status].append(key)

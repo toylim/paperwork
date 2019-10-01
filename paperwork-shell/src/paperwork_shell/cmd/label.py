@@ -45,7 +45,9 @@ class Plugin(openpaperwork_core.PluginBase):
         self.interactive = interactive
 
     def cmd_complete_argparse(self, parser):
-        label_parser = parser.add_parser('label')
+        label_parser = parser.add_parser(
+            'label', help=_("Commands to manage labels")
+        )
         subcmd_parser = label_parser.add_subparsers(
             help=_("label command"), dest='sub_command', required=True
         )

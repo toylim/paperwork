@@ -47,7 +47,9 @@ class Plugin(openpaperwork_core.PluginBase):
         self.interactive = interactive
 
     def cmd_complete_argparse(self, parser):
-        p = parser.add_parser('search')
+        p = parser.add_parser(
+            'search', help=_("Search keywords in documents")
+        )
         p.add_argument(
             '--limit', '-l', type=int, default=50,
             help=_("Maximum number of results (default: 50)")

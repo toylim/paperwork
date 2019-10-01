@@ -47,7 +47,9 @@ class Plugin(openpaperwork_core.PluginBase):
         self.interactive = interactive
 
     def cmd_complete_argparse(self, parser):
-        p = parser.add_parser('show')
+        p = parser.add_parser('show', help=_(
+            "Show the content of a document"
+        ))
         p.add_argument('doc_id')
         p.add_argument(
             '--pages', '-p', required=False,

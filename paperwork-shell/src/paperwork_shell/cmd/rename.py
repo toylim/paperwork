@@ -44,7 +44,9 @@ class Plugin(openpaperwork_core.PluginBase):
         self.interactive = interactive
 
     def cmd_complete_argparse(self, parser):
-        p = parser.add_parser('rename')
+        p = parser.add_parser(
+            'rename', help=_("Change a document identifier")
+        )
         p.add_argument(
             'source_doc_id',
             help=_("Document to rename")
