@@ -69,8 +69,8 @@ class FabulousRenderer(object):
                 doc_id, doc_url, page_nb, terminal_size
             )
 
-        img = self.core.call_success("page_get_img_url", doc_url, page_nb)
-        img = self.core.call_success("url_to_pillow", img)
+        img_url = self.core.call_success("page_get_img_url", doc_url, page_nb)
+        img = self.core.call_success("url_to_pillow", img_url)
 
         with tempfile.NamedTemporaryFile(
                     prefix='paperwork-shell', suffix='.jpeg',
@@ -84,7 +84,7 @@ class FabulousRenderer(object):
         finally:
             os.unlink(img_file)
 
-        return list(img) + [""] + parent_out
+        return [img_url] + list(img) + [""] + parent_out
 
     def get_doc_infos(self, doc_id, doc_url):
         out = {}
