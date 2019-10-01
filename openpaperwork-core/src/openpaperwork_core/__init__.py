@@ -142,6 +142,8 @@ class Core(object):
                             dep_interface, len(self.interfaces[dep_interface])
                         )
                         continue
+                    if len(dep_defaults) <= 0:
+                        continue
                     LOGGER.warning(
                         "Loading plugins %s to satisfy dependency."
                         " Required by '%s' for interface '%s'",
@@ -163,7 +165,6 @@ class Core(object):
         if 'interfaces' in deps:
             for (dep_interface, _) in deps['interfaces']:
                 dep_plugins = self.interfaces[dep_interface]
-                assert(len(dep_plugins) > 0)
                 for dep_plugin in dep_plugins:
                     self._init(dep_plugin)
 
