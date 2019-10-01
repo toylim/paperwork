@@ -26,8 +26,10 @@ class DocToPillowBoxesExportPipe(AbstractExportPipe):
         self.core = core
 
     def can_export_doc(self, doc_url):
-        pdf_url = self.core.call_success("doc_get_pdf_url_by_url", doc_url)
-        return pdf_url is not None
+        return True
+
+    def can_export_page(self, doc_url, page_nb):
+        return True
 
     def get_promise(self, result='final', target_file_url=None):
         def to_img_urls_and_boxes(input_data):
