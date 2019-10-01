@@ -50,7 +50,11 @@ class DocToPillowBoxesExportPipe(AbstractExportPipe):
                     for page_idx in range(0, nb_pages)
                 ]
             else:
-                (doc_url, page_idx) = input_data
+                if isinstance(input_data[1], int):
+                    (doc_url, page_idx) = input_data
+                    page_indexes = [page_idx]
+                else:
+                    (doc_url, page_indexes) = input_data
                 pages = [
                     (
                         self.core.call_success(
@@ -60,6 +64,7 @@ class DocToPillowBoxesExportPipe(AbstractExportPipe):
                             "page_get_boxes_by_url", doc_url, page_idx
                         )
                     )
+                    for page_idx in page_indexes
                 ]
 
             for page in pages:
@@ -124,7 +129,7 @@ class PageToImageExportPipe(AbstractExportPipe):
                 out = target_file_url
                 if page_idx != 0:
                     out = out.rsplit(".", 1)
-                    out = "{}_{}{}".format(out[0], page_idx, out[1])
+                    out = "{}_{}.{}".format(out[0], page_idx, out[1])
 
                 self.core.call_success(
                     "pillow_to_url", pil_img, out, format=self.format,
