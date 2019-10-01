@@ -68,16 +68,20 @@ class Plugin(openpaperwork_core.PluginBase):
         doc_ids = []
         self.core.call_all("index_search", doc_ids, keywords, args.limit)
 
-        renderers = []
-        self.core.call_all("doc_renderer_get", renderers)
-        assert(len(renderers) > 0)
-        renderer = renderers[-1]
+        if self.interactive:
+            renderers = []
+            self.core.call_all("doc_renderer_get", renderers)
+            renderer = renderers[-1]
+        else:
+            renderer = None
 
         if self.interactive:
             for doc_id in doc_ids:
                 header = _("Document id: %s") % doc_id
                 self.core.call_all("print", header + "\n")
                 doc_url = self.core.call_success("doc_id_to_url", doc_id)
+                if renderer is None:
+                    continue
                 lines = renderer.get_preview_output(
                     doc_id, doc_url,
                     shutil.get_terminal_size((80, 25))
