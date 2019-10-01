@@ -53,6 +53,7 @@ class Plugin(openpaperwork_core.PluginBase):
         config_parser = parser.add_parser(
             'config', help=_("Manage Paperwork configuration")
         )
+
         subparser = config_parser.add_subparsers(
             help=_("sub-command"), dest='subcommand', required=True
         )
@@ -84,19 +85,23 @@ class Plugin(openpaperwork_core.PluginBase):
             )
         )
 
-        add_plugin_parser = subparser.add_parser(
+        p = subparser.add_parser(
             'add_plugin', help=(
                 _("Add plugin in %s") % application
             )
         )
-        add_plugin_parser.add_argument('plugin_name')
+        p.add_argument('plugin_name')
 
-        remove_plugin_parser = subparser.add_parser(
+        p = subparser.add_parser(
             'remove_plugin', help=(
                 _("Remove plugin from %s") % application
             )
         )
-        remove_plugin_parser.add_argument('plugin_name')
+        p.add_argument('plugin_name')
+
+        subparser.add_parser(
+            'reset_plugins', help=(_("Reset plugin list to default"))
+        )
 
     def cmd_set_interactive(self, interactive):
         self.interactive = interactive
@@ -118,6 +123,8 @@ class Plugin(openpaperwork_core.PluginBase):
             return self._cmd_add_plugin(args.plugin_name)
         elif args.subcommand == "remove_plugin":
             return self._cmd_remove_plugin(args.plugin_name)
+        elif args.subcommand == "reset_plugins":
+            return self._cmd_reset_plugins()
         else:
             return None
 
@@ -158,7 +165,9 @@ class Plugin(openpaperwork_core.PluginBase):
         return r
 
     def _cmd_add_plugin(self, plugin_name):
-        self.core.call_all("paperwork_config_add_plugin", plugin_name)
+        self.core.call_all(
+            "paperwork_config_add_plugin", plugin_name
+        )
         self.core.call_all("paperwork_config_save")
         if self.interactive:
             self.core.call_all(
@@ -168,7 +177,9 @@ class Plugin(openpaperwork_core.PluginBase):
         return True
 
     def _cmd_remove_plugin(self, plugin_name):
-        self.core.call_all("paperwork_config_remove_plugin", plugin_name)
+        self.core.call_all(
+            "paperwork_config_remove_plugin", plugin_name
+        )
         self.core.call_all("paperwork_config_save")
         if self.interactive:
             self.core.call_all(
@@ -185,3 +196,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 self.core.call_all("print", plugin + "\n")
             self.core.call_all("print_flush")
         return list(plugins)
+
+    def _cmd_reset_plugins(self):
+        plugins = self.core.call_success("paperwork_config_reset_plugins")
+        self.core.call_all("paperwork_config_save")
+        if self.interactive:
+            print("Plugin list reseted")
+        return True

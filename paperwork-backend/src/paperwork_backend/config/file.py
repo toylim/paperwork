@@ -138,13 +138,24 @@ class Plugin(openpaperwork_core.PluginBase):
         self.settings[key].put(value)
         self.values[key] = value
 
-    def paperwork_config_add_plugin(self, plugin):
-        self.core.call_all('config_add_plugin', self.application, plugin)
+    def paperwork_config_add_plugin(self, plugin, application=None):
+        if application is None:
+            application = self.application
+        self.core.call_all('config_add_plugin', application, plugin)
 
-    def paperwork_config_remove_plugin(self, plugin):
-        self.core.call_all('config_remove_plugin', self.application, plugin)
+    def paperwork_config_remove_plugin(self, plugin, application=None):
+        if application is None:
+            application = self.application
+        self.core.call_all('config_remove_plugin', application, plugin)
 
-    def paperwork_config_list_plugins(self):
+    def paperwork_config_list_plugins(self, application=None):
+        if application is None:
+            application = self.application
         return self.core.call_success(
-            "config_list_active_plugins", self.application
+            "config_list_active_plugins", application
         )
+
+    def paperwork_config_reset_plugins(self, application=None):
+        if application is None:
+            application = self.application
+        return self.core.call_success("config_reset_plugins", application)
