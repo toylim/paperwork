@@ -37,6 +37,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return {
             'interfaces': [
                 ('doc_labels', ['paperwork_backend.model.labels',]),
+                ('document_storage', ['paperwork_backend.model.workdir',]),
             ],
         }
 
@@ -67,6 +68,11 @@ class Plugin(openpaperwork_core.PluginBase):
         p = subcmd_parser.add_parser('remove')
         p.add_argument('doc_id', help=_("Target document"))
         p.add_argument('label_name', help=_("Label to remove"))
+
+        p = subcmd_parser.add_parser('delete')
+        p.add_argument(
+            'label_name', help=_("Label to remove on *all* documents")
+        )
 
     def _load_all_labels(self):
         if self.interactive:
@@ -155,6 +161,56 @@ class Plugin(openpaperwork_core.PluginBase):
             )
             self._upd_doc(args.doc_id)
             return self._show([args.doc_id])
+
+        elif args.sub_command == "delete":
+
+            label = args.label_name
+
+            if self.interactive:
+                r = util.ask_confirmation(
+                    _(
+                        "Are you sure you want to delete label '%s' from all"
+                        " documents ?"
+                    ) % label,
+                    default='n'
+                )
+                if r != 'y':
+                    sys.exit(1)
+
+            all_docs = []
+            self.core.call_all("storage_get_all_docs", all_docs)
+
+            updated_docs = []
+
+            transactions = []
+            self.core.call_all(
+                "doc_transaction_start", transactions
+            )
+
+            for (doc_id, doc_url) in all_docs:
+                labels = set()
+                self.core.call_all("doc_get_labels_by_url", labels, doc_url)
+                labels = {l for (l, c) in labels}
+                if label not in labels:
+                    continue
+
+                if self.interactive:
+                    print("Removing label '{}' from document '{}'".format(
+                        label, doc_id
+                    ))
+                updated_docs.append(doc_id)
+                self.core.call_all("doc_remove_label_by_url", doc_url, label)
+                for transaction in transactions:
+                    transaction.upd_obj(doc_id)
+
+            if self.interactive:
+                sys.stdout.write("Committing changes in index ... ")
+                sys.stdout.flush()
+            for transaction in transactions:
+                transaction.commit()
+            if self.interactive:
+                sys.stdout.write("Done\n")
+            return updated_docs
 
         if self.interactive:
             print("Unknown label command: {}".format(args.sub_command))
