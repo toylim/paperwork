@@ -19,6 +19,7 @@ DEFAULT_SHELL_PLUGINS = paperwork_backend.DEFAULT_SHELL_PLUGINS + [
     'paperwork_shell.cmd.import',
     'paperwork_shell.cmd.label',
     'paperwork_shell.cmd.move',
+    'paperwork_shell.cmd.ocr',
     'paperwork_shell.cmd.rename',
     'paperwork_shell.cmd.search',
     'paperwork_shell.cmd.show',
