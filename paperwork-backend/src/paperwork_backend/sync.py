@@ -67,7 +67,7 @@ class StorageDoc(object):
         self.core.call_all(
             'doc_get_mtime_by_url', mtime, self.doc_url
         )
-        return datetime.datetime.fromtimestamp(max(mtime))
+        return datetime.datetime.fromtimestamp(max(mtime, default=0))
 
     extra = property(get_mtime)
 

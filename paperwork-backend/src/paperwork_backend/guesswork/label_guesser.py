@@ -157,7 +157,7 @@ class LabelGuesserTransaction(object):
                 ):
             mtime = []
             self.core.call_all("doc_get_mtime_by_url", mtime, doc_url)
-            mtime = max(mtime)
+            mtime = max(mtime, default=0)
 
             doc_text = []
             self.core.call_all("doc_get_text_by_url", doc_text, doc_url)

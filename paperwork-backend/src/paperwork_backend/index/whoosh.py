@@ -84,7 +84,7 @@ class WhooshTransaction(object):
 
         doc_mtime = []
         self.core.call_all("doc_get_mtime_by_url", doc_mtime, doc_url)
-        doc_mtime = datetime.datetime.fromtimestamp(max(doc_mtime))
+        doc_mtime = datetime.datetime.fromtimestamp(max(doc_mtime, default=0))
 
         doc_hash = []
         self.core.call_all("doc_get_hash_by_url", doc_hash, doc_url)
