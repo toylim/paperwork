@@ -57,6 +57,7 @@ class Plugin(openpaperwork_core.PluginBase):
         subparser = config_parser.add_subparsers(
             help=_("sub-command"), dest='subcommand', required=True
         )
+
         get_parser = subparser.add_parser(
             'get', help=_("Get a value from Paperwork's configuration")
         )

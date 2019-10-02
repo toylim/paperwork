@@ -16,6 +16,7 @@ DEFAULT_SHELL_PLUGINS = paperwork_backend.DEFAULT_SHELL_PLUGINS + [
     'paperwork_shell.cmd.config',
     'paperwork_shell.cmd.delete',
     'paperwork_shell.cmd.export',
+    'paperwork_shell.cmd.extra_text',
     'paperwork_shell.cmd.import',
     'paperwork_shell.cmd.label',
     'paperwork_shell.cmd.move',
@@ -27,6 +28,7 @@ DEFAULT_SHELL_PLUGINS = paperwork_backend.DEFAULT_SHELL_PLUGINS + [
 ]
 
 DEFAULT_CLI_PLUGINS = DEFAULT_SHELL_PLUGINS + [
+    "paperwork_shell.display.docrendering.extra_text",
     "paperwork_shell.display.docrendering.img",
     "paperwork_shell.display.docrendering.labels",
     "paperwork_shell.display.docrendering.text",

@@ -16,6 +16,7 @@ DEFAULT_PLUGINS = [
     'paperwork_backend.fs.memory',
     'paperwork_backend.guesswork.label_guesser',
     'paperwork_backend.index.whoosh',
+    'paperwork_backend.model.extra_text',
     'paperwork_backend.model.hocr',
     'paperwork_backend.model.img',
     'paperwork_backend.model.labels',
