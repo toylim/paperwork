@@ -507,7 +507,7 @@ class Plugin(CommonFsPluginBase):
         if not self._is_file_uri(uri):
             return None
 
-        gfile = Gio.File.new_for_uri(file_uri)
+        gfile = Gio.File.new_for_uri(uri)
         info = gfile.query_info(
             "standard::content-type", Gio.FileQueryInfoFlags.NONE
         )

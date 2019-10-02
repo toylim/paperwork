@@ -16,11 +16,10 @@ LOGGER = logging.getLogger(__name__)
 
 
 class SinglePdfImporter(object):
-    def __init__(self, core, file_import, src_file_uri, transactions):
+    def __init__(self, core, file_import, src_file_uri):
         self.core = core
         self.file_import = file_import
         self.src_file_uri = src_file_uri
-        self.transactions = transactions
         self.doc_id = None
         self.doc_url = None
 
@@ -33,17 +32,9 @@ class SinglePdfImporter(object):
         self.file_import.stats[_("Documents")] += 1
 
     def get_promise(self):
-        promise = openpaperwork_core.promise.Promise(self.core)
-
-        promise = promise.then(self._basic_import, self.src_file_uri)
-        for transaction in self.transactions:
-            promise = promise.then(
-                openpaperwork_core.promise.ThreadedPromise(
-                    self.core, lambda: transaction.add_obj(self.doc_id)
-                )
-            )
-
-        return promise
+        return openpaperwork_core.promise.Promise(
+            self.core, self._basic_import, args=(self.src_file_uri,)
+        )
 
 
 class SinglePdfImporterFactory(object):
@@ -64,9 +55,9 @@ class SinglePdfImporterFactory(object):
         if file_uri.lower().endswith(self.plugin.FILE_EXTENSION):
             return True
 
-    def make_importer(self, file_import, file_uri, transactions):
+    def make_importer(self, file_import, file_uri):
         return SinglePdfImporter(
-            self.core, file_import, file_uri, transactions
+            self.core, file_import, file_uri
         )
 
 

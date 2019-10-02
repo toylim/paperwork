@@ -16,12 +16,11 @@ LOGGER = logging.getLogger(__name__)
 
 
 class SingleImgImporter(object):
-    def __init__(self, factory, file_import, src_file_uri, transactions):
+    def __init__(self, factory, file_import, src_file_uri):
         self.factory = factory
         self.core = factory.core
         self.file_import = file_import
         self.src_file_uri = src_file_uri
-        self.transactions = transactions
         self.doc_id = None
         self.doc_url = None
 
@@ -39,22 +38,9 @@ class SingleImgImporter(object):
             self.file_import.stats[_("Pages")] += 1
 
     def get_promise(self):
-        promise = openpaperwork_core.promise.Promise(self.core)
-        promise = promise.then(self._basic_import, self.src_file_uri)
-        for transaction in self.transactions:
-            if self.file_import.active_doc_id is None:
-                promise = promise.then(
-                    openpaperwork_core.promise.ThreadedPromise(
-                        self.core, lambda: transaction.add_obj(self.doc_id)
-                    )
-                )
-            else:
-                promise = promise.then(
-                    openpaperwork_core.promise.ThreadPromise(
-                        self.core, lambda: transaction.upd_obj(self.doc_id)
-                    )
-                )
-        return promise
+        return openpaperwork_core.promise.Promise(
+            self.core, self._basic_import, args=(self.src_file_uri,)
+        )
 
 
 class SingleImgImporterFactory(object):
@@ -77,10 +63,8 @@ class SingleImgImporterFactory(object):
         if file_ext in self.plugin.FILE_EXTENSIONS:
             return True
 
-    def make_importer(self, file_import, file_uri, transactions):
-        return SingleImgImporter(
-            self, file_import, file_uri, transactions
-        )
+    def make_importer(self, file_import, file_uri):
+        return SingleImgImporter(self, file_import, file_uri)
 
 
 class Plugin(openpaperwork_core.PluginBase):

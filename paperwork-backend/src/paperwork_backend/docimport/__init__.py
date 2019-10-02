@@ -27,6 +27,9 @@ class BaseFileImporter(object):
         self.file_import = file_import
         self.single_file_importer_factory = single_file_importer_factory
 
+    def get_name(self):
+        return self.single_file_importer_factory.get_name()
+
     def can_import(self):
         return len(list(self._get_importables())) > 0
 
@@ -37,6 +40,27 @@ class BaseFileImporter(object):
         except KeyError:
             passs
 
+    def _make_transactions(self, file_import):
+        transactions = []
+        self.core.call_all(
+            "doc_transaction_start", transactions,
+            len(file_import.new_doc_ids) + len(file_import.upd_doc_ids)
+        )
+        return transactions
+
+    def _do_transactions(self, transactions, file_import):
+        for doc_id in file_import.new_doc_ids:
+            for transaction in transactions:
+                transaction.add_obj(doc_id)
+        for doc_id in file_import.upd_doc_ids:
+            for transaction in transactions:
+                transaction.upd_obj(doc_id)
+        return transactions
+
+    def _commit_transactions(self, transactions):
+        for transaction in transactions:
+            transaction.commit()
+
     def get_import_promise(self):
         """
         Return a promise with all the steps required to import files
@@ -44,19 +68,12 @@ class BaseFileImporter(object):
         """
         promise = openpaperwork_core.promise.Promise(self.core)
         to_import = list(self._get_importables())
-        transactions = []
-        self.core.call_all(
-            "doc_transaction_start", transactions, len(to_import)
-        )
 
         for (orig_uri, file_uri) in to_import:
             new_promise = self.single_file_importer_factory.make_importer(
-                    self.file_import, file_uri, transactions
+                    self.file_import, file_uri
                 ).get_promise()
             promise = promise.then(new_promise)
-
-        for transaction in transactions:
-            promise = promise.then(transaction.commit)
 
         for (orig_uri, file_uri) in to_import:
             promise = promise.then(
@@ -65,6 +82,18 @@ class BaseFileImporter(object):
             promise = promise.then(
                 self.file_import.imported_files.add, file_uri
             )
+
+        promise = promise.then(self._make_transactions, self.file_import)
+        promise = promise.then(
+            openpaperwork_core.promise.ThreadedPromise(
+                self.core, self._do_transactions, args=(self.file_import,)
+            )
+        )
+        promise = promise.then(
+            openpaperwork_core.promise.ThreadedPromise(
+                self.core, self._commit_transactions
+            )
+        )
 
         return promise.then(
             self.core.call_all, "on_import_done", self.file_import
