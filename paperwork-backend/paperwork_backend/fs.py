@@ -385,6 +385,20 @@ class GioFileSystem(CommonFs):
             logger.warning("Gio.Gerror", exc_info=exc)
             raise IOError(str(exc))
 
+    def writable(self, url):
+        try:
+            f = Gio.File.new_for_uri(url)
+            fi = f.query_info(
+                Gio.FILE_ATTRIBUTE_ACCESS_CAN_WRITE,
+                Gio.FileQueryInfoFlags.NONE
+            )
+            return fi.get_attribute_boolean(
+                Gio.FILE_ATTRIBUTE_ACCESS_CAN_WRITE
+            )
+        except GLib.GError as exc:
+            logger.warning("Gio.Gerror", exc_info=exc)
+            raise IOError(str(exc))
+
     def getsize(self, url):
         try:
             f = Gio.File.new_for_uri(url)
