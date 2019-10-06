@@ -196,8 +196,9 @@ class BasicPage(object):
             doc_file_path = self.get_doc_file_path()
 
             if (self.fs.exists(thumb_path) and
-                    self.fs.getmtime(doc_file_path) <
-                    self.fs.getmtime(thumb_path)):
+                    (self.fs.getmtime(doc_file_path) <
+                        self.fs.getmtime(thumb_path) or not
+                        self.fs.writable(thumb_path))):
                 with self.fs.open(thumb_path, 'rb') as fd:
                     thumbnail = PIL.Image.open(fd)
                     thumbnail.load()
