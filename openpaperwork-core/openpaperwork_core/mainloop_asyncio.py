@@ -18,7 +18,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.loop = None
         self.halt_cause = None
 
-    def _chk_mainloop(self):
+    def _check_mainloop_instantiated(self):
         if self.loop is None:
             self.loop = asyncio.get_event_loop()
 
@@ -28,7 +28,7 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def mainloop(self, halt_on_uncatched_exception=True):
-        self._chk_mainloop()
+        self._check_mainloop_instantiated()
         self.halt_on_uncatched_exception = halt_on_uncatched_exception
         self.loop.run_forever()
         if self.halt_cause is not None:
@@ -41,7 +41,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def schedule(self, func, *args, **kwargs):
         assert(hasattr(func, '__call__'))
 
-        self._chk_mainloop()
+        self._check_mainloop_instantiated()
 
         def decorator(_args):
             # event_loop.call_soon() do not accept kwargs (just args),
