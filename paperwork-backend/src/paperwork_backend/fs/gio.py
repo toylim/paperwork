@@ -518,3 +518,20 @@ class Plugin(CommonFsPluginBase):
             prefix=prefix, suffix=suffix, delete=False
         )
         return (self.fs_safe(tmp.name), tmp)
+
+    def fs_iswritable(self, url):
+        if not self._is_file_uri(url):
+            return None
+
+        try:
+            f = Gio.File.new_for_uri(url)
+            fi = f.query_info(
+                Gio.FILE_ATTRIBUTE_ACCESS_CAN_WRITE,
+                Gio.FileQueryInfoFlags.NONE
+            )
+            return fi.get_attribute_boolean(
+                Gio.FILE_ATTRIBUTE_ACCESS_CAN_WRITE
+            )
+        except GLib.GError as exc:
+            logger.warning("Gio.Gerror", exc_info=exc)
+            raise IOError(str(exc))

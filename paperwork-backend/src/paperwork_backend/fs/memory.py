@@ -222,6 +222,12 @@ class Plugin(CommonFsPluginBase):
     def fs_get_mime(self, url):
         return None
 
+    def fs_iswritable(self, url):
+        mem_id = self.get_memory_id(uri)
+        if mem_id is None:
+            return None
+        return True
+
     def fs_mktemp(self, prefix=None, suffix=None, mode='w'):
         assert('/' not in prefix)
         assert('/' not in suffix)

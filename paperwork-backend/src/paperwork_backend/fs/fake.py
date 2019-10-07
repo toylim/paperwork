@@ -233,3 +233,6 @@ class Plugin(CommonFsPluginBase):
 
     def fs_get_mime(self, uri):
         pass
+
+    def fs_iswritable(self, url):
+        return True
