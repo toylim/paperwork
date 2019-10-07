@@ -26,6 +26,7 @@ DEFAULT_PLUGINS = [
     'paperwork_backend.ocr.pyocr',
     'paperwork_backend.pillow.img',
     'paperwork_backend.pillow.pdf',
+    'paperwork_backend.pyocr',
 ]
 
 DEFAULT_GUI_PLUGINS = [
