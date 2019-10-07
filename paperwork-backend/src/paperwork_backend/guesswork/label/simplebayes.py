@@ -28,8 +28,8 @@ import simplebayes
 import openpaperwork_core
 import openpaperwork_core.promise
 
-from .. import sync
-from .. import util
+from ... import sync
+from ... import util
 
 
 # Beware that we use Sqlite, but sqlite python module is not thread-safe

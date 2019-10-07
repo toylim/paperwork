@@ -14,7 +14,7 @@ DEFAULT_PLUGINS = [
     'paperwork_backend.docscan.scan2doc',
     'paperwork_backend.fs.gio',
     'paperwork_backend.fs.memory',
-    'paperwork_backend.guesswork.label_guesser',
+    'paperwork_backend.guesswork.label.simplebayes',
     'paperwork_backend.index.whoosh',
     'paperwork_backend.model.extra_text',
     'paperwork_backend.model.hocr',

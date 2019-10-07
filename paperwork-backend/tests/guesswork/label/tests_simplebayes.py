@@ -14,9 +14,9 @@ class TestLabelGuesser(unittest.TestCase):
 
         self.core = openpaperwork_core.Core()
         self.core.load("paperwork_backend.model.fake")
-        self.core.load("paperwork_backend.guesswork.label_guesser")
+        self.core.load("paperwork_backend.guesswork.label.simplebayes")
         self.core.get_by_name(
-            "paperwork_backend.guesswork.label_guesser"
+            "paperwork_backend.guesswork.label.simplebayes"
         ).bayes_dir = self.tmp_bayes_dir
 
         self.fake_storage = self.core.get_by_name(
