@@ -1,5 +1,4 @@
 import logging
-import sys
 import threading
 import traceback
 
@@ -49,7 +48,9 @@ class BasePromise(object):
             next_promise = callback
             next_promise.parent = self
         else:
-            next_promise = Promise(self.core, callback, args, kwargs, parent=self)
+            next_promise = Promise(
+                self.core, callback, args, kwargs, parent=self
+            )
             last_promise = next_promise
         self._then.append(next_promise)
         return last_promise
@@ -61,7 +62,7 @@ class BasePromise(object):
     def on_error(self, exc):
         if len(self._catch) > 0:
             if self.hide_catched_exceptions:
-                trace = lambda *args, **kwargs: None
+                trace = lambda *args, **kwargs: None  # NOQA: E731
             else:
                 trace = LOGGER.warning
             catched = "catched"
@@ -118,7 +119,7 @@ class BasePromise(object):
 
         self.then(event.set)
         event.wait()
-        return r[0]
+        return out[0]
 
 
 class Promise(BasePromise):

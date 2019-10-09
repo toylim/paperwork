@@ -2,7 +2,6 @@
 Minimalist log handling. Print everything to stdout by default
 """
 
-import datetime
 import logging
 import os
 import sys
