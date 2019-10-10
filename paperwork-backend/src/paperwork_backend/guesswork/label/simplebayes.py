@@ -9,9 +9,9 @@ It stores data in 2 ways:
 
 Simplebayes caches store the training of bayes filters.
 The sqlite database allows the plugin to keep track of which documents have
-been used for training and which haven't. It also keeps a copy of document
-texts. This copy is used when a document is removed so the bayes filter
-can be untrained.
+been used for training and which haven't and which labels were already
+on which documents. It also keeps a copy of document texts. This copy is
+used when a document is removed so the bayes filter can be untrained.
 """
 
 import base64
