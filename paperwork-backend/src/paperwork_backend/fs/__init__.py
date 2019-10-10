@@ -1,3 +1,4 @@
+import hashlib
 import logging
 import os
 import urllib
@@ -74,3 +75,8 @@ class CommonFsPluginBase(openpaperwork_core.PluginBase):
     def fs_dirname(self, url):
         # dir name should not be unquoted. It could mess up the URI
         return os.path.dirname(url)
+
+    def fs_hash(self, url):
+        with self.core.call_success("fs_open", url, 'rb') as fd:
+            content = fd.read()
+        return int(hashlib.sha256(content).hexdigest(), 16)

@@ -1,4 +1,3 @@
-import hashlib
 import itertools
 import logging
 
@@ -151,10 +150,10 @@ class Plugin(openpaperwork_core.PluginBase):
         pdf_url = self._get_pdf_url(doc_url)
         if pdf_url is None:
             return
-        with self.core.call_success("fs_open", pdf_url, 'rb') as fd:
-            content = fd.read()
-        dochash = hashlib.sha256(content).hexdigest()
-        out.append(int(dochash, 16))
+        out.append(self.core.call_success("fs_hash", pdf_url))
+
+    def page_get_hash_by_url(self, out: list, doc_url, page_idx):
+        return self.doc_get_hash_by_url(out, doc_url)
 
     def doc_get_mtime_by_url(self, out: list, doc_url):
         pdf_url = self._get_pdf_url(doc_url)
@@ -164,6 +163,9 @@ class Plugin(openpaperwork_core.PluginBase):
         if mtime is None:
             return None
         out.append(mtime)
+
+    def page_get_mtime_by_url(self, out: list, doc_url, page_idx):
+        return self.doc_get_mtime_by_url(out, doc_url)
 
     def doc_get_nb_pages_by_url(self, doc_url):
         (pdf_url, pdf) = self._open_pdf(doc_url)

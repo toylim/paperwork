@@ -44,6 +44,22 @@ class Plugin(openpaperwork_core.PluginBase):
                 continue
             out.append(self.core.call_success("fs_get_mtime", page_url))
 
+    def page_get_mtime_by_url(self, out: list, doc_url, page_idx):
+        page_url = self.core.call_success(
+            "fs_join", doc_url, PAGE_FILENAME_FMT.format(page_idx + 1)
+        )
+        if self.core.call_success("fs_exists", page_url) is None:
+            return
+        out.append(self.core.call_success("fs_get_mtime", page_url))
+
+    def page_get_hash_by_url(self, out: list, doc_url, page_idx):
+        page_url = self.core.call_success(
+            "fs_join", doc_url, PAGE_FILENAME_FMT.format(page_idx + 1)
+        )
+        if self.core.call_success("fs_exists", page_url) is None:
+            return
+        out.append(self.core.call_success("fs_hash", page_url))
+
     def doc_get_text_by_url(self, out: list, doc_url):
         doc_nb_pages = self.core.call_success(
             "doc_get_nb_pages_by_url", doc_url
