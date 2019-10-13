@@ -34,7 +34,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return {
             'interfaces': [
                 ('syncable', [
-                    "paperwork_backend.guesswork.label_guesser",
+                    "paperwork_backend.guesswork.label.simplebayes",
                     "paperwork_backend.index.whoosh",
                     "paperwork_backend.model.labels",
                     "paperwork_backend.ocr.pyocr",
