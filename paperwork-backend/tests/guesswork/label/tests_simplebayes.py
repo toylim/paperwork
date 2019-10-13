@@ -14,7 +14,11 @@ class TestLabelGuesser(unittest.TestCase):
 
         self.core = openpaperwork_core.Core()
         self.core.load("paperwork_backend.model.fake")
+        self.core.load("paperwork_backend.doctracker")
         self.core.load("paperwork_backend.guesswork.label.simplebayes")
+        self.core.get_by_name(
+            "paperwork_backend.doctracker"
+        ).paperwork_dir = self.tmp_bayes_dir
         self.core.get_by_name(
             "paperwork_backend.guesswork.label.simplebayes"
         ).bayes_dir = self.tmp_bayes_dir
@@ -71,7 +75,7 @@ class TestLabelGuesser(unittest.TestCase):
         # the storage --> it will update the training of bayesian filters.
         transactions = []
         self.core.call_all("doc_transaction_start", transactions)
-        self.assertEqual(len(transactions), 1)
+        self.assertGreater(len(transactions), 0)
         for transaction in transactions:
             transaction.add_obj("test_doc")
         for transaction in transactions:
@@ -125,7 +129,7 @@ class TestLabelGuesser(unittest.TestCase):
         # on them.
         transactions = []
         self.core.call_all("doc_transaction_start", transactions)
-        self.assertEqual(len(transactions), 1)
+        self.assertGreater(len(transactions), 0)
         for transaction in transactions:
             transaction.add_obj("new_doc")
         for transaction in transactions:
@@ -183,7 +187,7 @@ class TestLabelGuesser(unittest.TestCase):
 
         transactions = []
         self.core.call_all("doc_transaction_start", transactions)
-        self.assertEqual(len(transactions), 1)
+        self.assertGreater(len(transactions), 0)
         for transaction in transactions:
             transaction.upd_obj("new_doc_2")
         for transaction in transactions:
@@ -224,7 +228,7 @@ class TestLabelGuesser(unittest.TestCase):
 
         transactions = []
         self.core.call_all("doc_transaction_start", transactions)
-        self.assertEqual(len(transactions), 1)
+        self.assertGreater(len(transactions), 0)
         for transaction in transactions:
             transaction.del_obj("new_doc")
         for transaction in transactions:
@@ -323,7 +327,7 @@ class TestLabelGuesser(unittest.TestCase):
         # on them.
         transactions = []
         self.core.call_all("doc_transaction_start", transactions)
-        self.assertEqual(len(transactions), 1)
+        self.assertGreater(len(transactions), 0)
         for transaction in transactions:
             transaction.add_obj("new_doc")
         for transaction in transactions:

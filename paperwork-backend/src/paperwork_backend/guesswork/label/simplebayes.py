@@ -42,21 +42,10 @@ _ = gettext.gettext
 
 CREATE_TABLES = [
     (
-        "CREATE TABLE IF NOT EXISTS documents ("
-        " doc_id TEXT PRIMARY KEY,"
-        " text TEXT NOT NULL,"
-        " mtime INTEGER NOT NULL"
-        ")"
-    ),
-    (
         "CREATE TABLE IF NOT EXISTS labels ("
         " doc_id TEXT NOT NULL,"
         " label TEXT NOT NULL,"
-        " PRIMARY KEY (doc_id, label),"
-        " FOREIGN KEY (doc_id)"
-        "   REFERENCES documents (doc_id)"
-        "   ON DELETE CASCADE"
-        "   ON UPDATE CASCADE"
+        " PRIMARY KEY (doc_id, label)"
         ")"
     ),
 ]
@@ -155,15 +144,10 @@ class LabelGuesserTransaction(object):
                     and self.core.call_success("fs_exists", doc_url)
                     is not None
                 ):
-            mtime = []
-            self.core.call_all("doc_get_mtime_by_url", mtime, doc_url)
-            mtime = max(mtime, default=0)
-
             doc_text = []
             self.core.call_all("doc_get_text_by_url", doc_text, doc_url)
             doc_text = "\n\n".join(doc_text)
         else:
-            mtime = 0
             doc_text = None
 
         doc_labels = set()
@@ -171,21 +155,14 @@ class LabelGuesserTransaction(object):
         doc_labels = {label[0] for label in doc_labels}
 
         return {
-            'mtime': mtime,
             'text': doc_text,
             'labels': doc_labels,
         }
 
     def _get_db_doc_data(self, doc_id, doc_url):
         db_text = self.core.call_success(
-            "mainloop_execute", self.cursor.execute,
-            "SELECT text FROM documents WHERE doc_id = ? LIMIT 1", (doc_id,)
+            "doc_tracker_get_doc_text_by_id", doc_id
         )
-        db_text = self.core.call_success("mainloop_execute", list, db_text)
-        if len(db_text) <= 0:
-            db_text = None
-        else:
-            db_text = db_text[0]
 
         db_labels = self.core.call_success(
             "mainloop_execute", self.cursor.execute,
@@ -212,14 +189,7 @@ class LabelGuesserTransaction(object):
                 )
                 # we need to figure out the known documents at this very
                 # moment to train first on those documents only.
-                doc_ids = self.core.call_success(
-                    "mainloop_execute", self.cursor.execute,
-                    "SELECT doc_id FROM documents"
-                )
-                doc_ids = self.core.call_success(
-                    "mainloop_execute", list, doc_ids
-                )
-                doc_ids = [d[0] for d in doc_ids]
+                doc_ids = self.core.call_success("doc_tracker_get_all_doc_ids")
                 self.todo.append({
                     "action": "new",
                     "label": doc_label,
@@ -268,22 +238,8 @@ class LabelGuesserTransaction(object):
         actual = self._get_actual_doc_data(doc_id, doc_url)
         db = self._get_db_doc_data(doc_id, doc_url)
 
-        if actual['text'] is not None:
-            self.core.call_one(
-                "mainloop_execute", self.cursor.execute,
-                "INSERT OR REPLACE INTO documents(doc_id, text, mtime)"
-                " VALUES (?, ?, ?)",
-                (doc_id, actual['text'], actual['mtime'])
-            )
-
         self._check_for_new_labels(doc_id, doc_url, actual, db)
         self._check_for_removed_labels(doc_id, doc_url, actual, db)
-
-        if actual['text'] is None:
-            self.core.call_one(
-                "mainloop_execute", self.cursor.execute,
-                "DELETE FROM documents WHERE doc_id = ?", (doc_id,)
-            )
 
     def unchanged_obj(self, doc_id):
         self.count += 1
@@ -332,14 +288,10 @@ class LabelGuesserTransaction(object):
 
             for doc_id in todo['doc_ids']:
                 text = self.core.call_success(
-                    "mainloop_execute", self.cursor.execute,
-                    "SELECT text FROM documents WHERE doc_id = ?",
-                    (doc_id,)
+                    "doc_tracker_get_doc_text_by_id", doc_id
                 )
-                text = self.core.call_success("mainloop_execute", list, text)
-                if len(text) <= 0:
+                if text is None or len(text) <= 0:
                     continue
-                text = text[0]
                 baye.train("no", text)
 
         for todo in self.todo:
@@ -379,9 +331,7 @@ class LabelGuesserTransaction(object):
         for label in self.all_labels:
             if self._check_label_exists_in_db(label):
                 continue
-            LOGGER.warning(
-                "Dropping baye training for label '%s'", label
-            )
+            LOGGER.warning("Dropping baye training for label '%s'", label)
             self.plugin._delete_baye(label)
 
         if self.cursor is not None:
@@ -413,15 +363,13 @@ class Plugin(openpaperwork_core.PluginBase):
         self.sql_file = None
 
     def get_interfaces(self):
-        return [
-            "doc_autocompleter",
-            "syncable",
-        ]
+        return []
 
     def get_deps(self):
         return {
             'interfaces': [
                 ('doc_labels', ['paperwork_backend.model.labels',]),
+                ('doc_tracking', ['paperwork_backend.doctracker',]),
                 ('document_storage', ['paperwork_backend.model.workdir',]),
                 ('fs', ['paperwork_backend.fs.gio',]),
                 ('mainloop', ['openpaperwork_core.mainloop_asyncio',]),
@@ -464,6 +412,14 @@ class Plugin(openpaperwork_core.PluginBase):
             label = label[0]
             LOGGER.info("Loading training for label '%s'", label)
             self._get_baye(label)
+
+        self.core.call_all(
+            "doc_tracker_register",
+            "label_guesser",
+            lambda sync, total_expected: LabelGuesserTransaction(
+                self, guess_labels=not sync, total_expected=total_expected
+            )
+        )
 
     def _get_baye(self, label):
         if label in self.bayes:
@@ -516,42 +472,3 @@ class Plugin(openpaperwork_core.PluginBase):
         labels = list(labels)
         for label in labels:
             self.core.call_all("doc_add_label_by_url", doc_url, label)
-
-    def doc_transaction_start(self, out: list, total_expected=-1):
-        out.append(LabelGuesserTransaction(
-            self, guess_labels=True, total_expected=total_expected
-        ))
-
-    def sync(self, promises: list):
-        storage_all_docs = []
-        self.core.call_all("storage_get_all_docs", storage_all_docs)
-        storage_all_docs.sort()
-        storage_all_docs = [
-            sync.StorageDoc(self.core, doc[0], doc[1])
-            for doc in storage_all_docs
-        ]
-
-        bayes_all_docs = self.core.call_success(
-            "mainloop_execute", self.sql.cursor
-        )
-        bayes_all_docs.execute("SELECT doc_id, mtime FROM documents")
-
-        class BayesDoc(object):
-            def __init__(self, result):
-                self.key = result[0]
-                self.extra = datetime.datetime.fromtimestamp(result[1])
-
-        bayes_docs = self.core.call_success(
-            "mainloop_execute",
-            lambda docs: [BayesDoc(r) for r in docs],
-            bayes_all_docs
-        )
-
-        transaction = LabelGuesserTransaction(
-            self, guess_labels=False, total_expected=len(storage_all_docs)
-        )
-
-        promises.append(sync.Syncer(
-            self.core, "label_guesser", storage_all_docs, bayes_docs,
-            transaction
-        ).get_promise())
