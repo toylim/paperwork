@@ -46,7 +46,7 @@ class TestImgImport(unittest.TestCase):
                     return dst_uri
 
                 def on_import_done(s, file_import):
-                    self.core.call_all("mainloop_quit")
+                    self.core.call_all("mainloop_quit_graceful")
 
                 def doc_transaction_start(s, transactions, expected=-1):
                     transactions.append(FakeTransaction())
@@ -205,7 +205,7 @@ class TestImgImport(unittest.TestCase):
                     return dst_uri
 
                 def on_import_done(s, file_import):
-                    self.core.call_all("mainloop_quit")
+                    self.core.call_all("mainloop_quit_graceful")
 
                 def doc_transaction_start(s, transactions, expected=-1):
                     transactions.append(FakeTransaction())

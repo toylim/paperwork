@@ -18,6 +18,7 @@ class TestStats(unittest.TestCase):
 
         self.config = self.core.get_by_name("paperwork_backend.config.fake")
         self.received = []
+        self.stats_sent = False
 
     def test_send_stats(self):
         self.received = []
@@ -65,16 +66,18 @@ class TestStats(unittest.TestCase):
                         stats['truck'] = 42
 
                     def on_stats_sent(s):
-                        self.core.call_all("mainloop_quit")
+                        self.stats_sent = True
 
             self.core._load_module(
                 "fake_module", FakeModule()
             )
 
             self.core.init()
+            self.core.call_all("mainloop_quit_graceful")
 
             self.core.call_one('mainloop')
 
+            self.assertTrue(self.stats_sent)
             self.assertEqual(len(self.received), 1)
             self.assertEqual(self.received[0][0], "/beacon/post_statistics")
             self.assertEqual(self.received[0][1]['uuid'], 1245)

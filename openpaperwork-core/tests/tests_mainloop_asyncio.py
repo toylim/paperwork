@@ -16,12 +16,9 @@ class TestCallback(unittest.TestCase):
         def set_val(value):
             self.val = value
 
-        def stop():
-            self.core.call_all('mainloop_quit')
-
         # queue some calls
         self.core.call_all('schedule', set_val, 22)
-        self.core.call_all('schedule', stop)
+        self.core.call_all("mainloop_quit_graceful")
 
         self.core.call_one('mainloop')
 
@@ -45,10 +42,10 @@ class TestPromise(unittest.TestCase):
 
         def stop():
             self.stop_called = True
-            self.core.call_all("mainloop_quit")
 
         p = openpaperwork_core.promise.Promise(self.core, stop)
         p.schedule()
+        self.core.call_all("mainloop_quit_graceful")
 
         self.core.call_one("mainloop")
         self.assertTrue(self.stop_called)
@@ -72,12 +69,12 @@ class TestPromise(unittest.TestCase):
         def stop():
             self.stop_called = self.idx
             self.idx += 1
-            self.core.call_all("mainloop_quit")
 
         p = openpaperwork_core.promise.Promise(self.core, alpha)
         p = p.then(beta)
         p = p.then(stop)
         p.schedule()
+        self.core.call_all("mainloop_quit_graceful")
 
         self.core.call_one("mainloop")
         self.assertEqual(self.alpha_called, 0)
@@ -99,17 +96,16 @@ class TestPromise(unittest.TestCase):
 
         def stop():
             self.stop_called = True
-            self.core.call_all("mainloop_quit")
 
         def on_exc(exc):
             self.exc_raised = True
-            self.core.call_all("mainloop_quit")
 
         p = openpaperwork_core.promise.Promise(self.core, alpha)
         p = p.then(beta)
         p = p.then(stop)
         p = p.catch(on_exc)
         p.schedule()
+        self.core.call_all("mainloop_quit_graceful")
 
         self.core.call_one("mainloop")
         self.assertTrue(self.alpha_called)

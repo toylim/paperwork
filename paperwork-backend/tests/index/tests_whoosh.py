@@ -72,7 +72,7 @@ class TestIndex(unittest.TestCase):
         class FakeModuleToStopMainLoop(object):
             class Plugin(openpaperwork_core.PluginBase):
                 def on_index_updated(self):
-                    core.call_all("mainloop_quit")
+                    core.call_all("mainloop_quit_graceful")
 
         self.core._load_module(
             "mainloop_stopper", FakeModuleToStopMainLoop()

@@ -71,7 +71,7 @@ class TestLabels(unittest.TestCase):
                     return True
 
                 def on_label_loading_end(self):
-                    core.call_all("mainloop_quit")
+                    core.call_all("mainloop_quit_graceful")
 
         self.core._load_module("mainloop_stopper", FakeModule())
 

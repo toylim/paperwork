@@ -46,7 +46,7 @@ class TestConfig(unittest.TestCase):
         for pipe in pipeline:
             promise = promise.then(pipe.get_promise(result='preview'))
         promise = promise.then(self.set_result)
-        promise = promise.then(self.core.call_all, "mainloop_quit")
+        promise = promise.then(self.core.call_all, "mainloop_quit_graceful")
         promise = promise.schedule()
         self.core.call_one("mainloop")
 
@@ -64,7 +64,7 @@ class TestConfig(unittest.TestCase):
                 pipe.get_promise(result='final', target_file_url=tmp_file)
             )
         promise = promise.then(self.set_result)
-        promise = promise.then(self.core.call_all, "mainloop_quit")
+        promise = promise.then(self.core.call_all, "mainloop_quit_graceful")
         promise.schedule()
         self.core.call_one("mainloop")
 
@@ -86,7 +86,7 @@ class TestConfig(unittest.TestCase):
         for pipe in pipeline:
             promise = promise.then(pipe.get_promise(result='preview'))
         promise = promise.then(self.set_result)
-        promise = promise.then(self.core.call_all, "mainloop_quit")
+        promise = promise.then(self.core.call_all, "mainloop_quit_graceful")
         promise = promise.schedule()
         self.core.call_one("mainloop")
 
@@ -104,7 +104,7 @@ class TestConfig(unittest.TestCase):
                 pipe.get_promise(result='final', target_file_url=tmp_file)
             )
         promise = promise.then(self.set_result)
-        promise = promise.then(self.core.call_all, "mainloop_quit")
+        promise = promise.then(self.core.call_all, "mainloop_quit_graceful")
         promise.schedule()
         self.core.call_one("mainloop")
 

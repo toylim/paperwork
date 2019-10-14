@@ -51,7 +51,7 @@ class TestUpdate(unittest.TestCase):
                 class Plugin(openpaperwork_core.PluginBase):
                     def on_update_detected(s, current, new):
                         self.assertEqual(new, (999, 1, 2))
-                        self.core.call_all("mainloop_quit")
+                        self.core.call_all("mainloop_quit_graceful")
 
             self.core._load_module(
                 "fake_module", FakeModule()
