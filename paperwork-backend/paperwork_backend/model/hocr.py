@@ -27,7 +27,7 @@ class Plugin(openpaperwork_core.PluginBase):
             ]
         }
 
-    def doc_get_mtime_by_url(self, out, doc_url):
+    def doc_get_mtime_by_url(self, out: list, doc_url):
         doc_nb_pages = self.core.call_success("doc_get_nb_pages", doc_url)
 
         page_idx = 0
@@ -37,7 +37,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 continue
             out.append(self.core.call_success("fs_get_mtime", page_url))
 
-    def doc_get_text_by_url(self, out, doc_url):
+    def doc_get_text_by_url(self, out: list, doc_url):
         doc_nb_pages = self.core.call_success("doc_get_nb_pages", doc_url)
 
         # The following is ugly to read, but generating the whole text from
@@ -77,3 +77,8 @@ class Plugin(openpaperwork_core.PluginBase):
                     doc_url, page_idx
                 )
                 return boxes
+
+    def page_set_boxes_by_url(self, doc_url, page_idx, boxes):
+        page_url = doc_url + "/" + PAGE_FILENAME_FMT.format(page_idx + 1)
+        with self.core.call_success("fs_open", page_url, 'w') as file_desc:
+            pyocr.builders.LineBoxBuilder().write_file(file_desc, boxes)

@@ -15,8 +15,12 @@ class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
         self.halt_on_uncatched_exception = True
-        self.loop = asyncio.get_event_loop()
+        self.loop = None
         self.halt_cause = None
+
+    def _check_mainloop_instantiated(self):
+        if self.loop is None:
+            self.loop = asyncio.get_event_loop()
 
     def get_interfaces(self):
         return [
@@ -24,6 +28,7 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def mainloop(self, halt_on_uncatched_exception=True):
+        self._check_mainloop_instantiated()
         self.halt_on_uncatched_exception = halt_on_uncatched_exception
         self.loop.run_forever()
         if self.halt_cause is not None:
@@ -35,6 +40,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def schedule(self, func, *args, **kwargs):
         assert(hasattr(func, '__call__'))
+
+        self._check_mainloop_instantiated()
+
         def decorator(_args):
             # event_loop.call_soon() do not accept kwargs (just args),
             # so we have to do some wrapping.
@@ -46,4 +54,4 @@ class Plugin(openpaperwork_core.PluginBase):
                     self.halt_cause = exc
                     self.mainloop_quit()
 
-        self.loop.call_soon(decorator, (args, kwargs))
+        self.loop.call_soon_threadsafe(decorator, (args, kwargs))

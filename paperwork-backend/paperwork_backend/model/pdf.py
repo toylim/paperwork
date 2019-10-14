@@ -4,7 +4,6 @@ import logging
 
 import gi
 gi.require_version('Poppler', '0.18')
-
 from gi.repository import Gio
 from gi.repository import Poppler
 
@@ -73,11 +72,13 @@ class PdfLineBox(object):
 class Plugin(openpaperwork_core.PluginBase):
     def get_interfaces(self):
         return [
-            "doc_type",
             "doc_hash",
+            "doc_pdf_import",
+            "doc_pdf_url",
             "doc_text",
-            "page_img",
+            "doc_type",
             "page_boxes",
+            "page_img",
         ]
 
     def get_deps(self):
@@ -108,7 +109,10 @@ class Plugin(openpaperwork_core.PluginBase):
             return None
         return True
 
-    def doc_get_hash_by_url(self, out, doc_url):
+    def doc_get_pdf_url_by_url(self, doc_url):
+        return self._get_pdf_url(doc_url)
+
+    def doc_get_hash_by_url(self, out: list, doc_url):
         pdf_url = self._get_pdf_url(doc_url)
         if pdf_url is None:
             return
@@ -117,7 +121,7 @@ class Plugin(openpaperwork_core.PluginBase):
         dochash = hashlib.sha256(content).hexdigest()
         out.append(int(dochash, 16))
 
-    def doc_get_mtime_by_url(self, out, doc_url):
+    def doc_get_mtime_by_url(self, out: list, doc_url):
         pdf_url = self._get_pdf_url(doc_url)
         if pdf_url is None:
             return None
@@ -157,8 +161,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 rects.append(rect)
             yield(letters, rects)
 
-    def doc_get_text_by_url(self, out, doc_url):
+    def doc_get_text_by_url(self, out: list, doc_url):
         (pdf_url, pdf) = self._open_pdf(doc_url)
+        if pdf is None:
+            return
         for page_idx in range(0, pdf.get_n_pages()):
             page = pdf.get_page(page_idx)
             txt = page.get_text()
@@ -169,6 +175,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def page_get_boxes_by_url(self, doc_url, page_idx):
         (pdf_url, pdf) = self._open_pdf(doc_url)
+        if pdf is None:
+            return
+
         pdf_page = pdf.get_page(page_idx)
 
         txt = pdf_page.get_text()
@@ -191,3 +200,14 @@ class Plugin(openpaperwork_core.PluginBase):
                 word_box = PdfWordBox(word, word_rects)
                 words.append(word_box)
             yield PdfLineBox(words, line_rects)
+
+    def doc_pdf_import(self, src_file_uri):
+        # check the PDF is readable before messing the content of the
+        # work directory
+        gio_file = Gio.File.new_for_uri(src_file_uri)
+        Poppler.Document.new_from_gfile(gio_file, password=None)
+
+        (doc_id, doc_url) = self.core.call_success("storage_get_new_doc")
+        pdf_url = self.core.call_success("fs_join", doc_url, PDF_FILENAME)
+        self.core.call_success("fs_copy", src_file_uri, pdf_url)
+        return (doc_id, doc_url)

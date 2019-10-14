@@ -1,8 +1,10 @@
 import datetime
 import functools
+import gettext
 import logging
 import os
 import shutil
+import unicodedata
 
 import whoosh.fields
 import whoosh.index
@@ -12,12 +14,10 @@ import whoosh.sorting
 
 import openpaperwork_core
 
-from .. import (
-    sync,
-    util
-)
+from .. import sync
 
 
+_ = gettext.gettext
 LOGGER = logging.getLogger(__name__)
 
 WHOOSH_SCHEMA = whoosh.fields.Schema(
@@ -28,6 +28,15 @@ WHOOSH_SCHEMA = whoosh.fields.Schema(
     date=whoosh.fields.DATETIME(sortable=True),
     last_read=whoosh.fields.DATETIME(stored=True),
 )
+
+
+def strip_accents(string):
+    """
+    Strip all the accents from the string
+    """
+    return u''.join(
+        (character for character in unicodedata.normalize('NFD', string)
+         if unicodedata.category(character) != 'Mn'))
 
 
 class CustomFuzzySearch(whoosh.qparser.query.FuzzyTerm):
@@ -88,12 +97,12 @@ class WhooshTransaction(object):
         doc_text = []
         self.core.call_all("doc_get_text_by_url", doc_text, doc_url)
         doc_text = "\n\n".join(doc_text)
-        doc_text = util.strip_accents(doc_text)
+        doc_text = strip_accents(doc_text)
 
         doc_labels = set()
         self.core.call_all("doc_get_labels_by_url", doc_labels, doc_url)
         doc_labels = ",".join([label[0] for label in doc_labels])
-        doc_labels = util.strip_accents(doc_labels)
+        doc_labels = strip_accents(doc_labels)
 
         doc_date = self.core.call_success("doc_get_date_by_id", doc_id)
         if doc_date is None:
@@ -114,36 +123,46 @@ class WhooshTransaction(object):
     def _get_progression(self):
         if self.total_expected <= 0:
             return 0
-        return sum(self.counts.values()) / self.total_expected
+        total = sum(self.counts.values())
+        return total / self.total_expected
 
     def add_obj(self, doc_id):
         LOGGER.info("Adding document '%s' to index", doc_id)
         self.counts['add'] += 1
-        self.core.call_all("on_index_add", self._get_progression(), doc_id)
+        self.core.call_all(
+            "on_progress", "index_update", self._get_progression(),
+            _("Indexing new document %s") % doc_id
+        )
         self._update_doc_in_index(doc_id)
 
     def del_obj(self, doc_id):
         LOGGER.info("Removing document '%s' from index", doc_id)
         self.counts['del'] += 1
-        self.core.call_all("on_index_del", self._get_progression(), doc_id)
+        self.core.call_all(
+            "on_progress", "index_update", self._get_progression(),
+            _("Removing document %s from index") % doc_id
+        )
         query = whoosh.query.Term("docid", doc_id)
         self.writer.delete_by_query(query)
 
     def upd_obj(self, doc_id):
-        LOGGER.info("Updaging document '%s' in index", doc_id)
+        LOGGER.info("Updating document '%s' in index", doc_id)
         self.counts['upd'] += 1
-        self.core.call_all('on_index_upd', self._get_progression(), doc_id)
+        self.core.call_all(
+            "on_progress", "index_update", self._get_progression(),
+            _("Indexing updated document %s") % doc_id
+        )
         self._update_doc_in_index(doc_id)
 
     def cancel(self):
         if self.writer is None:
             return
 
-        self.core.call_all('on_index_cancel', 0.99)
+        self.core.call_all('on_index_cancel')
         LOGGER.info("Canceling transaction")
         self.writer.cancel()
         self.writer = None
-        self.core.call_all("on_index_updated", 1.0)
+        self.core.call_all("on_index_updated")
 
     def commit(self):
         total = sum(self.counts.values())
@@ -158,6 +177,7 @@ class WhooshTransaction(object):
         self.core.call_all('on_index_commit')
         self.writer.commit()
         self.writer = None
+        self.core.call_all('on_progress', 'index_update', 1.0, None)
         self.core.call_all('on_index_updated')
 
 
@@ -277,12 +297,12 @@ class Plugin(openpaperwork_core.PluginBase):
         shutil.rmtree(self.index_dir)
         LOGGER.warning("Index destroyed")
 
-    def doc_transaction_start(self, out, total_expected=-1):
+    def doc_transaction_start(self, out: list, total_expected=-1):
         out.append(WhooshTransaction(self, total_expected))
 
-    def index_search(self, out, query, limit=None, search_type='fuzzy'):
+    def index_search(self, out: list, query, limit=None, search_type='fuzzy'):
         query = query.strip()
-        query = util.strip_accents(query)
+        query = strip_accents(query)
         if query == "":
             queries = [whoosh.query.Every()]
             limit = limit

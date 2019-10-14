@@ -58,7 +58,7 @@ class Plugin(openpaperwork_core.PluginBase):
             ]
         }
 
-    def doc_get_mtime_by_url(self, out, doc_url):
+    def doc_get_mtime_by_url(self, out: list, doc_url):
         labels_url = self.core.call_success(
             "fs_join", doc_url, LABELS_FILENAME
         )
@@ -66,7 +66,7 @@ class Plugin(openpaperwork_core.PluginBase):
             return
         out.append(self.core.call_success("fs_get_mtime", labels_url))
 
-    def doc_get_labels_by_url(self, out, doc_url):
+    def doc_get_labels_by_url(self, out: set, doc_url):
         labels_url = self.core.call_success(
             "fs_join", doc_url, LABELS_FILENAME
         )
@@ -101,7 +101,7 @@ class Plugin(openpaperwork_core.PluginBase):
         with self.core.call_success("fs_open", labels_url, 'a') as file_desc:
             file_desc.write("{},{}".format(label, color))
 
-    def labels_get_all(self, out):
+    def labels_get_all(self, out: set):
         for (label, color) in self.all_labels.items():
             out.add((label, color))
 

@@ -62,8 +62,10 @@ class TestPromise(unittest.TestCase):
         def alpha():
             self.alpha_called = self.idx
             self.idx += 1
+            return "alpha"
 
-        def beta():
+        def beta(previous):
+            self.assertEqual(previous, "alpha")
             self.beta_called = self.idx
             self.idx += 1
 

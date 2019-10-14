@@ -2,6 +2,7 @@ import ctypes
 import io
 import logging
 import os
+import tempfile
 import urllib
 
 from gi.repository import Gio
@@ -229,49 +230,14 @@ class Plugin(CommonFsPluginBase):
     def __init__(self):
         super().__init__()
 
-    def fs_safe(self, uri):
-        """
-        Make sure the specified URI is actually an URI and not a Unix path.
-        Returns:
-            - An URI
-        """
-        LOGGER.debug("safe: %s", uri)
-        if uri[:2] == "\\\\" or "://" in uri:
-            LOGGER.debug("safe: --> %s", uri)
-            return uri
-        if os.name != "nt":
-            uri = os.path.abspath(uri)
-            uri = "file://" + urllib.parse.quote(uri)
-            LOGGER.debug("safe: --> %s", uri)
-            return uri
-        else:
-            gf = Gio.File.new_for_path(uri)
-            uri = gf.get_uri()
-            LOGGER.debug("safe: --> %s", uri)
-            return uri
-
-    def fs_unsafe(self, uri):
-        """
-        Turn an URI into an Unix path, whenever possible.
-        Shouldn't be used at all.
-        """
-        LOGGER.debug("unsafe: %s", uri)
-        if "://" not in uri and uri[:2] != "\\\\":
-            LOGGER.debug("unsafe: --> %s", uri)
-            return uri
-        if not uri.startswith("file://"):
-            LOGGER.debug("unsafe: --> EXC")
-            raise Exception("TARGET URI SHOULD BE A LOCAL FILE")
-        uri = uri[len("file://"):]
-        if os.name == 'nt' and uri[0] == '/':
-            # for some reason, some URI on Windows starts with
-            # "file:///C:\..." instead of "file://C:\..."
-            uri = uri[1:]
-        uri = urllib.parse.unquote(uri)
-        LOGGER.debug("unsafe: --> %s", uri)
-        return uri
+    @staticmethod
+    def _is_file_uri(uri):
+        return uri.startswith("file://")
 
     def fs_open(self, uri, mode='rb'):
+        if not self._is_file_uri(uri):
+            return None
+
         f = Gio.File.new_for_uri(uri)
         if ('w' not in mode and 'a' not in mode):
             if self.fs_exists(uri) is None:
@@ -286,6 +252,9 @@ class Plugin(CommonFsPluginBase):
             raise IOError(str(exc))
 
     def fs_exists(self, url):
+        if not self._is_file_uri(url):
+            return None
+
         try:
             f = Gio.File.new_for_uri(url)
             if not f.query_exists():
@@ -299,6 +268,9 @@ class Plugin(CommonFsPluginBase):
             raise IOError(str(exc))
 
     def fs_listdir(self, url):
+        if not self._is_file_uri(url):
+            return None
+
         try:
             f = Gio.File.new_for_uri(url)
             children = f.enumerate_children(
@@ -313,6 +285,11 @@ class Plugin(CommonFsPluginBase):
             raise IOError(str(exc))
 
     def fs_rename(self, old_url, new_url):
+        if not self._is_file_uri(old_url):
+            return None
+        if not self._is_file_uri(new_url):
+            return None
+
         try:
             old = Gio.File.new_for_uri(old_url)
             new = Gio.File.new_for_uri(new_url)
@@ -323,6 +300,9 @@ class Plugin(CommonFsPluginBase):
             raise IOError(str(exc))
 
     def fs_unlink(self, url):
+        if not self._is_file_uri(url):
+            return None
+
         try:
             LOGGER.info("Deleting %s ...", url)
             f = Gio.File.new_for_uri(url)
@@ -345,6 +325,9 @@ class Plugin(CommonFsPluginBase):
             raise IOError(str(exc))
 
     def fs_rm_rf(self, url):
+        if not self._is_file_uri(url):
+            return None
+
         try:
             LOGGER.info("Deleting %s ...", url)
             f = Gio.File.new_for_uri(url)
@@ -372,6 +355,9 @@ class Plugin(CommonFsPluginBase):
             raise IOError(str(exc))
 
     def fs_getmtime(self, url):
+        if not self._is_file_uri(url):
+            return None
+
         try:
             f = Gio.File.new_for_uri(url)
             if not f.query_exists():
@@ -382,7 +368,6 @@ class Plugin(CommonFsPluginBase):
             return fi.get_attribute_uint64(Gio.FILE_ATTRIBUTE_TIME_CHANGED)
         except GLib.GError as exc:
             LOGGER.warning("Gio.Gerror", exc_info=exc)
-            raise IOError(str(exc))
 
     def fs_iswritable(self, url):
         try:
@@ -396,9 +381,11 @@ class Plugin(CommonFsPluginBase):
             )
         except GLib.GError as exc:
             logger.warning("Gio.Gerror", exc_info=exc)
-            raise IOError(str(exc))
 
     def fs_getsize(self, url):
+        if not self._is_file_uri(url):
+            return None
+
         try:
             f = Gio.File.new_for_uri(url)
             fi = f.query_info(
@@ -410,6 +397,9 @@ class Plugin(CommonFsPluginBase):
             raise IOError(str(exc))
 
     def fs_isdir(self, url):
+        if not self._is_file_uri(url):
+            return None
+
         try:
             f = Gio.File.new_for_uri(url)
             fi = f.query_info(
@@ -421,17 +411,23 @@ class Plugin(CommonFsPluginBase):
             raise IOError(str(exc))
 
     def fs_copy(self, old_url, new_url):
+        if not self._is_file_uri(old_url) or not self._is_file_uri(new_url):
+            return None
         try:
             old = Gio.File.new_for_uri(old_url)
             new = Gio.File.new_for_uri(new_url)
             if new.query_exists():
                 new.delete()
             old.copy(new, Gio.FileCopyFlags.ALL_METADATA)
+            return new_url
         except GLib.GError as exc:
             LOGGER.warning("Gio.Gerror", exc_info=exc)
-            raise IOError(str(exc))
+            return None
 
     def fs_mkdir_p(self, url):
+        if not self._is_file_uri(url):
+            return None
+
         try:
             f = Gio.File.new_for_uri(url)
             if not f.query_exists():
@@ -468,11 +464,17 @@ class Plugin(CommonFsPluginBase):
             yield parent
 
     def fs_recurse(self, parent_uri, dir_included=False):
+        if not self._is_file_uri(parent_uri):
+            return None
+
         parent = Gio.File.new_for_uri(parent_uri)
         for f in self._recurse(parent, dir_included):
             yield f.get_uri()
 
     def fs_hide(self, uri):
+        if not self._is_file_uri(uri):
+            return None
+
         if os.name != 'nt':
             LOGGER.warning("fs_hide('%s') can only works on Windows", uri)
             return
@@ -483,3 +485,19 @@ class Plugin(CommonFsPluginBase):
         )
         if not ret:
             raise ctypes.WinError()
+
+    def fs_get_mime(self, uri):
+        if not self._is_file_uri(uri):
+            return None
+
+        gfile = Gio.File.new_for_uri(file_uri)
+        info = gfile.query_info(
+            "standard::content-type", Gio.FileQueryInfoFlags.NONE
+        )
+        return info.get_content_type()
+
+    def fs_mktemp(self, prefix=None, suffix=None):
+        tmp = tempfile.NamedTemporaryFile(
+            prefix=prefix, suffix=suffix, delete=False
+        )
+        return (self.fs_safe(tmp.name), tmp)

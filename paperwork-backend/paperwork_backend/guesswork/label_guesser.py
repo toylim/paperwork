@@ -54,9 +54,10 @@ CREATE_TABLES = [
 
 
 class LabelGuesserTransaction(object):
-    def __init__(self, plugin):
+    def __init__(self, plugin, guess_labels=False):
         self.plugin = plugin
         self.core = plugin.core
+        self.guess_labels = guess_labels
 
         # use a dedicated connection to ensure thread-safety regarding
         # SQL transactions
@@ -75,6 +76,11 @@ class LabelGuesserTransaction(object):
 
     def add_obj(self, doc_id):
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
+
+        if self.guess_labels:
+            # we have a higher priority than index plugins, so it is a good
+            # time to update the document labels
+            self.plugin._set_guessed_labels(doc_url)
 
         mtime = []
         self.core.call_all("doc_get_mtime_by_url", mtime, doc_url)
@@ -176,6 +182,8 @@ class LabelGuesserTransaction(object):
 
 
 class Plugin(openpaperwork_core.PluginBase):
+    PRIORITY = 100
+
     # XXX(Jflesch):
     # Threshold found after many many many many tests. Works with my documents.
     # I can only hope it will work as nicely for other people.
@@ -275,16 +283,14 @@ class Plugin(openpaperwork_core.PluginBase):
             if (yes / total) > self.THRESHOLD_YES_NO_RATIO:
                 yield label_name
 
-    def on_doc_imported(self, doc_id):
-        doc_url = self.core.call_success("doc_id_to_url", doc_id)
-
+    def _set_guessed_labels(self, doc_url):
         labels = self._guess(doc_url)
         labels = list(labels)
         for label in labels:
             self.core.call_all("doc_add_label", doc_url, label)
 
-    def doc_transaction_start(self, out, total_expected=-1):
-        out.append(LabelGuesserTransaction(self))
+    def doc_transaction_start(self, out: list, total_expected=-1):
+        out.append(LabelGuesserTransaction(self, guess_labels=True))
 
     def sync(self):
         storage_all_docs = []
@@ -303,7 +309,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         bayes_docs = (BayesDoc(r) for r in bayes_all_docs)
 
-        transaction = LabelGuesserTransaction(self)
+        transaction = LabelGuesserTransaction(self, guess_labels=False)
 
         sync.Syncer(
             self.core, storage_all_docs, bayes_all_docs, transaction

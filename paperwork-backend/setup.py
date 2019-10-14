@@ -79,12 +79,13 @@ There is no GUI here. The GUI is
     },
     zip_safe=True,
     install_requires=[
-        "openpaperwork-core",
         "distro",
         "natsort",
+        "openpaperwork-core",
         "Pillow",
         "pycountry",
         "pyocr",
+        "pypillowfight",
         "simplebayes",
         "termcolor",  # used by paperwork-chkdeps
         "Whoosh",

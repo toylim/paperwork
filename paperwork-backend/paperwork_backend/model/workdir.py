@@ -21,7 +21,7 @@ class Plugin(openpaperwork_core.PluginBase):
             ]
         }
 
-    def storage_get_all_docs(self, out):
+    def storage_get_all_docs(self, out: list):
         """
         Returns all document IDs and URLs in the work directory
         """
@@ -59,3 +59,25 @@ class Plugin(openpaperwork_core.PluginBase):
             return datetime.datetime.strptime(doc_id, self.DOCNAME_FORMAT)
         except ValueError:
             return None
+
+    # datetime.datetime.now cannot be mocked with unittest.mock.patch
+    # (datetime is built-in) --> allow dependency injection here
+    def storage_get_new_doc(self, now_func=datetime.datetime.now):
+        workdir = self.core.call_success('paperwork_config_get', 'workdir')
+
+        base_doc_id = now_func().strftime(self.DOCNAME_FORMAT)
+        base_doc_url = self.core.call_success("fs_join", workdir, base_doc_id)
+
+        doc_id = base_doc_id
+        doc_url = base_doc_url
+        doc_idx = 0
+
+        while self.core.call_success("fs_exists", doc_url) is not None:
+            doc_idx += 1
+            doc_id = "{}_{}".format(base_doc_id, doc_idx)
+            doc_url = "{}_{}".format(base_doc_url, doc_idx)
+
+        # reserve the doc_id by creating the directory
+        self.core.call_all("fs_mkdir_p", doc_url)
+
+        return (doc_id, doc_url)
