@@ -79,9 +79,9 @@ class Syncer(object):
     `transaction`.
     """
 
-    def __init__(self, core, name, new_all, old_all, transactions):
+    def __init__(self, core, names, new_all, old_all, transactions):
         self.core = core
-        self.name = name
+        self.names = names
         self.new_all = new_all
         self.old_all = old_all
         self.transactions = transactions
@@ -110,10 +110,11 @@ class Syncer(object):
             (action, key) = self.diff.pop()
             self.nb_compared += 1
             if action != 'unchanged':
-                self.core.call_one(
-                    "schedule", self.core.call_all,
-                    "on_sync", self.name, action, key
-                )
+                for name in self.names:
+                    self.core.call_one(
+                        "schedule", self.core.call_all,
+                        "on_sync", name, action, key
+                    )
             if action == "added":
                 for transaction in self.transactions:
                     transaction.add_obj(key)
@@ -132,5 +133,5 @@ class Syncer(object):
         stop = time.time()
         LOGGER.info(
             "%s: Has compared %d objects in %.3fs",
-            self.name, self.nb_compared, stop - self.start
+            self.names, self.nb_compared, stop - self.start
         )

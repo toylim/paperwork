@@ -7,8 +7,8 @@ import openpaperwork_core
 
 class TestPageTracker(unittest.TestCase):
     def setUp(self):
-        self.tmp_bayes_dir = tempfile.mkdtemp(
-            prefix="paperwork_backend_labels"
+        self.tmp_paperwork_dir = tempfile.mkdtemp(
+            prefix="paperwork_backend_tests"
         )
 
         self.core = openpaperwork_core.Core()
@@ -16,7 +16,7 @@ class TestPageTracker(unittest.TestCase):
         self.core.load("paperwork_backend.pagetracker")
         self.core.get_by_name(
             "paperwork_backend.pagetracker"
-        ).paperwork_dir = self.tmp_bayes_dir
+        ).paperwork_dir = self.tmp_paperwork_dir
 
         self.fake_storage = self.core.get_by_name(
             "paperwork_backend.model.fake"
@@ -25,7 +25,7 @@ class TestPageTracker(unittest.TestCase):
         self.core.init()
 
     def tearDown(self):
-        shutil.rmtree(self.tmp_bayes_dir)
+        shutil.rmtree(self.tmp_paperwork_dir)
 
     def test_tracking(self):
         self.fake_storage.docs = [
@@ -49,11 +49,11 @@ class TestPageTracker(unittest.TestCase):
         ]
 
         tracker = self.core.call_success("page_tracker_get", 'test_tracking')
-        out = tracker.check_doc('test_doc', 'file:///somewhere/test_doc')
+        out = tracker.find_changes('test_doc', 'file:///somewhere/test_doc')
         self.assertEqual(out, [('new', 0), ('new', 1)])
         tracker.ack_page('test_doc', 'file:///somewhere/test_doc', 0)
         tracker.ack_page('test_doc', 'file:///somewhere/test_doc', 1)
-        out = tracker.check_doc('test_doc_2', 'file:///somewhere/test_doc_2')
+        out = tracker.find_changes('test_doc_2', 'file:///somewhere/test_doc_2')
         self.assertEqual(out, [('new', 0), ('new', 1), ('new', 2)])
         tracker.ack_page('test_doc_2', 'file:///somewhere/test_doc_2', 0)
         tracker.ack_page('test_doc_2', 'file:///somewhere/test_doc_2', 1)
@@ -73,7 +73,7 @@ class TestPageTracker(unittest.TestCase):
         ]
 
         tracker = self.core.call_success("page_tracker_get", 'test_tracking')
-        out = tracker.check_doc('test_doc', 'file:///somewhere/test_doc')
+        out = tracker.find_changes('test_doc', 'file:///somewhere/test_doc')
         self.assertEqual(out, [('upd', 0), ('new', 2)])
         tracker.ack_page('test_doc', 'file:///somewhere/test_doc', 0)
         tracker.ack_page('test_doc', 'file:///somewhere/test_doc', 2)

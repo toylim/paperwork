@@ -148,6 +148,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
                 text = ""
                 for page_boxes in doc['page_boxes']:
+                    if text != "":
+                        text += "\n\n"
                     if page_boxes is None:
                         continue
                     for line_boxes in page_boxes:

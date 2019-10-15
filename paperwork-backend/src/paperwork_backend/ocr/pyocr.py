@@ -14,13 +14,21 @@ import openpaperwork_core
 LOGGER = logging.getLogger(__name__)
 _ = gettext.gettext
 
+ID = "ocr"
+
 
 class OcrTransaction(object):
-    def __init__(self, plugin, total_expected=-1):
+    def __init__(self, plugin, sync, total_expected=-1):
         self.plugin = plugin
+        self.sync = sync
         self.core = plugin.core
         self.total_expected = total_expected
         self.count = 0
+
+        # for each document, we need to track which page have already been
+        # OCR-ed, which have been modified (cropping, rotation, ...)
+        # and must be re-OCRed, and which have not been changed.
+        self.page_tracker = self.core.call_success("page_tracker_get", ID)
 
     def __enter__(self):
         pass
@@ -33,10 +41,8 @@ class OcrTransaction(object):
             return 0
         return self.count / self.total_expected
 
-    def add_obj(self, doc_id):
-        doc_url = self.core.call_success("doc_id_to_url", doc_id)
-        nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)
-        for page_idx in range(0, nb_pages):
+    def _run_ocr_on_page(self, doc_id, doc_url, page_idx, wordless_only=False):
+        if wordless_only:
             current_boxes = self.core.call_success(
                 "page_get_boxes_by_url", doc_url, page_idx
             )
@@ -55,32 +61,48 @@ class OcrTransaction(object):
                         doc_id, page_idx
                     )
                 )
-                continue
-            self.core.call_one(
-                "schedule", self.core.call_all,
-                "on_progress", "ocr", self._get_progression(),
-                _("Running OCR on document %s page %d") % (
-                    doc_id, page_idx
-                )
-            )
-            self.core.call_one(
-                "schedule", self.core.call_all,
-                "on_ocr_start", doc_id, page_idx
-            )
-            self.plugin.ocr_page_by_url(doc_url, page_idx)
-            self.core.call_one(
-                "schedule", self.core.call_all,
-                "on_ocr_end", doc_id, page_idx
-            )
+                return
 
+        self.core.call_one(
+            "schedule", self.core.call_all,
+            "on_progress", "ocr", self._get_progression(),
+            _("Running OCR on document %s page %d") % (
+                doc_id, page_idx
+            )
+        )
+        self.core.call_one(
+            "schedule", self.core.call_all,
+            "on_ocr_start", doc_id, page_idx
+        )
+        self.plugin.ocr_page_by_url(doc_url, page_idx)
+        self.core.call_one(
+            "schedule", self.core.call_all,
+            "on_ocr_end", doc_id, page_idx
+        )
+
+    def _run_ocr_on_modified_pages(self, doc_id, wordless_only=False):
+        doc_url = self.core.call_success("doc_id_to_url", doc_id)
+
+        modified_pages = self.page_tracker.find_changes(doc_id, doc_url)
+
+        for (change, page_idx) in modified_pages:
+            # Run OCR on modified pages, but only if we are not synchronizing
+            # with the work directory (--> if the user just added or modified
+            # a document)
+            if not self.sync and (change == 'new' or change == 'upd'):
+                self._run_ocr_on_page(doc_id, doc_url, page_idx, wordless_only)
+            self.page_tracker.ack_page(doc_id, doc_url, page_idx)
+
+    def add_obj(self, doc_id):
         self.count += 1
+        self._run_ocr_on_modified_pages(doc_id, wordless_only=True)
 
     def upd_obj(self, doc_id):
-        # not used here
         self.count += 1
+        self._run_ocr_on_modified_pages(doc_id, wordless_only=False)
 
     def del_obj(self, doc_id):
-        # not used here
+        self.page_tracker.delete_doc(doc_id)
         self.count += 1
 
     def unchanged_obj(self, doc_id):
@@ -88,9 +110,10 @@ class OcrTransaction(object):
         self.count += 1
 
     def cancel(self):
-        pass
+        self.page_tracker.cancel()
 
     def commit(self):
+        self.page_tracker.commit()
         self.core.call_one(
             "schedule", self.core.call_all,
             "on_progress", "ocr", 1.0
@@ -110,9 +133,10 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return {
             'interfaces': [
+                ('doc_tracking', ['paperwork_backend.doctracker',]),
                 ('document_storage', ['paperwork_backend.model.workdir',]),
-                ('mainloop', ['openpaperwork_core.mainloop_asyncio',]),
                 ('ocr_settings', ['paperwork_backend.pyocr',]),
+                ('page_tracking', ['paperwork_backend.pagetracker',]),
                 ('pillow', [
                     'paperwork_backend.pillow.img',
                     'paperwork_backend.pillow.pdf',
@@ -123,6 +147,15 @@ class Plugin(openpaperwork_core.PluginBase):
                 ]),
             ]
         }
+
+    def init(self, core):
+        super().init(core)
+        self.core.call_all(
+            "doc_tracker_register", ID,
+            lambda sync, total_expected=-1: OcrTransaction(
+                self, sync, total_expected
+            )
+        )
 
     def ocr_page_by_url(self, doc_url, page_idx):
         page_img_url = self.core.call_success(
@@ -140,13 +173,3 @@ class Plugin(openpaperwork_core.PluginBase):
             builder=pyocr.builders.LineBoxBuilder()
         )
         self.core.call_all("page_set_boxes_by_url", doc_url, page_idx, boxes)
-
-    def doc_transaction_start(self, out: list, total_expected=-1):
-        # we monitor document transactions just so we can OCR freshly
-        # added documents.
-        out.append(OcrTransaction(self, total_expected))
-
-    def sync(self, promises):
-        # Nothing to do in that case, just here to satisfy the interface
-        # 'syncable'
-        pass

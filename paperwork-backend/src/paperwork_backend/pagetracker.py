@@ -1,6 +1,6 @@
 """
 This plugin is an helper for other plugins. It provides an easy way
-to track pages that have not yet being treated.
+to track pages that have not yet being treated in each document.
 
 For instance, when a document is notified as updated (see transactions), the
 OCR plugin needs to know which pages of this document have already been
@@ -58,7 +58,7 @@ class PageTracker(object):
         self.core.call_success("mainloop_execute", self.sql.execute, "COMMIT")
         self._close()
 
-    def check_doc(self, doc_id, doc_url):
+    def find_changes(self, doc_id, doc_url):
         """
         Examine a document. Return page that haven't been handled yet
         or that have been modified since.

@@ -397,6 +397,6 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
         promises.append(sync.Syncer(
-            self.core, "whoosh", storage_all_docs, index_all_docs,
+            self.core, ["whoosh"], storage_all_docs, index_all_docs,
             [transaction]
         ).get_promise())

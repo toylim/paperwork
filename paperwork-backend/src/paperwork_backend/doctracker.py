@@ -22,7 +22,7 @@ CREATE_TABLES = [
     (
         "CREATE TABLE IF NOT EXISTS documents ("
         " doc_id TEXT PRIMARY KEY,"
-        " text TEXT NOT NULL,"
+        " text TEXT NULL,"
         " mtime INTEGER NOT NULL"
         ")"
     ),
@@ -216,7 +216,9 @@ class Plugin(openpaperwork_core.PluginBase):
             ))
         transactions.append(DocTrackerTransaction(self.core, self.sql))
 
+        names = [t[0] for t in self.transaction_factories]
+        names.append('doc_tracker')
+
         promises.append(sync.Syncer(
-            self.core, name, storage_all_docs, db_docs,
-            transactions
+            self.core, names, storage_all_docs, db_docs, transactions
         ).get_promise())
