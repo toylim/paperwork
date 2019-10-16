@@ -56,7 +56,7 @@ class OcrTransaction(object):
                 )
                 self.core.call_one(
                     "schedule", self.core.call_all,
-                    "on_progress", "ocr", self._get_progression(),
+                    "on_progress", ID, self._get_progression(),
                     _("Document %s p%d has already some text. No OCR run") % (
                         doc_id, page_idx
                     )
@@ -65,7 +65,7 @@ class OcrTransaction(object):
 
         self.core.call_one(
             "schedule", self.core.call_all,
-            "on_progress", "ocr", self._get_progression(),
+            "on_progress", ID, self._get_progression(),
             _("Running OCR on document %s page %d") % (
                 doc_id, page_idx
             )
@@ -116,7 +116,7 @@ class OcrTransaction(object):
         self.page_tracker.commit()
         self.core.call_one(
             "schedule", self.core.call_all,
-            "on_progress", "ocr", 1.0
+            "on_progress", ID, 1.0
         )
 
 
@@ -126,7 +126,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_interfaces(self):
         return [
             "ocr",
-            "syncable",
+            "syncable",  # actually satisfied by the plugin 'doctracker'
         ]
 
     def get_deps(self):
