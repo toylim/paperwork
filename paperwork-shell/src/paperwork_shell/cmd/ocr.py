@@ -35,7 +35,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return {
             'interfaces': [
-                ('ocr', ['paperwork_backend.ocr.pyocr',])
+                ('ocr', ['paperwork_backend.guesswork.ocr.pyocr',])
             ],
         }
 

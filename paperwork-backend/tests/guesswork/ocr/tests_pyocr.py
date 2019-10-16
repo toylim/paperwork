@@ -26,7 +26,7 @@ class TestPyocr(unittest.TestCase):
         self.core.load("paperwork_backend.model.fake")
         self.core.load("paperwork_backend.doctracker")
         self.core.load("paperwork_backend.pagetracker")
-        self.core.load("paperwork_backend.ocr.pyocr")
+        self.core.load("paperwork_backend.guesswork.ocr.pyocr")
 
         self.core.get_by_name(
             "paperwork_backend.pagetracker"
