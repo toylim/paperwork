@@ -80,3 +80,12 @@ class CommonFsPluginBase(openpaperwork_core.PluginBase):
         with self.core.call_success("fs_open", url, 'rb') as fd:
             content = fd.read()
         return int(hashlib.sha256(content).hexdigest(), 16)
+
+    def fs_copy(self, origin_url, dest_url):
+        """
+        default generic implementation
+        """
+        with open(origin_url, 'rb') as fd:
+            content = fd.read()
+        with open(dest_url, 'wb') as fd:
+            fd.write(content)

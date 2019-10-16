@@ -187,13 +187,19 @@ class Plugin(CommonFsPluginBase):
         return None
 
     def fs_copy(self, old_url, new_url):
+        old_type = old_url.split(":", 1)[0]
+        new_type = new_url.split(":", 1)[0]
+        if old_type != new_type:
+            # use the more generic and cross-FS method
+            return super().fs_copy(old_url, new_url)
+
         old_mem_id = self.get_memory_id(old_url)
         new_mem_id = self.get_memory_id(old_url)
         if old_mem_id is None or new_mem_id is None:
-            return
+            return None
 
         self.fs[new_mem_id] = self.fs[old_mem_id]
-        return True
+        return new_url
 
     def fs_mkdir_p(self, url):
         mem_id = self.get_memory_id(url)
