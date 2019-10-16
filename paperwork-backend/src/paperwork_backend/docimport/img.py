@@ -24,11 +24,31 @@ class SingleImgImporter(object):
         self.doc_id = None
         self.doc_url = None
 
+    def _append_file_to_doc(self, file_url, doc_id=None):
+        if doc_id is None:
+            # new document
+            (doc_id, doc_url) = self.core.call_success("storage_get_new_doc")
+        else:
+            # update existing one
+            doc_url = self.core.call_success("doc_id_to_url", doc_id)
+
+        nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)
+        if nb_pages is None:
+            nb_pages = 0
+
+        img = self.core.call_success("url_to_pillow", file_url)
+        page_url = self.core.call_success(
+            "page_get_img_url", doc_url, nb_pages, write=True
+        )
+        self.core.call_success("pillow_to_url", img, page_url)
+
+        return (doc_id, doc_url)
+
     def _basic_import(self, file_uri):
-        (self.doc_id, self.doc_url) = self.core.call_success(
-            "doc_img_import_file_by_id",
+        (self.doc_id, self.doc_url) = self._append_file_to_doc(
             file_uri, self.file_import.active_doc_id
         )
+
         self.file_import.stats[_("Images")] += 1
         if self.file_import.active_doc_id is None:
             self.file_import.new_doc_ids.add(self.doc_id)
@@ -36,6 +56,8 @@ class SingleImgImporter(object):
         else:
             self.file_import.upd_doc_ids.add(self.doc_id)
             self.file_import.stats[_("Pages")] += 1
+
+        self.file_import.active_doc_id = self.doc_id
 
     def get_promise(self):
         return openpaperwork_core.promise.Promise(
@@ -99,6 +121,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 ('doc_img_import', ['paperwork_backend.model.img',]),
                 ('fs', ['paperwork_backend.fs.gio',]),
                 ('mainloop', ['openpaperwork_core.mainloop_asyncio',]),
+                ('pillow', ['paperwork_backend.pillow.img',]),
             ]
         }
 

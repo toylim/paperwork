@@ -157,7 +157,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 doc['text'] = text
         return None
 
-    def page_get_img_url(self, doc_url, page_idx):
+    def page_get_img_url(self, doc_url, page_idx, write=False):
         for doc in self.docs:
             if doc['url'] == doc_url:
                 if 'page_imgs' in doc:
@@ -172,12 +172,16 @@ class Plugin(openpaperwork_core.PluginBase):
                     if page_idx >= len(doc['page_hashes']):
                         return None
                     return doc['page_hashes'][page_idx][0]
+                elif write:
+                    return "file:///some_doc/new_page.jpeg"
                 else:
                     return None
         return None
 
     def url_to_pillow(self, img_url):
         for doc in self.docs:
+            if 'page_imgs' not in doc:
+                continue
             for (page_img_url, img) in doc['page_imgs']:
                 if page_img_url == img_url:
                     return img

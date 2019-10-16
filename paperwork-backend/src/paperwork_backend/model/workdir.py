@@ -93,6 +93,7 @@ class Plugin(openpaperwork_core.PluginBase):
             doc_id = "{}_{}".format(base_doc_id, doc_idx)
             doc_url = "{}_{}".format(base_doc_url, doc_idx)
 
+        self.core.call_success("fs_mkdir_p", doc_url)
         return (doc_id, doc_url)
 
     def storage_delete_doc_id(self, doc_id):

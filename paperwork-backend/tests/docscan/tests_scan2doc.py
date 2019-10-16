@@ -12,6 +12,7 @@ class TestScan2Doc(unittest.TestCase):
 
         self.fs = self.core.get_by_name("paperwork_backend.fs.fake")
         self.results = []
+        self.pillowed = []
         self.transaction_type = None
         self.nb_commits = 0
 
@@ -35,6 +36,8 @@ class TestScan2Doc(unittest.TestCase):
 
         class FakeModule(object):
             class Plugin(openpaperwork_core.PluginBase):
+                PRIORITY = 10000000000
+
                 def on_scan_feed_start(s, scan_id):
                     doc_id = self.core.call_success(
                         "scan2doc_scan_id_to_doc_id", scan_id
@@ -50,6 +53,16 @@ class TestScan2Doc(unittest.TestCase):
                     if "existing" in file_url:
                         return True
                     return None
+
+                def doc_id_to_url(s, doc_id):
+                    return 'file:///some_existing_doc'
+
+                def storage_get_new_doc(s, *args, **kwargs):
+                    return ('new_doc_id', 'file:///new_doc')
+
+                def pillow_to_url(s, img, url):
+                    self.pillowed.append(url)
+                    return url
 
         self.core._load_module("fake_module", FakeModule())
         self.core.init()
@@ -68,6 +81,7 @@ class TestScan2Doc(unittest.TestCase):
 
         self.assertTrue(len(self.results) > 0)
         self.assertEqual(self.transaction_type, "add")
+        self.assertEqual(self.pillowed, ['file:///new_doc/paper.1.jpg'])
 
     def test_scan2doc_upd(self):
         def at_the_end(args):
@@ -83,3 +97,6 @@ class TestScan2Doc(unittest.TestCase):
 
         self.assertTrue(len(self.results) > 0)
         self.assertEqual(self.transaction_type, "upd")
+        self.assertEqual(self.pillowed, [
+            'file:///some_existing_doc/paper.10.jpg'
+        ])

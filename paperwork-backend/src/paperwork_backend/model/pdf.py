@@ -173,7 +173,9 @@ class Plugin(openpaperwork_core.PluginBase):
             return None
         return pdf.get_n_pages()
 
-    def page_get_img_url(self, doc_url, page_idx):
+    def page_get_img_url(self, doc_url, page_idx, write=False):
+        if write:
+            return None
         pdf_url = self._get_pdf_url(doc_url)
         if pdf_url is None:
             return None

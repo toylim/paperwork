@@ -14,7 +14,7 @@ class TestImgImport(unittest.TestCase):
         )
         self.core = openpaperwork_core.Core()
 
-        self.copies = []
+        self.pillowed = []
         self.add_docs = []
         self.upd_docs = []
         self.nb_commits = 0
@@ -50,8 +50,8 @@ class TestImgImport(unittest.TestCase):
                 def fs_mkdir_p(s, dir_uri):
                     return True
 
-                def fs_copy(s, src_uri, dst_uri):
-                    self.copies.append((src_uri, dst_uri))
+                def pillow_to_url(s, img, dst_uri):
+                    self.pillowed.append(dst_uri)
                     return dst_uri
 
                 def on_import_done(s, file_import):
@@ -100,8 +100,8 @@ class TestImgImport(unittest.TestCase):
         self.core.call_all("mainloop")
 
         # see fake storage behaviour
-        self.assertEqual(self.copies, [
-            (self.test_img_url, 'file:///some_work_dir/1/paper.1.jpg')
+        self.assertEqual(self.pillowed, [
+            'file:///some_work_dir/1/paper.1.jpg'
         ])
         self.assertEqual(self.add_docs, ['1'])
         self.assertEqual(self.upd_docs, [])
@@ -152,8 +152,8 @@ class TestImgImport(unittest.TestCase):
         self.core.call_all("mainloop")
 
         # see fake storage behaviour
-        self.assertEqual(self.copies, [
-            (self.test_img_url, 'file:///somewhere/test_doc_2/paper.3.jpg')
+        self.assertEqual(self.pillowed, [
+            'file:///somewhere/test_doc_2/paper.3.jpg'
         ])
         self.assertEqual(self.add_docs, [])
         self.assertEqual(self.upd_docs, ['test_doc_2'])
@@ -182,7 +182,7 @@ class TestImgImport(unittest.TestCase):
         )
         self.core = openpaperwork_core.Core()
 
-        self.copies = []
+        self.pillowed = []
         self.add_docs = []
         self.upd_docs = []
         self.nb_commits = 0
@@ -212,8 +212,8 @@ class TestImgImport(unittest.TestCase):
                 def fs_mkdir_p(s, dir_uri):
                     return True
 
-                def fs_copy(s, src_uri, dst_uri):
-                    self.copies.append((src_uri, dst_uri))
+                def pillow_to_url(s, img, dst_uri):
+                    self.pillowed.append(dst_uri)
                     return dst_uri
 
                 def on_import_done(s, file_import):
@@ -264,8 +264,8 @@ class TestImgImport(unittest.TestCase):
         self.core.call_all("mainloop")
 
         # see fake storage behaviour
-        self.assertEqual(self.copies, [
-            (self.test_img_url, 'file:///some_work_dir/1/paper.1.jpg')
+        self.assertEqual(self.pillowed, [
+            'file:///some_doc/new_page.jpeg'
         ])
         self.assertEqual(self.add_docs, ['1'])
         self.assertEqual(self.upd_docs, [])
