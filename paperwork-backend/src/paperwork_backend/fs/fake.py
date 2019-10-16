@@ -1,15 +1,15 @@
+"""
+Mock implementation of the plugin interface 'fs'.
+Useful for tests only.
+"""
+
 import io
 import logging
 import os
 import urllib
 
 from . import CommonFsPluginBase
-
-"""
-Mock implementation of the plugin interface 'fs'.
-Useful for tests only.
-"""
-
+from . import memory
 
 LOGGER = logging.getLogger(__name__)
 
@@ -236,3 +236,9 @@ class Plugin(CommonFsPluginBase):
 
     def fs_iswritable(self, url):
         return True
+
+    def fs_mktemp(self, prefix=None, suffix=None, mode='w+b'):
+        return (
+            "file://tmp/temporary_file" + suffix,
+            memory.MemoryFileAdapter(self, name, mode)
+        )

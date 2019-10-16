@@ -234,7 +234,7 @@ class Plugin(CommonFsPluginBase):
             return None
         return True
 
-    def fs_mktemp(self, prefix=None, suffix=None, mode='w'):
+    def fs_mktemp(self, prefix=None, suffix=None, mode='w+b'):
         assert('/' not in prefix)
         assert('/' not in suffix)
         name = "{}{}{}".format(

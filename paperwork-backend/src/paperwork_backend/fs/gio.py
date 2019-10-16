@@ -519,9 +519,9 @@ class Plugin(CommonFsPluginBase):
         )
         return info.get_content_type()
 
-    def fs_mktemp(self, prefix=None, suffix=None):
+    def fs_mktemp(self, prefix=None, suffix=None, mode='w+b'):
         tmp = tempfile.NamedTemporaryFile(
-            prefix=prefix, suffix=suffix, delete=False
+            prefix=prefix, suffix=suffix, delete=False, mode=mode
         )
         return (self.fs_safe(tmp.name), tmp)
 
