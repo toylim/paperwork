@@ -1,0 +1,106 @@
+import os
+import shutil
+import tempfile
+import unittest
+
+import PIL
+import PIL.Image
+
+import openpaperwork_core
+
+
+class TestPyocr(unittest.TestCase):
+    def setUp(self):
+        self.tmp_paperwork_dir = tempfile.mkdtemp(
+            prefix="paperwork_backend_tests"
+        )
+
+        self.test_img = PIL.Image.open(
+            "{}/test_img.png".format(
+                os.path.dirname(os.path.abspath(__file__))
+            )
+        )
+        self.test_empty_img = PIL.Image.open(
+            "{}/test_img2.png".format(
+                os.path.dirname(os.path.abspath(__file__))
+            )
+        )
+
+        self.core = openpaperwork_core.Core()
+        self.core.load("paperwork_backend.config.fake")
+        self.core.load("paperwork_backend.model.fake")
+        self.core.load("paperwork_backend.doctracker")
+        self.core.load("paperwork_backend.pagetracker")
+        self.core.load("paperwork_backend.guesswork.orientation.pyocr")
+
+        self.core.get_by_name(
+            "paperwork_backend.pagetracker"
+        ).paperwork_dir = self.tmp_paperwork_dir
+        self.core.get_by_name(
+            "paperwork_backend.doctracker"
+        ).paperwork_dir = self.tmp_paperwork_dir
+
+        self.pillowed = []
+
+        class FakeModule(object):
+            class Plugin(openpaperwork_core.PluginBase):
+                PRIORITY = 10000000000
+
+                def pillow_to_url(s, img, url):
+                    self.pillowed.append(url)
+                    return url
+
+        self.core._load_module("fake_module", FakeModule())
+
+        self.core.init()
+
+        self.model = self.core.get_by_name("paperwork_backend.model.fake")
+
+        self.core.call_all("paperwork_config_put", "ocr_lang", "eng")
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp_paperwork_dir)
+
+    def test_guess_orientation(self):
+        self.model.docs = [
+            {
+                "id": 'some_id',
+                "url": 'file:///some_work_dir/some_doc_id',
+                "mtime": 12345,
+                "labels": [],
+                "page_boxes": [],
+                "page_imgs": [
+                    ("file:///some_image.png", self.test_img)
+                ],
+            },
+        ]
+
+        angle = self.core.call_success(
+            "guess_page_orientation_by_url",
+            'file:///some_work_dir/some_doc_id', 0
+        )
+
+        self.assertEqual(angle, 90)
+        self.assertEqual(self.pillowed, ['file:///some_image.png'])
+
+    def test_impossible_guess(self):
+        self.model.docs = [
+            {
+                "id": 'some_id',
+                "url": 'file:///some_work_dir/some_doc_id',
+                "mtime": 12345,
+                "labels": [],
+                "page_boxes": [],
+                "page_imgs": [
+                    ("file:///some_image.png", self.test_empty_img)
+                ],
+            },
+        ]
+
+        angle = self.core.call_success(
+            "guess_page_orientation_by_url",
+            'file:///some_work_dir/some_doc_id', 0
+        )
+
+        self.assertEqual(angle, None)
+        self.assertEqual(self.pillowed, [])

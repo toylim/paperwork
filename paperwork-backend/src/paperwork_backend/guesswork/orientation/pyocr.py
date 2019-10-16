@@ -14,7 +14,7 @@ import openpaperwork_core
 LOGGER = logging.getLogger(__name__)
 _ = gettext.gettext
 
-ID = "ocr"
+ID = "orientation_guesser"
 
 
 class OcrTransaction(object):
@@ -25,9 +25,8 @@ class OcrTransaction(object):
         self.total_expected = total_expected
         self.count = 0
 
-        # for each document, we need to track which pages have already been
-        # OCR-ed, which have been modified (cropping, rotation, ...)
-        # and must be re-OCRed, and which have not been changed.
+        # for each document, we need to track on which pages we have already
+        # guessed the orientation and on which page we didn't yet.
         self.page_tracker = self.core.call_success("page_tracker_get", ID)
 
     def __enter__(self):
@@ -41,65 +40,43 @@ class OcrTransaction(object):
             return 0
         return self.count / self.total_expected
 
-    def _run_ocr_on_page(self, doc_id, doc_url, page_idx, wordless_only=False):
-        if wordless_only:
-            current_boxes = self.core.call_success(
-                "page_get_boxes_by_url", doc_url, page_idx
-            )
-            if current_boxes is not None:
-                current_boxes = list(current_boxes)
-            if current_boxes is not None and len(current_boxes) > 0:
-                # there is already some text on this page
-                LOGGER.info(
-                    "Page %s p%d has already some text. No OCR run",
-                    doc_id, page_idx
-                )
-                self.core.call_one(
-                    "schedule", self.core.call_all,
-                    "on_progress", ID, self._get_progression(),
-                    _("Document %s p%d has already some text. No OCR run") % (
-                        doc_id, page_idx
-                    )
-                )
-                return
-
+    def _guess_page_orientation(self, doc_id, doc_url, page_idx):
         self.core.call_one(
             "schedule", self.core.call_all,
             "on_progress", ID, self._get_progression(),
-            _("Running OCR on document %s page %d") % (
+            _("Guessing orientation on document %s page %d") % (
                 doc_id, page_idx
             )
         )
         self.core.call_one(
             "schedule", self.core.call_all,
-            "on_ocr_start", doc_id, page_idx
+            "on_orientation_guess_start", doc_id, page_idx
         )
-        self.plugin.ocr_page_by_url(doc_url, page_idx)
+        self.plugin.guess_page_orientation_by_url(doc_url, page_idx)
         self.core.call_one(
             "schedule", self.core.call_all,
-            "on_ocr_end", doc_id, page_idx
+            "on_orientation_guess_end", doc_id, page_idx
         )
 
-    def _run_ocr_on_modified_pages(self, doc_id, wordless_only=False):
+    def _guess_new_page_orientations(self, doc_id):
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
 
         modified_pages = self.page_tracker.find_changes(doc_id, doc_url)
 
         for (change, page_idx) in modified_pages:
-            # Run OCR on modified pages, but only if we are not synchronizing
-            # with the work directory (--> if the user just added or modified
-            # a document)
-            if not self.sync and (change == 'new' or change == 'upd'):
-                self._run_ocr_on_page(doc_id, doc_url, page_idx, wordless_only)
+            # Guess page orientation on new pages, but only if we are
+            # not synchronizing with the work directory
+            if not self.sync and change == 'new':
+                self._guess_page_orientation(doc_id, doc_url, page_idx)
             self.page_tracker.ack_page(doc_id, doc_url, page_idx)
 
     def add_obj(self, doc_id):
         self.count += 1
-        self._run_ocr_on_modified_pages(doc_id, wordless_only=True)
+        self._guess_new_page_orientations(doc_id)
 
     def upd_obj(self, doc_id):
         self.count += 1
-        self._run_ocr_on_modified_pages(doc_id, wordless_only=False)
+        self._guess_new_page_orientations(doc_id)
 
     def del_obj(self, doc_id):
         self.page_tracker.delete_doc(doc_id)
@@ -125,7 +102,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_interfaces(self):
         return [
-            "ocr",
+            "orientation_guesser",
             "syncable",  # actually satisfied by the plugin 'doctracker'
         ]
 
@@ -133,12 +110,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return {
             'interfaces': [
                 ('doc_tracking', ['paperwork_backend.doctracker',]),
-                ('document_storage', ['paperwork_backend.model.workdir',]),
                 ('ocr_settings', ['paperwork_backend.pyocr',]),
-                ('page_boxes', [
-                    'paperwork_backend.model.hocr',
-                    'paperwork_backend.model.pdf',
-                ]),
                 ('page_tracking', ['paperwork_backend.pagetracker',]),
                 ('pillow', [
                     'paperwork_backend.pillow.img',
@@ -156,20 +128,44 @@ class Plugin(openpaperwork_core.PluginBase):
             )
         )
 
-    def ocr_page_by_url(self, doc_url, page_idx):
+    def guess_page_orientation_by_url(self, doc_url, page_idx):
         page_img_url = self.core.call_success(
             "page_get_img_url", doc_url, page_idx
         )
-        ocr_tool = pyocr.get_available_tools()[0]
-        LOGGER.info("Will use tool '%s'", ocr_tool.get_name())
+
+        for ocr_tool in pyocr.get_available_tools():
+            LOGGER.info(
+                "Orientation guessing: Will use tool '%s'",
+                ocr_tool.get_name()
+            )
+            if ocr_tool.can_detect_orientation():
+                break
+            LOGGER.warning(
+                "Orientation guessing: Tool '%s' cannot detect orientation",
+                ocr_tool.get_name()
+            )
+        else:
+            LOGGER.warning(
+                "Orientation guessing: No tool found able to detect"
+                " orientation"
+            )
+            return None
 
         ocr_lang = self.core.call_success("ocr_get_lang")
 
         img = self.core.call_success("url_to_pillow", page_img_url)
 
-        boxes = ocr_tool.image_to_string(
-            img, lang=ocr_lang,
-            builder=pyocr.builders.LineBoxBuilder()
-        )
-        self.core.call_all("page_set_boxes_by_url", doc_url, page_idx, boxes)
-        return True
+        try:
+            r = ocr_tool.detect_orientation(img, lang=ocr_lang)
+        except pyocr.PyocrException as exc:
+            LOGGER.warning(
+                "Orientation guessing: Failed to guess orientation",
+                exc_info=exc
+            )
+            return None
+
+        angle = r['angle']
+        img = img.rotate(angle)
+
+        self.core.call_success("pillow_to_url", img, page_img_url)
+        return angle
