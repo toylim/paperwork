@@ -106,32 +106,40 @@ class Syncer(object):
             except StopIteration:
                 break
 
-        while len(self.diff) > 0:
-            (action, key) = self.diff.pop()
-            self.nb_compared += 1
-            if action != 'unchanged':
-                for name in self.names:
-                    self.core.call_one(
-                        "schedule", self.core.call_all,
-                        "on_sync", name, action, key
-                    )
-            if action == "added":
-                for transaction in self.transactions:
-                    transaction.add_obj(key)
-            elif action == "updated":
-                for transaction in self.transactions:
-                    transaction.upd_obj(key)
-            elif action == "deleted":
-                for transaction in self.transactions:
-                    transaction.del_obj(key)
-            else:
-                for transaction in self.transactions:
-                    transaction.unchanged_obj(key)
+        try:
+            while len(self.diff) > 0:
+                (action, key) = self.diff.pop()
+                self.nb_compared += 1
+                if action != 'unchanged':
+                    for name in self.names:
+                        self.core.call_one(
+                            "schedule", self.core.call_all,
+                            "on_sync", name, action, key
+                        )
+                if action == "added":
+                    for transaction in self.transactions:
+                        transaction.add_obj(key)
+                elif action == "updated":
+                    for transaction in self.transactions:
+                        transaction.upd_obj(key)
+                elif action == "deleted":
+                    for transaction in self.transactions:
+                        transaction.del_obj(key)
+                else:
+                    for transaction in self.transactions:
+                        transaction.unchanged_obj(key)
 
-        for transaction in self.transactions:
-            transaction.commit()
-        stop = time.time()
-        LOGGER.info(
-            "%s: Has compared %d objects in %.3fs",
-            self.names, self.nb_compared, stop - self.start
-        )
+            for transaction in self.transactions:
+                transaction.commit()
+            stop = time.time()
+            LOGGER.info(
+                "%s: Has compared %d objects in %.3fs",
+                self.names, self.nb_compared, stop - self.start
+            )
+        except Exception as exc:
+            LOGGER.error(
+                "%s: Fail to sync. Cancelling transactions",
+                self.names, exc_info=exc
+            )
+            for transaction in self.transactions:
+                transaction.cancel()

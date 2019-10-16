@@ -25,7 +25,7 @@ class OcrTransaction(object):
         self.total_expected = total_expected
         self.count = 0
 
-        # for each document, we need to track which page have already been
+        # for each document, we need to track which pages have already been
         # OCR-ed, which have been modified (cropping, rotation, ...)
         # and must be re-OCRed, and which have not been changed.
         self.page_tracker = self.core.call_success("page_tracker_get", ID)
@@ -34,7 +34,7 @@ class OcrTransaction(object):
         pass
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        pass
+        self.cancel()
 
     def _get_progression(self):
         if self.total_expected <= 0:
@@ -125,7 +125,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_interfaces(self):
         return [
-            "chkdeps",
             "ocr",
             "syncable",
         ]
@@ -136,14 +135,14 @@ class Plugin(openpaperwork_core.PluginBase):
                 ('doc_tracking', ['paperwork_backend.doctracker',]),
                 ('document_storage', ['paperwork_backend.model.workdir',]),
                 ('ocr_settings', ['paperwork_backend.pyocr',]),
+                ('page_boxes', [
+                    'paperwork_backend.model.hocr',
+                    'paperwork_backend.model.pdf',
+                ]),
                 ('page_tracking', ['paperwork_backend.pagetracker',]),
                 ('pillow', [
                     'paperwork_backend.pillow.img',
                     'paperwork_backend.pillow.pdf',
-                ]),
-                ('page_boxes', [
-                    'paperwork_backend.model.hocr',
-                    'paperwork_backend.model.pdf',
                 ]),
             ]
         }
