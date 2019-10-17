@@ -86,7 +86,8 @@ class Plugin(openpaperwork_core.PluginBase):
             for transaction in transactions:
                 transaction.cancel()
             drop_scan_id()
-            self.core.call_all("storage_delete_doc_id", doc_id)
+            if new:
+                self.core.call_all("storage_delete_doc_id", doc_id)
             raise exc
 
         promise = promise.then(add_scans_to_doc)
