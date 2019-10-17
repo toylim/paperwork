@@ -1,11 +1,16 @@
+"""
+Automatic page cropping using libpillowfight.find_scan_borders().
+May or may not work.
+"""
+
+
 import gettext
 import glob
 import locale
 import logging
 import os
 
-import pyocr
-import pyocr.builders
+import pillowfight
 
 import openpaperwork_core
 
@@ -13,10 +18,10 @@ import openpaperwork_core
 LOGGER = logging.getLogger(__name__)
 _ = gettext.gettext
 
-ID = "orientation_guesser"
+ID = "cropping"
 
 
-class OrientationTransaction(object):
+class PillowfightTransaction(object):
     def __init__(self, plugin, sync, total_expected=-1):
         self.plugin = plugin
         self.sync = sync
@@ -25,7 +30,7 @@ class OrientationTransaction(object):
         self.count = 0
 
         # for each document, we need to track on which pages we have already
-        # guessed the orientation and on which page we didn't yet.
+        # guessed the page borders and on which page we didn't yet.
         self.page_tracker = self.core.call_success("page_tracker_get", ID)
 
     def __enter__(self):
@@ -39,35 +44,50 @@ class OrientationTransaction(object):
             return 0
         return self.count / self.total_expected
 
-    def _guess_page_orientation(self, doc_id, doc_url, page_idx):
+    def _guess_page_borders(self, doc_id, doc_url, page_idx):
+        paper_size = self.core.call_success(
+            "page_get_paper_size_by_url", doc_url, page_idx
+        )
+        if paper_size is not None:
+            # We don't want to guess page borders on PDF files since they
+            # are usually already well-cropped. Also the page borders won't
+            # appear in the document, so libpillowfight algorithm can only
+            # fail.
+            LOGGER.info(
+                "Paper size for new page %d (document %s) is known."
+                " --> Assuming we don't need to crop automatically the page",
+                doc_id, page_idx
+            )
+            return
+
         self.core.call_one(
             "schedule", self.core.call_all,
             "on_progress", ID, self._get_progression(),
-            _("Guessing orientation on document %s page %d") % (
+            _("Guessing page borders of document %s page %d") % (
                 doc_id, page_idx
             )
         )
-        self.plugin.guess_page_orientation_by_url(doc_url, page_idx)
+        self.plugin.crop_page_borders_by_url(doc_url, page_idx)
 
-    def _guess_new_page_orientations(self, doc_id):
+    def _guess_new_pages_borders(self, doc_id):
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
 
         modified_pages = self.page_tracker.find_changes(doc_id, doc_url)
 
         for (change, page_idx) in modified_pages:
-            # Guess page orientation on new pages, but only if we are
+            # Guess page borders on new pages, but only if we are
             # not synchronizing with the work directory
             if not self.sync and change == 'new':
-                self._guess_page_orientation(doc_id, doc_url, page_idx)
+                self._guess_page_borders(doc_id, doc_url, page_idx)
             self.page_tracker.ack_page(doc_id, doc_url, page_idx)
 
     def add_obj(self, doc_id):
         self.count += 1
-        self._guess_new_page_orientations(doc_id)
+        self._guess_new_pages_borders(doc_id)
 
     def upd_obj(self, doc_id):
         self.count += 1
-        self._guess_new_page_orientations(doc_id)
+        self._guess_new_pages_borders(doc_id)
 
     def del_obj(self, doc_id):
         self.page_tracker.delete_doc(doc_id)
@@ -89,11 +109,11 @@ class OrientationTransaction(object):
 
 
 class Plugin(openpaperwork_core.PluginBase):
-    PRIORITY = 2000
+    PRIORITY = 3000
 
     def get_interfaces(self):
         return [
-            "orientation_guesser",
+            "cropping",
             "syncable",  # actually satisfied by the plugin 'doctracker'
         ]
 
@@ -101,7 +121,6 @@ class Plugin(openpaperwork_core.PluginBase):
         return {
             'interfaces': [
                 ('doc_tracking', ['paperwork_backend.doctracker',]),
-                ('ocr_settings', ['paperwork_backend.pyocr',]),
                 ('page_tracking', ['paperwork_backend.pagetracker',]),
                 ('pillow', [
                     'paperwork_backend.pillow.img',
@@ -114,64 +133,34 @@ class Plugin(openpaperwork_core.PluginBase):
         super().init(core)
         self.core.call_all(
             "doc_tracker_register", ID,
-            lambda sync, total_expected=-1: OrientationTransaction(
+            lambda sync, total_expected=-1: PillowfightTransaction(
                 self, sync, total_expected
             )
         )
 
-    def guess_page_orientation_by_url(self, doc_url, page_idx):
+    def crop_page_borders_by_url(self, doc_url, page_idx):
         doc_id = self.core.call_success("doc_url_to_id", doc_url)
 
         if doc_id is not None:
             self.core.call_one(
                 "schedule", self.core.call_all,
-                "on_orientation_guess_start", doc_id, page_idx
+                "on_page_borders_guess_start", doc_id, page_idx
             )
 
         page_img_url = self.core.call_success(
             "page_get_img_url", doc_url, page_idx
         )
 
-        for ocr_tool in pyocr.get_available_tools():
-            LOGGER.info(
-                "Orientation guessing: Will use tool '%s'",
-                ocr_tool.get_name()
-            )
-            if ocr_tool.can_detect_orientation():
-                break
-            LOGGER.warning(
-                "Orientation guessing: Tool '%s' cannot detect orientation",
-                ocr_tool.get_name()
-            )
-        else:
-            LOGGER.warning(
-                "Orientation guessing: No tool found able to detect"
-                " orientation"
-            )
-            return None
-
-        ocr_lang = self.core.call_success("ocr_get_lang")
-
         img = self.core.call_success("url_to_pillow", page_img_url)
 
-        try:
-            r = ocr_tool.detect_orientation(img, lang=ocr_lang)
-        except pyocr.PyocrException as exc:
-            LOGGER.warning(
-                "Orientation guessing: Failed to guess orientation",
-                exc_info=exc
-            )
-            return None
-
-        angle = r['angle']
-        img = img.rotate(angle)
+        frame = pillowfight.find_scan_borders(img)
+        img = img.crop(frame)
 
         self.core.call_success("pillow_to_url", img, page_img_url)
 
         if doc_id is not None:
             self.core.call_one(
                 "schedule", self.core.call_all,
-                "on_orientation_guess_end", doc_id, page_idx
+                "on_page_borders_guess_end", doc_id, page_idx
             )
-
-        return angle
+        return frame

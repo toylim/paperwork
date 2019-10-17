@@ -93,6 +93,7 @@ class Plugin(openpaperwork_core.PluginBase):
             "doc_type",
             "page_boxes",
             "page_img",
+            "page_paper",
             'pages',
         ]
 
@@ -268,3 +269,18 @@ class Plugin(openpaperwork_core.PluginBase):
             LOGGER.warning(
                 "Cannot move page from PDF file (doc=%s)", doc_url
             )
+
+    def page_get_paper_size_by_url(self, doc_url, page_idx):
+        (pdf_url, pdf) = self._open_pdf(doc_url)
+        if pdf is None:
+            return None
+
+        page = pdf.get_page(page_idx)
+        size = page.get_size()
+
+        # points --> inches: / 72
+        # inches --> millimeters (i18n unit): * 25.4
+        return (
+            size[0] / 72.0 * 25.4,
+            size[0] / 72.0 * 25.4,
+        )

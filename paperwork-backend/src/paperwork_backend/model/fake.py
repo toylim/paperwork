@@ -37,6 +37,10 @@ class Plugin(openpaperwork_core.PluginBase):
         #       (img_url, hash),  # page 0
         #       (img_url, hash),  # page 1
         #     ],
+        #     'page_paper_sizes': [  # optional
+        #       (img_url, hash),  # page 0
+        #       (img_url, hash),  # page 1
+        #     ],
         #   },
         #   (...)
         # ]
@@ -51,6 +55,7 @@ class Plugin(openpaperwork_core.PluginBase):
             "doc_type",
             "document_storage",
             "page_boxes",
+            "page_paper",
             "pillow",
         ]
 
@@ -97,7 +102,11 @@ class Plugin(openpaperwork_core.PluginBase):
                 l_hashes = (
                     len(doc['page_hashes']) if 'page_hashes' in doc else 0
                 )
-                return max(l_boxes, l_imgs, l_mtimes, l_hashes)
+                l_paper_sizes = (
+                    len(doc['page_paper_sizes'])
+                    if 'page_paper_sizes' in doc else 0
+                )
+                return max(l_boxes, l_imgs, l_mtimes, l_hashes, l_paper_sizes)
         return None
 
     def doc_get_text_by_url(self, out: list, doc_url):
@@ -160,19 +169,16 @@ class Plugin(openpaperwork_core.PluginBase):
     def page_get_img_url(self, doc_url, page_idx, write=False):
         for doc in self.docs:
             if doc['url'] == doc_url:
-                if 'page_imgs' in doc:
-                    if page_idx >= len(doc['page_imgs']):
-                        return None
-                    return doc['page_imgs'][page_idx][0]
-                elif 'page_mtimes' in doc:
-                    if page_idx >= len(doc['page_mtimes']):
-                        return None
-                    return doc['page_mtimes'][page_idx][0]
-                elif 'page_hashes' in doc:
-                    if page_idx >= len(doc['page_hashes']):
-                        return None
-                    return doc['page_hashes'][page_idx][0]
-                elif write:
+                for k in [
+                            'page_imgs', 'page_mtimes', 'page_hashes',
+                            'page_sizes'
+                        ]:
+                    if k in doc:
+                        if page_idx >= len(doc[k]):
+                            return None
+                        return doc[k][page_idx][0]
+
+                if write:
                     return "file:///some_doc/new_page.jpeg"
                 else:
                     return None
@@ -236,3 +242,11 @@ class Plugin(openpaperwork_core.PluginBase):
             if 'page_hashes' not in doc:
                 continue
             out.append(doc['page_hashes'][page_idx][1])
+
+    def page_get_paper_size_by_url(self, doc_url, page_idx):
+        for doc in self.docs:
+            if doc['url'] != doc_url:
+                continue
+            if 'page_paper_sizes' not in doc:
+                continue
+            return doc['page_paper_sizes'][page_idx][1]
