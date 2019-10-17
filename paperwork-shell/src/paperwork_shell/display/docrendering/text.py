@@ -28,7 +28,11 @@ class TextRenderer(object):
         out = []
         for line in lines:
             new_line = ""
-            words = line.split(" ")
+            iwords = line.split(" ")
+            words = []
+            for word in iwords:
+                for p in range(0, len(word), terminal_width - 1):
+                    words.append(word[p:p + terminal_width - 1])
             for word in words:
                 if len(new_line) + len(word) + 1 >= terminal_width:
                     out.append(new_line)
