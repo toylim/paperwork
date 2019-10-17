@@ -229,7 +229,7 @@ class Plugin(CommonFsPluginBase):
         return None
 
     def fs_iswritable(self, url):
-        mem_id = self.get_memory_id(uri)
+        mem_id = self.get_memory_id(url)
         if mem_id is None:
             return None
         return True
