@@ -87,7 +87,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def paperwork_config_load(self, application, default_plugins=[]):
         self.application = application
-        self.core.call_all('config_load', 'paperwork')
+        self.core.call_all('config_load', 'paperwork2')
         self.core.call_all('config_load_plugins', application, default_plugins)
 
     def paperwork_get_application_name(self):
