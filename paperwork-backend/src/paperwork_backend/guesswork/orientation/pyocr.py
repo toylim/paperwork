@@ -4,7 +4,6 @@ import locale
 import logging
 import os
 
-import pycountry
 import pyocr
 import pyocr.builders
 
@@ -48,15 +47,7 @@ class OcrTransaction(object):
                 doc_id, page_idx
             )
         )
-        self.core.call_one(
-            "schedule", self.core.call_all,
-            "on_orientation_guess_start", doc_id, page_idx
-        )
         self.plugin.guess_page_orientation_by_url(doc_url, page_idx)
-        self.core.call_one(
-            "schedule", self.core.call_all,
-            "on_orientation_guess_end", doc_id, page_idx
-        )
 
     def _guess_new_page_orientations(self, doc_id):
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
@@ -129,6 +120,14 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def guess_page_orientation_by_url(self, doc_url, page_idx):
+        doc_id = self.core.call_success("doc_url_to_id", doc_url)
+
+        if doc_id is not None:
+            self.core.call_one(
+                "schedule", self.core.call_all,
+                "on_orientation_guess_start", doc_id, page_idx
+            )
+
         page_img_url = self.core.call_success(
             "page_get_img_url", doc_url, page_idx
         )
@@ -168,4 +167,11 @@ class Plugin(openpaperwork_core.PluginBase):
         img = img.rotate(angle)
 
         self.core.call_success("pillow_to_url", img, page_img_url)
+
+        if doc_id is not None:
+            self.core.call_one(
+                "schedule", self.core.call_all,
+                "on_orientation_guess_end", doc_id, page_idx
+            )
+
         return angle

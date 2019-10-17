@@ -4,7 +4,6 @@ import locale
 import logging
 import os
 
-import pycountry
 import pyocr
 import pyocr.builders
 
@@ -70,15 +69,7 @@ class OcrTransaction(object):
                 doc_id, page_idx
             )
         )
-        self.core.call_one(
-            "schedule", self.core.call_all,
-            "on_ocr_start", doc_id, page_idx
-        )
         self.plugin.ocr_page_by_url(doc_url, page_idx)
-        self.core.call_one(
-            "schedule", self.core.call_all,
-            "on_ocr_end", doc_id, page_idx
-        )
 
     def _run_ocr_on_modified_pages(self, doc_id, wordless_only=False):
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
@@ -157,6 +148,14 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def ocr_page_by_url(self, doc_url, page_idx):
+        doc_id = self.core.call_success("doc_url_to_id", doc_url)
+
+        if doc_id is not None:
+            self.core.call_one(
+                "schedule", self.core.call_all,
+                "on_ocr_start", doc_id, page_idx
+            )
+
         page_img_url = self.core.call_success(
             "page_get_img_url", doc_url, page_idx
         )
@@ -172,4 +171,11 @@ class Plugin(openpaperwork_core.PluginBase):
             builder=pyocr.builders.LineBoxBuilder()
         )
         self.core.call_all("page_set_boxes_by_url", doc_url, page_idx, boxes)
+
+        if doc_id is not None:
+            self.core.call_one(
+                "schedule", self.core.call_all,
+                "on_ocr_end", doc_id, page_idx
+            )
+
         return True
