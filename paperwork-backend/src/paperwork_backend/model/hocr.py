@@ -70,12 +70,16 @@ class Plugin(openpaperwork_core.PluginBase):
         # Paperwork starts and therefore it deserves some optimizations.
         # The fact is that the fastest way to concatenate
         # strings together with Python is `str.join()`.
-        line_txt_generator = lambda line: " ".join(
-            [word_box.content for word_box in line.word_boxes]
-        )
-        page_txt_generator = lambda line_boxes: "\n".join(
-            [line_txt_generator(line_box) for line_box in line_boxes]
-        )
+        def line_txt_generator(line):
+            return " ".join(
+                [word_box.content for word_box in line.word_boxes]
+            )
+
+        def page_txt_generator(line_boxes):
+            return "\n".join(
+                [line_txt_generator(line_box) for line_box in line_boxes]
+            )
+
         for page_idx in range(0, doc_nb_pages):
             line_boxes = self.page_get_boxes_by_url(doc_url, page_idx)
             if line_boxes is None:
@@ -99,7 +103,7 @@ class Plugin(openpaperwork_core.PluginBase):
             box_builder = pyocr.builders.WordBoxBuilder()
             boxes = box_builder.read_file(file_desc)
             if len(boxes) > 0:
-                logger.warning(
+                LOGGER.warning(
                     "Doc %s (page %d) uses old box format",
                     doc_url, page_idx
                 )

@@ -17,10 +17,10 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return {
             'interfaces': [
-                ('document_storage', ['paperwork_backend.model.workdir',]),
-                ('doc_img_import', ['paperwork_backend.model.img',]),
-                ('pillow', ['paperwork_backend.pillow.img',]),
-                ('scan', ['paperwork_backend.docscan.libinsane',]),
+                ('document_storage', ['paperwork_backend.model.workdir']),
+                ('doc_img_import', ['paperwork_backend.model.img']),
+                ('pillow', ['paperwork_backend.pillow.img']),
+                ('scan', ['paperwork_backend.docscan.libinsane']),
             ]
         }
 

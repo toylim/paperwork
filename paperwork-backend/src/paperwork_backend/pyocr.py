@@ -10,6 +10,8 @@ import pyocr.builders
 
 import openpaperwork_core
 
+from . import util
+
 
 LOGGER = logging.getLogger(__name__)
 _ = gettext.gettext
@@ -36,7 +38,7 @@ def init_flatpak():
     LOGGER.info("Assuming we are running in Flatpak."
                 " Building tessdata directory %s ...", tessdatadir)
     util.rm_rf(tessdatadir)
-    util.mkdir_p(tessdatadir)
+    os.makedirs(tessdatadir, exist_ok=True)
 
     os.symlink("/app/share/tessdata/eng.traineddata",
                os.path.join(tessdatadir, "eng.traineddata"))
@@ -157,7 +159,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return {
             'interfaces': [
-                ('paperwork_config', ['paperwork_backend.config.file',]),
+                ('paperwork_config', ['paperwork_backend.config.file']),
             ]
         }
 

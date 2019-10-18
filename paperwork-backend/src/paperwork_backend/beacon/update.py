@@ -37,8 +37,8 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return {
             'interfaces': [
-                ('mainloop', ['openpaperwork_core.mainloop_asyncio',]),
-                ('paperwork_config', ['paperwork_backend.config.file',]),
+                ('mainloop', ['openpaperwork_core.mainloop_asyncio']),
+                ('paperwork_config', ['paperwork_backend.config.file']),
             ]
         }
 

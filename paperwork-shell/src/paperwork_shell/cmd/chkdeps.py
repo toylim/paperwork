@@ -1,5 +1,6 @@
 import collections
 import distro
+import logging
 import os
 import sys
 
@@ -10,6 +11,7 @@ import openpaperwork_core
 from . import util
 
 
+LOGGER = logging.getLogger(__name__)
 _ = gettext.gettext
 
 

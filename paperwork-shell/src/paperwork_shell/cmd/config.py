@@ -43,7 +43,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return {
             'interfaces': [
-                ('paperwork_config', ['paperwork_backend.config.file',]),
+                ('paperwork_config', ['paperwork_backend.config.file']),
             ],
         }
 
@@ -200,7 +200,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return list(plugins)
 
     def _cmd_reset_plugins(self):
-        plugins = self.core.call_success("paperwork_config_reset_plugins")
+        self.core.call_success("paperwork_config_reset_plugins")
         self.core.call_all("paperwork_config_save")
         if self.interactive:
             print("Plugin list reseted")

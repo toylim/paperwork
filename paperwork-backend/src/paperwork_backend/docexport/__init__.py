@@ -72,7 +72,7 @@ class AbstractExportPipePlugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return {
             'interfaces': [
-                ('mainloop', ['openpaperwork_core.mainloop_asyncio',]),
+                ('mainloop', ['openpaperwork_core.mainloop_asyncio']),
             ]
         }
 

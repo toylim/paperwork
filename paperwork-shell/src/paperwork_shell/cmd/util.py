@@ -36,7 +36,7 @@ def parse_page_list(args):
         pages = args.pages.split("-", 1)
         return range(
             int(pages[0]) - 1,
-            min(int(pages[1]), nb_pages)
+            int(pages[1])
         )
     else:
         return [

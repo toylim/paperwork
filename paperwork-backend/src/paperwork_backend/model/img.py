@@ -1,7 +1,5 @@
 import logging
 
-import PIL.Image
-
 import openpaperwork_core
 
 from . import util

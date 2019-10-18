@@ -1,8 +1,5 @@
 import gettext
-import glob
-import locale
 import logging
-import os
 
 import pyocr
 import pyocr.builders
@@ -123,14 +120,14 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return {
             'interfaces': [
-                ('doc_tracking', ['paperwork_backend.doctracker',]),
-                ('document_storage', ['paperwork_backend.model.workdir',]),
-                ('ocr_settings', ['paperwork_backend.pyocr',]),
+                ('doc_tracking', ['paperwork_backend.doctracker']),
+                ('document_storage', ['paperwork_backend.model.workdir']),
+                ('ocr_settings', ['paperwork_backend.pyocr']),
                 ('page_boxes', [
                     'paperwork_backend.model.hocr',
                     'paperwork_backend.model.pdf',
                 ]),
-                ('page_tracking', ['paperwork_backend.pagetracker',]),
+                ('page_tracking', ['paperwork_backend.pagetracker']),
                 ('pillow', [
                     'paperwork_backend.pillow.img',
                     'paperwork_backend.pillow.pdf',

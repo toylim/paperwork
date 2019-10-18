@@ -15,7 +15,6 @@
 #    along with Paperwork.  If not, see <http://www.gnu.org/licenses/>.
 import gettext
 import shutil
-import sys
 
 import openpaperwork_core
 

@@ -5,6 +5,10 @@ import urllib
 
 import openpaperwork_core
 
+if os.name == "nt":
+    # TODO(Jflesch): bad. We shouldn't depend on Gio here. To fix.
+    from gi.repository import Gio
+
 
 LOGGER = logging.getLogger(__name__)
 

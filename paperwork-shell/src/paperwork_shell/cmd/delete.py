@@ -14,7 +14,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with Paperwork.  If not, see <http://www.gnu.org/licenses/>.
 import gettext
-import shutil
 import sys
 
 import openpaperwork_core
@@ -36,7 +35,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return {
             'interfaces': [
-                ('document_storage', ['paperwork_backend.model.workdir',]),
+                ('document_storage', ['paperwork_backend.model.workdir']),
                 ('pages', [
                     'paperwork_backend.model.hocr',
                     'paperwork_backend.model.img',
@@ -69,8 +68,6 @@ class Plugin(openpaperwork_core.PluginBase):
         if args.command != 'delete':
             return None
 
-        nb_deleted = 0
-
         doc_ids = args.doc_ids
 
         for doc_id in doc_ids:
@@ -94,7 +91,7 @@ class Plugin(openpaperwork_core.PluginBase):
                     r = util.ask_confirmation(
                         _("Delete page(s) %s of document %s ?") % (
                             str([p + 1 for p in pages]), str(doc_id)
-                        ), default = 'n'
+                        ), default='n'
                     )
                 if r != 'y':
                     continue

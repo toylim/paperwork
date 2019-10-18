@@ -20,7 +20,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return {
             'interfaces': [
-                ('fs', ['paperwork_backend.fs.gio',]),
+                ('fs', ['paperwork_backend.fs.gio']),
             ]
         }
 

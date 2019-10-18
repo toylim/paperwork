@@ -43,7 +43,7 @@ class PageTracker(object):
             self.core.call_success("mainloop_execute", self.sql.execute, query)
         self.core.call_success(
             "mainloop_execute", self.sql.execute, "BEGIN TRANSACTION"
-        );
+        )
 
     def _close(self):
         self.core.call_success("mainloop_execute", self.sql.close)
@@ -51,7 +51,7 @@ class PageTracker(object):
     def cancel(self):
         self.core.call_success(
             "mainloop_execute", self.sql.execute, "ROLLBACK"
-        );
+        )
         self._close()
 
     def commit(self):
@@ -79,7 +79,9 @@ class PageTracker(object):
         )
         db_hashes = set(db_pages.values())
 
-        fs_nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)
+        fs_nb_pages = self.core.call_success(
+            "doc_get_nb_pages_by_url", doc_url
+        )
         fs_pages = {}
         for page_idx in range(0, fs_nb_pages):
             h = []
@@ -114,9 +116,6 @@ class PageTracker(object):
         """
         Mark the page update has handled.
         """
-        page_url = self.core.call_success(
-            "page_get_img_url", doc_url, page_idx
-        )
         page_hash = []
         self.core.call_success(
             "page_get_hash_by_url", page_hash, doc_url, page_idx
@@ -150,9 +149,9 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return {
             'interfaces': [
-                ('fs', ['paperwork_backend.fs.gio',]),
-                ('mainloop', ['openpaperwork_core.mainloop_asyncio',]),
-                ('page_boxes', ['paperwork_backend.model.hocr',]),
+                ('fs', ['paperwork_backend.fs.gio']),
+                ('mainloop', ['openpaperwork_core.mainloop_asyncio']),
+                ('page_boxes', ['paperwork_backend.model.hocr']),
                 ('page_img', [
                     'paperwork_backend.model.img',
                     'paperwork_backend.model.pdf',

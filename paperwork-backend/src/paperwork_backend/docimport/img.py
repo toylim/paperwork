@@ -66,15 +66,15 @@ class SingleImgImporter(object):
 
 
 class SingleImgImporterFactory(object):
-    def __init__(self, core):
-        self.core = core
+    def __init__(self, plugin):
+        self.plugin = plugin
+        self.core = plugin.core
 
     @staticmethod
     def get_name():
         return _("Append the image to the current document")
 
-    @staticmethod
-    def is_importable(core, file_uri):
+    def is_importable(self, core, file_uri):
         mime = core.call_success("fs_get_mime", file_uri)
         if mime is not None:
             mimes = [mime[1] for mime in Plugin.IMG_MIME_TYPES]
@@ -118,10 +118,10 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return {
             'interfaces': [
-                ('doc_img_import', ['paperwork_backend.model.img',]),
-                ('fs', ['paperwork_backend.fs.gio',]),
-                ('mainloop', ['openpaperwork_core.mainloop_asyncio',]),
-                ('pillow', ['paperwork_backend.pillow.img',]),
+                ('doc_img_import', ['paperwork_backend.model.img']),
+                ('fs', ['paperwork_backend.fs.gio']),
+                ('mainloop', ['openpaperwork_core.mainloop_asyncio']),
+                ('pillow', ['paperwork_backend.pillow.img']),
             ]
         }
 
@@ -130,13 +130,13 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_importer(self, out: list, file_import: FileImport):
         importer = DirectFileImporter(
-            self.core, file_import, SingleImgImporterFactory(self.core)
+            self.core, file_import, SingleImgImporterFactory(self)
         )
         if importer.can_import():
             out.append(importer)
 
         importer = RecursiveFileImporter(
-            self.core, file_import, SingleImgImporterFactory(self.core)
+            self.core, file_import, SingleImgImporterFactory(self)
         )
         if importer.can_import():
             out.append(importer)

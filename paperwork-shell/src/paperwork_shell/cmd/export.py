@@ -36,7 +36,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return {
             'interfaces': [
-                ('fs', ['paperwork_backend.fs.gio',]),
+                ('fs', ['paperwork_backend.fs.gio']),
                 ('export_pipes', [
                     'paperwork_backend.docexport.img',
                     'paperwork_backend.docexport.pdf',
@@ -96,13 +96,10 @@ class Plugin(openpaperwork_core.PluginBase):
         out = args.out
 
         if pages is None or len(pages) <= 0:
-            input_type = 'doc_url'
             input_value = doc_url
         elif len(pages) == 1:
-            input_type = 'page_url'
             input_value = (doc_url, pages)
         else:
-            input_type = 'pages'
             input_value = (doc_url, pages)
 
         if len(filters) <= 0:

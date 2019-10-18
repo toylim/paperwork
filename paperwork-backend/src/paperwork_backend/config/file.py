@@ -19,7 +19,6 @@ Paperwork configuration management code
 
 import gettext
 import logging
-import os
 
 import openpaperwork_core
 

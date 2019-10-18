@@ -38,15 +38,15 @@ class SinglePdfImporter(object):
 
 
 class SinglePdfImporterFactory(object):
-    def __init__(self, core):
-        self.core = core
+    def __init__(self, plugin):
+        self.plugin = plugin
+        self.core = plugin.core
 
     @staticmethod
     def get_name():
         return _("Import PDF")
 
-    @staticmethod
-    def is_importable(core, file_uri):
+    def is_importable(self, core, file_uri):
         mime = core.call_success("fs_get_mime", file_uri)
         if mime is not None:
             if mime == Plugin.MIME_TYPE:
@@ -73,9 +73,9 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return {
             'interfaces': [
-                ('doc_pdf_import', ['paperwork_backend.model.pdf',]),
-                ('fs', ['paperwork_backend.fs.gio',]),
-                ('mainloop', ['openpaperwork_core.mainloop_asyncio',]),
+                ('doc_pdf_import', ['paperwork_backend.model.pdf']),
+                ('fs', ['paperwork_backend.fs.gio']),
+                ('mainloop', ['openpaperwork_core.mainloop_asyncio']),
             ]
         }
 
@@ -85,13 +85,13 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_importer(self, out: list, file_import: FileImport):
         importer = DirectFileImporter(
-            self.core, file_import, SinglePdfImporterFactory(self.core)
+            self.core, file_import, SinglePdfImporterFactory(self)
         )
         if importer.can_import():
             out.append(importer)
 
         importer = RecursiveFileImporter(
-            self.core, file_import, SinglePdfImporterFactory(self.core)
+            self.core, file_import, SinglePdfImporterFactory(self)
         )
         if importer.can_import():
             out.append(importer)

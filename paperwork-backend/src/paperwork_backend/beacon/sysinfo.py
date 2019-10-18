@@ -5,11 +5,11 @@ import platform
 import openpaperwork_core
 
 
-class Plugin(openpaperwork_base.PluginBase):
+class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return {
             'interfaces': [
-                ("stats_post", ['paperwork_backend.beacon.stats',]),
+                ("stats_post", ['paperwork_backend.beacon.stats']),
             ]
         }
 
@@ -34,3 +34,4 @@ class Plugin(openpaperwork_base.PluginBase):
         out['platform_processor'] = processor
         out['platform_distribution'] = distribution
         out['cpu_count'] = os.cpu_count()
+        return out

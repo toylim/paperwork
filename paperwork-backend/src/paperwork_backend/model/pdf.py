@@ -181,7 +181,7 @@ class Plugin(openpaperwork_core.PluginBase):
         if pdf_url is None:
             return None
         # same URL used in browsers
-        return "{}#page={}".format(pdf_url , str(page_idx + 1))
+        return "{}#page={}".format(pdf_url, str(page_idx + 1))
 
     @staticmethod
     def _custom_split(input_str, input_rects, splitter):
@@ -239,7 +239,8 @@ class Plugin(openpaperwork_core.PluginBase):
                     ):
                 word_box = PdfWordBox(word, word_rects)
                 words.append(word_box)
-            yield PdfLineBox(words, line_rects)
+            line_boxes.append(PdfLineBox(words, line_rects))
+        return line_boxes
 
     def doc_pdf_import(self, src_file_uri):
         # check the PDF is readable before messing the content of the
@@ -267,7 +268,7 @@ class Plugin(openpaperwork_core.PluginBase):
             ):
         if self.is_doc(source_doc_url):
             LOGGER.warning(
-                "Cannot move page from PDF file (doc=%s)", doc_url
+                "Cannot move page from PDF file (doc=%s)", source_doc_url
             )
 
     def page_get_paper_size_by_url(self, doc_url, page_idx):

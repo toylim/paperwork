@@ -49,7 +49,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return PaperworkSetting(None, default)
 
     def paperwork_config_register(self, key, setting):
-        if key not in self._settings: # don't smash test settings
+        if key not in self._settings:  # don't smash test settings
             self._settings[key] = setting
 
     def paperwork_config_get_setting(self, key):

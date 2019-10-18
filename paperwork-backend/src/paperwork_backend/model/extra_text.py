@@ -34,7 +34,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def doc_get_text_by_url(self, out: list, doc_url):
         self.doc_get_extra_text_by_url(out, doc_url)
 
-    def doc_get_extra_text_by_url(self, out:list, doc_url):
+    def doc_get_extra_text_by_url(self, out: list, doc_url):
         extra_url = self.core.call_success(
             "fs_join", doc_url, EXTRA_TEXT_FILENAME
         )

@@ -3,7 +3,6 @@ import io
 import logging
 import os
 import tempfile
-import urllib
 
 try:
     from gi.repository import Gio
@@ -384,19 +383,6 @@ class Plugin(CommonFsPluginBase):
         except GLib.GError as exc:
             LOGGER.warning("Gio.Gerror", exc_info=exc)
 
-    def fs_iswritable(self, url):
-        try:
-            f = Gio.File.new_for_uri(url)
-            fi = f.query_info(
-                Gio.FILE_ATTRIBUTE_ACCESS_CAN_WRITE,
-                Gio.FileQueryInfoFlags.NONE
-            )
-            return fi.get_attribute_boolean(
-                Gio.FILE_ATTRIBUTE_ACCESS_CAN_WRITE
-            )
-        except GLib.GError as exc:
-            logger.warning("Gio.Gerror", exc_info=exc)
-
     def fs_getsize(self, url):
         if not self._is_file_uri(url):
             return None
@@ -539,5 +525,5 @@ class Plugin(CommonFsPluginBase):
                 Gio.FILE_ATTRIBUTE_ACCESS_CAN_WRITE
             )
         except GLib.GError as exc:
-            logger.warning("Gio.Gerror", exc_info=exc)
+            LOGGER.warning("Gio.Gerror", exc_info=exc)
             raise IOError(str(exc))

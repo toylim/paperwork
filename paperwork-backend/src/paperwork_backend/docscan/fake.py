@@ -123,7 +123,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return {
             'interfaces': [
-                ('mainloop', ['openpaperwork_core.mainloop_asyncio',]),
+                ('mainloop', ['openpaperwork_core.mainloop_asyncio']),
             ]
         }
 
@@ -134,11 +134,11 @@ class Plugin(openpaperwork_core.PluginBase):
                 ("fake:scanner1", "Super scanner #1"),
             ]
 
-        return opepaperwork_core.promise.Promise(self.core, list_scanners)
+        return openpaperwork_core.promise.Promise(self.core, list_scanners)
 
     def scan_get_scanner_promise(self, dev_id):
         def get_scanner():
-            if dev_id != "fake:scanner0" and scanner_dev_id != "fake:scanner1":
+            if dev_id != "fake:scanner0" and dev_id != "fake:scanner1":
                 return None
             return Scanner(self.core, dev_id)
 

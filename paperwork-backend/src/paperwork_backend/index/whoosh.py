@@ -236,9 +236,9 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return {
             'interfaces': [
-                ('document_storage', ['paperwork_backend.model.workdir',]),
-                ('fs', ['paperwork_backend.fs.gio',]),
-                ('mainloop', ['openpaperwork_core.mainloop_asyncio',]),
+                ('document_storage', ['paperwork_backend.model.workdir']),
+                ('fs', ['paperwork_backend.fs.gio']),
+                ('mainloop', ['openpaperwork_core.mainloop_asyncio']),
                 # Optional dependencies:
                 # ('page_boxes', [
                 #     'paperwork_backend.model.hocr',

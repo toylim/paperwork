@@ -5,7 +5,6 @@ directory.
 """
 
 import datetime
-import logging
 import os
 import sqlite3
 
@@ -38,7 +37,7 @@ class DocTrackerTransaction(object):
         )
         self.core.call_success(
             "mainloop_execute", self.sql.execute, "BEGIN TRANSACTION"
-        );
+        )
 
     def _get_actual_doc_data(self, doc_id, doc_url):
         if (
@@ -115,9 +114,9 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return {
             'interfaces': [
-                ('document_storage', ['paperwork_backend.model.workdir',]),
-                ('fs', ['paperwork_backend.fs.gio',]),
-                ('mainloop', ['openpaperwork_core.mainloop_asyncio',]),
+                ('document_storage', ['paperwork_backend.model.workdir']),
+                ('fs', ['paperwork_backend.fs.gio']),
+                ('mainloop', ['openpaperwork_core.mainloop_asyncio']),
             ]
         }
 
@@ -198,6 +197,7 @@ class Plugin(openpaperwork_core.PluginBase):
             "mainloop_execute", db_all_docs.execute,
             "SELECT doc_id, mtime FROM documents"
         )
+
         class DbDoc(object):
             def __init__(self, result):
                 self.key = result[0]

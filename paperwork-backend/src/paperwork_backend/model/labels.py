@@ -58,9 +58,9 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return {
             'interfaces': [
-                ('document_storage', ['paperwork_backend.model.workdir',]),
+                ('document_storage', ['paperwork_backend.model.workdir']),
                 ('fs', ['paperwork_backend.fs.gio']),
-                ('mainloop', ['openpaperwork_core.mainloop_asyncio',]),
+                ('mainloop', ['openpaperwork_core.mainloop_asyncio']),
             ]
         }
 

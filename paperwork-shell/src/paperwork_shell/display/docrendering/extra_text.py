@@ -14,8 +14,7 @@ class ExtraTextRenderer(object):
     def get_preview_output(self, doc_id, doc_url, terminal_size=(80, 25)):
         if self.parent is not None:
             return self.parent.get_preview_output(
-                doc_id, doc_url,
-                (terminal_size[0] - w_split - 2, terminal_size[1])
+                doc_id, doc_url, terminal_size
             )
         return []
 
@@ -44,7 +43,6 @@ class ExtraTextRenderer(object):
         return []
 
     def get_doc_infos(self, doc_id, doc_url):
-        out = {}
         if self.parent is not None:
             return self.parent.get_doc_infos(doc_id, doc_url)
         return {}
@@ -64,7 +62,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return {
             'interfaces': [
-                ('extra_text', ['paperwork_backend.model.extra_text',]),
+                ('extra_text', ['paperwork_backend.model.extra_text']),
             ]
         }
 

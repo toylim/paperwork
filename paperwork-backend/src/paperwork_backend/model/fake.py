@@ -124,8 +124,8 @@ class Plugin(openpaperwork_core.PluginBase):
             all_labels = set()
             self.labels_get_all(all_labels)
 
-            for (l, c) in all_labels:
-                if l == label:
+            for (label_name, c) in all_labels:
+                if label_name == label:
                     color = c
                     break
             else:

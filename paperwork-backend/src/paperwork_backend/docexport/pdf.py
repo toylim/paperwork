@@ -1,41 +1,6 @@
-import collections
 import gettext
 import io
 import logging
-
-try:
-    import cairo
-    CAIRO_AVAILABLE = True
-except ImportError:
-    CAIRO_AVAILABLE = False
-
-try:
-    import gi
-    gi.require_version('Pango', '1.0')
-    gi.require_version('PangoCairo', '1.0')
-    gi.require_version('Poppler', '0.18')
-    GI_AVAILABLE = True
-except ImportError:
-    GI_AVAILABLE = False
-
-try:
-    from gi.repository import Gio
-    GLIB_AVAILABLE = True
-except ImportError:
-    GLIB_AVAILABLE = False
-
-try:
-    from gi.repository import Pango
-    from gi.repository import PangoCairo
-    PANGO_AVAILABLE = True
-except ImportError:
-    PANGO_AVAILABLE = False
-
-try:
-    from gi.repository import Poppler
-    POPPLER_AVAILABLE = True
-except ImportError:
-    POPPLER_AVAILABLE = False
 
 import PIL
 import PIL.Image
@@ -47,6 +12,50 @@ from . import (
     AbstractExportPipe,
     AbstractExportPipePlugin
 )
+
+
+CAIRO_AVAILABLE = False
+GDK_AVAILABLE = False
+GI_AVAILABLE = False
+GLIB_AVAILABLE = False
+PANGO_AVAILABLE = False
+
+try:
+    import cairo
+    CAIRO_AVAILABLE = True
+except ImportError:
+    pass
+
+try:
+    import gi
+    GI_AVAILABLE = True
+except ImportError:
+    pass
+
+if GI_AVAILABLE:
+    try:
+        gi.require_version('Gdk', '3.0')
+        gi.require_version('GdkPixbuf', '2.0')
+        from gi.repository import Gdk
+        from gi.repository import GdkPixbuf
+        GDK_AVAILABLE = True
+    except (ImportError, ValueError):
+        pass
+
+    try:
+        from gi.repository import GLib
+        GLIB_AVAILABLE = True
+    except ImportError:
+        pass
+
+    try:
+        gi.require_version('Pango', '1.0')
+        gi.require_version('PangoCairo', '1.0')
+        from gi.repository import Pango
+        from gi.repository import PangoCairo
+        PANGO_AVAILABLE = True
+    except (ImportError, ValueError):
+        pass
 
 
 _ = gettext.gettext
@@ -76,7 +85,6 @@ def image2surface(img, intermediate="pixbuf", quality=90):
             ):
         intermediate = "png"
 
-
     if intermediate == "pixbuf":
 
         data = GLib.Bytes.new(img.tobytes())
@@ -97,7 +105,7 @@ def image2surface(img, intermediate="pixbuf", quality=90):
     elif intermediate == "jpeg":
 
         if not hasattr(cairo.ImageSurface, 'set_mime_data'):
-            logger.warning(
+            LOGGER.warning(
                 "Cairo %s does not support yet 'set_mime_data'."
                 " Cannot include image as JPEG in the PDF."
                 " Image will be included as PNG (much bigger)",
@@ -151,15 +159,17 @@ class PdfDocUrlToPdfUrlExportPipe(AbstractExportPipe):
 
     def get_promise(self, result='final', target_file_url=None):
         def do(doc_url):
-            if target_file_url is None:
-                (target_file_url, file_desc) = self.core.call_success(
+            target = target_file_url
+            if target is None:
+                (target, file_desc) = self.core.call_success(
                     "fs_mktemp", prefix="paperwork-export-", suffix=".pdf",
                     mode="w"
                 )
                 file_desc.close()
 
             pdf_url = self.core.call_success("doc_get_pdf_url_by_url", doc_url)
-            self.core.call_success("fs_copy", doc_url, target_file_url)
+            self.core.call_success("fs_copy", pdf_url, target)
+            return target
 
         return openpaperwork_core.promise.Promise(self.core, do)
 
@@ -234,8 +244,8 @@ class PdfCreator(object):
                 try:
                     self.pdf_context.set_source_rgb(0, 0, 0)
                     self.pdf_context.translate(
-                        word.position[0][0] * scale_factor,
-                        word.position[0][1] * scale_factor
+                        word.position[0][0] * self.scale_factor,
+                        word.position[0][1] * self.scale_factor
                     )
 
                     # make the text use the whole box space
@@ -338,6 +348,9 @@ class Plugin(AbstractExportPipePlugin):
             out['cairo']['linuxmint'] = 'python-gi-cairo'  # Python 3 ?
             out['cairo']['ubuntu'] = 'python3-gi-cairo'
             out['cairo']['suse'] = 'python-cairo'  # Python 3 ?
+        if not GDK_AVAILABLE:
+            out['gdk-pixbuf']['debian'] = 'girk1.2-gdkpixbuf-2.0'
+            out['gdk-pixbuf']['ubuntu'] = 'girk1.2-gdkpixbuf-2.0'
         if not GI_AVAILABLE:
             out['gi']['debian'] = 'python3-gi'
             out['gi']['fedora'] = 'python3-gobject-base'
@@ -351,10 +364,3 @@ class Plugin(AbstractExportPipePlugin):
         if not PANGO_AVAILABLE:
             out['gi.repository.Pango']['debian'] = 'gir1.2-pango-1.0'
             out['gi.repository.Pango']['ubuntu'] = 'gir1.2-pango-1.0'
-        if not POPPLER_AVAILABLE:
-            out['gi.repository.Poppler']['debian'] = 'gir1.2-poppler-0.18'
-            out['gi.repository.Poppler']['fedora'] = 'poppler-glib'
-            out['gi.repository.Poppler']['gentoo'] = 'app-text/poppler'
-            out['gi.repository.Poppler']['linuxmint'] = 'gir1.2-poppler-0.18'
-            out['gi.repository.Poppler']['ubuntu'] = 'gir1.2-poppler-0.18'
-            out['gi.repository.Poppler']['suse'] = 'typelib-1_0-Poppler-0_18'

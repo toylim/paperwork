@@ -15,7 +15,6 @@
 #    along with Paperwork.  If not, see <http://www.gnu.org/licenses/>.
 import gettext
 import shutil
-import sys
 
 import openpaperwork_core
 
@@ -38,8 +37,8 @@ class Plugin(openpaperwork_core.PluginBase):
                     # may be fine.
                     # (see paperwork-json)
                 ]),
-                ('document_storage', ['paperwork_backend.model.workdir',]),
-                ('index', ['paperwork_backend.index.shell',])
+                ('document_storage', ['paperwork_backend.model.workdir']),
+                ('index', ['paperwork_backend.index.shell'])
             ],
         }
 

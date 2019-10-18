@@ -38,7 +38,7 @@ class BaseFileImporter(object):
         try:
             s.remove(k)
         except KeyError:
-            passs
+            pass
 
     def _make_transactions(self, file_import):
         transactions = []

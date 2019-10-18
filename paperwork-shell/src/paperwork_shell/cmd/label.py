@@ -14,7 +14,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with Paperwork.  If not, see <http://www.gnu.org/licenses/>.
 import gettext
-import shutil
 import sys
 
 import openpaperwork_core
@@ -36,8 +35,8 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return {
             'interfaces': [
-                ('doc_labels', ['paperwork_backend.model.labels',]),
-                ('document_storage', ['paperwork_backend.model.workdir',]),
+                ('doc_labels', ['paperwork_backend.model.labels']),
+                ('document_storage', ['paperwork_backend.model.workdir']),
             ],
         }
 

@@ -5,10 +5,7 @@ May or may not work.
 
 
 import gettext
-import glob
-import locale
 import logging
-import os
 
 import pillowfight
 
@@ -120,8 +117,8 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return {
             'interfaces': [
-                ('doc_tracking', ['paperwork_backend.doctracker',]),
-                ('page_tracking', ['paperwork_backend.pagetracker',]),
+                ('doc_tracking', ['paperwork_backend.doctracker']),
+                ('page_tracking', ['paperwork_backend.pagetracker']),
                 ('pillow', [
                     'paperwork_backend.pillow.img',
                     'paperwork_backend.pillow.pdf',

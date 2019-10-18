@@ -62,7 +62,7 @@ class DocToPillowBoxesExportPipe(AbstractExportPipe):
                         ),
                         self.core.call_success(
                             "page_get_boxes_by_url", doc_url, page_idx
-                        )
+                        ) or []
                     )
                     for page_idx in page_indexes
                 ]
@@ -202,7 +202,7 @@ class Plugin(AbstractExportPipePlugin):
                     'paperwork_backend.model.hocr',
                     'paperwork_backend.model.pdf',
                 ]),
-                ('mainloop', ['openpaperwork_core.mainloop_asyncio',]),
+                ('mainloop', ['openpaperwork_core.mainloop_asyncio']),
                 ("pillow", [
                     'paperwork_backend.pillow.img',
                     'paperwork_backend.pillow.pdf',

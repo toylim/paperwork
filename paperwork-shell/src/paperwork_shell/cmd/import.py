@@ -14,16 +14,15 @@
 #    You should have received a copy of the GNU General Public License
 #    along with Paperwork.  If not, see <http://www.gnu.org/licenses/>.
 import gettext
-import sys
+import logging
 
 import openpaperwork_core
 import openpaperwork_core.promise
 
 import paperwork_backend.docimport
 
-from . import util
 
-
+LOGGER = logging.getLogger(__name__)
 _ = gettext.gettext
 
 
@@ -38,7 +37,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return {
             'interfaces': [
-                ('fs', ['paperwork_backend.fs.gio',]),
+                ('fs', ['paperwork_backend.fs.gio']),
                 ('import', [
                     'paperwork_backend.docimport.img',
                     'paperwork_backend.docimport.pdf',
@@ -104,7 +103,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 return self._file_import_to_dict(file_import)
             print(_("Found many ways to import file(s) %s:") % args.files)
             choice = -1
-            while not choice in range(0, len(importers)):
+            while choice not in range(0, len(importers)):
                 for (idx, importer) in enumerate(importers):
                     print("  {} - {}".format(idx + 1, importer.get_name()))
                 choice = int(input()) - 1

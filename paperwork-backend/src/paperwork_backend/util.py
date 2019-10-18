@@ -14,11 +14,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with Paperwork.  If not, see <http://www.gnu.org/licenses/>
 
-import io
 import logging
 import os
-
-import PIL.Image
 
 
 LOGGER = logging.getLogger(__name__)

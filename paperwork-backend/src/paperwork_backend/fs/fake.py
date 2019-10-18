@@ -6,7 +6,6 @@ Useful for tests only.
 import io
 import logging
 import os
-import urllib
 
 from . import CommonFsPluginBase
 from . import memory
@@ -238,7 +237,5 @@ class Plugin(CommonFsPluginBase):
         return True
 
     def fs_mktemp(self, prefix=None, suffix=None, mode='w+b'):
-        return (
-            "file://tmp/temporary_file" + suffix,
-            memory.MemoryFileAdapter(self, name, mode)
-        )
+        name = "file://tmp/temporary_file" + suffix
+        return (name, memory.MemoryFileAdapter(self, name, mode))

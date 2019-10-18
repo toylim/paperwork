@@ -15,20 +15,17 @@ used when a document is removed so the bayes filter can be untrained.
 """
 
 import base64
-import datetime
 import gettext
 import hashlib
 import logging
 import os
 import sqlite3
-import time
 
 import simplebayes
 
 import openpaperwork_core
 import openpaperwork_core.promise
 
-from ... import sync
 from ... import util
 
 
@@ -368,11 +365,11 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return {
             'interfaces': [
-                ('doc_labels', ['paperwork_backend.model.labels',]),
-                ('doc_tracking', ['paperwork_backend.doctracker',]),
-                ('document_storage', ['paperwork_backend.model.workdir',]),
-                ('fs', ['paperwork_backend.fs.gio',]),
-                ('mainloop', ['openpaperwork_core.mainloop_asyncio',]),
+                ('doc_labels', ['paperwork_backend.model.labels']),
+                ('doc_tracking', ['paperwork_backend.doctracker']),
+                ('document_storage', ['paperwork_backend.model.workdir']),
+                ('fs', ['paperwork_backend.fs.gio']),
+                ('mainloop', ['openpaperwork_core.mainloop_asyncio']),
             ]
         }
 
