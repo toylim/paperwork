@@ -38,6 +38,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def print_flush(self):
         output = "".join(self.output)
+        self.output = []
         nb_lines = output.count("\n")
         isatty = os.isatty(sys.stdout.fileno())
 

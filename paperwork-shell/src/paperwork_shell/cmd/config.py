@@ -155,7 +155,8 @@ class Plugin(openpaperwork_core.PluginBase):
             out[opt] = self.core.call_success("paperwork_config_get", opt)
             if self.interactive:
                 self.core.call_all("print", "{} = {}\n".format(opt, out[opt]))
-                self.core.call_all("print_flush")
+        if self.interactive:
+            self.core.call_all("print_flush")
         return out
 
     def _cmd_list_types(self):
