@@ -15,7 +15,7 @@ import openpaperwork_core
 LOGGER = logging.getLogger(__name__)
 _ = gettext.gettext
 
-ID = "cropping"
+ID = "color"
 
 
 class PillowfightTransaction(object):
@@ -27,7 +27,7 @@ class PillowfightTransaction(object):
         self.count = 0
 
         # for each document, we need to track on which pages we have already
-        # guessed the page borders and on which page we didn't yet.
+        # adjusted the color and on which page we didn't yet.
         self.page_tracker = self.core.call_success("page_tracker_get", ID)
 
     def __enter__(self):
@@ -41,18 +41,15 @@ class PillowfightTransaction(object):
             return 0
         return self.count / self.total_expected
 
-    def _guess_page_borders(self, doc_id, doc_url, page_idx):
+    def _adjust_page_colors(self, doc_id, doc_url, page_idx):
         paper_size = self.core.call_success(
             "page_get_paper_size_by_url", doc_url, page_idx
         )
         if paper_size is not None:
-            # We don't want to guess page borders on PDF files since they
-            # are usually already well-cropped. Also the page borders won't
-            # appear in the document, so libpillowfight algorithm can only
-            # fail.
+            # probably a PDF --> no need to adjust colors
             LOGGER.info(
                 "Paper size for new page %d (document %s) is known."
-                " --> Assuming we don't need to crop automatically the page",
+                " --> Assuming we don't need to adjust colors",
                 doc_id, page_idx
             )
             return
@@ -60,31 +57,31 @@ class PillowfightTransaction(object):
         self.core.call_one(
             "schedule", self.core.call_all,
             "on_progress", ID, self._get_progression(),
-            _("Guessing page borders of document %s page %d") % (
+            _("Adjusting colors of document %s page %d") % (
                 doc_id, page_idx
             )
         )
-        self.plugin.crop_page_borders_by_url(doc_url, page_idx)
+        self.plugin.adjust_page_colors_by_url(doc_url, page_idx)
 
-    def _guess_new_pages_borders(self, doc_id):
+    def _adjust_new_pages_colors(self, doc_id):
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
 
         modified_pages = self.page_tracker.find_changes(doc_id, doc_url)
 
         for (change, page_idx) in modified_pages:
-            # Guess page borders on new pages, but only if we are
+            # Adjust page colors on new pages, but only if we are
             # not synchronizing with the work directory
             if not self.sync and change == 'new':
-                self._guess_page_borders(doc_id, doc_url, page_idx)
+                self._adjust_page_colors(doc_id, doc_url, page_idx)
             self.page_tracker.ack_page(doc_id, doc_url, page_idx)
 
     def add_obj(self, doc_id):
         self.count += 1
-        self._guess_new_pages_borders(doc_id)
+        self._adjust_new_pages_colors(doc_id)
 
     def upd_obj(self, doc_id):
         self.count += 1
-        self._guess_new_pages_borders(doc_id)
+        self._adjust_new_pages_colors(doc_id)
 
     def del_obj(self, doc_id):
         self.page_tracker.delete_doc(doc_id)
@@ -106,11 +103,11 @@ class PillowfightTransaction(object):
 
 
 class Plugin(openpaperwork_core.PluginBase):
-    PRIORITY = 4000
+    PRIORITY = 3000
 
     def get_interfaces(self):
         return [
-            "cropping",
+            "color",
             "syncable",  # actually satisfied by the plugin 'doctracker'
         ]
 
@@ -135,13 +132,13 @@ class Plugin(openpaperwork_core.PluginBase):
             )
         )
 
-    def crop_page_borders_by_url(self, doc_url, page_idx):
+    def adjust_page_colors_by_url(self, doc_url, page_idx):
         doc_id = self.core.call_success("doc_url_to_id", doc_url)
 
         if doc_id is not None:
             self.core.call_one(
                 "schedule", self.core.call_all,
-                "on_page_borders_guess_start", doc_id, page_idx
+                "on_page_color_adjustment_start", doc_id, page_idx
             )
 
         page_img_url = self.core.call_success(
@@ -150,14 +147,13 @@ class Plugin(openpaperwork_core.PluginBase):
 
         img = self.core.call_success("url_to_pillow", page_img_url)
 
-        frame = pillowfight.find_scan_borders(img)
-        img = img.crop(frame)
+        img = pillowfight.ace(img)
 
         self.core.call_success("pillow_to_url", img, page_img_url)
 
         if doc_id is not None:
             self.core.call_one(
                 "schedule", self.core.call_all,
-                "on_page_borders_guess_end", doc_id, page_idx
+                "on_page_color_adjustment_end", doc_id, page_idx
             )
-        return frame
+        return img
