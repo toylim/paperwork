@@ -22,6 +22,7 @@ DEFAULT_PLUGINS = [
     'paperwork_backend.model.extra_text',
     'paperwork_backend.model.hocr',
     'paperwork_backend.model.img',
+    'paperwork_backend.model.img_overlay',
     'paperwork_backend.model.labels',
     'paperwork_backend.model.pdf',
     'paperwork_backend.model.workdir',

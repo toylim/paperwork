@@ -188,9 +188,15 @@ class Plugin(CommonFsPluginBase):
         path = self._get_path(url)
         f = self.fs
         for p in path[:-1]:
+            if p not in f:
+                return None
             f = f[p]
         assert(isinstance(f, dict))
-        f.pop(url.split("/")[-1])
+        filename = url.split("/")[-1]
+        if filename in f:
+            f.pop(filename)
+            return True
+        return None
 
     def fs_get_mtime(self, url):
         return 0
