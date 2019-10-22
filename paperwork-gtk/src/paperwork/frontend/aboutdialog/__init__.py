@@ -18,6 +18,7 @@ Contains the code relative to the about dialog (the one you get when you click
 on Help->About)
 """
 
+import gettext
 import os
 
 from gi.repository import GdkPixbuf
@@ -26,6 +27,9 @@ from ... import _version
 
 from paperwork.frontend.util import load_uifile
 from paperwork.frontend.util import preload_file
+
+
+_ = gettext.gettext
 
 
 class AboutDialog(object):
@@ -52,6 +56,12 @@ class AboutDialog(object):
             _version.authors_documentation.split("\n")
         )
         self.__dialog.set_translator_credits(_version.authors_translators)
+        self.__dialog.add_credit_section(
+            _("UI design"), _version.authors_ui.split("\n")
+        )
+        self.__dialog.add_credit_section(
+            _("Patrons"), _version.patrons.split("\n")
+        )
 
         if logo_path and os.access(logo_path, os.F_OK):
             logo = GdkPixbuf.Pixbuf.new_from_file(logo_path)
