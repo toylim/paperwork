@@ -160,7 +160,7 @@ will never delete your documents.
 
 ```
 flatpak --user remove work.openpaper.Paperwork
-flatpak --user install --reinstall https://builder.openpaper.work/paperwork_master.flatpakref
+flatpak --user install https://builder.openpaper.work/paperwork_master.flatpakref
 ```
 
 
