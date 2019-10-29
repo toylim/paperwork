@@ -1,6 +1,7 @@
 image: debian:stable-slim
 
 check:
+  stage: test
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
@@ -34,6 +35,7 @@ test:
 
 
 linux_flatpak:
+  stage: deploy
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
@@ -43,6 +45,7 @@ linux_flatpak:
     - ./update_flatpak_repo.sh
 
 windows_exe:
+  stage: deploy
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork

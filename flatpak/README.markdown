@@ -14,6 +14,7 @@ Its drawback:
 - Using Flatpak, Paperwork comes directly from its developers. It has not been
   reviewed by your distribution maintainers. It may not include some changes
   that your distribution maintainers would have added.
+- Does not work with Fujitsu scanners (still needs to figure out why)
 
 
 # Quick start
@@ -69,13 +70,6 @@ Paperwork from accessing devices directly. Therefore the scanning daemon
 [Saned](https://linux.die.net/man/1/saned) must be enabled on the host system,
 and connection must be allowed from 127.0.0.1.
 
-## Releases
-
-'release' always points to the latest Paperwork release.
-
-```shell
-flatpak --user install https://builder.openpaper.work/paperwork_release.flatpakref
-```
 
 ## Continuous builds
 
@@ -92,6 +86,16 @@ and develop if you wish):
 ```shell
 flatpak --user install https://builder.openpaper.work/paperwork_develop.flatpakref
 ```
+
+
+## Releases
+
+'release' always points to the latest Paperwork release.
+
+```shell
+flatpak --user install https://builder.openpaper.work/paperwork_release.flatpakref
+```
+
 
 ## Running Paperwork
 
