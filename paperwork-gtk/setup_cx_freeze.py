@@ -256,6 +256,7 @@ Main features are:
             'include_files': common_include_files,
             'silent': True,
             'packages': common_packages,
+            "excludes": ["tkinter", "tk", "tcl"],
         },
     },
 )
