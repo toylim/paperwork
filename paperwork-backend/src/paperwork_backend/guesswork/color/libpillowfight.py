@@ -147,7 +147,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         img = self.core.call_success("url_to_pillow", page_img_url)
 
-        img = pillowfight.ace(img)
+        img = pillowfight.ace(img, samples=200)
 
         self.core.call_success("pillow_to_url", img, page_img_url)
 
