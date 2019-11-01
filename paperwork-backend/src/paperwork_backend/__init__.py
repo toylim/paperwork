@@ -31,6 +31,7 @@ DEFAULT_PLUGINS = [
     'paperwork_backend.model.pdf',
     'paperwork_backend.model.thumbnail',
     'paperwork_backend.model.workdir',
+    'paperwork_backend.pageedit.pageeditor',
     'paperwork_backend.pagetracker',
     'paperwork_backend.pillow.img',
     'paperwork_backend.pillow.pdf',
