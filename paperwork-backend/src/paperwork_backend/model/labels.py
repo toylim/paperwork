@@ -1,4 +1,5 @@
 import logging
+import random
 
 import openpaperwork_core
 import openpaperwork_core.promise
@@ -94,6 +95,13 @@ class Plugin(openpaperwork_core.PluginBase):
                 # Expected: ('label', '#rrrrggggbbbb')
                 out.add(tuple(x.strip() for x in line.split(",", 1)))
 
+    def label_generate_color(self):
+        color = (
+            random.randint(0, 255),
+            random.randint(0, 255),
+            random.randint(0, 255),
+        )
+
     def doc_add_label_by_url(self, doc_url, label, color=None):
         assert("," not in label)
         assert(color is None or "," not in color)
@@ -114,12 +122,7 @@ class Plugin(openpaperwork_core.PluginBase):
             )
             self.all_labels[label] = color
         else:
-            if label not in self.all_labels:
-                LOGGER.error(
-                    "Label '%s' unknown. Cannot figure out its color", label
-                )
-                return None
-            color = self.all_labels[label]
+            color = self.label_generator_color()
 
         LOGGER.info("Adding label '%s' on document '%s'", label, doc_url)
 
@@ -128,6 +131,9 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         with self.core.call_success("fs_open", labels_url, 'a') as file_desc:
             file_desc.write("{},{}\n".format(label, color))
+
+        if label not in self.all_labels:
+            self.all_labels[label] = color
 
     def doc_remove_label_by_url(self, doc_url, label):
         LOGGER.info("Removing label '%s' from document '%s'", label, doc_url)
