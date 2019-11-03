@@ -18,7 +18,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return {
             'interfaces': [
                 ('document_storage', ['paperwork_backend.model.workdir']),
-                ('doc_img_import', ['paperwork_backend.model.img']),
+                ('page_img', ['paperwork_backend.model.img']),
                 ('pillow', ['paperwork_backend.pillow.img']),
                 ('scan', ['paperwork_backend.docscan.libinsane']),
             ]
@@ -51,14 +51,11 @@ class Plugin(openpaperwork_core.PluginBase):
         def add_scans_to_doc(args):
             (source, scan_id, imgs) = args
             for img in imgs:
-                self.core.call_all("doc_img_import_img_by_id", img, doc_id)
-
                 nb_pages = self.core.call_success(
                     "doc_get_nb_pages_by_url", doc_url
                 )
                 if nb_pages is None:
                     nb_pages = 0
-
                 page_url = self.core.call_success(
                     "page_get_img_url", doc_url, nb_pages, write=True
                 )

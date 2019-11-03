@@ -118,9 +118,9 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return {
             'interfaces': [
-                ('doc_img_import', ['paperwork_backend.model.img']),
                 ('fs', ['paperwork_backend.fs.gio']),
                 ('mainloop', ['openpaperwork_core.mainloop_asyncio']),
+                ('page_img', ['paperwork_backend.model.img']),
                 ('pillow', ['paperwork_backend.pillow.img']),
             ]
         }
