@@ -11,8 +11,9 @@ fabulous.image.basestring = str
 
 
 class FabulousRenderer(object):
-    def __init__(self, core):
-        self.core = core
+    def __init__(self, plugin):
+        self.plugin = plugin
+        self.core = plugin.core
         self.parent = None
 
     def get_preview_output(self, doc_id, doc_url, terminal_size=(80, 25)):
@@ -26,19 +27,7 @@ class FabulousRenderer(object):
             )
 
         thumbnail = self.core.call_success("thumbnail_get_doc", doc_url)
-
-        with tempfile.NamedTemporaryFile(
-                    prefix='paperwork-shell', suffix='.jpeg',
-                    delete=False
-                ) as fd:
-            thumbnail.save(fd, format="JPEG")
-            thumbnail_file = fd.name
-        try:
-            thumbnail = fabulous.image.Image(thumbnail_file, width=w_split)
-            thumbnail = thumbnail.reduce(thumbnail.convert())
-            thumbnail = list(thumbnail)
-        finally:
-            os.unlink(thumbnail_file)
+        thumbnail = self.plugin.img_render(thumbnail, w_split)
 
         if len(parent) < len(thumbnail):
             parent.extend([""] * (len(thumbnail) - len(parent)))
@@ -71,19 +60,9 @@ class FabulousRenderer(object):
 
         img_url = self.core.call_success("page_get_img_url", doc_url, page_nb)
         img = self.core.call_success("url_to_pillow", img_url)
-
-        with tempfile.NamedTemporaryFile(
-                    prefix='paperwork-shell', suffix='.jpeg',
-                    delete=False
-                ) as fd:
-            img.save(fd, format="JPEG")
-            img_file = fd.name
-        try:
-            img = fabulous.image.Image(img_file, width=(terminal_size[0] - 1))
-            img = img.reduce(img.convert())
-        finally:
-            os.unlink(img_file)
-
+        img = self.plugin.img_render(
+            img, terminal_width=(terminal_size[0] - 1)
+        )
         return [img_url] + list(img) + [""] + parent_out
 
     def get_doc_infos(self, doc_id, doc_url):
@@ -106,7 +85,10 @@ class Plugin(openpaperwork_core.PluginBase):
     PRIORITY = 10000
 
     def get_interfaces(self):
-        return ['doc_renderer']
+        return [
+            'doc_renderer',
+            'img_renderer',
+        ]
 
     def get_deps(self):
         return {
@@ -126,7 +108,21 @@ class Plugin(openpaperwork_core.PluginBase):
         }
 
     def doc_renderer_get(self, out):
-        r = FabulousRenderer(self.core)
+        r = FabulousRenderer(self)
         if len(out) > 0:
             r.parent = out[-1]
         out.append(r)
+
+    def img_render(self, img, terminal_width=80):
+        with tempfile.NamedTemporaryFile(
+                    prefix='paperwork-shell', suffix='.jpeg',
+                    delete=False
+                ) as fd:
+            img.save(fd, format="JPEG")
+            img_file = fd.name
+        try:
+            img = fabulous.image.Image(img_file, width=terminal_width)
+            img = img.reduce(img.convert())
+        finally:
+            os.unlink(img_file)
+        return list(img)

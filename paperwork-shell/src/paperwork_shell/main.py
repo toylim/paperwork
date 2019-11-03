@@ -15,6 +15,7 @@ DEFAULT_SHELL_PLUGINS = paperwork_backend.DEFAULT_SHELL_PLUGINS + [
     'paperwork_shell.cmd.chkdeps',
     'paperwork_shell.cmd.config',
     'paperwork_shell.cmd.delete',
+    'paperwork_shell.cmd.edit',
     'paperwork_shell.cmd.export',
     'paperwork_shell.cmd.extra_text',
     'paperwork_shell.cmd.import',

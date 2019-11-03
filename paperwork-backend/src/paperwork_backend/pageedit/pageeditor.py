@@ -106,20 +106,25 @@ class PageEditor(object):
         self.doc_url = doc_url
         self.page_idx = page_idx
 
-        page_url = self.core.call_success(
-            "page_get_img_url", doc_url, page_idx, write=False
-        )
-        self.original_img = self.core.call_success(
-            "url_to_pillow", page_url
-        )
+        if doc_url is not None:
+            page_url = self.core.call_success(
+                "page_get_img_url", doc_url, page_idx, write=False
+            )
+            self.original_img = self.core.call_success(
+                "url_to_pillow", page_url
+            )
 
-        # The frame coordinates we keep here are relative to the original
-        # image (not the resulting image, that can, for instance, be rotated)
-        # TODO(Jflesch): We should use libpillowfight.scan_border()
-        # to predefined an useful frame.
-        self.original_frame = ((0, 0), self.original_img.size)
+            # The frame coordinates we keep here are relative to the original
+            # image (not the resulting image, that can, for instance, be
+            # rotated)
+            # TODO(Jflesch): We should use libpillowfight.scan_border()
+            # to predefined an useful frame.
+            self.original_frame = ((0, 0), self.original_img.size)
+        else:
+            self.original_img = None
+            self.original_frame = ((0, 0), (0, 0))
+
         self.frame = Frame(self.original_frame)
-
         modifiers = []
         self.core.call_all("img_editor_get_names", modifiers)
 
