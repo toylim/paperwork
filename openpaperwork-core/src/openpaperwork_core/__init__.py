@@ -77,7 +77,7 @@ class Core(object):
             - module_name: name of the Python module to load
         """
         if module_name in self.plugins:
-            return
+            return self.plugins[module_name]
 
         LOGGER.info("Loading plugin '%s' ...", module_name)
         module = importlib.import_module(module_name)
@@ -89,7 +89,7 @@ class Core(object):
         """
         if module_name in self.plugins:
             LOGGER.debug("Module %s already loaded", module_name)
-            return
+            return self.plugins[module_name]
 
         plugin = module.Plugin()
         self.plugins[module_name] = plugin
