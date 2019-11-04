@@ -11,7 +11,10 @@ class Plugin(openpaperwork_core.PluginBase):
     DOCNAME_FORMAT = "%Y%m%d_%H%M_%S"
 
     def get_interfaces(self):
-        return ["document_storage"]
+        return [
+            "document_storage",
+            "stats"
+        ]
 
     def get_deps(self):
         return {
@@ -77,7 +80,14 @@ class Plugin(openpaperwork_core.PluginBase):
             doc_id = "{}_{}".format(base_doc_id, doc_idx)
             doc_url = "{}_{}".format(base_doc_url, doc_idx)
 
-        # reserve the doc_id by creating the directory
-        self.core.call_all("fs_mkdir_p", doc_url)
-
         return (doc_id, doc_url)
+
+    def storage_delete_doc_id(self, doc_id):
+        doc_url = self.doc_id_to_url(doc_id)
+        self.core.call_all("fs_rm_rf", doc_url)
+
+    def stats_get(self, stats):
+        LOGGER.info("Counting documents for statistics...")
+        all_docs = []
+        self.storage_get_all_docs(all_docs)
+        self.stats['nb_documents'] += len(all_docs)

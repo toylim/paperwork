@@ -8,6 +8,8 @@ import openpaperwork_core
 LOGGER = logging.getLogger(__name__)
 
 PAGE_FILENAME_FMT = "paper.{}.jpg"
+PAGE_FILE_FORMAT = 'JPEG'
+PAGE_QUALITY = 90
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -60,11 +62,11 @@ class Plugin(openpaperwork_core.PluginBase):
             return None
         return page_url
 
-    def doc_img_import_by_id(self, src_file_uri, doc_id=None):
+    def doc_img_import_file_by_id(self, src_file_url, doc_id=None):
         # make sure the image is valid before making a mess in the work
         # directory
-        with self.core.call_success("fs_open", src_file_uri) as file_desc:
-            img = PIL.Image.open(file_desc)
+        with self.core.call_success("fs_open", src_file_url, 'rb') as fd:
+            img = PIL.Image.open(fd)
             img.load()
             del img
 
@@ -75,6 +77,8 @@ class Plugin(openpaperwork_core.PluginBase):
             # update existing one
             doc_url = self.core.call_success("doc_id_to_url", doc_id)
 
+        self.core.call_success("fs_mkdir_p", doc_url)
+
         nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)
         if nb_pages is None:
             nb_pages = 0
@@ -82,5 +86,26 @@ class Plugin(openpaperwork_core.PluginBase):
         page_url = self.core.call_success(
             "fs_join", doc_url, PAGE_FILENAME_FMT.format(nb_pages + 1)
         )
-        self.core.call_success("fs_copy", src_file_uri, page_url)
+        self.core.call_success("fs_copy", src_file_url, page_url)
+        return (doc_id, doc_url)
+
+    def doc_img_import_img_by_id(self, img, doc_id=None):
+        if doc_id is None:
+            # new document
+            (doc_id, doc_url) = self.core.call_success("storage_get_new_doc")
+        else:
+            # update existing one
+            doc_url = self.core.call_success("doc_id_to_url", doc_id)
+
+        self.core.call_success("fs_mkdir_p", doc_url)
+
+        nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)
+        if nb_pages is None:
+            nb_pages = 0
+
+        page_url = self.core.call_success(
+            "fs_join", doc_url, PAGE_FILENAME_FMT.format(nb_pages + 1)
+        )
+        with self.core.call_success("fs_open", page_url, mode='wb') as fd:
+            img.save(fd, format=PAGE_FILE_FORMAT, quality=PAGE_QUALITY)
         return (doc_id, doc_url)

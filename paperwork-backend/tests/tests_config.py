@@ -78,7 +78,7 @@ class TestConfig(unittest.TestCase):
             'paperwork_config_load', 'paperwork-gtk', default_plugins=['pouet']
         )
         self.assertEqual(
-            self.core.get('openpaperwork_core.config_file').calls,
+            self.core.get_by_name('openpaperwork_core.config_file').calls,
             [
                 ('config_load', ('paperwork-gtk',), {}),
                 ('config_load_plugins', (['pouet'],), {}),
@@ -90,7 +90,7 @@ class TestConfig(unittest.TestCase):
             "paperwork_config_get", "workdir"
         )
         self.assertEqual(
-            self.core.get('openpaperwork_core.config_file').calls,
+            self.core.get_by_name('openpaperwork_core.config_file').calls,
             [
                 ('config_get', ('Global', "WorkDirectory", None), {}),
             ]
@@ -98,7 +98,7 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(default, "file://" + os.path.expanduser("~/papers"))
 
     def test_get_nondefault(self):
-        self.core.get('openpaperwork_core.config_file').rets = {
+        self.core.get_by_name('openpaperwork_core.config_file').rets = {
             'config_get': ['file:///pouet/path']
         }
 
@@ -106,7 +106,7 @@ class TestConfig(unittest.TestCase):
             "paperwork_config_get", "workdir"
         )
         self.assertEqual(
-            self.core.get('openpaperwork_core.config_file').calls,
+            self.core.get_by_name('openpaperwork_core.config_file').calls,
             [
                 ('config_get', ('Global', "WorkDirectory", None), {}),
             ]
@@ -114,7 +114,7 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(val, "file:///pouet/path")
 
     def test_get_cache(self):
-        self.core.get('openpaperwork_core.config_file').rets = {
+        self.core.get_by_name('openpaperwork_core.config_file').rets = {
             # only one call expected
             'config_get': ['file:///pouet/path']
         }
@@ -126,7 +126,7 @@ class TestConfig(unittest.TestCase):
             "paperwork_config_get", "workdir"
         )
         self.assertEqual(
-            self.core.get('openpaperwork_core.config_file').calls,
+            self.core.get_by_name('openpaperwork_core.config_file').calls,
             [
                 ('config_get', ('Global', "WorkDirectory", None), {}),
             ]

@@ -41,12 +41,15 @@ class TestImgImport(unittest.TestCase):
                         return "inode/directory"
                     return "image/png"
 
+                def fs_mkdir_p(s, dir_uri):
+                    return True
+
                 def fs_copy(s, src_uri, dst_uri):
                     self.copies.append((src_uri, dst_uri))
                     return dst_uri
 
                 def on_import_done(s, file_import):
-                    self.core.call_all("mainloop_quit")
+                    self.core.call_all("mainloop_quit_graceful")
 
                 def doc_transaction_start(s, transactions, expected=-1):
                     transactions.append(FakeTransaction())
@@ -55,7 +58,7 @@ class TestImgImport(unittest.TestCase):
         self.core.load("paperwork_backend.model.fake")
         self.core.load("paperwork_backend.docimport.img")
 
-        self.fake_storage = self.core.get("paperwork_backend.model.fake")
+        self.fake_storage = self.core.get_by_name("paperwork_backend.model.fake")
 
         self.core.init()
 
@@ -200,12 +203,15 @@ class TestImgImport(unittest.TestCase):
                         return "inode/directory"
                     return "image/png"
 
+                def fs_mkdir_p(s, dir_uri):
+                    return True
+
                 def fs_copy(s, src_uri, dst_uri):
                     self.copies.append((src_uri, dst_uri))
                     return dst_uri
 
                 def on_import_done(s, file_import):
-                    self.core.call_all("mainloop_quit")
+                    self.core.call_all("mainloop_quit_graceful")
 
                 def doc_transaction_start(s, transactions, expected=-1):
                     transactions.append(FakeTransaction())
@@ -214,7 +220,9 @@ class TestImgImport(unittest.TestCase):
         self.core.load("paperwork_backend.model.fake")
         self.core.load("paperwork_backend.docimport.img")
 
-        self.fake_storage = self.core.get("paperwork_backend.model.fake")
+        self.fake_storage = self.core.get_by_name(
+            "paperwork_backend.model.fake"
+        )
 
         self.core.init()
 

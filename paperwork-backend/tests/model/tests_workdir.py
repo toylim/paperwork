@@ -13,11 +13,11 @@ class TestWorkdir(unittest.TestCase):
         self.core.load("paperwork_backend.model.workdir")
         self.core.init()
 
-        self.config = self.core.get("paperwork_backend.config.fake")
+        self.config = self.core.get_by_name("paperwork_backend.config.fake")
         self.config.settings = {
             "workdir": "file:///some_work_dir"
         }
-        self.fs = self.core.get("paperwork_backend.fs.fake")
+        self.fs = self.core.get_by_name("paperwork_backend.fs.fake")
 
     def test_storage_get_all_docs(self):
         self.fs.fs = {
@@ -66,7 +66,6 @@ class TestWorkdir(unittest.TestCase):
         )
         self.assertEqual(doc_id, "20190904_1327_10")
         self.assertEqual(doc_url, "file:///some_work_dir/20190904_1327_10")
-        self.assertIn('20190904_1327_10', self.fs.fs['some_work_dir'])
 
     def test_storage_get_new_doc_2(self):
         now = lambda: datetime.datetime(
@@ -90,4 +89,3 @@ class TestWorkdir(unittest.TestCase):
         )
         self.assertEqual(doc_id, "20190904_1327_10_2")
         self.assertEqual(doc_url, "file:///some_work_dir/20190904_1327_10_2")
-        self.assertIn('20190904_1327_10_2', self.fs.fs['some_work_dir'])

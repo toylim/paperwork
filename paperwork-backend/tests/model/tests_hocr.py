@@ -10,7 +10,7 @@ class TestHocr(unittest.TestCase):
         self.core.load("paperwork_backend.model.hocr")
         self.core.init()
 
-        self.fs = self.core.get("paperwork_backend.fs.fake")
+        self.fs = self.core.get_by_name("paperwork_backend.fs.fake")
 
     def test_get_boxes(self):
         self.fs.fs = {

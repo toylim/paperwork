@@ -234,7 +234,7 @@ class Plugin(CommonFsPluginBase):
     def _is_file_uri(uri):
         return uri.startswith("file://")
 
-    def fs_open(self, uri, mode='rb'):
+    def fs_open(self, uri, mode='r'):
         if not self._is_file_uri(uri):
             return None
 
@@ -435,6 +435,8 @@ class Plugin(CommonFsPluginBase):
         except GLib.GError as exc:
             LOGGER.warning("Gio.Gerror", exc_info=exc)
             raise IOError(str(exc))
+
+        return True
 
     def _recurse(self, parent, dir_included=False):
         """

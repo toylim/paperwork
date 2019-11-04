@@ -17,10 +17,12 @@ class Plugin(openpaperwork_core.PluginBase):
         self.halt_on_uncatched_exception = True
         self.loop = None
         self.halt_cause = None
+        self.task_count = 0
 
     def _check_mainloop_instantiated(self):
         if self.loop is None:
             self.loop = asyncio.get_event_loop()
+            self.task_count = 0
 
     def get_interfaces(self):
         return [
@@ -33,25 +35,60 @@ class Plugin(openpaperwork_core.PluginBase):
         self.loop.run_forever()
         if self.halt_cause is not None:
             LOGGER.error("Main loop stopped because %s", str(self.halt_cause))
+            raise self.halt_cause
 
-    def mainloop_quit(self):
+    def mainloop_quit_graceful(self):
+        self.schedule(self._mainloop_quit_graceful)
+
+    def _mainloop_quit_graceful(self):
+        if self.task_count > 1:  # keep in mind this function is in a task too
+            LOGGER.info(
+                "Quit graceful: Remaining tasks: %d", self.task_count - 1
+            )
+            self.schedule(self.mainloop_quit_graceful, delay_s=0.2)
+            return
+
+        LOGGER.info("Quit graceful: Quitting")
+        self.mainloop_quit_now()
+
+    def mainloop_quit_now(self):
         self.loop.stop()
         self.loop = None
+        self.task_count = 0
 
-    def schedule(self, func, *args, **kwargs):
+    def mainloop_ref(self, obj):
+        self.task_count += 1
+
+    def mainloop_unref(self, obj):
+        self.task_count -= 1
+
+    def schedule(self, func, *args, delay_s=0, **kwargs):
         assert(hasattr(func, '__call__'))
 
         self._check_mainloop_instantiated()
 
-        def decorator(_args):
-            # event_loop.call_soon() do not accept kwargs (just args),
-            # so we have to do some wrapping.
+        self.task_count += 1
+
+        async def decorator(args, kwargs):
             try:
                 func(*args, **kwargs)
+                self.task_count -= 1
             except Exception as exc:
-                LOGGER.error("Main loop: Uncatched exception !", exc_info=exc)
                 if self.halt_on_uncatched_exception:
+                    LOGGER.error(
+                        "Main loop: Uncatched exception ! Quitting",
+                        exc_info=exc
+                    )
                     self.halt_cause = exc
-                    self.mainloop_quit()
+                    self.mainloop_quit_now()
+                else:
+                    LOGGER.error(
+                        "Main loop: Uncatched exception !", exc_info=exc
+                    )
 
-        self.loop.call_soon_threadsafe(decorator, (args, kwargs))
+        coroutine = decorator(args, kwargs)
+
+        args = (self.loop.create_task, coroutine)
+        if delay_s != 0:
+            args = (self.loop.call_later, delay_s) + args
+        self.loop.call_soon_threadsafe(args[0], *(args[1:]))

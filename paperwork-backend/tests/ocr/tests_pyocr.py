@@ -21,7 +21,7 @@ class TestPyocr(unittest.TestCase):
         self.core.load("paperwork_backend.ocr.pyocr")
         self.core.init()
 
-        self.model = self.core.get("paperwork_backend.model.fake")
+        self.model = self.core.get_by_name("paperwork_backend.model.fake")
 
         self.core.call_all("paperwork_config_put", "ocr_lang", "eng")
 
@@ -95,7 +95,6 @@ class TestPyocr(unittest.TestCase):
         self.assertNotIn('text', self.model.docs[0])
 
         # but OCR should be run on the other doc
-        print(self.model.docs)
         self.assertNotEqual(len(self.model.docs[1]['page_boxes']), 0)
         self.assertEqual(
             self.model.docs[1]['text'],

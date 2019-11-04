@@ -184,12 +184,15 @@ class Core(object):
         self._to_initialize = set()
         LOGGER.info("All plugins initialized")
 
-    def get(self, module_name):
+    def get_by_name(self, module_name):
         """
         Returns a Plugin instance based on the corresponding module name
         (assuming it has been loaded).
         """
         return self.plugins[module_name]
+
+    def get_by_interface(self, interface_name):
+        return self.interfaces[interface_name]
 
     def call_all(self, callback_name, *args, **kwargs):
         """
