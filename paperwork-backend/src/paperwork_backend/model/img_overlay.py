@@ -26,6 +26,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_interfaces(self):
         return [
             "page_img",
+            "page_reset",
             'pages',
         ]
 
@@ -39,8 +40,12 @@ class Plugin(openpaperwork_core.PluginBase):
     def doc_get_mtime_by_url(self, out: list, doc_url):
         for file_uri in self.core.call_success("fs_listdir", doc_url):
             name = self.core.call_success("fs_basename", file_uri)
-            if name.startswith(PAGE_PREFIX) and name.endswith(PAGE_SUFFIX):
-                out.append(self.core.call_success("fs_get_mtime", name))
+            if (not name.startswith(PAGE_PREFIX)
+                    or not name.endswith(PAGE_SUFFIX)):
+                continue
+            if self.core.call_success("fs_exists", file_uri) is None:
+                return
+            out.append(self.core.call_success("fs_get_mtime", file_uri))
 
     def page_get_mtime_by_url(self, out: list, doc_url, page_idx):
         page_url = self.core.call_success(
