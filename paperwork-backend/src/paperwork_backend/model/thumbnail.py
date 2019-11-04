@@ -55,6 +55,12 @@ class Plugin(openpaperwork_core.PluginBase):
         page_url = self.core.call_success(
             "page_get_img_url", doc_url, page_idx
         )
+        if page_url is None:
+            LOGGER.warning(
+                "Failed to get thumbnail for %s p%d. No page URL",
+                doc_url, page_idx
+            )
+            return None
 
         if self.core.call_success("fs_exists", thumbnail_url) is not None:
             thumbnail_mtime = self.core.call_success(
