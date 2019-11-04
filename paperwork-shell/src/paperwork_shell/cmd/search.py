@@ -14,10 +14,13 @@
 #    You should have received a copy of the GNU General Public License
 #    along with Paperwork.  If not, see <http://www.gnu.org/licenses/>.
 import gettext
+import logging
 import shutil
 
 import openpaperwork_core
 
+
+LOGGER = logging.getLogger(__name__)
 _ = gettext.gettext
 
 
@@ -78,8 +81,11 @@ class Plugin(openpaperwork_core.PluginBase):
             for doc_id in doc_ids:
                 header = _("Document id: %s") % doc_id
                 self.core.call_all("print", header + "\n")
-                doc_url = self.core.call_success("doc_id_to_url", doc_id)
                 if renderer is None:
+                    continue
+                doc_url = self.core.call_success("doc_id_to_url", doc_id)
+                if doc_url is None:
+                    LOGGER.warning("Failed to get URL of document %s", doc_id)
                     continue
                 lines = renderer.get_preview_output(
                     doc_id, doc_url,
