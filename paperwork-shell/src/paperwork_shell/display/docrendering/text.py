@@ -17,6 +17,8 @@ class TextRenderer(object):
         line_boxes = self.core.call_success(
             "page_get_boxes_by_url", doc_url, page_nb
         )
+        if line_boxes is None:
+            return out
         for line_box in line_boxes:
             line = line_box.content
             if line == "":
