@@ -87,7 +87,11 @@ class Plugin(openpaperwork_core.PluginBase):
                 self.core.call_all("storage_delete_doc_id", doc_id)
             raise exc
 
-        promise = promise.then(add_scans_to_doc)
+        promise = promise.then(
+            openpaperwork_core.promise.ThreadedPromise(
+                self.core, add_scans_to_doc
+            )
+        )
         promise = promise.then(
             openpaperwork_core.promise.ThreadedPromise(
                 self.core, run_transactions

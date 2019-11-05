@@ -139,26 +139,30 @@ class Source(object):
             "paperwork_config_put", "scanner_resolution", int(resolution)
         )
 
-    def scan(self, scan_id=None, resolution=None, max_pages=9999):
+    def scan(
+                self, scan_id=None, resolution=None, max_pages=9999,
+                close_on_end=False
+            ):
         if scan_id is None:
             scan_id = next(SCAN_ID_GENERATOR)
+
+        LOGGER.info("Setting scan options ...")
         if resolution is None:
             resolution = self.core.call_success(
                 "paperwork_config_get", "scanner_resolution"
             )
-
-        # keep in mind that we are in a thread here, but listeners
-        # must be called from the main loop
-
-        LOGGER.info("Setting scan options ...")
-
         options = self.source.get_options()
-        opts = {}
-        for opt in options:
-            opts[opt.get_name()] = opt
-
+        opts = {opt.get_name(): opt for opt in options}
         if 'resolution' in opts:
             opts['resolution'].set_value(resolution)
+
+        imgs = self._scan(scan_id, resolution, max_pages, close_on_end)
+        return (self, scan_id, imgs)
+
+
+    def _scan(self, scan_id, resolution, max_pages, close_on_end=False):
+        # keep in mind that we are in a thread here, but listeners
+        # must be called from the main loop
 
         LOGGER.info("Scanning ...")
 
@@ -170,7 +174,6 @@ class Source(object):
                 "on_scan_feed_start", scan_id
             )
 
-            imgs = []
             session = self.source.scan_start()
 
             while not session.end_of_feed() and page_nb < max_pages:
@@ -209,29 +212,33 @@ class Source(object):
 
                 LOGGER.info("Page %d/%d scanned", page_nb, max_pages)
                 page_nb += 1
-                imgs.append(image.get_image())
+                img = image.get_image()
+                yield img
                 self.core.call_one(
                     "schedule", self.core.call_all,
                     "on_scan_page_end", scan_id, page_nb,
-                    raw_to_img(scan_params, imgs[-1])
+                    raw_to_img(scan_params, img)
                 )
             LOGGER.info("End of feed")
 
             self.core.call_one(
                 "schedule", self.core.call_all, "on_scan_feed_end", scan_id
             )
-
-            return (self, scan_id, imgs)
         finally:
             session.cancel()
+            if close_on_end:
+                self.close()
 
     def scan_promise(self, *args, scan_id=None, **kwargs):
         if scan_id is None:
             scan_id = next(SCAN_ID_GENERATOR)
         kwargs['scan_id'] = scan_id
-        return (scan_id, openpaperwork_core.promise.ThreadedPromise(
-            self.core, self.scan, args=args, kwargs=kwargs
-        ))
+        return (
+            scan_id,
+            openpaperwork_core.promise.ThreadedPromise(
+                self.core, self.scan, args=args, kwargs=kwargs
+            )
+        )
 
     def close(self, *args, **kwargs):
         self.scanner.close()
@@ -397,14 +404,10 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         promise = promise.then(
             openpaperwork_core.promise.ThreadedPromise(
-                self.core, Source.scan, args=(scan_id,)
+                self.core, Source.scan, args=(scan_id,), kwargs={
+                    'close_on_end': True
+                }
             )
         )
 
-        def close(args):
-            (source, scan_id, imgs) = args
-            source.close()
-            return (source, scan_id, imgs)
-
-        promise = promise.then(close)
         return (scan_id, promise)
