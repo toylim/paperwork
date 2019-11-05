@@ -15,6 +15,7 @@ check:
     - make check
 
 test:
+  stage: test
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
