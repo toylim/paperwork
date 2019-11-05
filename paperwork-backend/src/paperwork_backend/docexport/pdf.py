@@ -349,8 +349,8 @@ class Plugin(AbstractExportPipePlugin):
             out['cairo']['ubuntu'] = 'python3-gi-cairo'
             out['cairo']['suse'] = 'python-cairo'  # Python 3 ?
         if not GDK_AVAILABLE:
-            out['gdk-pixbuf']['debian'] = 'girk1.2-gdkpixbuf-2.0'
-            out['gdk-pixbuf']['ubuntu'] = 'girk1.2-gdkpixbuf-2.0'
+            out['gdk-pixbuf']['debian'] = 'gir1.2-gdkpixbuf-2.0'
+            out['gdk-pixbuf']['ubuntu'] = 'gir1.2-gdkpixbuf-2.0'
         if not GI_AVAILABLE:
             out['gi']['debian'] = 'python3-gi'
             out['gi']['fedora'] = 'python3-gobject-base'
