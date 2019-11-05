@@ -124,4 +124,12 @@ class Plugin(openpaperwork_core.PluginBase):
     def page_reset_by_url(self, doc_url, page_idx):
         # see model.img_overlay.page_reset_by_url()
         # We must force a rebuild of the thumbnail
-        self.page_delete_by_url(self, doc_url, page_idx)
+        self.page_delete_by_url(doc_url, page_idx)
+
+    def page_get_img_url(self, doc_url, page_idx, write=False):
+        if not write:
+            return None
+        # Image is going to be updated --> We must force a rebuild of the
+        # thumbnail
+        self.page_delete_by_url(doc_url, page_idx)
+        return None
