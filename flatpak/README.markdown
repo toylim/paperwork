@@ -119,7 +119,31 @@ You can also run specifically the branch 'develop':
 flatpak run work.openpaper.Paperwork//develop
 ```
 
-## Running paperwork-shell
+
+## Build
+
+```shell
+git clone https://gitlab.gnome.org/World/OpenPaperwork/paperwork.git
+cd paperwork/flatpak
+flatpak --user remote-add --if-not-exists gnome https://sdk.gnome.org/gnome.flatpakrepo
+flatpak --user install gnome org.gnome.Sdk//3.26
+flatpak --user install gnome org.gnome.Platform//3.26
+make
+```
+
+
+## Uninstallation
+
+Uninstallation *won't* delete your work directory nor your documents.
+
+```ahell
+flatpak --user uninstall work.openpaper.Paperwork
+```
+
+
+## FAQ
+
+### How do I run paperwork-shell ?
 
 When using Flatpak, paperwork-shell remains available. Note that it will run
 inside Paperwork's container and may not access files outside your home
@@ -138,7 +162,7 @@ flatpak run --command=paperwork-shell work.openpaper.Paperwork -bq import ~/tmp/
 ```
 
 
-## Getting the latest GPG public key of Paperwork repository
+### How do I update The GPG public key of the Flatpak repository ?
 
 Paperwork repository GPG key expires every 2 years. When that happens, when you
 try updating Paperwork, you will get an output similar to the following one:
@@ -168,22 +192,13 @@ flatpak --user install https://builder.openpaper.work/paperwork_master.flatpakre
 ```
 
 
-## Build
+### No text appears when rendering PDF files. What do I do ?
 
-```shell
-git clone https://gitlab.gnome.org/World/OpenPaperwork/paperwork.git
-cd paperwork/flatpak
-flatpak --user remote-add --if-not-exists gnome https://sdk.gnome.org/gnome.flatpakrepo
-flatpak --user install gnome org.gnome.Sdk//3.26
-flatpak --user install gnome org.gnome.Platform//3.26
-make
-```
+If you run Paperwork from a terminal, you can see the message
+`some font thing has failed` every time you open a PDF file from Paperwork.
+This issue is related to fontconfig cache.
 
+To fix it:
 
-## Uninstallation
-
-Uninstallation *won't* delete your work directory nor your documents.
-
-```ahell
-flatpak --user uninstall work.openpaper.Paperwork
-```
+- Stop Paperwork
+- Run: `flatpak run --command=fc-cache work.openpaper.Paperwork -f`
