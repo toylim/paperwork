@@ -113,25 +113,25 @@ class Source(object):
             "paperwork_config_put", "scanner_source_id", self.source_id
         )
 
+    def get_resolutions(self):
+        LOGGER.info(
+            "Looking for possible values for option 'resolution' on %s"
+            " : %s ...", str(self.scanner), self.source_id
+        )
+        options = self.source.get_options()
+        options = {opt.get_name(): opt for opt in options}
+
+        opt = options['resolution']
+        constraint = opt.get_constraint()
+        LOGGER.info(
+            "%s : %s : resolution : Possible values: %s",
+            str(self.scanner), self.source_id, constraint
+        )
+        return constraint
+
     def get_resolutions_promise(self):
-        def get_opt_constraint():
-            LOGGER.info(
-                "Looking for possible values for option 'resolution' on %s"
-                " : %s ...", str(self.scanner), self.source_id
-            )
-            options = self.source.get_options()
-            options = {opt.get_name(): opt for opt in options}
-
-            opt = options['resolution']
-            constraint = opt.get_constraint()
-            LOGGER.info(
-                "%s : %s : resolution : Possible values: %s",
-                str(self.scanner), self.source_id, constraint
-            )
-            return constraint
-
         return openpaperwork_core.promise.ThreadedPromise(
-            self.core, get_opt_constraint
+            self.core, self.get_resolutions
         )
 
     def set_default_resolution(self, resolution):
@@ -265,7 +265,7 @@ class Scanner(object):
             LOGGER.info("Closing device %s", self.dev_id)
             self.dev.close()
             self.dev = None
-        # return the args for convience when used with promises
+        # return the args for convenience when used with promises
         if len(args) == 1 and len(kwargs) == 0:
             return args
         return (args, kwargs)
@@ -355,7 +355,7 @@ class Plugin(openpaperwork_core.PluginBase):
             out['gi.repository.Libinsane'] = {}
 
     def scan_list_scanners_promise(self):
-        def list_scanners():
+        def list_scanners(*args, **kwargs):
             LOGGER.info("Looking for scan devices ...")
             devs = self.libinsane.list_devices(Libinsane.DeviceLocations.ANY)
             devs = [
@@ -377,7 +377,7 @@ class Plugin(openpaperwork_core.PluginBase):
             return None
         scanner_dev_id = scanner_dev_id[len("libinsane:"):]
 
-        def get_scanner():
+        def get_scanner(*args, **kwargs):
             LOGGER.info("Accessing scanner '%s' ...", scanner_dev_id)
             scanner = self.libinsane.get_device(scanner_dev_id)
             LOGGER.info("Scanner '%s' opened", scanner.get_name())
