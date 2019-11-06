@@ -23,6 +23,9 @@ import openpaperwork_core.promise
 _ = gettext.gettext
 
 
+DEFAULT_RESOLUTION = 300
+
+
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
@@ -36,6 +39,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return {
             'interfaces': [
                 ('mainloop', ['openpaperwork_core.mainloop_asyncio']),
+                ('paperwork_config', ['paperwork_backend.config.file']),
                 ('scan', ['paperwork_backend.docscan.libinsane']),
             ],
         }
@@ -50,8 +54,33 @@ class Plugin(openpaperwork_core.PluginBase):
         subparser = scanner_parser.add_subparsers(
             help=_("sub-command"), dest='subcommand', required=True
         )
+
         subparser.add_parser(
             'list', help=_("List all scanners and their possible settings")
+        )
+
+        subparser.add_parser(
+            'get', help=_(
+                "Show the currently selected scanner and its settings"
+            )
+        )
+
+        set_scanner = subparser.add_parser(
+            'set', help=_("Define which scanner and which settings to use")
+        )
+        set_scanner.add_argument(
+            "device_id", help=_("Scanner to use")
+        )
+        set_scanner.add_argument(
+            "--source", "-s", type=str, required=False,
+            help=_(
+                "Default source on the scanner to use (if not specified,"
+                " one will be selected randomly"
+            )
+        )
+        set_scanner.add_argument(
+            "--resolution", "-r", type=int, required=False,
+            help=_("Default resolution (dpi ; default=300)")
         )
 
     def _get_scanner_info(self, dev, dev_id, dev_name):
@@ -105,6 +134,109 @@ class Plugin(openpaperwork_core.PluginBase):
                     )
                 print("")
 
+    def _get_scanner(self):
+        out = {
+            'id': self.core.call_success(
+                "paperwork_config_get", "scanner_dev_id"
+            ),
+            'source': self.core.call_success(
+                "paperwork_config_get", "scanner_source_id"
+            ),
+            'resolution': self.core.call_success(
+                "paperwork_config_get", "scanner_resolution"
+            ),
+        }
+        if self.interactive:
+            print(_("ID:") + " " + str(out['id']))
+            print(_("Source:") + " " + str(out['source']))
+            print(_("Resolution:") + " " + str(out['resolution']))
+        return out
+
+    def _set_scanner(self, args):
+        dev_settings = {
+            'id': args.device_id,
+            'source': args.source,
+            'resolution': (
+                args.resolution
+                if args.resolution is not None
+                else DEFAULT_RESOLUTION
+            ),
+        }
+
+        # In any case, we want to make sure the settings provided are valid
+        promise = self.core.call_success(
+            "scan_get_scanner_promise", args.device_id
+        )
+
+        def check_source(dev):
+            sources = dev.get_sources()
+
+            if (
+                        dev_settings['source'] is not None
+                        and dev_settings['source'] not in sources
+                    ):
+                if self.interactive:
+                    print(_(
+                        "Source {} not found on device."
+                        " Using another source"
+                    ).format(dev_settings['source']))
+                dev_settings['source'] = None
+
+            if dev_settings['source'] is None:
+                for (source_id, source_obj) in sources.items():
+                    if 'flatbed' in source_id.lower():
+                        source = (source_id, source_obj)
+                        break
+                else:
+                    source = sources.popitem()
+                dev_settings['source'] = source[0]
+            else:
+                source = (
+                    dev_settings['source'],
+                    sources[dev_settings['source']]
+                )
+
+            if self.interactive:
+                print(_("Default source:") + " " + dev_settings['source'])
+
+            return source[1]
+
+        promise = promise.then(check_source)
+
+        def check_resolution(source):
+            resolutions = source.get_resolutions()
+            if dev_settings['resolution'] in resolutions:
+                return source
+            resolution = min(
+                resolutions, key=lambda x: abs(x - dev_settings['resolution'])
+            )
+            if self.interactive:
+                print(_("Resolution {} not available. Adjusted to {}.").format(
+                    dev_settings['resolution'], resolution
+                ))
+            dev_settings['resolution'] = resolution
+            return source
+
+        promise = promise.then(check_resolution)
+
+        promise = promise.then(lambda source: source.close())
+        promise.schedule()
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
+        self.core.call_all(
+            "paperwork_config_put", "scanner_dev_id", dev_settings['id']
+        )
+        self.core.call_all(
+            "paperwork_config_put", "scanner_source_id", dev_settings['source']
+        )
+        self.core.call_all(
+            "paperwork_config_put", "scanner_resolution",
+            dev_settings['resolution']
+        )
+        self.core.call_all("paperwork_config_save")
+
+        return self._get_scanner()
 
     def cmd_run(self, args):
         if args.command != 'scanner':
