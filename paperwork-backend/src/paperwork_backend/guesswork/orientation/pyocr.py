@@ -15,6 +15,8 @@ ID = "orientation_guesser"
 
 class OrientationTransaction(object):
     def __init__(self, plugin, sync, total_expected=-1):
+        self.priority = plugin.PRIORITY
+
         self.plugin = plugin
         self.sync = sync
         self.core = plugin.core

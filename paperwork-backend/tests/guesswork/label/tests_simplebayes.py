@@ -75,6 +75,7 @@ class TestLabelGuesser(unittest.TestCase):
         # the storage --> it will update the training of bayesian filters.
         transactions = []
         self.core.call_all("doc_transaction_start", transactions)
+        transactions.sort(key=lambda transaction: -transaction.priority)
         self.assertGreater(len(transactions), 0)
         for transaction in transactions:
             transaction.add_obj("test_doc")

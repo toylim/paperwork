@@ -29,8 +29,10 @@ CREATE_TABLES = [
 
 
 class DocTrackerTransaction(object):
-    def __init__(self, core, sql):
-        self.core = core
+    def __init__(self, plugin, sql):
+        self.priority = plugin.PRIORITY
+
+        self.core = plugin.core
 
         self.sql = self.core.call_success(
             "mainloop_execute", sql.cursor
@@ -179,7 +181,7 @@ class Plugin(openpaperwork_core.PluginBase):
             out.append(transaction_factory(
                 sync=False, total_expected=total_expected
             ))
-        out.append(DocTrackerTransaction(self.core, self.sql))
+        out.append(DocTrackerTransaction(self, self.sql))
 
     def sync(self, promises: list):
         storage_all_docs = []
@@ -214,7 +216,7 @@ class Plugin(openpaperwork_core.PluginBase):
             transactions.append(transaction_factory(
                 sync=True, total_expected=len(storage_all_docs)
             ))
-        transactions.append(DocTrackerTransaction(self.core, self.sql))
+        transactions.append(DocTrackerTransaction(self, self.sql))
 
         names = [t[0] for t in self.transaction_factories]
         names.append('doc_tracker')

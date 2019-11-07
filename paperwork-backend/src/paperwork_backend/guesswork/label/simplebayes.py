@@ -50,6 +50,8 @@ CREATE_TABLES = [
 
 class LabelGuesserTransaction(object):
     def __init__(self, plugin, guess_labels=False, total_expected=-1):
+        self.priority = plugin.PRIORITY
+
         self.plugin = plugin
         self.core = plugin.core
         self.guess_labels = guess_labels

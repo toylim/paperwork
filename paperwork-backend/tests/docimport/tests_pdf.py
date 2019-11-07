@@ -19,6 +19,8 @@ class TestPdfImport(unittest.TestCase):
         self.nb_commits = 0
 
         class FakeTransaction(object):
+            priority = 0
+
             def add_obj(s, doc_id):
                 self.add_docs.append(doc_id)
 
@@ -128,6 +130,8 @@ class TestRecursivePdfImport(unittest.TestCase):
         self.nb_commits = 0
 
         class FakeTransaction(object):
+            priority = 0
+
             def add_obj(s, doc_id):
                 self.add_docs.append(doc_id)
 

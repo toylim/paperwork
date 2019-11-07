@@ -92,9 +92,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _upd_doc(self, doc_id):
         transactions = []
-        self.core.call_all(
-            "doc_transaction_start", transactions, 1
-        )
+        self.core.call_all("doc_transaction_start", transactions, 1)
+        transactions.sort(key=lambda transaction: -transaction.priority)
         for transaction in transactions:
             transaction.upd_obj(doc_id)
         for transaction in transactions:

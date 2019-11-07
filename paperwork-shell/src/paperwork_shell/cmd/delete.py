@@ -110,9 +110,8 @@ class Plugin(openpaperwork_core.PluginBase):
                     self.core.call_all("page_delete", doc_url, page)
 
         transactions = []
-        self.core.call_all(
-            "doc_transaction_start", transactions, len(doc_ids)
-        )
+        self.core.call_all("doc_transaction_start", transactions, len(doc_ids))
+        transactions.sort(key=lambda transaction: -transaction.priority)
 
         for transaction in transactions:
             for doc_id in doc_ids:

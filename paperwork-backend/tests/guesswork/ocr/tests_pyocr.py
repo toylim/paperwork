@@ -111,6 +111,7 @@ class TestPyocr(unittest.TestCase):
 
         transactions = []
         self.core.call_all("doc_transaction_start", transactions)
+        transactions.sort(key=lambda transaction: -transaction.priority)
         self.assertNotEqual(transactions, [])
 
         for t in transactions:

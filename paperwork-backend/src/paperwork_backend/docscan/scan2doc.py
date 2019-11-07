@@ -47,6 +47,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         transactions = []
         self.core.call_all("doc_transaction_start", transactions, 1)
+        transactions.sort(key=lambda transaction: -transaction.priority)
 
         def add_scans_to_doc(args):
             (source, scan_id, imgs) = args

@@ -17,6 +17,8 @@ class TestScan2Doc(unittest.TestCase):
         self.nb_commits = 0
 
         class FakeTransaction(object):
+            priority = 0
+
             def add_obj(s, doc_id):
                 self.assertIsNone(self.transaction_type)
                 self.transaction_type = "add"

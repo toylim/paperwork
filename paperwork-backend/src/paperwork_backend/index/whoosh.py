@@ -56,6 +56,8 @@ class WhooshTransaction(object):
     are thread-safe.
     """
     def __init__(self, plugin, total_expected=-1):
+        self.priority = plugin.PRIORITY
+
         LOGGER.debug("Starting Whoosh index transaction")
         self.core = plugin.core
         self.writer = plugin.index.writer()

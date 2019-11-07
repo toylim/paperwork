@@ -46,6 +46,7 @@ class BaseFileImporter(object):
             "doc_transaction_start", transactions,
             len(file_import.new_doc_ids) + len(file_import.upd_doc_ids)
         )
+        transactions.sort(key=lambda transaction: -transaction.priority)
         return transactions
 
     def _do_transactions(self, transactions, file_import):

@@ -65,9 +65,8 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all("doc_rename_by_url", source_doc_url, dest_doc_url)
 
         transactions = []
-        self.core.call_all(
-            "doc_transaction_start", transactions, 2
-        )
+        self.core.call_all("doc_transaction_start", transactions, 2)
+        transactions.sort(key=lambda transaction: -transaction.priority)
         for transaction in transactions:
             transaction.del_obj(source_doc_id)
         for transaction in transactions:
