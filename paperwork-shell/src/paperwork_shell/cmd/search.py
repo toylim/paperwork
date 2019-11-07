@@ -88,8 +88,7 @@ class Plugin(openpaperwork_core.PluginBase):
                     LOGGER.warning("Failed to get URL of document %s", doc_id)
                     continue
                 lines = renderer.get_preview_output(
-                    doc_id, doc_url,
-                    shutil.get_terminal_size((80, 25))
+                    doc_id, doc_url, shutil.get_terminal_size()
                 )
                 for line in lines:
                     self.core.call_all("print", line + "\n")

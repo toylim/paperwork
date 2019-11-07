@@ -82,8 +82,7 @@ class Plugin(openpaperwork_core.PluginBase):
             self.core.call_all("print", "=" * len(header) + "\n")
 
             lines = renderer.get_doc_output(
-                doc_id, doc_url,
-                shutil.get_terminal_size((80, 25))
+                doc_id, doc_url, shutil.get_terminal_size()
             )
             for line in lines:
                 self.core.call_all("print", line + "\n")
@@ -95,8 +94,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 self.core.call_all("print", header + "\n")
                 self.core.call_all("print", ("-" * len(header)) + "\n\n")
                 lines = renderer.get_page_output(
-                    doc_id, doc_url, page_nb,
-                    shutil.get_terminal_size((80, 25))
+                    doc_id, doc_url, page_nb, shutil.get_terminal_size()
                 )
                 for line in lines:
                     self.core.call_all("print", line + "\n")

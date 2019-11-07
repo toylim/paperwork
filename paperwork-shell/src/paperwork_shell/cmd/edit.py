@@ -39,7 +39,7 @@ class CliUI(paperwork_backend.pageedit.AbstractPageEditorUI):
         self.core = core
 
     def show_preview(self, img):
-        terminal_width = shutil.get_terminal_size((80, 25))[0] - 1
+        terminal_width = shutil.get_terminal_size()[0] - 1
         img = self.core.call_success(
             "img_render", img, terminal_width=terminal_width
         )

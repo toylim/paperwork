@@ -70,7 +70,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         img = self.core.call_success("url_to_pillow", page_url)
 
-        terminal_width = shutil.get_terminal_size((80, 25))[0] - 1
+        terminal_width = shutil.get_terminal_size()[0] - 1
         img = self.core.call_success(
             "img_render", img, terminal_width=terminal_width
         )
