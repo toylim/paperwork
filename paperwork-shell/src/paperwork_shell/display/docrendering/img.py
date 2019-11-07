@@ -16,17 +16,23 @@ class FabulousRenderer(object):
         self.core = plugin.core
         self.parent = None
 
-    def get_preview_output(self, doc_id, doc_url, terminal_size=(80, 25)):
+    def get_preview_output(
+                self, doc_id, doc_url, terminal_size=(80, 25),
+                page_idx=0
+            ):
         w_split = int(terminal_size[0] / 3)
 
         parent = []
         if self.parent is not None:
             parent = self.parent.get_preview_output(
                 doc_id, doc_url,
-                (terminal_size[0] - w_split - 2, terminal_size[1])
+                (terminal_size[0] - w_split - 2, terminal_size[1]),
+                page_idx
             )
 
-        thumbnail = self.core.call_success("thumbnail_get_doc", doc_url)
+        thumbnail = self.core.call_success(
+            "thumbnail_get_page", doc_url, page_idx
+        )
         thumbnail = self.plugin.img_render(thumbnail, w_split)
 
         if len(parent) < len(thumbnail):

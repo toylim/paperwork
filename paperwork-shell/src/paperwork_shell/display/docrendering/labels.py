@@ -56,12 +56,17 @@ class LabelsRenderer(object):
             out.append(line)
         return [l.strip() for l in out]
 
-    def get_preview_output(self, doc_id, doc_url, terminal_size=(80, 25)):
+    def get_preview_output(
+                self, doc_id, doc_url, terminal_size=(80, 25),
+                page_idx=0
+            ):
         out = []
         if self.parent is not None:
             out = self.parent.get_preview_output(
-                doc_id, doc_url, terminal_size
+                doc_id, doc_url, terminal_size, page_idx
             )
+        if page_idx != 0:
+            return out
 
         labels = self._get_labels(doc_url)
         labels = color_labels(self.core, labels)

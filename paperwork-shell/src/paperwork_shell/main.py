@@ -24,6 +24,7 @@ DEFAULT_SHELL_PLUGINS = paperwork_backend.DEFAULT_SHELL_PLUGINS + [
     'paperwork_shell.cmd.ocr',
     'paperwork_shell.cmd.rename',
     'paperwork_shell.cmd.reset',
+    'paperwork_shell.cmd.scan',
     'paperwork_shell.cmd.scanner',
     'paperwork_shell.cmd.search',
     'paperwork_shell.cmd.show',
@@ -37,6 +38,7 @@ DEFAULT_CLI_PLUGINS = DEFAULT_SHELL_PLUGINS + [
     "paperwork_shell.display.docrendering.text",
     'paperwork_shell.display.print',
     'paperwork_shell.display.progress',
+    "paperwork_shell.display.scan",
 ]
 DEFAULT_JSON_PLUGINS = DEFAULT_SHELL_PLUGINS
 

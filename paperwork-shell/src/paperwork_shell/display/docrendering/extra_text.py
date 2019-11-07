@@ -11,10 +11,13 @@ class ExtraTextRenderer(object):
         self.core = core
         self.parent = None
 
-    def get_preview_output(self, doc_id, doc_url, terminal_size=(80, 25)):
+    def get_preview_output(
+                self, doc_id, doc_url, terminal_size=(80, 25),
+                page_idx=0
+            ):
         if self.parent is not None:
             return self.parent.get_preview_output(
-                doc_id, doc_url, terminal_size
+                doc_id, doc_url, terminal_size, page_idx
             )
         return []
 
