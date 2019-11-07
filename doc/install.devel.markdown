@@ -1,13 +1,7 @@
-## Branches
+## Contributing
 
-* branch `master` is the latest release with possibly some bug fixes. Never
-  submit a merge request for this branch. Only Paperwork maintainer(s)
-  push changes on this branch.
-* branch 'develop' is the development branch. It will be the next version
-  of Paperwork. Merge request should always go to this branch, even for bug
-  fixes. Maintainer(s) will cherry-pick commits in the branch 'master' if
-  required.
-`
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) carefully before submitting any
+merge request.
 
 ## Paperwork in a Virtualenv
 
