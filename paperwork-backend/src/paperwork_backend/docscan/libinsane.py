@@ -211,14 +211,13 @@ class Source(object):
                         )
 
                 LOGGER.info("Page %d/%d scanned", page_nb, max_pages)
-                page_nb += 1
-                img = image.get_image()
+                img = raw_to_img(scan_params, image.get_image())
                 yield img
                 self.core.call_one(
                     "schedule", self.core.call_all,
-                    "on_scan_page_end", scan_id, page_nb,
-                    raw_to_img(scan_params, img)
+                    "on_scan_page_end", scan_id, page_nb, img
                 )
+                page_nb += 1
             LOGGER.info("End of feed")
 
             self.core.call_one(
