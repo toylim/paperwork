@@ -25,6 +25,7 @@ _ = gettext.gettext
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         self.nb_written = 0
+        self.nb_obj_expected = 0
 
     def on_label_guesser_commit_start(self, *args, **kwargs):
         if self.nb_written > 0:
@@ -54,6 +55,9 @@ class Plugin(openpaperwork_core.PluginBase):
         self.nb_written = 0
         sys.stdout.write(_("Done") + "\n")
 
+    def doc_transaction_start(self, out: list, total_expected=-1):
+        self.nb_obj_expected = total_expected
+
     def on_progress(self, upd_type, progress, description=None):
         if description is None:
             if self.nb_written > 0:
@@ -61,13 +65,16 @@ class Plugin(openpaperwork_core.PluginBase):
             self.nb_written = 0
             return
 
-        str_progress = (
-            "=" * int(progress * 20)
-            + " " * int((1.0 - progress) * 20)
-        )
-        line = '[%s] [%-20s] %s' % (
-            str_progress[:20], upd_type[:20], description
-        )
+        if self.nb_obj_expected == 1:
+            line = ""
+        else:
+            str_progress = (
+                "=" * int(progress * 20)
+                + " " * int((1.0 - progress) * 20)
+            )
+            line = '[%s] ' % str_progress[:20]
+
+        line += '[%-20s] %s' % (upd_type[:20], description)
 
         term_width = shutil.get_terminal_size((500, 25)).columns
         line = line[:term_width - 1]
