@@ -2,10 +2,11 @@
 
 [You can help in many ways](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Contributing):
 - [Code contributions](doc/install.devel.markdown)
-- UX and UI designs
+- UX and UI designs ([example](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/issues/356#note_244099))
 - Testing
 - Translating
-- Documentation
+- Documentation (markdown files or [LyX](https://www.lyx.org/)/[PDF files](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/tree/master/paperwork-gtk/doc)
+  integrated in Paperwork)
 
 For most tasks, being familiar with Git is really helpful.
 
