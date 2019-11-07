@@ -41,7 +41,13 @@ class Plugin(openpaperwork_core.PluginBase):
             (doc_id, doc_url) = self.core.call_success("storage_get_new_doc")
             new = True
 
-        (scan_id, promise) = self.core.call_success("scan_promise")
+        promise = openpaperwork_core.promise.Promise(
+            self.core, self.core.call_all,
+            args=("on_scan2doc_start", doc_id, doc_url)
+        )
+        promise = promise.then(lambda *args, **kwargs: None)
+        (scan_id, p) = self.core.call_success("scan_promise")
+        promise = promise.then(p)
 
         self.scan_id_to_doc_id[scan_id] = doc_id
 
@@ -51,7 +57,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
         def add_scans_to_doc(args):
             (source, scan_id, imgs) = args
+            nb = 0
             for img in imgs:
+                nb += 1
                 nb_pages = self.core.call_success(
                     "doc_get_nb_pages_by_url", doc_url
                 )
@@ -61,7 +69,11 @@ class Plugin(openpaperwork_core.PluginBase):
                     "page_get_img_url", doc_url, nb_pages, write=True
                 )
                 self.core.call_success("pillow_to_url", img, page_url)
-            return len(imgs)
+                self.core.call_one(
+                    "schedule", self.core.call_all,
+                    "on_scan2doc_page_scanned", doc_id, doc_url, nb_pages
+                )
+            return nb
 
         def run_transactions(nb_imgs):
             if nb_imgs <= 0:
@@ -78,6 +90,10 @@ class Plugin(openpaperwork_core.PluginBase):
 
         def drop_scan_id(*args, **kwargs):
             self.scan_id_to_doc_id.pop(scan_id)
+            return (doc_id, doc_url)
+
+        def notify_end(*args, **kwargs):
+            self.core.call_all("on_scan2doc_end", doc_id, doc_url)
             return (doc_id, doc_url)
 
         def cancel(exc):
@@ -99,5 +115,7 @@ class Plugin(openpaperwork_core.PluginBase):
             )
         )
         promise = promise.then(drop_scan_id)
+        promise = promise.then(notify_end)
+
         promise = promise.catch(cancel)
         return promise
