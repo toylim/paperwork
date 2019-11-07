@@ -20,6 +20,8 @@ LOGGER = logging.getLogger(__name__)
 
 
 class Plugin(openpaperwork_core.PluginBase):
+    PRIORITY = 5000  # see page_get_img_url()
+
     def get_interfaces(self):
         return [
             'pages',
