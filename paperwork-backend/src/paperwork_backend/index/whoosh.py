@@ -129,17 +129,16 @@ class WhooshTransaction(object):
 
     def add_obj(self, doc_id):
         LOGGER.info("Adding document '%s' to index", doc_id)
-        self.counts['add'] += 1
         self.core.call_one(
             "schedule", self.core.call_all,
             "on_progress", "index_update", self._get_progression(),
             _("Indexing new document %s") % doc_id
         )
         self._update_doc_in_index(doc_id)
+        self.counts['add'] += 1
 
     def del_obj(self, doc_id):
         LOGGER.info("Removing document '%s' from index", doc_id)
-        self.counts['del'] += 1
         self.core.call_one(
             "schedule", self.core.call_all,
             "on_progress", "index_update", self._get_progression(),
@@ -147,16 +146,17 @@ class WhooshTransaction(object):
         )
         query = whoosh.query.Term("docid", doc_id)
         self.writer.delete_by_query(query)
+        self.counts['del'] += 1
 
     def upd_obj(self, doc_id):
         LOGGER.info("Updating document '%s' in index", doc_id)
-        self.counts['upd'] += 1
         self.core.call_one(
             "schedule", self.core.call_all,
             "on_progress", "index_update", self._get_progression(),
             _("Indexing updated document %s") % doc_id
         )
         self._update_doc_in_index(doc_id)
+        self.counts['upd'] += 1
 
     def unchanged_obj(self, doc_id):
         self.unchanged += 1

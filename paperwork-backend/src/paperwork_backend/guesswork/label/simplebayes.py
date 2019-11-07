@@ -92,8 +92,6 @@ class LabelGuesserTransaction(object):
         return self.count / self.total_expected
 
     def add_obj(self, doc_id):
-        self.count += 1
-
         if self.guess_labels:
             doc_url = self.core.call_success("doc_id_to_url", doc_id)
             # we have a higher priority than index plugins, so it is a good
@@ -106,25 +104,25 @@ class LabelGuesserTransaction(object):
             _("Updating label guesser with added document %s") % doc_id
         )
         self._upd_doc(doc_id)
-
-    def del_obj(self, doc_id):
         self.count += 1
 
+    def del_obj(self, doc_id):
         self.core.call_one(
             "schedule", self.core.call_all,
             "on_progress", "label_guesser_update", self._get_progression(),
             _("Updating label guesser due to deleted document %s") % doc_id
         )
         self._upd_doc(doc_id)
+        self.count += 1
 
     def upd_obj(self, doc_id):
-        self.count += 1
         self.core.call_one(
             "schedule", self.core.call_all,
             "on_progress", "label_guesser_update", self._get_progression(),
             _("Updating label guesser with updated document %s") % doc_id
         )
         self._upd_doc(doc_id)
+        self.count += 1
 
     def _check_label_exists_in_db(self, label):
         r = self.core.call_success(
@@ -239,12 +237,12 @@ class LabelGuesserTransaction(object):
         self._check_for_removed_labels(doc_id, doc_url, actual, db)
 
     def unchanged_obj(self, doc_id):
-        self.count += 1
         self.core.call_one(
             "schedule", self.core.call_all,
             "on_progress", "label_guesser_update", self._get_progression(),
             _("Document %s unchanged") % doc_id
         )
+        self.count += 1
 
     def cancel(self):
         self.core.call_one(

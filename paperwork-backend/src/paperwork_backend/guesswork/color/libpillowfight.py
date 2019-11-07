@@ -76,12 +76,12 @@ class PillowfightTransaction(object):
             self.page_tracker.ack_page(doc_id, doc_url, page_idx)
 
     def add_obj(self, doc_id):
-        self.count += 1
         self._adjust_new_pages_colors(doc_id)
+        self.count += 1
 
     def upd_obj(self, doc_id):
-        self.count += 1
         self._adjust_new_pages_colors(doc_id)
+        self.count += 1
 
     def del_obj(self, doc_id):
         self.page_tracker.delete_doc(doc_id)

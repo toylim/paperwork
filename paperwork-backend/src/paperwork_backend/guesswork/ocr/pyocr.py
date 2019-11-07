@@ -82,12 +82,12 @@ class OcrTransaction(object):
             self.page_tracker.ack_page(doc_id, doc_url, page_idx)
 
     def add_obj(self, doc_id):
-        self.count += 1
         self._run_ocr_on_modified_pages(doc_id, wordless_only=True)
+        self.count += 1
 
     def upd_obj(self, doc_id):
-        self.count += 1
         self._run_ocr_on_modified_pages(doc_id, wordless_only=False)
+        self.count += 1
 
     def del_obj(self, doc_id):
         self.page_tracker.delete_doc(doc_id)
