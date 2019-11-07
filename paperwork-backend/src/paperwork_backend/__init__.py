@@ -19,6 +19,7 @@ DEFAULT_PLUGINS = [
     'paperwork_backend.guesswork.cropping.libpillowfight',
     'paperwork_backend.guesswork.label.simplebayes',
     'paperwork_backend.guesswork.ocr.pyocr',
+    'paperwork_backend.guesswork.orientation.pyocr',
     'paperwork_backend.imgedit.color',
     'paperwork_backend.imgedit.crop',
     'paperwork_backend.imgedit.rotate',
