@@ -1,6 +1,8 @@
 import gettext
 import logging
 
+import PIL
+import PIL.Image
 import pyocr
 import pyocr.builders
 
@@ -163,7 +165,15 @@ class Plugin(openpaperwork_core.PluginBase):
             return None
 
         angle = r['angle']
-        img = img.rotate(angle)
+        if angle == 0:
+            return 0
+
+        t_angle = {
+            90: PIL.Image.ROTATE_90,
+            180: PIL.Image.ROTATE_180,
+            270: PIL.Image.ROTATE_270,
+        }[angle]
+        img = img.transpose(t_angle)
 
         page_img_url = self.core.call_success(
             "page_get_img_url", doc_url, page_idx, write=True
