@@ -165,6 +165,9 @@ class Plugin(openpaperwork_core.PluginBase):
         angle = r['angle']
         img = img.rotate(angle)
 
+        page_img_url = self.core.call_success(
+            "page_get_img_url", doc_url, page_idx, write=True
+        )
         self.core.call_success("pillow_to_url", img, page_img_url)
 
         if doc_id is not None:

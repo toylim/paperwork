@@ -155,6 +155,9 @@ class Plugin(openpaperwork_core.PluginBase):
         frame = pillowfight.find_scan_borders(img)
         img = img.crop(frame)
 
+        page_img_url = self.core.call_success(
+            "page_get_img_url", doc_url, page_idx, write=True
+        )
         self.core.call_success("pillow_to_url", img, page_img_url)
 
         if doc_id is not None:
