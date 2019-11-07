@@ -24,20 +24,7 @@ _ = gettext.gettext
 
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
-        self.interactive = True
         self.nb_written = 0
-
-    def get_interfaces(self):
-        return ['shell']
-
-    def cmd_set_interactive(self, interactive):
-        self.interactive = interactive
-
-    def cmd_complete_argparse(self, parser):
-        pass
-
-    def cmd_run(self, args):
-        pass
 
     def on_label_guesser_commit_start(self, *args, **kwargs):
         if self.nb_written > 0:
@@ -68,9 +55,6 @@ class Plugin(openpaperwork_core.PluginBase):
         sys.stdout.write(_("Done") + "\n")
 
     def on_progress(self, upd_type, progress, description=None):
-        if not self.interactive:
-            return
-
         if description is None:
             if self.nb_written > 0:
                 sys.stdout.write("\n")
