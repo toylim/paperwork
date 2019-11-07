@@ -1,11 +1,15 @@
 # How to contribute ?
 
-[You can help in many way](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Contributing):
+[You can help in many ways](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Contributing):
 - Code contributions
 - UX and UI designs
 - Testing
 - Translating
 - Documentation
+
+Most of the communication happens on the [bug tracker](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/issues).
+Sometimes the [mailing-list](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Contact#mailing-list)
+or [IRC](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Contact#irc) are used too.
 
 
 # Code contribution rules
@@ -45,17 +49,19 @@ There is a [BuildBot](https://origami.openpaper.work). Between your machine and 
 
 Paperwork follows a process similar to the [GitFlow branching model](http://nvie.com/posts/a-successful-git-branching-model/).
 
-Permanent branch:
-* master : always match the last released version of Paperwork + some extra bugfixes. Only documentation updates and **safe** bugfixes are allowed on this branch. Minor versions come from this branch. Please **do not** send me changes for the branch 'master'. Send them for the branch 'develop', and I will cherry-pick them on 'master' if required.
-* develop : where new features, cleanup, etc go.
-
-Semi-permanent branches:
-* release-xxxx : the next version of Paperwork, during its testing phase. No new feature is allowed. Only bugfixes, translations and documentation updates.
+Permanent branches:
+* `master` : always match the last released version of Paperwork + some extra bugfixes. Only documentation updates and **safe** bugfixes are allowed on this branch. Minor versions come from this branch.
+  Please **do not** send me changes for the branch 'master'. Send them for the branch `develop`, and I will cherry-pick them on `master` if required.
+* `develop` : where new features, cleanup, etc go.
+* `testing` : the next version of Paperwork, during its testing phase. No new feature is allowed. Only bugfixes, translations and documentation updates.
+  When no new version is being prepared, it simply matches the branch `master`.
 
 Temporary / feature development branches:
-* wip-xxxx
+* `wip-xxxx`
 
-Bugfixes and other contributions usually go in the branch 'develop'. They may or may not be cherry-picked into the branches release-xxx and master by Paperwork maintainer (Jerome Flesch).
+Bugfixes and other contributions usually go in the branch 'develop'. They may
+or may not be cherry-picked into the branches `testing` and `master` by
+Paperwork maintainer (Jerome Flesch).
 
 
 # Versionning
