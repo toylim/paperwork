@@ -15,7 +15,9 @@ DEFAULT_PLUGINS = [
     'paperwork_backend.doctracker',
     'paperwork_backend.fs.gio',
     'paperwork_backend.fs.memory',
-    'paperwork_backend.guesswork.color.libpillowfight',
+    # ACE is disabled by default: it's slow, and actually makes some scans
+    # harder to read.
+    # 'paperwork_backend.guesswork.color.libpillowfight',
     'paperwork_backend.guesswork.cropping.libpillowfight',
     'paperwork_backend.guesswork.label.simplebayes',
     'paperwork_backend.guesswork.ocr.pyocr',
