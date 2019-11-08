@@ -33,7 +33,10 @@ class FabulousRenderer(object):
         thumbnail = self.core.call_success(
             "thumbnail_get_page", doc_url, page_idx
         )
-        thumbnail = self.plugin.img_render(thumbnail, w_split)
+        if thumbnail is None:
+            thumbnail = []
+        else:
+            thumbnail = self.plugin.img_render(thumbnail, w_split)
 
         if len(parent) < len(thumbnail):
             parent.extend([""] * (len(thumbnail) - len(parent)))
