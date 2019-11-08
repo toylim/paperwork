@@ -36,12 +36,16 @@ class Plugin(openpaperwork_core.PluginBase):
         return ['shell']
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('mainloop', ['openpaperwork_core.mainloop_asyncio']),
-                ('scan2doc', ['paperwork_backend.docscan.scan2doc']),
-            ],
-        }
+        return [
+            {
+                "interface": "mainloop",
+                "defaults": ['openpaperwork_core.mainloop_asyncio'],
+            },
+            {
+                "interface": "scan2doc",
+                "defaults": ["paperwork_backend.docscan.scan2doc"],
+            },
+        ]
 
     def cmd_set_interactive(self, interactive):
         self.interactive = interactive

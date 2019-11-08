@@ -147,17 +147,27 @@ class Plugin(openpaperwork_core.PluginBase):
         return ['page_tracking']
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('fs', ['paperwork_backend.fs.gio']),
-                ('mainloop', ['openpaperwork_core.mainloop_asyncio']),
-                ('page_boxes', ['paperwork_backend.model.hocr']),
-                ('page_img', [
+        return [
+            {
+                'interface': 'fs',
+                'defaults': ['paperwork_backend.fs.gio']
+            },
+            {
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_core.mainloop_asyncio'],
+            },
+            {
+                'interface': 'page_boxes',
+                'defaults': ['paperwork_backend.model.hocr'],
+            },
+            {
+                'interface': 'page_img',
+                'defaults': [
                     'paperwork_backend.model.img',
                     'paperwork_backend.model.pdf',
-                ]),
-            ]
-        }
+                ],
+            },
+        ]
 
     def init(self, core):
         super().init(core)

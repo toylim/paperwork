@@ -121,11 +121,12 @@ class Plugin(openpaperwork_core.PluginBase):
         return ["scan"]
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('mainloop', ['openpaperwork_core.mainloop_asyncio']),
-            ]
-        }
+        return [
+            {
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_core.mainloop_asyncio'],
+            },
+        ]
 
     def scan_list_scanners_promise(self):
         def list_scanners():

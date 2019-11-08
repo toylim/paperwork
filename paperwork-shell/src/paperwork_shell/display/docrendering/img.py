@@ -100,21 +100,26 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ("page_img", [
+        return [
+            {
+                'interface': 'page_img',
+                'defaults': [
                     'paperwork_backend.model.img',
                     'paperwork_backend.model.pdf',
-                ]),
-                ("pillow", [
+                ],
+            },
+            {
+                'interface': 'pillow',
+                'defaults': [
                     'paperwork_backend.pillow.img',
                     'paperwork_backend.pillow.pdf',
-                ]),
-                ("thumbnail", [
-                    'paperwork_backend.model.thumbnail',
-                ]),
-            ]
-        }
+                ],
+            },
+            {
+                'interface': 'thumbnail',
+                'defaults': ['paperwork_backend.model.thumbnail'],
+            },
+        ]
 
     def doc_renderer_get(self, out):
         r = FabulousRenderer(self)

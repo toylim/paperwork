@@ -30,11 +30,12 @@ class Plugin(openpaperwork_core.PluginBase):
         return ['shell']
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('document_storage', ['paperwork_backend.model.workdir']),
-            ],
-        }
+        return [
+            {
+                "interface": "document_storage",
+                "defaults": ['paperwork_backend.model.workdir'],
+            },
+        ]
 
     def cmd_set_interactive(self, interactive):
         self.interactive = interactive

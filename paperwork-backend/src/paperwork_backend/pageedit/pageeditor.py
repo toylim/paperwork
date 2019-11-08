@@ -324,20 +324,27 @@ class Plugin(openpaperwork_core.PluginBase):
         return ['page_editor']
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('img_editor', [
+        return [
+            {
+                "interface": "img_editor",
+                'defaults': [
                     'paperwork_backend.imgedit.color',
                     'paperwork_backend.imgedit.crop',
                     'paperwork_backend.imgedit.rotate',
-                ]),
-                ('mainloop', ['openpaperwork_core.mainloop_asyncio']),
-                ('pillow', [
+                ],
+            },
+            {
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_core.mainloop_asyncio'],
+            },
+            {
+                'interface': 'pillow',
+                'defaults': [
                     'paperwork_backend.pillow.img',
                     'paperwork_backend.pillow.pdf',
-                ]),
-            ],
-        }
+                ]
+            },
+        ]
 
     def page_editor_get(self, doc_url, page_idx, page_editor_ui):
         return PageEditor(self.core, doc_url, page_idx, page_editor_ui)

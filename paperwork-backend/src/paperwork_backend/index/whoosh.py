@@ -236,20 +236,36 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('document_storage', ['paperwork_backend.model.workdir']),
-                ('fs', ['paperwork_backend.fs.gio']),
-                ('mainloop', ['openpaperwork_core.mainloop_asyncio']),
-                # Optional dependencies:
-                # ('page_boxes', [
-                #     'paperwork_backend.model.hocr',
-                #     'paperwork_backend.model.pdf',
-                # ]),
-                # ('doc_hash', ['paperwork_backend.model.pdf',]),
-                # ('doc_labels', ['paperwork_backend_model.labels',])
-            ]
-        }
+        return [
+            {
+                'interface': 'document_storage',
+                'defaults': ['paperwork_backend.model.workdir'],
+            },
+            {
+                'interface': 'fs',
+                'defaults': ['paperwork_backend.fs.gio'],
+            },
+            {
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_core.mainloop_asyncio'],
+            },
+            # Optional dependencies:
+            # {
+            #     'interface': 'page_boxes',
+            #     'defaults': [
+            #         'paperwork_backend.model.hocr',
+            #         'paperwork_backend.model.pdf',
+            #     ],
+            # },
+            # {
+            #     'interface': 'doc_hash',
+            #     'defaults': ['paperwork_backend.model.pdf'],
+            # },
+            # {
+            #     'interface': 'doc_labels',
+            #     'defaults': ['paperwork_backend.model.labels'],
+            # },
+        ]
 
     def init(self, core):
         super().init(core)

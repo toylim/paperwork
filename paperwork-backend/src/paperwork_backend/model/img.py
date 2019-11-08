@@ -23,11 +23,12 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('fs', ['paperwork_backend.fs.gio']),
-            ]
-        }
+        return [
+            {
+                'interface': 'fs',
+                'defaults': ['paperwork_backend.fs.gio'],
+            }
+        ]
 
     def is_doc(self, doc_url):
         page_url = self.core.call_success(

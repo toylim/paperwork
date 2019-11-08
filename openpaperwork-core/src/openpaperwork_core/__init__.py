@@ -42,11 +42,17 @@ class PluginBase(object):
     def get_deps(self):
         """
         Return the dependencies required by this plugin.
+
+        Example:
+        [
+            {
+                "interface": "some_interface_name",  # required
+                "defaults": ['plugin_a', 'plugin_b'],  # required
+                "expected_already_satisfied": False,  # optional, default: True
+            },
+        ]
         """
-        return {
-            'plugins': [],
-            'interfaces': [],
-        }
+        return []
 
     def init(self, core):
         # default implementation
@@ -127,46 +133,34 @@ class Core(object):
             LOGGER.info("Examining dependencies of '%s' ...", type(plugin))
 
             deps = plugin.get_deps()
-            if 'plugins' in deps:
-                for dep_plugin in deps['plugins']:
-                    if dep_plugin in self.plugins:
-                        LOGGER.info("- Plugin '%s' already loaded", dep_plugin)
-                        continue
-                    to_examine.append(self.load(dep_plugin))
-
-            if 'interfaces' in deps:
-                for (dep_interface, dep_defaults) in deps['interfaces']:
-                    if len(self.interfaces[dep_interface]) > 0:
-                        LOGGER.info(
-                            "- Interface '%s' already provided by %d plugins",
-                            dep_interface, len(self.interfaces[dep_interface])
-                        )
-                        continue
-                    if len(dep_defaults) <= 0:
-                        continue
-                    LOGGER.warning(
-                        "Loading plugins %s to satisfy dependency."
-                        " Required by '%s' for interface '%s'",
-                        dep_defaults, type(plugin), dep_interface
+            for dep in deps:
+                interface = dep['interface']
+                defaults = dep['defaults']
+                if len(self.interfaces[interface]) > 0:
+                    LOGGER.info(
+                        "- Interface '%s' already provided by %d plugins",
+                        interface, len(self.interfaces[interface])
                     )
-                    for dep_default in dep_defaults:
-                        to_examine.append(self.load(dep_default))
+                    continue
+                if len(defaults) <= 0:
+                    continue
+                LOGGER.warning(
+                    "Loading plugins %s to satisfy dependency."
+                    " Required by '%s' for interface '%s'",
+                    defaults, type(plugin), interface
+                )
+                for default in defaults:
+                    to_examine.append(self.load(default))
 
     def _init(self, plugin):
         if plugin in self._initialized:
             return
 
         deps = plugin.get_deps()
-        if 'plugins' in deps:
-            for dep_plugin in deps['plugins']:
-                assert(dep_plugin in self.plugins)
-                self._init(self.plugins[dep_plugin])
-
-        if 'interfaces' in deps:
-            for (dep_interface, _) in deps['interfaces']:
-                dep_plugins = self.interfaces[dep_interface]
-                for dep_plugin in dep_plugins:
-                    self._init(dep_plugin)
+        for dep in deps:
+            dep_plugins = self.interfaces[dep['interface']]
+            for dep_plugin in dep_plugins:
+                self._init(dep_plugin)
 
         LOGGER.info("Initializing plugin '%s' ...", type(plugin))
         plugin.init(self)

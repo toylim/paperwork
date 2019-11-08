@@ -116,14 +116,24 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('fs', ['paperwork_backend.fs.gio']),
-                ('mainloop', ['openpaperwork_core.mainloop_asyncio']),
-                ('page_img', ['paperwork_backend.model.img']),
-                ('pillow', ['paperwork_backend.pillow.img']),
-            ]
-        }
+        return [
+            {
+                'interface': 'fs',
+                'defaults': ['paperwork_backend.fs.gio'],
+            },
+            {
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_core.mainloop_asyncio'],
+            },
+            {
+                'interface': 'page_img',
+                'defaults': ['paperwork_backend.model.img'],
+            },
+            {
+                'interface': 'pillow',
+                'defaults': ['paperwork_backend.pillow.img'],
+            },
+        ]
 
     def get_import_mime_type(self, out: list):
         out += self.IMG_MIME_TYPES

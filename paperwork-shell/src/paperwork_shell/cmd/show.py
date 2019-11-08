@@ -32,15 +32,10 @@ class Plugin(openpaperwork_core.PluginBase):
         return ['shell']
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('doc_renderer', [
-                    # if there are none loaded, nothing it displayed, which
-                    # may be fine.
-                    # (see paperwork-json)
-                ]),
-            ],
-        }
+        # if there are no doc_renderer loaded, nothing is displayed, which
+        # may be fine.
+        # (see paperwork-json)
+        return []
 
     def cmd_set_interactive(self, interactive):
         self.interactive = interactive

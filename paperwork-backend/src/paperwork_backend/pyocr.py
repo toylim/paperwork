@@ -157,11 +157,12 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('paperwork_config', ['paperwork_backend.config.file']),
-            ]
-        }
+        return [
+            {
+                'interface': 'paperwork_config',
+                'defaults': ['paperwork_backend.config.file'],
+            },
+        ]
 
     def init(self, core):
         super().init(core)

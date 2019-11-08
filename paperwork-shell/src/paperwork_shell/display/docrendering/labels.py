@@ -121,13 +121,12 @@ class Plugin(openpaperwork_core.PluginBase):
         return ['doc_renderer']
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ("page_boxes", [
-                    'paperwork_backend.model.labels',
-                ]),
-            ]
-        }
+        return [
+            {
+                'interface': 'page_boxes',
+                'defaults': ['paperwork_backend.model.labels'],
+            },
+        ]
 
     def print_labels(self, labels, separator='\n'):
         labels = color_labels(self.core, labels)

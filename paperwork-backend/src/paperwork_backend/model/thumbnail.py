@@ -29,18 +29,22 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('page_img', [
+        return [
+            {
+                'interface': 'page_img',
+                'defaults': [
                     'paperwork_backend.model.img',
                     'paperwork_backend.model.pdf',
-                ]),
-                ('pillow', [
+                ],
+            },
+            {
+                'interface': 'pillow',
+                'defaults': [
                     'paperwork_backend.pillow.img',
                     'paperwork_backend.pillow.pdf',
-                ])
-            ]
-        }
+                ],
+            },
+        ]
 
     def thumbnail_get_doc(self, doc_url):
         return self.thumbnail_get_page(doc_url, page_idx=0)

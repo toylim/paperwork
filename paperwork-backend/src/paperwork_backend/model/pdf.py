@@ -98,11 +98,12 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('fs', ['paperwork_backend.fs.gio']),
-            ]
-        }
+        return [
+            {
+                'interface': 'fs',
+                'defaults': ['paperwork_backend.fs.gio'],
+            }
+        ]
 
     def chkdeps(self, out: dict):
         if not GI_AVAILABLE:

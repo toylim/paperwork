@@ -23,9 +23,6 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_interfaces(self):
         return ['img_editor']
 
-    def get_deps(self):
-        return {}
-
     def img_editor_get_names(self, out: list):
         out.append(self.NAME)
 

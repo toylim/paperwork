@@ -99,17 +99,27 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('doc_tracking', ['paperwork_backend.doctracker']),
-                ('ocr_settings', ['paperwork_backend.pyocr']),
-                ('page_tracking', ['paperwork_backend.pagetracker']),
-                ('pillow', [
+        return [
+            {
+                'interface': 'doc_tracking',
+                'defaults': ['paperwork_backend.doctracker']
+            },
+            {
+                'interface': 'ocr_settings',
+                'defaults': ['paperwork_backend.pyocr'],
+            },
+            {
+                'interface': 'page_tracking',
+                'defaults': ['paperwork_backend.pagetracker'],
+            },
+            {
+                'interface': 'pillow',
+                'defaults': [
                     'paperwork_backend.pillow.img',
                     'paperwork_backend.pillow.pdf',
-                ]),
-            ]
-        }
+                ],
+            },
+        ]
 
     def init(self, core):
         super().init(core)

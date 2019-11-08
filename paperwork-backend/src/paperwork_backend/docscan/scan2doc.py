@@ -15,14 +15,24 @@ class Plugin(openpaperwork_core.PluginBase):
         return ['scan2doc']
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('document_storage', ['paperwork_backend.model.workdir']),
-                ('page_img', ['paperwork_backend.model.img']),
-                ('pillow', ['paperwork_backend.pillow.img']),
-                ('scan', ['paperwork_backend.docscan.libinsane']),
-            ]
-        }
+        return [
+            {
+                'interface': 'document_storage',
+                'defaults': ['paperwork_backend.model.workdir'],
+            },
+            {
+                'interface': 'page_img',
+                'defaults': ['paperwork_backend.model.img'],
+            },
+            {
+                'interface': 'pillow',
+                'defaults': ['paperwork_backend.pillow.img'],
+            },
+            {
+                'interface': 'scan',
+                'defaults': ['paperwork_backend.docscan.libinsane'],
+            }
+        ]
 
     def scan2doc_scan_id_to_doc_id(self, scan_id):
         try:

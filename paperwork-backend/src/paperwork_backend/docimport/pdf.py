@@ -71,13 +71,20 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('doc_pdf_import', ['paperwork_backend.model.pdf']),
-                ('fs', ['paperwork_backend.fs.gio']),
-                ('mainloop', ['openpaperwork_core.mainloop_asyncio']),
-            ]
-        }
+        return [
+            {
+                'interface': 'doc_pdf_import',
+                'defaults': ['paperwork_backend.model.pdf'],
+            },
+            {
+                'interface': 'fs',
+                'defaults': ['paperwork_backend.fs.gio'],
+            },
+            {
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_core.mainloop_asyncio'],
+            },
+        ]
 
     def get_import_mime_type(self, out: list):
         out.append(("PDF", self.MIME_TYPE))

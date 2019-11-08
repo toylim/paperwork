@@ -63,11 +63,12 @@ class Plugin(openpaperwork_core.PluginBase):
         return ['doc_renderer']
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('extra_text', ['paperwork_backend.model.extra_text']),
-            ]
-        }
+        return [
+            {
+                'interface': 'extra_text',
+                'defaults': ['paperwork_backend.model.extra_text'],
+            },
+        ]
 
     def doc_renderer_get(self, out):
         r = ExtraTextRenderer(self.core)

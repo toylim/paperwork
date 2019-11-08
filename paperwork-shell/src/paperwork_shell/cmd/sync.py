@@ -31,16 +31,17 @@ class Plugin(openpaperwork_core.PluginBase):
         return ['shell']
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('syncable', [
+        return [
+            {
+                "interface": "syncable",
+                "defaults": [
                     "paperwork_backend.guesswork.label.simplebayes",
                     "paperwork_backend.guesswork.ocr.pyocr",
                     "paperwork_backend.index.whoosh",
                     "paperwork_backend.model.labels",
-                ]),
-            ],
-        }
+                ],
+            },
+        ]
 
     def cmd_set_interactive(self, interactive):
         self.interactive = interactive

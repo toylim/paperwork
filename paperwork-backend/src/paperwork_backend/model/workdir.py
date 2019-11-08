@@ -20,12 +20,16 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('fs', ['paperwork_backend.fs.gio']),
-                ('paperwork_config', ['paperwork_backend.config.file']),
-            ]
-        }
+        return [
+            {
+                'interface': 'fs',
+                'defaults': ['paperwork_backend.fs.gio'],
+            },
+            {
+                'interface': 'paperwork_config',
+                'defaults': ['paperwork_backend.config.file'],
+            },
+        ]
 
     def init(self, core):
         super().init(core)

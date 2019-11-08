@@ -30,12 +30,9 @@ class Plugin(openpaperwork_core.PluginBase):
         return ['shell']
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                # will call method from interface 'chkdeps', but we can still
-                # work if no other plugin implement 'chkdeps'.
-            ],
-        }
+        # will call method from interface 'chkdeps', but we can still
+        # work if no other plugin implement 'chkdeps'.
+        return []
 
     def _get_distribution(self):
         distribution = distro.linux_distribution(full_distribution_name=False)

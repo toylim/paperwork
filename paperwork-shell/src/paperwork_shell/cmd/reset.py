@@ -36,19 +36,24 @@ class Plugin(openpaperwork_core.PluginBase):
         return ['shell']
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                # optional dependency
-                # ('img_renderer', [
-                #     'paperwork_shell.display.docrendering.img'
-                # ]),
-                ('page_reset', ['paperwork_backend.model.img_overlay',]),
-                ('pillow', [
+        return [
+            # optional dependency
+            # {
+            #     "interface": "img_renderer",
+            #     "defaults": ["paperwork_shell.display.docrendering.img"],
+            # },
+            {
+                "interface": "page_reset",
+                "defaults": ["paperwork_backend.model.img_overlay"],
+            },
+            {
+                "interface": "pillow",
+                "defaults": [
                     'paperwork_backend.pillow.img',
                     'paperwork_backend.pillow.pdf',
-                ])
-            ],
-        }
+                ],
+            },
+        ]
 
     def cmd_set_interactive(self, interactive):
         self.interactive = interactive

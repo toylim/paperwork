@@ -114,13 +114,20 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('document_storage', ['paperwork_backend.model.workdir']),
-                ('fs', ['paperwork_backend.fs.gio']),
-                ('mainloop', ['openpaperwork_core.mainloop_asyncio']),
-            ]
-        }
+        return [
+            {
+                'interface': 'document_storage',
+                'defaults': ['paperwork_backend.model.workdir'],
+            },
+            {
+                'interface': 'fs',
+                'defaults': ['paperwork_backend.fs.gio']
+            },
+            {
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_core.mainloop_asyncio'],
+            },
+        ]
 
     def init(self, core):
         super().init(core)

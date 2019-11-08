@@ -81,9 +81,12 @@ class Plugin(PluginBase):
         return []
 
     def get_deps(self):
-        return {'interfaces': [
-            ('configuration', ['openpaperwork_core.config_file']),
-        ]}
+        return [
+            {
+                'interface': 'configuration',
+                'defaults': ['openpaperwork_core.config_file'],
+            },
+        ]
 
     def init(self, core):
         self.core = core

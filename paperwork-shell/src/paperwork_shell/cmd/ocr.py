@@ -33,11 +33,12 @@ class Plugin(openpaperwork_core.PluginBase):
         return ['shell']
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('ocr', ['paperwork_backend.guesswork.ocr.pyocr'])
-            ],
-        }
+        return [
+            {
+                "interface": "ocr",
+                "defaults": ['paperwork_backend.guesswork.ocr.pyocr'],
+            },
+        ]
 
     def cmd_set_interactive(self, interactive):
         self.interactive = interactive

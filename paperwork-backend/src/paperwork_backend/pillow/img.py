@@ -18,11 +18,12 @@ class Plugin(openpaperwork_core.PluginBase):
         return ['pillow']
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('fs', ['paperwork_backend.fs.gio']),
-            ]
-        }
+        return [
+            {
+                'interface': 'fs',
+                'defaults': ['paperwork_backend.fs.gio',]
+            }
+        ]
 
     def url_to_pillow(self, file_url):
         if file_url.split(".")[-1] not in self.FILE_EXTENSIONS:

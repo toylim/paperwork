@@ -7,11 +7,12 @@ import openpaperwork_core
 
 class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
-        return {
-            'interfaces': [
-                ("stats_post", ['paperwork_backend.beacon.stats']),
-            ]
-        }
+        return [
+            {
+                'interface': 'stats_post',
+                'defaults': ['paperwork_backend.beacon.stats'],
+            }
+        ]
 
     def stats_get(self, out: dict):
         flatpak = os.path.exists("/app")

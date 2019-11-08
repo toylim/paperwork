@@ -30,11 +30,12 @@ class Plugin(openpaperwork_core.PluginBase):
         return ['shell']
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('extra_text', ['paperwork_backend.model.extra_text']),
-            ],
-        }
+        return [
+            {
+                "interface": "extra_text",
+                "defaults": ['paperwork_backend.model.extra_text'],
+            },
+        ]
 
     def cmd_set_interactive(self, interactive):
         self.interactive = interactive

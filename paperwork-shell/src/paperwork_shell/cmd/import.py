@@ -35,15 +35,19 @@ class Plugin(openpaperwork_core.PluginBase):
         return ['shell']
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('fs', ['paperwork_backend.fs.gio']),
-                ('import', [
+        return [
+            {
+                "interface": "fs",
+                "defaults": "paperwork_backend.fs.gio",
+            },
+            {
+                "interface": "import",
+                "defaults": [
                     'paperwork_backend.docimport.img',
                     'paperwork_backend.docimport.pdf',
-                ]),
-            ],
-        }
+                ],
+            },
+        ]
 
     def cmd_set_interactive(self, interactive):
         self.interactive = interactive

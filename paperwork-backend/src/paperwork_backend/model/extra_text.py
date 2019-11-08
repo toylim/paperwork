@@ -17,11 +17,12 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('fs', ['paperwork_backend.fs.gio']),
-            ]
-        }
+        return [
+            {
+                'interface': 'fs',
+                'defaults': ['paperwork_backend.fs.gio'],
+            },
+        ]
 
     def doc_get_mtime_by_url(self, out: list, doc_url):
         extra_url = self.core.call_success(

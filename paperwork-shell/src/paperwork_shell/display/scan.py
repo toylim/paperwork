@@ -62,20 +62,24 @@ class Plugin(openpaperwork_core.PluginBase):
         self.page_hashes = {}
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('doc_renderer', [
-                    # if there are none loaded, nothing it displayed, which
-                    # may be fine.
-                    # (see paperwork-json)
-                ]),
-                ('img_renderer', [
-                    'paperwork_shell.display.docrendering.img',
-                ]),
-                # optional dependency: 'scan2doc'
-                ('scan', ['paperwork_backend.docscan.libinsane']),
-            ],
-        }
+        return [
+            # if there are no doc_renderer loaded, nothing it displayed, which
+            # may be fine.
+            #
+            # (see paperwork-json)
+            # {
+            #     'interface': 'doc_renderer',
+            #     'defaults': [],
+            # },
+            {
+                'interface': 'img_renderer',
+                'defaults': ['paperwork_shell.display.docrendering.img'],
+            },
+            {
+                'interface': 'scan',
+                'defaults': ['paperwork_backend.docscan.libinsane'],
+            },
+        ]
 
     def on_scan_feed_start(self, scan_id):
         pass

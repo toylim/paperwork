@@ -363,15 +363,28 @@ class Plugin(openpaperwork_core.PluginBase):
         return []
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('doc_labels', ['paperwork_backend.model.labels']),
-                ('doc_tracking', ['paperwork_backend.doctracker']),
-                ('document_storage', ['paperwork_backend.model.workdir']),
-                ('fs', ['paperwork_backend.fs.gio']),
-                ('mainloop', ['openpaperwork_core.mainloop_asyncio']),
-            ]
-        }
+        return [
+            {
+                'interface': 'doc_labels',
+                'defaults': ['paperwork_backend.model.labels'],
+            },
+            {
+                'interface': 'doc_tracking',
+                'defaults': ['paperwork_backend.doctracker'],
+            },
+            {
+                'interface': 'document_storage',
+                'defaults': ['paperwork_backend.model.workdir'],
+            },
+            {
+                'interface': 'fs',
+                'defaults': ['paperwork_backend.fs.gio'],
+            },
+            {
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_core.mainloop_asyncio'],
+            },
+        ]
 
     def _get_baye_dir(self, label_name):
         """

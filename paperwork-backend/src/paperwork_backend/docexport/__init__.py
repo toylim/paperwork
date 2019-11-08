@@ -70,11 +70,12 @@ class AbstractExportPipePlugin(openpaperwork_core.PluginBase):
         return ['export_pipes']
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('mainloop', ['openpaperwork_core.mainloop_asyncio']),
-            ]
-        }
+        return [
+            {
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_core.mainloop_asyncio'],
+            },
+        ]
 
     def export_get_pipe_by_name(self, name):
         for pipe in self.pipes:

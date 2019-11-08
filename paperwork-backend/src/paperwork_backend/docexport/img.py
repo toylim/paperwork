@@ -186,26 +186,36 @@ class Plugin(AbstractExportPipePlugin):
         ]
 
     def get_deps(self):
-        return {
-            "interfaces": [
-                ('doc_text', [
+        return [
+            {
+                'interface': 'doc_text',
+                'defaults': [
                     # load also model.img because model.pdf will
                     # satisfy the interface 'page_img' anyway
                     'paperwork_backend.model.img',
                     'paperwork_backend.model.hocr',
                     'paperwork_backend.model.pdf',
-                ]),
-                ('page_img', [
+                ],
+            },
+            {
+                'interface': 'page_img',
+                'defaults': [
                     # load also model.hocr because model.pdf will
                     # satisfy the interface 'doc_text' anyway
                     'paperwork_backend.model.img',
                     'paperwork_backend.model.hocr',
                     'paperwork_backend.model.pdf',
-                ]),
-                ('mainloop', ['openpaperwork_core.mainloop_asyncio']),
-                ("pillow", [
+                ],
+            },
+            {
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_core.mainloop_asyncio'],
+            },
+            {
+                'interface': 'pillow',
+                'defaults': [
                     'paperwork_backend.pillow.img',
                     'paperwork_backend.pillow.pdf',
-                ]),
-            ]
-        }
+                ],
+            },
+        ]

@@ -100,14 +100,15 @@ class Plugin(openpaperwork_core.PluginBase):
         return ['doc_renderer']
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ("page_boxes", [
+        return [
+            {
+                'interface': 'page_boxes',
+                'defaults': [
                     'paperwork_backend.model.hocr',
                     'paperwork_backend.model.pdf',
-                ]),
-            ]
-        }
+                ],
+            },
+        ]
 
     def doc_renderer_get(self, out):
         r = TextRenderer(self.core)

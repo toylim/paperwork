@@ -41,11 +41,12 @@ class Plugin(openpaperwork_core.PluginBase):
         return ['shell']
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('paperwork_config', ['paperwork_backend.config.file']),
-            ],
-        }
+        return [
+            {
+                'interface': 'paperwork_config',
+                'defaults': ['paperwork_backend.config.file']
+            },
+        ]
 
     def cmd_complete_argparse(self, parser):
         application = self.core.call_success("paperwork_get_application_name")

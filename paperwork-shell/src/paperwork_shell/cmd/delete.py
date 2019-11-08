@@ -33,16 +33,20 @@ class Plugin(openpaperwork_core.PluginBase):
         return ['shell']
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('document_storage', ['paperwork_backend.model.workdir']),
-                ('pages', [
+        return [
+            {
+                "interface": "document_storage",
+                "defaults": ['paperwork_backend.model.workdir'],
+            },
+            {
+                "interface": "pages",
+                "defaults": [
                     'paperwork_backend.model.hocr',
                     'paperwork_backend.model.img',
                     'paperwork_backend.model.thumbnail',
-                ])
-            ],
-        }
+                ],
+            },
+        ]
 
     def cmd_set_interactive(self, interactive):
         self.interactive = interactive

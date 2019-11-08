@@ -47,29 +47,40 @@ class Plugin(openpaperwork_core.PluginBase):
         return ['interface_name_toto', 'interface_name_tutu']
 
     def get_deps(self):
-        return {
-            'plugins': [
-                # specify that some plugins are explicitely required
-                # (not recommended)
-                'module_name_a',
-                'module_name_b',
-            ],
-            'interfaces': [
-                # specify that we are looking for plugins implemented the
-                # specified interface(s) (recommended). Provide also
-                # some default plugins to load if no plugins provide the
-                # requested interface yet. Core will try to load them one
-                # after the other until the interface is available.
-                ('interface_name_a', [
+        # specify that we are looking for plugins implementing the
+        # specified interface(s) (recommended).
+        # Provide also some default plugins to load if no plugins provide the
+        # requested interface yet.
+        # By default, it is assumed that the specified interface has already
+        # be loaded (default plugin list must be exhaustive). If not, an error
+        # will be raised.
+        # When running tests, the default plugin list is used (it allows to
+        # make sure it is exhaustive).
+        # Note that plugins may be loaded in any order. Dependencies may not
+        # be satisfied yet when they are loaded.
+        # When initializing plugins, the core will make sure that dependencies
+        # are satisfied, loaded and initialized before calling `init()`.
+        return [
+            {
+                'interface': 'interface_name_a',
+                'defaults': [
                     'suggested_default_plugin_a',
                     'suggested_default_plugin_b',
-                ])
-                ('interface_name_b', [
+                ],
+            },
+            {
+                'interface': 'inteface_name_b',
+                'defaults': [
                     'suggested_default_plugin_d',
                     'suggested_default_plugin_e',
-                ])
-            ],
-        }
+
+                    # do not raise an error if no plugin already-loaded
+                    # implements the required interface. Instead, load the
+                    # default plugins.
+                    'expected_already_satisfied': False,
+                ],
+            }
+        ]
 
     def init(self, core):
         # all the dependnecies have loaded and initialized.

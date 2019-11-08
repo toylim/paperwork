@@ -33,12 +33,16 @@ class Plugin(openpaperwork_core.PluginBase):
         return ['shell']
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('doc_labels', ['paperwork_backend.model.labels']),
-                ('document_storage', ['paperwork_backend.model.workdir']),
-            ],
-        }
+        return [
+            {
+                "interface": "doc_labels",
+                "defaults": ["paperwork_backend.model.labels"],
+            },
+            {
+                "interface": "document_storage",
+                "defaults": ["paperwork_backend.model.workdir"],
+            },
+        ]
 
     def cmd_set_interactive(self, interactive):
         self.interactive = interactive
