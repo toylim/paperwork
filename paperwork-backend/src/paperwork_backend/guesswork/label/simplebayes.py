@@ -360,7 +360,9 @@ class Plugin(openpaperwork_core.PluginBase):
         self.sql_file = None
 
     def get_interfaces(self):
-        return []
+        return [
+            'sync',  # actually implemented by doctracker
+        ]
 
     def get_deps(self):
         return [
