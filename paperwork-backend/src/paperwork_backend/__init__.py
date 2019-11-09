@@ -5,6 +5,9 @@ DEFAULT_CONFIG_PLUGINS = [
 
 DEFAULT_PLUGINS = [
     'openpaperwork_core.config_file',
+    'paperwork_backend.beacon.stats',
+    'paperwork_backend.beacon.sysinfo',
+    'paperwork_backend.beacon.update',
     'paperwork_backend.docexport.img',
     'paperwork_backend.docexport.pdf',
     'paperwork_backend.docexport.pillowfight',
@@ -43,9 +46,6 @@ DEFAULT_PLUGINS = [
 
 DEFAULT_GUI_PLUGINS = [
     'openpaperwork_core.log_collector',
-    'paperwork_backend.beacon.stats',
-    'paperwork_backend.beacon.sysinfo',
-    'paperwork_backend.beacon.update',
 ] + DEFAULT_PLUGINS
 
 DEFAULT_SHELL_PLUGINS = [
