@@ -6,6 +6,9 @@ import openpaperwork_core
 
 
 class Plugin(openpaperwork_core.PluginBase):
+    def get_interfaces(self):
+        return ['stats']
+
     def get_deps(self):
         return [
             {
