@@ -5,7 +5,7 @@ import openpaperwork_core
 
 class TestSysinfo(unittest.TestCase):
     def setUp(self):
-        self.core = openpaperwork_core.Core()
+        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
         self.core.load("paperwork_backend.beacon.sysinfo")
 
     def test_get(self):

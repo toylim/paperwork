@@ -6,6 +6,10 @@ import logging
 LOGGER = logging.getLogger(__name__)
 
 
+class DependencyException(Exception):
+    pass
+
+
 class PluginBase(object):
     """
     Indicates all the methods that must be implemented by any plugin
@@ -63,12 +67,13 @@ class Core(object):
     """
     Manage plugins and their callbacks.
     """
-    def __init__(self):
+    def __init__(self, allow_unsatisfied=False):
         self.plugins = {}
         self._to_initialize = set()
         self._initialized = set()  # avoid double-init
         self.interfaces = collections.defaultdict(list)
         self.callbacks = collections.defaultdict(list)
+        self.allow_unsatisfied = allow_unsatisfied
 
     def load(self, module_name):
         """
@@ -135,22 +140,36 @@ class Core(object):
             deps = plugin.get_deps()
             for dep in deps:
                 interface = dep['interface']
-                defaults = dep['defaults']
                 if len(self.interfaces[interface]) > 0:
-                    LOGGER.info(
+                    LOGGER.debug(
                         "- Interface '%s' already provided by %d plugins",
                         interface, len(self.interfaces[interface])
                     )
                     continue
+
+                defaults = dep['defaults']
                 if len(defaults) <= 0:
                     continue
-                LOGGER.warning(
-                    "Loading plugins %s to satisfy dependency."
-                    " Required by '%s' for interface '%s'",
-                    defaults, type(plugin), interface
-                )
-                for default in defaults:
-                    to_examine.append(self.load(default))
+
+                if (not self.allow_unsatisfied
+                        and (
+                            'expected_already_satisfied' not in dep
+                            or dep['expected_already_satisfied']
+                        )):
+                    raise DependencyException(
+                        "Plugin '{}' requires interface '{}' but no plugins"
+                        " provide this interface (suggested: {}).".format(
+                            type(plugin), interface, defaults
+                        )
+                    )
+                else:
+                    LOGGER.info(
+                        "Loading plugins %s to satisfy dependency."
+                        " Required by '%s' for interface '%s'",
+                        defaults, type(plugin), interface
+                    )
+                    for default in defaults:
+                        to_examine.append(self.load(default))
 
     def _init(self, plugin):
         if plugin in self._initialized:

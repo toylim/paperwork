@@ -12,7 +12,7 @@ class TestPdfImport(unittest.TestCase):
                 os.path.dirname(os.path.abspath(__file__))
             )
         )
-        self.core = openpaperwork_core.Core()
+        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
 
         self.copies = []
         self.add_docs = []
@@ -123,7 +123,7 @@ class TestRecursivePdfImport(unittest.TestCase):
                 os.path.dirname(os.path.abspath(__file__))
             )
         )
-        self.core = openpaperwork_core.Core()
+        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
 
         self.copies = []
         self.add_docs = []

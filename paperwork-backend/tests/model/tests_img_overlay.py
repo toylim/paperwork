@@ -5,7 +5,7 @@ import openpaperwork_core
 
 class TestImg(unittest.TestCase):
     def setUp(self):
-        self.core = openpaperwork_core.Core()
+        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
         self.core.load("paperwork_backend.fs.fake")
         self.core.load("paperwork_backend.model.img")
         self.core.load("paperwork_backend.model.img_overlay")

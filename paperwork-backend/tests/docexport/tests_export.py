@@ -18,7 +18,7 @@ class TestExport(unittest.TestCase):
             )
         )
 
-        self.core = openpaperwork_core.Core()
+        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
         self.core.load("paperwork_backend.docexport.img")
         self.core.load("paperwork_backend.docexport.pdf")
         self.core.load("paperwork_backend.docexport.pillowfight")

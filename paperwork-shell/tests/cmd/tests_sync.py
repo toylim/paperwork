@@ -30,7 +30,7 @@ class TestSync(unittest.TestCase):
         os.unsetenv('XDG_DATA_HOME')
 
     def test_sync(self):
-        core = openpaperwork_core.Core()
+        core = openpaperwork_core.Core(allow_unsatisfied=True)
         core.load("paperwork_backend.config.fake")
         core.init()
         config = core.get_by_name("paperwork_backend.config.fake")

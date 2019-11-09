@@ -5,7 +5,7 @@ import openpaperwork_core
 
 class TestHocr(unittest.TestCase):
     def setUp(self):
-        self.core = openpaperwork_core.Core()
+        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
         self.core.load("paperwork_backend.fs.fake")
         self.core.load("paperwork_backend.model.hocr")
         self.core.init()

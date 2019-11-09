@@ -6,7 +6,7 @@ import openpaperwork_core.promise
 
 class TestCallback(unittest.TestCase):
     def setUp(self):
-        self.core = openpaperwork_core.Core()
+        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
         self.core.load("openpaperwork_core.mainloop_asyncio")
         self.core.init()
 
@@ -27,7 +27,7 @@ class TestCallback(unittest.TestCase):
 
 class TestPromise(unittest.TestCase):
     def setUp(self):
-        self.core = openpaperwork_core.Core()
+        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
         self.core.load("openpaperwork_core.mainloop_asyncio")
         self.core.init()
 

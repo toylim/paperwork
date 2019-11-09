@@ -9,7 +9,7 @@ import openpaperwork_core
 
 class TestReadWrite(unittest.TestCase):
     def test_simple_getset(self):
-        core = openpaperwork_core.Core()
+        core = openpaperwork_core.Core(allow_unsatisfied=True)
         core.load('openpaperwork_core.config_file')
 
         core.init()
@@ -28,7 +28,7 @@ class TestReadWrite(unittest.TestCase):
         core.call_all('config_add_plugin', 'some_opt', 'some_test_module')
 
     def test_no_config_file(self):
-        core = openpaperwork_core.Core()
+        core = openpaperwork_core.Core(allow_unsatisfied=True)
         core.load('openpaperwork_core.config_file')
 
         core.get_by_name('openpaperwork_core.config_file').base_path = (
@@ -44,7 +44,7 @@ class TestReadWrite(unittest.TestCase):
             shutil.rmtree(core.get_by_name('openpaperwork_core.config_file').base_path)
 
     def test_simple_readwrite(self):
-        core = openpaperwork_core.Core()
+        core = openpaperwork_core.Core(allow_unsatisfied=True)
         core.load('openpaperwork_core.config_file')
 
         core.get_by_name('openpaperwork_core.config_file').base_path = (
@@ -77,7 +77,7 @@ class TestReadWrite(unittest.TestCase):
     def test_simple_load_module(self, import_module):
         import openpaperwork_core.config_file
 
-        core = openpaperwork_core.Core()
+        core = openpaperwork_core.Core(allow_unsatisfied=True)
 
         import_module.return_value = openpaperwork_core.config_file
         core.load('openpaperwork_core.config_file')
@@ -105,7 +105,7 @@ class TestReadWrite(unittest.TestCase):
         self.assertEqual(core.get_by_name('some_test_module_2').initialized, True)
 
     def test_observers(self):
-        core = openpaperwork_core.Core()
+        core = openpaperwork_core.Core(allow_unsatisfied=True)
         core.load('openpaperwork_core.config_file')
 
         core.get_by_name('openpaperwork_core.config_file').base_path = (
@@ -147,7 +147,7 @@ class TestReadWrite(unittest.TestCase):
             shutil.rmtree(core.get_by_name('openpaperwork_core.config_file').base_path)
 
     def test_simple_readwrite_list(self):
-        core = openpaperwork_core.Core()
+        core = openpaperwork_core.Core(allow_unsatisfied=True)
         core.load('openpaperwork_core.config_file')
 
         core.get_by_name('openpaperwork_core.config_file').base_path = (
@@ -187,7 +187,7 @@ class TestReadWrite(unittest.TestCase):
             shutil.rmtree(core.get_by_name('openpaperwork_core.config_file').base_path)
 
     def test_simple_readwrite_dict(self):
-        core = openpaperwork_core.Core()
+        core = openpaperwork_core.Core(allow_unsatisfied=True)
         core.load('openpaperwork_core.config_file')
 
         core.get_by_name('openpaperwork_core.config_file').base_path = (
@@ -238,7 +238,7 @@ class TestReadWrite(unittest.TestCase):
             )
 
     def test_getset_date(self):
-        core = openpaperwork_core.Core()
+        core = openpaperwork_core.Core(allow_unsatisfied=True)
         core.load('openpaperwork_core.config_file')
 
         core.get_by_name('openpaperwork_core.config_file').base_path = (

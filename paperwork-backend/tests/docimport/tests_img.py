@@ -12,7 +12,7 @@ class TestImgImport(unittest.TestCase):
                 os.path.dirname(os.path.abspath(__file__))
             )
         )
-        self.core = openpaperwork_core.Core()
+        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
 
         self.pillowed = []
         self.add_docs = []
@@ -182,7 +182,7 @@ class TestImgImport(unittest.TestCase):
                 os.path.dirname(os.path.abspath(__file__))
             )
         )
-        self.core = openpaperwork_core.Core()
+        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
 
         self.pillowed = []
         self.add_docs = []

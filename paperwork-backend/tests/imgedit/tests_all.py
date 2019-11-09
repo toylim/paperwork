@@ -15,7 +15,7 @@ class TestImgEdit(unittest.TestCase):
             )
         )
 
-        self.core = openpaperwork_core.Core()
+        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
         self.core.load("paperwork_backend.imgedit.color")
         self.core.load("paperwork_backend.imgedit.crop")
         self.core.load("paperwork_backend.imgedit.rotate")

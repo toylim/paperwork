@@ -19,7 +19,7 @@ class TestLoading(unittest.TestCase):
                 def test_method(self):
                     self.test_method_called = True
 
-        core = openpaperwork_core.Core()
+        core = openpaperwork_core.Core(allow_unsatisfied=True)
 
         import_module.return_value = TestModule()
         core.load('whatever_module')
@@ -70,7 +70,7 @@ class TestLoading(unittest.TestCase):
                 def init(self, core):
                     self.init_called = True
 
-        core = openpaperwork_core.Core()
+        core = openpaperwork_core.Core(allow_unsatisfied=True)
 
         import_module.return_value = TestModuleB()
         core.load('module_b')
@@ -146,6 +146,7 @@ class TestInit(unittest.TestCase):
                         {
                             'interface': 'module_b',
                             'defaults': ['module_b'],
+                            'expected_already_satisfied': False,
                         }
                     ]
 
@@ -213,7 +214,7 @@ class TestCall(unittest.TestCase):
                 def test_method(self):
                     self.test_method_called_c = True
 
-        core = openpaperwork_core.Core()
+        core = openpaperwork_core.Core(allow_unsatisfied=True)
 
         import_module.return_value = TestModuleC()
         core.load('module_c')
@@ -270,7 +271,7 @@ class TestCall(unittest.TestCase):
                     self.test_method_called_d = True
                     return None
 
-        core = openpaperwork_core.Core()
+        core = openpaperwork_core.Core(allow_unsatisfied=True)
 
         import_module.return_value = TestModuleB()
         core.load('module_b')
@@ -312,7 +313,7 @@ class TestCall(unittest.TestCase):
                 def test_method(self):
                     return "B"
 
-        core = openpaperwork_core.Core()
+        core = openpaperwork_core.Core(allow_unsatisfied=True)
 
         import_module.return_value = TestModuleA()
         core.load('module_a')

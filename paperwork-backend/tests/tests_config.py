@@ -65,7 +65,7 @@ class MockConfigFileModule(object):
 
 class TestConfig(unittest.TestCase):
     def setUp(self):
-        self.core = openpaperwork_core.Core()
+        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
         self.core._load_module(
             "openpaperwork_core.config_file", MockConfigFileModule()
         )

@@ -39,7 +39,7 @@ class TestPageEdit(unittest.TestCase):
         self.pillowed = []
         self.ui_calls = []
 
-        self.core = openpaperwork_core.Core()
+        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
         self.core.load("paperwork_backend.model.fake")
         self.core.load("paperwork_backend.imgedit.color")
         self.core.load("paperwork_backend.imgedit.crop")
