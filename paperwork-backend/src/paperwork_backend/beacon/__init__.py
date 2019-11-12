@@ -87,7 +87,7 @@ class OpenpaperHttp(object):
             self.config_section_name + "_server":
                 core.call_success(
                     "paperwork_config_build_simple", self.config_section_name,
-                    "server", lambda: self.default_protocol
+                    "server", lambda: self.default_server
                 ),
             self.config_section_name + "_url":
                 core.call_success(
