@@ -142,11 +142,7 @@ class Plugin(openpaperwork_core.PluginBase):
         elif args.sub_command == "add":
 
             color = args.color
-            if color is None:
-                # color will be generated, but it implies loading current
-                # labels
-                self._load_all_labels()
-            else:
+            if color is not None:
                 # make sure the color is valid
                 color = self.core.call_success("label_color_to_rgb", color)
                 color = self.core.call_success("label_color_from_rgb", color)

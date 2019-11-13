@@ -128,8 +128,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 or self.all_labels[label] == color
             )
             self.all_labels[label] = color
+        if label in self.all_labels:
+            color = self.all_labels[label]
         else:
-            color = self.label_generator_color()
+            color = self.label_generate_color()
 
         LOGGER.info("Adding label '%s' on document '%s'", label, doc_url)
 
