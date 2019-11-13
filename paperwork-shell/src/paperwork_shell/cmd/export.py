@@ -81,7 +81,7 @@ class Plugin(openpaperwork_core.PluginBase):
         p.add_argument(
             '--out', '-o', type=str, required=False,
             help=_(
-                "Output file/directory. If not specify, will list"
+                "Output file/directory. If not specified, will list"
                 " the filters that could be chained after those already"
                 " specified."
             )
@@ -171,5 +171,5 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_one("schedule", promise.schedule)
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
-        sys.stdout.write(_("Done"))
+        sys.stdout.write(_("Done") + "\n")
         return self.core.call_success("fs_exists", out) is not None
