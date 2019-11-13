@@ -174,7 +174,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all("paperwork_config_save")
         if self.interactive:
             self.core.call_all(
-                "print", _("Plugin {} added").format(plugin_name + "\n")
+                "print", _("Plugin {} added").format(plugin_name) + "\n"
             )
             self.core.call_all("print_flush")
         return True
