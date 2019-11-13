@@ -128,14 +128,17 @@ class Core(object):
         LOGGER.info("Plugin '%s' loaded", module_name)
         return plugin
 
-    def _load_deps(self):
-        to_examine = list(self.plugins.values())
+    def _check_deps(self):
+        to_examine = [
+            (plugin_name, plugin)
+            for (plugin_name, plugin) in self.plugins.items()
+        ]
 
         while len(to_examine) > 0:
-            plugin = to_examine[0]
+            (plugin_name, plugin) = to_examine[0]
             to_examine = to_examine[1:]
 
-            LOGGER.info("Examining dependencies of '%s' ...", type(plugin))
+            LOGGER.info("Examining dependencies of '%s' ...", plugin_name)
 
             deps = plugin.get_deps()
             for dep in deps:
@@ -156,12 +159,17 @@ class Core(object):
                             'expected_already_satisfied' not in dep
                             or dep['expected_already_satisfied']
                         )):
-                    raise DependencyException(
+                    LOGGER.warning(
                         "Plugin '{}' requires interface '{}' but no plugins"
-                        " provide this interface (suggested: {}).".format(
-                            type(plugin), interface, defaults
+                        " provide this interface (suggested: {}). Plugin '{}'"
+                        " will be unloaded.".format(
+                            plugin_name, interface, defaults, plugin_name
                         )
                     )
+                    self.plugins.pop(plugin_name)
+                    # return False to indicate we actually dropped a plugin
+                    # and need to reevaluate all the dependencies again.
+                    return False
                 else:
                     LOGGER.info(
                         "Loading plugins %s to satisfy dependency."
@@ -169,7 +177,9 @@ class Core(object):
                         defaults, type(plugin), interface
                     )
                     for default in defaults:
-                        to_examine.append(self.load(default))
+                        to_examine.append((default, self.load(default)))
+
+        return True
 
     def _init(self, plugin):
         if plugin in self._initialized:
@@ -195,7 +205,8 @@ class Core(object):
         BEWARE of dependency loops !
         """
         LOGGER.info("Initializing all plugins")
-        self._load_deps()
+        while not self._check_deps():
+            pass
         for plugin in self._to_initialize:
             self._init(plugin)
         self._to_initialize = set()
