@@ -111,7 +111,7 @@ class Plugin(openpaperwork_core.PluginBase):
                     )
                     if self.interactive:
                         print(del_page_msg % (page + 1, doc_id))
-                    self.core.call_all("page_delete", doc_url, page)
+                    self.core.call_all("page_delete_by_url", doc_url, page)
 
         transactions = []
         self.core.call_all("doc_transaction_start", transactions, len(doc_ids))
