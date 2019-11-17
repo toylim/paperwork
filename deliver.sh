@@ -42,7 +42,9 @@ fi
 
 echo "rclone: ${latest_name}"
 
-if ! rclone --config ./rclone.conf copyto "ovhswift:download_openpaperwork/${os}/${arch}/${out_name}" "ovhswift:download_openpaperwork/${DELIVERY_PATH}/${os}/${arch}/${latest_name}" ; then
+if ! rclone --config ./rclone.conf copyto \
+    "ovhswift:download_openpaperwork/${os}/${arch}/${out_name}" \
+    "ovhswift:download_openpaperwork/${os}/${arch}/${latest_name}" ; then
   echo "rclone failed"
   exit 1
 fi
