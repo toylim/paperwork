@@ -10,53 +10,40 @@ else
   arch="x86"
 fi
 
-if [ -z "$DELIVERY_KEY" ] ; then
-  echo "Delivery: No ssh private key provided."
+if [ "${os}" = "linux" ] ; then
+  arch="amd64"
+else
+  arch="x86"
+fi
+
+if [ -z "$RCLONE_CONFIG_OVHSWIFT_USER" ] ; then
+  echo "Delivery: No rclone credentials provided."
   exit 0
 fi
 
-if ! which ssh-agent; then
-  echo "ssh-agent not available. Installing"
-  if ! (apt-get update -y && apt-get install openssh-client -y) && ! pacman --needed --noconfirm -S openssh ; then
-    echo "Failed to install ssh-agent"
-    exit 1
-  fi
+if ! which rclone; then
+  echo "rclone not available."
+  exit 1
 fi
-if ! which rsync; then
-  echo "rsync not available. Installing"
-  if ! (apt-get update -y && apt-get install rsync -y) && ! pacman --needed --noconfirm -S rsync ; then
-    echo "Failed to install rsync"
-    exit 1
-  fi
-fi
-
-mkdir -p ~/.ssh
-chmod 700 ~/.ssh
-
-rm -f ~/.ssh/known_hosts
-echo "$DELIVERY_SERVER_KEY" > ~/.ssh/known_hosts
-chmod 644 ~/.ssh/known_hosts
-
-eval $(ssh-agent -s)
-echo "$DELIVERY_KEY" | tr -d '\r' | ssh-add - > /dev/null
 
 echo "Delivering: ${binary} (${CI_COMMIT_REF_NAME} - ${CI_COMMIT_SHORT_SHA})"
-echo "To: $DELIVERY_USER@$DELIVERY_SERVER:$DELIVERY_PATH (${exe_suffix} ${os})"
+echo "Destination: ${os}/${arch} (${exe_suffix})"
 
 out_name="paperwork-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}${exe_suffix}"
 latest_name="paperwork-${CI_COMMIT_REF_NAME}-latest${exe_suffix}"
 
-ls -lh "${binary}"
 
-if ! rsync -tz "${binary}" "${DELIVERY_USER}@${DELIVERY_SERVER}:${DELIVERY_PATH}/${os}/${arch}/${out_name}" ; then
-  echo "rsync failed"
+echo "rclone: ${out_name}"
+
+if ! rclone --config ./rclone.conf copyto "${binary}" "ovhswift:download_openpaperwork/${os}/${arch}/${out_name}" ; then
+  echo "rclone failed"
   exit 1
 fi
 
-if ! ssh "${DELIVERY_USER}@${DELIVERY_SERVER}" -- ln -nfs \
-    ${out_name} \
-    ${DELIVERY_PATH}/${os}/${arch}/${latest_name} ; then
-  echo ln failed
+echo "rclone: ${latest_name}"
+
+if ! rclone --config ./rclone.conf copyto "ovhswift:download_openpaperwork/${os}/${arch}/${out_name}" "ovhswift:download_openpaperwork/${DELIVERY_PATH}/${os}/${arch}/${latest_name}" ; then
+  echo "rclone failed"
   exit 1
 fi
 

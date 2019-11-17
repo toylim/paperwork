@@ -61,6 +61,12 @@ windows_exe:
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S zip
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-nsis
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-nsis-nsisunz
+    # We need rclone to upload the files on OVH object storage
+    - c:\msys64\usr\bin\rm -f rclone-v1.50.1-windows-386.zip
+    - c:\msys64\usr\bin\rm -rf rclone-v1.50.1-windows-386
+    - c:\msys64\usr\bin\wget -q https://downloads.rclone.org/v1.50.1/rclone-v1.50.1-windows-386.zip
+    - c:\msys64\usr\bin\unzip rclone-v1.50.1-windows-386.zip
+    - c:\msys64\usr\bin\cp rclone-v1.50.1-windows-386/rclone.exe /usr/bin
     # Build
     - git submodule init
     - git submodule update --recursive --remote
