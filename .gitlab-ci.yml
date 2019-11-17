@@ -22,6 +22,9 @@ linux_flatpak:
   tags:
     - flatpak
   script:
+    # not running as root, so we cannot actually install anything
+    # - apt-get update
+    # - apt-get install -y -q rclone flatpak-builder
     - ./update_flatpak_repo.sh
 
 windows_exe:
