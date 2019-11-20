@@ -308,7 +308,7 @@ def _get_scanner(config, libinsane, devid, preferred_sources=None):
         src_name = None
         for possible in preferred_sources:
             if possible.lower() in config_source.lower():
-                src_name = [config_source]
+                src_name = config_source
                 break
         # else find a source that matches the preferred_sources requirement
         if src_name is None:
