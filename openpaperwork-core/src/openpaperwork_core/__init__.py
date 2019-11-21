@@ -48,13 +48,16 @@ class PluginBase(object):
         Return the dependencies required by this plugin.
 
         Example:
-        [
+
+        .. code-block:: python
+
+          [
             {
-                "interface": "some_interface_name",  # required
-                "defaults": ['plugin_a', 'plugin_b'],  # required
-                "expected_already_satisfied": False,  # optional, default: True
+              "interface": "some_interface_name",  # required
+              "defaults": ['plugin_a', 'plugin_b'],  # required
+              "expected_already_satisfied": False,  # optional, default: True
             },
-        ]
+          ]
         """
         return []
 

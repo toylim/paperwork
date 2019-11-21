@@ -38,6 +38,8 @@ test: $(ALL_COMPONENTS:%=%_test)
 
 doc: $(ALL_COMPONENTS:%=%_doc)
 
+upload_doc: $(ALL_COMPONENTS:%=%_upload_doc)
+
 release_pypi: $(ALL_COMPONENTS:%=%_release_pypi)
 
 release: $(ALL_COMPONENTS:%=%_release)
@@ -87,15 +89,19 @@ help:
 	$(MAKE) -C $(@:%_check=%) check
 
 %_test:
-	echo "Checking $(@:%_test=%)"
+	echo "Testing $(@:%_test=%)"
 	$(MAKE) -C $(@:%_test=%) test
 
+%_upload_doc:
+	echo "Uploading doc of $(@:%_upload_doc=%)"
+	$(MAKE) -C $(@:%_upload_doc=%) upload_doc
+
 %_doc:
-	echo "Checking $(@:%_doc=%)"
+	echo "Generating doc of $(@:%_doc=%)"
 	$(MAKE) -C $(@:%_doc=%) doc
 
 %_clean:
-	echo "Building $(@:%_clean=%)"
+	echo "Cleaning $(@:%_clean=%)"
 	$(MAKE) -C $(@:%_clean=%) clean
 
 %_uninstall:
@@ -133,4 +139,4 @@ venv:
 
 .PHONY: help build clean test check install install_py install_c uninstall \
 	uninstall_c uninstall_py release libinsane_win32 pyocr_win32 \
-	libpillowfight_win32
+	libpillowfight_win32 doc upload_doc

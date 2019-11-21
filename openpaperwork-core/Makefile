@@ -19,7 +19,13 @@ ${VERSION_FILE}:
 	echo -n $(shell git describe --always) >> $@
 	echo "\"" >> $@
 
-doc:
+doc: install_py
+	$(MAKE) -C doc html
+
+doc/_build/html/index.html: doc
+
+upload_doc: doc/_build/html/index.html
+	cd .. && ./deliver_doc.sh ${CURDIR}/doc/_build/html openpaperwork_core
 
 check:
 	flake8 src/openpaperwork_core
@@ -47,6 +53,7 @@ release_pypi:
 	@echo "All done"
 
 clean:
+	rm -rf doc/_build
 	rm -f ${VERSION_FILE}
 	rm -rf build dist *.egg-info
 
