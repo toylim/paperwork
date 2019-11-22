@@ -7,6 +7,9 @@ LOGGER = logging.getLogger(__name__)
 
 
 class DependencyException(Exception):
+    """
+    Failed to satisfy dependencies.
+    """
     pass
 
 
@@ -62,7 +65,11 @@ class PluginBase(object):
         return []
 
     def init(self, core):
-        # default implementation
+        """
+        Plugins can initialize whatever they want here. When called, all
+        dependencies have been loaded and initialized, so using them is safe.
+        Does nothing by default.
+        """
         self.core = core
 
 
@@ -71,6 +78,11 @@ class Core(object):
     Manage plugins and their callbacks.
     """
     def __init__(self, allow_unsatisfied=False):
+        """
+        `allow_unsatisfied=True` means that missing dependencies will be
+        loaded automatically based on the default plugin list provided by
+        plugins. This should be only used for testing.
+        """
         self.plugins = {}
         self._to_initialize = set()
         self._initialized = set()  # avoid double-init
@@ -230,6 +242,23 @@ class Core(object):
         Call all the methods of all the plugins that have `callback_name`
         as name. Arguments are passed as is. Returned values are dropped
         (use callbacks for return values if required)
+
+        When we need a return value from callbacks called with `call_all()`,
+        we need a way to get the results from all of them. The usual way to do
+        that is to instantiate an empty `list` or `set`, and pass it as first
+        argument of the callbacks (argument `out`). Callbacks can then
+        complete this list or set using `list.append()` or `set.add()`.
+
+        .. uml::
+
+           Caller -> Core: calls "func"
+           Core -> "Plugin A": plugin.func()
+           Core <- "Plugin A": returns "something_a"
+           Core -> "Plugin B": plugin.func()
+           Core <- "Plugin B": returns "something_b"
+           Core -> "Plugin C": plugin.func()
+           Core <- "Plugin C": returns "something_c"
+           Caller <- Core: returns 3
         """
         callbacks = self.callbacks[callback_name]
         if len(callbacks) <= 0:
@@ -251,6 +280,13 @@ class Core(object):
         Raises an error if no such method exists. If many exists,
         raises a warning and call one at random.
         Returns the value return by the callback.
+
+        .. uml::
+
+           Caller -> Core: calls "func"
+           Core -> "Plugin A": plugin.func()
+           Core <- "Plugin A": returns X
+           Caller <- Core: returns X
 
         You're advised to use `call_all()` or `call_success` instead
         whenever possible. This method is only provided as convenience for
@@ -277,6 +313,19 @@ class Core(object):
         from None is returned. If none of the callbacks returned
         a value different from None or if no callback has the
         specified name, this method will return None.
+
+        Callbacks should never raise any exception.
+
+        .. uml::
+
+           Caller -> Core: calls "func"
+           Core -> "Plugin A": plugin.func()
+           Core <- "Plugin A": returns None
+           Core -> "Plugin B": plugin.func()
+           Core <- "Plugin B": returns None
+           Core -> "Plugin C": plugin.func()
+           Core <- "Plugin C": returns "something"
+           Caller <- Core: returns "something"
         """
         callbacks = self.callbacks[callback_name]
         if len(callbacks) <= 0:
