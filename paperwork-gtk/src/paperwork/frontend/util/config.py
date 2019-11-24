@@ -364,7 +364,7 @@ def get_scanner(config, libinsane, preferred_sources=None):
                 "Will try another scanner id: %s" % devices[0].get_dev_id()
             )
             return _get_scanner(
-                config, devices[0].get_dev_id(), preferred_sources
+                config, libinsane, devices[0].get_dev_id(), preferred_sources
             )
         except GLib.Error:
             # this is a fallback mechanism, but what interest us is the first
