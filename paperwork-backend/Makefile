@@ -1,4 +1,4 @@
-VERSION_FILE = paperwork_backend/_version.py
+VERSION_FILE = src/paperwork_backend/_version.py
 PYTHON ?= python3
 
 build: build_c build_py
@@ -22,7 +22,7 @@ ${VERSION_FILE}:
 doc:
 
 check:
-	flake8 paperwork_backend
+	flake8 src/paperwork_backend
 
 test: install
 	python3 -m unittest discover --verbose -s tests

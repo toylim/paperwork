@@ -1,4 +1,4 @@
-VERSION_FILE = src/openpaperwork_core/_version.py
+VERSION_FILE = src/paperwork_shell/_version.py
 PYTHON ?= python3
 
 build: build_c build_py
@@ -22,7 +22,7 @@ ${VERSION_FILE}:
 doc:
 
 check:
-	flake8 src/openpaperwork_core
+	flake8 src/paperwork_shell
 
 test: install
 	python3 -m unittest discover --verbose -s tests
@@ -42,8 +42,9 @@ else
 endif
 
 release_pypi:
-	@echo "Releasing paperwork-backend ..."
-	${PYTHON} ./setup.py sdist upload
+	@echo "Releasing paperwork-shell ..."
+	${PYTHON} ./setup.py sdist
+	twine upload dist/paperwork-shell-${RELEASE}.tar.gz
 	@echo "All done"
 
 clean:
@@ -57,7 +58,7 @@ install_py: ${VERSION_FILE}
 install_c:
 
 uninstall_py:
-	pip3 uninstall -y paperwork-backend
+	pip3 uninstall -y paperwork-shell
 
 uninstall_c:
 

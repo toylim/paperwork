@@ -80,8 +80,8 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(
             self.core.get_by_name('openpaperwork_core.config_file').calls,
             [
-                ('config_load', ('paperwork-gtk',), {}),
-                ('config_load_plugins', (['pouet'],), {}),
+                ('config_load', ('paperwork',), {}),
+                ('config_load_plugins', ('paperwork-gtk', ['pouet'],), {}),
             ]
         )
 

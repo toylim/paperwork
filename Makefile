@@ -1,5 +1,5 @@
 # order matters (dependencies)
-ALL_COMPONENTS = openpaperwork-core paperwork-backend paperwork-gtk
+ALL_COMPONENTS = openpaperwork-core paperwork-backend paperwork-shell paperwork-gtk
 
 build:
 

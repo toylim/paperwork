@@ -1,25 +1,18 @@
 #!/usr/bin/env python3
-
-import os
 import sys
 
-from setuptools import setup, find_packages
+import setuptools
 
-if os.name == "nt":
-    extra_deps = []
-else:
-    extra_deps = [
-        "python-Levenshtein",
-    ]
 
 quiet = '--quiet' in sys.argv or '-q' in sys.argv
 
+
 try:
-    with open("src/paperwork_backend/_version.py", "r") as file_descriptor:
+    with open("src/paperwork_shell/_version.py", "r") as file_descriptor:
         version = file_descriptor.read().strip()
         version = version.split(" ")[2][1:-1]
     if not quiet:
-        print("Paperwork-backend version: {}".format(version))
+        print("Paperwork-shell version: {}".format(version))
     if "-" in version:
         version = version.split("-")[0]
 except FileNotFoundError:
@@ -27,27 +20,22 @@ except FileNotFoundError:
     print("ERROR: Please run 'make version' first")
     sys.exit(1)
 
-setup(
-    name="paperwork-backend",
+
+setuptools.setup(
+    name="paperwork-shell",
     version=version,
-    description="Paperwork's backend",
+    description="Paperwork's shell interface",
     long_description="""Paperwork is a GUI to make papers searchable.
 
-This is the backend part of Paperwork. It manages:
-- The work directory / Access to the documents
-- Indexing
-- Searching
-- Suggestions
-- Import
-- Export
+- paperwork-cli : a interactive shell frontend for Paperwork.
 
-There is no GUI here. The GUI is
-<https://gitlab.gnome.org/World/OpenPaperwork/paperwork>.
-    """,
+- paperwork-json : a non-interactive shell frontend for Paperwork that always
+  return JSON results.
+""",
     keywords="documents",
     url=(
         "https://gitlab.gnome.org/World/OpenPaperwork/paperwork/tree/master/"
-        "paperwork-backend"
+        "paperwork-shell"
     ),
     download_url=(
         "https://gitlab.gnome.org/World/OpenPaperwork/paperwork/-"
@@ -69,22 +57,19 @@ There is no GUI here. The GUI is
     license="GPLv3+",
     author="Jerome Flesch",
     author_email="jflesch@openpaper.work",
-    packages=find_packages('src'),
+    packages=setuptools.find_packages('src'),
     package_dir={'': 'src'},
+    entry_points={
+        'console_scripts': [
+            'paperwork-cli = paperwork_shell.main:cli_main',
+            'paperwork-json = paperwork_shell.main:json_main',
+        ],
+    },
     zip_safe=True,
     install_requires=[
-        "distro",
         "openpaperwork-core",
-        "Pillow",
-        "pycountry",
-        "pyocr",
-        "pypillowfight",
-        "simplebayes",
-        "Whoosh",
-        # paperwork-shell chkdeps take care of all the dependencies that can't
-        # be handled here. Mainly, dependencies using gobject introspection
-        # (libpoppler, etc)
-    ] + extra_deps
+        "paperwork-backend",
+    ]
 )
 
 if quiet:

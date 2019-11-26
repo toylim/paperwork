@@ -75,7 +75,13 @@ class TestLabels(unittest.TestCase):
 
         self.core._load_module("mainloop_stopper", FakeModule())
 
-        self.core.call_all("sync")
+        promises = []
+        self.core.call_all('sync', promises)
+        promise = promises[0]
+        for p in promises[1:]:
+            promise = promise.then(p)
+        promise.schedule()
+
         self.core.call_one("mainloop")
 
         labels = set()

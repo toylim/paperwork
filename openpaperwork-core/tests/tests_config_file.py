@@ -25,7 +25,7 @@ class TestReadWrite(unittest.TestCase):
             core.call_success('config_get', 'test_section', 'wrong_key')
         )
 
-        core.call_all('config_add_plugin', 'some_test_module')
+        core.call_all('config_add_plugin', 'some_opt', 'some_test_module')
 
     def test_no_config_file(self):
         core = openpaperwork_core.Core()
@@ -57,7 +57,7 @@ class TestReadWrite(unittest.TestCase):
             core.call_all(
                 'config_put', 'test_section', 'test_key', 'test_value'
             )
-            core.call_all('config_add_plugin', 'some_test_module')
+            core.call_all('config_add_plugin', 'some_opt', 'some_test_module')
             core.call_all('config_save', 'openpaperwork_test')
 
             core.call_all('config_load', 'openpaperwork_test')
@@ -93,12 +93,12 @@ class TestReadWrite(unittest.TestCase):
                 def init(self, core):
                     self.initialized = True
 
-        core.call_all('config_add_plugin', 'some_test_module')
-        core.call_all('config_add_plugin', 'some_test_module_2')
+        core.call_all('config_add_plugin', 'some_opt', 'some_test_module')
+        core.call_all('config_add_plugin', 'some_opt', 'some_test_module_2')
 
         import_module.reset_mock()
         import_module.side_effect = [TestModule(), TestModule()]
-        core.call_all('config_load_plugins')
+        core.call_all('config_load_plugins', 'some_opt')
         import_module.assert_called_with('some_test_module_2')
 
         self.assertEqual(core.get_by_name('some_test_module').initialized, True)
@@ -125,13 +125,17 @@ class TestReadWrite(unittest.TestCase):
             obs = Observer()
             core.call_all('config_add_observer', 'test_section', obs.obs)
 
-            core.call_all('config_put', 'other_section', 'test_key', 'test_value')
+            core.call_all(
+                'config_put', 'other_section', 'test_key', 'test_value'
+            )
             self.assertEqual(obs.count, 0)
 
-            core.call_all('config_put', 'test_section', 'test_key', 'test_value')
+            core.call_all(
+                'config_put', 'test_section', 'test_key', 'test_value'
+            )
             self.assertEqual(obs.count, 1)
 
-            core.call_all('config_add_plugin', 'some_test_module')
+            core.call_all('config_add_plugin', 'some_opt', 'some_test_module')
             self.assertEqual(obs.count, 1)
 
             core.call_all('config_save', 'openpaperwork_test')
