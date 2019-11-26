@@ -24,7 +24,7 @@ COLORS = {
 }
 
 
-class ColorFormatter(logging.Formatter):
+class _ColorFormatter(logging.Formatter):
     def format(self, record):
         levelname = record.levelname
         if levelname in COLORS:
@@ -55,7 +55,7 @@ class LogHandler(logging.Handler):
         if hasattr(fd, 'fileno'):
             isatty = os.isatty(fd.fileno())
         if isatty:
-            self.formatter = ColorFormatter(LOG_FORMAT)
+            self.formatter = _ColorFormatter(LOG_FORMAT)
         else:
             self.formatter = logging.Formatter(LOG_FORMAT)
         self._out_fd = fd

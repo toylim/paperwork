@@ -251,7 +251,7 @@ class Core(object):
 
         .. uml::
 
-           Caller -> Core: calls "func"
+           Caller -> Core: call "func"
            Core -> "Plugin A": plugin.func()
            Core <- "Plugin A": returns "something_a"
            Core -> "Plugin B": plugin.func()
@@ -283,7 +283,7 @@ class Core(object):
 
         .. uml::
 
-           Caller -> Core: calls "func"
+           Caller -> Core: call "func"
            Core -> "Plugin A": plugin.func()
            Core <- "Plugin A": returns X
            Caller <- Core: returns X
@@ -318,7 +318,7 @@ class Core(object):
 
         .. uml::
 
-           Caller -> Core: calls "func"
+           Caller -> Core: call "func"
            Core -> "Plugin A": plugin.func()
            Core <- "Plugin A": returns None
            Core -> "Plugin B": plugin.func()
