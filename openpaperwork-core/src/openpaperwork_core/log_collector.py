@@ -23,7 +23,7 @@ def _get_tmp_file():
     return t
 
 
-class LogHandler(logging.Handler):
+class _LogHandler(logging.Handler):
     def __init__(self):
         super().__init__()
         self.formatter = None
@@ -64,7 +64,7 @@ class Plugin(PluginBase):
     }
     DEFAULT_LOG_LEVEL = 'info'
     DEFAULT_LOG_FILES = 'stderr' + CONFIG_FILE_SEPARATOR + 'temp'
-    DEFAULT_LOG_FORMAT = '[%(levelname)-6s] [%(name)-30s] %(message)s\n'
+    DEFAULT_LOG_FORMAT = '[%(levelname)-6s] [%(name)-30s] %(message)s'
 
     SPECIAL_FILES = {
         'stderr': lambda: open("/dev/stderr", "w"),
@@ -74,16 +74,19 @@ class Plugin(PluginBase):
     def __init__(self):
         self.core = None
         self.log_file_paths = set()
-        self.log_handler = LogHandler()
+        self.log_handler = _LogHandler()
         logging.getLogger().addHandler(self.log_handler)
 
     def get_interfaces(self):
         return []
 
     def get_deps(self):
-        return {'interfaces': [
-            ('configuration', ['openpaperwork_core.config_file']),
-        ]}
+        return [
+            {
+                'interface': 'configuration',
+                'defaults': ['openpaperwork_core.config_file'],
+            },
+        ]
 
     def init(self, core):
         self.core = core
@@ -114,18 +117,20 @@ class Plugin(PluginBase):
     def _reload_config(self):
         self._disable_logging()
         try:
-            log_level = self.core.call_one(
+            log_level = self.core.call_success(
                 'config_get', self.CONFIG_SECTION, self.CONFIG_LOG_LEVEL,
                 self.DEFAULT_LOG_LEVEL
             )
             logging.getLogger().setLevel(self.LOG_LEVELS[log_level])
-            self.log_file_paths = self.core.call_one(
+            self.log_file_paths = self.core.call_success(
                 'config_get', self.CONFIG_SECTION, self.CONFIG_LOG_FILES,
                 self.DEFAULT_LOG_FILES
             ).split(self.CONFIG_FILE_SEPARATOR)
-            self.log_handler.formatter = logging.Formatter(self.core.call_one(
-                'config_get', self.CONFIG_SECTION, self.CONFIG_LOG_FORMAT,
-                self.DEFAULT_LOG_FORMAT
-            ))
+            self.log_handler.formatter = logging.Formatter(
+                self.core.call_success(
+                    'config_get', self.CONFIG_SECTION, self.CONFIG_LOG_FORMAT,
+                    self.DEFAULT_LOG_FORMAT
+                ) + "\n"
+            )
         finally:
             self._enable_logging()

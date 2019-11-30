@@ -3,11 +3,8 @@ import logging
 
 import pillowfight
 
-import openpaperwork_core
-
 
 from . import (
-    AbstractExportPipe,
     AbstractExportPipePlugin,
     AbstractSimpleTransformExportPipe
 )
@@ -66,8 +63,9 @@ class Plugin(AbstractExportPipePlugin):
         ]
 
     def get_deps(self):
-        return {
-            "interfaces": [
-                ('mainloop', ['openpaperwork_core.mainloop_asyncio',]),
-            ]
-        }
+        return [
+            {
+                'interface': 'mainloop',
+                'defaults': 'openpaperwork_core.mainloop_asyncio',
+            },
+        ]

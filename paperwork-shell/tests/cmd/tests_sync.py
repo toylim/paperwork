@@ -30,7 +30,7 @@ class TestSync(unittest.TestCase):
         os.unsetenv('XDG_DATA_HOME')
 
     def test_sync(self):
-        core = openpaperwork_core.Core()
+        core = openpaperwork_core.Core(allow_unsatisfied=True)
         core.load("paperwork_backend.config.fake")
         core.init()
         config = core.get_by_name("paperwork_backend.config.fake")
@@ -42,6 +42,7 @@ class TestSync(unittest.TestCase):
         core.load("paperwork_backend.model.hocr")
         core.load("paperwork_backend.model.pdf")
         core.load("paperwork_shell.cmd.sync")
+
         core.init()
 
         parser = argparse.ArgumentParser()
@@ -74,9 +75,15 @@ class TestSync(unittest.TestCase):
             'whoosh': {
                 'added': ['20190801_1733_23', '20190830_1916_32',],
             },
+            'ocr': {
+                'added': ['20190801_1733_23', '20190830_1916_32',],
+            },
             'label_guesser': {
                 'added': ['20190801_1733_23', '20190830_1916_32',],
-            }
+            },
+            'doc_tracker': {
+                'added': ['20190801_1733_23', '20190830_1916_32',],
+            },
         })
 
         # modify one document
@@ -98,9 +105,15 @@ class TestSync(unittest.TestCase):
             'whoosh': {
                 'updated': ['20190830_1916_32',],
             },
+            'ocr': {
+                'updated': ['20190830_1916_32',],
+            },
             'label_guesser': {
                 'updated': ['20190830_1916_32',],
-            }
+            },
+            'doc_tracker': {
+                'updated': ['20190830_1916_32',],
+            },
         })
 
         # delete one document
@@ -112,7 +125,13 @@ class TestSync(unittest.TestCase):
             'whoosh': {
                 'deleted': ['20190801_1733_23',],
             },
+            'ocr': {
+                'deleted': ['20190801_1733_23',],
+            },
             'label_guesser': {
                 'deleted': ['20190801_1733_23',],
-            }
+            },
+            'doc_tracker': {
+                'deleted': ['20190801_1733_23',],
+            },
         })

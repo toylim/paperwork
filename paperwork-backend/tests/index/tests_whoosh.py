@@ -10,7 +10,7 @@ class TestIndex(unittest.TestCase):
     def setUp(self):
         self.tmp_index_dir = tempfile.mkdtemp(prefix="paperwork_backend_index")
 
-        self.core = openpaperwork_core.Core()
+        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
         self.core.load("paperwork_backend.model.fake")
         self.core.load("paperwork_backend.index.whoosh")
         self.core.get_by_name("paperwork_backend.index.whoosh").index_dir = (
@@ -43,6 +43,7 @@ class TestIndex(unittest.TestCase):
 
         transactions = []
         self.core.call_all('doc_transaction_start', transactions)
+        transactions.sort(key=lambda transaction: -transaction.priority)
         for transaction in transactions:
             transaction.add_obj('test_doc')
         for transaction in transactions:
@@ -71,7 +72,7 @@ class TestIndex(unittest.TestCase):
 
         class FakeModuleToStopMainLoop(object):
             class Plugin(openpaperwork_core.PluginBase):
-                def on_index_updated(self):
+                def on_index_commit_end(self):
                     core.call_all("mainloop_quit_graceful")
 
         self.core._load_module(

@@ -56,6 +56,8 @@ class WhooshTransaction(object):
     are thread-safe.
     """
     def __init__(self, plugin, total_expected=-1):
+        self.priority = plugin.PRIORITY
+
         LOGGER.debug("Starting Whoosh index transaction")
         self.core = plugin.core
         self.writer = plugin.index.writer()
@@ -64,6 +66,7 @@ class WhooshTransaction(object):
             'upd': 0,
             'del': 0,
         }
+        self.unchanged = 0
         self.total_expected = total_expected
 
     def __enter__(self):
@@ -83,7 +86,7 @@ class WhooshTransaction(object):
 
         doc_mtime = []
         self.core.call_all("doc_get_mtime_by_url", doc_mtime, doc_url)
-        doc_mtime = datetime.datetime.fromtimestamp(max(doc_mtime))
+        doc_mtime = datetime.datetime.fromtimestamp(max(doc_mtime, default=0))
 
         doc_hash = []
         self.core.call_all("doc_get_hash_by_url", doc_hash, doc_url)
@@ -123,22 +126,21 @@ class WhooshTransaction(object):
     def _get_progression(self):
         if self.total_expected <= 0:
             return 0
-        total = sum(self.counts.values())
+        total = sum(self.counts.values()) + self.unchanged
         return total / self.total_expected
 
     def add_obj(self, doc_id):
         LOGGER.info("Adding document '%s' to index", doc_id)
-        self.counts['add'] += 1
         self.core.call_one(
             "schedule", self.core.call_all,
             "on_progress", "index_update", self._get_progression(),
             _("Indexing new document %s") % doc_id
         )
         self._update_doc_in_index(doc_id)
+        self.counts['add'] += 1
 
     def del_obj(self, doc_id):
         LOGGER.info("Removing document '%s' from index", doc_id)
-        self.counts['del'] += 1
         self.core.call_one(
             "schedule", self.core.call_all,
             "on_progress", "index_update", self._get_progression(),
@@ -146,47 +148,68 @@ class WhooshTransaction(object):
         )
         query = whoosh.query.Term("docid", doc_id)
         self.writer.delete_by_query(query)
+        self.counts['del'] += 1
 
     def upd_obj(self, doc_id):
         LOGGER.info("Updating document '%s' in index", doc_id)
-        self.counts['upd'] += 1
         self.core.call_one(
             "schedule", self.core.call_all,
             "on_progress", "index_update", self._get_progression(),
             _("Indexing updated document %s") % doc_id
         )
         self._update_doc_in_index(doc_id)
+        self.counts['upd'] += 1
+
+    def unchanged_obj(self, doc_id):
+        self.unchanged += 1
+        self.core.call_one(
+            "schedule", self.core.call_all,
+            "on_progress", "index_update", self._get_progression(),
+            _("Document unchanged %s") % doc_id
+        )
 
     def cancel(self):
         if self.writer is None:
             return
 
-        self.core.call_all('on_index_cancel')
+        self.core.call_one(
+            "schedule", self.core.call_all,
+            'on_index_cancel'
+        )
         LOGGER.info("Canceling transaction")
         self.writer.cancel()
         self.writer = None
-        self.core.call_all("on_index_updated")
+        self.core.call_one(
+            "schedule", self.core.call_all,
+            "on_index_updated"
+        )
 
     def commit(self):
         total = sum(self.counts.values())
+        self.core.call_one(
+            "schedule", self.core.call_all,
+            'on_index_commit_start'
+        )
         if total == 0:
             LOGGER.info(
                 "commit() called but nothing to commit."
                 " Cancelling transaction"
             )
-            self.cancel()
-            return
-        LOGGER.info("Committing changes to Whoosh index: %s", str(self.counts))
-        self.core.call_all('on_index_commit')
-        self.writer.commit()
-        self.writer = None
+            self.writer.cancel()
+            self.writer = None
+        else:
+            LOGGER.info(
+                "Committing changes to Whoosh index: %s", str(self.counts)
+            )
+            self.writer.commit()
+            self.writer = None
         self.core.call_one(
             "schedule", self.core.call_all,
             'on_progress', 'index_update', 1.0
         )
         self.core.call_all(
             "schedule", self.core.call_all,
-            'on_index_updated'
+            'on_index_commit_end'
         )
 
 
@@ -213,20 +236,36 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('document_storage', ['paperwork_backend.model.workdir',]),
-                ('fs', ['paperwork_backend.fs.gio',]),
-                ('mainloop', ['openpaperwork_core.mainloop_asyncio',]),
-                # Optional dependencies:
-                # ('page_boxes', [
-                #     'paperwork_backend.model.hocr',
-                #     'paperwork_backend.model.pdf',
-                # ]),
-                # ('doc_hash', ['paperwork_backend.model.pdf',]),
-                # ('doc_labels', ['paperwork_backend_model.labels',])
-            ]
-        }
+        return [
+            {
+                'interface': 'document_storage',
+                'defaults': ['paperwork_backend.model.workdir'],
+            },
+            {
+                'interface': 'fs',
+                'defaults': ['paperwork_backend.fs.gio'],
+            },
+            {
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_core.mainloop_asyncio'],
+            },
+            # Optional dependencies:
+            # {
+            #     'interface': 'page_boxes',
+            #     'defaults': [
+            #         'paperwork_backend.model.hocr',
+            #         'paperwork_backend.model.pdf',
+            #     ],
+            # },
+            # {
+            #     'interface': 'doc_hash',
+            #     'defaults': ['paperwork_backend.model.pdf'],
+            # },
+            # {
+            #     'interface': 'doc_labels',
+            #     'defaults': ['paperwork_backend.model.labels'],
+            # },
+        ]
 
     def init(self, core):
         super().init(core)
@@ -315,7 +354,6 @@ class Plugin(openpaperwork_core.PluginBase):
         query = strip_accents(query)
         if query == "":
             queries = [whoosh.query.Every()]
-            limit = limit
         else:
             queries = []
             for parser in self.query_parsers[search_type]:
@@ -323,11 +361,14 @@ class Plugin(openpaperwork_core.PluginBase):
 
         with self.index.searcher() as searcher:
             for query in queries:
-                results = searcher.search(query, limit=None, sortedby='docid')
+                facet = whoosh.sorting.FieldFacet("docid", reverse=True)
+                results = searcher.search(query, limit=limit, sortedby=facet)
                 has_results = False
                 for result in results:
                     has_results = True
                     out.append(result['docid'])
+                    if limit is not None and len(out) >= limit:
+                        return
                 if has_results:
                     return
 
@@ -374,5 +415,6 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
         promises.append(sync.Syncer(
-            self.core, "whoosh", storage_all_docs, index_all_docs, transaction
+            self.core, ["whoosh"], storage_all_docs, index_all_docs,
+            [transaction]
         ).get_promise())

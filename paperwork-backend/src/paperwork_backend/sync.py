@@ -67,7 +67,7 @@ class StorageDoc(object):
         self.core.call_all(
             'doc_get_mtime_by_url', mtime, self.doc_url
         )
-        return datetime.datetime.fromtimestamp(max(mtime))
+        return datetime.datetime.fromtimestamp(max(mtime, default=0))
 
     extra = property(get_mtime)
 
@@ -79,12 +79,12 @@ class Syncer(object):
     `transaction`.
     """
 
-    def __init__(self, core, name, new_all, old_all, transaction):
+    def __init__(self, core, names, new_all, old_all, transactions):
         self.core = core
-        self.name = name
+        self.names = names
         self.new_all = new_all
         self.old_all = old_all
-        self.transaction = transaction
+        self.transactions = transactions
         self.diff_generator = None
         self.diff = set()
         self.start = None
@@ -106,24 +106,40 @@ class Syncer(object):
             except StopIteration:
                 break
 
-        while len(self.diff) > 0:
-            (action, key) = self.diff.pop()
-            self.nb_compared += 1
-            if action != 'unchanged':
-                self.core.call_one(
-                    "schedule", self.core.call_all,
-                    "on_sync", self.name, action, key
-                )
-            if action == "added":
-                self.transaction.add_obj(key)
-            elif action == "updated":
-                self.transaction.upd_obj(key)
-            elif action == "deleted":
-                self.transaction.del_obj(key)
+        try:
+            while len(self.diff) > 0:
+                (action, key) = self.diff.pop()
+                self.nb_compared += 1
+                if action != 'unchanged':
+                    for name in self.names:
+                        self.core.call_one(
+                            "schedule", self.core.call_all,
+                            "on_sync", name, action, key
+                        )
+                if action == "added":
+                    for transaction in self.transactions:
+                        transaction.add_obj(key)
+                elif action == "updated":
+                    for transaction in self.transactions:
+                        transaction.upd_obj(key)
+                elif action == "deleted":
+                    for transaction in self.transactions:
+                        transaction.del_obj(key)
+                else:
+                    for transaction in self.transactions:
+                        transaction.unchanged_obj(key)
 
-        self.transaction.commit()
-        stop = time.time()
-        LOGGER.info(
-            "Has compared %d objects in %.3fs",
-            self.nb_compared, stop - self.start
-        )
+            for transaction in self.transactions:
+                transaction.commit()
+            stop = time.time()
+            LOGGER.info(
+                "%s: Has compared %d objects in %.3fs",
+                self.names, self.nb_compared, stop - self.start
+            )
+        except Exception as exc:
+            LOGGER.error(
+                "%s: Fail to sync. Cancelling transactions",
+                self.names, exc_info=exc
+            )
+            for transaction in self.transactions:
+                transaction.cancel()

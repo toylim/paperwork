@@ -30,6 +30,8 @@ ${VERSION_FILE}:
 
 doc:
 
+upload_doc:
+
 check:
 	flake8 --exclude=_version.py src/paperwork
 

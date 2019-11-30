@@ -1,11 +1,24 @@
-import hashlib
 import itertools
 import logging
 
-import gi
-gi.require_version('Poppler', '0.18')
-from gi.repository import Gio
-from gi.repository import Poppler
+try:
+    import gi
+    gi.require_version('Poppler', '0.18')
+    GI_AVAILABLE = True
+except ImportError:
+    GI_AVAILABLE = False
+
+try:
+    from gi.repository import Gio
+    GLIB_AVAILABLE = True
+except ImportError:
+    GLIB_AVAILABLE = False
+
+try:
+    from gi.repository import Poppler
+    POPPLER_AVAILABLE = True
+except ImportError:
+    POPPLER_AVAILABLE = False
 
 import openpaperwork_core
 
@@ -72,6 +85,7 @@ class PdfLineBox(object):
 class Plugin(openpaperwork_core.PluginBase):
     def get_interfaces(self):
         return [
+            "chkdeps",
             "doc_hash",
             "doc_pdf_import",
             "doc_pdf_url",
@@ -79,14 +93,36 @@ class Plugin(openpaperwork_core.PluginBase):
             "doc_type",
             "page_boxes",
             "page_img",
+            "page_paper",
+            'pages',
         ]
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('fs', ['paperwork_backend.fs.gio']),
-            ]
-        }
+        return [
+            {
+                'interface': 'fs',
+                'defaults': ['paperwork_backend.fs.gio'],
+            }
+        ]
+
+    def chkdeps(self, out: dict):
+        if not GI_AVAILABLE:
+            out['gi']['debian'] = 'python3-gi'
+            out['gi']['fedora'] = 'python3-gobject-base'
+            out['gi']['gentoo'] = 'dev-python/pygobject'  # Python 3 ?
+            out['gi']['linuxmint'] = 'python3-gi'
+            out['gi']['ubuntu'] = 'python3-gi'
+            out['gi']['suse'] = 'python-gobject'  # Python 3 ?
+        if not GLIB_AVAILABLE:
+            out['gi.repository.GLib']['debian'] = 'gir1.2-glib-2.0'
+            out['gi.repository.GLib']['ubuntu'] = 'gir1.2-glib-2.0'
+        if not POPPLER_AVAILABLE:
+            out['gi.repository.Poppler']['debian'] = 'gir1.2-poppler-0.18'
+            out['gi.repository.Poppler']['fedora'] = 'poppler-glib'
+            out['gi.repository.Poppler']['gentoo'] = 'app-text/poppler'
+            out['gi.repository.Poppler']['linuxmint'] = 'gir1.2-poppler-0.18'
+            out['gi.repository.Poppler']['ubuntu'] = 'gir1.2-poppler-0.18'
+            out['gi.repository.Poppler']['suse'] = 'typelib-1_0-Poppler-0_18'
 
     def _get_pdf_url(self, doc_url):
         pdf_url = doc_url + "/" + PDF_FILENAME
@@ -116,10 +152,10 @@ class Plugin(openpaperwork_core.PluginBase):
         pdf_url = self._get_pdf_url(doc_url)
         if pdf_url is None:
             return
-        with self.core.call_success("fs_open", pdf_url, 'rb') as fd:
-            content = fd.read()
-        dochash = hashlib.sha256(content).hexdigest()
-        out.append(int(dochash, 16))
+        out.append(self.core.call_success("fs_hash", pdf_url))
+
+    def page_get_hash_by_url(self, out: list, doc_url, page_idx):
+        return self.doc_get_hash_by_url(out, doc_url)
 
     def doc_get_mtime_by_url(self, out: list, doc_url):
         pdf_url = self._get_pdf_url(doc_url)
@@ -130,18 +166,23 @@ class Plugin(openpaperwork_core.PluginBase):
             return None
         out.append(mtime)
 
+    def page_get_mtime_by_url(self, out: list, doc_url, page_idx):
+        return self.doc_get_mtime_by_url(out, doc_url)
+
     def doc_get_nb_pages_by_url(self, doc_url):
         (pdf_url, pdf) = self._open_pdf(doc_url)
         if pdf is None:
             return None
         return pdf.get_n_pages()
 
-    def page_get_img_url(self, doc_url, page_idx):
+    def page_get_img_url(self, doc_url, page_idx, write=False):
+        if write:
+            return None
         pdf_url = self._get_pdf_url(doc_url)
         if pdf_url is None:
             return None
         # same URL used in browsers
-        return "{}#page={}".format(pdf_url , str(page_idx + 1))
+        return "{}#page={}".format(pdf_url, str(page_idx + 1))
 
     @staticmethod
     def _custom_split(input_str, input_rects, splitter):
@@ -199,7 +240,8 @@ class Plugin(openpaperwork_core.PluginBase):
                     ):
                 word_box = PdfWordBox(word, word_rects)
                 words.append(word_box)
-            yield PdfLineBox(words, line_rects)
+            line_boxes.append(PdfLineBox(words, line_rects))
+        return line_boxes
 
     def doc_pdf_import(self, src_file_uri):
         # check the PDF is readable before messing the content of the
@@ -213,3 +255,34 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_success("fs_mkdir_p", doc_url)
         self.core.call_success("fs_copy", src_file_uri, pdf_url)
         return (doc_id, doc_url)
+
+    def page_delete_by_url(self, doc_url, page_idx):
+        if self.is_doc(doc_url):
+            LOGGER.warning(
+                "Cannot delete page from PDF file (doc=%s)", doc_url
+            )
+
+    def page_move_by_url(
+                self,
+                source_doc_url, source_page_idx,
+                dest_doc_url, dest_page_idx
+            ):
+        if self.is_doc(source_doc_url):
+            LOGGER.warning(
+                "Cannot move page from PDF file (doc=%s)", source_doc_url
+            )
+
+    def page_get_paper_size_by_url(self, doc_url, page_idx):
+        (pdf_url, pdf) = self._open_pdf(doc_url)
+        if pdf is None:
+            return None
+
+        page = pdf.get_page(page_idx)
+        size = page.get_size()
+
+        # points --> inches: / 72
+        # inches --> millimeters (i18n unit): * 25.4
+        return (
+            size[0] / 72.0 * 25.4,
+            size[0] / 72.0 * 25.4,
+        )

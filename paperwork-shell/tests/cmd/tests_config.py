@@ -1,5 +1,4 @@
 import argparse
-import os
 import unittest
 
 import openpaperwork_core
@@ -71,12 +70,18 @@ class MockConfigFileModule(object):
 
 class TestConfig(unittest.TestCase):
     def setUp(self):
-        self.core = openpaperwork_core.Core()
+        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
         self.core._load_module(
             "openpaperwork_core.config_file", MockConfigFileModule()
         )
         self.core.load("paperwork_shell.cmd.config")
         self.core.init()
+
+        setting = self.core.call_success(
+            "paperwork_config_build_simple", "Global", "WorkDirectory",
+            lambda: "file:///home/toto/papers"
+        )
+        self.core.call_all("paperwork_config_register", "workdir", setting)
 
     def test_get_put(self):
         self.core.get_by_name('openpaperwork_core.config_file').returns = {
@@ -158,7 +163,7 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(
             self.core.get_by_name('openpaperwork_core.config_file').calls,
             [
-                ('config_load', ('paperwork',), {}),
+                ('config_load', ('paperwork2',), {}),
                 ('config_load_plugins', ('paperwork-gtk', ['pouet']), {}),
                 ('config_add_plugin', ('paperwork-gtk', 'plugin_c'), {}),
                 ('config_save', (), {}),
@@ -171,7 +176,7 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(
             self.core.get_by_name('openpaperwork_core.config_file').calls,
             [
-                ('config_load', ('paperwork',), {}),
+                ('config_load', ('paperwork2',), {}),
                 ('config_load_plugins', ('paperwork-gtk', ['pouet']), {}),
                 ('config_add_plugin', ('paperwork-gtk', 'plugin_c'), {}),
                 ('config_save', (), {}),
@@ -187,7 +192,7 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(
             self.core.get_by_name('openpaperwork_core.config_file').calls,
             [
-                ('config_load', ('paperwork',), {}),
+                ('config_load', ('paperwork2',), {}),
                 ('config_load_plugins', ('paperwork-gtk', ['pouet']), {}),
                 ('config_add_plugin', ('paperwork-gtk', 'plugin_c'), {}),
                 ('config_save', (), {}),
@@ -203,7 +208,7 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(
             self.core.get_by_name('openpaperwork_core.config_file').calls,
             [
-                ('config_load', ('paperwork',), {}),
+                ('config_load', ('paperwork2',), {}),
                 ('config_load_plugins', ('paperwork-gtk', ['pouet']), {}),
                 ('config_add_plugin', ('paperwork-gtk', 'plugin_c'), {}),
                 ('config_save', (), {}),

@@ -15,13 +15,24 @@ class Plugin(openpaperwork_core.PluginBase):
         return ['scan2doc']
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('document_storage', ['paperwork_backend.model.workdir',]),
-                ('doc_img_import', ['paperwork_backend.model.img',]),
-                ('scan', ['paperwork_backend.docscan.libinsane',]),
-            ]
-        }
+        return [
+            {
+                'interface': 'document_storage',
+                'defaults': ['paperwork_backend.model.workdir'],
+            },
+            {
+                'interface': 'page_img',
+                'defaults': ['paperwork_backend.model.img'],
+            },
+            {
+                'interface': 'pillow',
+                'defaults': ['paperwork_backend.pillow.img'],
+            },
+            {
+                'interface': 'scan',
+                'defaults': ['paperwork_backend.docscan.libinsane'],
+            }
+        ]
 
     def scan2doc_scan_id_to_doc_id(self, scan_id):
         try:
@@ -40,18 +51,39 @@ class Plugin(openpaperwork_core.PluginBase):
             (doc_id, doc_url) = self.core.call_success("storage_get_new_doc")
             new = True
 
-        (scan_id, promise) = self.core.call_success("scan_promise")
+        promise = openpaperwork_core.promise.Promise(
+            self.core, self.core.call_all,
+            args=("on_scan2doc_start", doc_id, doc_url)
+        )
+        promise = promise.then(lambda *args, **kwargs: None)
+        (scan_id, p) = self.core.call_success("scan_promise")
+        promise = promise.then(p)
 
         self.scan_id_to_doc_id[scan_id] = doc_id
 
         transactions = []
         self.core.call_all("doc_transaction_start", transactions, 1)
+        transactions.sort(key=lambda transaction: -transaction.priority)
 
         def add_scans_to_doc(args):
             (source, scan_id, imgs) = args
+            nb = 0
             for img in imgs:
-                self.core.call_all("doc_img_import_img_by_id", img, doc_id)
-            return len(imgs)
+                nb += 1
+                nb_pages = self.core.call_success(
+                    "doc_get_nb_pages_by_url", doc_url
+                )
+                if nb_pages is None:
+                    nb_pages = 0
+                page_url = self.core.call_success(
+                    "page_get_img_url", doc_url, nb_pages, write=True
+                )
+                self.core.call_success("pillow_to_url", img, page_url)
+                self.core.call_one(
+                    "schedule", self.core.call_all,
+                    "on_scan2doc_page_scanned", doc_id, doc_url, nb_pages
+                )
+            return nb
 
         def run_transactions(nb_imgs):
             if nb_imgs <= 0:
@@ -70,19 +102,30 @@ class Plugin(openpaperwork_core.PluginBase):
             self.scan_id_to_doc_id.pop(scan_id)
             return (doc_id, doc_url)
 
+        def notify_end(*args, **kwargs):
+            self.core.call_all("on_scan2doc_end", doc_id, doc_url)
+            return (doc_id, doc_url)
+
         def cancel(exc):
             for transaction in transactions:
                 transaction.cancel()
             drop_scan_id()
-            self.core.call_all("storage_delete_doc_id", doc_id)
+            if new:
+                self.core.call_all("storage_delete_doc_id", doc_id)
             raise exc
 
-        promise = promise.then(add_scans_to_doc)
+        promise = promise.then(
+            openpaperwork_core.promise.ThreadedPromise(
+                self.core, add_scans_to_doc
+            )
+        )
         promise = promise.then(
             openpaperwork_core.promise.ThreadedPromise(
                 self.core, run_transactions
             )
         )
         promise = promise.then(drop_scan_id)
+        promise = promise.then(notify_end)
+
         promise = promise.catch(cancel)
         return promise

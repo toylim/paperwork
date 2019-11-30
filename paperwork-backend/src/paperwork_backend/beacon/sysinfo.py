@@ -5,13 +5,17 @@ import platform
 import openpaperwork_core
 
 
-class Plugin(openpaperwork_base.PluginBase):
+class Plugin(openpaperwork_core.PluginBase):
+    def get_interfaces(self):
+        return ['stats']
+
     def get_deps(self):
-        return {
-            'interfaces': [
-                ("stats_post", ['paperwork_backend.beacon.stats',]),
-            ]
-        }
+        return [
+            {
+                'interface': 'stats_post',
+                'defaults': ['paperwork_backend.beacon.stats'],
+            }
+        ]
 
     def stats_get(self, out: dict):
         flatpak = os.path.exists("/app")
@@ -34,3 +38,4 @@ class Plugin(openpaperwork_base.PluginBase):
         out['platform_processor'] = processor
         out['platform_distribution'] = distribution
         out['cpu_count'] = os.cpu_count()
+        return out

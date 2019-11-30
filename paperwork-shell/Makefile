@@ -21,6 +21,8 @@ ${VERSION_FILE}:
 
 doc:
 
+upload_doc:
+
 check:
 	flake8 src/paperwork_shell
 

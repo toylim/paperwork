@@ -26,8 +26,10 @@ class DocToPillowBoxesExportPipe(AbstractExportPipe):
         self.core = core
 
     def can_export_doc(self, doc_url):
-        pdf_url = self.core.call_success("doc_get_pdf_url_by_url", doc_url)
-        return pdf_url is not None
+        return True
+
+    def can_export_page(self, doc_url, page_nb):
+        return True
 
     def get_promise(self, result='final', target_file_url=None):
         def to_img_urls_and_boxes(input_data):
@@ -48,7 +50,11 @@ class DocToPillowBoxesExportPipe(AbstractExportPipe):
                     for page_idx in range(0, nb_pages)
                 ]
             else:
-                (doc_url, page_idx) = input_data
+                if isinstance(input_data[1], int):
+                    (doc_url, page_idx) = input_data
+                    page_indexes = [page_idx]
+                else:
+                    (doc_url, page_indexes) = input_data
                 pages = [
                     (
                         self.core.call_success(
@@ -56,8 +62,9 @@ class DocToPillowBoxesExportPipe(AbstractExportPipe):
                         ),
                         self.core.call_success(
                             "page_get_boxes_by_url", doc_url, page_idx
-                        )
+                        ) or []
                     )
+                    for page_idx in page_indexes
                 ]
 
             for page in pages:
@@ -122,7 +129,7 @@ class PageToImageExportPipe(AbstractExportPipe):
                 out = target_file_url
                 if page_idx != 0:
                     out = out.rsplit(".", 1)
-                    out = "{}_{}{}".format(out[0], page_idx, out[1])
+                    out = "{}_{}.{}".format(out[0], page_idx, out[1])
 
                 self.core.call_success(
                     "pillow_to_url", pil_img, out, format=self.format,
@@ -179,26 +186,36 @@ class Plugin(AbstractExportPipePlugin):
         ]
 
     def get_deps(self):
-        return {
-            "interfaces": [
-                ('doc_text', [
+        return [
+            {
+                'interface': 'doc_text',
+                'defaults': [
                     # load also model.img because model.pdf will
                     # satisfy the interface 'page_img' anyway
                     'paperwork_backend.model.img',
                     'paperwork_backend.model.hocr',
                     'paperwork_backend.model.pdf',
-                ]),
-                ('page_img', [
+                ],
+            },
+            {
+                'interface': 'page_img',
+                'defaults': [
                     # load also model.hocr because model.pdf will
                     # satisfy the interface 'doc_text' anyway
                     'paperwork_backend.model.img',
                     'paperwork_backend.model.hocr',
                     'paperwork_backend.model.pdf',
-                ]),
-                ('mainloop', ['openpaperwork_core.mainloop_asyncio',]),
-                ("pillow", [
+                ],
+            },
+            {
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_core.mainloop_asyncio'],
+            },
+            {
+                'interface': 'pillow',
+                'defaults': [
                     'paperwork_backend.pillow.img',
                     'paperwork_backend.pillow.pdf',
-                ]),
-            ]
-        }
+                ],
+            },
+        ]

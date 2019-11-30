@@ -241,15 +241,18 @@ class Plugin(PluginBase):
             "plugins", opt_name, ConfigList(None, self.default_plugins)
         )
 
+    def config_reset_plugins(self, opt_name):
+        self.config_del("plugins", opt_name)
+
     def config_add_plugin(self, opt_name, module_name):
         LOGGER.info("Adding plugin '%s' to configuration", module_name)
-        modules = self.config_get("plugins", opt_name, ConfigList())
+        modules = self.config_list_active_plugins(opt_name)
         modules.elements.append(module_name)
         self.config_put("plugins", opt_name, modules)
 
     def config_remove_plugin(self, opt_name, module_name):
         LOGGER.info("Removing plugin '%s' from configuration", module_name)
-        modules = self.config_get("plugins", opt_name, ConfigList())
+        modules = self.config_list_active_plugins(opt_name)
         modules.elements.remove(module_name)
         self.config_put("plugins", opt_name, modules)
 
@@ -270,6 +273,9 @@ class Plugin(PluginBase):
 
         for observer in self.observers[section]:
             observer()
+
+    def config_del(self, section, key):
+        self.config.remove_option(section, key)
 
     def config_get(self, section, key, default=None):
         try:

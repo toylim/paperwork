@@ -1,10 +1,20 @@
 import itertools
 import logging
 
-import gi
-gi.require_version('Libinsane', '1.0')
-from gi.repository import GObject
-from gi.repository import Libinsane
+try:
+    import gi
+    gi.require_version('Libinsane', '1.0')
+    from gi.repository import GObject
+    GI_AVAILABLE = True
+except ImportError:
+    GI_AVAILABLE = False
+
+try:
+    from gi.repository import Libinsane
+    LIBINSANE_AVAILABLE = True
+except ImportError:
+    LIBINSANE_AVAILABLE = False
+
 import PIL
 import PIL.Image
 
@@ -103,25 +113,25 @@ class Source(object):
             "paperwork_config_put", "scanner_source_id", self.source_id
         )
 
+    def get_resolutions(self):
+        LOGGER.info(
+            "Looking for possible values for option 'resolution' on %s"
+            " : %s ...", str(self.scanner), self.source_id
+        )
+        options = self.source.get_options()
+        options = {opt.get_name(): opt for opt in options}
+
+        opt = options['resolution']
+        constraint = opt.get_constraint()
+        LOGGER.info(
+            "%s : %s : resolution : Possible values: %s",
+            str(self.scanner), self.source_id, constraint
+        )
+        return constraint
+
     def get_resolutions_promise(self):
-        def get_opt_constraint():
-            LOGGER.info(
-                "Looking for possible values for option 'resolution' on %s"
-                " : %s ...", str(self.scanner), self.source_id
-            )
-            options = self.source.get_options()
-            options = {opt.get_name(): opt for opt in options}
-
-            opt = options['resolution']
-            constraint = opt.get_constraint()
-            LOGGER.info(
-                "%s : %s : resolution : Possible values: %s",
-                str(self.scanner), self.source_id, constraint
-            )
-            return constraint
-
         return openpaperwork_core.promise.ThreadedPromise(
-            self.core, get_opt_constraint
+            self.core, self.get_resolutions
         )
 
     def set_default_resolution(self, resolution):
@@ -129,26 +139,30 @@ class Source(object):
             "paperwork_config_put", "scanner_resolution", int(resolution)
         )
 
-    def scan(self, scan_id=None, resolution=None, max_pages=9999):
+    def scan(
+                self, scan_id=None, resolution=None, max_pages=9999,
+                close_on_end=False
+            ):
         if scan_id is None:
             scan_id = next(SCAN_ID_GENERATOR)
+
+        LOGGER.info("Setting scan options ...")
         if resolution is None:
             resolution = self.core.call_success(
                 "paperwork_config_get", "scanner_resolution"
             )
-
-        # keep in mind that we are in a thread here, but listeners
-        # must be called from the main loop
-
-        LOGGER.info("Setting scan options ...")
-
         options = self.source.get_options()
-        opts = {}
-        for opt in options:
-            opts[opt.get_name()] = opt
-
+        opts = {opt.get_name(): opt for opt in options}
         if 'resolution' in opts:
             opts['resolution'].set_value(resolution)
+
+        imgs = self._scan(scan_id, resolution, max_pages, close_on_end)
+        return (self, scan_id, imgs)
+
+
+    def _scan(self, scan_id, resolution, max_pages, close_on_end=False):
+        # keep in mind that we are in a thread here, but listeners
+        # must be called from the main loop
 
         LOGGER.info("Scanning ...")
 
@@ -160,7 +174,6 @@ class Source(object):
                 "on_scan_feed_start", scan_id
             )
 
-            imgs = []
             session = self.source.scan_start()
 
             while not session.end_of_feed() and page_nb < max_pages:
@@ -198,30 +211,33 @@ class Source(object):
                         )
 
                 LOGGER.info("Page %d/%d scanned", page_nb, max_pages)
-                page_nb += 1
-                imgs.append(image.get_image())
+                img = raw_to_img(scan_params, image.get_image())
+                yield img
                 self.core.call_one(
                     "schedule", self.core.call_all,
-                    "on_scan_page_end", scan_id, page_nb,
-                    raw_to_img(scan_params, imgs[-1])
+                    "on_scan_page_end", scan_id, page_nb, img
                 )
+                page_nb += 1
             LOGGER.info("End of feed")
 
             self.core.call_one(
                 "schedule", self.core.call_all, "on_scan_feed_end", scan_id
             )
-
-            return (self, scan_id, imgs)
         finally:
             session.cancel()
+            if close_on_end:
+                self.close()
 
     def scan_promise(self, *args, scan_id=None, **kwargs):
         if scan_id is None:
             scan_id = next(SCAN_ID_GENERATOR)
         kwargs['scan_id'] = scan_id
-        return (scan_id, openpaperwork_core.promise.ThreadedPromise(
-            self.core, self.scan, args=args, kwargs=kwargs
-        ))
+        return (
+            scan_id,
+            openpaperwork_core.promise.ThreadedPromise(
+                self.core, self.scan, args=args, kwargs=kwargs
+            )
+        )
 
     def close(self, *args, **kwargs):
         self.scanner.close()
@@ -248,7 +264,7 @@ class Scanner(object):
             LOGGER.info("Closing device %s", self.dev_id)
             self.dev.close()
             self.dev = None
-        # return the args for convience when used with promises
+        # return the args for convenience when used with promises
         if len(args) == 1 and len(kwargs) == 0:
             return args
         return (args, kwargs)
@@ -291,15 +307,22 @@ class Plugin(openpaperwork_core.PluginBase):
         LOGGER.info("Libinsane %s initialized", self.libinsane.get_version())
 
     def get_interfaces(self):
-        return ["scan"]
+        return [
+            "chkdeps",
+            "scan"
+        ]
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('mainloop', ['openpaperwork_core.mainloop_asyncio',]),
-                ('paperwork_config', ['paperwork_backend.config.file',]),
-            ]
-        }
+        return [
+            {
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_core.mainloop_asyncio'],
+            },
+            {
+                'interface': 'paperwork_config',
+                'defaults': ['paperwork_backend.config.file'],
+            },
+        ]
 
     def init(self, core):
         super().init(core)
@@ -323,8 +346,19 @@ class Plugin(openpaperwork_core.PluginBase):
                 "paperwork_config_register", k, setting
             )
 
+    def chkdeps(self, out: dict):
+        if not GI_AVAILABLE:
+            out['gi']['debian'] = 'python3-gi'
+            out['gi']['fedora'] = 'python3-gobject-base'
+            out['gi']['gentoo'] = 'dev-python/pygobject'  # Python 3 ?
+            out['gi']['linuxmint'] = 'python3-gi'
+            out['gi']['ubuntu'] = 'python3-gi'
+            out['gi']['suse'] = 'python-gobject'  # Python 3 ?
+        if not LIBINSANE_AVAILABLE:
+            out['gi.repository.Libinsane'] = {}
+
     def scan_list_scanners_promise(self):
-        def list_scanners():
+        def list_scanners(*args, **kwargs):
             LOGGER.info("Looking for scan devices ...")
             devs = self.libinsane.list_devices(Libinsane.DeviceLocations.ANY)
             devs = [
@@ -346,7 +380,7 @@ class Plugin(openpaperwork_core.PluginBase):
             return None
         scanner_dev_id = scanner_dev_id[len("libinsane:"):]
 
-        def get_scanner():
+        def get_scanner(*args, **kwargs):
             LOGGER.info("Accessing scanner '%s' ...", scanner_dev_id)
             scanner = self.libinsane.get_device(scanner_dev_id)
             LOGGER.info("Scanner '%s' opened", scanner.get_name())
@@ -373,14 +407,10 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         promise = promise.then(
             openpaperwork_core.promise.ThreadedPromise(
-                self.core, Source.scan, args=(scan_id,)
+                self.core, Source.scan, args=(scan_id,), kwargs={
+                    'close_on_end': True
+                }
             )
         )
 
-        def close(args):
-            (source, scan_id, imgs) = args
-            source.close()
-            return (source, scan_id, imgs)
-
-        promise = promise.then(close)
         return (scan_id, promise)

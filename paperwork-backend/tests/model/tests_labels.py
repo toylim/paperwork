@@ -5,7 +5,7 @@ import openpaperwork_core
 
 class TestLabels(unittest.TestCase):
     def setUp(self):
-        self.core = openpaperwork_core.Core()
+        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
         self.core.load("paperwork_backend.config.fake")
         self.core.load("paperwork_backend.fs.fake")
         self.core.load("paperwork_backend.model.labels")
@@ -111,7 +111,7 @@ class TestLabels(unittest.TestCase):
         }
 
         self.core.call_success(
-            "doc_add_label", "file:///some_work_dir/some_doc",
+            "doc_add_label_by_url", "file:///some_work_dir/some_doc",
             label="label C", color="#123412341234"
         )
 
@@ -128,5 +128,36 @@ class TestLabels(unittest.TestCase):
                 ("label A", "#aaaabbbbcccc"),
                 ("label B", "#ccccbbbbaaaa"),
                 ("label C", "#123412341234"),
+            ]
+        )
+
+    def test_doc_remove_labels(self):
+        self.fs.fs = {
+            "some_work_dir": {
+                "some_doc": {
+                    "labels": (
+                        "label A,#aaaabbbbcccc\n"
+                        "label B,#ccccbbbbaaaa\n"
+                    )
+                },
+            },
+        }
+
+        self.core.call_success(
+            "doc_remove_label_by_url", "file:///some_work_dir/some_doc",
+            label="label A"
+        )
+
+        labels = set()
+        self.core.call_success(
+            "doc_get_labels_by_url", labels, "file:///some_work_dir/some_doc"
+        )
+        labels = list(labels)
+        labels.sort()
+
+        self.assertEqual(
+            labels,
+            [
+                ("label B", "#ccccbbbbaaaa"),
             ]
         )

@@ -45,17 +45,20 @@ class PeriodicTask(object):
         last_run = core.call_success(
             "paperwork_config_get", self.config_section_name + "_last_run"
         )
-        LOGGER.info("[%s] Last run: %s ; Now: %s",
+        LOGGER.info(
+            "[%s] Last run: %s ; Now: %s",
             self.config_section_name, last_run, now
         )
         if now - last_run < self.min_delay:
-            LOGGER.info("[%s] Nothing to do (%s < %s)",
+            LOGGER.info(
+                "[%s] Nothing to do (%s < %s)",
                 self.config_section_name, now - last_run, self.min_delay
             )
             self.else_callback()
             return
 
-        LOGGER.info("[%s] Running %s (%s >= %s)",
+        LOGGER.info(
+            "[%s] Running %s (%s >= %s)",
             self.config_section_name,
             self.periodic_callback, now - last_run, self.min_delay
         )
@@ -84,7 +87,7 @@ class OpenpaperHttp(object):
             self.config_section_name + "_server":
                 core.call_success(
                     "paperwork_config_build_simple", self.config_section_name,
-                    "server", lambda: self.default_protocol
+                    "server", lambda: self.default_server
                 ),
             self.config_section_name + "_url":
                 core.call_success(

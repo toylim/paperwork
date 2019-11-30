@@ -1,9 +1,14 @@
+import datetime
 import time
 
 import openpaperwork_core
 
+from . import workdir
+
 
 class Plugin(openpaperwork_core.PluginBase):
+    PRIORITY = 10000
+
     def __init__(self):
         super().__init__()
         # expected in self.docs:
@@ -20,9 +25,21 @@ class Plugin(openpaperwork_core.PluginBase):
         #       [LineBox, LineBox, ...],  # page 1
         #       (...)
         #     ],
-        #     'page_imgs':  # optional
+        #     'page_imgs': [  # optional
         #       (img_url, PIL.Image),  # page 0
         #       (img_url, PIL.Image),  # page 1
+        #     ],
+        #     'page_mtimes': [  # optional
+        #       (img_url, mtime),  # page 0
+        #       (img_url, mtime),  # page 1
+        #     ],
+        #     'page_hashes': [  # optional
+        #       (img_url, hash),  # page 0
+        #       (img_url, hash),  # page 1
+        #     ],
+        #     'page_paper_sizes': [  # optional
+        #       (img_url, hash),  # page 0
+        #       (img_url, hash),  # page 1
         #     ],
         #   },
         #   (...)
@@ -32,12 +49,13 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_interfaces(self):
         return [
-            "document_storage",
-            "doc_type",
             "doc_hash",
-            "doc_text",
             "doc_labels",
+            "doc_text",
+            "doc_type",
+            "document_storage",
             "page_boxes",
+            "page_paper",
             "pillow",
         ]
 
@@ -76,11 +94,19 @@ class Plugin(openpaperwork_core.PluginBase):
     def doc_get_nb_pages_by_url(self, doc_url):
         for doc in self.docs:
             if doc['url'] == doc_url:
-                if 'page_boxes' not in doc and 'page_imgs' not in doc:
-                    return None
                 l_boxes = len(doc['page_boxes']) if 'page_boxes' in doc else 0
                 l_imgs = len(doc['page_imgs']) if 'page_imgs' in doc else 0
-                return max(l_boxes, l_imgs)
+                l_mtimes = (
+                    len(doc['page_mtimes']) if 'page_mtimes' in doc else 0
+                )
+                l_hashes = (
+                    len(doc['page_hashes']) if 'page_hashes' in doc else 0
+                )
+                l_paper_sizes = (
+                    len(doc['page_paper_sizes'])
+                    if 'page_paper_sizes' in doc else 0
+                )
+                return max(l_boxes, l_imgs, l_mtimes, l_hashes, l_paper_sizes)
         return None
 
     def doc_get_text_by_url(self, out: list, doc_url):
@@ -93,13 +119,13 @@ class Plugin(openpaperwork_core.PluginBase):
             if doc['url'] == doc_url:
                 out.update(doc['labels'])
 
-    def doc_add_label(self, doc_url, label, color=None):
+    def doc_add_label_by_url(self, doc_url, label, color=None):
         if color is None:
             all_labels = set()
             self.labels_get_all(all_labels)
 
-            for (l, c) in all_labels:
-                if l == label:
+            for (label_name, c) in all_labels:
+                if label_name == label:
                     color = c
                     break
             else:
@@ -131,6 +157,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
                 text = ""
                 for page_boxes in doc['page_boxes']:
+                    if text != "":
+                        text += "\n\n"
                     if page_boxes is None:
                         continue
                     for line_boxes in page_boxes:
@@ -138,16 +166,28 @@ class Plugin(openpaperwork_core.PluginBase):
                 doc['text'] = text
         return None
 
-    def page_get_img_url(self, doc_url, page_idx):
+    def page_get_img_url(self, doc_url, page_idx, write=False):
         for doc in self.docs:
             if doc['url'] == doc_url:
-                if page_idx >= len(doc['page_imgs']):
+                for k in [
+                            'page_imgs', 'page_mtimes', 'page_hashes',
+                            'page_sizes'
+                        ]:
+                    if k in doc:
+                        if page_idx >= len(doc[k]):
+                            return None
+                        return doc[k][page_idx][0]
+
+                if write:
+                    return "file:///some_doc/new_page.jpeg"
+                else:
                     return None
-                return doc['page_imgs'][page_idx][0]
         return None
 
     def url_to_pillow(self, img_url):
         for doc in self.docs:
+            if 'page_imgs' not in doc:
+                continue
             for (page_img_url, img) in doc['page_imgs']:
                 if page_img_url == img_url:
                     return img
@@ -167,3 +207,46 @@ class Plugin(openpaperwork_core.PluginBase):
         }
         self.docs.append(doc)
         return (doc['id'], doc['url'])
+
+    def doc_get_date_by_id(self, doc_id):
+        # Doc id is expected to have this format:
+        # YYYYMMDD_hhmm_ss_NN_something_else
+        doc_id = doc_id.split("_", 3)
+        doc_id = "_".join(doc_id[:3])
+        try:
+            return datetime.datetime.strptime(doc_id, workdir.DOCNAME_FORMAT)
+        except ValueError:
+            return None
+
+    def storage_delete_doc_id(self, doc_id):
+        for (idx, doc) in enumerate(self.docs[:]):
+            if doc['id'] == doc_id:
+                self.docs.pop(idx)
+                return True
+
+    def page_delete(self, doc_url, page_idx):
+        raise NotImplementedError()
+
+    def page_get_mtime_by_url(self, out: list, doc_url, page_idx):
+        for doc in self.docs:
+            if doc['url'] != doc_url:
+                continue
+            if 'page_mtimes' not in doc:
+                continue
+            out.append(doc['page_mtimes'][page_idx][1])
+
+    def page_get_hash_by_url(self, out: list, doc_url, page_idx):
+        for doc in self.docs:
+            if doc['url'] != doc_url:
+                continue
+            if 'page_hashes' not in doc:
+                continue
+            out.append(doc['page_hashes'][page_idx][1])
+
+    def page_get_paper_size_by_url(self, doc_url, page_idx):
+        for doc in self.docs:
+            if doc['url'] != doc_url:
+                continue
+            if 'page_paper_sizes' not in doc:
+                continue
+            return doc['page_paper_sizes'][page_idx][1]

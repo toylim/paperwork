@@ -10,8 +10,8 @@ LOGGER = logging.getLogger(__name__)
 
 class Plugin(openpaperwork_core.PluginBase):
     """
-    A main loop. Not as good as GLib main loop, but good enough for shell
-    commands.
+    A main loop based on asyncio. Not as complete as GLib main loop, but
+    good enough for shell commands.
     """
     def __init__(self):
         super().__init__()
@@ -32,6 +32,12 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def mainloop(self, halt_on_uncatched_exception=True):
+        """
+        Wait for callbacks to be scheduled and execute them.
+
+        This method is blocking and will block until `mainloop_quit*()` is
+        called.
+        """
         self._check_mainloop_instantiated()
         self.halt_on_uncatched_exception = halt_on_uncatched_exception
 
@@ -45,9 +51,17 @@ class Plugin(openpaperwork_core.PluginBase):
             raise self.halt_cause
 
     def mainloop_get_thread_id(self):
+        """
+        Gets the ID of the thread running the main loop. `None` if no
+        thread is running it.
+        """
         return self.loop_ident
 
     def mainloop_quit_graceful(self):
+        """
+        Wait for all the scheduled callbacks to be executed and then stops
+        the main loop.
+        """
         self.schedule(self._mainloop_quit_graceful)
 
     def _mainloop_quit_graceful(self):
@@ -62,17 +76,36 @@ class Plugin(openpaperwork_core.PluginBase):
         self.mainloop_quit_now()
 
     def mainloop_quit_now(self):
+        """
+        Stops the main loop right now.
+
+        Note that it cannot interrupt a callback being executed, but no
+        callback scheduled after this one will be executed.
+        """
         self.loop.stop()
         self.loop = None
         self.task_count = 0
 
     def mainloop_ref(self, obj):
+        """
+        If you run a task independently from the main loop, you may want
+        to increment the reference counter of the main loop so
+        `mainloop_quit_graceful` does not interrupt the main loop while your
+        task is still running.
+
+        ThreadedPromise already takes care of incrementing and decrementing
+        this reference counter.
+        """
         self.task_count += 1
 
     def mainloop_unref(self, obj):
         self.task_count -= 1
 
     def schedule(self, func, *args, delay_s=0, **kwargs):
+        """
+        Request that the main loop executes the callback `func`.
+        Will return immediately.
+        """
         assert(hasattr(func, '__call__'))
 
         self._check_mainloop_instantiated()
@@ -107,7 +140,11 @@ class Plugin(openpaperwork_core.PluginBase):
     def mainloop_execute(self, func, *args, **kwargs):
         """
         Ensure a function is run on the main loop, even if called from
-        a thread
+        a thread. Will return only once the callback `func` has been
+        executed. Will return the value returned by `func`.
+
+        This method makes it easier to work with non-thread-safe modules
+        (sqlite3 for instance).
         """
         current = threading.current_thread().ident
 
@@ -121,12 +158,18 @@ class Plugin(openpaperwork_core.PluginBase):
 
         event = threading.Event()
         out = [None]
+        exc = [None]
 
         def get_result():
-            out[0] = func(*args, **kwargs)
+            try:
+                out[0] = func(*args, **kwargs)
+            except Exception as e:
+                exc[0] = e
             event.set()
 
         self.schedule(get_result)
         event.wait()
 
+        if exc[0] is not None:
+            raise exc[0]
         return out[0]

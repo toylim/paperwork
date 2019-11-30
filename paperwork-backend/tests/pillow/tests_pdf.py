@@ -8,7 +8,7 @@ import openpaperwork_core
 
 class TestPillowPdf(unittest.TestCase):
     def setUp(self):
-        self.core = openpaperwork_core.Core()
+        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
         self.core.load("paperwork_backend.pillow.pdf")
         self.core.init()
 

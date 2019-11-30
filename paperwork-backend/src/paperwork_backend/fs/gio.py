@@ -3,10 +3,13 @@ import io
 import logging
 import os
 import tempfile
-import urllib
 
-from gi.repository import Gio
-from gi.repository import GLib
+try:
+    from gi.repository import Gio
+    from gi.repository import GLib
+    GLIB_AVAILABLE = True
+except ImportError:
+    GLIB_AVAILABLE = False
 
 from . import CommonFsPluginBase
 
@@ -230,6 +233,14 @@ class Plugin(CommonFsPluginBase):
     def __init__(self):
         super().__init__()
 
+    def get_interfaces(self):
+        return super().get_interfaces() + ['chkdeps']
+
+    def chkdeps(self, out: dict):
+        if not GLIB_AVAILABLE:
+            out['gi.repository.GLib']['debian'] = 'gir1.2-glib-2.0'
+            out['gi.repository.GLib']['ubuntu'] = 'gir1.2-glib-2.0'
+
     @staticmethod
     def _is_file_uri(uri):
         return uri.startswith("file://")
@@ -328,6 +339,9 @@ class Plugin(CommonFsPluginBase):
         if not self._is_file_uri(url):
             return None
 
+        if self.fs_exists(url) is None:
+            return None
+
         try:
             LOGGER.info("Deleting %s ...", url)
             f = Gio.File.new_for_uri(url)
@@ -369,19 +383,6 @@ class Plugin(CommonFsPluginBase):
         except GLib.GError as exc:
             LOGGER.warning("Gio.Gerror", exc_info=exc)
 
-    def fs_iswritable(self, url):
-        try:
-            f = Gio.File.new_for_uri(url)
-            fi = f.query_info(
-                Gio.FILE_ATTRIBUTE_ACCESS_CAN_WRITE,
-                Gio.FileQueryInfoFlags.NONE
-            )
-            return fi.get_attribute_boolean(
-                Gio.FILE_ATTRIBUTE_ACCESS_CAN_WRITE
-            )
-        except GLib.GError as exc:
-            logger.warning("Gio.Gerror", exc_info=exc)
-
     def fs_getsize(self, url):
         if not self._is_file_uri(url):
             return None
@@ -411,6 +412,12 @@ class Plugin(CommonFsPluginBase):
             raise IOError(str(exc))
 
     def fs_copy(self, old_url, new_url):
+        old_type = old_url.split(":", 1)[0]
+        new_type = new_url.split(":", 1)[0]
+        if old_type != new_type:
+            # use the more generic and cross-FS method
+            return super().fs_copy(old_url, new_url)
+
         if not self._is_file_uri(old_url) or not self._is_file_uri(new_url):
             return None
         try:
@@ -492,14 +499,31 @@ class Plugin(CommonFsPluginBase):
         if not self._is_file_uri(uri):
             return None
 
-        gfile = Gio.File.new_for_uri(file_uri)
+        gfile = Gio.File.new_for_uri(uri)
         info = gfile.query_info(
             "standard::content-type", Gio.FileQueryInfoFlags.NONE
         )
         return info.get_content_type()
 
-    def fs_mktemp(self, prefix=None, suffix=None):
+    def fs_mktemp(self, prefix=None, suffix=None, mode='w+b'):
         tmp = tempfile.NamedTemporaryFile(
-            prefix=prefix, suffix=suffix, delete=False
+            prefix=prefix, suffix=suffix, delete=False, mode=mode
         )
         return (self.fs_safe(tmp.name), tmp)
+
+    def fs_iswritable(self, url):
+        if not self._is_file_uri(url):
+            return None
+
+        try:
+            f = Gio.File.new_for_uri(url)
+            fi = f.query_info(
+                Gio.FILE_ATTRIBUTE_ACCESS_CAN_WRITE,
+                Gio.FileQueryInfoFlags.NONE
+            )
+            return fi.get_attribute_boolean(
+                Gio.FILE_ATTRIBUTE_ACCESS_CAN_WRITE
+            )
+        except GLib.GError as exc:
+            LOGGER.warning("Gio.Gerror", exc_info=exc)
+            raise IOError(str(exc))

@@ -23,6 +23,7 @@ _ = gettext.gettext
 
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
+        super().__init__()
         self.interactive = True
         self.changes = None
 
@@ -30,22 +31,25 @@ class Plugin(openpaperwork_core.PluginBase):
         return ['shell']
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('syncable', [
-                    "paperwork_backend.guesswork.label_guesser",
+        return [
+            {
+                "interface": "syncable",
+                "defaults": [
+                    "paperwork_backend.guesswork.label.simplebayes",
+                    "paperwork_backend.guesswork.ocr.pyocr",
                     "paperwork_backend.index.whoosh",
                     "paperwork_backend.model.labels",
-                    "paperwork_backend.ocr.pyocr",
-                ]),
-            ],
-        }
+                ],
+            },
+        ]
 
     def cmd_set_interactive(self, interactive):
         self.interactive = interactive
 
     def cmd_complete_argparse(self, parser):
-        parser.add_parser('sync')
+        parser.add_parser('sync', help=_(
+            "Synchronize the index(es) with the content of the work directory"
+        ))
 
     def on_sync(self, name, status, key):
         self.changes[name][status].append(key)
@@ -67,7 +71,7 @@ class Plugin(openpaperwork_core.PluginBase):
         for p in promises[1:]:
             promise = promise.then(p)
 
-        self.core.call_one("schedule", p.schedule)
+        self.core.call_one("schedule", promise.schedule)
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
         if self.interactive:

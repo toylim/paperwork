@@ -1,18 +1,14 @@
-import io
-import logging
-import os
-import urllib
-
-from gi.repository import Gio
-from gi.repository import GLib
-
-from . import CommonFsPluginBase
-
 """
 Mock implementation of the plugin interface 'fs'.
 Useful for tests only.
 """
 
+import io
+import logging
+import os
+
+from . import CommonFsPluginBase
+from . import memory
 
 LOGGER = logging.getLogger(__name__)
 
@@ -172,7 +168,18 @@ class Plugin(CommonFsPluginBase):
         return [url + "/" + k for k in f.keys()]
 
     def fs_rename(self, old_url, new_url):
-        raise NotImplementedError()
+        old_path = self._get_path(old_url)
+        old_dir = self.fs
+        for p in old_path[:-1]:
+            old_dir = old_dir[p]
+
+        new_path = self._get_path(new_url)
+        new_dir = self.fs
+        for p in new_path[:-1]:
+            new_dir = new_dir[p]
+
+        old_file = old_dir.pop(old_path[-1])
+        new_dir[new_path[-1]] = old_file
 
     def fs_unlink(self, url):
         self.fs_rm_rf(url)
@@ -181,9 +188,15 @@ class Plugin(CommonFsPluginBase):
         path = self._get_path(url)
         f = self.fs
         for p in path[:-1]:
+            if p not in f:
+                return None
             f = f[p]
         assert(isinstance(f, dict))
-        f.pop(url.split("/")[-1])
+        filename = url.split("/")[-1]
+        if filename in f:
+            f.pop(filename)
+            return True
+        return None
 
     def fs_get_mtime(self, url):
         return 0
@@ -225,3 +238,10 @@ class Plugin(CommonFsPluginBase):
 
     def fs_get_mime(self, uri):
         pass
+
+    def fs_iswritable(self, url):
+        return True
+
+    def fs_mktemp(self, prefix=None, suffix=None, mode='w+b'):
+        name = "file://tmp/temporary_file" + suffix
+        return (name, memory.MemoryFileAdapter(self, name, mode))

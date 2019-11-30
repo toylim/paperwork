@@ -6,6 +6,13 @@ import logging
 LOGGER = logging.getLogger(__name__)
 
 
+class DependencyException(Exception):
+    """
+    Failed to satisfy dependencies.
+    """
+    pass
+
+
 class PluginBase(object):
     """
     Indicates all the methods that must be implemented by any plugin
@@ -42,14 +49,27 @@ class PluginBase(object):
     def get_deps(self):
         """
         Return the dependencies required by this plugin.
+
+        Example:
+
+        .. code-block:: python
+
+          [
+            {
+              "interface": "some_interface_name",  # required
+              "defaults": ['plugin_a', 'plugin_b'],  # required
+              "expected_already_satisfied": False,  # optional, default: True
+            },
+          ]
         """
-        return {
-            'plugins': [],
-            'interfaces': [],
-        }
+        return []
 
     def init(self, core):
-        # default implementation
+        """
+        Plugins can initialize whatever they want here. When called, all
+        dependencies have been loaded and initialized, so using them is safe.
+        Does nothing by default.
+        """
         self.core = core
 
 
@@ -57,12 +77,18 @@ class Core(object):
     """
     Manage plugins and their callbacks.
     """
-    def __init__(self):
+    def __init__(self, allow_unsatisfied=False):
+        """
+        `allow_unsatisfied=True` means that missing dependencies will be
+        loaded automatically based on the default plugin list provided by
+        plugins. This should be only used for testing.
+        """
         self.plugins = {}
         self._to_initialize = set()
         self._initialized = set()  # avoid double-init
         self.interfaces = collections.defaultdict(list)
         self.callbacks = collections.defaultdict(list)
+        self.allow_unsatisfied = allow_unsatisfied
 
     def load(self, module_name):
         """
@@ -77,7 +103,7 @@ class Core(object):
             - module_name: name of the Python module to load
         """
         if module_name in self.plugins:
-            return
+            return self.plugins[module_name]
 
         LOGGER.info("Loading plugin '%s' ...", module_name)
         module = importlib.import_module(module_name)
@@ -87,6 +113,10 @@ class Core(object):
         """
         should be called from outside for testing only
         """
+        if module_name in self.plugins:
+            LOGGER.debug("Module %s already loaded", module_name)
+            return self.plugins[module_name]
+
         plugin = module.Plugin()
         self.plugins[module_name] = plugin
 
@@ -113,56 +143,68 @@ class Core(object):
         LOGGER.info("Plugin '%s' loaded", module_name)
         return plugin
 
-    def _load_deps(self):
-        to_examine = list(self.plugins.values())
+    def _check_deps(self):
+        to_examine = [
+            (plugin_name, plugin)
+            for (plugin_name, plugin) in self.plugins.items()
+        ]
 
         while len(to_examine) > 0:
-            plugin = to_examine[0]
+            (plugin_name, plugin) = to_examine[0]
             to_examine = to_examine[1:]
 
-            LOGGER.info("Examining dependencies of '%s' ...", type(plugin))
+            LOGGER.info("Examining dependencies of '%s' ...", plugin_name)
 
             deps = plugin.get_deps()
-            if 'plugins' in deps:
-                for dep_plugin in deps['plugins']:
-                    if dep_plugin in self.plugins:
-                        LOGGER.info("- Plugin '%s' already loaded", dep_plugin)
-                        continue
-                    to_examine.append(self.load(dep_plugin))
-
-            if 'interfaces' in deps:
-                for (dep_interface, dep_defaults) in deps['interfaces']:
-                    if len(self.interfaces[dep_interface]) > 0:
-                        LOGGER.info(
-                            "- Interface '%s' already provided by %d plugins",
-                            dep_interface, len(self.interfaces[dep_interface])
-                        )
-                        continue
-                    LOGGER.info(
-                        "Loading default plugins for interface '%s'"
-                        " (%d plugins)",
-                        dep_interface, len(dep_defaults)
+            for dep in deps:
+                interface = dep['interface']
+                if len(self.interfaces[interface]) > 0:
+                    LOGGER.debug(
+                        "- Interface '%s' already provided by %d plugins",
+                        interface, len(self.interfaces[interface])
                     )
-                    for dep_default in dep_defaults:
-                        to_examine.append(self.load(dep_default))
-                    assert(len(self.interfaces[dep_interface]) > 0)
+                    continue
+
+                defaults = dep['defaults']
+                if len(defaults) <= 0:
+                    continue
+
+                if (not self.allow_unsatisfied
+                        and (
+                            'expected_already_satisfied' not in dep
+                            or dep['expected_already_satisfied']
+                        )):
+                    LOGGER.warning(
+                        "Plugin '{}' requires interface '{}' but no plugins"
+                        " provide this interface (suggested: {}). Plugin '{}'"
+                        " will be unloaded.".format(
+                            plugin_name, interface, defaults, plugin_name
+                        )
+                    )
+                    self.plugins.pop(plugin_name)
+                    # return False to indicate we actually dropped a plugin
+                    # and need to reevaluate all the dependencies again.
+                    return False
+                else:
+                    LOGGER.info(
+                        "Loading plugins %s to satisfy dependency."
+                        " Required by '%s' for interface '%s'",
+                        defaults, type(plugin), interface
+                    )
+                    for default in defaults:
+                        to_examine.append((default, self.load(default)))
+
+        return True
 
     def _init(self, plugin):
         if plugin in self._initialized:
             return
 
         deps = plugin.get_deps()
-        if 'plugins' in deps:
-            for dep_plugin in deps['plugins']:
-                assert(dep_plugin in self.plugins)
-                self._init(self.plugins[dep_plugin])
-
-        if 'interfaces' in deps:
-            for (dep_interface, _) in deps['interfaces']:
-                dep_plugins = self.interfaces[dep_interface]
-                assert(len(dep_plugins) > 0)
-                for dep_plugin in dep_plugins:
-                    self._init(dep_plugin)
+        for dep in deps:
+            dep_plugins = self.interfaces[dep['interface']]
+            for dep_plugin in dep_plugins:
+                self._init(dep_plugin)
 
         LOGGER.info("Initializing plugin '%s' ...", type(plugin))
         plugin.init(self)
@@ -178,7 +220,8 @@ class Core(object):
         BEWARE of dependency loops !
         """
         LOGGER.info("Initializing all plugins")
-        self._load_deps()
+        while not self._check_deps():
+            pass
         for plugin in self._to_initialize:
             self._init(plugin)
         self._to_initialize = set()
@@ -199,16 +242,33 @@ class Core(object):
         Call all the methods of all the plugins that have `callback_name`
         as name. Arguments are passed as is. Returned values are dropped
         (use callbacks for return values if required)
+
+        When we need a return value from callbacks called with `call_all()`,
+        we need a way to get the results from all of them. The usual way to do
+        that is to instantiate an empty `list` or `set`, and pass it as first
+        argument of the callbacks (argument `out`). Callbacks can then
+        complete this list or set using `list.append()` or `set.add()`.
+
+        .. uml::
+
+           Caller -> Core: call "func"
+           Core -> "Plugin A": plugin.func()
+           Core <- "Plugin A": returns "something_a"
+           Core -> "Plugin B": plugin.func()
+           Core <- "Plugin B": returns "something_b"
+           Core -> "Plugin C": plugin.func()
+           Core <- "Plugin C": returns "something_c"
+           Caller <- Core: returns 3
         """
         callbacks = self.callbacks[callback_name]
         if len(callbacks) <= 0:
             if callback_name.startswith("on_"):
                 # those are 'observer' callback. If nobody is observing,
                 # it's usually fine.
-                l = LOGGER.debug
+                log_method = LOGGER.debug
             else:
-                l = LOGGER.warning
-            l("No method '%s' found", callback_name)
+                log_method = LOGGER.warning
+            log_method("No method '%s' found", callback_name)
             return 0
         for (priority, plugin, callback) in callbacks:
             callback(*args, **kwargs)
@@ -220,6 +280,13 @@ class Core(object):
         Raises an error if no such method exists. If many exists,
         raises a warning and call one at random.
         Returns the value return by the callback.
+
+        .. uml::
+
+           Caller -> Core: call "func"
+           Core -> "Plugin A": plugin.func()
+           Core <- "Plugin A": returns X
+           Caller <- Core: returns X
 
         You're advised to use `call_all()` or `call_success` instead
         whenever possible. This method is only provided as convenience for
@@ -246,6 +313,19 @@ class Core(object):
         from None is returned. If none of the callbacks returned
         a value different from None or if no callback has the
         specified name, this method will return None.
+
+        Callbacks should never raise any exception.
+
+        .. uml::
+
+           Caller -> Core: call "func"
+           Core -> "Plugin A": plugin.func()
+           Core <- "Plugin A": returns None
+           Core -> "Plugin B": plugin.func()
+           Core <- "Plugin B": returns None
+           Core -> "Plugin C": plugin.func()
+           Core <- "Plugin C": returns "something"
+           Caller <- Core: returns "something"
         """
         callbacks = self.callbacks[callback_name]
         if len(callbacks) <= 0:
@@ -253,7 +333,7 @@ class Core(object):
         for (priority, plugin, callback) in callbacks:
             try:
                 r = callback(*args, **kwargs)
-            except Exception as exc:
+            except Exception:
                 LOGGER.error("Callback '%s' failed", str(callback))
                 raise
             if r is not None:

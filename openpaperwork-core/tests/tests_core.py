@@ -19,7 +19,7 @@ class TestLoading(unittest.TestCase):
                 def test_method(self):
                     self.test_method_called = True
 
-        core = openpaperwork_core.Core()
+        core = openpaperwork_core.Core(allow_unsatisfied=True)
 
         import_module.return_value = TestModule()
         core.load('whatever_module')
@@ -60,17 +60,17 @@ class TestLoading(unittest.TestCase):
                     return ['some_interface']
 
                 def get_deps(self):
-                    return {
-                        'plugins': [],
-                        'interfaces': [
-                            ('test_interface', ['module_a']),
-                        ],
-                    }
+                    return [
+                        {
+                            'interface': 'test_interface',
+                            'defaults': ['module_a'],
+                        }
+                    ]
 
                 def init(self, core):
                     self.init_called = True
 
-        core = openpaperwork_core.Core()
+        core = openpaperwork_core.Core(allow_unsatisfied=True)
 
         import_module.return_value = TestModuleB()
         core.load('module_b')
@@ -107,6 +107,9 @@ class TestInit(unittest.TestCase):
                 def __init__(self):
                     self.init_called_a = -1
 
+                def get_interfaces(self):
+                    return ['module_a']
+
                 def init(self, core):
                     global g_idx
                     self.init_called_a = g_idx
@@ -117,10 +120,16 @@ class TestInit(unittest.TestCase):
                 def __init__(self):
                     self.init_called_b = -1
 
+                def get_interfaces(self):
+                    return ['module_b']
+
                 def get_deps(self):
-                    return {
-                        'plugins': ['module_a'],
-                    }
+                    return [
+                        {
+                            'interface': 'module_a',
+                            'defaults': ['module_a'],
+                        }
+                    ]
 
                 def init(self, core):
                     global g_idx
@@ -133,9 +142,13 @@ class TestInit(unittest.TestCase):
                     self.init_called_c = -1
 
                 def get_deps(self):
-                    return {
-                        'plugins': ['module_b'],
-                    }
+                    return [
+                        {
+                            'interface': 'module_b',
+                            'defaults': ['module_b'],
+                            'expected_already_satisfied': False,
+                        }
+                    ]
 
                 def init(self, core):
                     global g_idx
@@ -188,15 +201,12 @@ class TestCall(unittest.TestCase):
                     self.test_method_called_c = False
 
                 def get_deps(self):
-                    return {
-                        'plugins': [],
-                        'interfaces': [
-                            ('test_interface', [
-                                'module_a',
-                                'module_b',
-                            ]),
-                        ],
-                    }
+                    return [
+                        {
+                            'interface': 'test_interface',
+                            'defaults': ['module_a', 'module_b']
+                        },
+                    ]
 
                 def init(self, core):
                     self.init_called_c = True
@@ -204,7 +214,7 @@ class TestCall(unittest.TestCase):
                 def test_method(self):
                     self.test_method_called_c = True
 
-        core = openpaperwork_core.Core()
+        core = openpaperwork_core.Core(allow_unsatisfied=True)
 
         import_module.return_value = TestModuleC()
         core.load('module_c')
@@ -261,7 +271,7 @@ class TestCall(unittest.TestCase):
                     self.test_method_called_d = True
                     return None
 
-        core = openpaperwork_core.Core()
+        core = openpaperwork_core.Core(allow_unsatisfied=True)
 
         import_module.return_value = TestModuleB()
         core.load('module_b')
@@ -303,7 +313,7 @@ class TestCall(unittest.TestCase):
                 def test_method(self):
                     return "B"
 
-        core = openpaperwork_core.Core()
+        core = openpaperwork_core.Core(allow_unsatisfied=True)
 
         import_module.return_value = TestModuleA()
         core.load('module_a')

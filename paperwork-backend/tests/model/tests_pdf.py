@@ -6,7 +6,7 @@ import openpaperwork_core
 
 class TestHocr(unittest.TestCase):
     def setUp(self):
-        self.core = openpaperwork_core.Core()
+        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
         self.core.load("paperwork_backend.model.pdf")
         self.core.init()
 
@@ -20,7 +20,7 @@ class TestHocr(unittest.TestCase):
         self.core.call_all("doc_get_hash_by_url", h, self.doc_url)
         expected = [
             0x7d2ffb0e8ddce8f7dfbb4a8dfc14d563b272bd47b1bafb9617fbfd228bf2eecd
-            ]
+        ]
         self.assertEqual(h, expected)
 
     def test_get_nb_pages(self):

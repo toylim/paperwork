@@ -35,12 +35,16 @@ class Plugin(openpaperwork_core.PluginBase):
         return ["update_detection"]
 
     def get_deps(self):
-        return {
-            'interfaces': [
-                ('mainloop', ['openpaperwork_core.mainloop_asyncio',]),
-                ('paperwork_config', ['paperwork_backend.config.file',]),
-            ]
-        }
+        return [
+            {
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_core.mainloop_asyncio'],
+            },
+            {
+                'interface': 'paperwork_config',
+                'defaults': ['paperwork_backend.config.file'],
+            },
+        ]
 
     def _register_config(self, core):
         setting = self.core.call_success(

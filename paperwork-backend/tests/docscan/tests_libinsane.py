@@ -47,7 +47,7 @@ class TestImageAssembler(unittest.TestCase):
 
 class TestLibinsane(unittest.TestCase):
     def setUp(self):
-        self.core = openpaperwork_core.Core()
+        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
         self.core.load("paperwork_backend.config.fake")
         self.core.load("paperwork_backend.docscan.libinsane")
 
@@ -105,6 +105,9 @@ class TestLibinsane(unittest.TestCase):
         def scan(sources):
             source = sources['flatbed']
             (scan_id, promise) = source.scan_promise(resolution=150)
+            promise = promise.then(  # roll out the image generator
+                lambda args: list(args[2])
+            )
             promise = promise.then(source.close)
             promise.schedule()
             self.called = True
@@ -163,6 +166,9 @@ class TestLibinsane(unittest.TestCase):
         self.core.init()
 
         (scan_id, promise) = self.core.call_success("scan_promise")
+        promise = promise.then(  # roll out the image generator
+            lambda args: list(args[2])
+        )
         promise.schedule()
         self.core.call_all("mainloop_quit_graceful")
 

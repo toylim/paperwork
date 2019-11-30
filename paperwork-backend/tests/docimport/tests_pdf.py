@@ -12,15 +12,20 @@ class TestPdfImport(unittest.TestCase):
                 os.path.dirname(os.path.abspath(__file__))
             )
         )
-        self.core = openpaperwork_core.Core()
+        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
 
         self.copies = []
         self.add_docs = []
         self.nb_commits = 0
 
         class FakeTransaction(object):
+            priority = 0
+
             def add_obj(s, doc_id):
                 self.add_docs.append(doc_id)
+
+            def unchanged_obj(s, doc_id):
+                pass
 
             def commit(s):
                 self.nb_commits += 1
@@ -118,15 +123,20 @@ class TestRecursivePdfImport(unittest.TestCase):
                 os.path.dirname(os.path.abspath(__file__))
             )
         )
-        self.core = openpaperwork_core.Core()
+        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
 
         self.copies = []
         self.add_docs = []
         self.nb_commits = 0
 
         class FakeTransaction(object):
+            priority = 0
+
             def add_obj(s, doc_id):
                 self.add_docs.append(doc_id)
+
+            def unchanged_obj(s, doc_id):
+                pass
 
             def commit(s):
                 self.nb_commits += 1

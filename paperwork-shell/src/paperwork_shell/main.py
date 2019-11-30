@@ -2,6 +2,7 @@ import argparse
 import gettext
 import json
 import sys
+import traceback
 
 import openpaperwork_core
 
@@ -11,12 +12,33 @@ import paperwork_backend
 _ = gettext.gettext
 
 DEFAULT_SHELL_PLUGINS = paperwork_backend.DEFAULT_SHELL_PLUGINS + [
+    'paperwork_shell.cmd.chkdeps',
     'paperwork_shell.cmd.config',
+    'paperwork_shell.cmd.delete',
+    'paperwork_shell.cmd.edit',
+    'paperwork_shell.cmd.export',
+    'paperwork_shell.cmd.extra_text',
+    'paperwork_shell.cmd.import',
+    'paperwork_shell.cmd.label',
+    'paperwork_shell.cmd.move',
+    'paperwork_shell.cmd.ocr',
+    'paperwork_shell.cmd.rename',
+    'paperwork_shell.cmd.reset',
+    'paperwork_shell.cmd.scan',
+    'paperwork_shell.cmd.scanner',
+    'paperwork_shell.cmd.search',
+    'paperwork_shell.cmd.show',
     'paperwork_shell.cmd.sync',
 ]
 
 DEFAULT_CLI_PLUGINS = DEFAULT_SHELL_PLUGINS + [
+    "paperwork_shell.display.docrendering.extra_text",
+    "paperwork_shell.display.docrendering.img",
+    "paperwork_shell.display.docrendering.labels",
+    "paperwork_shell.display.docrendering.text",
+    'paperwork_shell.display.print',
     'paperwork_shell.display.progress',
+    "paperwork_shell.display.scan",
 ]
 DEFAULT_JSON_PLUGINS = DEFAULT_SHELL_PLUGINS
 
@@ -33,7 +55,8 @@ def main_main(in_args, application_name, default_plugins, interactive):
     core.call_all("set_log_output", sys.stderr)
     core.call_all("set_log_level", 'warning')
 
-    core.load(paperwork_backend.DEFAULT_CONFIG_PLUGIN)
+    for module_name in paperwork_backend.DEFAULT_CONFIG_PLUGINS:
+        core.load(module_name)
     core.init()
     core.call_all("paperwork_config_load", application_name, default_plugins)
 
@@ -67,12 +90,14 @@ def json_main():
             sort_keys=True
         ))
     except Exception as exc:
+        stack = traceback.format_exc().splitlines()
         print(json.dumps(
             {
                 "status": "error",
                 "exception": str(type(exc)),
                 "args": str(exc.args),
                 "reason": str(exc),
+                "stack": stack,
             },
             indent=4,
             separators=(',', ': '),
