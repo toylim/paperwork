@@ -82,7 +82,7 @@ windows_exe:
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-poppler
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S git  # for 'make version'
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-python3-cx_Freeze
-    - c:\msys64\usr\bin\pacman --needed --noconfirm -S zip
+    - c:\msys64\usr\bin\pacman --needed --noconfirm -S zip unzip
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-nsis
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-nsis-nsisunz
     # We need rclone to upload the files on OVH object storage
