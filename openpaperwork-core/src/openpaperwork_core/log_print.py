@@ -36,7 +36,7 @@ class _ColorFormatter(logging.Formatter):
         return logging.Formatter.format(self, record)
 
 
-class LogHandler(logging.Handler):
+class _LogHandler(logging.Handler):
 
     def __init__(self):
         super().__init__()
@@ -73,16 +73,23 @@ class LogHandler(logging.Handler):
 class Plugin(PluginBase):
     def __init__(self):
         super().__init__()
-        self.log_handler = LogHandler()
+        self.log_handler = _LogHandler()
         logging.getLogger().addHandler(self.log_handler)
 
     def get_interfaces(self):
         return []
 
     def set_log_output(self, fd):
+        """
+        Provide the file descriptor to which the output must be written.
+        """
         self.log_handler.out_fd = fd
 
     def set_log_level(self, level):
+        """
+        Valid log levels are: 'none', 'critical', 'error', 'warn', 'warning',
+        'info', 'debug'.
+        """
         LOG_LEVELS = {
             'none': logging.CRITICAL,
             'critical': logging.CRITICAL,

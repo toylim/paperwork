@@ -9,6 +9,7 @@ Welcome to Openpaperwork-core's documentation!
    :caption: Contents:
 
    core
+   config_file
    logs
    mainloop
    promise
