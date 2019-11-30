@@ -63,7 +63,7 @@ mkdir -p ~/flatpak  # directory that contains the repository directory
 cd flatpak/
 
 export EXPORT_ARGS="--gpg-sign=E5ACE6FEA7A6DD48"
-export REPO=/home/gitlab-runner/flatpak/repo
+export REPO=/home/gitlab-runner/flatpak/paperwork_repo
 
 for arch in x86_64 i386 ; do
 	msg "=== Architecture: ${arch} ==="
@@ -106,6 +106,35 @@ for arch in x86_64 i386 ; do
 	fi
 done
 
+cd ..
+
 chmod -R a+rX ${HOME}/flatpak
+
+if [ -z "$RCLONE_CONFIG_OVHSWIFT_USER" ] ; then
+  echo "Delivery: No rclone credentials provided."
+  exit 0
+fi
+
+echo "Syncing ..."
+
+# we must sync first the objects and the deltas before the references
+# otherwise users might get temporarily an inconsistent content.
+for dir in \
+		paperwork_repo/objects \
+		paperwork_repo/deltas \
+		paperwork_repo ; do
+
+	local_path="/home/gitlab-runner/flatpak/${dir}"
+
+	echo "${local_path} --> ${dir} ..."
+
+	if ! rclone --config ./rclone.conf sync ${local_path} "ovhswift:paperwork_flatpak/${dir}" ; then
+		echo "rclone failed"
+		exit 1
+	fi
+
+done
+
+
 
 cleanup

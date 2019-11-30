@@ -3,26 +3,33 @@
 
 ## Build dependencies
 
-It's hard to list all the dependencies here. Currently, the main ones are:
+Paperwork build is based on [Msys2](https://www.msys2.org/).
 
-* [Msys2](https://www.msys2.org/)
-* [Python 3.4](https://www.python.org/downloads/windows/)
-* GObject Introspection, Gtk, Gdk, Libpoppler, & friends
-* GNU Makefile
+You can have a look at the
+[.gitlab-ci.yml](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/blob/develop/.gitlab-ci.yml)
+(target 'windows_exe') to have an exhaustive list of all the required MSYS2 packages.
+Some Python packages are automatically downloaded and installed by setuptools when running
+`make install` / `make install_py` / `python3 ./setup.py install` / etc.
 
-They must be installed *before* the rest of Paperwork. Once everything is installed:
+Once everything is installed:
 
-* [Clone](https://git-for-windows.github.io/) ```https://gitlab.gnome.org/World/OpenPaperwork/paperwork.git```
-* You can run ```make install``` (GNU Makefile) to fetch all the Python dependencies
-  not listed here. However, it won't create any shortcut or anything. Paperwork startup script
-  is installed, but isn't of much help.
+* `git clone https://gitlab.gnome.org/World/OpenPaperwork/paperwork.git`
+* You can run `make install` (GNU Makefile) to fetch all the Python dependencies
+  not listed here and install Paperwork system-wide. However, it won't create
+  any shortcut or anything (the installer creates them).
+
+Tesseract is not packaged in the same .zip than Paperwork and is not required
+to build Paperwork executable and .zip. It is only required for running it.
+Already-compiled version of Tesseract and its data files are available on
+[download.openpaper.work](https://download.openpaper.work/tesseract/) and are
+the files actually downloaded by the installer.
 
 
 ## Running
 
 
 Go to where you checked out Paperwork frontend,
-and run ```python paperwork\src\launcher.py```. Tesseract must be in your PATH.
+and run ```python3 paperwork\src\launcher.py```. Tesseract must be in your PATH.
 
 
 ## Packaging
@@ -74,4 +81,4 @@ C:\Program Files (x86)\OpenPaper\ (for example)
             |-- fra.traineddata
 ```
 
-Note that it will only work if packaged with Pyinstaller.
+Note that it will only work if packaged with cx_freeze (`sys.frozen == True`).

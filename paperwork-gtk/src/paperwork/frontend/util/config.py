@@ -334,7 +334,7 @@ def _get_scanner(core, libinsane, devid, preferred_sources=None):
         src_name = None
         for possible in preferred_sources:
             if possible.lower() in config_source.lower():
-                src_name = [config_source]
+                src_name = config_source
                 break
         # else find a source that matches the preferred_sources requirement
         if src_name is None:
@@ -393,7 +393,7 @@ def get_scanner(core, libinsane, preferred_sources=None):
                 "Will try another scanner id: %s" % devices[0].get_dev_id()
             )
             return _get_scanner(
-                core, devices[0].get_dev_id(), preferred_sources
+                core, libinsane, devices[0].get_dev_id(), preferred_sources
             )
         except GLib.Error:
             # this is a fallback mechanism, but what interest us is the first

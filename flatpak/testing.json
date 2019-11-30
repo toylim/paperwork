@@ -196,54 +196,6 @@
             ]
         },
         {
-            "name": "libinsane",
-            "buildsystem": "meson",
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://gitlab.gnome.org/World/OpenPaperwork/libinsane.git",
-                    "branch": "master",
-                    "disable-shallow-clone": true
-                }
-            ]
-        },
-        {
-            "name": "python-pyocr",
-            "no-autogen": true,
-            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://gitlab.gnome.org/World/OpenPaperwork/pyocr.git",
-                    "branch": "master",
-                    "disable-shallow-clone": true
-                },
-                {
-                    "type": "file",
-                    "path": "pip-Makefile",
-                    "dest-filename": "Makefile"
-                }
-            ]
-        },
-        {
-            "name": "python-pypillowfight",
-            "no-autogen": true,
-            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://gitlab.gnome.org/World/OpenPaperwork/libpillowfight.git",
-                    "branch": "master",
-                    "disable-shallow-clone": true
-                },
-                {
-                    "type": "file",
-                    "path": "pypillowfight-Makefile",
-                    "dest-filename": "Makefile"
-                }
-            ]
-        },
-        {
             "name": "python-pyxdg",
             "no-autogen": true,
             "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
@@ -367,6 +319,54 @@
                     "type": "archive",
                     "url": "https://poppler.freedesktop.org/poppler-0.74.0.tar.xz",
                     "sha256": "92e09fd3302567fd36146b36bb707db43ce436e8841219025a82ea9fb0076b2f"
+                }
+            ]
+        },
+        {
+            "name": "libinsane",
+            "buildsystem": "meson",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://gitlab.gnome.org/World/OpenPaperwork/libinsane.git",
+                    "branch": "master",
+                    "disable-shallow-clone": true
+                }
+            ]
+        },
+        {
+            "name": "python-pyocr",
+            "no-autogen": true,
+            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://gitlab.gnome.org/World/OpenPaperwork/pyocr.git",
+                    "branch": "master",
+                    "disable-shallow-clone": true
+                },
+                {
+                    "type": "file",
+                    "path": "pip-Makefile",
+                    "dest-filename": "Makefile"
+                }
+            ]
+        },
+        {
+            "name": "python-pypillowfight",
+            "no-autogen": true,
+            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://gitlab.gnome.org/World/OpenPaperwork/libpillowfight.git",
+                    "branch": "master",
+                    "disable-shallow-clone": true
+                },
+                {
+                    "type": "file",
+                    "path": "pypillowfight-Makefile",
+                    "dest-filename": "Makefile"
                 }
             ]
         },

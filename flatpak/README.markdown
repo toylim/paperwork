@@ -14,6 +14,7 @@ Its drawback:
 - Using Flatpak, Paperwork comes directly from its developers. It has not been
   reviewed by your distribution maintainers. It may not include some changes
   that your distribution maintainers would have added.
+- Does not work with Fujitsu scanners (still needs to figure out why)
 
 
 # Quick start
@@ -69,13 +70,6 @@ Paperwork from accessing devices directly. Therefore the scanning daemon
 [Saned](https://linux.die.net/man/1/saned) must be enabled on the host system,
 and connection must be allowed from 127.0.0.1.
 
-## Releases
-
-'release' always points to the latest Paperwork release.
-
-```shell
-flatpak --user install https://builder.openpaper.work/paperwork_release.flatpakref
-```
 
 ## Continuous builds
 
@@ -92,6 +86,16 @@ and develop if you wish):
 ```shell
 flatpak --user install https://builder.openpaper.work/paperwork_develop.flatpakref
 ```
+
+
+## Releases
+
+'release' always points to the latest Paperwork release.
+
+```shell
+flatpak --user install https://builder.openpaper.work/paperwork_release.flatpakref
+```
+
 
 ## Running Paperwork
 
@@ -115,24 +119,6 @@ You can also run specifically the branch 'develop':
 flatpak run work.openpaper.Paperwork//develop
 ```
 
-## Running paperwork-shell
-
-When using Flatpak, paperwork-shell remains available. Note that it will run
-inside Paperwork's container and may not access files outside your home
-directory.
-
-```shell
-flatpak run --command=paperwork-shell work.openpaper.Paperwork [args]
-flatpak run --command=paperwork-shell work.openpaper.Paperwork --help
-```
-
-Examples:
-
-```shell
-flatpak run --command=paperwork-shell work.openpaper.Paperwork help import
-flatpak run --command=paperwork-shell work.openpaper.Paperwork -bq import ~/tmp/pdf
-```
-
 
 ## Build
 
@@ -153,3 +139,66 @@ Uninstallation *won't* delete your work directory nor your documents.
 ```ahell
 flatpak --user uninstall work.openpaper.Paperwork
 ```
+
+
+## FAQ
+
+### How do I run paperwork-shell ?
+
+When using Flatpak, paperwork-shell remains available. Note that it will run
+inside Paperwork's container and may not access files outside your home
+directory.
+
+```shell
+flatpak run --command=paperwork-shell work.openpaper.Paperwork [args]
+flatpak run --command=paperwork-shell work.openpaper.Paperwork --help
+```
+
+Examples:
+
+```shell
+flatpak run --command=paperwork-shell work.openpaper.Paperwork help import
+flatpak run --command=paperwork-shell work.openpaper.Paperwork -bq import ~/tmp/pdf
+```
+
+
+### How do I update The GPG public key of the Flatpak repository ?
+
+Paperwork repository GPG key expires every 2 years. When that happens, when you
+try updating Paperwork, you will get an output similar to the following one:
+
+```
+$ flatpak --user update
+Looking for updates…
+F: Error updating remote metadata for 'paperwork-origin': GPG signatures found, but none are in trusted keyring
+F: Warning: Treating remote fetch error as non-fatal since runtime/work.openpaper.Paperwork.Locale/x86_64/master is already installed: Unable to load summary from remote paperwork-origin: GPG signatures found, but none are in trusted keyring
+F: Warning: Can't find runtime/work.openpaper.Paperwork.Locale/x86_64/master metadata for dependencies: Unable to load metadata from remote paperwork-origin: summary fetch error: GPG signatures found, but none are in trusted keyring
+F: Warning: Treating remote fetch error as non-fatal since app/work.openpaper.Paperwork/x86_64/master is already installed: Unable to load summary from remote paperwork-origin: GPG signatures found, but none are in trusted keyring
+F: Warning: Can't find app/work.openpaper.Paperwork/x86_64/master metadata for dependencies: Unable to load metadata from remote paperwork-origin: summary fetch error: GPG signatures found, but none are in trusted keyring
+(...)
+Warning: org.freedesktop.Platform.openh264 needs a later flatpak version
+Error: GPG signatures found, but none are in trusted keyring
+Error: GPG signatures found, but none are in trusted keyring
+Changes complete.
+error: There were one or more errors
+```
+
+The simplest way to fix that is to reinstall Paperwork. Uninstalling Paperwork
+will never delete your documents.
+
+```
+flatpak --user remove work.openpaper.Paperwork
+flatpak --user install https://builder.openpaper.work/paperwork_master.flatpakref
+```
+
+
+### No text appears when rendering PDF files. What do I do ?
+
+If you run Paperwork from a terminal, you can see the message
+`some font thing has failed` every time you open a PDF file from Paperwork.
+This issue is related to fontconfig cache.
+
+To fix it:
+
+- Stop Paperwork
+- Run: `flatpak run --command=fc-cache work.openpaper.Paperwork -f`

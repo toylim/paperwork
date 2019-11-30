@@ -1,6 +1,7 @@
 image: debian:stable-slim
 
 check:
+  stage: test
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
@@ -12,6 +13,7 @@ check:
     - apt-get install -y -q make
     - apt-get install -y -q pycodestyle flake8 python3-flake8
     - make check
+
 
 .apt: &apt
   before_script:
@@ -30,7 +32,9 @@ check:
     - apt-get install -y -qq gir1.2-pango-1.0 gir1.2-poppler-0.18
     - apt-get install -y -qq tesseract-ocr tesseract-ocr-fra
 
+
 test:
+  stage: test
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
@@ -43,12 +47,16 @@ test:
 
 
 linux_flatpak:
+  stage: deploy
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
   tags:
     - flatpak
   script:
+    # not running as root, so we cannot actually install anything
+    # - apt-get update
+    # - apt-get install -y -q rclone flatpak-builder
     - ./update_flatpak_repo.sh
 
 
@@ -69,6 +77,7 @@ doc:
 
 
 windows_exe:
+  stage: deploy
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
@@ -101,9 +110,15 @@ windows_exe:
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-poppler
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S git  # for 'make version'
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-python3-cx_Freeze
-    - c:\msys64\usr\bin\pacman --needed --noconfirm -S zip
+    - c:\msys64\usr\bin\pacman --needed --noconfirm -S zip unzip
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-nsis
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-nsis-nsisunz
+    # We need rclone to upload the files on OVH object storage
+    - c:\msys64\usr\bin\rm -f rclone-v1.50.1-windows-386.zip
+    - c:\msys64\usr\bin\rm -rf rclone-v1.50.1-windows-386
+    - c:\msys64\usr\bin\wget -q https://downloads.rclone.org/v1.50.1/rclone-v1.50.1-windows-386.zip
+    - c:\msys64\usr\bin\unzip rclone-v1.50.1-windows-386.zip
+    - c:\msys64\usr\bin\cp rclone-v1.50.1-windows-386/rclone.exe /usr/bin
     # Build
     - git submodule init
     - git submodule update --recursive --remote

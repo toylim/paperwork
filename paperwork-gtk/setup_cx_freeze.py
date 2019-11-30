@@ -105,7 +105,7 @@ required_dlls = [
     'libpangocairo-1.0-0.dll',
     'libpangoft2-1.0-0.dll',
     'libpangowin32-1.0-0.dll',
-    'libpoppler-89.dll',
+    'libpoppler-91.dll',
     'libpoppler-glib-8.dll',
     'librsvg-2-2.dll',
     'libxml2-2.dll',
@@ -257,6 +257,7 @@ Main features are:
             'include_files': common_include_files,
             'silent': True,
             'packages': common_packages,
+            "excludes": ["tkinter", "tk", "tcl"],
         },
     },
 )
