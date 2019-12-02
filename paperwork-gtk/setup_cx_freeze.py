@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import codecs
+import glob
 import os
 import setuptools
 import sys
@@ -105,7 +106,7 @@ required_dlls = [
     'libpangocairo-1.0-0.dll',
     'libpangoft2-1.0-0.dll',
     'libpangowin32-1.0-0.dll',
-    'libpoppler-91.dll',
+    'libpoppler-*.dll',
     'libpoppler-glib-8.dll',
     'librsvg-2-2.dll',
     'libxml2-2.dll',
@@ -116,10 +117,13 @@ required_dlls = [
 
 for dll in required_dlls:
     dll_path = None
-    for p in required_dll_search_paths:
-        p = os.path.join(p, dll)
-        if os.path.isfile(p):
-            dll_path = p
+    for p_dir in required_dll_search_paths:
+        p_glob = os.path.join(p_dir, dll)
+        for p in p_glob:
+            if os.path.isfile(p):
+                dll_path = p
+                break
+        if dll_path is not None:
             break
     if dll_path is None:
         raise Exception(
