@@ -131,7 +131,8 @@ for dll in required_dlls:
                 dll, required_dll_search_paths
             )
         )
-    common_include_files.append((dll_path, dll))
+    print(f"Found {dll} = {dll_path}")
+    common_include_files.append((dll_path, os.path.basename(dll_path)))
 
 # We need the .typelib files at runtime.
 # The related .gir files are in $PREFIX/share/gir-1.0/$NS.gir,
@@ -168,7 +169,6 @@ common_packages = [
     # XXX(Jflesch): known bug in cx_freeze
     'appdirs',
     'packaging',
-    'pkg_resources',
 
     "six",
     "gi",   # always seems to be needed
