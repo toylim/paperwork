@@ -119,7 +119,7 @@ for dll in required_dlls:
     dll_path = None
     for p_dir in required_dll_search_paths:
         p_glob = os.path.join(p_dir, dll)
-        for p in p_glob:
+        for p in glob.glob(p_glob):
             if os.path.isfile(p):
                 dll_path = p
                 break
