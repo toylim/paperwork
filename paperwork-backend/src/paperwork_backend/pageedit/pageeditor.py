@@ -139,7 +139,7 @@ class PageEditor(object):
                 "togglable": False,
             }
         if ('cropping' in modifiers
-                    and self.ui.can(self.ui.CAPABILITY_SHOW_FRAME)):
+                and self.ui.can(self.ui.CAPABILITY_SHOW_FRAME)):
             self.modifier_descriptors['crop'] = {
                 "id": "crop",
                 "name": _("Cropping"),

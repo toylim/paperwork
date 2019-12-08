@@ -159,7 +159,6 @@ class Source(object):
         imgs = self._scan(scan_id, resolution, max_pages, close_on_end)
         return (self, scan_id, imgs)
 
-
     def _scan(self, scan_id, resolution, max_pages, close_on_end=False):
         # keep in mind that we are in a thread here, but listeners
         # must be called from the main loop

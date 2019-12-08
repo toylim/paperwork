@@ -35,7 +35,8 @@ class AbstractPageEditorUI(object):
         """
         Tells the UI to not let the user select a frame anymore.
 
-        Called every time the image changes (if we want the frame to be hidden).
+        Called every time the image changes (if we want the frame to be
+        hidden).
         """
         return
 

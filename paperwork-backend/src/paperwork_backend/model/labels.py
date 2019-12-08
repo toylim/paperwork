@@ -103,7 +103,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 out.add(tuple(x.strip() for x in line.split(",", 1)))
 
     def label_generate_color(self):
-        color = (
+        return (
             random.randint(0, 255),
             random.randint(0, 255),
             random.randint(0, 255),
