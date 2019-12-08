@@ -19,9 +19,13 @@ ${VERSION_FILE}:
 	echo -n $(shell git describe --always) >> $@
 	echo "\"" >> $@
 
-doc:
+doc: install_py
+	$(MAKE) -C doc html
 
-upload_doc:
+doc/_build/html/index.html: doc
+
+upload_doc: doc/_build/html/index.html
+	cd .. && ./deliver_doc.sh ${CURDIR}/doc/_build/html paperwork_backend
 
 check:
 	flake8 src/paperwork_backend
@@ -85,6 +89,7 @@ help:
 	install_py \
 	release \
 	test \
+	upload_doc \
 	uninstall \
 	uninstall_c \
 	version
