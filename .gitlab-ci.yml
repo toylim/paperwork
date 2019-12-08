@@ -65,12 +65,14 @@ doc:
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
+  image: debian:stable
   tags:
     - linux
     - volatile
   <<: *apt
   script:
     - apt-get update
+    - apt-get install -y -qq openjdk-11-jre
     - apt-get install -y -qq python3-sphinx python3-recommonmark
     - apt-get install -y -qq plantuml python3-sphinxcontrib.plantuml
     - source ./activate_test_env.sh && make doc && make upload_doc
