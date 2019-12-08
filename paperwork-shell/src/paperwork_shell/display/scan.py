@@ -16,7 +16,6 @@
 import functools
 import gettext
 import shutil
-import sys
 
 import PIL
 import PIL.Image
@@ -170,9 +169,6 @@ class Plugin(openpaperwork_core.PluginBase):
         if self.doc_renderer is None:
             return
 
-        nb_pages = self.core.call_success(
-            "doc_get_nb_pages_by_url", self.doc_url
-        )
         for page_idx in self.page_hashes:
             # we only want to display the page if something has actually
             # changed
