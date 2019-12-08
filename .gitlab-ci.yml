@@ -9,7 +9,7 @@ check:
     - linux
     - volatile
   script:
-    - apt-get update
+    - sh ./set_apt_proxy.sh
     - apt-get install -y -q make
     - apt-get install -y -q pycodestyle flake8 python3-flake8
     - make check
@@ -17,7 +17,7 @@ check:
 
 .apt: &apt
   before_script:
-    - apt-get update
+    - sh ./set_apt_proxy.sh
     - apt-get install -y -qq make meson build-essential gcc
     - apt-get install -y -qq libsane-dev
     - apt-get install -y -qq libgirepository1.0-dev gobject-introspection
@@ -71,7 +71,6 @@ doc:
     - volatile
   <<: *apt
   script:
-    - apt-get update
     - apt-get install -y -qq openjdk-11-jre
     - apt-get install -y -qq python3-sphinx python3-recommonmark
     - apt-get install -y -qq plantuml python3-sphinxcontrib.plantuml
