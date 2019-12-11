@@ -31,19 +31,17 @@ class PeriodicTask(object):
 
     def register_config(self, core):
         setting = core.call_success(
-            "paperwork_config_build_simple", self.config_section_name,
+            "config_build_simple", self.config_section_name,
             "last_run", lambda: datetime.date(year=1970, month=1, day=1)
         )
         core.call_all(
-            "paperwork_config_register",
-            self.config_section_name + "_last_run",
-            setting
+            "config_register", self.config_section_name + "_last_run", setting
         )
 
     def do(self, core):
         now = datetime.date.today()
         last_run = core.call_success(
-            "paperwork_config_get", self.config_section_name + "_last_run"
+            "config_get", self.config_section_name + "_last_run"
         )
         LOGGER.info(
             "[%s] Last run: %s ; Now: %s",
@@ -81,22 +79,22 @@ class OpenpaperHttp(object):
         settings = {
             self.config_section_name + "_protocol":
                 core.call_success(
-                    "paperwork_config_build_simple", self.config_section_name,
+                    "config_build_simple", self.config_section_name,
                     "protocol", lambda: self.default_protocol
                 ),
             self.config_section_name + "_server":
                 core.call_success(
-                    "paperwork_config_build_simple", self.config_section_name,
+                    "config_build_simple", self.config_section_name,
                     "server", lambda: self.default_server
                 ),
             self.config_section_name + "_url":
                 core.call_success(
-                    "paperwork_config_build_simple", self.config_section_name,
+                    "config_build_simple", self.config_section_name,
                     "url", lambda: self.default_url
                 ),
         }
         for (k, setting) in settings.items():
-            core.call_all("paperwork_config_register", k, setting)
+            core.call_all("config_register", k, setting)
 
     def _request(self, data, protocol, server, url):
         if protocol == "http":
@@ -131,13 +129,13 @@ class OpenpaperHttp(object):
 
     def get_request_promise(self, core):
         protocol = core.call_success(
-            "paperwork_config_get", self.config_section_name + "_protocol"
+            "config_get", self.config_section_name + "_protocol"
         )
         server = core.call_success(
-            "paperwork_config_get", self.config_section_name + "_server"
+            "config_get", self.config_section_name + "_server"
         )
         url = core.call_success(
-            "paperwork_config_get", self.config_section_name + "_url"
+            "config_get", self.config_section_name + "_url"
         )
 
         return openpaperwork_core.promise.ThreadedPromise(

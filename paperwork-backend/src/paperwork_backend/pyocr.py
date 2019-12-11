@@ -159,8 +159,8 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return [
             {
-                'interface': 'paperwork_config',
-                'defaults': ['paperwork_backend.config.file'],
+                'interface': 'config',
+                'defaults': ['openpaperwork_core.config'],
             },
         ]
 
@@ -168,10 +168,10 @@ class Plugin(openpaperwork_core.PluginBase):
         super().init(core)
 
         ocr_lang = self.core.call_success(
-            "paperwork_config_build_simple",
+            "config_build_simple",
             "OCR", "Lang", get_default_ocr_lang
         )
-        self.core.call_all("paperwork_config_register", "ocr_lang", ocr_lang)
+        self.core.call_all("config_register", "ocr_lang", ocr_lang)
 
     def chkdeps(self, out: dict):
         ocr_tools = pyocr.get_available_tools()
@@ -197,9 +197,9 @@ class Plugin(openpaperwork_core.PluginBase):
             out[name]['ubuntu'] = 'tesseract-ocr-{}'.format(ocr_lang)
 
     def ocr_get_lang(self):
-        return self.core.call_success("paperwork_config_get", "ocr_lang")
+        return self.core.call_success("config_get", "ocr_lang")
 
     def ocr_set_lang(self, lang):
         return self.core.call_success(
-            "paperwork_config_set", "ocr_lang", lang
+            "config_set", "ocr_lang", lang
         )

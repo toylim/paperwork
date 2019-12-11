@@ -9,7 +9,7 @@ import logging
 import os
 import os.path
 
-from . import PluginBase
+from ... import PluginBase
 
 
 LOGGER = logging.getLogger(__name__)
@@ -187,9 +187,9 @@ class Plugin(PluginBase):
         self.core = core
 
     def get_interfaces(self):
-        return ['configuration']
+        return ['config_backend']
 
-    def config_load(self, application_name):
+    def config_backend_load(self, application_name):
         self.application_name = application_name
         config_path = self.config_file_path_fmt.format(
             directory=self.base_path,
@@ -209,7 +209,7 @@ class Plugin(PluginBase):
             for observer in observers:
                 observer()
 
-    def config_save(self, application_name=None):
+    def config_backend_save(self, application_name=None):
         if application_name is not None:
             self.application_name = application_name
         config_path = self.config_file_path_fmt.format(
@@ -220,12 +220,12 @@ class Plugin(PluginBase):
         with open(config_path, 'w') as fd:
             self.config.write(fd)
 
-    def config_load_plugins(self, opt_name, default=[]):
+    def config_backend_load_plugins(self, opt_name, default=[]):
         """
         Load and init the plugin list from the configuration.
         """
         self.default_plugins = default
-        modules = self.config_get(
+        modules = self.config_backend_get(
             "plugins", opt_name, ConfigList(None, self.default_plugins)
         )
         LOGGER.info(
@@ -236,27 +236,27 @@ class Plugin(PluginBase):
             self.core.load(module)
         self.core.init()
 
-    def config_list_active_plugins(self, opt_name):
-        return self.config_get(
+    def config_backend_list_active_plugins(self, opt_name):
+        return self.config_backend_get(
             "plugins", opt_name, ConfigList(None, self.default_plugins)
         )
 
-    def config_reset_plugins(self, opt_name):
-        self.config_del("plugins", opt_name)
+    def config_backend_reset_plugins(self, opt_name):
+        self.config_backend_del("plugins", opt_name)
 
-    def config_add_plugin(self, opt_name, module_name):
+    def config_backend_add_plugin(self, opt_name, module_name):
         LOGGER.info("Adding plugin '%s' to configuration", module_name)
-        modules = self.config_list_active_plugins(opt_name)
+        modules = self.config_backend_list_active_plugins(opt_name)
         modules.elements.append(module_name)
-        self.config_put("plugins", opt_name, modules)
+        self.config_backend_put("plugins", opt_name, modules)
 
-    def config_remove_plugin(self, opt_name, module_name):
+    def config_backend_remove_plugin(self, opt_name, module_name):
         LOGGER.info("Removing plugin '%s' from configuration", module_name)
-        modules = self.config_list_active_plugins(opt_name)
+        modules = self.config_backend_list_active_plugins(opt_name)
         modules.elements.remove(module_name)
-        self.config_put("plugins", opt_name, modules)
+        self.config_backend_put("plugins", opt_name, modules)
 
-    def config_put(self, section, key, value):
+    def config_backend_put(self, section, key, value):
         """
         Section must be a string.
         Key must be a string.
@@ -274,10 +274,10 @@ class Plugin(PluginBase):
         for observer in self.observers[section]:
             observer()
 
-    def config_del(self, section, key):
+    def config_backend_del(self, section, key):
         self.config.remove_option(section, key)
 
-    def config_get(self, section, key, default=None):
+    def config_backend_get(self, section, key, default=None):
         try:
             value = self.config[section][key]
             (t, value) = value.split(_TYPE_SEPARATOR, 1)
@@ -291,8 +291,8 @@ class Plugin(PluginBase):
             )
             return default
 
-    def config_add_observer(self, section, callback):
+    def config_backend_add_observer(self, section, callback):
         self.observers[section].add(callback)
 
-    def config_remove_observer(self, section, callback):
+    def config_backend_remove_observer(self, section, callback):
         self.observers[section].remove(callback)

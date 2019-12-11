@@ -41,25 +41,25 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_core.mainloop_asyncio'],
             },
             {
-                'interface': 'paperwork_config',
-                'defaults': ['paperwork_backend.config.file'],
+                'interface': 'config',
+                'defaults': ['openpaperwork_core.config'],
             },
         ]
 
     def _register_config(self, core):
         setting = self.core.call_success(
-            "paperwork_config_build_simple", "update",
+            "config_build_simple", "update",
             "enabled", lambda: False
         )
         self.core.call_all(
-            "paperwork_config_register", "check_for_update", setting
+            "config_register", "check_for_update", setting
         )
         setting = self.core.call_success(
-            "paperwork_config_build_simple", "update",
+            "config_build_simple", "update",
             "last_update_found", lambda: _version.version
         )
         self.core.call_all(
-            "paperwork_config_register", "last_update_found", setting
+            "config_register", "last_update_found", setting
         )
 
     def _parse_version(self, version):
@@ -73,9 +73,9 @@ class Plugin(openpaperwork_core.PluginBase):
             latest_version = update_data['paperwork'][os.name]
             LOGGER.info("Version advertised: %s", latest_version)
             self.core.call_all(
-                "paperwork_config_put", "last_update_found", latest_version
+                "config_put", "last_update_found", latest_version
             )
-            self.core.call_all("paperwork_config_save")
+            self.core.call_all("config_save")
             self.update_compare()
 
         promise = openpaperwork_core.promise.Promise(self.core, lambda: "")
@@ -85,7 +85,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def update_compare(self):
         remote_version = self.core.call_success(
-            "paperwork_config_get", "last_update_found"
+            "config_get", "last_update_found"
         )
         remote_version = self._parse_version(remote_version)
         LOGGER.info("Remote version: %s", remote_version)
@@ -102,5 +102,5 @@ class Plugin(openpaperwork_core.PluginBase):
         self.periodic.register_config(core)
         self.http.register_config(core)
 
-        if self.core.call_success("paperwork_config_get", "check_for_update"):
+        if self.core.call_success("config_get", "check_for_update"):
             self.periodic.do(core)

@@ -1,7 +1,7 @@
-import openpaperwork_core
+from .. import PluginBase
 
 
-class PaperworkSetting(object):
+class Setting(object):
     def __init__(self, value, default_func):
         self.value = value
         self.default_value_func = default_func
@@ -15,7 +15,7 @@ class PaperworkSetting(object):
         self.value = v
 
 
-class Plugin(openpaperwork_core.PluginBase):
+class Plugin(PluginBase):
     """
     Translate values from the configuration into more usable ones.
     Provides default values (except for plugins).
@@ -30,45 +30,45 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def __set_settings(self, new_settings):
         self._settings = {
-            k: PaperworkSetting(v, lambda: None)
+            k: Setting(v, lambda: None)
             for (k, v) in new_settings.items()
         }
 
     settings = property(__get_settings, __set_settings)
 
     def get_interfaces(self):
-        return ['paperwork_config']
+        return ['config']
 
-    def paperwork_config_load(self, application, default_plugins=[]):
+    def config_load(self, application, plugin_list_name, default_plugins=[]):
         pass
 
-    def paperwork_config_save(self):
+    def config_save(self):
         pass
 
-    def paperwork_config_build_simple(self, section, token, default):
-        return PaperworkSetting(None, default)
+    def config_build_simple(self, section, token, default):
+        return Setting(None, default)
 
-    def paperwork_config_register(self, key, setting):
+    def config_register(self, key, setting):
         if key not in self._settings:  # don't smash test settings
             self._settings[key] = setting
 
-    def paperwork_config_get_setting(self, key):
+    def config_get_setting(self, key):
         return self._settings[key]
 
-    def paperwork_config_get(self, key):
+    def config_get(self, key):
         return self._settings[key].get()
 
-    def paperwork_config_get_default(self, key):
+    def config_get_default(self, key):
         return self._settings[key].default_value_func()
 
-    def paperwork_config_put(self, key, value):
+    def config_put(self, key, value):
         self._settings[key].put(value)
 
-    def paperwork_config_add_plugin(self, plugin):
+    def config_add_plugin(self, plugin):
         raise NotImplementedError()
 
-    def paperwork_config_remove_plugin(self, plugin):
+    def config_remove_plugin(self, plugin):
         raise NotImplementedError()
 
-    def paperwork_config_list_plugins(self):
+    def onfig_list_plugins(self):
         raise NotImplementedError()

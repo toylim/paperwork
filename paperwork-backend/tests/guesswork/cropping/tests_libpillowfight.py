@@ -22,7 +22,7 @@ class TestBorder(unittest.TestCase):
         )
 
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("paperwork_backend.config.fake")
+        self.core.load("openpaperwork_core.config.fake")
         self.core.load("paperwork_backend.model.fake")
         self.core.load("paperwork_backend.doctracker")
         self.core.load("paperwork_backend.pagetracker")

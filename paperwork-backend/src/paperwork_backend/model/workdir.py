@@ -22,30 +22,30 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return [
             {
-                'interface': 'fs',
-                'defaults': ['paperwork_backend.fs.gio'],
+                'interface': 'config',
+                'defaults': ['openpaperwork_core.config'],
             },
             {
-                'interface': 'paperwork_config',
-                'defaults': ['paperwork_backend.config.file'],
+                'interface': 'fs',
+                'defaults': ['paperwork_backend.fs.gio'],
             },
         ]
 
     def init(self, core):
         super().init(core)
         setting = self.core.call_success(
-            "paperwork_config_build_simple", "Global", "WorkDirectory",
+            "config_build_simple", "Global", "WorkDirectory",
             lambda: self.core.call_success(
                 "fs_safe", os.path.expanduser("~/papers")
             )
         )
-        self.core.call_all("paperwork_config_register", "workdir", setting)
+        self.core.call_all("config_register", "workdir", setting)
 
     def storage_get_all_docs(self, out: list):
         """
         Returns all document IDs and URLs in the work directory
         """
-        workdir = self.core.call_success('paperwork_config_get', 'workdir')
+        workdir = self.core.call_success('config_get', 'workdir')
         if self.core.call_success('fs_exists', workdir) is None:
             # we are not the plugin handling this work directory (?)
             return
@@ -61,11 +61,11 @@ class Plugin(openpaperwork_core.PluginBase):
         LOGGER.info("%d documents found in %s", workdir)
 
     def doc_id_to_url(self, doc_id):
-        workdir = self.core.call_success('paperwork_config_get', 'workdir')
+        workdir = self.core.call_success('config_get', 'workdir')
         return self.core.call_success("fs_join", workdir, doc_id)
 
     def doc_url_to_id(self, doc_url):
-        workdir = self.core.call_success('paperwork_config_get', 'workdir')
+        workdir = self.core.call_success('config_get', 'workdir')
         if not doc_url.startswith(workdir):
             return None
         return self.core.call_success("fs_basename", doc_url)
@@ -83,7 +83,7 @@ class Plugin(openpaperwork_core.PluginBase):
     # datetime.datetime.now cannot be mocked with unittest.mock.patch
     # (datetime is built-in) --> allow dependency injection here
     def storage_get_new_doc(self, now_func=datetime.datetime.now):
-        workdir = self.core.call_success('paperwork_config_get', 'workdir')
+        workdir = self.core.call_success('config_get', 'workdir')
 
         base_doc_id = now_func().strftime(DOCNAME_FORMAT)
         base_doc_url = self.core.call_success("fs_join", workdir, base_doc_id)

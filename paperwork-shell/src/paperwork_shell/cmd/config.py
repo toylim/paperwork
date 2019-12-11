@@ -43,8 +43,8 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return [
             {
-                'interface': 'paperwork_config',
-                'defaults': ['paperwork_backend.config.file']
+                'interface': 'config',
+                'defaults': ['openpaperwork_core.config'],
             },
         ]
 
@@ -131,7 +131,7 @@ class Plugin(openpaperwork_core.PluginBase):
             return None
 
     def _cmd_get(self, opt_name):
-        v = self.core.call_success("paperwork_config_get", opt_name)
+        v = self.core.call_success("config_get", opt_name)
         if v is None:
             LOGGER.warning("No such option '%s'", opt_name)
             return None
@@ -145,15 +145,15 @@ class Plugin(openpaperwork_core.PluginBase):
         if self.interactive:
             self.core.call_all("print", "{} = {}\n".format(opt_name, value))
             self.core.call_all("print_flush")
-        self.core.call_all("paperwork_config_put", opt_name, value)
-        self.core.call_all("paperwork_config_save")
+        self.core.call_all("config_put", opt_name, value)
+        self.core.call_all("config_save")
         return {opt_name: value}
 
     def _cmd_show(self):
-        opts = self.core.call_success("paperwork_config_list_options")
+        opts = self.core.call_success("config_list_options")
         out = {}
         for opt in opts:
-            out[opt] = self.core.call_success("paperwork_config_get", opt)
+            out[opt] = self.core.call_success("config_get", opt)
             if self.interactive:
                 self.core.call_all("print", "{} = {}\n".format(opt, out[opt]))
         if self.interactive:
@@ -169,9 +169,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _cmd_add_plugin(self, plugin_name):
         self.core.call_all(
-            "paperwork_config_add_plugin", plugin_name
+            "config_add_plugin", plugin_name
         )
-        self.core.call_all("paperwork_config_save")
+        self.core.call_all("config_save")
         if self.interactive:
             self.core.call_all(
                 "print", _("Plugin {} added").format(plugin_name) + "\n"
@@ -181,9 +181,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _cmd_remove_plugin(self, plugin_name):
         self.core.call_all(
-            "paperwork_config_remove_plugin", plugin_name
+            "config_remove_plugin", plugin_name
         )
-        self.core.call_all("paperwork_config_save")
+        self.core.call_all("config_save")
         if self.interactive:
             self.core.call_all(
                 "print", _("Plugin {} removed").format(plugin_name) + "\n"
@@ -192,7 +192,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return True
 
     def _cmd_list_plugins(self):
-        plugins = self.core.call_success("paperwork_config_list_plugins")
+        plugins = self.core.call_success("config_list_plugins")
         if self.interactive:
             self.core.call_all("print", "  " + _("Active plugins:") + "\n")
             for plugin in plugins:
@@ -201,8 +201,8 @@ class Plugin(openpaperwork_core.PluginBase):
         return list(plugins)
 
     def _cmd_reset_plugins(self):
-        self.core.call_success("paperwork_config_reset_plugins")
-        self.core.call_all("paperwork_config_save")
+        self.core.call_success("config_reset_plugins")
+        self.core.call_all("config_save")
         if self.interactive:
             print("Plugin list reseted")
         return True

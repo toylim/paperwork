@@ -41,8 +41,8 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_core.mainloop_asyncio'],
             },
             {
-                'interface': 'paperwork_config',
-                'defaults': ['paperwork_backend.config.file'],
+                'interface': 'config',
+                'defaults': ['openpaperwork_core.config'],
             },
         ]
 
@@ -52,22 +52,22 @@ class Plugin(openpaperwork_core.PluginBase):
         self.periodic.register_config(core)
         self.http.register_config(core)
 
-        if self.core.call_success("paperwork_config_get", "send_statistics"):
+        if self.core.call_success("config_get", "send_statistics"):
             self.periodic.do(core)
 
     def _register_config(self, core):
         setting = self.core.call_success(
-            "paperwork_config_build_simple", "statistics",
+            "config_build_simple", "statistics",
             "enabled", lambda: False
         )
         self.core.call_all(
-            "paperwork_config_register", "send_statistics", setting
+            "config_register", "send_statistics", setting
         )
         setting = self.core.call_success(
-            "paperwork_config_build_simple", "statistics",
+            "config_build_simple", "statistics",
             "uuid", lambda: uuid.getnode()
         )
-        self.core.call_all("paperwork_config_register", "uuid", setting)
+        self.core.call_all("config_register", "uuid", setting)
 
     def _collect_stats(self, node_uuid):
         stats = {
@@ -84,7 +84,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return {'statistics': stats}
 
     def stats_send(self):
-        node_uuid = self.core.call_success("paperwork_config_get", "uuid")
+        node_uuid = self.core.call_success("config_get", "uuid")
         promise = openpaperwork_core.promise.ThreadedPromise(
             self.core, self._collect_stats, args=(node_uuid,)
         )

@@ -58,7 +58,9 @@ def main_main(in_args, application_name, default_plugins, interactive):
     for module_name in paperwork_backend.DEFAULT_CONFIG_PLUGINS:
         core.load(module_name)
     core.init()
-    core.call_all("paperwork_config_load", application_name, default_plugins)
+    core.call_all(
+        "config_load", "paperwork2", application_name, default_plugins
+    )
 
     parser = argparse.ArgumentParser()
     cmd_parser = parser.add_subparsers(

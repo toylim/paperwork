@@ -13,10 +13,10 @@ import openpaperwork_core
 class TestUpdate(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("paperwork_backend.config.fake")
+        self.core.load("openpaperwork_core.config.fake")
         self.core.load("paperwork_backend.beacon.update")
 
-        self.config = self.core.get_by_name("paperwork_backend.config.fake")
+        self.config = self.core.get_by_name("openpaperwork_core.config.fake")
         self.received = []
 
     def test_check_update(self):

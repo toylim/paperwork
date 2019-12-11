@@ -48,7 +48,7 @@ class TestImageAssembler(unittest.TestCase):
 class TestLibinsane(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("paperwork_backend.config.fake")
+        self.core.load("openpaperwork_core.config.fake")
         self.core.load("paperwork_backend.docscan.libinsane")
 
         self.called = False
@@ -58,7 +58,7 @@ class TestLibinsane(unittest.TestCase):
         plugin = self.core.get_by_name("paperwork_backend.docscan.libinsane")
         plugin.libinsane_logger.min_level = Libinsane.LogLevel.ERROR
 
-        self.config = self.core.get_by_name("paperwork_backend.config.fake")
+        self.config = self.core.get_by_name("openpaperwork_core.config.fake")
 
     def test_list_devs(self):
         self.core.init()

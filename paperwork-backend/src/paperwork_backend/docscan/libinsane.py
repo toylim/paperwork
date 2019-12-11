@@ -110,7 +110,7 @@ class Source(object):
 
     def set_as_default(self):
         self.core.call_all(
-            "paperwork_config_put", "scanner_source_id", self.source_id
+            "config_put", "scanner_source_id", self.source_id
         )
 
     def get_resolutions(self):
@@ -136,7 +136,7 @@ class Source(object):
 
     def set_default_resolution(self, resolution):
         self.core.call_all(
-            "paperwork_config_put", "scanner_resolution", int(resolution)
+            "config_put", "scanner_resolution", int(resolution)
         )
 
     def scan(
@@ -149,7 +149,7 @@ class Source(object):
         LOGGER.info("Setting scan options ...")
         if resolution is None:
             resolution = self.core.call_success(
-                "paperwork_config_get", "scanner_resolution"
+                "config_get", "scanner_resolution"
             )
         options = self.source.get_options()
         opts = {opt.get_name(): opt for opt in options}
@@ -292,7 +292,7 @@ class Scanner(object):
 
     def set_as_default(self):
         self.core.call_all(
-            "paperwork_config_put", "scanner_dev_id",
+            "config_put", "scanner_dev_id",
             'libinsane:' + self.dev_id
         )
 
@@ -318,8 +318,8 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_core.mainloop_asyncio'],
             },
             {
-                'interface': 'paperwork_config',
-                'defaults': ['paperwork_backend.config.file'],
+                'interface': 'config',
+                'defaults': ['openpaperwork_core.config'],
             },
         ]
 
@@ -328,21 +328,21 @@ class Plugin(openpaperwork_core.PluginBase):
 
         settings = {
             'scanner_dev_id': self.core.call_success(
-                "paperwork_config_build_simple", "scanner",
+                "config_build_simple", "scanner",
                 "dev_id", lambda: None
             ),
             'scanner_source_id': self.core.call_success(
-                "paperwork_config_build_simple", "scanner",
+                "config_build_simple", "scanner",
                 "source", lambda: None
             ),
             'scanner_resolution': self.core.call_success(
-                "paperwork_config_build_simple", "scanner",
+                "config_build_simple", "scanner",
                 "resolution", lambda: 300
             ),
         }
         for (k, setting) in settings.items():
             self.core.call_all(
-                "paperwork_config_register", k, setting
+                "config_register", k, setting
             )
 
     def chkdeps(self, out: dict):
@@ -391,10 +391,10 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def scan_promise(self, *args, **kwargs):
         scanner_dev_id = self.core.call_success(
-            "paperwork_config_get", "scanner_dev_id"
+            "config_get", "scanner_dev_id"
         )
         source_id = self.core.call_success(
-            "paperwork_config_get", "scanner_source_id"
+            "config_get", "scanner_source_id"
         )
         scan_id = next(SCAN_ID_GENERATOR)
 

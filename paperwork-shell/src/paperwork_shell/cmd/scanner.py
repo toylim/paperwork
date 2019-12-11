@@ -41,8 +41,8 @@ class Plugin(openpaperwork_core.PluginBase):
                 "defaults": ["openpaperwork_core.mainloop_asyncio"],
             },
             {
-                "interface": "paperwork_config",
-                "defaults": ['paperwork_backend.config.file'],
+                "interface": "config",
+                "defaults": ['openpaperwork_core.config'],
             },
             {
                 "interface": "scan",
@@ -143,13 +143,13 @@ class Plugin(openpaperwork_core.PluginBase):
     def _get_scanner(self):
         out = {
             'id': self.core.call_success(
-                "paperwork_config_get", "scanner_dev_id"
+                "config_get", "scanner_dev_id"
             ),
             'source': self.core.call_success(
-                "paperwork_config_get", "scanner_source_id"
+                "config_get", "scanner_source_id"
             ),
             'resolution': self.core.call_success(
-                "paperwork_config_get", "scanner_resolution"
+                "config_get", "scanner_resolution"
             ),
         }
         if self.interactive:
@@ -231,16 +231,16 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_one("mainloop")
 
         self.core.call_all(
-            "paperwork_config_put", "scanner_dev_id", dev_settings['id']
+            "config_put", "scanner_dev_id", dev_settings['id']
         )
         self.core.call_all(
-            "paperwork_config_put", "scanner_source_id", dev_settings['source']
+            "config_put", "scanner_source_id", dev_settings['source']
         )
         self.core.call_all(
-            "paperwork_config_put", "scanner_resolution",
+            "config_put", "scanner_resolution",
             dev_settings['resolution']
         )
-        self.core.call_all("paperwork_config_save")
+        self.core.call_all("config_save")
 
         return self._get_scanner()
 

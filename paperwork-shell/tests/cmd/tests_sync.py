@@ -31,9 +31,9 @@ class TestSync(unittest.TestCase):
 
     def test_sync(self):
         core = openpaperwork_core.Core(allow_unsatisfied=True)
-        core.load("paperwork_backend.config.fake")
+        core.load("openpaperwork_core.config.fake")
         core.init()
-        config = core.get_by_name("paperwork_backend.config.fake")
+        config = core.get_by_name("openpaperwork_core.config.fake")
         config.settings = {
             "workdir": "file://" + self.tmp_work_dir,
         }

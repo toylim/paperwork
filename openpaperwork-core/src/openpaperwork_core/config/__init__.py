@@ -20,7 +20,7 @@ Paperwork configuration management code
 import gettext
 import logging
 
-import openpaperwork_core
+from .. import PluginBase
 
 
 LOGGER = logging.getLogger(__name__)
@@ -36,7 +36,7 @@ CMD_VALUE_TYPES = {
 }
 
 
-class PaperworkSetting(object):
+class Setting(object):
     def __init__(self, core, section, token, default_value_func):
         self.core = core
         self.section = section
@@ -45,7 +45,7 @@ class PaperworkSetting(object):
 
     def get(self):
         value = self.core.call_success(
-            "config_get", self.section, self.token, None
+            "config_backend_get", self.section, self.token, None
         )
         if value is None:
             return self.default_value_func()
@@ -54,11 +54,11 @@ class PaperworkSetting(object):
 
     def put(self, value):
         self.core.call_all(
-            "config_put", self.section, self.token, value
+            "config_backend_put", self.section, self.token, value
         )
 
 
-class Plugin(openpaperwork_core.PluginBase):
+class Plugin(PluginBase):
     """
     Translate values from the configuration into more usable ones.
     Provides default values (except for plugins).
@@ -71,13 +71,13 @@ class Plugin(openpaperwork_core.PluginBase):
         self.application = None
 
     def get_interfaces(self):
-        return ['paperwork_config']
+        return ['config']
 
     def get_deps(self):
         return [
             {
-                'interface': 'configuration',
-                'defaults': ['openpaperwork_core.config_file'],
+                'interface': 'config_backend',
+                'defaults': ['openpaperwork_core.config.backend.file'],
             },
         ]
 
@@ -85,23 +85,25 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core = core
         self.settings = {}
 
-    def paperwork_config_load(self, application, default_plugins=[]):
+    def config_load(self, application, plugin_list_name, default_plugins=[]):
         self.application = application
-        self.core.call_all('config_load', 'paperwork2')
-        self.core.call_all('config_load_plugins', application, default_plugins)
+        self.core.call_all('config_backend_load', application)
+        self.core.call_all(
+            'config_backend_load_plugins', plugin_list_name, default_plugins
+        )
 
-    def paperwork_get_application_name(self):
+    def config_get_application_name(self):
         return self.application
 
-    def paperwork_config_save(self):
-        self.core.call_all('config_save')
+    def config_save(self):
+        self.core.call_all('config_backend_save')
 
-    def paperwork_config_build_simple(
+    def config_build_simple(
                 self, section, token, default_value_func
             ):
         """
         Provide a default simple implementation for a new setting that can
-        be registered using 'paperwork_config_register'.
+        be registered using 'config_register'.
 
         Arguments:
         - section: Section in which option must be stored (see ConfigParser)
@@ -109,53 +111,55 @@ class Plugin(openpaperwork_core.PluginBase):
         - default_value_func: function to call to get the default value if
           none is stored in the file.
         """
-        return PaperworkSetting(self.core, section, token, default_value_func)
+        return Setting(self.core, section, token, default_value_func)
 
-    def paperwork_config_register(self, key, setting):
+    def config_register(self, key, setting):
         """
         Add another setting to manage. Make this setting available to other
         components.
         """
         self.settings[key] = setting
 
-    def paperwork_config_list_options(self):
+    def config_list_options(self):
         return list(self.settings.keys())
 
-    def paperwork_config_get_setting(self, key):
+    def config_get_setting(self, key):
         return self.settings[key]
 
-    def paperwork_config_get(self, key):
+    def config_get(self, key):
         if key not in self.settings:
             return None
         if key not in self.values:
             self.values[key] = self.settings[key].get()
         return self.values[key]
 
-    def paperwork_config_get_default(self, key):
+    def config_get_default(self, key):
         return self.settings[key].default_value_func()
 
-    def paperwork_config_put(self, key, value):
+    def config_put(self, key, value):
         self.settings[key].put(value)
         self.values[key] = value
 
-    def paperwork_config_add_plugin(self, plugin, application=None):
+    def config_add_plugin(self, plugin, application=None):
         if application is None:
             application = self.application
-        self.core.call_all('config_add_plugin', application, plugin)
+        self.core.call_all('config_backend_add_plugin', application, plugin)
 
-    def paperwork_config_remove_plugin(self, plugin, application=None):
+    def config_remove_plugin(self, plugin, application=None):
         if application is None:
             application = self.application
-        self.core.call_all('config_remove_plugin', application, plugin)
+        self.core.call_all('config_backend_remove_plugin', application, plugin)
 
-    def paperwork_config_list_plugins(self, application=None):
+    def config_list_plugins(self, application=None):
         if application is None:
             application = self.application
         return self.core.call_success(
-            "config_list_active_plugins", application
+            "config_backend_list_active_plugins", application
         )
 
-    def paperwork_config_reset_plugins(self, application=None):
+    def config_reset_plugins(self, application=None):
         if application is None:
             application = self.application
-        return self.core.call_success("config_reset_plugins", application)
+        return self.core.call_success(
+            "config_backend_reset_plugins", application
+        )
