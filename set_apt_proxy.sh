@@ -3,18 +3,11 @@
 # Try to use an AptCacherNg proxy installed close to the gitlab-runner to
 # speed up builds
 
-IP_MASK=192.168.2.
 APT_PROXY_CACHE_HOST=192.168.2.120
 APT_PROXY_CACHE_PORT=3142
 
 apt-get update
-apt-get install -y -qq netcat-openbsd iproute2
-
-echo "IP mask: ${IP_MASK}"
-if ! /sbin/ip addr | grep ${IP_MASK} > /dev/null ; then
-	echo "Not on the required subnet"
-	exit 0
-fi
+apt-get install -y -qq netcat-openbsd
 
 echo "Proxy ${APT_PROXY_CACHE_HOST}:${APT_PROXY_CACHE_PORT}"
 if ! nc -w 5 -z ${APT_PROXY_CACHE_HOST} ${APT_PROXY_CACHE_PORT} ; then
