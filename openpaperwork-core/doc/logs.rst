@@ -35,7 +35,7 @@ Configuration entries are as follow:
     format = str:[%(levelname)-6s] [%(name)-30s] %(message)s
 
 It monitors the configuration. So to change its settings, you can just update
-the configuration using the plugin `openpaperwork_core.config_file`.
+the configuration using the plugin `openpaperwork_core.config`.
 
 ----
 

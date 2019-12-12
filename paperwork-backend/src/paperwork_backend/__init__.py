@@ -1,10 +1,11 @@
 DEFAULT_CONFIG_PLUGINS = [
-    'openpaperwork_core.config_file',
-    'paperwork_backend.config.file'
+    'openpaperwork_core.config',
+    'openpaperwork_core.config.backend.file',
 ]
 
 DEFAULT_PLUGINS = [
-    'openpaperwork_core.config_file',
+    'openpaperwork_core.fs.gio',
+    'openpaperwork_core.fs.memory',
     'paperwork_backend.beacon.stats',
     'paperwork_backend.beacon.sysinfo',
     'paperwork_backend.beacon.update',
@@ -16,8 +17,6 @@ DEFAULT_PLUGINS = [
     'paperwork_backend.docscan.libinsane',
     'paperwork_backend.docscan.scan2doc',
     'paperwork_backend.doctracker',
-    'openpaperwork_core.fs.gio',
-    'openpaperwork_core.fs.memory',
     # ACE is disabled by default: it's slow, and actually makes some scans
     # harder to read.
     # 'paperwork_backend.guesswork.color.libpillowfight',

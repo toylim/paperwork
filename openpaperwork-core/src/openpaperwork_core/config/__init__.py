@@ -69,6 +69,7 @@ class Plugin(PluginBase):
         self.settings = {}
         self.values = {}
         self.application = None
+        self.plugin_list_name = None
 
     def get_interfaces(self):
         return ['config']
@@ -87,6 +88,7 @@ class Plugin(PluginBase):
 
     def config_load(self, application, plugin_list_name, default_plugins=[]):
         self.application = application
+        self.plugin_list_name = plugin_list_name
         self.core.call_all('config_backend_load', application)
         self.core.call_all(
             'config_backend_load_plugins', plugin_list_name, default_plugins
@@ -94,6 +96,9 @@ class Plugin(PluginBase):
 
     def config_get_application_name(self):
         return self.application
+
+    def config_get_plugin_list_name(self):
+        return self.plugin_list_name
 
     def config_save(self):
         self.core.call_all('config_backend_save')

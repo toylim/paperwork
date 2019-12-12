@@ -19,7 +19,7 @@ Calling Code Example
 
    # Load plugins requested by your user if any.
    # You can used previously loaded to get the plugin to load if you want.
-   # For instance, you can load and initialize `openpaperwork_core.config_file`
+   # For instance, you can load and initialize `openpaperwork_core.config`
    # and then use it to get a plugin list from a configuration file.
    core.load(...)
 

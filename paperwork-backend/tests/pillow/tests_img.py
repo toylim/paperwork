@@ -9,8 +9,8 @@ import openpaperwork_core
 class TestPillowImg(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("paperwork_backend.fs.gio")
-        self.core.load("paperwork_backend.fs.memory")
+        self.core.load("openpaperwork_core.fs.gio")
+        self.core.load("openpaperwork_core.fs.memory")
         self.core.load("paperwork_backend.pillow.img")
         self.core.init()
 
