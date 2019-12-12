@@ -1,4 +1,4 @@
-VERSION_FILE = src/paperwork/_version.py
+VERSION_FILE = src/paperwork_gtk/_version.py
 PYTHON ?= python3
 
 build: build_c build_py
@@ -33,13 +33,13 @@ doc:
 upload_doc:
 
 check:
-	flake8 --exclude=_version.py src/paperwork
+	flake8 --exclude=_version.py src/paperwork_gtk
 
 test:
 
 windows_exe:
 	${PYTHON} /mingw32/bin/pip3-script.py install .
-	${PYTHON} ./setup_cx_freeze.py build_exe
+	${PYTHON} ./setup.py build_exe
 	mkdir -p ../build
 	mv $$(find build -name exe\*) ../build/exe
 	# a bunch of things are missing ...
