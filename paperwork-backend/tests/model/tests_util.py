@@ -8,7 +8,7 @@ import paperwork_backend.model.util
 class TestUtil(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("paperwork_backend.fs.fake")
+        self.core.load("openpaperwork_core.fs.fake")
         self.core.init()
 
         class FakeModule(object):
@@ -19,7 +19,7 @@ class TestUtil(unittest.TestCase):
 
         self.core._load_module("fake_module", FakeModule())
 
-        self.fs = self.core.get_by_name("paperwork_backend.fs.fake")
+        self.fs = self.core.get_by_name("openpaperwork_core.fs.fake")
 
     def test_delete_page_file(self):
         self.fs.fs = {

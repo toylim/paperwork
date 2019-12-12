@@ -6,12 +6,12 @@ import openpaperwork_core
 class TestImg(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("paperwork_backend.fs.fake")
+        self.core.load("openpaperwork_core.fs.fake")
         self.core.load("paperwork_backend.model.img")
         self.core.load("paperwork_backend.model.img_overlay")
         self.core.init()
 
-        self.fs = self.core.get_by_name("paperwork_backend.fs.fake")
+        self.fs = self.core.get_by_name("openpaperwork_core.fs.fake")
 
     def test_get_img_urls(self):
         self.fs.fs = {

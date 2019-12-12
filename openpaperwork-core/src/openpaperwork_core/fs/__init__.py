@@ -2,6 +2,7 @@ import hashlib
 import logging
 import os
 import urllib
+import urllib.parse
 
 import openpaperwork_core
 

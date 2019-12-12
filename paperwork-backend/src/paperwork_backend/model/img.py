@@ -26,7 +26,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return [
             {
                 'interface': 'fs',
-                'defaults': ['paperwork_backend.fs.gio'],
+                'defaults': ['openpaperwork_core.fs.gio'],
             }
         ]
 

@@ -8,7 +8,7 @@ class TestWorkdir(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
         self.core.load("openpaperwork_core.config.fake")
-        self.core.load("paperwork_backend.fs.fake")
+        self.core.load("openpaperwork_core.fs.fake")
         self.core.load("paperwork_backend.model.img")
         self.core.load("paperwork_backend.model.workdir")
         self.core.init()
@@ -17,7 +17,7 @@ class TestWorkdir(unittest.TestCase):
         self.config.settings = {
             "workdir": "file:///some_work_dir"
         }
-        self.fs = self.core.get_by_name("paperwork_backend.fs.fake")
+        self.fs = self.core.get_by_name("openpaperwork_core.fs.fake")
 
     def test_storage_get_all_docs(self):
         self.fs.fs = {

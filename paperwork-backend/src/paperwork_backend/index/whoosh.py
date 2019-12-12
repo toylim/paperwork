@@ -243,7 +243,7 @@ class Plugin(openpaperwork_core.PluginBase):
             },
             {
                 'interface': 'fs',
-                'defaults': ['paperwork_backend.fs.gio'],
+                'defaults': ['openpaperwork_core.fs.gio'],
             },
             {
                 'interface': 'mainloop',

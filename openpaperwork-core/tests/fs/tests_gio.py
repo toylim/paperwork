@@ -9,7 +9,7 @@ import openpaperwork_core
 class TestSafe(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("paperwork_backend.fs.gio")
+        self.core.load("openpaperwork_core.fs.gio")
         self.core.init()
 
     @unittest.skipUnless(os.name == 'posix', reason="Linux only")
@@ -32,7 +32,7 @@ class TestSafe(unittest.TestCase):
 class TestUnsafe(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("paperwork_backend.fs.gio")
+        self.core.load("openpaperwork_core.fs.gio")
         self.core.init()
 
     @unittest.skipUnless(os.name == 'posix', reason="Linux only")
@@ -58,7 +58,7 @@ class TestUnsafe(unittest.TestCase):
 class TestOpen(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("paperwork_backend.fs.gio")
+        self.core.load("openpaperwork_core.fs.gio")
         self.core.init()
 
     def test_read_binary(self):
@@ -123,7 +123,7 @@ class TestOpen(unittest.TestCase):
 class TestExists(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("paperwork_backend.fs.gio")
+        self.core.load("openpaperwork_core.fs.gio")
         self.core.init()
 
     def test_not_exist(self):
@@ -144,7 +144,7 @@ class TestExists(unittest.TestCase):
 class TestListDir(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("paperwork_backend.fs.gio")
+        self.core.load("openpaperwork_core.fs.gio")
         self.core.init()
 
         self.dirname = tempfile.mkdtemp()
@@ -186,7 +186,7 @@ class TestListDir(unittest.TestCase):
 class TestRename(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("paperwork_backend.fs.gio")
+        self.core.load("openpaperwork_core.fs.gio")
         self.core.init()
 
     def test_rename(self):
@@ -221,7 +221,7 @@ class TestRename(unittest.TestCase):
 class TestUnlink(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("paperwork_backend.fs.gio")
+        self.core.load("openpaperwork_core.fs.gio")
         self.core.init()
 
     def test_unlink(self):
@@ -244,7 +244,7 @@ class TestUnlink(unittest.TestCase):
 class TestGetMtime(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("paperwork_backend.fs.gio")
+        self.core.load("openpaperwork_core.fs.gio")
         self.core.init()
 
     def test_get_mtime(self):
@@ -268,7 +268,7 @@ class TestGetMtime(unittest.TestCase):
 class TestGetsize(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("paperwork_backend.fs.gio")
+        self.core.load("openpaperwork_core.fs.gio")
         self.core.init()
 
     def test_getsize(self):
@@ -289,7 +289,7 @@ class TestGetsize(unittest.TestCase):
 class TestIsdir(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("paperwork_backend.fs.gio")
+        self.core.load("openpaperwork_core.fs.gio")
         self.core.init()
 
     def test_isdir_true(self):
@@ -320,7 +320,7 @@ class TestIsdir(unittest.TestCase):
 class TestCopy(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("paperwork_backend.fs.gio")
+        self.core.load("openpaperwork_core.fs.gio")
         self.core.init()
 
     def test_copy(self):
@@ -359,7 +359,7 @@ class TestCopy(unittest.TestCase):
 class TestMkdirP(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("paperwork_backend.fs.gio")
+        self.core.load("openpaperwork_core.fs.gio")
         self.core.init()
 
     def test_mkdir_p(self):

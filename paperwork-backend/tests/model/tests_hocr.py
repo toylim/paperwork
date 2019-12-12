@@ -6,11 +6,11 @@ import openpaperwork_core
 class TestHocr(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("paperwork_backend.fs.fake")
+        self.core.load("openpaperwork_core.fs.fake")
         self.core.load("paperwork_backend.model.hocr")
         self.core.init()
 
-        self.fs = self.core.get_by_name("paperwork_backend.fs.fake")
+        self.fs = self.core.get_by_name("openpaperwork_core.fs.fake")
 
     def test_get_boxes(self):
         self.fs.fs = {

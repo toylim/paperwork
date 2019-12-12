@@ -7,7 +7,7 @@ class TestLabels(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
         self.core.load("openpaperwork_core.config.fake")
-        self.core.load("paperwork_backend.fs.fake")
+        self.core.load("openpaperwork_core.fs.fake")
         self.core.load("paperwork_backend.model.labels")
         self.core.init()
 
@@ -16,7 +16,7 @@ class TestLabels(unittest.TestCase):
             "workdir": "file:///some_work_dir"
         }
 
-        self.fs = self.core.get_by_name("paperwork_backend.fs.fake")
+        self.fs = self.core.get_by_name("openpaperwork_core.fs.fake")
 
     def test_doc_get_labels(self):
         self.fs.fs = {

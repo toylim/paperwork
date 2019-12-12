@@ -16,8 +16,8 @@ DEFAULT_PLUGINS = [
     'paperwork_backend.docscan.libinsane',
     'paperwork_backend.docscan.scan2doc',
     'paperwork_backend.doctracker',
-    'paperwork_backend.fs.gio',
-    'paperwork_backend.fs.memory',
+    'openpaperwork_core.fs.gio',
+    'openpaperwork_core.fs.memory',
     # ACE is disabled by default: it's slow, and actually makes some scans
     # harder to read.
     # 'paperwork_backend.guesswork.color.libpillowfight',

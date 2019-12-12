@@ -6,7 +6,7 @@ import openpaperwork_core
 class TestSafe(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("paperwork_backend.fs.memory")
+        self.core.load("openpaperwork_core.fs.memory")
         self.core.init()
 
     def test_write_read_bytes(self):
