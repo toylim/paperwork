@@ -16,11 +16,11 @@ _ = gettext.gettext
 
 
 PACKAGE_TOOLS = {
-    'debian': 'apt install',
+    'debian': 'apt-get install -y',
     'fedora': 'dnf install',
     'gentoo': 'emerge',
-    'linuxmint': 'apt install',
-    'ubuntu': 'apt install',
+    'linuxmint': 'apt-get install -y',
+    'ubuntu': 'apt-get install -y',
     'suse': 'zypper in',
 }
 
@@ -84,7 +84,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         if distribution in PACKAGE_TOOLS:
             command = PACKAGE_TOOLS[distribution]
-            if 'UID' not in os.environ or int(os.environ['UID']) != 0:
+            if os.getuid() != 0:
                 command = "sudo {}".format(command)
         else:
             command = None
@@ -105,10 +105,16 @@ class Plugin(openpaperwork_core.PluginBase):
                     r = util.ask_confirmation(
                         _("Do you want to run this command now ?")
                     )
-                    if r == 'y':
-                        r = os.system(command)
-                        if r != 0:
-                            sys.exit(r)
+                    if r.lower() != 'y':
+                        return {
+                            "missing": missing,
+                            "command": command,
+                        }
+                print("Running command ...")
+                r = os.system(command)
+                print("Command returned {}".format(r))
+                if r != 0:
+                    sys.exit(r)
             elif len(missing) > 0:
                 print(
                     _("Don't know how to install missing dependencies. Sorry.")
