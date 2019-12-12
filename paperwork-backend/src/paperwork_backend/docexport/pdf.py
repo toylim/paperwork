@@ -23,13 +23,13 @@ PANGO_AVAILABLE = False
 try:
     import cairo
     CAIRO_AVAILABLE = True
-except ImportError:
+except (ImportError, ValueError):
     pass
 
 try:
     import gi
     GI_AVAILABLE = True
-except ImportError:
+except (ImportError, ValueError):
     pass
 
 if GI_AVAILABLE:
@@ -45,7 +45,7 @@ if GI_AVAILABLE:
     try:
         from gi.repository import GLib
         GLIB_AVAILABLE = True
-    except ImportError:
+    except (ImportError, ValueError):
         pass
 
     try:

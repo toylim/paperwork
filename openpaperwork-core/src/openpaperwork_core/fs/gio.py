@@ -8,7 +8,7 @@ try:
     from gi.repository import Gio
     from gi.repository import GLib
     GLIB_AVAILABLE = True
-except ImportError:
+except (ImportError, ValueError):
     GLIB_AVAILABLE = False
 
 from . import CommonFsPluginBase

@@ -69,13 +69,7 @@ def find_language(lang_str=None, allow_none=False):
     lang_str = lang_str.lower()
     if "_" in lang_str:
         lang_str = lang_str.split("_")[0]
-
-    try:
-        r = pycountry.pycountry.languages.get(name=lang_str.title())
-        if r is not None:
-            return r
-    except (KeyError, UnicodeDecodeError):
-        pass
+    LOGGER.info("System language: {}".format(lang_str))
 
     attrs = (
         'iso_639_3_code',
@@ -86,12 +80,14 @@ def find_language(lang_str=None, allow_none=False):
         'bibliographic',
         'alpha_3',
         'alpha_2',
-        'alpha2'
+        'alpha2',
+        'name',
     )
     for attr in attrs:
         try:
             r = pycountry.pycountry.languages.get(**{attr: lang_str})
             if r is not None:
+                LOGGER.info("OCR language: {}".format(r))
                 return r
         except (KeyError, UnicodeDecodeError):
             pass
@@ -117,7 +113,9 @@ def pycountry_to_tesseract(ocr_lang, possibles=None):
         if not hasattr(ocr_lang, attr):
             continue
         if possibles is None or getattr(ocr_lang, attr) in possibles:
-            return getattr(ocr_lang, attr)
+            r = getattr(ocr_lang, attr)
+            if r is not None:
+                return r
     return None
 
 

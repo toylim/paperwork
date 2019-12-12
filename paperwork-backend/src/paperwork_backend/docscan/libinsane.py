@@ -6,13 +6,13 @@ try:
     gi.require_version('Libinsane', '1.0')
     from gi.repository import GObject
     GI_AVAILABLE = True
-except ImportError:
+except (ImportError, ValueError):
     GI_AVAILABLE = False
 
 try:
     from gi.repository import Libinsane
     LIBINSANE_AVAILABLE = True
-except ImportError:
+except (ImportError, ValueError):
     LIBINSANE_AVAILABLE = False
 
 import PIL

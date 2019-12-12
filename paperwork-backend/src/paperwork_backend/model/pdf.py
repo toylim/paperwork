@@ -5,19 +5,19 @@ try:
     import gi
     gi.require_version('Poppler', '0.18')
     GI_AVAILABLE = True
-except ImportError:
+except (ImportError, ValueError):
     GI_AVAILABLE = False
 
 try:
     from gi.repository import Gio
     GLIB_AVAILABLE = True
-except ImportError:
+except (ImportError, ValueError):
     GLIB_AVAILABLE = False
 
 try:
     from gi.repository import Poppler
     POPPLER_AVAILABLE = True
-except ImportError:
+except (ImportError, ValueError):
     POPPLER_AVAILABLE = False
 
 import openpaperwork_core
