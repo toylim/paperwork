@@ -105,7 +105,7 @@ class Plugin(openpaperwork_core.PluginBase):
                     r = util.ask_confirmation(
                         _("Do you want to run this command now ?")
                     )
-                    if r.lower() != 'y':
+                    if r != 'y':
                         return {
                             "missing": missing,
                             "command": command,

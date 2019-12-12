@@ -17,8 +17,9 @@ import gettext
 import sys
 
 import openpaperwork_core
+from openpaperwork_core.cmd.util import ask_confirmation
 
-from . import util
+from .util import parse_page_list
 
 
 _ = gettext.gettext
@@ -79,7 +80,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 print("Invalid doc_id: {}".format(doc_id))
                 sys.exit(2)
 
-        pages = util.parse_page_list(args)
+        pages = parse_page_list(args)
 
         del_doc_msg = _("Deleting document %s ...")
         del_page_msg = _("Deleting page %d of document %s ...")
@@ -87,12 +88,12 @@ class Plugin(openpaperwork_core.PluginBase):
         for doc_id in doc_ids:
             if self.interactive:
                 if pages is None:
-                    r = util.ask_confirmation(
+                    r = ask_confirmation(
                         _("Delete document %s ?") % str(doc_id),
                         default='n'
                     )
                 else:
-                    r = util.ask_confirmation(
+                    r = ask_confirmation(
                         _("Delete page(s) %s of document %s ?") % (
                             str([p + 1 for p in pages]), str(doc_id)
                         ), default='n'

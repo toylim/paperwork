@@ -18,7 +18,7 @@ import sys
 
 import openpaperwork_core
 
-from . import util
+from openpaperwork_core.cmd.util import ask_confirmation
 
 
 _ = gettext.gettext
@@ -171,7 +171,7 @@ class Plugin(openpaperwork_core.PluginBase):
             label = args.label_name
 
             if self.interactive:
-                r = util.ask_confirmation(
+                r = ask_confirmation(
                     _(
                         "Are you sure you want to delete label '%s' from all"
                         " documents ?"

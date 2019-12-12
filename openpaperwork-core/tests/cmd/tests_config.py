@@ -78,7 +78,7 @@ class TestConfig(unittest.TestCase):
         self.core._load_module(
             "openpaperwork_core.config.backend.file", MockConfigBackendModule()
         )
-        self.core.load("paperwork_shell.cmd.config")
+        self.core.load("openpaperwork_core.cmd.config")
         self.core.init()
 
         setting = self.core.call_success(

@@ -1,4 +1,6 @@
 DEFAULT_CONFIG_PLUGINS = [
+    'openpaperwork_core.cmd.chkdeps',
+    'openpaperwork_core.cmd.config',
     'openpaperwork_core.config',
     'openpaperwork_core.config.backend.file',
 ]
