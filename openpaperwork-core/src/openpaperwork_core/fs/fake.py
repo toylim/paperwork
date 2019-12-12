@@ -242,6 +242,6 @@ class Plugin(CommonFsPluginBase):
     def fs_iswritable(self, url):
         return True
 
-    def fs_mktemp(self, prefix=None, suffix=None, mode='w+b'):
+    def fs_mktemp(self, prefix=None, suffix=None, mode='w+b', **kwargs):
         name = "file://tmp/temporary_file" + suffix
         return (name, memory.MemoryFileAdapter(self, name, mode))

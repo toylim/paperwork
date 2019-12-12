@@ -1,5 +1,5 @@
 """
-Provide supports for URIs "memory://". Those files are actually stored in
+Provides support for URIs "memory://". Those files are actually stored in
 memory. It is only useful for temporary files. It has been made as a plugin
 so it can easily be disabled on low-memory systems (will fall back on
 gio.fs --> real on-disk files).
@@ -16,7 +16,7 @@ from . import CommonFsPluginBase
 LOGGER = logging.getLogger(__name__)
 
 
-class MemoryFileAdapter(io.RawIOBase):
+class _MemoryFileAdapter(io.RawIOBase):
     def __init__(self, plugin, key, mode='r'):
         super().__init__()
         self.plugin = plugin
@@ -99,25 +99,25 @@ class Plugin(CommonFsPluginBase):
         self.id_gen = itertools.count()
 
     @staticmethod
-    def get_memory_id(uri):
+    def _get_memory_id(uri):
         if not uri.startswith("memory://"):
             return None
         return uri[len("memory://"):]
 
     def fs_open(self, uri, mode='r'):
-        mem_id = self.get_memory_id(uri)
+        mem_id = self._get_memory_id(uri)
         if mem_id is None:
             return None
-        return MemoryFileAdapter(self, mem_id, mode)
+        return _MemoryFileAdapter(self, mem_id, mode)
 
     def fs_exists(self, url):
-        mem_id = self.get_memory_id(url)
+        mem_id = self._get_memory_id(url)
         if mem_id is None:
             return None
         return mem_id in self.fs
 
     def fs_listdir(self, url):
-        mem_id = self.get_memory_id(url)
+        mem_id = self._get_memory_id(url)
         if mem_id is None:
             return
 
@@ -131,8 +131,8 @@ class Plugin(CommonFsPluginBase):
         return out
 
     def fs_rename(self, old_url, new_url):
-        old_mem_id = self.get_memory_id(old_url)
-        new_mem_id = self.get_memory_id(old_url)
+        old_mem_id = self._get_memory_id(old_url)
+        new_mem_id = self._get_memory_id(old_url)
 
         if old_mem_id is None or new_mem_id is None:
             return
@@ -142,14 +142,14 @@ class Plugin(CommonFsPluginBase):
         return True
 
     def fs_unlink(self, url):
-        mem_id = self.get_memory_id(url)
+        mem_id = self._get_memory_id(url)
         if mem_id is None:
             return
         self.fs.pop(mem_id)
         return True
 
     def fs_rm_rf(self, url):
-        mem_id = self.get_memory_id(url)
+        mem_id = self._get_memory_id(url)
         if mem_id is None:
             return
 
@@ -164,19 +164,19 @@ class Plugin(CommonFsPluginBase):
         return True
 
     def fs_get_mtime(self, url):
-        mem_id = self.get_memory_id(url)
+        mem_id = self._get_memory_id(url)
         if mem_id is None:
             return
         return self.fs[mem_id][0]
 
     def fs_getsize(self, url):
-        mem_id = self.get_memory_id(url)
+        mem_id = self._get_memory_id(url)
         if mem_id is None:
             return
         return len(self.fs[mem_id][1])
 
     def fs_isdir(self, url):
-        mem_id = self.get_memory_id(url)
+        mem_id = self._get_memory_id(url)
         if mem_id is None:
             return None
 
@@ -193,8 +193,8 @@ class Plugin(CommonFsPluginBase):
             # use the more generic and cross-FS method
             return super().fs_copy(old_url, new_url)
 
-        old_mem_id = self.get_memory_id(old_url)
-        new_mem_id = self.get_memory_id(old_url)
+        old_mem_id = self._get_memory_id(old_url)
+        new_mem_id = self._get_memory_id(old_url)
         if old_mem_id is None or new_mem_id is None:
             return None
 
@@ -202,14 +202,14 @@ class Plugin(CommonFsPluginBase):
         return new_url
 
     def fs_mkdir_p(self, url):
-        mem_id = self.get_memory_id(url)
+        mem_id = self._get_memory_id(url)
         if mem_id is None:
             return None
         # nothing to do actually
         return True
 
     def fs_recurse(self, parent_url, dir_included=False):
-        mem_id = self.get_memory_id(parent_url)
+        mem_id = self._get_memory_id(parent_url)
         if mem_id is None:
             return
 
@@ -229,15 +229,18 @@ class Plugin(CommonFsPluginBase):
         return None
 
     def fs_iswritable(self, url):
-        mem_id = self.get_memory_id(url)
+        mem_id = self._get_memory_id(url)
         if mem_id is None:
             return None
         return True
 
-    def fs_mktemp(self, prefix=None, suffix=None, mode='w+b'):
+    def fs_mktemp(
+                self, prefix=None, suffix=None, mode='w+b', on_disk=False,
+                **kwargs
+            ):
         assert('/' not in prefix)
         assert('/' not in suffix)
         name = "{}{}{}".format(
             prefix, next(self.id_gen), suffix
         )
-        return ("memory://" + name, MemoryFileAdapter(self, name, mode))
+        return ("memory://" + name, _MemoryFileAdapter(self, name, mode))

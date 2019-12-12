@@ -106,37 +106,52 @@ class Plugin(PluginBase):
         be registered using 'config_register'.
 
         Arguments:
-        - section: Section in which option must be stored (see ConfigParser)
-        - token: token name for the option (see ConfigParser)
-        - default_value_func: function to call to get the default value if
-          none is stored in the file.
+          - section: Section in which option must be stored (see ConfigParser)
+          - token: token name for the option (see ConfigParser)
+          - default_value_func: function to call to get the default value if
+            none is stored in the file.
         """
         return Setting(self.core, section, token, default_value_func)
 
-    def config_register(self, key, setting):
+    def config_register(self, key: str, setting):
         """
         Add another setting to manage. Make this setting available to other
         components.
+
+        Arguments:
+          - key: configuration key
+          - setting: Setting must be an object providing a method `get()`
+            and a method `put(value)`. See :func:`config_build_simple` to
+            get quickly a default implementation.
         """
         self.settings[key] = setting
 
     def config_list_options(self):
         return list(self.settings.keys())
 
-    def config_get_setting(self, key):
+    def config_get_setting(self, key: str):
         return self.settings[key]
 
-    def config_get(self, key):
+    def config_get(self, key: str):
         if key not in self.settings:
             return None
         if key not in self.values:
             self.values[key] = self.settings[key].get()
         return self.values[key]
 
-    def config_get_default(self, key):
+    def config_get_default(self, key: str):
         return self.settings[key].default_value_func()
 
-    def config_put(self, key, value):
+    def config_put(self, key: str, value):
+        """
+        Store a setting value.
+        Warning: You must call :func:`config_save` so the changes are actually
+        saved.
+
+        Arguments:
+          - key: configuration key,
+          - value: can be of many types (`str`, `int`, etc).
+        """
         self.settings[key].put(value)
         self.values[key] = value
 

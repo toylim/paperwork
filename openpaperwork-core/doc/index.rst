@@ -9,8 +9,9 @@ Welcome to Openpaperwork-core's documentation!
    :caption: Contents:
 
    core
-   config_file
+   config
    logs
+   fs
    mainloop
    promise
 

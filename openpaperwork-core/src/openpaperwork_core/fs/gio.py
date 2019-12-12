@@ -17,7 +17,7 @@ from . import CommonFsPluginBase
 LOGGER = logging.getLogger(__name__)
 
 
-class GioFileAdapter(io.RawIOBase):
+class _GioFileAdapter(io.RawIOBase):
     def __init__(self, gfile, mode='r'):
         super().__init__()
         self.gfile = gfile
@@ -146,7 +146,7 @@ class GioFileAdapter(io.RawIOBase):
         self.close()
 
 
-class GioUTF8FileAdapter(io.RawIOBase):
+class _GioUTF8FileAdapter(io.RawIOBase):
     def __init__(self, raw):
         super().__init__()
         self.raw = raw
@@ -254,10 +254,10 @@ class Plugin(CommonFsPluginBase):
             if self.fs_exists(uri) is None:
                 return None
         try:
-            raw = GioFileAdapter(f, mode)
+            raw = _GioFileAdapter(f, mode)
             if 'b' in mode:
                 return raw
-            return GioUTF8FileAdapter(raw)
+            return _GioUTF8FileAdapter(raw)
         except GLib.GError as exc:
             LOGGER.warning("Gio.Gerror", exc_info=exc)
             raise IOError(str(exc))
@@ -505,7 +505,7 @@ class Plugin(CommonFsPluginBase):
         )
         return info.get_content_type()
 
-    def fs_mktemp(self, prefix=None, suffix=None, mode='w+b'):
+    def fs_mktemp(self, prefix=None, suffix=None, mode='w+b', **kwargs):
         tmp = tempfile.NamedTemporaryFile(
             prefix=prefix, suffix=suffix, delete=False, mode=mode
         )
