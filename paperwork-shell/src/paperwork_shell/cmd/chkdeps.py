@@ -50,14 +50,22 @@ class Plugin(openpaperwork_core.PluginBase):
         self.interactive = interactive
 
     def cmd_complete_argparse(self, parser):
-        parser.add_parser(
+        p = parser.add_parser(
             'chkdeps',
             help=_("Check that all required dependencies are installed")
+        )
+        p.add_argument(
+            "--yes", "-y",
+            required=False, default=False, action='store_true'
         )
 
     def cmd_run(self, args):
         if args.command != 'chkdeps':
             return None
+        auto = args.yes
+
+        if auto:
+            LOGGER.warning("Confirmation disabled")
 
         distribution = self._get_distribution()
 
@@ -93,13 +101,14 @@ class Plugin(openpaperwork_core.PluginBase):
                 print(_("Suggested command:"))
                 print("  " + command)
                 print("")
-                r = util.ask_confirmation(
-                    _("Do you want to run this command now ?")
-                )
-                if r == 'y':
-                    r = os.system(command)
-                    if r != 0:
-                        sys.exit(r)
+                if not auto:
+                    r = util.ask_confirmation(
+                        _("Do you want to run this command now ?")
+                    )
+                    if r == 'y':
+                        r = os.system(command)
+                        if r != 0:
+                            sys.exit(r)
             elif len(missing) > 0:
                 print(
                     _("Don't know how to install missing dependencies. Sorry.")

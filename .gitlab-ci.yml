@@ -18,6 +18,8 @@ check:
 .apt: &apt
   before_script:
     - sh ./set_apt_proxy.sh
+    # Only the build dependencies for Libinsane. Everything else should be
+    # installed by paperwork-cli chkdeps
     - apt-get install -y -qq make meson build-essential gcc
     - apt-get install -y -qq libsane-dev
     - apt-get install -y -qq libgirepository1.0-dev gobject-introspection
@@ -27,10 +29,6 @@ check:
     - apt-get install -y -qq python3-dev git
     - apt-get install -y -qq zlib1g-dev libjpeg-dev
     - apt-get install -y -qq python3-gi
-    - apt-get install -y -qq python3-gi-cairo
-    - apt-get install -y -qq gir1.2-gdkpixbuf-2.0 gir1.2-glib-2.0
-    - apt-get install -y -qq gir1.2-pango-1.0 gir1.2-poppler-0.18
-    - apt-get install -y -qq tesseract-ocr tesseract-ocr-fra
 
 
 test:
@@ -43,7 +41,7 @@ test:
     - volatile
   <<: *apt
   script:
-    - source ./activate_test_env.sh && make test
+    - source ./activate_test_env.sh && paperwork-cli chkdeps -y && make test
 
 
 linux_flatpak:
