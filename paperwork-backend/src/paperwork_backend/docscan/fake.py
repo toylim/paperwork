@@ -73,7 +73,8 @@ class Source(object):
             test_page
         )
         self.core.call_one(
-            "mainloop_schedule", self.core.call_all, "on_scan_feed_end", scan_id
+            "mainloop_schedule", self.core.call_all,
+            "on_scan_feed_end", scan_id
         )
         return (self, scan_id, [test_page])
 

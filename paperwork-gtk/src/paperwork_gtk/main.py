@@ -1,8 +1,6 @@
 import argparse
 import gettext
-import json
 import sys
-import traceback
 
 import openpaperwork_core
 
@@ -42,7 +40,7 @@ def main_main(in_args):
     core.call_all("cmd_complete_argparse", cmd_parser)
     args = parser.parse_args(in_args)
 
-    core.call_all("cmd_set_interactive", interactive)
+    core.call_all("cmd_set_interactive", True)
 
     r = core.call_success("cmd_run", args)
     if r is None:
