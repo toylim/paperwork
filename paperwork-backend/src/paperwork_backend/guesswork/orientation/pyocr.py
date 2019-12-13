@@ -42,7 +42,7 @@ class OrientationTransaction(object):
 
     def _guess_page_orientation(self, doc_id, doc_url, page_idx):
         self.core.call_one(
-            "schedule", self.core.call_all,
+            "mainloop_schedule", self.core.call_all,
             "on_progress", ID, self._get_progression(),
             _("Guessing orientation on document %s page %d") % (
                 doc_id, page_idx
@@ -84,7 +84,7 @@ class OrientationTransaction(object):
     def commit(self):
         self.page_tracker.commit()
         self.core.call_one(
-            "schedule", self.core.call_all,
+            "mainloop_schedule", self.core.call_all,
             "on_progress", ID, 1.0
         )
 
@@ -135,7 +135,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         if doc_id is not None:
             self.core.call_one(
-                "schedule", self.core.call_all,
+                "mainloop_schedule", self.core.call_all,
                 "on_orientation_guess_start", doc_id, page_idx
             )
 
@@ -192,7 +192,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         if doc_id is not None:
             self.core.call_one(
-                "schedule", self.core.call_all,
+                "mainloop_schedule", self.core.call_all,
                 "on_orientation_guess_end", doc_id, page_idx
             )
 

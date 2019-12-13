@@ -17,7 +17,7 @@ class TestCallback(unittest.TestCase):
             self.val = value
 
         # queue some calls
-        self.core.call_all('schedule', set_val, 22)
+        self.core.call_all("mainloop_schedule", set_val, 22)
         self.core.call_all("mainloop_quit_graceful")
 
         self.core.call_one('mainloop')

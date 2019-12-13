@@ -119,7 +119,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         if self.interactive:
             print(_("Importing %s ...") % args.files)
-        self.core.call_one("schedule", promise.schedule)
+        self.core.call_one("mainloop_schedule", promise.schedule)
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
         if self.interactive:

@@ -80,7 +80,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 )
                 self.core.call_success("pillow_to_url", img, page_url)
                 self.core.call_one(
-                    "schedule", self.core.call_all,
+                    "mainloop_schedule", self.core.call_all,
                     "on_scan2doc_page_scanned", doc_id, doc_url, nb_pages
                 )
             return nb

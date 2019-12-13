@@ -101,7 +101,7 @@ class LabelGuesserTransaction(object):
             self.plugin._set_guessed_labels(doc_url)
 
         self.core.call_one(
-            "schedule", self.core.call_all,
+            "mainloop_schedule", self.core.call_all,
             "on_progress", "label_guesser_update", self._get_progression(),
             _("Updating label guesser with added document %s") % doc_id
         )
@@ -110,7 +110,7 @@ class LabelGuesserTransaction(object):
 
     def del_obj(self, doc_id):
         self.core.call_one(
-            "schedule", self.core.call_all,
+            "mainloop_schedule", self.core.call_all,
             "on_progress", "label_guesser_update", self._get_progression(),
             _("Updating label guesser due to deleted document %s") % doc_id
         )
@@ -119,7 +119,7 @@ class LabelGuesserTransaction(object):
 
     def upd_obj(self, doc_id):
         self.core.call_one(
-            "schedule", self.core.call_all,
+            "mainloop_schedule", self.core.call_all,
             "on_progress", "label_guesser_update", self._get_progression(),
             _("Updating label guesser with updated document %s") % doc_id
         )
@@ -240,7 +240,7 @@ class LabelGuesserTransaction(object):
 
     def unchanged_obj(self, doc_id):
         self.core.call_one(
-            "schedule", self.core.call_all,
+            "mainloop_schedule", self.core.call_all,
             "on_progress", "label_guesser_update", self._get_progression(),
             _("Document %s unchanged") % doc_id
         )
@@ -248,7 +248,7 @@ class LabelGuesserTransaction(object):
 
     def cancel(self):
         self.core.call_one(
-            "schedule", self.core.call_all,
+            "mainloop_schedule", self.core.call_all,
             "on_label_guesser_canceled"
         )
         self.core.call_one("mainloop_execute", self.cursor.execute, "ROLLBACK")
@@ -258,7 +258,7 @@ class LabelGuesserTransaction(object):
 
     def commit(self):
         self.core.call_all(
-            "schedule", self.core.call_all,
+            "mainloop_schedule", self.core.call_all,
             "on_label_guesser_commit_start"
         )
 
@@ -335,11 +335,11 @@ class LabelGuesserTransaction(object):
             self.core.call_one("mainloop_execute", self.cursor.close)
         self.cursor = None
         self.core.call_one(
-            "schedule", self.core.call_all,
+            "mainloop_schedule", self.core.call_all,
             "on_progress", "label_guesser_update", 1.0
         )
         self.core.call_one(
-            "schedule", self.core.call_all,
+            "mainloop_schedule", self.core.call_all,
             'on_label_guesser_commit_end'
         )
 

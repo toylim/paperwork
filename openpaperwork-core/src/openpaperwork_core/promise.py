@@ -91,7 +91,7 @@ class BasePromise(object):
 
         if len(self._catch) > 0:
             for c in self._catch:
-                self.core.call_one("schedule", c, exc)
+                self.core.call_one("mainloop_schedule", c, exc)
             return
 
         raise exc
@@ -102,7 +102,7 @@ class BasePromise(object):
         else:
             if args == ():
                 args = None
-            self.core.call_one("schedule", self.do, args)
+            self.core.call_one("mainloop_schedule", self.do, args)
 
     def wait(self):
         assert(
@@ -143,7 +143,7 @@ class Promise(BasePromise):
                 )
 
             for t in self._then:
-                self.core.call_one("schedule", t.do, our_r)
+                self.core.call_one("mainloop_schedule", t.do, our_r)
         except Exception as exc:
             self.on_error(exc)
 
@@ -176,7 +176,7 @@ class ThreadedPromise(BasePromise):
             )
 
             for t in self._then:
-                self.core.call_one("schedule", t.do, our_r)
+                self.core.call_one("mainloop_schedule", t.do, our_r)
         except Exception as exc:
             self.on_error(exc)
         finally:
@@ -188,7 +188,7 @@ class ThreadedPromise(BasePromise):
             if self.func is None:
                 # no thread, we immediately schedule the next promises
                 for t in self._then:
-                    self.core.call_one("schedule", t.do, None)
+                    self.core.call_one("mainloop_schedule", t.do, None)
                 return
 
             thread = threading.Thread(

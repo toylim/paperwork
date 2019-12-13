@@ -168,7 +168,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         sys.stdout.write(_("Exporting to %s ... ") % out)
         sys.stdout.flush()
-        self.core.call_one("schedule", promise.schedule)
+        self.core.call_one("mainloop_schedule", promise.schedule)
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
         sys.stdout.write(_("Done") + "\n")

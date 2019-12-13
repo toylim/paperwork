@@ -62,14 +62,14 @@ class Plugin(openpaperwork_core.PluginBase):
         Wait for all the scheduled callbacks to be executed and then stops
         the main loop.
         """
-        self.schedule(self._mainloop_quit_graceful)
+        self.mainloop_schedule(self._mainloop_quit_graceful)
 
     def _mainloop_quit_graceful(self):
         if self.task_count > 1:  # keep in mind this function is in a task too
             LOGGER.info(
                 "Quit graceful: Remaining tasks: %d", self.task_count - 1
             )
-            self.schedule(self.mainloop_quit_graceful, delay_s=0.2)
+            self.mainloop_schedule(self.mainloop_quit_graceful, delay_s=0.2)
             return
 
         LOGGER.info("Quit graceful: Quitting")
@@ -101,7 +101,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def mainloop_unref(self, obj):
         self.task_count -= 1
 
-    def schedule(self, func, *args, delay_s=0, **kwargs):
+    def mainloop_schedule(self, func, *args, delay_s=0, **kwargs):
         """
         Request that the main loop executes the callback `func`.
         Will return immediately.
@@ -167,7 +167,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 exc[0] = e
             event.set()
 
-        self.schedule(get_result)
+        self.mainloop_schedule(get_result)
         event.wait()
 
         if exc[0] is not None:

@@ -40,7 +40,7 @@ class LabelLoader(object):
 
     def notify_done(self):
         self.core.call_one(
-            "schedule",
+            "mainloop_schedule",
             self.core.call_all, "on_label_loading_end"
         )
 

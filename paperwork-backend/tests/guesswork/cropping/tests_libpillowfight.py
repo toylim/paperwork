@@ -79,7 +79,7 @@ class TestBorder(unittest.TestCase):
             promise.schedule()
 
         self.core.call_success(
-            "schedule", self.core.call_all, "mainloop_quit_graceful"
+            "mainloop_schedule", self.core.call_all, "mainloop_quit_graceful"
         )
         self.core.call_one("mainloop")
 
@@ -148,7 +148,7 @@ class TestBorder(unittest.TestCase):
             promise.schedule()
 
         self.core.call_success(
-            "schedule", self.core.call_all, "mainloop_quit_graceful"
+            "mainloop_schedule", self.core.call_all, "mainloop_quit_graceful"
         )
         self.core.call_one("mainloop")
 

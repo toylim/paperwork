@@ -132,7 +132,7 @@ class WhooshTransaction(object):
     def add_obj(self, doc_id):
         LOGGER.info("Adding document '%s' to index", doc_id)
         self.core.call_one(
-            "schedule", self.core.call_all,
+            "mainloop_schedule", self.core.call_all,
             "on_progress", "index_update", self._get_progression(),
             _("Indexing new document %s") % doc_id
         )
@@ -142,7 +142,7 @@ class WhooshTransaction(object):
     def del_obj(self, doc_id):
         LOGGER.info("Removing document '%s' from index", doc_id)
         self.core.call_one(
-            "schedule", self.core.call_all,
+            "mainloop_schedule", self.core.call_all,
             "on_progress", "index_update", self._get_progression(),
             _("Removing document %s from index") % doc_id
         )
@@ -153,7 +153,7 @@ class WhooshTransaction(object):
     def upd_obj(self, doc_id):
         LOGGER.info("Updating document '%s' in index", doc_id)
         self.core.call_one(
-            "schedule", self.core.call_all,
+            "mainloop_schedule", self.core.call_all,
             "on_progress", "index_update", self._get_progression(),
             _("Indexing updated document %s") % doc_id
         )
@@ -163,7 +163,7 @@ class WhooshTransaction(object):
     def unchanged_obj(self, doc_id):
         self.unchanged += 1
         self.core.call_one(
-            "schedule", self.core.call_all,
+            "mainloop_schedule", self.core.call_all,
             "on_progress", "index_update", self._get_progression(),
             _("Document unchanged %s") % doc_id
         )
@@ -173,21 +173,21 @@ class WhooshTransaction(object):
             return
 
         self.core.call_one(
-            "schedule", self.core.call_all,
+            "mainloop_schedule", self.core.call_all,
             'on_index_cancel'
         )
         LOGGER.info("Canceling transaction")
         self.writer.cancel()
         self.writer = None
         self.core.call_one(
-            "schedule", self.core.call_all,
+            "mainloop_schedule", self.core.call_all,
             "on_index_updated"
         )
 
     def commit(self):
         total = sum(self.counts.values())
         self.core.call_one(
-            "schedule", self.core.call_all,
+            "mainloop_schedule", self.core.call_all,
             'on_index_commit_start'
         )
         if total == 0:
@@ -204,11 +204,11 @@ class WhooshTransaction(object):
             self.writer.commit()
             self.writer = None
         self.core.call_one(
-            "schedule", self.core.call_all,
+            "mainloop_schedule", self.core.call_all,
             'on_progress', 'index_update', 1.0
         )
         self.core.call_all(
-            "schedule", self.core.call_all,
+            "mainloop_schedule", self.core.call_all,
             'on_index_commit_end'
         )
 

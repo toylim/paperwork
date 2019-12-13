@@ -113,7 +113,7 @@ class Syncer(object):
                 if action != 'unchanged':
                     for name in self.names:
                         self.core.call_one(
-                            "schedule", self.core.call_all,
+                            "mainloop_schedule", self.core.call_all,
                             "on_sync", name, action, key
                         )
                 if action == "added":

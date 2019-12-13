@@ -37,43 +37,43 @@ class Source(object):
         test_page = PIL.Image.new("RGB", (200, 200), (171, 205, 239))
 
         self.core.call_one(
-            "schedule", self.core.call_all,
+            "mainloop_schedule", self.core.call_all,
             "on_scan_feed_start", scan_id
         )
         self.core.call_one(
-            "schedule", self.core.call_all,
+            "mainloop_schedule", self.core.call_all,
             "on_scan_page_start",
             scan_id, 0,
             None,  # TODO(Jflesch): scan params
         )
         self.core.call_one(
-            "schedule", self.core.call_all,
+            "mainloop_schedule", self.core.call_all,
             "on_scan_chunk",
             scan_id,
             None,  # TODO(Jflesch): scan_params
             test_chunk
         )
         self.core.call_one(
-            "schedule", self.core.call_all,
+            "mainloop_schedule", self.core.call_all,
             "on_scan_chunk",
             scan_id,
             None,  # TODO(Jflesch): scan_params
             test_chunk
         )
         self.core.call_one(
-            "schedule", self.core.call_all,
+            "mainloop_schedule", self.core.call_all,
             "on_scan_chunk",
             scan_id,
             None,  # TODO(Jflesch): scan_params
             test_chunk
         )
         self.core.call_one(
-            "schedule", self.core.call_all,
+            "mainloop_schedule", self.core.call_all,
             "on_scan_page_end", scan_id, 0,
             test_page
         )
         self.core.call_one(
-            "schedule", self.core.call_all, "on_scan_feed_end", scan_id
+            "mainloop_schedule", self.core.call_all, "on_scan_feed_end", scan_id
         )
         return (self, scan_id, [test_page])
 

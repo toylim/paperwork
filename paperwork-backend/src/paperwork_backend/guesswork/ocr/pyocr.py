@@ -53,7 +53,7 @@ class OcrTransaction(object):
                     doc_id, page_idx
                 )
                 self.core.call_one(
-                    "schedule", self.core.call_all,
+                    "mainloop_schedule", self.core.call_all,
                     "on_progress", ID, self._get_progression(),
                     _("Document %s p%d has already some text. No OCR run") % (
                         doc_id, page_idx
@@ -62,7 +62,7 @@ class OcrTransaction(object):
                 return
 
         self.core.call_one(
-            "schedule", self.core.call_all,
+            "mainloop_schedule", self.core.call_all,
             "on_progress", ID, self._get_progression(),
             _("Running OCR on document %s page %d") % (
                 doc_id, page_idx
@@ -105,7 +105,7 @@ class OcrTransaction(object):
     def commit(self):
         self.page_tracker.commit()
         self.core.call_one(
-            "schedule", self.core.call_all,
+            "mainloop_schedule", self.core.call_all,
             "on_progress", ID, 1.0
         )
 
@@ -167,7 +167,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         if doc_id is not None:
             self.core.call_one(
-                "schedule", self.core.call_all,
+                "mainloop_schedule", self.core.call_all,
                 "on_ocr_start", doc_id, page_idx
             )
 
@@ -189,7 +189,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         if doc_id is not None:
             self.core.call_one(
-                "schedule", self.core.call_all,
+                "mainloop_schedule", self.core.call_all,
                 "on_ocr_end", doc_id, page_idx
             )
 
