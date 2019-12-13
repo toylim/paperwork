@@ -39,7 +39,7 @@ class TestPyocr(unittest.TestCase):
 
         self.model = self.core.get_by_name("paperwork_backend.model.fake")
 
-        self.core.call_all("paperwork_config_put", "ocr_lang", "eng")
+        self.core.call_all("config_put", "ocr_lang", "eng")
 
     def tearDown(self):
         shutil.rmtree(self.tmp_paperwork_dir)
