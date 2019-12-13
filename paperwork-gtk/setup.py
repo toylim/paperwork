@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import codecs
+import glob
 import os
 import sys
 
@@ -106,6 +107,8 @@ Main features are:
 if not freeze:
     setuptools.setup(**kwargs)
 else:
+    import cx_Freeze
+
     common_include_files = []
 
     required_dll_search_paths = os.getenv("PATH", os.defpath).split(os.pathsep)
