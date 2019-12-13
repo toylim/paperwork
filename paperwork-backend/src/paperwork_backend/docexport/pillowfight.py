@@ -66,6 +66,6 @@ class Plugin(AbstractExportPipePlugin):
         return [
             {
                 'interface': 'mainloop',
-                'defaults': 'openpaperwork_core.mainloop_asyncio',
+                'defaults': 'openpaperwork_core.mainloop.asyncio',
             },
         ]

@@ -51,5 +51,5 @@ DEFAULT_GUI_PLUGINS = [
 
 DEFAULT_SHELL_PLUGINS = [
     'openpaperwork_core.log_print',
-    "openpaperwork_core.mainloop_asyncio",
+    "openpaperwork_core.mainloop.asyncio",
 ] + DEFAULT_PLUGINS

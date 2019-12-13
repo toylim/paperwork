@@ -209,7 +209,7 @@ class Plugin(AbstractExportPipePlugin):
             },
             {
                 'interface': 'mainloop',
-                'defaults': ['openpaperwork_core.mainloop_asyncio'],
+                'defaults': ['openpaperwork_core.mainloop.asyncio'],
             },
             {
                 'interface': 'pillow',

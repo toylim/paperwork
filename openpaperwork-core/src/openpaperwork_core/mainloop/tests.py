@@ -4,10 +4,16 @@ import openpaperwork_core
 import openpaperwork_core.promise
 
 
-class TestCallback(unittest.TestCase):
+class AbstractTestCallback(unittest.TestCase):
+    def get_plugin_name(self):
+        """
+        Must be overloaded by subclasses
+        """
+        assert()
+
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("openpaperwork_core.mainloop_asyncio")
+        self.core.load(self.get_plugin_name())
         self.core.init()
 
         self.val = None
@@ -25,10 +31,16 @@ class TestCallback(unittest.TestCase):
         self.assertEqual(self.val, 22)
 
 
-class TestPromise(unittest.TestCase):
+class AbstractTestPromise(unittest.TestCase):
+    def get_plugin_name(self):
+        """
+        Must be overloaded by subclasses
+        """
+        assert()
+
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("openpaperwork_core.mainloop_asyncio")
+        self.core.load(self.get_plugin_name())
         self.core.init()
 
         self.alpha_called = False

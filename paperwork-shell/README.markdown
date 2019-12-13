@@ -100,7 +100,7 @@ workdir = file:///home/jflesch/tmp/papers
 
 $ paperwork-cli config list_plugins
 openpaperwork_core.log_print
-openpaperwork_core.mainloop_asyncio
+openpaperwork_core.mainloop.asyncio
 openpaperwork_core.config
 paperwork_backend.beacon.stats
 paperwork_backend.beacon.sysinfo

@@ -82,7 +82,7 @@ class Plugin(openpaperwork_core.PluginBase):
             },
             {
                 'interface': 'mainloop',
-                'defaults': ['openpaperwork_core.mainloop_asyncio'],
+                'defaults': ['openpaperwork_core.mainloop.asyncio'],
             },
         ]
 
