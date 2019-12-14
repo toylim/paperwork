@@ -11,7 +11,7 @@ try:
 except (ImportError, ValueError):
     GLIB_AVAILABLE = False
 
-from . import CommonFsPluginBase
+import openpaperwork_core.fs
 
 
 LOGGER = logging.getLogger(__name__)
@@ -229,7 +229,7 @@ class _GioUTF8FileAdapter(io.RawIOBase):
         self.close()
 
 
-class Plugin(CommonFsPluginBase):
+class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
     def __init__(self):
         super().__init__()
 

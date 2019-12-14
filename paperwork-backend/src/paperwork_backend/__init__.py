@@ -6,8 +6,8 @@ DEFAULT_CONFIG_PLUGINS = [
 ]
 
 DEFAULT_PLUGINS = [
-    'openpaperwork_core.fs.gio',
     'openpaperwork_core.fs.memory',
+    'openpaperwork_gtk.fs.gio',
     'paperwork_backend.beacon.stats',
     'paperwork_backend.beacon.sysinfo',
     'paperwork_backend.beacon.update',

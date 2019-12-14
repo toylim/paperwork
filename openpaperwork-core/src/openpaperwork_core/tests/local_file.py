@@ -6,10 +6,16 @@ import unittest
 import openpaperwork_core
 
 
-class TestSafe(unittest.TestCase):
+class AbstractTestSafe(unittest.TestCase):
+    def get_plugin_name(self):
+        """
+        must be subclassed
+        """
+        assert()
+
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("openpaperwork_core.fs.gio")
+        self.core.load(self.get_plugin_name())
         self.core.init()
 
     @unittest.skipUnless(os.name == 'posix', reason="Linux only")
@@ -29,10 +35,16 @@ class TestSafe(unittest.TestCase):
         self.assertEqual(v, "\\\\someserver\\someshare")
 
 
-class TestUnsafe(unittest.TestCase):
+class AbstractTestUnsafe(unittest.TestCase):
+    def get_plugin_name(self):
+        """
+        must be subclassed
+        """
+        assert()
+
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("openpaperwork_core.fs.gio")
+        self.core.load(self.get_plugin_name())
         self.core.init()
 
     @unittest.skipUnless(os.name == 'posix', reason="Linux only")
@@ -55,10 +67,16 @@ class TestUnsafe(unittest.TestCase):
         self.assertEqual(v, "\\\\someserver\\someshare")
 
 
-class TestOpen(unittest.TestCase):
+class AbstractTestOpen(unittest.TestCase):
+    def get_plugin_name(self):
+        """
+        must be subclassed
+        """
+        assert()
+
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("openpaperwork_core.fs.gio")
+        self.core.load(self.get_plugin_name())
         self.core.init()
 
     def test_read_binary(self):
@@ -120,10 +138,16 @@ class TestOpen(unittest.TestCase):
             os.unlink(file_name)
 
 
-class TestExists(unittest.TestCase):
+class AbstractTestExists(unittest.TestCase):
+    def get_plugin_name(self):
+        """
+        must be subclassed
+        """
+        assert()
+
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("openpaperwork_core.fs.gio")
+        self.core.load(self.get_plugin_name())
         self.core.init()
 
     def test_not_exist(self):
@@ -141,10 +165,16 @@ class TestExists(unittest.TestCase):
             os.unlink(file_name)
 
 
-class TestListDir(unittest.TestCase):
+class AbstractTestListDir(unittest.TestCase):
+    def get_plugin_name(self):
+        """
+        must be subclassed
+        """
+        assert()
+
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("openpaperwork_core.fs.gio")
+        self.core.load(self.get_plugin_name())
         self.core.init()
 
         self.dirname = tempfile.mkdtemp()
@@ -183,10 +213,16 @@ class TestListDir(unittest.TestCase):
         ])
 
 
-class TestRename(unittest.TestCase):
+class AbstractTestRename(unittest.TestCase):
+    def get_plugin_name(self):
+        """
+        must be subclassed
+        """
+        assert()
+
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("openpaperwork_core.fs.gio")
+        self.core.load(self.get_plugin_name())
         self.core.init()
 
     def test_rename(self):
@@ -218,10 +254,16 @@ class TestRename(unittest.TestCase):
                 os.unlink(dst_file_name)
 
 
-class TestUnlink(unittest.TestCase):
+class AbstractTestUnlink(unittest.TestCase):
+    def get_plugin_name(self):
+        """
+        must be subclassed
+        """
+        assert()
+
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("openpaperwork_core.fs.gio")
+        self.core.load(self.get_plugin_name())
         self.core.init()
 
     def test_unlink(self):
@@ -241,10 +283,16 @@ class TestUnlink(unittest.TestCase):
                 os.unlink(file_name)
 
 
-class TestGetMtime(unittest.TestCase):
+class AbstractTestGetMtime(unittest.TestCase):
+    def get_plugin_name(self):
+        """
+        must be subclassed
+        """
+        assert()
+
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("openpaperwork_core.fs.gio")
+        self.core.load(self.get_plugin_name())
         self.core.init()
 
     def test_get_mtime(self):
@@ -265,10 +313,16 @@ class TestGetMtime(unittest.TestCase):
             os.unlink(file_name)
 
 
-class TestGetsize(unittest.TestCase):
+class AbstractTestGetsize(unittest.TestCase):
+    def get_plugin_name(self):
+        """
+        must be subclassed
+        """
+        assert()
+
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("openpaperwork_core.fs.gio")
+        self.core.load(self.get_plugin_name())
         self.core.init()
 
     def test_getsize(self):
@@ -286,10 +340,16 @@ class TestGetsize(unittest.TestCase):
             os.unlink(file_name)
 
 
-class TestIsdir(unittest.TestCase):
+class AbstractTestIsdir(unittest.TestCase):
+    def get_plugin_name(self):
+        """
+        must be subclassed
+        """
+        assert()
+
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("openpaperwork_core.fs.gio")
+        self.core.load(self.get_plugin_name())
         self.core.init()
 
     def test_isdir_true(self):
@@ -317,10 +377,16 @@ class TestIsdir(unittest.TestCase):
             os.unlink(file_name)
 
 
-class TestCopy(unittest.TestCase):
+class AbstractTestCopy(unittest.TestCase):
+    def get_plugin_name(self):
+        """
+        must be subclassed
+        """
+        assert()
+
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("openpaperwork_core.fs.gio")
+        self.core.load(self.get_plugin_name())
         self.core.init()
 
     def test_copy(self):
@@ -356,10 +422,16 @@ class TestCopy(unittest.TestCase):
                 os.unlink(dst_file_name)
 
 
-class TestMkdirP(unittest.TestCase):
+class AbstractTestMkdirP(unittest.TestCase):
+    def get_plugin_name(self):
+        """
+        must be subclassed
+        """
+        assert()
+
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("openpaperwork_core.fs.gio")
+        self.core.load(self.get_plugin_name())
         self.core.init()
 
     def test_mkdir_p(self):

@@ -37,7 +37,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return [
             {
                 "interface": "fs",
-                "defaults": ["openpaperwork_core.fs.gio"],
+                "defaults": ["openpaperwork_gtk.fs.gio"],
             },
             {
                 "interface": "export_pipes",

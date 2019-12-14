@@ -19,7 +19,7 @@ class TestExport(unittest.TestCase):
         )
 
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
-        self.core.load("openpaperwork_core.fs.gio")
+        self.core.load("openpaperwork_gtk.fs.gio")
         self.core.load("openpaperwork_core.fs.memory")
         self.core.load("paperwork_backend.docexport.img")
         self.core.load("paperwork_backend.docexport.pdf")

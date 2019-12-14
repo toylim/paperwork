@@ -64,7 +64,7 @@ class Plugin(openpaperwork_core.PluginBase):
             },
             {
                 'interface': 'fs',
-                'defaults': ['openpaperwork_core.fs.gio'],
+                'defaults': ['openpaperwork_gtk.fs.gio'],
             },
             {
                 'interface': 'mainloop',

@@ -17,7 +17,7 @@ similar to the memory plugin.
 GIO
 ~~~
 
-.. automodule:: openpaperwork_core.fs.gio
+.. automodule:: openpaperwork_gtk.fs.gio
    :members:
    :undoc-members:
 
