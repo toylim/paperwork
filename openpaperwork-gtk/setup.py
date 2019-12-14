@@ -8,11 +8,11 @@ from setuptools import setup, find_packages
 quiet = '--quiet' in sys.argv or '-q' in sys.argv
 
 try:
-    with open("src/openpaperwork_core/_version.py", "r") as file_descriptor:
+    with open("src/openpaperwork_gtk/_version.py", "r") as file_descriptor:
         version = file_descriptor.read().strip()
         version = version.split(" ")[2][1:-1]
     if not quiet:
-        print("OpenPaperwork-core version: {}".format(version))
+        print("OpenPaperwork-gtk version: {}".format(version))
     if "-" in version:
         version = version.split("-")[0]
 except FileNotFoundError:
@@ -22,21 +22,18 @@ except FileNotFoundError:
 
 
 setup(
-    name="openpaperwork-core",
+    name="openpaperwork-gtk",
     version=version,
     description=(
-        "OpenPaperwork's core"
+        "OpenPaperwork GTK plugins"
     ),
     long_description="""Paperwork is a GUI to make papers searchable.
 
-This is the core part of Paperwork. It manages plugins.
-
-There is no GUI here. The GUI is
-<https://gitlab.gnome.org/World/OpenPaperwork/paperwork#readme>.
+A bunch of plugins for Paperwork related to GLib and GTK.
     """,
     url=(
         "https://gitlab.gnome.org/World/OpenPaperwork/paperwork/tree/master/"
-        "openpaperwork-core"
+        "openpaperwork-gtk"
     ),
     download_url=(
         "https://gitlab.gnome.org/World/OpenPaperwork/paperwork/-"
