@@ -6,6 +6,7 @@ DEFAULT_CONFIG_PLUGINS = [
 ]
 
 DEFAULT_PLUGINS = [
+    "openpaperwork_gtk.mainloop.glib",
     'openpaperwork_core.fs.memory',
     'openpaperwork_gtk.fs.gio',
     'paperwork_backend.beacon.stats',
@@ -51,5 +52,4 @@ DEFAULT_GUI_PLUGINS = [
 
 DEFAULT_SHELL_PLUGINS = [
     'openpaperwork_core.log_print',
-    "openpaperwork_core.mainloop.asyncio",
 ] + DEFAULT_PLUGINS
