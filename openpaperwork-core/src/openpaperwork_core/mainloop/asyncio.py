@@ -76,6 +76,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         LOGGER.info("Quit graceful: Quitting")
         self.mainloop_quit_now()
+        self.task_count = 1  # we are actually the one task still running
 
     def mainloop_quit_now(self):
         """

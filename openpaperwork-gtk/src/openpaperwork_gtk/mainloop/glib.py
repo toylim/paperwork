@@ -75,6 +75,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         LOGGER.info("Quit graceful: Quitting")
         self.mainloop_quit_now()
+        self.task_count = 1  # we are actually the one task still running
 
     def mainloop_quit_now(self):
         self.loop.quit()
@@ -86,6 +87,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def mainloop_unref(self, obj):
         self.task_count -= 1
+        assert(self.task_count >= 0)
 
     def mainloop_schedule(self, func, *args, delay_s=0, **kwargs):
         assert(hasattr(func, '__call__'))
