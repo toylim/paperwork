@@ -177,11 +177,12 @@ class Core(object):
                     LOGGER.warning(
                         "Plugin '{}' requires interface '{}' but no plugins"
                         " provide this interface (suggested: {}). Plugin '{}'"
-                        " will be unloaded.".format(
+                        " will not be initialized.".format(
                             plugin_name, interface, defaults, plugin_name
                         )
                     )
-                    self.plugins.pop(plugin_name)
+                    plugin = self.plugins.pop(plugin_name)
+                    self._to_initialize.remove(plugin)
                     # return False to indicate we actually dropped a plugin
                     # and need to reevaluate all the dependencies again.
                     return False
@@ -197,19 +198,24 @@ class Core(object):
         return True
 
     def _init(self, plugin):
+        nb = 0
+
         if plugin in self._initialized:
-            return
+            return nb
 
         deps = plugin.get_deps()
         for dep in deps:
             dep_plugins = self.interfaces[dep['interface']]
             for dep_plugin in dep_plugins:
-                self._init(dep_plugin)
+                nb += self._init(dep_plugin)
 
         LOGGER.info("Initializing plugin '%s' ...", type(plugin))
         plugin.init(self)
+        nb += 1
 
         self._initialized.add(plugin)
+
+        return nb
 
     def init(self):
         """
@@ -222,10 +228,11 @@ class Core(object):
         LOGGER.info("Initializing all plugins")
         while not self._check_deps():
             pass
+        nb = 0
         for plugin in self._to_initialize:
-            self._init(plugin)
+            nb += self._init(plugin)
         self._to_initialize = set()
-        LOGGER.info("All plugins initialized")
+        LOGGER.info("%d plugins initialized", nb)
 
     def get_by_name(self, module_name):
         """

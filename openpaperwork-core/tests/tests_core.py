@@ -31,70 +31,6 @@ class TestLoading(unittest.TestCase):
         core.call_all('test_method')
         self.assertTrue(core.get_by_name('whatever_module').test_method_called)
 
-    @unittest.mock.patch("importlib.import_module")
-    def test_default_interface(self, import_module):
-        class TestModuleA(object):
-            class Plugin(openpaperwork_core.PluginBase):
-                def __init__(self):
-                    self.init_called = False
-                    self.test_method_called = False
-
-                def get_interfaces(self):
-                    return [
-                        "test_interface",
-                        "some_interface",
-                    ]
-
-                def init(self, core):
-                    self.init_called = True
-
-                def test_method(self):
-                    self.test_method_called = True
-
-        class TestModuleB(object):
-            class Plugin(openpaperwork_core.PluginBase):
-                def __init__(self):
-                    self.init_called = False
-
-                def get_interfaces(self):
-                    return ['some_interface']
-
-                def get_deps(self):
-                    return [
-                        {
-                            'interface': 'test_interface',
-                            'defaults': ['module_a'],
-                        }
-                    ]
-
-                def init(self, core):
-                    self.init_called = True
-
-        core = openpaperwork_core.Core(allow_unsatisfied=True)
-
-        import_module.return_value = TestModuleB()
-        core.load('module_b')
-        import_module.assert_called_once_with('module_b')
-
-        import_module.reset_mock()
-        import_module.return_value = TestModuleA()
-        core.init()  # will load 'module_a' because of dependencies
-        import_module.assert_called_once_with('module_a')
-        self.assertTrue(core.get_by_name('module_a').init_called)
-        self.assertTrue(core.get_by_name('module_b').init_called)
-
-        core.call_all('test_method')
-        self.assertTrue(core.get_by_name('module_a').test_method_called)
-
-        self.assertEqual(
-            core.get_by_interface('some_interface'),
-            [
-                core.get_by_name('module_b'),
-                core.get_by_name('module_a'),
-            ]
-        )
-        self.assertEqual(core.get_by_interface('unknown_interface'), [])
-
 
 class TestInit(unittest.TestCase):
     @unittest.mock.patch("importlib.import_module")
@@ -329,3 +265,117 @@ class TestCall(unittest.TestCase):
 
         r = core.call_success('test_method')
         self.assertEqual(r, "B")
+
+
+class TestDependencies(unittest.TestCase):
+    @unittest.mock.patch("importlib.import_module")
+    def test_default_interface(self, import_module):
+        class TestModuleA(object):
+            class Plugin(openpaperwork_core.PluginBase):
+                def __init__(self):
+                    self.init_called = False
+                    self.test_method_called = False
+
+                def get_interfaces(self):
+                    return [
+                        "test_interface",
+                        "some_interface",
+                    ]
+
+                def init(self, core):
+                    self.init_called = True
+
+                def test_method(self):
+                    self.test_method_called = True
+
+        class TestModuleB(object):
+            class Plugin(openpaperwork_core.PluginBase):
+                def __init__(self):
+                    self.init_called = False
+
+                def get_interfaces(self):
+                    return ['some_interface']
+
+                def get_deps(self):
+                    return [
+                        {
+                            'interface': 'test_interface',
+                            'defaults': ['module_a'],
+                        }
+                    ]
+
+                def init(self, core):
+                    self.init_called = True
+
+        core = openpaperwork_core.Core(allow_unsatisfied=True)
+
+        import_module.return_value = TestModuleB()
+        core.load('module_b')
+        import_module.assert_called_once_with('module_b')
+
+        import_module.reset_mock()
+        import_module.return_value = TestModuleA()
+        core.init()  # will load 'module_a' because of dependencies
+        import_module.assert_called_once_with('module_a')
+        self.assertTrue(core.get_by_name('module_a').init_called)
+        self.assertTrue(core.get_by_name('module_b').init_called)
+
+        core.call_all('test_method')
+        self.assertTrue(core.get_by_name('module_a').test_method_called)
+
+        self.assertEqual(
+            core.get_by_interface('some_interface'),
+            [
+                core.get_by_name('module_b'),
+                core.get_by_name('module_a'),
+            ]
+        )
+        self.assertEqual(core.get_by_interface('unknown_interface'), [])
+
+
+    @unittest.mock.patch("importlib.import_module")
+    def test_no_init_if_dropped(self, import_module):
+        self.init_called = False
+
+        class TestModuleA(object):
+            class Plugin(openpaperwork_core.PluginBase):
+                def get_interfaces(s):
+                    return [
+                        "test_interface",
+                        "some_interface",
+                    ]
+
+                def init(s, core):
+                    self.init_called = True
+
+        class TestModuleB(object):
+            class Plugin(openpaperwork_core.PluginBase):
+                def __init__(s):
+                    s.init_called = False
+
+                def get_interfaces(s):
+                    return ['some_interface']
+
+                def get_deps(s):
+                    return [
+                        {
+                            'interface': 'test_interface',
+                            'defaults': ['module_a'],
+                        }
+                    ]
+
+                def init(s, core):
+                    self.init_called = True
+
+        core = openpaperwork_core.Core(allow_unsatisfied=False)
+
+        import_module.return_value = TestModuleB()
+        core.load('module_b')
+        import_module.assert_called_once_with('module_b')
+
+        import_module.reset_mock()
+        import_module.return_value = TestModuleA()
+        core.init()  # will NOT load 'module_a' and will drop 'module_b'
+        self.assertFalse(self.init_called)
+        self.assertRaises(KeyError, core.get_by_name, 'module_a')
+        self.assertRaises(KeyError, core.get_by_name, 'module_b')
