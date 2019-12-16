@@ -9,7 +9,13 @@ import paperwork_backend
 
 _ = gettext.gettext
 
-DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_GUI_PLUGINS + [
+LOGGER = logging.getLogger(__name__)
+
+DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
+    'openpaperwork_core.log_collector',
+    'openpaperwork_core.resources.setuptools',
+    'openpaperwork_gtk.resources',
+    'paperwork_gtk.mainwindow',
 ]
 
 
