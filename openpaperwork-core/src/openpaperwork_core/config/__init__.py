@@ -17,6 +17,7 @@
 Paperwork configuration management code
 """
 
+import collections
 import gettext
 import logging
 
@@ -70,6 +71,7 @@ class Plugin(PluginBase):
         self.values = {}
         self.application = None
         self.plugin_list_name = None
+        self.observers = collections.defaultdict(set)
 
     def get_interfaces(self):
         return ['config']
@@ -159,6 +161,9 @@ class Plugin(PluginBase):
         """
         self.settings[key].put(value)
         self.values[key] = value
+        if key in self.observers:
+            for callback in self.observers[key]:
+                callback(key, value)
 
     def config_add_plugin(self, plugin, application=None):
         if application is None:
@@ -183,3 +188,9 @@ class Plugin(PluginBase):
         return self.core.call_success(
             "config_backend_reset_plugins", application
         )
+
+    def config_add_observer(self, key: str, callback):
+        self.observers[key].add(callback)
+
+    def config_remove_observer(self, key: str, callback):
+        self.observers[key].remove(callback)

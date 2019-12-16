@@ -9,7 +9,15 @@ from . import PluginBase
 LOGGER = logging.getLogger(__name__)
 
 
+g_tmp_file = None
+
+
 def _get_tmp_file():
+    global g_tmp_file
+
+    if g_tmp_file is not None:
+        return g_tmp_file
+
     date = datetime.datetime.now()
     date = date.strftime("%Y%m%d_%H%M_%S")
     t = tempfile.NamedTemporaryFile(
@@ -20,14 +28,16 @@ def _get_tmp_file():
     )
     if sys.stderr is not None:
         sys.stderr.write("Temporary file = {}\n".format(t.name))
+    g_tmp_file = t
     return t
 
 
 class _LogHandler(logging.Handler):
     def __init__(self):
         super().__init__()
-        self.formatter = None
-        self.out_fds = set()
+        logging.getLogger().setLevel(logging.DEBUG)
+        self.formatter = logging.Formatter(Plugin.DEFAULT_LOG_FORMAT)
+        self.out_fds = {sys.stderr}
         sys.excepthook = self.on_uncatched_exception_cb
 
     def emit(self, record):
@@ -35,7 +45,7 @@ class _LogHandler(logging.Handler):
             return
         line = self.formatter.format(record)
         for fd in self.out_fds:
-            fd.write(line)
+            fd.write(line + "\n")
 
     def on_uncatched_exception_cb(self, exc_type, exc_value, exc_tb):
         LOGGER.error(
@@ -46,12 +56,11 @@ class _LogHandler(logging.Handler):
 
 
 class Plugin(PluginBase):
-    CONFIG_SECTION = 'logging'
-    CONFIG_LOG_LEVEL = 'level'
-    CONFIG_LOG_FILES = 'files'
-    CONFIG_LOG_FORMAT = 'format'
-
     CONFIG_FILE_SEPARATOR = ","
+
+    DEFAULT_LOG_LEVEL = 'info'
+    DEFAULT_LOG_FILES = 'stderr' + CONFIG_FILE_SEPARATOR + 'temp'
+    DEFAULT_LOG_FORMAT = '[%(levelname)-6s] [%(name)-30s] %(message)s'
 
     LOG_LEVELS = {
         'none': logging.CRITICAL,
@@ -62,10 +71,6 @@ class Plugin(PluginBase):
         'info': logging.INFO,
         'debug': logging.DEBUG,
     }
-    DEFAULT_LOG_LEVEL = 'info'
-    DEFAULT_LOG_FILES = 'stderr' + CONFIG_FILE_SEPARATOR + 'temp'
-    DEFAULT_LOG_FORMAT = '[%(levelname)-6s] [%(name)-30s] %(message)s'
-
     SPECIAL_FILES = {
         'stderr': lambda: open("/dev/stderr", "w"),
         'temp': _get_tmp_file,
@@ -74,8 +79,7 @@ class Plugin(PluginBase):
     def __init__(self):
         self.core = None
         self.log_file_paths = set()
-        self.log_handler = _LogHandler()
-        logging.getLogger().addHandler(self.log_handler)
+        self.log_handler = None
 
     def get_interfaces(self):
         return []
@@ -91,19 +95,40 @@ class Plugin(PluginBase):
     def init(self, core):
         self.core = core
 
-        core.call_all(
-            'config_add_observer', self.CONFIG_SECTION, self._reload_config
+        self.log_handler = _LogHandler()
+        logging.getLogger().addHandler(self.log_handler)
+
+        s = core.call_success(
+            "config_build_simple", "logging", "level",
+            lambda: self.DEFAULT_LOG_LEVEL
         )
+        core.call_all("config_register", "log_level", s)
+        core.call_all('config_add_observer', "log_level", self._reload_config)
+
+        s = core.call_success(
+            "config_build_simple", "logging", "files",
+            lambda: self.DEFAULT_LOG_FILES
+        )
+        core.call_all("config_register", "log_files", s)
+        core.call_all('config_add_observer', "log_files", self._reload_config)
+
+        s = core.call_success(
+            "config_build_simple", "logging", "format",
+            lambda: self.DEFAULT_LOG_FORMAT
+        )
+        core.call_all("config_register", "log_format", s)
+        core.call_all('config_add_observer', "log_format", self._reload_config)
+
         self._reload_config()
 
     def _disable_logging(self):
         for fd in self.log_handler.out_fds:
-            fd.close()
-        self.log_handler.out_fds = set()
+            if fd != sys.stderr and fd != g_tmp_file:
+                fd.close()
+        self.log_handler.out_fds = {sys.stderr}
 
     def _enable_logging(self):
-        if self.log_file_paths is None:
-            return
+        self.log_handler.out_fds = set()
         for file_path in self.log_file_paths:
             if sys.stderr is not None:  # if app is frozen
                 sys.stderr.write("Writing logs to {}\n".format(file_path))
@@ -114,23 +139,16 @@ class Plugin(PluginBase):
                     self.SPECIAL_FILES[file_path.lower()]()
                 )
 
-    def _reload_config(self):
+    def _reload_config(self, *args, **kwargs):
         self._disable_logging()
         try:
-            log_level = self.core.call_success(
-                'config_get', self.CONFIG_SECTION, self.CONFIG_LOG_LEVEL,
-                self.DEFAULT_LOG_LEVEL
-            )
+            log_level = self.core.call_success('config_get', "log_level")
             logging.getLogger().setLevel(self.LOG_LEVELS[log_level])
             self.log_file_paths = self.core.call_success(
-                'config_get', self.CONFIG_SECTION, self.CONFIG_LOG_FILES,
-                self.DEFAULT_LOG_FILES
+                'config_get', "log_files",
             ).split(self.CONFIG_FILE_SEPARATOR)
             self.log_handler.formatter = logging.Formatter(
-                self.core.call_success(
-                    'config_get', self.CONFIG_SECTION, self.CONFIG_LOG_FORMAT,
-                    self.DEFAULT_LOG_FORMAT
-                ) + "\n"
+                self.core.call_success('config_get', "log_format")
             )
         finally:
             self._enable_logging()
