@@ -1,5 +1,4 @@
 DEFAULT_CONFIG_PLUGINS = [
-    'openpaperwork_core.cmd.chkdeps',
     'openpaperwork_core.cmd.config',
     'openpaperwork_core.config',
     'openpaperwork_core.config.backend.file',
@@ -7,6 +6,7 @@ DEFAULT_CONFIG_PLUGINS = [
 
 DEFAULT_PLUGINS = [
     "openpaperwork_gtk.mainloop.glib",
+    'openpaperwork_core.cmd.chkdeps',
     'openpaperwork_core.fs.memory',
     'openpaperwork_gtk.fs.gio',
     'paperwork_backend.beacon.stats',

@@ -20,14 +20,13 @@ def main_main(in_args):
     # enable and configure the plugin log_print first.
 
     core = openpaperwork_core.Core()
-    core.load('openpaperwork_core.log_print')
-    core.init()
-    core.call_all("set_log_output", sys.stderr)
-    core.call_all("set_log_level", 'warning')
-
     for module_name in paperwork_backend.DEFAULT_CONFIG_PLUGINS:
         core.load(module_name)
     core.init()
+
+    core.load('openpaperwork_core.log_collector')
+    core.init()
+
     core.call_all(
         "config_load", "paperwork2", "paperwork-gtk", DEFAULT_GUI_PLUGINS
     )
