@@ -45,11 +45,3 @@ DEFAULT_PLUGINS = [
     'paperwork_backend.pillow.pdf',
     'paperwork_backend.pyocr',
 ]
-
-DEFAULT_GUI_PLUGINS = [
-    'openpaperwork_core.log_collector',
-] + DEFAULT_PLUGINS
-
-DEFAULT_SHELL_PLUGINS = [
-    'openpaperwork_core.log_print',
-] + DEFAULT_PLUGINS

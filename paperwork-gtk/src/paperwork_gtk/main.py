@@ -1,4 +1,5 @@
 import argparse
+import logging
 import gettext
 import sys
 
@@ -37,21 +38,30 @@ def main_main(in_args):
         "config_load", "paperwork2", "paperwork-gtk", DEFAULT_GUI_PLUGINS
     )
 
-    parser = argparse.ArgumentParser()
-    cmd_parser = parser.add_subparsers(
-        help=_('command'), dest='command', required=True
-    )
+    if len(in_args) <= 0:
 
-    core.call_all("cmd_complete_argparse", cmd_parser)
-    args = parser.parse_args(in_args)
+        core.call_all("on_initialized")
+        LOGGER.info("Ready")
+        core.call_one("mainloop", halt_on_uncatched_exception=False)
+        LOGGER.info("Quitting")
 
-    core.call_all("cmd_set_interactive", True)
+    else:
 
-    r = core.call_success("cmd_run", args)
-    if r is None:
-        print("Unknown command or argument(s): {}".format(in_args))
-        sys.exit(1)
-    return r
+        parser = argparse.ArgumentParser()
+        cmd_parser = parser.add_subparsers(
+            help=_('command'), dest='command', required=True
+        )
+
+        core.call_all("cmd_complete_argparse", cmd_parser)
+        args = parser.parse_args(in_args)
+
+        core.call_all("cmd_set_interactive", True)
+
+        r = core.call_success("cmd_run", args)
+        if r is None:
+            print("Unknown command or argument(s): {}".format(in_args))
+            sys.exit(1)
+        return r
 
 
 def main():

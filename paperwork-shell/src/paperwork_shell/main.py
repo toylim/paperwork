@@ -11,7 +11,8 @@ import paperwork_backend
 
 _ = gettext.gettext
 
-DEFAULT_SHELL_PLUGINS = paperwork_backend.DEFAULT_SHELL_PLUGINS + [
+DEFAULT_SHELL_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
+    'openpaperwork_core.log_print',
     'paperwork_shell.cmd.delete',
     'paperwork_shell.cmd.edit',
     'paperwork_shell.cmd.export',
