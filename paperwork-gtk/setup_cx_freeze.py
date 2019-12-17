@@ -166,10 +166,6 @@ for ns in required_gi_namespaces:
     common_include_files.append((fullpath, subpath))
 
 common_packages = [
-    # XXX(Jflesch): known bug in cx_freeze
-    'appdirs',
-    'packaging',
-
     "six",
     "gi",   # always seems to be needed
     "cairo",   # Only needed (for foreign structs) if no "import cairo"s
