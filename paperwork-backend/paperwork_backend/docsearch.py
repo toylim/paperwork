@@ -162,24 +162,31 @@ class DocDirExaminer(GObject.GObject):
 
         progress = 0
         while True:
-            (status, doc) = self.docsearch.index.continue_examine_rootdir()
-            if status == 'end':
-                break
-            elif status == 'modified':
-                on_doc_modified(doc)
-            elif status == 'unchanged':
-                on_doc_unchanged(doc)
-            elif status == 'new':
-                on_new_doc(doc)
-            progress_cb(progress, count,
-                        DocSearch.INDEX_STEP_CHECKING, doc)
-            progress += 1
+            try:
+                (status, doc) = self.docsearch.index.continue_examine_rootdir()
+                if status == 'end':
+                    break
+                elif status == 'modified':
+                    on_doc_modified(doc)
+                elif status == 'unchanged':
+                    on_doc_unchanged(doc)
+                elif status == 'new':
+                    on_new_doc(doc)
+                progress_cb(progress, count,
+                            DocSearch.INDEX_STEP_CHECKING, doc)
+                progress += 1
+            except Exception as exc:
+                logger.error("Failed to examine document", exc_info=exc)
 
         while True:
-            (status, doc) = self.docsearch.index.continue_examine_rootdir2()
-            if status == 'end':
-                break
-            on_doc_deleted(doc)
+            try:
+                (status, doc) = \
+                    self.docsearch.index.continue_examine_rootdir2()
+                if status == 'end':
+                    break
+                on_doc_deleted(doc)
+            except Exception as exc:
+                logger.error("Failed to examine document", exc_info=exc)
 
         progress_cb(1, 1, DocSearch.INDEX_STEP_CHECKING)
         self.docsearch.index.end_examine_rootdir()
@@ -201,8 +208,13 @@ class DocIndexUpdater(GObject.GObject):
         """
         logger.info("Indexing new doc: %s" % doc)
         doc = doc.clone()  # make sure it can be serialized safely
-        self.docsearch.index.add_doc(doc, index_update=index_update,
-                                     label_guesser_update=label_guesser_update)
+        try:
+            self.docsearch.index.add_doc(
+                doc, index_update=index_update,
+                label_guesser_update=label_guesser_update
+            )
+        except Exception as exc:
+            logger.error("Failed to examine document", exc_info=exc)
 
     def upd_doc(self, doc, index_update=True, label_guesser_update=True):
         """
@@ -210,8 +222,13 @@ class DocIndexUpdater(GObject.GObject):
         """
         logger.info("Updating modified doc: %s" % doc)
         doc = doc.clone()  # make sure it can be serialized safely
-        self.docsearch.index.upd_doc(doc, index_update=index_update,
-                                     label_guesser_update=label_guesser_update)
+        try:
+            self.docsearch.index.upd_doc(
+                doc, index_update=index_update,
+                label_guesser_update=label_guesser_update
+            )
+        except Exception as exc:
+            logger.error("Failed to examine document", exc_info=exc)
 
     def del_doc(self, doc):
         """
