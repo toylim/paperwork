@@ -64,7 +64,8 @@
   <launchable type="desktop-id">work.openpaper.Paperwork.desktop</launchable>
 
   <releases>
-    <release version="1.3.0" date="2019-06-24" urgency="medium" />
+    <release version="1.3.1" date="2019-12-20" urgency="medium" />
+    <release version="1.3.0" date="2019-08-17" urgency="medium" />
     <release version="1.2.4" date="2018-03-01" urgency="medium" />
     <release version="1.2.3" date="2018-02-01" urgency="medium" />
     <release version="1.2.2" date="2017-11-14" urgency="medium" />
