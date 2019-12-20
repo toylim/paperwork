@@ -1,3 +1,10 @@
+2019/12/20 - 1.3.1:
+- Add spanish translations (thanks to Iñigo Figuero)
+- Frontend: Fix multi-scan dialog / scanning from feeder
+- Frontend: When looking for the scanner, if the exact ID is not found,
+  fix fall back code
+- Frontend: About dialog: Add patrons
+
 2019/08/17 - 1.3.0:
 - Switch from Pyinsane2 to Libinsane
 - Replace application menu by primary menu (new Gnome recommendation)
