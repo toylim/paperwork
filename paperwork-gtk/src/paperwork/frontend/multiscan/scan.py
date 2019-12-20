@@ -76,7 +76,7 @@ class PageScan(GObject.GObject):
         self.__multiscan_win.on_scan_error_cb(self, exc)
 
     def __make_scan_workflow(self):
-        self.scan_workflow = self.__main_win.make_scan_workflow()
+        self.scan_workflow = self.__main_win.make_scan_workflow(multiple=True)
         self.scan_workflow.connect("scan-start", lambda _: GLib.idle_add(
             self.__multiscan_win.on_scan_start_cb, self))
         self.scan_workflow.connect("scan-error", lambda _, exc:

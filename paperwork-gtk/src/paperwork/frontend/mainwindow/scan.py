@@ -68,10 +68,11 @@ class JobScan(Job):
     can_stop = False
     priority = 10
 
-    def __init__(self, factory, id, scan_session):
+    def __init__(self, factory, id, scan_session, multiple=False):
         Job.__init__(self, factory, id)
         self.can_run = False
         self.scan_session = scan_session
+        self.multiple = multiple
 
     def do(self):
         self.can_run = True
@@ -79,6 +80,9 @@ class JobScan(Job):
         self.emit('scan-started')
 
         try:
+            if self.multiple and self.scan_session.end_of_feed():
+                raise StopIteration()
+
             params = self.scan_session.get_scan_parameters()
             self.emit('scan-info', params.get_width(), params.get_height())
 
@@ -114,9 +118,6 @@ class JobScan(Job):
                 last_line += (split / line_length)
                 chunk = next_chunk
 
-            if not self.scan_session.end_of_feed():
-                self.scan_session.cancel()
-
             if not self.can_run:
                 logger.info("Scan canceled")
                 self.emit('scan-canceled')
@@ -126,6 +127,10 @@ class JobScan(Job):
             image = raw2pillow(whole_image, params)
             self.emit('scan-done', image)
             logger.info("Scan done")
+
+            if not self.multiple and not self.scan_session.end_of_feed():
+                self.scan_session.cancel()
+
         except Exception as exc:
             self.emit('scan-error', exc)
             raise
@@ -146,8 +151,8 @@ class JobFactoryScan(JobFactory):
         JobFactory.__init__(self, "Scan")
         self.scan_workflow = scan_workflow
 
-    def make(self, scan_session):
-        job = JobScan(self, next(self.id_generator), scan_session)
+    def make(self, scan_session, multiple=False):
+        job = JobScan(self, next(self.id_generator), scan_session, multiple)
         job.connect("scan-started",
                     lambda job: GLib.idle_add(
                         self.scan_workflow.on_scan_start))
@@ -740,7 +745,7 @@ class ScanWorkflow(GObject.GObject):
     STEP_SCAN = 0
     STEP_OCR = 1
 
-    def __init__(self, config, scan_scheduler, ocr_scheduler):
+    def __init__(self, config, scan_scheduler, ocr_scheduler, multiple=False):
         GObject.GObject.__init__(self)
         self.__config = config
         self.schedulers = {
@@ -756,6 +761,8 @@ class ScanWorkflow(GObject.GObject):
         }
         self.__resolution = -1
         self.calibration = None
+
+        self.multiple = multiple
 
     def scan(self, resolution, scan_session):
         """
@@ -775,7 +782,7 @@ class ScanWorkflow(GObject.GObject):
                  calibration[1][1] * resolution / calib_resolution),
             )
 
-        job = self.factories['scan'].make(scan_session)
+        job = self.factories['scan'].make(scan_session, self.multiple)
         self.schedulers['scan'].schedule(job)
         return job
 

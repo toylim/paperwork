@@ -4021,10 +4021,11 @@ class MainWindow(object):
             return
         self.__select_page(page)
 
-    def make_scan_workflow(self):
+    def make_scan_workflow(self, multiple=False):
         return ScanWorkflow(self.__config,
                             self.schedulers['scan'],
-                            self.schedulers['ocr'])
+                            self.schedulers['ocr'],
+                            multiple)
 
     def make_scan_workflow_drawer(self, scan_workflow, single_angle=False,
                                   page=None):
