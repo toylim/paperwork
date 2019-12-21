@@ -1,3 +1,5 @@
+# Introduction
+
 This README explains how to install Paperwork using Flatpak.
 
 Flatpak is a package manager for Linux. It is available on any GNU/Linux
@@ -15,6 +17,16 @@ Its drawback:
   reviewed by your distribution maintainers. It may not include some changes
   that your distribution maintainers would have added.
 - Does not work with Fujitsu scanners (still needs to figure out why)
+
+
+# i386 and ARM architectures
+
+[Continous integration](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/pipelines)
+only builds Paperwork for amd64 (aka x86\_64). If you want to run Paperwork on i386 or arm, you can use the
+[Flathub version](https://flathub.org/apps/details/work.openpaper.Paperwork).
+
+If you don't know what architecture your computer is based and if it has more
+than 2GB of RAM, you can probably ignore this chapter and keep reading.
 
 
 # Quick start

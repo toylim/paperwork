@@ -65,7 +65,7 @@ cd flatpak/
 export EXPORT_ARGS="--gpg-sign=E5ACE6FEA7A6DD48"
 export REPO=/home/gitlab-runner/flatpak/paperwork_repo
 
-for arch in x86_64 i386 ; do
+for arch in x86_64 ; do
 	msg "=== Architecture: ${arch} ==="
 
 	export ARCH_ARGS=--arch=${arch}
