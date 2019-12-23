@@ -1440,7 +1440,7 @@ class ActionSingleScan(SimpleAction):
                 return
 
             try:
-                (dev, resolution) = get_scanner(
+                (dev, source, resolution) = get_scanner(
                     self.__config, self.__libinsane
                 )
             except Exception as exc:
@@ -1451,7 +1451,7 @@ class ActionSingleScan(SimpleAction):
                 popup_no_scanner_found(self.__main_win.window, str(exc))
                 return
             try:
-                scan_session = dev.scan_start()
+                scan_session = source.scan_start()
             except Exception as exc:
                 logger.warning("Error while scanning: {}".format(str(exc)))
                 self.__on_scan_error(None, exc)

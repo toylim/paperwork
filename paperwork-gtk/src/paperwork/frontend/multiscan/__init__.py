@@ -169,7 +169,7 @@ class ActionScan(SimpleAction):
         SimpleAction.do(self)
 
         try:
-            (dev, resolution) = get_scanner(
+            (dev, source, resolution) = get_scanner(
                 self.__config, self.__libinsane,
                 preferred_sources=["ADF", "Feeder"]
             )
@@ -182,7 +182,7 @@ class ActionScan(SimpleAction):
             raise
 
         try:
-            scan_session = dev.scan_start()
+            scan_session = source.scan_start()
         except Exception as exc:
             logger.error("Exception while scanning: {}".format(exc))
             logger.exception(exc)
