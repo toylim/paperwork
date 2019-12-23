@@ -158,28 +158,40 @@ class JobInfoGetter(Job):
                 )
 
                 for opt in source.get_options():
-                    logger.info("Option: {}".format(opt.get_name()))
-                    logger.info("  Title: {}".format(opt.get_title()))
-                    logger.info("  Desc: {}".format(opt.get_desc()))
-                    logger.info("  Type: {}".format(str(opt.get_value_type())))
-                    logger.info("  Unit: {}".format(str(opt.get_value_unit())))
-                    logger.info("  Is readable ? {}".format(
-                        str(opt.is_readable()))
-                    )
-                    logger.info("  Is writable ? {}".format(
-                        str(opt.is_writable()))
-                    )
-                    logger.info("  Capabilities: {}".format(
-                        str(opt.get_capabilities()))
-                    )
-                    logger.info("  Constraint type: {}".format(
-                        str(opt.get_constraint_type()))
-                    )
-                    logger.info("  Constraint: {}".format(
-                        str(opt.get_constraint()))
-                    )
-                    if opt.is_readable():
-                        logger.info("  Value: {}".format(str(opt.get_value())))
+                    try:
+                        logger.info("Option: {}".format(opt.get_name()))
+                        logger.info("  Title: {}".format(opt.get_title()))
+                        logger.info("  Desc: {}".format(opt.get_desc()))
+                        logger.info("  Type: {}".format(
+                            str(opt.get_value_type()))
+                        )
+                        logger.info("  Unit: {}".format(
+                            str(opt.get_value_unit()))
+                        )
+                        logger.info("  Is readable ? {}".format(
+                            str(opt.is_readable()))
+                        )
+                        logger.info("  Is writable ? {}".format(
+                            str(opt.is_writable()))
+                        )
+                        logger.info("  Capabilities: {}".format(
+                            str(opt.get_capabilities()))
+                        )
+                        logger.info("  Constraint type: {}".format(
+                            str(opt.get_constraint_type()))
+                        )
+                        logger.info("  Constraint: {}".format(
+                            str(opt.get_constraint()))
+                        )
+                        if opt.is_readable():
+                            logger.info("  Value: {}".format(
+                                str(opt.get_value()))
+                            )
+                    except Exception as exc:
+                        logger.warning(
+                            "Failed to get option details",
+                            exc_info=exc
+                        )
 
         logger.info("====== END OF SCANNER INFORMATIONS ======")
 
