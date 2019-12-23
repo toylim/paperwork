@@ -340,7 +340,7 @@ def _get_scanner(config, libinsane, devid, preferred_sources=None):
     else:
         opts['mode'] = "Color"
 
-    return (dev, resolution)
+    return (dev, src, resolution)
 
 
 def get_scanner(config, libinsane, preferred_sources=None):
