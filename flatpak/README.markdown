@@ -214,3 +214,27 @@ To fix it:
 
 - Stop Paperwork
 - Run: `flatpak run --command=fc-cache work.openpaper.Paperwork -f`
+
+
+### The scanner is not found
+
+If it works with Simple-scan or with Paperwork outside of Flatpak, it probably
+means it's a permission problem.
+
+The Sane daemon (saned) runs as the user `saned`, not as your user. Therefore
+the default udev rules may not set the appropriate permissions.
+
+#### Fujitsu scanners
+
+```
+sudo adduser saned plugdev
+```
+
+#### Other scanners
+
+```
+sudo adduser saned scanner
+```
+
+You can find the instructions to fix the permissions using udev on the
+[ArchLinux wiki](https://wiki.archlinux.org/index.php/SANE#Permission_problem).
