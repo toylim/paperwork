@@ -17,6 +17,7 @@ DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'openpaperwork_core.resources.setuptools',
     'openpaperwork_gtk.resources',
     'paperwork_gtk.mainwindow.doclist',
+    'paperwork_gtk.mainwindow.search.field',
     'paperwork_gtk.mainwindow.window',
 ]
 

@@ -78,8 +78,7 @@ class Plugin(openpaperwork_core.PluginBase):
         css_provider.load_from_data(content)
 
         Gtk.StyleContext.add_provider_for_screen(
-            Gdk.Screen.get_default(),
-            css_provider,
+            Gdk.Screen.get_default(), css_provider,
             Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         )
         return True

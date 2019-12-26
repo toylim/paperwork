@@ -1,5 +1,4 @@
 import logging
-import typing
 
 import openpaperwork_core
 
@@ -13,7 +12,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.widget_tree = None
 
     def get_interfaces(self):
-        return ['gtk_doclist']
+        return ['gtk_search_field']
 
     def get_deps(self):
         return [
@@ -22,27 +21,18 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_gtk.resources'],
             },
             {
-                'interface': 'gtk_mainwindow',
-                'defaults': ['paperwork_gtk.mainwindow.window'],
+                'interface': 'gtk_doclist',
+                'defaults': ['paperwork_gtk.mainwindow.doclist'],
             },
         ]
 
     def init(self, core):
         super().init(core)
-
         self.widget_tree = self.core.call_success(
             "gtk_load_widget_tree",
-            "paperwork_gtk.mainwindow.doclist", "doclist.glade"
+            "paperwork_gtk.mainwindow.search", "field.glade"
         )
-
         self.core.call_all(
-            "mainwindow_add", side="left",
-            name="doclist", priority=10000,
-            header=self.widget_tree.get_object("doclist_header"),
-            body=self.widget_tree.get_object("doclist_body"),
+            "doclist_add",
+            self.widget_tree.get_object("search_field"), vposition=0
         )
-
-    def doclist_add(self, widget, vposition):
-        body = self.widget_tree.get_object("doclist_body")
-        body.add(widget)
-        body.reorder_child(widget, vposition)
