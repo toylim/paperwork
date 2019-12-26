@@ -2,6 +2,7 @@ import logging
 
 
 try:
+    from gi.repository import Gdk
     from gi.repository import Gtk
     GTK_AVAILABLE = True
 except (ImportError, ValueError):
@@ -39,9 +40,46 @@ class Plugin(openpaperwork_core.PluginBase):
             out['gtk']['suse'] = 'python-gtk'
 
     def gtk_load_widget_tree(self, pkg, filename):
-        assert(GTK_AVAILABLE)
+        """
+        Load a .glade file
+
+        Arguments:
+            pkg -- Python package name
+            filename -- css file name to load
+
+        Returns:
+            GTK Widget Tree
+        """
+
+        if not GTK_AVAILABLE:
+            return None
 
         filepath = self.core.call_success("resources_get_file", pkg, filename)
         with self.core.call_success("fs_open", filepath, 'r') as fd:
             content = fd.read()
         return Gtk.Builder.new_from_string(content, -1)
+
+    def gtk_load_css(self, pkg, filename):
+        """
+        Load a .css file
+
+        Arguments:
+            pkg -- Python package name
+            filename -- css file name to load.
+        """
+        if not GTK_AVAILABLE:
+            return None
+
+        filepath = self.core.call_success("resources_get_file", pkg, filename)
+        with self.core.call_success("fs_open", filepath, 'rb') as fd:
+            content = fd.read()
+
+        css_provider = Gtk.CssProvider()
+        css_provider.load_from_data(content)
+
+        Gtk.StyleContext.add_provider_for_screen(
+            Gdk.Screen.get_default(),
+            css_provider,
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        )
+        return True
