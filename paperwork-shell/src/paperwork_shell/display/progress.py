@@ -16,16 +16,20 @@
 import gettext
 import shutil
 import sys
+import time
 
 import openpaperwork_core
 
 _ = gettext.gettext
+
+MIN_TIME_BETWEEN_PROGRESS = 0.5
 
 
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         self.nb_written = 0
         self.nb_obj_expected = 0
+        self.last_progress = 0
 
     def on_label_guesser_commit_start(self, *args, **kwargs):
         if self.nb_written > 0:
@@ -59,6 +63,11 @@ class Plugin(openpaperwork_core.PluginBase):
         self.nb_obj_expected = total_expected
 
     def on_progress(self, upd_type, progress, description=None):
+        now = time.time()
+        if now - self.last_progress < MIN_TIME_BETWEEN_PROGRESS:
+            return
+        self.last_progress = now
+
         if description is None:
             if self.nb_written > 0:
                 sys.stdout.write("\n")

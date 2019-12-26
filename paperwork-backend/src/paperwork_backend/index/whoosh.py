@@ -4,6 +4,7 @@ import gettext
 import logging
 import os
 import shutil
+import time
 import unicodedata
 
 import whoosh.fields
@@ -350,6 +351,8 @@ class Plugin(openpaperwork_core.PluginBase):
         out.append(WhooshTransaction(self, total_expected))
 
     def index_search(self, out: list, query, limit=None, search_type='fuzzy'):
+        start = time.time()
+
         query = query.strip()
         query = strip_accents(query)
         if query == "":
@@ -360,17 +363,23 @@ class Plugin(openpaperwork_core.PluginBase):
                 queries.append(parser.parse(query))
 
         with self.index.searcher() as searcher:
-            for query in queries:
+            for q in queries:
                 facet = whoosh.sorting.FieldFacet("docid", reverse=True)
-                results = searcher.search(query, limit=limit, sortedby=facet)
+                results = searcher.search(q, limit=limit, sortedby=facet)
                 has_results = False
                 for result in results:
                     has_results = True
                     out.append(result['docid'])
                     if limit is not None and len(out) >= limit:
-                        return
+                        break
                 if has_results:
-                    return
+                    break
+
+        stop = time.time()
+        LOGGER.info(
+            "Search [%s] took %dms (limit=%s, type=%s)",
+            query, (stop - start) * 1000, limit, search_type
+        )
 
     def index_get_doc_id_by_hash(self, doc_hash):
         doc_hash = "%X" % doc_hash

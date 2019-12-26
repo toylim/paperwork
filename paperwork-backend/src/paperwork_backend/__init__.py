@@ -8,6 +8,7 @@ DEFAULT_PLUGINS = [
     "openpaperwork_gtk.mainloop.glib",
     'openpaperwork_core.cmd.chkdeps',
     'openpaperwork_core.fs.memory',
+    'openpaperwork_core.i18n.python',
     'openpaperwork_gtk.fs.gio',
     'paperwork_backend.beacon.stats',
     'paperwork_backend.beacon.sysinfo',

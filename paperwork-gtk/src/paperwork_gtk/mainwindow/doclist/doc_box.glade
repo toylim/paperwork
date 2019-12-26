@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+  <object class="GtkListBoxRow" id="doc_box">
+    <property name="visible">True</property>
+
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="orientation">horizontal</property>
+
+        <child>
+          <object class="GtkImage" id="doc_thumbnail">
+            <property name="visible">False</property>
+          </object>
+          <packing>
+            <property name="pack_type">start</property>
+          </packing>
+        </child>
+
+        <child>
+        </child>
+
+        <child>
+          <object class="GtkButton" id="doc_actions">
+            <property name="use_action_appearance">False</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="use_underline">True</property>
+            <child>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="icon_name">view-more-symbolic</property>
+                <property name="icon_size">1</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="pack_type">end</property>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
