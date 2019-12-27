@@ -12,7 +12,7 @@
         <property name="label">1985</property>
         <property name="xalign">0</property>
         <attributes>
-          <attribute name="size" value="40000"/>
+          <attribute name="size" value="30000"/>
         </attributes>
       </object>
     </child>
