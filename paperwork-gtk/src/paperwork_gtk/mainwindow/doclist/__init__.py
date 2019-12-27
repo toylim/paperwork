@@ -100,7 +100,7 @@ class Plugin(openpaperwork_core.PluginBase):
             "paperwork_gtk.mainwindow.doclist", "doc_box.glade"
         )
         row = widget_tree.get_object("doc_box")
-        self.core.call_all("on_doc_box_creation", doc_id, row)
+        self.core.call_all("on_doc_box_creation", doc_id, widget_tree)
         self.doclist.insert(row, -1)
 
     def doclist_extend(self, nb_docs):

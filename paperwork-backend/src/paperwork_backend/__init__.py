@@ -44,5 +44,6 @@ DEFAULT_PLUGINS = [
     'paperwork_backend.pagetracker',
     'paperwork_backend.pillow.img',
     'paperwork_backend.pillow.pdf',
+    'paperwork_backend.pillow.util',
     'paperwork_backend.pyocr',
 ]
