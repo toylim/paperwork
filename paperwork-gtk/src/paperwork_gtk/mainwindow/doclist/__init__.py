@@ -1,7 +1,6 @@
 import datetime
 import logging
 import time
-import typing
 
 import openpaperwork_core
 
@@ -55,7 +54,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doclist = self.widget_tree.get_object("doclist_listbox")
         self.core.call_all(
             "mainwindow_add", side="left",
-            name="doclist", priority=10000,
+            name="doclist", prio=10000,
             header=self.widget_tree.get_object("doclist_header"),
             body=self.widget_tree.get_object("doclist_body"),
         )
@@ -104,7 +103,6 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doclist.insert(row, -1)
 
     def doclist_extend(self, nb_docs):
-        old_visibles = self.doc_visibles
         last_date = datetime.datetime(year=1, month=1, day=1)
 
         start = time.time()
@@ -125,8 +123,8 @@ class Plugin(openpaperwork_core.PluginBase):
                     )
                     self._add_date_box("year_box.glade", doc_year)
 
-                if (doc_date.year != last_date.year
-                        or doc_date.month != last_date.month):
+                if (doc_date.year != last_date.year or
+                        doc_date.month != last_date.month):
                     doc_month = self.core.call_success(
                         "i18n_date_long_month", doc_date
                     )
