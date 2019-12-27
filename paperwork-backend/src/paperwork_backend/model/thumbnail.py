@@ -79,7 +79,15 @@ class Plugin(openpaperwork_core.PluginBase):
 
         if self.core.call_success("fs_exists", thumbnail_url) is not None:
             LOGGER.debug("Loading thumbnail for %s page %d", doc_url, page_idx)
-            return self.core.call_success("url_to_pillow", thumbnail_url)
+            thumbnail = self.core.call_success("url_to_pillow", thumbnail_url)
+            size = thumbnail.size
+            if size[0] == THUMBNAIL_WIDTH or size[1] == THUMBNAIL_HEIGHT:
+                return thumbnail
+            LOGGER.info(
+                "Thumbnail for %s page %d doesn't have the expected size"
+                " (%s instead of %s). Regenerating.",
+                doc_url, page_idx, size, (THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT)
+            )
 
         LOGGER.info("Generating thumbnail for %s page %d", doc_url, page_idx)
         start = time.time()
