@@ -45,7 +45,7 @@ class LabelingTask(object):
 
         promise = openpaperwork_core.promise.Promise(
             self.core,
-            LOGGER.info, args=("Loading labels of document %s", self.doc_id,)
+            LOGGER.debug, args=("Loading labels of document %s", self.doc_id,)
         )
         promise = promise.then(lambda *args: None)  # drop logger return value
 
