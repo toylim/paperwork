@@ -1,8 +1,6 @@
 import collections
 import logging
 
-import PIL
-
 try:
     import gi
     gi.require_version('Gtk', '3.0')
@@ -12,11 +10,6 @@ except (ImportError, ValueError):
     GTK_AVAILABLE = False
 
 import openpaperwork_core
-
-from paperwork_backend.model.thumbnail import (
-    THUMBNAIL_HEIGHT,
-    THUMBNAIL_WIDTH
-)
 
 
 LOGGER = logging.getLogger(__name__)

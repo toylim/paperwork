@@ -91,8 +91,8 @@ class LabelWidget(Gtk.DrawingArea):
 
     def _draw(self, _, cairo_ctx):
         txt_offset = (
-            (self.LABEL_HEIGHT - self.LABEL_TEXT_SIZE) / 2
-            + self.LABEL_TEXT_SHIFT
+            (self.LABEL_HEIGHT - self.LABEL_TEXT_SIZE) / 2 +
+            self.LABEL_TEXT_SHIFT
         )
 
         (w, h) = self.compute_size(cairo_ctx)

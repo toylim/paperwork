@@ -1,7 +1,4 @@
-import collections
 import logging
-
-import PIL
 
 try:
     import gi

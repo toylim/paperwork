@@ -1,12 +1,6 @@
 import logging
 
 try:
-    import cairo
-    CAIRO_AVAILABLE = True
-except (ImportError, ValueError):
-    CAIRO_AVAILABLE = False
-
-try:
     from gi.repository import GObject
     GI_AVAILABLE = True
 except (ImportError, ValueError):
@@ -243,11 +237,6 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def chkdeps(self, out: dict):
-        if not CAIRO_AVAILABLE:
-            out['cairo']['debian'] = 'python3-gi-cairo'
-            out['cairo']['fedora'] = 'python3-gobject'
-            out['cairo']['linuxmint'] = 'python3-gi-cairo'
-            out['cairo']['ubuntu'] = 'python3-gi-cairo'
         if not GI_AVAILABLE:
             out['gi']['debian'] = 'python3-gi'
             out['gi']['fedora'] = 'python3-gobject-base'
@@ -262,7 +251,6 @@ class Plugin(openpaperwork_core.PluginBase):
             out['gtk']['suse'] = 'python-gtk'
 
     def gtk_widget_flowbox_new(self, spacing=(0, 0)):
-        assert(CAIRO_AVAILABLE)
         assert(GI_AVAILABLE)
         assert(GTK_AVAILABLE)
         return CustomFlowBox(spacing)
