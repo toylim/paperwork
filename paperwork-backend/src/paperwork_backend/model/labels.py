@@ -102,12 +102,36 @@ class Plugin(openpaperwork_core.PluginBase):
                 # Expected: ('label', '#rrrrggggbbbb')
                 out.add(tuple(x.strip() for x in line.split(",", 1)))
 
-    def label_generate_color(self):
-        return (
-            random.randint(0, 255),
-            random.randint(0, 255),
-            random.randint(0, 255),
+    def doc_get_labels_by_url_promise(self, out: list, doc_url):
+        def get_labels(labels=None):
+            if labels is None:
+                labels = set()
+            self.doc_get_labels_by_url(labels, doc_url)
+            return labels
+
+        promise = openpaperwork_core.promise.ThreadedPromise(
+            self.core, get_labels
         )
+        out.append(promise)
+
+    def label_generate_color(self):
+        color = (
+            random.randint(0, 255) / 255,
+            random.randint(0, 255) / 255,
+            random.randint(0, 255) / 255,
+        )
+        return self.label_color_from_rgb(color)
+
+    def label_get_foreground_color(self, bg_color):
+        brightness = (
+            (bg_color[0] * 0.299)
+            + (bg_color[1] * 0.587)
+            + (bg_color[2] * 0.114)
+        )
+        if brightness > (186 / 255):
+            return (0, 0, 0)  # black
+        else:
+            return (1, 1, 1)  # white
 
     def doc_add_label_by_url(self, doc_url, label, color=None):
         assert("," not in label)
@@ -186,10 +210,13 @@ class Plugin(openpaperwork_core.PluginBase):
                     int(color[3:5], 16) / 0xFF,
                     int(color[5:7], 16) / 0xFF,
                 )
-        elif color.startswith("rgb("):
-            color = color[len("rgb("):-1]
+        else:
+            if color.startswith("rgb("):
+                color = color[len("rgb("):-1]
+            elif color.startswith("("):
+                color = color[len("("):-1]
             color = color.split(",")
-            color = tuple([int(x) for x in color])
+            color = tuple([int(x.strip()) for x in color])
             color = (color[0] / 0xFF, color[1] / 0xFF, color[2] / 0xFF)
             return color
 

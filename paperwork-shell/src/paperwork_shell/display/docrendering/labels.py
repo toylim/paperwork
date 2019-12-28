@@ -18,16 +18,15 @@ def color_labels(core, labels):
     ]
 
     for (label, bg_color) in labels:
-        brightness = (
-            (bg_color[0] * 0.299)
-            + (bg_color[1] * 0.587)
-            + (bg_color[2] * 0.114)
+        fg_color = core.call_success(
+            "label_get_foreground_color",
+            (
+                bg_color[0] / 0xFF,
+                bg_color[1] / 0xFF,
+                bg_color[2] / 0xFF,
+            )
         )
-        if brightness > 186:
-            fg_color = (0, 0, 0)  # black
-        else:
-            fg_color = (255, 255, 255)  # white
-
+        fg_color = (fg_color[0] * 0xFF, fg_color[1] * 0xFF, fg_color[2] * 0xFF)
         l_label = len(label)
         label = fabulous.color.fg256(fg_color, label)
         label = fabulous.color.bg256(bg_color, label)
