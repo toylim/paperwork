@@ -5,8 +5,10 @@ import openpaperwork_core
 
 try:
     from gi.repository import GLib
+    GLIB_AVAILABLE = True
 except (ValueError, ImportError):
     GLIB_AVAILABLE = False
+
 try:
     import gi
     gi.require_version('GdkPixbuf', '2.0')
