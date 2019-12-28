@@ -36,7 +36,7 @@ class ThumbnailTask(object):
 
         promise = openpaperwork_core.promise.Promise(
             self.core,
-            LOGGER.info, args=("Thumbnailing of document %s", self.doc_id,)
+            LOGGER.debug, args=("Thumbnailing of document %s", self.doc_id,)
         )
         promise = promise.then(lambda *args: None)  # drop logger return value
         promise = promise.then(
