@@ -39,6 +39,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['paperwork_gtk.mainwindow.window'],
             },
             {
+                'interface': 'gtk_widget_flowbox',
+                'defaults': ['paprwork_gtk.widget.flowbox'],
+            },
+            {
                 'interface': 'i18n',
                 'defaults': ['openpaperwork_core.i18n.python'],
             },
@@ -98,8 +102,17 @@ class Plugin(openpaperwork_core.PluginBase):
             "gtk_load_widget_tree",
             "paperwork_gtk.mainwindow.doclist", "doc_box.glade"
         )
-        row = widget_tree.get_object("doc_box")
-        self.core.call_all("on_doc_box_creation", doc_id, widget_tree)
+
+        doc_box = widget_tree.get_object("doc_box")
+
+        flowbox = self.core.call_success("gtk_widget_flowbox_new")
+        flowbox.set_visible(True)
+        doc_box.pack_start(flowbox, expand=True, fill=True, padding=0)
+        doc_box.reorder_child(flowbox, 1)
+
+        self.core.call_all("on_doc_box_creation", doc_id, widget_tree, flowbox)
+
+        row = widget_tree.get_object("doc_listbox")
         self.doclist.insert(row, -1)
 
     def doclist_extend(self, nb_docs):

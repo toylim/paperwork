@@ -91,7 +91,7 @@ class Plugin(openpaperwork_core.PluginBase):
         img = self.core.call_success("pillow_add_border", img)
         self.default_thumbnail = self.core.call_success("pillow2pixbuf", img)
 
-    def on_doc_box_creation(self, doc_id, gtk_row):
+    def on_doc_box_creation(self, doc_id, gtk_row, gtk_custom_flowbox):
         gtk_img = gtk_row.get_object("doc_thumbnail")
         gtk_img.set_from_pixbuf(self.default_thumbnail)
         gtk_img.set_size_request(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT)
