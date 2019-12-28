@@ -18,11 +18,13 @@ DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'openpaperwork_gtk.pixbuf.pillow',
     'openpaperwork_gtk.resources',
     'paperwork_gtk.mainwindow.doclist',
+    'paperwork_gtk.mainwindow.doclist.labeler',
     'paperwork_gtk.mainwindow.doclist.name',
     'paperwork_gtk.mainwindow.doclist.thumbnailer',
     'paperwork_gtk.mainwindow.search.field',
     'paperwork_gtk.mainwindow.window',
     'paperwork_gtk.widget.flowbox',
+    'paperwork_gtk.widget.label',
 ]
 
 

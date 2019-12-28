@@ -4,6 +4,8 @@ import time
 
 import openpaperwork_core
 
+from gi.repository import Gtk
+
 
 LOGGER = logging.getLogger(__name__)
 
