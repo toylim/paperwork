@@ -18,7 +18,7 @@
           <object class="GtkStack" id="mainwindow_stack_header_left">
             <property name="visible">True</property>
             <property name="name">mainwindow_stack_header_left</property>
-            <property name="width_request">250</property>
+            <property name="width_request">300</property>
           </object>
         </child>
         <child>

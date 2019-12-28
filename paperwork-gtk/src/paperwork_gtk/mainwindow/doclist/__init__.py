@@ -107,7 +107,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
         doc_box = widget_tree.get_object("doc_box")
 
-        flowbox = self.core.call_success("gtk_widget_flowbox_new")
+        flowbox = self.core.call_success(
+            "gtk_widget_flowbox_new", spacing=(3, 3)
+        )
         flowbox.set_visible(True)
         doc_box.pack_start(flowbox, expand=True, fill=True, padding=0)
         doc_box.reorder_child(flowbox, 1)
