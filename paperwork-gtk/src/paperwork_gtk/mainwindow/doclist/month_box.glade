@@ -5,6 +5,7 @@
   <object class="GtkListBoxRow" id="date_box">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
+    <property name="sensitive">False</property>
     <child>
       <object class="GtkLabel" id="date_label">
         <property name="visible">True</property>
