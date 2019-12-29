@@ -581,7 +581,7 @@ def cmd_import(*args):
     Import a file or a PDF folder. OCR is run by default on images
     and on PDF pages without text (PDF containing only images)
 
-    Please keep in mind that documents that are already in the word directory
+    Please keep in mind that documents that are already in the work directory
     are never imported again and are simply ignored.
 
     Example: paperwork-shell import -- somefile.pdf --no_label_guessing
