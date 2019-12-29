@@ -18,8 +18,10 @@ class Plugin(openpaperwork_core.PluginBase):
         super().__init__()
         self.widget_tree = None
         self.doclist = None
+        self.scrollbar = None
         self.doc_ids = []
         self.doc_visibles = 0
+        self.last_date = datetime.datetime(year=1, month=1, day=1)
 
     def get_interfaces(self):
         return ['gtk_doclist']
@@ -57,10 +59,16 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         self.doclist = self.widget_tree.get_object("doclist_listbox")
         self.core.call_all(
-            "mainwindow_add", side="left",
-            name="doclist", prio=10000,
+            "mainwindow_add", side="left", name="doclist", prio=10000,
             header=self.widget_tree.get_object("doclist_header"),
             body=self.widget_tree.get_object("doclist_body"),
+        )
+
+        scrollbar = self.widget_tree.get_object("doclist_scroll")
+        self.scrollbar = scrollbar.get_vadjustment()
+
+        self.scrollbar.connect(
+            "value-changed", self._on_scrollbar_value_changed
         )
 
     def doclist_add(self, widget, vposition):
@@ -71,14 +79,8 @@ class Plugin(openpaperwork_core.PluginBase):
     def doclist_clear(self):
         start = time.time()
 
-        self.doclist.freeze_notify()
-        self.doclist.freeze_child_notify()
-        try:
-            for child in self.doclist.get_children():
-                self.doclist.remove(child)
-        finally:
-            self.doclist.thaw_child_notify()
-            self.doclist.thaw_notify()
+        for child in self.doclist.get_children():
+            self.doclist.remove(child)
 
         stop = time.time()
 
@@ -86,6 +88,7 @@ class Plugin(openpaperwork_core.PluginBase):
             "%d documents cleared in %dms",
             self.doc_visibles, (stop - start) * 1000
         )
+        self.last_date = datetime.datetime(year=1, month=1, day=1)
         self.doc_visibles = 0
 
     def _add_date_box(self, name, txt):
@@ -118,41 +121,37 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doclist.insert(row, -1)
 
     def doclist_extend(self, nb_docs):
-        last_date = datetime.datetime(year=1, month=1, day=1)
-
         start = time.time()
 
         doc_ids = self.doc_ids[
             self.doc_visibles:self.doc_visibles + nb_docs
         ]
+        LOGGER.info(
+            "Adding %d documents to the document list (%d-%d)",
+            len(doc_ids), self.doc_visibles, self.doc_visibles + nb_docs
+        )
 
-        self.doclist.freeze_notify()
-        self.doclist.freeze_child_notify()
-        try:
-            for doc_id in doc_ids:
-                doc_date = self.core.call_success("doc_get_date_by_id", doc_id)
+        for doc_id in doc_ids:
+            doc_date = self.core.call_success("doc_get_date_by_id", doc_id)
 
-                if doc_date.year != last_date.year:
-                    doc_year = self.core.call_success(
-                        "i18n_date_long_year", doc_date
-                    )
-                    self._add_date_box("year_box.glade", doc_year)
+            if doc_date.year != self.last_date.year:
+                doc_year = self.core.call_success(
+                    "i18n_date_long_year", doc_date
+                )
+                self._add_date_box("year_box.glade", doc_year)
 
-                if (doc_date.year != last_date.year or
-                        doc_date.month != last_date.month):
-                    doc_month = self.core.call_success(
-                        "i18n_date_long_month", doc_date
-                    )
-                    self._add_date_box("month_box.glade", doc_month)
+            if (doc_date.year != self.last_date.year or
+                    doc_date.month != self.last_date.month):
+                doc_month = self.core.call_success(
+                    "i18n_date_long_month", doc_date
+                )
+                self._add_date_box("month_box.glade", doc_month)
 
-                last_date = doc_date
+            self.last_date = doc_date
 
-                self._add_doc_box(doc_id)
-        finally:
-            self.doclist.thaw_child_notify()
-            self.doclist.thaw_notify()
+            self._add_doc_box(doc_id)
 
-        self.doc_visibles = max(
+        self.doc_visibles = min(
             len(self.doc_ids),
             self.doc_visibles + nb_docs
         )
@@ -167,4 +166,18 @@ class Plugin(openpaperwork_core.PluginBase):
     def doclist_show(self, docs):
         self.doclist_clear()
         self.doc_ids = docs
+        self.doclist_extend(NB_DOCS_PER_PAGE)
+
+    def _on_scrollbar_value_changed(self, _):
+        lower = self.scrollbar.get_lower()
+        upper = self.scrollbar.get_upper() - lower
+        value = (
+            self.scrollbar.get_value() +
+            self.scrollbar.get_page_size() -
+            lower
+        ) / upper
+
+        if value < 0.95:
+            return
+
         self.doclist_extend(NB_DOCS_PER_PAGE)
