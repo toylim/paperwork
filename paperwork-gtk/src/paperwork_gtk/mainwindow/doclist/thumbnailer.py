@@ -48,6 +48,8 @@ class ThumbnailTask(object):
 
 
 class Plugin(openpaperwork_core.PluginBase):
+    PRIORITY = 100
+
     def __init__(self):
         super().__init__()
         self.default_thumbnail = None
@@ -90,6 +92,9 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         img = self.core.call_success("pillow_add_border", img)
         self.default_thumbnail = self.core.call_success("pillow2pixbuf", img)
+
+    def doclist_show(self, docids):
+        self.work_queue = collections.deque()
 
     def on_doc_box_creation(self, doc_id, gtk_row, gtk_custom_flowbox):
         gtk_img = gtk_row.get_object("doc_thumbnail")

@@ -53,6 +53,8 @@ class LabelingTask(object):
 
 
 class Plugin(openpaperwork_core.PluginBase):
+    PRIORITY = 100
+
     def __init__(self):
         super().__init__()
         self.default_thumbnail = None
@@ -90,6 +92,9 @@ class Plugin(openpaperwork_core.PluginBase):
             out['gtk']['linuxmint'] = 'gir1.2-gtk-3.0'
             out['gtk']['ubuntu'] = 'gir1.2-gtk-3.0'
             out['gtk']['suse'] = 'python-gtk'
+
+    def doclist_show(self, docids):
+        self.work_queue = collections.deque()
 
     def on_doc_box_creation(self, doc_id, gtk_row, gtk_custom_flowbox):
         task = LabelingTask(self, doc_id, gtk_custom_flowbox)
