@@ -22,6 +22,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doc_ids = []
         self.doc_visibles = 0
         self.last_date = datetime.datetime(year=1, month=1, day=1)
+        self.row_to_docid = {}
 
     def get_interfaces(self):
         return ['gtk_doclist']
@@ -64,12 +65,10 @@ class Plugin(openpaperwork_core.PluginBase):
             body=self.widget_tree.get_object("doclist_body"),
         )
 
-        scrollbar = self.widget_tree.get_object("doclist_scroll")
-        self.scrollbar = scrollbar.get_vadjustment()
+        vadj = self.widget_tree.get_object("doclist_scroll").get_vadjustment()
+        vadj.connect("value-changed", self._on_scrollbar_value_changed)
 
-        self.scrollbar.connect(
-            "value-changed", self._on_scrollbar_value_changed
-        )
+        self.doclist.connect("row-activated", self._on_row_activated)
 
     def doclist_add(self, widget, vposition):
         body = self.widget_tree.get_object("doclist_body")
@@ -90,6 +89,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         self.last_date = datetime.datetime(year=1, month=1, day=1)
         self.doc_visibles = 0
+        self.row_to_docid = {}
 
     def _add_date_box(self, name, txt):
         widget_tree = self.core.call_success(
@@ -118,6 +118,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all("on_doc_box_creation", doc_id, widget_tree, flowbox)
 
         row = widget_tree.get_object("doc_listbox")
+        self.row_to_docid[row] = doc_id
         self.doclist.insert(row, -1)
 
     def doclist_extend(self, nb_docs):
@@ -168,12 +169,12 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doc_ids = docs
         self.doclist_extend(NB_DOCS_PER_PAGE)
 
-    def _on_scrollbar_value_changed(self, _):
-        lower = self.scrollbar.get_lower()
-        upper = self.scrollbar.get_upper() - lower
+    def _on_scrollbar_value_changed(self, vadj):
+        lower = vadj.get_lower()
+        upper = vadj.get_upper() - lower
         value = (
-            self.scrollbar.get_value() +
-            self.scrollbar.get_page_size() -
+            vadj.get_value() +
+            vadj.get_page_size() -
             lower
         ) / upper
 
@@ -181,3 +182,9 @@ class Plugin(openpaperwork_core.PluginBase):
             return
 
         self.doclist_extend(NB_DOCS_PER_PAGE)
+
+    def _on_row_activated(self, list_box, row):
+        doc_id = self.row_to_docid[row]
+        doc_url = self.core.call_success("doc_id_to_url", doc_id)
+        LOGGER.info("Opening document %s (%s)", doc_id, doc_url)
+        self.core.call_all("gtk_doc_open", doc_id, doc_url)
