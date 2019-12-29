@@ -58,7 +58,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 self.core.call_success("fs_basename", doc_url), doc_url
             ))
             nb += 1
-        LOGGER.info("%d documents found in %s", workdir)
+        LOGGER.info("%d documents found in %s", nb, workdir)
 
     def doc_id_to_url(self, doc_id):
         workdir = self.core.call_success('config_get', 'workdir')

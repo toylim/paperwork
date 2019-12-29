@@ -22,6 +22,7 @@ DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'paperwork_gtk.mainwindow.doclist.name',
     'paperwork_gtk.mainwindow.doclist.thumbnailer',
     'paperwork_gtk.mainwindow.search.field',
+    'paperwork_gtk.mainwindow.statusbar',
     'paperwork_gtk.mainwindow.window',
     'paperwork_gtk.widget.flowbox',
     'paperwork_gtk.widget.label',
@@ -49,6 +50,15 @@ def main_main(in_args):
     if len(in_args) <= 0:
 
         core.call_all("on_initialized")
+
+        LOGGER.info("Starting synchronization ...")
+        promises = []
+        core.call_all("sync", promises)
+        promise = promises[0]
+        for p in promises[1:]:
+            promise = promise.then(p)
+        core.call_one("mainloop_schedule", promise.schedule)
+
         LOGGER.info("Ready")
         core.call_one("mainloop", halt_on_uncatched_exception=False)
         LOGGER.info("Quitting")

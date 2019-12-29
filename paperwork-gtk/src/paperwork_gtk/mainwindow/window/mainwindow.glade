@@ -31,21 +31,34 @@
     </child>
 
     <child>
-      <object class="GtkBox" id="box_body">
+      <object class="GtkBox" id="main_box">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="orientation">horizontal</property>
+        <property name="orientation">vertical</property>
+
         <child>
-          <object class="GtkStack" id="mainwindow_stack_body_left">
-            <property name="name">mainwindow_stack_body_left</property>
+          <object class="GtkBox" id="box_body">
             <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="orientation">horizontal</property>
+            <child>
+              <object class="GtkStack" id="mainwindow_stack_body_left">
+                <property name="name">mainwindow_stack_body_left</property>
+                <property name="visible">True</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkStack" id="mainwindow_stack_body_right">
+                <property name="name">mainwindow_stack_body_right</property>
+                <property name="visible">True</property>
+              </object>
+            </child>
           </object>
-        </child>
-        <child>
-          <object class="GtkStack" id="mainwindow_stack_body_right">
-            <property name="name">mainwindow_stack_body_right</property>
-            <property name="visible">True</property>
-          </object>
+          <packing>
+            <property name="pack_type">start</property>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+          </packing>
         </child>
       </object>
     </child>

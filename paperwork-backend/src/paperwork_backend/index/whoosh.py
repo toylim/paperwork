@@ -189,6 +189,11 @@ class WhooshTransaction(object):
         total = sum(self.counts.values())
         self.core.call_one(
             "mainloop_schedule", self.core.call_all,
+            'on_progress', 'index_update', 0.99,
+            _("Committing changes in the index ...")
+        )
+        self.core.call_one(
+            "mainloop_schedule", self.core.call_all,
             'on_index_commit_start'
         )
         if total == 0:

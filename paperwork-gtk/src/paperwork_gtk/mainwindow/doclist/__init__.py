@@ -75,7 +75,7 @@ class Plugin(openpaperwork_core.PluginBase):
         body.add(widget)
         body.reorder_child(widget, vposition)
 
-    def doclist_clear(self):
+    def _doclist_clear(self):
         start = time.time()
 
         for child in self.doclist.get_children():
@@ -87,9 +87,19 @@ class Plugin(openpaperwork_core.PluginBase):
             "%d documents cleared in %dms",
             self.doc_visibles, (stop - start) * 1000
         )
+
+    def doclist_clear(self):
+        self._doclist_clear()
         self.last_date = datetime.datetime(year=1, month=1, day=1)
         self.doc_visibles = 0
         self.row_to_docid = {}
+
+    def doclist_refresh(self):
+        self._doclist_clear()
+        self.last_date = datetime.datetime(year=1, month=1, day=1)
+        currently_visible = self.doc_visibles
+        self.doc_visibles = 0
+        self.doclist_extend(currently_visible)
 
     def _add_date_box(self, name, txt):
         widget_tree = self.core.call_success(

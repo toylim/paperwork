@@ -31,38 +31,16 @@ class Plugin(openpaperwork_core.PluginBase):
         self.nb_obj_expected = 0
         self.last_progress = 0
 
-    def on_label_guesser_commit_start(self, *args, **kwargs):
-        if self.nb_written > 0:
-            sys.stdout.write("\n")
-        self.nb_written = 0
-        sys.stdout.write(
-            _("Committing changes in label guesser database ...") + " "
-        )
-        sys.stdout.flush()
-
-    def on_label_guesser_commit_end(self, *args, **kwargs):
-        if self.nb_written > 0:
-            sys.stdout.write("\n")
-        self.nb_written = 0
-        sys.stdout.write(_("Done") + "\n")
-
-    def on_index_commit_start(self, *args, **kwargs):
-        if self.nb_written > 0:
-            sys.stdout.write("\n")
-        self.nb_written = 0
-        sys.stdout.write(_("Committing changes in the index ...") + " ")
-        sys.stdout.flush()
-
-    def on_index_commit_end(self, *args, **kwargs):
-        if self.nb_written > 0:
-            sys.stdout.write("\n")
-        self.nb_written = 0
-        sys.stdout.write(_("Done") + "\n")
-
     def doc_transaction_start(self, out: list, total_expected=-1):
         self.nb_obj_expected = total_expected
 
     def on_progress(self, upd_type, progress, description=None):
+        if progress >= 1.0:
+            if self.nb_written > 0:
+                sys.stdout.write("\n")
+            self.nb_written = 0
+            sys.stdout.write(_("[{}] Done").format(upd_type) + "\n")
+
         now = time.time()
         if now - self.last_progress < MIN_TIME_BETWEEN_PROGRESS:
             return

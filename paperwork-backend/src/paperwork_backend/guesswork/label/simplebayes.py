@@ -257,6 +257,7 @@ class LabelGuesserTransaction(object):
         self.cursor = None
 
     def commit(self):
+        LOGGER.info("Updating training ...")
         self.core.call_all(
             "mainloop_schedule", self.core.call_all,
             "on_label_guesser_commit_start"
@@ -277,9 +278,17 @@ class LabelGuesserTransaction(object):
         for todo in self.todo:
             if todo['action'] != "new":
                 continue
-            LOGGER.info(
+            LOGGER.debug(
                 "Training from all already-known docs for new label '%s'",
                 todo['label']
+            )
+            self.core.call_one(
+                "mainloop_schedule", self.core.call_all,
+                "on_progress", "label_guesser_update", 0.99,
+                _(
+                    "Updating label guessing training for label '%s'"
+                    " with all known documents ..."
+                ).format(todo['label'])
             )
             baye = self.plugin._get_baye(todo['label'])
 
@@ -291,11 +300,17 @@ class LabelGuesserTransaction(object):
                     continue
                 baye.train("no", text)
 
+        self.core.call_one(
+            "mainloop_schedule", self.core.call_all,
+            "on_progress", "label_guesser_update", 0.99,
+            _("Updating label guessing training ...")
+        )
+
         for todo in self.todo:
             if todo['action'] != "remove":
                 continue
             for label in self.all_labels:
-                LOGGER.info(
+                LOGGER.debug(
                     "Untraining label '%s' from doc '%s'",
                     label, todo['doc_id']
                 )
@@ -309,7 +324,7 @@ class LabelGuesserTransaction(object):
             if todo['action'] != "add":
                 continue
             for label in self.all_labels:
-                LOGGER.info(
+                LOGGER.debug(
                     "Training label '%s' from doc '%s'",
                     label, todo['doc_id']
                 )
@@ -342,6 +357,7 @@ class LabelGuesserTransaction(object):
             "mainloop_schedule", self.core.call_all,
             'on_label_guesser_commit_end'
         )
+        LOGGER.info("Training updated")
 
 
 class Plugin(openpaperwork_core.PluginBase):

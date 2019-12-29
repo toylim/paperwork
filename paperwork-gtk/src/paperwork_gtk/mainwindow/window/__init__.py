@@ -73,14 +73,17 @@ class Plugin(openpaperwork_core.PluginBase):
             if side_default[0] < 0:
                 continue
             self.mainwindow_show(side_name, side_default[1])
+
         self.widget_tree.get_object("mainwindow").set_visible(True)
 
     def on_mainwindow_destroy(self, main_window):
         LOGGER.info("Main window destroy. Quitting")
         self.core.call_all("mainloop_quit_graceful")
 
-    def mainwindow_add(self, side: str, name: str, prio: int, header, body):
+    def mainwindow_get_main_container(self):
+        return self.widget_tree.get_object("main_box")
 
+    def mainwindow_add(self, side: str, name: str, prio: int, header, body):
         self.components[side][name] = {
             "header": header,
             "body": body,

@@ -8,13 +8,18 @@ LOGGER = logging.getLogger(__name__)
 
 
 class Plugin(openpaperwork_core.PluginBase):
+    PRIORITY = -1000000
+
     def __init__(self):
         super().__init__()
         self.search_entry = None
         self.widget_tree = None
 
     def get_interfaces(self):
-        return ['gtk_search_field']
+        return [
+            'gtk_search_field',
+            'syncable',
+        ]
 
     def get_deps(self):
         return [
@@ -48,21 +53,47 @@ class Plugin(openpaperwork_core.PluginBase):
             "search-changed", self.search_update_document_list
         )
         self.search_entry.connect("stop-search", lambda w: self.search_stop())
-        self.search_update_document_list()
 
     def search_update_document_list(self, _=None):
+        query = self.search_entry.get_text()
+        LOGGER.info("Looking for [%s]", query)
+
         out = []
-        promise = openpaperwork_core.promise.Promise(
-            self.core, self.search_entry.get_text
-        )
-        promise = promise.then(openpaperwork_core.promise.ThreadedPromise(
-            self.core, lambda query: self.core.call_all(
+        promise = openpaperwork_core.promise.ThreadedPromise(
+            self.core, lambda: self.core.call_all(
                 "index_search", out, query
             )
-        ))
+        )
         promise = promise.then(lambda _: out.sort(reverse=True))
         promise = promise.then(self.core.call_all, "doclist_show", out)
         promise.schedule()
 
     def search_stop(self):
         pass
+
+    def doc_transaction_start(self, out: list, total_expected=-1):
+        class RefreshDocListTransaction(object):
+            def add_obj(s, doc_id):
+                pass
+
+            def upd_obj(s, doc_id):
+                pass
+
+            def del_obj(s, doc_id):
+                pass
+
+            def unchanged_obj(s, doc_id):
+                pass
+
+            def cancel(s):
+                pass
+
+            def commit(s):
+                self.search_update_document_list()
+
+        out.append(RefreshDocListTransaction())
+
+    def sync(self, promises: list):
+        promises.append(openpaperwork_core.promise.Promise(
+            self.core, self.search_update_document_list
+        ))
