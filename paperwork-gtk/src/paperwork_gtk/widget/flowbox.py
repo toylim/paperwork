@@ -155,8 +155,8 @@ def recompute_box_positions(widgets, width, spacing=(0, 0)):
 class CustomFlowBox(Gtk.Box):
     def __init__(self, spacing=(0, 0)):
         super().__init__()
-        self.spacing = spacing
         self.widgets = []
+        self.spacing = spacing
         self.set_has_window(False)
         self.set_redraw_on_allocate(False)
         self.width = 100
@@ -169,11 +169,16 @@ class CustomFlowBox(Gtk.Box):
         self.queue_resize()
 
     def on_remove(self, _, widget):
-        self.widgets.remove(widget)
-        self.queue_draw()
-        self.queue_resize()
+        try:
+            self.widgets.remove(widget)
+            self.queue_draw()
+            self.queue_resize()
+        except ValueError:
+            pass
 
     def do_forall(self, include_internals: bool, callback, callback_data=None):
+        if not hasattr(self, 'widgets'):
+            return
         for widget in self.widgets:
             callback(widget.widget)
 
@@ -184,10 +189,13 @@ class CustomFlowBox(Gtk.Box):
         self.forall(chk_widget)
 
     def set_alignment(self, widget, alignment):
-        widget_idx = self.widgets.index(widget)
-        widget = self.widgets[widget_idx]
-        widget.alignment = alignment
-        self.queue_draw()
+        try:
+            widget_idx = self.widgets.index(widget)
+            widget = self.widgets[widget_idx]
+            widget.alignment = alignment
+            self.queue_draw()
+        except ValueError:
+            pass
 
     def do_get_preferred_width(self):
         min_width = 0
@@ -221,9 +229,12 @@ class CustomFlowBox(Gtk.Box):
             rect.height = widget.size[1]
             widget.widget.size_allocate(rect)
 
-    def do_destroy(self):
+    def on_destroy(self, _):
+        if not hasattr(self, 'widgets'):
+            return
         for widget in self.widgets:
             widget.widget.unparent()
+        self.widgets = []
 
 
 GObject.type_register(CustomFlowBox)
