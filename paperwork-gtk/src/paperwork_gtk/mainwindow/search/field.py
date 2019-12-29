@@ -50,7 +50,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.search_entry.connect("stop-search", lambda w: self.search_stop())
         self.search_update_document_list()
 
-    def search_update_document_list(self):
+    def search_update_document_list(self, _=None):
         out = []
         promise = openpaperwork_core.promise.Promise(
             self.core, self.search_entry.get_text
