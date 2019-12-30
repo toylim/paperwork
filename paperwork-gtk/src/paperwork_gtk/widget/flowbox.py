@@ -220,7 +220,7 @@ class CustomFlowBox(Gtk.Box):
         (min_width, nat_width) = self.do_get_preferred_width()
         return self.do_get_preferred_height_for_width(min_width)
 
-    def do_get_preferred_width_for_height(self):
+    def do_get_preferred_width_for_height(self, height):
         return self.do_get_preferred_width()
 
     def on_size_allocate(self, _, allocation):
