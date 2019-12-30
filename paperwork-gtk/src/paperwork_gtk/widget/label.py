@@ -20,6 +20,10 @@ try:
     from gi.repository import Gtk
     GTK_AVAILABLE = True
 except (ImportError, ValueError):
+    # workaround so chkdeps can still be called
+    class Gtk(object):
+        class DrawingArea(object):
+            pass
     GTK_AVAILABLE = False
 
 
@@ -119,7 +123,8 @@ class LabelWidget(Gtk.DrawingArea):
         cairo_ctx.fill()
 
 
-GObject.type_register(LabelWidget)
+if GTK_AVAILABLE:
+    GObject.type_register(LabelWidget)
 
 
 class Plugin(openpaperwork_core.PluginBase):

@@ -14,6 +14,10 @@ try:
     from gi.repository import Gtk
     GTK_AVAILABLE = True
 except (ImportError, ValueError):
+    # workaround so chkdeps can still be called
+    class Gtk(object):
+        class Box(object):
+            pass
     GTK_AVAILABLE = False
 
 
@@ -237,7 +241,8 @@ class CustomFlowBox(Gtk.Box):
         self.widgets = []
 
 
-GObject.type_register(CustomFlowBox)
+if GTK_AVAILABLE:
+    GObject.type_register(CustomFlowBox)
 
 
 class Plugin(openpaperwork_core.PluginBase):
