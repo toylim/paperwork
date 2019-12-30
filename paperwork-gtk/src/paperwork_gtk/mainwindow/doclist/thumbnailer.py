@@ -1,4 +1,3 @@
-import collections
 import logging
 
 import PIL
@@ -31,7 +30,7 @@ class ThumbnailTask(object):
         pixbuf = self.core.call_success("pillow2pixbuf", img)
         self.gtk_image.set_from_pixbuf(pixbuf)
 
-    def do(self):
+    def get_promise(self):
         doc_url = self.core.call_success("doc_id_to_url", self.doc_id)
 
         promise = openpaperwork_core.promise.Promise(
@@ -42,9 +41,7 @@ class ThumbnailTask(object):
         promise = promise.then(
             self.core.call_success("thumbnail_get_doc_promise", doc_url)
         )
-        promise = promise.then(self.set_thumbnail)
-        promise = promise.then(self.plugin._do_next_thumbnail)
-        promise.schedule()
+        return promise.then(self.set_thumbnail)
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -53,7 +50,6 @@ class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
         self.default_thumbnail = None
-        self.work_queue = collections.deque()
         self.running = False
 
     def get_interfaces(self):
@@ -81,6 +77,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'thumbnail',
                 'defaults': ['paperwork_backend.model.thumbnail'],
             },
+            {
+                'interface': 'work_queue',
+                'defaults': ['openpaperwork_core.work_queue.default'],
+            },
         ]
 
     def init(self, core):
@@ -92,9 +92,10 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         img = self.core.call_success("pillow_add_border", img)
         self.default_thumbnail = self.core.call_success("pillow2pixbuf", img)
+        self.core.call_all("work_queue_create", "thumbnailer")
 
     def doclist_show(self, docids):
-        self.work_queue = collections.deque()
+        self.core.call_all("work_queue_cancel_all", "thumbnailer")
 
     def on_doc_box_creation(self, doc_id, gtk_row, gtk_custom_flowbox):
         gtk_img = gtk_row.get_object("doc_thumbnail")
@@ -103,16 +104,6 @@ class Plugin(openpaperwork_core.PluginBase):
         gtk_img.set_visible(True)
 
         task = ThumbnailTask(self, doc_id, gtk_img)
-        self.work_queue.append(task)
-
-        if not self.running:
-            self._do_next_thumbnail()
-
-    def _do_next_thumbnail(self):
-        self.running = True
-        try:
-            task = self.work_queue.popleft()
-            task.do()
-        except IndexError:
-            self.running = False
-            LOGGER.debug("All thumbnails have been generated")
+        self.core.call_success(
+            "work_queue_add_promise", "thumbnailer", task.get_promise()
+        )

@@ -1,4 +1,3 @@
-import collections
 import logging
 
 try:
@@ -34,7 +33,7 @@ class LabelingTask(object):
             self.flowbox.add(widget)
             self.flowbox.set_alignment(widget, Gtk.Align.END)
 
-    def do(self):
+    def get_promise(self):
         doc_url = self.core.call_success("doc_id_to_url", self.doc_id)
 
         promise = openpaperwork_core.promise.Promise(
@@ -48,9 +47,7 @@ class LabelingTask(object):
         for p in promises:
             promise = promise.then(p)
 
-        promise = promise.then(self.show_labels)
-        promise = promise.then(self.plugin._do_next_labeling)
-        promise.schedule()
+        return promise.then(self.show_labels)
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -59,7 +56,6 @@ class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
         self.default_thumbnail = None
-        self.work_queue = collections.deque()
         self.running = False
 
     def get_interfaces(self):
@@ -83,27 +79,25 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'gtk_widget_label',
                 'defaults': ['paperwork_gtk.widget.label'],
             },
+            {
+                'interface': 'work_queue',
+                'defaults': ['openpaperwork_core.work_queue.default'],
+            },
         ]
+
+    def init(self, core):
+        super().init(core)
+        self.core.call_all("work_queue_create", "labeler")
 
     def chkdeps(self, out: dict):
         if not GTK_AVAILABLE:
             out['gtk'].update(openpaperwork_gtk.deps.GTK)
 
     def doclist_show(self, docids):
-        self.work_queue = collections.deque()
+        self.core.call_all("work_queue_cancel_all", "labeler")
 
     def on_doc_box_creation(self, doc_id, gtk_row, gtk_custom_flowbox):
         task = LabelingTask(self, doc_id, gtk_custom_flowbox)
-        self.work_queue.append(task)
-
-        if not self.running:
-            self._do_next_labeling()
-
-    def _do_next_labeling(self):
-        self.running = True
-        try:
-            task = self.work_queue.popleft()
-            task.do()
-        except IndexError:
-            self.running = False
-            LOGGER.debug("All thumbnails have been generated")
+        self.core.call_success(
+            "work_queue_add_promise", "labeler", task.get_promise()
+        )
