@@ -20,12 +20,22 @@
             <property name="name">mainwindow_stack_header_left</property>
             <property name="width_request">300</property>
           </object>
+          <packing>
+            <property name="pack_type">start</property>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+          </packing>
         </child>
         <child>
           <object class="GtkStack" id="mainwindow_stack_header_right">
             <property name="visible">True</property>
             <property name="name">mainwindow_stack_header_right</property>
           </object>
+          <packing>
+            <property name="pack_type">end</property>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+          </packing>
         </child>
       </object>
     </child>
@@ -46,12 +56,22 @@
                 <property name="name">mainwindow_stack_body_left</property>
                 <property name="visible">True</property>
               </object>
+              <packing>
+                <property name="pack_type">start</property>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+              </packing>
             </child>
             <child>
               <object class="GtkStack" id="mainwindow_stack_body_right">
                 <property name="name">mainwindow_stack_body_right</property>
                 <property name="visible">True</property>
               </object>
+              <packing>
+                <property name="pack_type">end</property>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+              </packing>
             </child>
           </object>
           <packing>

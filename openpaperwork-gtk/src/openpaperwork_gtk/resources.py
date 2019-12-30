@@ -57,6 +57,8 @@ class Plugin(openpaperwork_core.PluginBase):
         if not GTK_AVAILABLE:
             return None
 
+        LOGGER.info("Loading GTK widgets from %s:%s", pkg, filename)
+
         filepath = self.core.call_success("resources_get_file", pkg, filename)
         with self.core.call_success("fs_open", filepath, 'r') as fd:
             content = fd.read()
@@ -72,6 +74,8 @@ class Plugin(openpaperwork_core.PluginBase):
         """
         if not GTK_AVAILABLE:
             return None
+
+        LOGGER.info("Loading CSS from %s:%s", pkg, filename)
 
         filepath = self.core.call_success("resources_get_file", pkg, filename)
         with self.core.call_success("fs_open", filepath, 'rb') as fd:
