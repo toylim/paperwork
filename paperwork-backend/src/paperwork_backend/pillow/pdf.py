@@ -1,30 +1,44 @@
 import io
 import logging
 
+
+CAIRO_AVAILABLE = False
+GI_AVAILABLE = False
+GLIB_AVAILABLE = False
+POPPLER_AVAILABLE = False
+
+
 try:
     import cairo
     CAIRO_AVAILABLE = True
 except (ImportError, ValueError):
-    CAIRO_AVAILABLE = False
+    pass
 
 try:
     import gi
-    gi.require_version('Poppler', '0.18')
     GI_AVAILABLE = True
 except (ImportError, ValueError):
-    GI_AVAILABLE = False
+    pass
 
-try:
-    from gi.repository import Gio
-    GLIB_AVAILABLE = True
-except (ImportError, ValueError):
-    GLIB_AVAILABLE = False
+if GI_AVAILABLE:
+    try:
+        gi.require_version('Poppler', '0.18')
+        GI_AVAILABLE = True
+    except (ImportError, ValueError):
+        pass
 
-try:
-    from gi.repository import Poppler
-    POPPLER_AVAILABLE = True
-except (ImportError, ValueError):
-    POPPLER_AVAILABLE = False
+    try:
+        from gi.repository import Gio
+        GLIB_AVAILABLE = True
+    except (ImportError, ValueError):
+        pass
+
+    try:
+        from gi.repository import Poppler
+        POPPLER_AVAILABLE = True
+    except (ImportError, ValueError):
+        pass
+
 
 import PIL
 import PIL.Image
@@ -85,8 +99,11 @@ class Plugin(openpaperwork_core.PluginBase):
         if (self.FILE_EXTENSION + "#page=") not in file_url.lower():
             return None
 
-        (file_url, page_idx) = file_url.rsplit("#page=", 1)
-        page_idx = int(page_idx) - 1
+        if "#" in file_url:
+            (file_url, page_idx) = file_url.rsplit("#page=", 1)
+            page_idx = int(page_idx) - 1
+        else:
+            page_idx = 0
 
         gio_file = Gio.File.new_for_uri(file_url)
         doc = Poppler.Document.new_from_gfile(gio_file, password=None)

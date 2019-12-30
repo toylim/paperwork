@@ -1,26 +1,34 @@
 import itertools
 import logging
 
+
+GI_AVAILABLE = False
+GLIB_AVAILABLE = False
+POPPLER_AVAILABLE = False
+
 try:
     import gi
-    gi.require_version('Poppler', '0.18')
     GI_AVAILABLE = True
 except (ImportError, ValueError):
-    GI_AVAILABLE = False
+    pass
 
-try:
-    from gi.repository import Gio
-    GLIB_AVAILABLE = True
-except (ImportError, ValueError):
-    GLIB_AVAILABLE = False
+if GI_AVAILABLE:
+    try:
+        from gi.repository import Gio
+        GLIB_AVAILABLE = True
+    except (ImportError, ValueError):
+        pass
 
-try:
-    from gi.repository import Poppler
-    POPPLER_AVAILABLE = True
-except (ImportError, ValueError):
-    POPPLER_AVAILABLE = False
+    try:
+        gi.require_version('Poppler', '0.18')
+        from gi.repository import Poppler
+        POPPLER_AVAILABLE = True
+    except (ImportError, ValueError):
+        pass
+
 
 import openpaperwork_core
+import openpaperwork_core.deps
 
 
 LOGGER = logging.getLogger(__name__)
@@ -107,22 +115,11 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def chkdeps(self, out: dict):
         if not GI_AVAILABLE:
-            out['gi']['debian'] = 'python3-gi'
-            out['gi']['fedora'] = 'python3-gobject-base'
-            out['gi']['gentoo'] = 'dev-python/pygobject'  # Python 3 ?
-            out['gi']['linuxmint'] = 'python3-gi'
-            out['gi']['ubuntu'] = 'python3-gi'
-            out['gi']['suse'] = 'python-gobject'  # Python 3 ?
+            out['gi'].update(openpaperwork_core.deps.GI)
         if not GLIB_AVAILABLE:
-            out['gi.repository.GLib']['debian'] = 'gir1.2-glib-2.0'
-            out['gi.repository.GLib']['ubuntu'] = 'gir1.2-glib-2.0'
+            out['glib'].update(openpaperwork_core.deps.GLIB)
         if not POPPLER_AVAILABLE:
-            out['gi.repository.Poppler']['debian'] = 'gir1.2-poppler-0.18'
-            out['gi.repository.Poppler']['fedora'] = 'poppler-glib'
-            out['gi.repository.Poppler']['gentoo'] = 'app-text/poppler'
-            out['gi.repository.Poppler']['linuxmint'] = 'gir1.2-poppler-0.18'
-            out['gi.repository.Poppler']['ubuntu'] = 'gir1.2-poppler-0.18'
-            out['gi.repository.Poppler']['suse'] = 'typelib-1_0-Poppler-0_18'
+            out['poppler'].update(openpaperwork_core.deps.POPPLER)
 
     def _get_pdf_url(self, doc_url):
         pdf_url = doc_url + "/" + PDF_FILENAME
