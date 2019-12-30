@@ -143,6 +143,10 @@ class Plugin(openpaperwork_core.PluginBase):
             try:
                 out[0] = func(*args, **kwargs)
             except Exception as e:
+                LOGGER.warning(
+                    "mainloop_execute exception (func=%s, args=%s, kwargs=%s)",
+                    func, args, kwargs, exc_info=e
+                )
                 exc[0] = e
             event.set()
 
