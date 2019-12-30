@@ -41,7 +41,9 @@ test:
     - volatile
   <<: *apt
   script:
-    - source ./activate_test_env.sh && make install && paperwork-cli chkdeps -y && make test
+    - source ./activate_test_env.sh && make install
+    - source ./activate_test_env.sh && paperwork-cli chkdeps -y && paperwork-gtk chkdeps -y
+    - source ./activate_test_env.sh && make test
 
 
 linux_flatpak:
