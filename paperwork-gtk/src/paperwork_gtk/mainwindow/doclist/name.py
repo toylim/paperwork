@@ -9,6 +9,7 @@ except (ImportError, ValueError):
     GTK_AVAILABLE = False
 
 import openpaperwork_core
+import openpaperwork_gtk.deps
 
 
 LOGGER = logging.getLogger(__name__)
@@ -44,12 +45,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def chkdeps(self, out: dict):
         if not GTK_AVAILABLE:
-            out['gtk']['debian'] = 'gir1.2-gtk-3.0'
-            out['gtk']['fedora'] = 'gtk3'
-            out['gtk']['gentoo'] = 'x11-libs/gtk+'
-            out['gtk']['linuxmint'] = 'gir1.2-gtk-3.0'
-            out['gtk']['ubuntu'] = 'gir1.2-gtk-3.0'
-            out['gtk']['suse'] = 'python-gtk'
+            out['gtk'].update(openpaperwork_gtk.deps.GTK)
 
     def on_doc_box_creation(self, doc_id, gtk_row, custom_flowbox):
         doc_date = self.core.call_success("doc_get_date_by_id", doc_id)

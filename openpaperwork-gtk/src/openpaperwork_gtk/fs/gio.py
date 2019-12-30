@@ -13,6 +13,8 @@ except (ImportError, ValueError):
 
 import openpaperwork_core.fs
 
+from .. import deps
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -238,9 +240,7 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
 
     def chkdeps(self, out: dict):
         if not GLIB_AVAILABLE:
-            out['gi.repository.GLib']['debian'] = 'gir1.2-glib-2.0'
-            out['gi.repository.GLib']['linuxmint'] = 'gir1.2-glib-2.0'
-            out['gi.repository.GLib']['ubuntu'] = 'gir1.2-glib-2.0'
+            out['glib'].update(deps.GLIB)
 
     @staticmethod
     def _is_file_uri(uri):

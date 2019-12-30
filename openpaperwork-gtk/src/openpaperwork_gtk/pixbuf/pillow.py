@@ -18,6 +18,9 @@ except (ValueError, ImportError):
     GDK_PIXBUF_AVAILABLE = False
 
 
+from .. import deps
+
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -30,13 +33,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def chkdeps(self, out: dict):
         if not GLIB_AVAILABLE:
-            out['gi.repository.GLib']['debian'] = 'gir1.2-glib-2.0'
-            out['gi.repository.GLib']['linuxmint'] = 'gir1.2-glib-2.0'
-            out['gi.repository.GLib']['ubuntu'] = 'gir1.2-glib-2.0'
+            out['glib'].update(deps.GLIB)
         if not GDK_PIXBUF_AVAILABLE:
-            out['gtk']['debian'] = 'gir1.2-gdkpixbuf-2.0'
-            out['gtk']['linuxmint'] = 'gir1.2-gdkpixbuf-2.0'
-            out['gtk']['ubuntu'] = 'gir1.2-gdkpixbuf-2.0'
+            out['gdk_pixbuf'].update(deps.GDK_PIXBUF)
 
     def pillow2pixbuf(self, img):
         """

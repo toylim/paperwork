@@ -6,6 +6,7 @@ import PIL
 import PIL.Image
 
 import openpaperwork_core
+import openpaperwork_core.deps
 import openpaperwork_core.promise
 
 from . import (
@@ -342,25 +343,12 @@ class Plugin(AbstractExportPipePlugin):
 
     def chkdeps(self, out: dict):
         if not CAIRO_AVAILABLE:
-            out['cairo']['debian'] = 'python3-gi-cairo'
-            out['cairo']['fedora'] = 'python3-pycairo'
-            out['cairo']['gentoo'] = 'dev-python/pycairo'  # Python 3 ?
-            out['cairo']['linuxmint'] = 'python-gi-cairo'  # Python 3 ?
-            out['cairo']['ubuntu'] = 'python3-gi-cairo'
-            out['cairo']['suse'] = 'python-cairo'  # Python 3 ?
+            out['cairo'].update(openpaperwork_core.deps.CAIRO)
         if not GDK_AVAILABLE:
-            out['gdk-pixbuf']['debian'] = 'gir1.2-gdkpixbuf-2.0'
-            out['gdk-pixbuf']['ubuntu'] = 'gir1.2-gdkpixbuf-2.0'
+            out['gdk'].update(openpaperwork_core.deps.GDK)
         if not GI_AVAILABLE:
-            out['gi']['debian'] = 'python3-gi'
-            out['gi']['fedora'] = 'python3-gobject-base'
-            out['gi']['gentoo'] = 'dev-python/pygobject'  # Python 3 ?
-            out['gi']['linuxmint'] = 'python3-gi'
-            out['gi']['ubuntu'] = 'python3-gi'
-            out['gi']['suse'] = 'python-gobject'  # Python 3 ?
+            out['gi'].update(openpaperwork_core.deps.GI)
         if not GLIB_AVAILABLE:
-            out['gi.repository.GLib']['debian'] = 'gir1.2-glib-2.0'
-            out['gi.repository.GLib']['ubuntu'] = 'gir1.2-glib-2.0'
+            out['gi'].update(openpaperwork_core.deps.GLIB)
         if not PANGO_AVAILABLE:
-            out['gi.repository.Pango']['debian'] = 'gir1.2-pango-1.0'
-            out['gi.repository.Pango']['ubuntu'] = 'gir1.2-pango-1.0'
+            out['pango'].update(openpaperwork_core.deps.PANGO)

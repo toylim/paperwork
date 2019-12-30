@@ -19,7 +19,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_interfaces(self):
         return [
-            'chkdeps',
             'gtk_mainwindow',
         ]
 

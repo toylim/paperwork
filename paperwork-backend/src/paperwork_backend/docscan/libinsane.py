@@ -19,6 +19,7 @@ import PIL
 import PIL.Image
 
 import openpaperwork_core
+import openpaperwork_core.deps
 import openpaperwork_core.promise
 
 
@@ -348,14 +349,13 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def chkdeps(self, out: dict):
         if not GI_AVAILABLE:
-            out['gi']['debian'] = 'python3-gi'
-            out['gi']['fedora'] = 'python3-gobject-base'
-            out['gi']['gentoo'] = 'dev-python/pygobject'  # Python 3 ?
-            out['gi']['linuxmint'] = 'python3-gi'
-            out['gi']['ubuntu'] = 'python3-gi'
-            out['gi']['suse'] = 'python-gobject'  # Python 3 ?
+            out['gi'].update(openpaperwork_core.deps.GI)
         if not LIBINSANE_AVAILABLE:
-            out['gi.repository.Libinsane'] = {}
+            out['libinsane'] = {
+                'debian': 'gir1.2-libinsane-1.0',
+                'linuxmint': 'gir1.2-libinsane-1.0',
+                'ubuntu': 'gir1.2-libinsane-1.0',
+            }
 
     def scan_list_scanners_promise(self):
         def list_scanners(*args, **kwargs):

@@ -22,6 +22,8 @@ except (ImportError, ValueError):
 
 
 import openpaperwork_core
+import openpaperwork_core.deps
+import openpaperwork_gtk.deps
 
 
 LOGGER = logging.getLogger(__name__)
@@ -254,17 +256,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def chkdeps(self, out: dict):
         if not GI_AVAILABLE:
-            out['gi']['debian'] = 'python3-gi'
-            out['gi']['fedora'] = 'python3-gobject-base'
-            out['gi']['linuxmint'] = 'python3-gi'
-            out['gi']['ubuntu'] = 'python3-gi'
+            out['gi'].update(openpaperwork_core.deps.GI)
         if not GTK_AVAILABLE:
-            out['gtk']['debian'] = 'gir1.2-gtk-3.0'
-            out['gtk']['fedora'] = 'gtk3'
-            out['gtk']['gentoo'] = 'x11-libs/gtk+'
-            out['gtk']['linuxmint'] = 'gir1.2-gtk-3.0'
-            out['gtk']['ubuntu'] = 'gir1.2-gtk-3.0'
-            out['gtk']['suse'] = 'python-gtk'
+            out['gtk'].update(openpaperwork_gtk.deps.GTK)
 
     def gtk_widget_flowbox_new(self, spacing=(0, 0)):
         assert(GI_AVAILABLE)

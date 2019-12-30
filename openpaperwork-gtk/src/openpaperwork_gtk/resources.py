@@ -14,6 +14,8 @@ except (ImportError, ValueError):
 
 import openpaperwork_core
 
+from . import deps
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -35,12 +37,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def chkdeps(self, out: dict):
         if not GTK_AVAILABLE:
-            out['gtk']['debian'] = 'gir1.2-gtk-3.0'
-            out['gtk']['fedora'] = 'gtk3'
-            out['gtk']['gentoo'] = 'x11-libs/gtk+'
-            out['gtk']['linuxmint'] = 'gir1.2-gtk-3.0'
-            out['gtk']['ubuntu'] = 'gir1.2-gtk-3.0'
-            out['gtk']['suse'] = 'python-gtk'
+            out['gtk'].update(deps.GTK)
 
     def gtk_load_widget_tree(self, pkg, filename):
         """
