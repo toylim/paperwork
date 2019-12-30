@@ -1,5 +1,6 @@
 import io
 import logging
+import time
 
 
 CAIRO_AVAILABLE = False
@@ -105,6 +106,18 @@ class Plugin(openpaperwork_core.PluginBase):
         else:
             page_idx = 0
 
+        start = time.time()
+        pillow = self.core.call_one(  # Poppler is not really thread safe
+            "mainloop_execute", self._url_to_pillow, file_url, page_idx
+        )
+        stop = time.time()
+        LOGGER.info(
+            "Took %dms to render %s p%d as a pillow image",
+            (stop - start) * 1000, file_url, page_idx
+        )
+        return pillow
+
+    def _url_to_pillow(self, file_url, page_idx):
         gio_file = Gio.File.new_for_uri(file_url)
         doc = Poppler.Document.new_from_gfile(gio_file, password=None)
         page = doc.get_page(page_idx)
@@ -125,7 +138,9 @@ class Plugin(openpaperwork_core.PluginBase):
         ctx.scale(factor_w, factor_h)
         page.render(ctx)
 
-        return surface2image(surface)
+        img = surface2image(surface)
+        img.load()
+        return img
 
     def pillow_to_url(self, *args, **kwargs):
         # It could be implemented, but there is no known use-case.

@@ -1,7 +1,13 @@
+import logging
+import time
+
 import PIL
 import PIL.Image
 
 import openpaperwork_core
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -28,10 +34,16 @@ class Plugin(openpaperwork_core.PluginBase):
     def url_to_pillow(self, file_url):
         if file_url.split(".")[-1] not in self.FILE_EXTENSIONS:
             return None
+        start = time.time()
         with self.core.call_success("fs_open", file_url, mode='rb') as fd:
             img = PIL.Image.open(fd)
             img.load()
-            return img
+        stop = time.time()
+        LOGGER.info(
+            "Took %dms to render %s as a pillow image",
+            (stop - start) * 1000, file_url
+        )
+        return img
 
     def pillow_to_url(self, img, file_url, format='JPEG', quality=0.75):
         with self.core.call_success("fs_open", file_url, mode='wb') as fd:
