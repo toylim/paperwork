@@ -2,6 +2,15 @@ import io
 import logging
 import time
 
+import PIL
+import PIL.Image
+
+import openpaperwork_core
+import openpaperwork_core.deps
+
+# TODO(Jflesch): bad
+import paperwork_backend.model.pdf
+
 
 CAIRO_AVAILABLE = False
 GI_AVAILABLE = False
@@ -39,16 +48,6 @@ if GI_AVAILABLE:
         POPPLER_AVAILABLE = True
     except (ImportError, ValueError):
         pass
-
-
-import PIL
-import PIL.Image
-
-import openpaperwork_core
-import openpaperwork_core.deps
-
-# TODO(Jflesch): bad
-import paperwork_backend.model.pdf
 
 
 LOGGER = logging.getLogger(__name__)

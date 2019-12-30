@@ -1,6 +1,9 @@
 import itertools
 import logging
 
+import openpaperwork_core
+import openpaperwork_core.deps
+
 
 GI_AVAILABLE = False
 GLIB_AVAILABLE = False
@@ -25,10 +28,6 @@ if GI_AVAILABLE:
         POPPLER_AVAILABLE = True
     except (ImportError, ValueError):
         pass
-
-
-import openpaperwork_core
-import openpaperwork_core.deps
 
 
 LOGGER = logging.getLogger(__name__)
