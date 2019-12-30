@@ -148,9 +148,9 @@ def recompute_box_positions(widgets, width, spacing=(0, 0)):
         w_center = (width - w_center) / 2
         w_orig = w_center
         for widget in line[Gtk.Align.CENTER]:
-            widget.position = (w_center, height)
             if w_center != w_orig:
                 w_center += spacing[1]
+            widget.position = (w_center, height)
             w_center += widget.size[0]
 
         height += line_height

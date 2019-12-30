@@ -79,3 +79,13 @@ class TestPositioning(unittest.TestCase):
         self.assertEqual(widgets[1].position, (67, 0))
         self.assertEqual(widgets[2].position, (110, 0))
         self.assertEqual(widgets[3].position, (55, 24))
+
+    def test_position_center_spacing(self):
+        widgets = [
+            flowbox.WidgetInfo(None, Gtk.Align.CENTER, (140, 200)),
+            flowbox.WidgetInfo(None, Gtk.Align.CENTER, (140, 200)),
+        ]
+        flowbox.recompute_box_positions(widgets, width=500, spacing=(50, 50))
+
+        self.assertEqual(widgets[0].position, (85, 0))
+        self.assertEqual(widgets[1].position, (275, 0))
