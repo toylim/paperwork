@@ -171,7 +171,7 @@ class CustomFlowBox(Gtk.Box):
         self.connect("remove", self.on_remove)
 
     def on_add(self, _, widget):
-        self.widgets.append(WidgetInfo(widget, Gtk.Align.START))
+        self.widgets.append(WidgetInfo(widget, Gtk.Align.CENTER))
         self.queue_resize()
 
     def on_remove(self, _, widget):
