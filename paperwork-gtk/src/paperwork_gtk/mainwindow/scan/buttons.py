@@ -40,6 +40,10 @@ class Plugin(openpaperwork_core.PluginBase):
             "gtk_load_widget_tree",
             "paperwork_gtk.mainwindow.scan", "buttons.glade"
         )
+        if self.widget_tree is None:
+            # init must still work so 'chkdeps' is still available
+            LOGGER.error("Failed to load widget tree")
+            return
 
         headerbar = self.core.call_success("docview_get_headerbar")
         headerbar.pack_start(self.widget_tree.get_object("scan_buttons"))

@@ -55,6 +55,7 @@ class Plugin(openpaperwork_core.PluginBase):
         """
 
         if not GTK_AVAILABLE:
+            LOGGER.error("gtk_load_widget_tree(): GTK is not available")
             return None
 
         LOGGER.info("Loading GTK widgets from %s:%s", pkg, filename)
@@ -73,6 +74,7 @@ class Plugin(openpaperwork_core.PluginBase):
             filename -- css file name to load.
         """
         if not GTK_AVAILABLE:
+            LOGGER.error("gtk_load_css(): GTK is not available")
             return None
 
         LOGGER.info("Loading CSS from %s:%s", pkg, filename)

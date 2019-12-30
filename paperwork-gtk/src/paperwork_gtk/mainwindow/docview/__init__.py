@@ -40,6 +40,10 @@ class Plugin(openpaperwork_core.PluginBase):
             "gtk_load_widget_tree",
             "paperwork_gtk.mainwindow.docview", "docview.glade"
         )
+        if self.widget_tree is None:
+            # init must still work so 'chkdeps' is still available
+            LOGGER.error("Failed to load widget tree")
+            return
 
         scroll = self.widget_tree.get_object("docview_scroll")
 

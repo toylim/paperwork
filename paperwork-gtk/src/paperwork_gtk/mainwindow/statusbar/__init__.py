@@ -35,6 +35,10 @@ class Plugin(openpaperwork_core.PluginBase):
             "gtk_load_widget_tree",
             "paperwork_gtk.mainwindow.statusbar", "statusbar.glade"
         )
+        if widget_tree is None:
+            # init must still work so 'chkdeps' is still available
+            LOGGER.error("Failed to load widget tree")
+            return
         self.progressbar = widget_tree.get_object("progressbar")
 
         mainwindow = self.core.call_success("mainwindow_get_main_container")

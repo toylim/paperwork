@@ -43,6 +43,10 @@ class Plugin(openpaperwork_core.PluginBase):
             "gtk_load_widget_tree",
             "paperwork_gtk.mainwindow.search", "field.glade"
         )
+        if self.widget_tree is None:
+            # init must still work so 'chkdeps' is still available
+            LOGGER.error("Failed to load widget tree")
+            return
 
         self.search_entry = self.widget_tree.get_object("search_entry")
         search_field = self.widget_tree.get_object("search_field")

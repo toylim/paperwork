@@ -58,6 +58,10 @@ class Plugin(openpaperwork_core.PluginBase):
             "gtk_load_widget_tree",
             "paperwork_gtk.mainwindow.doclist", "doclist.glade"
         )
+        if self.widget_tree is None:
+            # init must still work so 'chkdeps' is still available
+            LOGGER.error("Failed to load widget tree")
+            return
         self.doclist = self.widget_tree.get_object("doclist_listbox")
         self.core.call_all(
             "mainwindow_add", side="left", name="doclist", prio=10000,
