@@ -5,7 +5,6 @@ DEFAULT_CONFIG_PLUGINS = [
 ]
 
 DEFAULT_PLUGINS = [
-    "openpaperwork_gtk.mainloop.glib",
     'openpaperwork_core.cmd.chkdeps',
     'openpaperwork_core.fs.memory',
     'openpaperwork_core.i18n.python',
