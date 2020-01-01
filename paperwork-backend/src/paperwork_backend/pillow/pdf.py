@@ -7,47 +7,6 @@ import PIL.Image
 import openpaperwork_core
 import openpaperwork_core.deps
 
-# TODO(Jflesch): bad
-import paperwork_backend.model.pdf
-
-
-CAIRO_AVAILABLE = False
-GI_AVAILABLE = False
-GLIB_AVAILABLE = False
-POPPLER_AVAILABLE = False
-
-
-try:
-    import cairo
-    CAIRO_AVAILABLE = True
-except (ImportError, ValueError):
-    pass
-
-try:
-    import gi
-    GI_AVAILABLE = True
-except (ImportError, ValueError):
-    pass
-
-if GI_AVAILABLE:
-    try:
-        gi.require_version('Poppler', '0.18')
-        GI_AVAILABLE = True
-    except (ImportError, ValueError):
-        pass
-
-    try:
-        from gi.repository import Gio
-        GLIB_AVAILABLE = True
-    except (ImportError, ValueError):
-        pass
-
-    try:
-        from gi.repository import Poppler
-        POPPLER_AVAILABLE = True
-    except (ImportError, ValueError):
-        pass
-
 
 LOGGER = logging.getLogger(__name__)
 
@@ -96,7 +55,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_interfaces(self):
         return [
-            'chkdeps',
             'page_img_size',
             'pillow',
         ]
@@ -122,27 +80,6 @@ class Plugin(openpaperwork_core.PluginBase):
         else:
             page_idx = 0
         return (file_url, page_idx)
-
-    def url_to_img_size(self, file_url):
-        (file_url, page_idx) = self._check_is_pdf(file_url)
-        if file_url is None:
-            return None
-
-        task = "url_to_img_size({})".format(file_url)
-        self.core.call_all("on_perfcheck_start", task)
-
-        gio_file = Gio.File.new_for_uri(file_url)
-        doc = Poppler.Document.new_from_gfile(gio_file, password=None)
-        page = doc.get_page(page_idx)
-
-        base_size = page.get_size()
-        size = (  # scale up because default size if too small for reading
-            int(base_size[0]) * paperwork_backend.model.pdf.PDF_RENDER_FACTOR,
-            int(base_size[1]) * paperwork_backend.model.pdf.PDF_RENDER_FACTOR,
-        )
-
-        self.core.call_all("on_perfcheck_stop", task, size=base_size)
-        return pillow
 
     def url_to_pillow(self, file_url):
         (file_url, page_idx) = self._check_is_pdf(file_url)
@@ -171,13 +108,3 @@ class Plugin(openpaperwork_core.PluginBase):
     def pillow_to_url(self, *args, **kwargs):
         # It could be implemented, but there is no known use-case.
         return None
-
-    def chkdeps(self, out: dict):
-        if not CAIRO_AVAILABLE:
-            out['cairo'].update(openpaperwork_core.deps.CAIRO)
-        if not GI_AVAILABLE:
-            out['gi'].update(openpaperwork_core.deps.GI)
-        if not GLIB_AVAILABLE:
-            out['glib'].update(openpaperwork_core.deps.GLIB)
-        if not POPPLER_AVAILABLE:
-            out['poppler'].update(openpaperwork_core.deps.POPPLER)

@@ -129,7 +129,9 @@ class Plugin(openpaperwork_core.PluginBase):
         doc_box.pack_start(flowlayout, expand=True, fill=True, padding=0)
         doc_box.reorder_child(flowlayout, 1)
 
-        self.core.call_all("on_doc_box_creation", doc_id, widget_tree, flowlayout)
+        self.core.call_all(
+            "on_doc_box_creation", doc_id, widget_tree, flowlayout
+        )
 
         row = widget_tree.get_object("doc_listbox")
         self.row_to_docid[row] = doc_id

@@ -1,5 +1,4 @@
 import gettext
-import io
 import logging
 
 import PIL
@@ -45,7 +44,6 @@ if GI_AVAILABLE:
 
 _ = gettext.gettext
 LOGGER = logging.getLogger(__name__)
-
 
 
 class PdfDocUrlToPdfUrlExportPipe(AbstractExportPipe):

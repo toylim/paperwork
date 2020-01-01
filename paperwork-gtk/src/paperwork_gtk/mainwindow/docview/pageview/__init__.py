@@ -2,10 +2,8 @@ import logging
 import time
 
 import openpaperwork_core
-import openpaperwork_core.deps
 import openpaperwork_core.promise
 
-from .... import deps
 
 LOGGER = logging.getLogger(__name__)
 
@@ -141,7 +139,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_interfaces(self):
         return [
-            'chkdeps',
             'gtk_docview',
         ]
 
@@ -174,14 +171,6 @@ class Plugin(openpaperwork_core.PluginBase):
     def init(self, core):
         super().init(core)
         self.core.call_all("work_queue_create", "page_loader")
-
-    def chkdeps(self, out: dict):
-        if not CLUTTER_AVAILABLE:
-            out['clutter'] = deps.CLUTTER
-        if not GI_AVAILABLE:
-            out['gi'] = openpaperwork_core.deps.GI
-        if not GTK_CLUTTER_AVAILABLE:
-            out['gtk_clutter'] = deps.GTK_CLUTTER
 
     def doc_open_components(self, doc_id, doc_url, page_container):
         nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)
