@@ -99,6 +99,10 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return [
             {
+                'interface': 'pdf_cairo_url',
+                'defaults': ['paperwork_backend.cairo.poppler'],
+            },
+            {
                 'interface': 'mainloop',
                 'defaults': ['openpaperwork_gtk.mainloop.glib'],
             },
@@ -142,41 +146,31 @@ class Plugin(openpaperwork_core.PluginBase):
         if file_url is None:
             return None
 
-        start = time.time()
         pillow = self.core.call_one(  # Poppler is not really thread safe
             "mainloop_execute", self._url_to_pillow, file_url, page_idx
-        )
-        stop = time.time()
-        LOGGER.info(
-            "Took %dms to render %s p%d as a pillow image",
-            (stop - start) * 1000, file_url, page_idx
         )
         return pillow
 
     def _url_to_pillow(self, file_url, page_idx):
-        gio_file = Gio.File.new_for_uri(file_url)
-        doc = Poppler.Document.new_from_gfile(gio_file, password=None)
-        page = doc.get_page(page_idx)
-
-        base_size = page.get_size()
-        size = (  # scale up because default size if too small for reading
-            int(base_size[0]) * paperwork_backend.model.pdf.PDF_RENDER_FACTOR,
-            int(base_size[1]) * paperwork_backend.model.pdf.PDF_RENDER_FACTOR,
+        surface = self.core.call_success(
+            "pdf_page_to_cairo_surface", file_url, page_idx
         )
 
-        width = int(size[0])
-        height = int(size[1])
-        factor_w = width / base_size[0]
-        factor_h = height / base_size[1]
-
-        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
-        ctx = cairo.Context(surface)
-        ctx.scale(factor_w, factor_h)
-        page.render(ctx)
-
+        start = time.time()
         img = surface2image(surface)
         img.load()
+        stop = time.time()
+        LOGGER.info(
+            "Took %dms to convert %s p%d"
+            " from Cairo ImageSurface to a pillow image",
+            (stop - start) * 1000, file_url, page_idx
+        )
         return img
+
+    def url_to_pillow_promise(self, file_url):
+        return openpaperwork_core.promise.Promise(
+            self.core, self.url_to_pillow, args=(file_url,)
+        )
 
     def pillow_to_url(self, *args, **kwargs):
         # It could be implemented, but there is no known use-case.

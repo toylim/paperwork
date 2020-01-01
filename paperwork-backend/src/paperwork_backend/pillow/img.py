@@ -5,6 +5,7 @@ import PIL
 import PIL.Image
 
 import openpaperwork_core
+import openpaperwork_core.promise
 
 
 LOGGER = logging.getLogger(__name__)
@@ -60,10 +61,15 @@ class Plugin(openpaperwork_core.PluginBase):
             img.load()
         stop = time.time()
         LOGGER.info(
-            "Took %dms to render %s as a pillow image",
+            "Took %dms to render %s as a Pillow image",
             (stop - start) * 1000, file_url
         )
         return img
+
+    def url_to_pillow_promise(self, file_url):
+        return openpaperwork_core.promise.ThreadedPromise(
+            self.core, self.url_to_pillow, args=(file_url,)
+        )
 
     def pillow_to_url(self, img, file_url, format='JPEG', quality=0.75):
         with self.core.call_success("fs_open", file_url, mode='wb') as fd:

@@ -16,7 +16,6 @@ from . import (
 
 
 CAIRO_AVAILABLE = False
-GDK_AVAILABLE = False
 GI_AVAILABLE = False
 GLIB_AVAILABLE = False
 PANGO_AVAILABLE = False
@@ -35,21 +34,6 @@ except (ImportError, ValueError):
 
 if GI_AVAILABLE:
     try:
-        gi.require_version('Gdk', '3.0')
-        gi.require_version('GdkPixbuf', '2.0')
-        from gi.repository import Gdk
-        from gi.repository import GdkPixbuf
-        GDK_AVAILABLE = True
-    except (ImportError, ValueError):
-        pass
-
-    try:
-        from gi.repository import GLib
-        GLIB_AVAILABLE = True
-    except (ImportError, ValueError):
-        pass
-
-    try:
         gi.require_version('Pango', '1.0')
         gi.require_version('PangoCairo', '1.0')
         from gi.repository import Pango
@@ -62,84 +46,6 @@ if GI_AVAILABLE:
 _ = gettext.gettext
 LOGGER = logging.getLogger(__name__)
 
-
-def image2surface(img, intermediate="pixbuf", quality=90):
-    """
-    Convert a PIL image into a Cairo surface
-    """
-    # TODO(Jflesch): Python 3 problem
-    # cairo.ImageSurface.create_for_data() raises NotImplementedYet ...
-
-    # img.putalpha(256)
-    # (width, height) = img.size
-    # imgd = img.tobytes('raw', 'BGRA')
-    # imga = array.array('B', imgd)
-    # stride = width * 4
-    #  return cairo.ImageSurface.create_for_data(
-    #      imga, cairo.FORMAT_ARGB32, width, height, stride)
-
-    # So we fall back to those methods:
-
-    if intermediate == "pixbuf" and (
-                not hasattr(GdkPixbuf.Pixbuf, 'new_from_bytes') or
-                img.getbands() != ('R', 'G', 'B')
-            ):
-        intermediate = "png"
-
-    if intermediate == "pixbuf":
-
-        data = GLib.Bytes.new(img.tobytes())
-        (width, height) = img.size
-        pixbuf = GdkPixbuf.Pixbuf.new_from_bytes(
-            data, GdkPixbuf.Colorspace.RGB, False, 8,
-            width, height, width * 3
-        )
-        image_surface = cairo.ImageSurface(
-            cairo.FORMAT_RGB24, width, height
-        )
-        ctx = cairo.Context(image_surface)
-        Gdk.cairo_set_source_pixbuf(ctx, pixbuf, 0.0, 0.0)
-        ctx.rectangle(0, 0, width, height)
-        ctx.fill()
-        return image_surface
-
-    elif intermediate == "jpeg":
-
-        if not hasattr(cairo.ImageSurface, 'set_mime_data'):
-            LOGGER.warning(
-                "Cairo %s does not support yet 'set_mime_data'."
-                " Cannot include image as JPEG in the PDF."
-                " Image will be included as PNG (much bigger)",
-                cairo.version
-            )
-            intermediate = 'png'
-        else:
-            # IMPORTANT: The actual surface will be empty.
-            # but mime-data will have attached the correct data
-            # to the surface that supports it
-            img_surface = cairo.ImageSurface(
-                cairo.FORMAT_RGB24, img.size[0], img.size[1]
-            )
-            img_io = io.BytesIO()
-            img.save(img_io, format="JPEG", quality=quality)
-            img_io.seek(0)
-            data = img_io.read()
-            img_surface.set_mime_data(
-                cairo.MIME_TYPE_JPEG, data
-            )
-            return img_surface
-
-    if intermediate == "png":
-
-        img_io = io.BytesIO()
-        img.save(img_io, format="PNG")
-        img_io.seek(0)
-        return cairo.ImageSurface.create_from_png(img_io)
-
-    else:
-        raise Exception(
-            "image2surface(): unknown intermediate: {}".format(intermediate)
-        )
 
 
 class PdfDocUrlToPdfUrlExportPipe(AbstractExportPipe):
@@ -180,6 +86,7 @@ class PdfDocUrlToPdfUrlExportPipe(AbstractExportPipe):
 
 class PdfCreator(object):
     def __init__(self, core, target_file_url, page_format, quality):
+        self.core = core
         self.page_format = page_format
         self.quality = quality
 
@@ -261,8 +168,9 @@ class PdfCreator(object):
     def paint_img(self, img):
         img = img.resize(self.img_size, PIL.Image.ANTIALIAS)
 
-        img_surface = image2surface(
-            img, intermediate="jpeg", quality=int(self.quality * 100)
+        img_surface = self.core.call_success(
+            "pillow_to_surface", img,
+            intermediate="jpeg", quality=int(self.quality * 100)
         )
 
         self.pdf_context.save()
@@ -341,14 +249,18 @@ class Plugin(AbstractExportPipePlugin):
     def get_interfaces(self):
         return super().get_interfaces() + ['chkdeps']
 
+    def get_deps(self):
+        return super().get_deps() + [
+            {
+                'interface': 'pillow_to_surface',
+                'defaults': ['paperwork_backend.cairo.pillow'],
+            },
+        ]
+
     def chkdeps(self, out: dict):
         if not CAIRO_AVAILABLE:
             out['cairo'].update(openpaperwork_core.deps.CAIRO)
-        if not GDK_AVAILABLE:
-            out['gdk'].update(openpaperwork_core.deps.GDK)
         if not GI_AVAILABLE:
             out['gi'].update(openpaperwork_core.deps.GI)
-        if not GLIB_AVAILABLE:
-            out['gi'].update(openpaperwork_core.deps.GLIB)
         if not PANGO_AVAILABLE:
             out['pango'].update(openpaperwork_core.deps.PANGO)

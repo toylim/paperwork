@@ -13,6 +13,8 @@ DEFAULT_PLUGINS = [
     'paperwork_backend.beacon.stats',
     'paperwork_backend.beacon.sysinfo',
     'paperwork_backend.beacon.update',
+    'paperwork_backend.cairo.pillow',
+    'paperwork_backend.cairo.poppler',
     'paperwork_backend.docexport.img',
     'paperwork_backend.docexport.pdf',
     'paperwork_backend.docexport.pillowfight',
