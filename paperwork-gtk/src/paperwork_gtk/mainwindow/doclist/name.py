@@ -47,10 +47,10 @@ class Plugin(openpaperwork_core.PluginBase):
         if not GTK_AVAILABLE:
             out['gtk'].update(openpaperwork_gtk.deps.GTK)
 
-    def on_doc_box_creation(self, doc_id, gtk_row, custom_flowbox):
+    def on_doc_box_creation(self, doc_id, gtk_row, custom_flowlayout):
         doc_date = self.core.call_success("doc_get_date_by_id", doc_id)
         doc_date = self.core.call_success("i18n_date_short", doc_date)
         label = Gtk.Label.new(doc_date)
         label.set_visible(True)
-        custom_flowbox.add(label)
-        custom_flowbox.set_alignment(label, Gtk.Align.START)
+        custom_flowlayout.add(label)
+        custom_flowlayout.set_alignment(label, Gtk.Align.START)

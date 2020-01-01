@@ -158,7 +158,7 @@ def recompute_box_positions(widgets, width, spacing=(0, 0)):
     return widgets
 
 
-class CustomFlowBox(Gtk.Box):
+class CustomFlowLayout(Gtk.Box):
     def __init__(self, spacing=(0, 0)):
         super().__init__()
         self.widgets = []
@@ -244,14 +244,14 @@ class CustomFlowBox(Gtk.Box):
 
 
 if GTK_AVAILABLE:
-    GObject.type_register(CustomFlowBox)
+    GObject.type_register(CustomFlowLayout)
 
 
 class Plugin(openpaperwork_core.PluginBase):
     def get_interfaces(self):
         return [
             'chkdeps',
-            'gtk_widget_flowbox',
+            'gtk_widget_flowlayout',
         ]
 
     def chkdeps(self, out: dict):
@@ -260,7 +260,7 @@ class Plugin(openpaperwork_core.PluginBase):
         if not GTK_AVAILABLE:
             out['gtk'].update(openpaperwork_gtk.deps.GTK)
 
-    def gtk_widget_flowbox_new(self, spacing=(0, 0)):
+    def gtk_widget_flowlayout_new(self, spacing=(0, 0)):
         assert(GI_AVAILABLE)
         assert(GTK_AVAILABLE)
-        return CustomFlowBox(spacing)
+        return CustomFlowLayout(spacing)

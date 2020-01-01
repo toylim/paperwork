@@ -28,8 +28,8 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_gtk.resources'],
             },
             {
-                'interface': 'gtk_widget_flowbox',
-                'defaults': ['paprwork_gtk.widget.flowbox'],
+                'interface': 'gtk_widget_flowlayout',
+                'defaults': ['paprwork_gtk.widget.flowlayout'],
             },
         ]
 
@@ -48,7 +48,7 @@ class Plugin(openpaperwork_core.PluginBase):
         scroll = self.widget_tree.get_object("docview_scroll")
 
         self.page_container = self.core.call_success(
-            "gtk_widget_flowbox_new", spacing=(20, 20)
+            "gtk_widget_flowlayout_new", spacing=(20, 20)
         )
         self.page_container.set_visible(True)
 

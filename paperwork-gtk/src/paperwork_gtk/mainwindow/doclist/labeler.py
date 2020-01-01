@@ -16,12 +16,12 @@ LOGGER = logging.getLogger(__name__)
 
 
 class LabelingTask(object):
-    def __init__(self, plugin, doc_id, flowbox):
+    def __init__(self, plugin, doc_id, flowlayout):
         self.plugin = plugin
         self.core = plugin.core
 
         self.doc_id = doc_id
-        self.flowbox = flowbox
+        self.flowlayout = flowlayout
 
     def show_labels(self, labels):
         for label in labels:
@@ -30,8 +30,8 @@ class LabelingTask(object):
                 "gtk_widget_label_new", label[0], color
             )
             widget.set_visible(True)
-            self.flowbox.add(widget)
-            self.flowbox.set_alignment(widget, Gtk.Align.END)
+            self.flowlayout.add(widget)
+            self.flowlayout.set_alignment(widget, Gtk.Align.END)
 
     def get_promise(self):
         doc_url = self.core.call_success("doc_id_to_url", self.doc_id)
@@ -96,8 +96,8 @@ class Plugin(openpaperwork_core.PluginBase):
     def doclist_show(self, docids):
         self.core.call_all("work_queue_cancel_all", "labeler")
 
-    def on_doc_box_creation(self, doc_id, gtk_row, gtk_custom_flowbox):
-        task = LabelingTask(self, doc_id, gtk_custom_flowbox)
+    def on_doc_box_creation(self, doc_id, gtk_row, gtk_custom_flowlayout):
+        task = LabelingTask(self, doc_id, gtk_custom_flowlayout)
         self.core.call_success(
             "work_queue_add_promise", "labeler", task.get_promise()
         )

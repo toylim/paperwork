@@ -28,7 +28,7 @@ DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'paperwork_gtk.mainwindow.search.field',
     'paperwork_gtk.mainwindow.statusbar',
     'paperwork_gtk.mainwindow.window',
-    'paperwork_gtk.widget.flowbox',
+    'paperwork_gtk.widget.flowlayout',
     'paperwork_gtk.widget.label',
 ]
 

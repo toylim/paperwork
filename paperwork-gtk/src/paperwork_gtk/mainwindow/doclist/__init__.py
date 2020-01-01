@@ -42,8 +42,8 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['paperwork_gtk.mainwindow.window'],
             },
             {
-                'interface': 'gtk_widget_flowbox',
-                'defaults': ['paprwork_gtk.widget.flowbox'],
+                'interface': 'gtk_widget_flowlayout',
+                'defaults': ['paprwork_gtk.widget.flowlayout'],
             },
             {
                 'interface': 'i18n',
@@ -122,14 +122,14 @@ class Plugin(openpaperwork_core.PluginBase):
 
         doc_box = widget_tree.get_object("doc_box")
 
-        flowbox = self.core.call_success(
-            "gtk_widget_flowbox_new", spacing=(3, 3)
+        flowlayout = self.core.call_success(
+            "gtk_widget_flowlayout_new", spacing=(3, 3)
         )
-        flowbox.set_visible(True)
-        doc_box.pack_start(flowbox, expand=True, fill=True, padding=0)
-        doc_box.reorder_child(flowbox, 1)
+        flowlayout.set_visible(True)
+        doc_box.pack_start(flowlayout, expand=True, fill=True, padding=0)
+        doc_box.reorder_child(flowlayout, 1)
 
-        self.core.call_all("on_doc_box_creation", doc_id, widget_tree, flowbox)
+        self.core.call_all("on_doc_box_creation", doc_id, widget_tree, flowlayout)
 
         row = widget_tree.get_object("doc_listbox")
         self.row_to_docid[row] = doc_id
