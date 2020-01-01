@@ -1,5 +1,6 @@
 import io
 import logging
+import time
 
 import openpaperwork_core
 import openpaperwork_core.deps
@@ -8,6 +9,9 @@ import openpaperwork_core.promise
 
 CAIRO_AVAILABLE = False
 GDK_AVAILABLE = False
+
+DELAY = 0.01
+
 
 try:
     import gi
@@ -25,6 +29,7 @@ if GI_AVAILABLE:
     try:
         gi.require_version('Gdk', '3.0')
         gi.require_version('GdkPixbuf', '2.0')
+        from gi.repository import GObject
         from gi.repository import Gdk
         from gi.repository import GdkPixbuf
         GDK_AVAILABLE = True
@@ -126,6 +131,98 @@ def pillow_to_surface(core, img, intermediate="pixbuf", quality=90):
     return img_surface
 
 
+class CairoRenderer(GObject.GObject):
+    __gsignals__ = {
+        'getting_size': (GObject.SignalFlags.RUN_LAST, None, ()),
+        'size_obtained': (GObject.SignalFlags.RUN_LAST, None, ()),
+        'img_obtained': (GObject.SignalFlags.RUN_LAST, None, ()),
+    }
+
+    DEFAULT_BACKGROUND = (0.5, 0.5, 0.5)
+
+    def __init__(self, core, work_queue_name, file_url):
+        super().__init__()
+        self.core = core
+        self.work_queue_name = work_queue_name
+        self.file_url = file_url
+        self.size = (0, 0)
+        self.size_factor = 1.0
+        self.cairo_surface = None
+        self.background = self.DEFAULT_BACKGROUND
+
+        promise = core.call_success("url_to_img_size_promise", file_url)
+        promise = promise.then(self._set_img_size)
+        # Gives back a bit of CPU time to GTK so the GUI remains
+        # usable
+        promise = promise.then(openpaperwork_core.promise.ThreadedPromise(
+            core, time.sleep, args=(DELAY,)
+        ))
+        self.get_size_promise = promise
+
+        promise = core.call_success(
+            "url_to_cairo_surface_promise", file_url
+        )
+        promise = promise.then(self._set_cairo_surface)
+        # Gives back a bit of CPU time to GTK so the GUI remains
+        # usable
+        promise = promise.then(openpaperwork_core.promise.ThreadedPromise(
+            core, time.sleep, args=(DELAY,)
+        ))
+        self.render_img_promise = promise
+
+    def start(self):
+        self.core.call_success(
+            "work_queue_add_promise",
+            self.work_queue_name, self.get_size_promise
+        )
+
+    def render(self):
+        self.core.call_success(
+            "work_queue_add_promise",
+            self.work_queue_name, self.render_img_promise, priority=100
+        )
+
+    def hide(self):
+        self.cairo_surface = None
+        self.core.call_all(
+            "work_queue_cancel", self.work_queue_name, self.render_img_promise
+        )
+
+    def _set_img_size(self, size):
+        self.emit("getting_size")
+        self.size = size
+        self.emit("size_obtained")
+
+    def _set_cairo_surface(self, surface):
+        self.cairo_surface = surface
+        self.emit("img_obtained")
+
+    def draw(self, cairo_ctx):
+        if self.cairo_surface is None:
+            cairo_ctx.save()
+            try:
+                size = self.size
+                (r, g, b) = self.background
+                cairo_ctx.set_source_rgb(r, g, b)
+                cairo_ctx.rectangle(0, 0, size[0], size[1])
+                cairo_ctx.clip()
+                cairo_ctx.paint()
+            finally:
+                cairo_ctx.restore()
+        else:
+            cairo_ctx.save()
+            try:
+                cairo_ctx.scale(self.size_factor, self.size_factor)
+                cairo_ctx.set_source_surface(self.cairo_surface)
+                cairo_ctx.paint()
+            finally:
+                cairo_ctx.restore()
+
+
+if GLIB_AVAILABLE:
+    GObject.type_register(CairoRenderer)
+
+
 class Plugin(openpaperwork_core.PluginBase):
     def get_interfaces(self):
         return [
@@ -139,6 +236,10 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'pillow',
                 'defaults': ['paperwork_backend.pillow.img'],
+            },
+            {
+                'interface': 'work_queue',
+                'defaults': ['openpaperwork_core.work_queue.default'],
             },
         ]
 
@@ -159,3 +260,6 @@ class Plugin(openpaperwork_core.PluginBase):
         promise = self.core.call_success("url_to_pillow_promise", file_url)
         promise = promise.then(self.pillow_to_surface)
         return promise
+
+    def cairo_renderer_by_url(self, work_queue_name, file_url):
+        return CairoRenderer(self.core, work_queue_name, file_url)
