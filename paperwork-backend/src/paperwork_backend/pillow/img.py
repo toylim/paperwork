@@ -21,7 +21,10 @@ class Plugin(openpaperwork_core.PluginBase):
     ]
 
     def get_interfaces(self):
-        return ['pillow']
+        return [
+            'page_img_size',
+            'pillow',
+        ]
 
     def get_deps(self):
         return [
@@ -31,8 +34,25 @@ class Plugin(openpaperwork_core.PluginBase):
             }
         ]
 
+    def _check_is_img(self, file_url):
+        return file_url.split(".")[-1] in self.FILE_EXTENSIONS
+
+    def url_to_img_size(self, file_url):
+        if not self._check_is_img(file_url):
+            return None
+        start = time.time()
+        with self.core.call_success("fs_open", file_url, mode='rb') as fd:
+            img = PIL.Image.open(fd)
+            size = img.size
+        stop = time.time()
+        LOGGER.info(
+            "Took %dms to get size of %s: %s",
+            (stop - start) * 1000, file_url, size
+        )
+        return img
+
     def url_to_pillow(self, file_url):
-        if file_url.split(".")[-1] not in self.FILE_EXTENSIONS:
+        if not self._check_is_img(file_url):
             return None
         start = time.time()
         with self.core.call_success("fs_open", file_url, mode='rb') as fd:

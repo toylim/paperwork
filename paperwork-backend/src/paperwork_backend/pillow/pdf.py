@@ -92,18 +92,55 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_interfaces(self):
         return [
             'chkdeps',
+            'page_img_size',
             'pillow',
         ]
 
-    def url_to_pillow(self, file_url):
-        if (self.FILE_EXTENSION + "#page=") not in file_url.lower():
-            return None
+    def get_deps(self):
+        return [
+            {
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_gtk.mainloop.glib'],
+            },
+        ]
 
+    def _check_is_pdf(self, file_url):
+        if (self.FILE_EXTENSION + "#page=") not in file_url.lower():
+            return (None, None)
         if "#" in file_url:
             (file_url, page_idx) = file_url.rsplit("#page=", 1)
             page_idx = int(page_idx) - 1
         else:
             page_idx = 0
+        return (file_url, page_idx)
+
+    def url_to_img_size(self, file_url):
+        (file_url, page_idx) = self._check_is_pdf(file_url)
+        if file_url is None:
+            return None
+
+        start = time.time()
+        gio_file = Gio.File.new_for_uri(file_url)
+        doc = Poppler.Document.new_from_gfile(gio_file, password=None)
+        page = doc.get_page(page_idx)
+
+        base_size = page.get_size()
+        size = (  # scale up because default size if too small for reading
+            int(base_size[0]) * paperwork_backend.model.pdf.PDF_RENDER_FACTOR,
+            int(base_size[1]) * paperwork_backend.model.pdf.PDF_RENDER_FACTOR,
+        )
+
+        stop = time.time()
+        LOGGER.info(
+            "Took %dms to get %s p%d size: %s",
+            (stop - start) * 1000, file_url, page_idx, size
+        )
+        return pillow
+
+    def url_to_pillow(self, file_url):
+        (file_url, page_idx) = self._check_is_pdf(file_url)
+        if file_url is None:
+            return None
 
         start = time.time()
         pillow = self.core.call_one(  # Poppler is not really thread safe
