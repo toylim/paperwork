@@ -97,12 +97,12 @@ class BasePromise(object):
         raise exc
 
     def schedule(self, *args):
-        if self.parent is not None:
-            self.parent.schedule(*args)
-        else:
-            if args == ():
-                args = None
-            self.core.call_one("mainloop_schedule", self.do, args)
+        s = self
+        while s.parent is not None:
+            s = s.parent
+        if args == ():
+            args = None
+        self.core.call_one("mainloop_schedule", s.do, args)
 
     def wait(self):
         assert(
