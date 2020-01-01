@@ -65,3 +65,10 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def docview_get_body(self):
         return self.widget_tree.get_object("docview_body")
+
+    def doc_open(self, doc_id, doc_url):
+        for child in self.page_container.get_children():
+            self.page_container.remove(child)
+        self.core.call_all(
+            "doc_open_components", doc_id, doc_url, self.page_container
+        )

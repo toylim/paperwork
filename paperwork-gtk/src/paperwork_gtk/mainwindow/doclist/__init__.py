@@ -201,4 +201,4 @@ class Plugin(openpaperwork_core.PluginBase):
         doc_id = self.row_to_docid[row]
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
         LOGGER.info("Opening document %s (%s)", doc_id, doc_url)
-        self.core.call_all("gtk_doc_open", doc_id, doc_url)
+        self.core.call_all("doc_open", doc_id, doc_url)
