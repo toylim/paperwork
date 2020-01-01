@@ -1,6 +1,5 @@
 import gettext
 import logging
-import time
 
 import openpaperwork_core
 import openpaperwork_core.promise
@@ -57,11 +56,14 @@ class Page(object):
         )
         self.widget = self.widget_tree.get_object("pageview_area")
         self.widget.connect("draw", self._on_draw)
-        self.flow_layout.add(self.widget)
         self.resize()
+        self.flow_layout.add(self.widget)
 
     def _on_renderer_img(self, renderer):
         return self.refresh()
+
+    def close(self):
+        self.renderer.close()
 
     def set_height(self, height):
         self.height = height
@@ -113,6 +115,10 @@ class Page(object):
 class Plugin(openpaperwork_core.PluginBase):
     PRIORITY = 10000
 
+    def __init__(self):
+        super().__init__()
+        self.pages = []
+
     def get_interfaces(self):
         return [
             'gtk_docview',
@@ -151,6 +157,9 @@ class Plugin(openpaperwork_core.PluginBase):
     def doc_open_components(self, doc_id, doc_url, page_container):
         self.core.call_success("work_queue_cancel_all", "page_loader")
 
+        for page in self.pages:
+            page.close()
+
         nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)
         if nb_pages is None:
             LOGGER.warning("Failed to get the number of pages in %s", doc_id)
@@ -160,10 +169,13 @@ class Plugin(openpaperwork_core.PluginBase):
             "on_perfcheck_start",
             "pageview->doc_open_components({})".format(doc_id)
         )
-        for page_idx in range(0, nb_pages):
-            page = Page(
+
+        self.pages = [
+            Page(
                 self.core, page_container, doc_id, doc_url, page_idx, nb_pages
-            )
+            ) for page_idx in range(0, nb_pages)
+        ]
+        for page in self.pages:
             page.set_height(400)  # default
 
         promise = openpaperwork_core.promise.Promise(

@@ -28,6 +28,7 @@ except (ImportError, ValueError):
 if GI_AVAILABLE:
     try:
         from gi.repository import Gio
+        from gi.repository import GObject
         GLIB_AVAILABLE = True
     except (ImportError, ValueError):
         pass
@@ -41,6 +42,104 @@ if GI_AVAILABLE:
 
 
 LOGGER = logging.getLogger(__name__)
+
+
+POPPLER_DOCS = {}
+
+
+class CairoRenderer(GObject.GObject):
+    __gsignals__ = {
+        'getting_size': (GObject.SignalFlags.RUN_LAST, None, ()),
+        'size_obtained': (GObject.SignalFlags.RUN_LAST, None, ()),
+        'img_obtained': (GObject.SignalFlags.RUN_LAST, None, ()),
+    }
+
+    def __init__(self, core, work_queue_name, file_url, page_idx):
+        global POPPLER_DOCS
+
+        super().__init__()
+        self.core = core
+        self.work_queue_name = work_queue_name
+        self.file_url = file_url
+        self.page_idx = page_idx
+        self.visible = False
+        self.size = (0, 0)
+        self.size_factor = 1.0
+
+        if file_url in POPPLER_DOCS:
+            (doc, refcount) = POPPLER_DOCS[file_url]
+        else:
+            LOGGER.info("Opening PDF file {}".format(file_url))
+            gio_file = Gio.File.new_for_uri(file_url)
+            doc = Poppler.Document.new_from_gfile(gio_file, password=None)
+            refcount = 0
+        POPPLER_DOCS[file_url] = (doc, refcount + 1)
+
+        self.page = doc.get_page(page_idx)
+
+    def __str__(self):
+        return "CairoRenderer({} p{})".format(self.file_url, self.page_idx)
+
+    def start(self):
+        self.emit('getting_size')
+        base_size = self.page.get_size()
+        self.size = (  # scale up because default size if too small for reading
+            int(base_size[0]) * paperwork_backend.model.pdf.PDF_RENDER_FACTOR,
+            int(base_size[1]) * paperwork_backend.model.pdf.PDF_RENDER_FACTOR,
+        )
+        self.emit('size_obtained')
+
+    def render(self):
+        self.visible = True
+        self.emit('img_obtained')
+
+    def hide(self):
+        self.visible = False
+
+    def close(self):
+        global POPPLER_DOCS
+        self.hide()
+        self.page = None
+        self.size = (0, 0)
+        (doc, refcount) = POPPLER_DOCS[self.file_url]
+        refcount -= 1
+        if refcount > 0:
+            POPPLER_DOCS[self.file_url] = (doc, refcount)
+            return
+        LOGGER.info("Closing PDF file {}".format(self.file_url))
+        POPPLER_DOCS.pop(self.file_url)
+
+    def draw(self, cairo_ctx):
+        if not self.visible or self.page is None:
+            return
+
+        task = "pdf_to_cairo_draw({}, p{})".format(
+            self.file_url, self.page_idx
+        )
+        self.core.call_all("on_perfcheck_start", task)
+
+        cairo_ctx.save()
+        try:
+            cairo_ctx.set_source_rgb(1.0, 1.0, 1.0)
+            cairo_ctx.rectangle(0, 0, self.size[0], self.size[1])
+            cairo_ctx.clip()
+            cairo_ctx.paint()
+
+            cairo_ctx.scale(
+                paperwork_backend.model.pdf.PDF_RENDER_FACTOR *
+                self.size_factor,
+                paperwork_backend.model.pdf.PDF_RENDER_FACTOR *
+                self.size_factor,
+            )
+            self.page.render(cairo_ctx)
+        finally:
+            cairo_ctx.restore()
+
+        self.core.call_all("on_perfcheck_stop", task, size=self.size)
+
+
+if GLIB_AVAILABLE:
+    GObject.type_register(CairoRenderer)
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -159,3 +258,9 @@ class Plugin(openpaperwork_core.PluginBase):
             self.core, self.pdf_page_to_cairo_surface,
             args=(file_url, page_idx)
         )
+
+    def cairo_renderer_by_url(self, work_queue_name, file_url):
+        (file_url, page_idx) = self._check_is_pdf(file_url)
+        if file_url is None:
+            return None
+        return CairoRenderer(self.core, work_queue_name, file_url, page_idx)

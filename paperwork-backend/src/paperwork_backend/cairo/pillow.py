@@ -188,6 +188,9 @@ class CairoRenderer(GObject.GObject):
             "work_queue_cancel", self.work_queue_name, self.render_img_promise
         )
 
+    def close(self):
+        self.hide()
+
     def _set_img_size(self, size):
         self.emit("getting_size")
         self.size = size
