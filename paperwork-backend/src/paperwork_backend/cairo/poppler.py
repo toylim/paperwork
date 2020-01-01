@@ -98,6 +98,15 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all("on_perfcheck_stop", task, size=size)
         return size
 
+    def url_to_img_size_promise(self, file_url):
+        (_file_url, page_idx) = self._check_is_pdf(file_url)
+        if _file_url is None:
+            return None
+
+        return openpaperwork_core.promise.Promise(
+            self.core, self.url_to_img_size, args=(file_url,)
+        )
+
     def pdf_page_to_cairo_surface(self, file_url, page_idx):
         task = "pdf_page_to_cairo_surface({})".format(file_url, page_idx)
 

@@ -51,6 +51,14 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all("on_perfcheck_stop", task, size=size)
         return size
 
+    def url_to_img_size_promise(self, file_url):
+        if not self._check_is_img(file_url):
+            return None
+
+        return openpaperwork_core.promise.ThreadedPromise(
+            self.core, self.url_to_img_size, args=(file_url,)
+        )
+
     def url_to_pillow(self, file_url):
         if not self._check_is_img(file_url):
             return None

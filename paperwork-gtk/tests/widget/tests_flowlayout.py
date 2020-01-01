@@ -7,6 +7,12 @@ from gi.repository import Gtk
 from paperwork_gtk.widget import flowlayout
 
 
+class DummyCore(object):
+    @staticmethod
+    def call_all(*args, **kwargs):
+        pass
+
+
 class TestPositioning(unittest.TestCase):
     def test_position_start(self):
         widgets = [
@@ -15,7 +21,7 @@ class TestPositioning(unittest.TestCase):
             flowlayout.WidgetInfo(None, Gtk.Align.START, (40, 20)),
             flowlayout.WidgetInfo(None, Gtk.Align.START, (40, 20)),
         ]
-        flowlayout.recompute_box_positions(widgets, width=100)
+        flowlayout.recompute_box_positions(DummyCore(), widgets, width=100)
 
         self.assertEqual(widgets[0].position, (0, 0))
         self.assertEqual(widgets[1].position, (40, 0))
@@ -29,7 +35,7 @@ class TestPositioning(unittest.TestCase):
             flowlayout.WidgetInfo(None, Gtk.Align.END, (40, 20)),
             flowlayout.WidgetInfo(None, Gtk.Align.END, (40, 20)),
         ]
-        flowlayout.recompute_box_positions(widgets, width=100)
+        flowlayout.recompute_box_positions(DummyCore(), widgets, width=100)
 
         self.assertEqual(widgets[0].position, (20, 0))
         self.assertEqual(widgets[1].position, (60, 0))
@@ -43,7 +49,7 @@ class TestPositioning(unittest.TestCase):
             flowlayout.WidgetInfo(None, Gtk.Align.CENTER, (40, 20)),
             flowlayout.WidgetInfo(None, Gtk.Align.CENTER, (40, 20)),
         ]
-        flowlayout.recompute_box_positions(widgets, width=100)
+        flowlayout.recompute_box_positions(DummyCore(), widgets, width=100)
 
         self.assertEqual(widgets[0].position, (10, 0))
         self.assertEqual(widgets[1].position, (50, 0))
@@ -57,7 +63,7 @@ class TestPositioning(unittest.TestCase):
             flowlayout.WidgetInfo(None, Gtk.Align.END, (40, 20)),
             flowlayout.WidgetInfo(None, Gtk.Align.CENTER, (40, 20)),
         ]
-        flowlayout.recompute_box_positions(widgets, width=150)
+        flowlayout.recompute_box_positions(DummyCore(), widgets, width=150)
 
         self.assertEqual(widgets[0].position, (0, 0))
         self.assertEqual(widgets[1].position, (70, 0))
@@ -72,7 +78,7 @@ class TestPositioning(unittest.TestCase):
             flowlayout.WidgetInfo(None, Gtk.Align.CENTER, (40, 20)),
         ]
         flowlayout.recompute_box_positions(
-            widgets, width=150, spacing=(3, 4)
+            DummyCore(), widgets, width=150, spacing=(3, 4)
         )
 
         self.assertEqual(widgets[0].position, (0, 0))
@@ -85,7 +91,9 @@ class TestPositioning(unittest.TestCase):
             flowlayout.WidgetInfo(None, Gtk.Align.CENTER, (140, 200)),
             flowlayout.WidgetInfo(None, Gtk.Align.CENTER, (140, 200)),
         ]
-        flowlayout.recompute_box_positions(widgets, width=500, spacing=(50, 50))
+        flowlayout.recompute_box_positions(
+            DummyCore(), widgets, width=500, spacing=(50, 50)
+        )
 
         self.assertEqual(widgets[0].position, (85, 0))
         self.assertEqual(widgets[1].position, (275, 0))
