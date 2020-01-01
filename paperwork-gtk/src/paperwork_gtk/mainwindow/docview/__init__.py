@@ -48,7 +48,7 @@ class Plugin(openpaperwork_core.PluginBase):
         scroll = self.widget_tree.get_object("docview_scroll")
 
         self.page_container = self.core.call_success(
-            "gtk_widget_flowlayout_new", spacing=(20, 20)
+            "gtk_widget_flowlayout_new", spacing=(20, 20), scrollbars=scroll
         )
         self.page_container.set_visible(True)
 

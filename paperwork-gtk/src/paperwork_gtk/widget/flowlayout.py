@@ -38,6 +38,8 @@ class WidgetInfo(object):
         else:
             self.size = (0, 0)
         self.position = (0, 0)
+        self.visible = False
+        self.size_allocate_handler_id = -1
 
     def update_widget_size(self):
         if self.widget is None:  # test mode
@@ -159,26 +161,51 @@ def recompute_box_positions(widgets, width, spacing=(0, 0)):
 
 
 class CustomFlowLayout(Gtk.Box):
-    def __init__(self, spacing=(0, 0)):
+    __gsignals__ = {
+        'widget_visible': (
+            GObject.SignalFlags.RUN_LAST, None, (Gtk.Widget,)
+        ),
+        'widget_hidden': (
+            GObject.SignalFlags.RUN_LAST, None, (Gtk.Widget,)
+        ),
+    }
+
+    def __init__(self, spacing=(0, 0), scrollbars=None):
         super().__init__()
         self.widgets = []
         self.spacing = spacing
+        self.vadjustment = None
+
         self.set_has_window(False)
         self.set_redraw_on_allocate(False)
-        self.width = 100
-        self.connect("size-allocate", self.on_size_allocate)
-        self.connect("add", self.on_add)
-        self.connect("remove", self.on_remove)
 
-    def on_add(self, _, widget):
-        self.widgets.append(WidgetInfo(widget, Gtk.Align.CENTER))
+        self.connect("size-allocate", self._on_size_allocate)
+        self.connect("add", self._on_add)
+        self.connect("remove", self._on_remove)
+
+        if scrollbars is not None:
+            self.vadjustment = scrollbars.get_vadjustment()
+            self.vadjustment.connect(
+                "value-changed", self._on_vadj_value_changed
+            )
+
+    def _on_add(self, _, widget):
+        widget = WidgetInfo(widget, Gtk.Align.CENTER)
+        self.widgets.append(widget)
         self.queue_resize()
+        widget.size_allocate_handler_id = widget.widget.connect(
+            "size-allocate", self._on_widget_size_allocate
+        )
 
-    def on_remove(self, _, widget):
+    def _on_remove(self, _, widget):
         try:
+            idx = self.widgets.index(widget)
+            widget = self.widgets[idx]
+
             self.widgets.remove(widget)
             self.queue_draw()
             self.queue_resize()
+            widget.widget.disconnect(widget.size_allocate_handler_id)
         except ValueError:
             pass
 
@@ -223,7 +250,7 @@ class CustomFlowLayout(Gtk.Box):
     def do_get_preferred_width_for_height(self, height):
         return self.do_get_preferred_width()
 
-    def on_size_allocate(self, _, allocation):
+    def _on_size_allocate(self, _, allocation):
         recompute_box_positions(self.widgets, allocation.width, self.spacing)
 
         for widget in self.widgets:
@@ -235,7 +262,41 @@ class CustomFlowLayout(Gtk.Box):
             rect.height = widget.size[1]
             widget.widget.size_allocate(rect)
 
-    def on_destroy(self, _):
+    def update_visibility(self):
+        if self.vadjustment is None:
+            return
+
+        # assumes the vadjustment values are in pixels
+        lower = self.vadjustment.get_lower()
+        p_min = self.vadjustment.get_value() - lower
+        p_max = (
+            self.vadjustment.get_value() +
+            self.vadjustment.get_page_size() -
+            lower
+        )
+
+        for widget in self.widgets:
+            p_lower = widget.position[1]
+            p_upper = widget.position[1] + widget.size[1]
+            visible = (
+                (p_min <= p_lower and p_lower <= p_max)
+                or (p_min <= p_upper and p_upper <= p_max)
+            )
+
+            if widget.visible != visible:
+                widget.visible = visible
+                if visible:
+                    self.emit("widget_visible", widget.widget)
+                else:
+                    self.emit("widget_hidden", widget.widget)
+
+    def _on_vadj_value_changed(self, vadjustment):
+        self.update_visibility()
+
+    def _on_widget_size_allocate(self, widget, allocation):
+        self.update_visibility()
+
+    def _on_destroy(self, _):
         if not hasattr(self, 'widgets'):
             return
         for widget in self.widgets:
@@ -260,7 +321,7 @@ class Plugin(openpaperwork_core.PluginBase):
         if not GTK_AVAILABLE:
             out['gtk'].update(openpaperwork_gtk.deps.GTK)
 
-    def gtk_widget_flowlayout_new(self, spacing=(0, 0)):
+    def gtk_widget_flowlayout_new(self, spacing=(0, 0), scrollbars=None):
         assert(GI_AVAILABLE)
         assert(GTK_AVAILABLE)
-        return CustomFlowLayout(spacing)
+        return CustomFlowLayout(spacing, scrollbars)
