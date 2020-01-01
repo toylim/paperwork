@@ -1,6 +1,5 @@
 import io
 import logging
-import time
 
 import openpaperwork_core
 import openpaperwork_core.deps
@@ -42,7 +41,7 @@ if GI_AVAILABLE:
 LOGGER = logging.getLogger(__name__)
 
 
-def pillow_to_surface(img, intermediate="pixbuf", quality=90):
+def pillow_to_surface(core, img, intermediate="pixbuf", quality=90):
     """
     Convert a PIL image into a Cairo surface
     """
@@ -59,7 +58,7 @@ def pillow_to_surface(img, intermediate="pixbuf", quality=90):
 
     # So we fall back to those methods:
 
-    start = time.time()
+    core.call_all("on_perfcheck_start", "pillow_to_surface")
 
     if intermediate == "pixbuf" and (
                 not hasattr(GdkPixbuf.Pixbuf, 'new_from_bytes') or
@@ -120,12 +119,9 @@ def pillow_to_surface(img, intermediate="pixbuf", quality=90):
             "image2surface(): unknown intermediate: {}".format(intermediate)
         )
 
-    stop = time.time()
-
-    LOGGER.info(
-        "Took %dms to convert Pillow image to Cairo surface"
-        " (size=%s, intermediate=%s)",
-        (stop - start) * 1000, img.size, intermediate
+    core.call_all(
+        "on_perfcheck_stop", "pillow_to_surface",
+        size=img.size, intermediate=intermediate
     )
     return img_surface
 
@@ -157,7 +153,7 @@ class Plugin(openpaperwork_core.PluginBase):
             out['glib'].update(openpaperwork_core.deps.GLIB)
 
     def pillow_to_surface(self, pillow, intermediate="pixbuf", quality=90):
-        return pillow_to_surface(pillow, intermediate, quality)
+        return pillow_to_surface(self.core, pillow, intermediate, quality)
 
     def url_to_cairo_surface_promise(self, file_url):
         promise = self.core.call_success("url_to_pillow_promise", file_url)

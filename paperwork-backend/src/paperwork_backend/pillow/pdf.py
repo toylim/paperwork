@@ -1,6 +1,5 @@
 import io
 import logging
-import time
 
 import PIL
 import PIL.Image
@@ -53,7 +52,7 @@ if GI_AVAILABLE:
 LOGGER = logging.getLogger(__name__)
 
 
-def surface2image(surface):
+def surface2image(core, surface):
     """
     Convert a cairo surface into a PIL image
     """
@@ -72,6 +71,8 @@ def surface2image(surface):
     # background.paste(img, mask=img.split()[3])  # 3 is the alpha channel
     # return background
 
+    core.call_all("on_perfcheck_start", "surface2image")
+
     img_io = io.BytesIO()
     surface.write_to_png(img_io)
     img_io.seek(0)
@@ -79,10 +80,14 @@ def surface2image(surface):
     img.load()
 
     if "A" not in img.getbands():
+        core.call_all("on_perfcheck_stop", "surface2image", size=img.size)
         return img
 
     img_no_alpha = PIL.Image.new("RGB", img.size, (255, 255, 255))
     img_no_alpha.paste(img, mask=img.split()[3])  # 3 is the alpha channel
+    core.call_all(
+        "on_perfcheck_stop", "surface2image", size=img_no_alpha.size
+    )
     return img_no_alpha
 
 
@@ -123,7 +128,9 @@ class Plugin(openpaperwork_core.PluginBase):
         if file_url is None:
             return None
 
-        start = time.time()
+        task = "url_to_img_size({})".format(file_url)
+        self.core.call_all("on_perfcheck_start", task)
+
         gio_file = Gio.File.new_for_uri(file_url)
         doc = Poppler.Document.new_from_gfile(gio_file, password=None)
         page = doc.get_page(page_idx)
@@ -134,11 +141,7 @@ class Plugin(openpaperwork_core.PluginBase):
             int(base_size[1]) * paperwork_backend.model.pdf.PDF_RENDER_FACTOR,
         )
 
-        stop = time.time()
-        LOGGER.info(
-            "Took %dms to get %s p%d size: %s",
-            (stop - start) * 1000, file_url, page_idx, size
-        )
+        self.core.call_all("on_perfcheck_stop", task, size=base_size)
         return pillow
 
     def url_to_pillow(self, file_url):
@@ -156,15 +159,8 @@ class Plugin(openpaperwork_core.PluginBase):
             "pdf_page_to_cairo_surface", file_url, page_idx
         )
 
-        start = time.time()
-        img = surface2image(surface)
+        img = surface2image(self.core, surface)
         img.load()
-        stop = time.time()
-        LOGGER.info(
-            "Took %dms to convert %s p%d"
-            " from Cairo ImageSurface to a pillow image",
-            (stop - start) * 1000, file_url, page_idx
-        )
         return img
 
     def url_to_pillow_promise(self, file_url):

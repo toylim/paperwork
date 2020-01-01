@@ -1,5 +1,4 @@
 import logging
-import time
 
 import PIL
 import PIL.Image
@@ -41,29 +40,30 @@ class Plugin(openpaperwork_core.PluginBase):
     def url_to_img_size(self, file_url):
         if not self._check_is_img(file_url):
             return None
-        start = time.time()
+
+        task = "url_to_img_size({})".format(file_url)
+        self.core.call_all("on_perfcheck_start", task)
+
         with self.core.call_success("fs_open", file_url, mode='rb') as fd:
             img = PIL.Image.open(fd)
             size = img.size
-        stop = time.time()
-        LOGGER.info(
-            "Took %dms to get size of %s: %s",
-            (stop - start) * 1000, file_url, size
-        )
-        return img
+
+        self.core.call_all("on_perfcheck_stop", task, size=size)
+        return size
 
     def url_to_pillow(self, file_url):
         if not self._check_is_img(file_url):
             return None
-        start = time.time()
+
+        task = "url_to_pillow({})".format(file_url)
+        self.core.call_all("on_perfcheck_start", task)
+
         with self.core.call_success("fs_open", file_url, mode='rb') as fd:
             img = PIL.Image.open(fd)
             img.load()
-        stop = time.time()
-        LOGGER.info(
-            "Took %dms to render %s as a Pillow image",
-            (stop - start) * 1000, file_url
-        )
+            size = img.size
+
+        self.core.call_all("on_perfcheck_stop", task, size=size)
         return img
 
     def url_to_pillow_promise(self, file_url):

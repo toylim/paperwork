@@ -189,6 +189,15 @@ class Plugin(openpaperwork_core.PluginBase):
             LOGGER.warning("Failed to get the number of pages in %s", doc_id)
             nb_pages = 0
 
+        self.core.call_all(
+            "on_perfcheck_start",
+            "pageview->doc_open_components({})".format(doc_id)
+        )
         for page_idx in range(0, nb_pages):
             page = Page(self.core, page_container, doc_id, doc_url, page_idx)
             page.set_height(400)  # default
+        self.core.call_all(
+            "on_perfcheck_stop",
+            "pageview->doc_open_components({})".format(doc_id),
+            nb_pages=nb_pages
+        )

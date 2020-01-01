@@ -1,5 +1,4 @@
 import logging
-import time
 
 import openpaperwork_core
 import openpaperwork_core.deps
@@ -84,7 +83,8 @@ class Plugin(openpaperwork_core.PluginBase):
         if file_url is None:
             return None
 
-        start = time.time()
+        task = "url_to_img_size({})".format(file_url)
+        self.core.call_all("on_perfcheck_start", task)
         gio_file = Gio.File.new_for_uri(file_url)
         doc = Poppler.Document.new_from_gfile(gio_file, password=None)
         page = doc.get_page(page_idx)
@@ -95,15 +95,14 @@ class Plugin(openpaperwork_core.PluginBase):
             int(base_size[1]) * paperwork_backend.model.pdf.PDF_RENDER_FACTOR,
         )
 
-        stop = time.time()
-        LOGGER.info(
-            "Took %dms to get %s p%d size: %s",
-            (stop - start) * 1000, file_url, page_idx, size
-        )
+        self.core.call_all("on_perfcheck_stop", task, size=size)
         return size
 
     def pdf_page_to_cairo_surface(self, file_url, page_idx):
-        start = time.time()
+        task = "pdf_page_to_cairo_surface({})".format(file_url, page_idx)
+
+        self.core.call_all("on_perfcheck_start", task)
+
         gio_file = Gio.File.new_for_uri(file_url)
         doc = Poppler.Document.new_from_gfile(gio_file, password=None)
         page = doc.get_page(page_idx)
@@ -134,12 +133,7 @@ class Plugin(openpaperwork_core.PluginBase):
         finally:
             ctx.restore()
 
-        stop = time.time()
-
-        LOGGER.info(
-            "Took %dms to render %s p%d on a Cairo ImageSurface (size=%s)",
-            (stop - start) * 1000, file_url, page_idx, size
-        )
+        self.core.call_all("on_perfcheck_stop", task, size=(width, height))
         return surface
 
     def url_to_cairo_surface(self, file_url):
