@@ -1,6 +1,8 @@
 import collections
 import importlib
 import logging
+import os
+import time
 
 
 LOGGER = logging.getLogger(__name__)
@@ -89,6 +91,11 @@ class Core(object):
         self.interfaces = collections.defaultdict(list)
         self.callbacks = collections.defaultdict(list)
         self.allow_unsatisfied = allow_unsatisfied
+
+        self.log_all = bool(os.getenv("CORE_LOG_ALL", 0))
+        self.count_limit_per_second = int(os.getenv("CORE_CALL_LIMIT", 0))
+        self.counters_last_reset = 0
+        self.counters = collections.defaultdict(lambda: 0)
 
     def load(self, module_name):
         """
@@ -244,6 +251,21 @@ class Core(object):
     def get_by_interface(self, interface_name):
         return self.interfaces[interface_name]
 
+    def _check_call_limit(self, callback_name):
+        if self.count_limit_per_second <= 0:
+            return
+        now = time.time()
+        if now - self.counters_last_reset >= 1.0:
+            self.counters = collections.defaultdict(lambda: 0)
+            self.counters_last_reset = now
+        self.counters[callback_name] += 1
+        if self.counters[callback_name] >= self.count_limit_per_second:
+            raise Exception(
+                "Too many calls to '{}' (>= {}) in one second".format(
+                    callback_name, self.count_limit_per_second
+                )
+            )
+
     def call_all(self, callback_name, *args, **kwargs):
         """
         Call all the methods of all the plugins that have `callback_name`
@@ -267,6 +289,14 @@ class Core(object):
            Core <- "Plugin C": returns "something_c"
            Caller <- Core: returns 3
         """
+        if self.log_all:
+            print(
+                "[{}] call_all({}, args={}, kwargs={})".format(
+                    time.time(), callback_name, args, kwargs
+                )
+            )
+        self._check_call_limit(callback_name)
+
         callbacks = self.callbacks[callback_name]
         if len(callbacks) <= 0:
             if callback_name.startswith("on_"):
@@ -300,6 +330,13 @@ class Core(object):
         when you're fairly sure there should be only one plugin with such
         callback (example: mainloop plugins).
         """
+        self._check_call_limit(callback_name)
+        if self.log_all:
+            print(
+                "[{}] call_one({}, args={}, kwargs={})".format(
+                    time.time(), callback_name, args, kwargs
+                )
+            )
         callbacks = self.callbacks[callback_name]
         if len(callbacks) <= 0:
             raise IndexError(
@@ -334,6 +371,13 @@ class Core(object):
            Core <- "Plugin C": returns "something"
            Caller <- Core: returns "something"
         """
+        self._check_call_limit(callback_name)
+        if self.log_all:
+            print(
+                "[{}] call_one({}, args={}, kwargs={})".format(
+                    time.time(), callback_name, args, kwargs
+                )
+            )
         callbacks = self.callbacks[callback_name]
         if len(callbacks) <= 0:
             LOGGER.warning("No method '%s' found", callback_name)
