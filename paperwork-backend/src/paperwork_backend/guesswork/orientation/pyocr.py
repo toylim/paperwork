@@ -59,14 +59,10 @@ class OrientationTransaction(object):
             # Guess page orientation on new pages, but only if we are
             # not synchronizing with the work directory
             if not self.sync and change == 'new':
-                out = []
-                self.core.call_one(
-                    "mainloop_execute", self.core.call_success,
-                    "doc_get_text_by_url", out, doc_url
-                )
-                out = " ".join(out)
-                out = out.strip()
-                if out != "":
+                if self.core.call_one(
+                            "mainloop_execute", self.core.call_success,
+                            "page_has_text_by_url", doc_url, page_idx
+                        ):
                     LOGGER.debug(
                         "Document %s page %d has already some text",
                         doc_id, page_idx

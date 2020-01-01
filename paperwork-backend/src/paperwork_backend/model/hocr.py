@@ -87,6 +87,14 @@ class Plugin(openpaperwork_core.PluginBase):
                 continue
             out.append(page_txt_generator(line_boxes))
 
+    def page_has_text_by_url(self, doc_url, page_idx):
+        page_url = self.core.call_success(
+            "fs_join", doc_url, PAGE_FILENAME_FMT.format(page_idx + 1)
+        )
+        if self.core.call_success("fs_exists", page_url) is None:
+            return None
+        return True
+
     def page_get_boxes_by_url(self, doc_url, page_idx):
         page_url = self.core.call_success(
             "fs_join", doc_url, PAGE_FILENAME_FMT.format(page_idx + 1)

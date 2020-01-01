@@ -90,6 +90,10 @@ class PdfLineBox(object):
 
 
 class Plugin(openpaperwork_core.PluginBase):
+    def __init__(self):
+        super().__init__()
+        self.cache = {}
+
     def get_interfaces(self):
         return [
             "chkdeps",
@@ -148,7 +152,13 @@ class Plugin(openpaperwork_core.PluginBase):
         pdf_url = self._get_pdf_url(doc_url)
         if pdf_url is None:
             return
-        out.append(self.core.call_success("fs_hash", pdf_url))
+
+        # cache the hash to speed up imports
+        cache_key = "hash_{}".format(doc_url)
+        if cache_key not in self.cache:
+            h = self.core.call_success("fs_hash", pdf_url)
+            self.cache[cache_key] = h
+        out.append(self.cache[cache_key])
 
     def page_get_hash_by_url(self, out: list, doc_url, page_idx):
         return self.doc_get_hash_by_url(out, doc_url)
@@ -209,6 +219,12 @@ class Plugin(openpaperwork_core.PluginBase):
             if txt == "":
                 continue
             out.append(txt)
+
+    def page_has_text_by_url(self, doc_url, page_idx):
+        (pdf_url, pdf) = self._open_pdf(doc_url)
+        if pdf is None:
+            return
+        return len(pdf.get_page(page_idx).get_text().strip()) > 0
 
     def page_get_boxes_by_url(self, doc_url, page_idx):
         (pdf_url, pdf) = self._open_pdf(doc_url)
