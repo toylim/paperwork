@@ -29,7 +29,6 @@ if GI_AVAILABLE:
     try:
         gi.require_version('Gdk', '3.0')
         gi.require_version('GdkPixbuf', '2.0')
-        from gi.repository import GObject
         from gi.repository import Gdk
         from gi.repository import GdkPixbuf
         GDK_AVAILABLE = True
@@ -38,9 +37,17 @@ if GI_AVAILABLE:
 
     try:
         from gi.repository import GLib
+        from gi.repository import GObject
         GLIB_AVAILABLE = True
     except (ImportError, ValueError):
         pass
+
+
+if not GLIB_AVAILABLE:
+    # dummy so chkdeps can still be called
+    class GObject(object):
+        class GObject(object):
+            pass
 
 
 LOGGER = logging.getLogger(__name__)

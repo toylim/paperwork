@@ -41,6 +41,13 @@ if GI_AVAILABLE:
         pass
 
 
+if not GLIB_AVAILABLE:
+    # dummy so chkdeps can still be called
+    class GObject(object):
+        class GObject(object):
+            pass
+
+
 LOGGER = logging.getLogger(__name__)
 
 
