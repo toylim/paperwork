@@ -88,6 +88,7 @@ Main features are:
     "install_requires": [
         "distro",
         "openpaperwork-core",
+        "openpaperwork-gtk",
         "Pillow",
         "pycountry",
         "pyocr >= 0.3.0",
