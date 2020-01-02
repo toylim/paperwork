@@ -40,14 +40,10 @@ if GI_AVAILABLE:
         from gi.repository import GObject
         GLIB_AVAILABLE = True
     except (ImportError, ValueError):
-        pass
-
-
-if not GLIB_AVAILABLE:
-    # dummy so chkdeps can still be called
-    class GObject(object):
+        # dummy so chkdeps can still be called
         class GObject(object):
-            pass
+            class GObject(object):
+                pass
 
 
 LOGGER = logging.getLogger(__name__)
