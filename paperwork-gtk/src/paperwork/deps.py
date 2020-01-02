@@ -73,7 +73,13 @@ MODULES = [
     ),
     (
         'Libinsane (scanner support)', 'gi.repository.Libinsane',
-        {},  # no known package yet
+        {
+            'debian': 'gir1.2-libinsane-1.0',
+            'fedora': 'libinsane-gobject',
+            'gentoo': 'media-libs/libinsane',
+            'linuxmint': 'gir1.2-libinsane-1.0',
+            'ubuntu': 'gir1.2-libinsane-1.0',
+        },
     ),
     (
         'Notify (GObject introspection bindings)', 'gi.repository.Notify',
