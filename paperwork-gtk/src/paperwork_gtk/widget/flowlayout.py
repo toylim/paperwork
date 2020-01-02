@@ -19,6 +19,10 @@ except (ImportError, ValueError):
     class Gtk(object):
         class Box(object):
             pass
+
+        class Widget(object):
+            pass
+
     GTK_AVAILABLE = False
 
 
