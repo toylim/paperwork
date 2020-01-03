@@ -41,12 +41,10 @@ class OcrTransaction(object):
 
     def _run_ocr_on_page(self, doc_id, doc_url, page_idx, wordless_only=False):
         if wordless_only:
-            current_boxes = self.core.call_success(
-                "page_get_boxes_by_url", doc_url, page_idx
+            has_text = self.core.call_success(
+                "page_has_text_by_url", doc_url, page_idx
             )
-            if current_boxes is not None:
-                current_boxes = list(current_boxes)
-            if current_boxes is not None and len(current_boxes) > 0:
+            if has_text:
                 # there is already some text on this page
                 LOGGER.info(
                     "Page %s p%d has already some text. No OCR run",
