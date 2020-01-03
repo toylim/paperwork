@@ -240,6 +240,8 @@ class Plugin(CommonFsPluginBase):
             ):
         assert('/' not in prefix)
         assert('/' not in suffix)
+        if on_disk:
+            return
         name = "{}{}{}".format(
             prefix, next(self.id_gen), suffix
         )
