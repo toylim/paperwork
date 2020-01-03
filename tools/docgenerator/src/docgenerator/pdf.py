@@ -18,7 +18,9 @@ def generate(core, out_file, paper_size):
         for page_idx in range(0, nb_pages):
             print("Generating page {}/{}...".format(page_idx, nb_pages))
             words.draw_words(
-                context, dictionary, int(paper_size[0]), int(paper_size[1])
+                context, dictionary,
+                int(paper_size[0]), int(paper_size[1]),
+                page_idx, nb_pages
             )
             context.show_page()
 
