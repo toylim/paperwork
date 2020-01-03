@@ -9,7 +9,7 @@ check:
     - linux
     - volatile
   script:
-    - sh ./set_apt_proxy.sh
+    - sh ./ci/set_apt_proxy.sh
     - apt-get install -y -q make
     - apt-get install -y -q pycodestyle flake8 python3-flake8
     - make check
@@ -57,7 +57,7 @@ linux_flatpak:
     # not running as root, so we cannot actually install anything
     # - apt-get update
     # - apt-get install -y -q rclone flatpak-builder
-    - ./update_flatpak_repo.sh
+    - ./ci/update_flatpak_repo.sh
 
 
 doc:
@@ -125,7 +125,7 @@ windows_exe:
     - git submodule update --recursive --remote
     - c:\msys64\usr\bin\bash -lc "make clean"
     - c:\msys64\usr\bin\bash -lc "make windows_exe"
-    - c:\msys64\usr\bin\bash -lc "./deliver.sh dist/paperwork.zip windows .zip"
+    - c:\msys64\usr\bin\bash -lc "./ci/deliver.sh dist/paperwork.zip windows .zip"
   artifacts:
     expire_in: 2 days
     paths:
