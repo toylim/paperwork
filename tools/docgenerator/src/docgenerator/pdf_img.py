@@ -22,7 +22,8 @@ def generate(core, out_file, paper_size):
         for page_idx in range(0, nb_pages):
             print("Generating page {}/{}...".format(page_idx, nb_pages))
             img_surface = img.generate_img(
-                core, paper_size, page_idx, nb_pages, dictionary=dictionary
+                core, paper_size, page_idx, nb_pages, dictionary=dictionary,
+                jpeg=True
             )
 
             scale_factor = paper_size[0] / img_surface.get_width()

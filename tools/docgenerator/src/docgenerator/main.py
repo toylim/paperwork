@@ -19,7 +19,7 @@ from . import pdf_img
 
 DOC_GENERATORS = {
     'pdf': (pdf.generate, ".pdf", 1),
-    'img': (img.generate, ".png", 2),
+    'img': (img.generate, ".jpeg", 2),
     'pdf_img': (pdf_img.generate, ".pdf", 1),
 }
 
@@ -90,9 +90,9 @@ def main_generate_workdir():
         print("  {} <work_dir> <nb_docs>".format(sys.argv[0]))
         sys.exit(1)
 
-    generators = [DOC_GENERATORS['pdf_img']]
+    generators = ([DOC_GENERATORS['img']] * 5)
+    generators += [DOC_GENERATORS['pdf_img']]
     generators += ([DOC_GENERATORS['pdf']] * 5)
-    generators += ([DOC_GENERATORS['img']] * 5)
 
     core = get_core()
     paper_size = get_page_size()
@@ -123,7 +123,9 @@ def main_generate_workdir():
         ]
 
         if nb_files > 1:
-            nb_files = int(random.expovariate(1 / 25))
+            nb_files = int(random.expovariate(1 / 50))
+            if nb_files <= 0:
+                nb_files = 1
             if nb_files > 200:
                 nb_files = 200
 
@@ -137,9 +139,12 @@ def main_generate_workdir():
                 )
                 tmp_fd.close()
                 tmp_files.append(tmp_file)
-                print("Generating file {} for document {}/{} --> {}...".format(
-                    f, doc_idx, nb_docs, tmp_file
-                ))
+                print(
+                    "Generating file {}/{} for document {}/{}"
+                    " --> {}...".format(
+                        f, nb_files, doc_idx, nb_docs, tmp_file
+                    )
+                )
                 generator(core, tmp_file, paper_size)
 
             file_import = paperwork_backend.docimport.FileImport(

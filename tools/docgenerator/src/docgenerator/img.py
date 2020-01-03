@@ -6,7 +6,10 @@ import cairo
 from . import words
 
 
-def generate_img(core, paper_size, page_idx, nb_pages, dictionary=None):
+def generate_img(
+            core, paper_size, page_idx, nb_pages, dictionary=None,
+            jpeg=False
+        ):
     if dictionary is None:
         dictionary = words.WordDict()
 
@@ -26,10 +29,11 @@ def generate_img(core, paper_size, page_idx, nb_pages, dictionary=None):
 
     surface.flush()
 
-    img = core.call_success("cairo_surface_to_pillow", surface)
-    surface = core.call_success(
-        "pillow_to_surface", img, intermediate='jpeg', quality=80
-    )
+    if jpeg:
+        img = core.call_success("cairo_surface_to_pillow", surface)
+        surface = core.call_success(
+            "pillow_to_surface", img, intermediate='jpeg', quality=80
+        )
 
     print("Image generated")
     return surface
@@ -39,4 +43,4 @@ def generate(core, file_out, paper_size, page_idx=0, nb_pages=1):
     img = generate_img(core, paper_size, page_idx, nb_pages)
     img = core.call_success("cairo_surface_to_pillow", img)
     with core.call_success("fs_open", file_out, 'wb') as fd:
-        img.save(fd, format="PNG")
+        img.save(fd, format="JPEG")
