@@ -25,7 +25,10 @@ class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
         self.interactive = True
-        self.changes = None
+        self.changes = collections.defaultdict(
+            # we cannot use sets here because sets are not JSON-serializable
+            lambda: collections.defaultdict(list)
+        )
 
     def get_interfaces(self):
         return ['shell']
