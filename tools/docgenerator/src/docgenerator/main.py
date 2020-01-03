@@ -47,4 +47,5 @@ def main_generate_one():
         paper_size.get_height(Gtk.Unit.POINTS)
     )
 
-    DOC_GENERATORS[sys.argv[1]](core, sys.argv[2], paper_size)
+    file_out = core.call_success("fs_safe", sys.argv[2])
+    DOC_GENERATORS[sys.argv[1]](core, file_out, paper_size)

@@ -11,7 +11,7 @@ def generate(core, out_file, paper_size):
     nb_pages = int(random.expovariate(1 / 500))
 
     print("Generating PDF {}...".format(out_file))
-    with open(out_file, "wb") as fd:
+    with core.call_success("fs_open", out_file, "wb") as fd:
         surface = cairo.PDFSurface(fd, int(paper_size[0]), int(paper_size[1]))
         context = cairo.Context(surface)
 

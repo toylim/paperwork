@@ -13,7 +13,8 @@ WORD_SPACE = 10
 
 
 def draw_words(
-            context, words, width, height, page_idx, nb_pages,
+            context, words, width, height,
+            page_idx, nb_pages,
             word_height=WORD_HEIGHT, word_space=WORD_SPACE
         ):
     w = word_space
