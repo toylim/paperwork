@@ -10,12 +10,13 @@ import paperwork_shell.main
 
 from . import img
 from . import pdf
+from . import pdf_img
 
 
 DOC_GENERATORS = {
     'pdf': pdf.generate,
     'img': img.generate,
-    # 'pdf_img': pdf_img.generate,
+    'pdf_img': pdf_img.generate,
 }
 
 

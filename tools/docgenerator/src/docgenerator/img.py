@@ -25,9 +25,10 @@ def generate_img(core, paper_size, page_idx, nb_pages):
 
     surface.flush()
     print("Image generated")
-    return core.call_success("cairo_surface_to_pillow", surface)
+    return surface
 
 
 def generate(core, file_out, paper_size, page_idx=0, nb_pages=1):
     img = generate_img(core, paper_size, page_idx, nb_pages)
+    img = core.call_success("cairo_surface_to_pillow", img)
     img.save(file_out)
