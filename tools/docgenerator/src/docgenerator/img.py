@@ -1,3 +1,4 @@
+import io
 import random
 
 import cairo
@@ -24,6 +25,12 @@ def generate_img(core, paper_size, page_idx, nb_pages, dictionary=None):
     )
 
     surface.flush()
+
+    img = core.call_success("cairo_surface_to_pillow", surface)
+    surface = core.call_success(
+        "pillow_to_surface", img, intermediate='jpeg', quality=80
+    )
+
     print("Image generated")
     return surface
 

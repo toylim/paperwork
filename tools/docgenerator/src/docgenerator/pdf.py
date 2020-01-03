@@ -9,6 +9,8 @@ from . import words
 def generate(core, out_file, paper_size):
     dictionary = words.WordDict()
     nb_pages = int(random.expovariate(1 / 500))
+    if nb_pages <= 0:
+        nb_pages = 1
     if nb_pages > 2000:
         nb_pages = 2000
 

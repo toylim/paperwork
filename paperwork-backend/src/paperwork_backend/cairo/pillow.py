@@ -111,9 +111,7 @@ def pillow_to_surface(core, img, intermediate="pixbuf", quality=90):
             img.save(img_io, format="JPEG", quality=quality)
             img_io.seek(0)
             data = img_io.read()
-            img_surface.set_mime_data(
-                cairo.MIME_TYPE_JPEG, data
-            )
+            img_surface.set_mime_data(cairo.MIME_TYPE_JPEG, data)
 
     if intermediate == "png":
 
