@@ -16,7 +16,6 @@ Its drawback:
 - Using Flatpak, Paperwork comes directly from its developers. It has not been
   reviewed by your distribution maintainers. It may not include some changes
   that your distribution maintainers would have added.
-- Does not work with Fujitsu scanners (still needs to figure out why)
 
 
 # i386 and ARM architectures
