@@ -31,5 +31,6 @@ setuptools.setup(
         'openpaperwork-core',
         'openpaperwork-gtk',
         'paperwork-backend',
+        'paperwork-shell',
     ]
 )

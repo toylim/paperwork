@@ -91,6 +91,9 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         return pillow
 
+    def cairo_surface_to_pillow(self, surface):
+        return surface2image(self.core, surface)
+
     def _url_to_pillow(self, file_url, page_idx):
         surface = self.core.call_success(
             "pdf_page_to_cairo_surface", file_url, page_idx

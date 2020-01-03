@@ -1,31 +1,25 @@
-import cairo
 import random
 
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
+import cairo
 
 from . import words
 
 
 
-def generate(out_file):
-    paper_size = Gtk.PaperSize.new("iso_a4")
-    (w, h) = (
-        paper_size.get_width(Gtk.Unit.POINTS),
-        paper_size.get_height(Gtk.Unit.POINTS)
-    )
+def generate(core, out_file, paper_size):
     dictionary = words.WordDict()
     nb_pages = int(random.expovariate(1 / 500))
 
     print("Generating PDF {}...".format(out_file))
     with open(out_file, "wb") as fd:
-        surface = cairo.PDFSurface(fd, w, h)
+        surface = cairo.PDFSurface(fd, int(paper_size[0]), int(paper_size[1]))
         context = cairo.Context(surface)
 
         for page_idx in range(0, nb_pages):
             print("Generating page {}/{}...".format(page_idx, nb_pages))
-            words.draw_words(context, dictionary, w, h)
+            words.draw_words(
+                context, dictionary, int(paper_size[0]), int(paper_size[1])
+            )
             context.show_page()
 
         surface.flush()

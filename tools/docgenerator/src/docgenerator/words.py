@@ -14,6 +14,14 @@ def draw_words(context, words, width, height):
     w = WORD_SPACE
     h = WORD_SPACE
 
+    context.save()
+    try:
+        context.set_source_rgb(1.0, 1.0, 1.0)
+        context.rectangle(0, 0, width, height)
+        context.fill()
+    finally:
+        context.restore()
+
     while True:
         word = words.pick_word()
 
