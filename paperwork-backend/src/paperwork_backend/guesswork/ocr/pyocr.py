@@ -163,6 +163,8 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def ocr_page_by_url(self, doc_url, page_idx):
+        LOGGER.info("Running OCR on page %d of %s", page_idx, doc_url)
+
         doc_id = self.core.call_success("doc_url_to_id", doc_url)
 
         if doc_id is not None:

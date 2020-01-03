@@ -55,7 +55,7 @@ class PillowfightTransaction(object):
             LOGGER.info(
                 "Paper size for new page %d (document %s) is known."
                 " --> Assuming we don't need to crop automatically the page",
-                doc_id, page_idx
+                page_idx, doc_id
             )
             return
 
@@ -145,6 +145,8 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def crop_page_borders_by_url(self, doc_url, page_idx):
+        LOGGER.info("Cropping page %d of %s", page_idx, doc_url)
+
         doc_id = self.core.call_success("doc_url_to_id", doc_url)
 
         if doc_id is not None:

@@ -61,7 +61,7 @@ class WhooshTransaction(object):
 
         LOGGER.debug("Starting Whoosh index transaction")
         self.core = plugin.core
-        self.writer = plugin.index.writer()
+        self.writer = None
         self.counts = {
             'add': 0,
             'upd': 0,
@@ -69,6 +69,8 @@ class WhooshTransaction(object):
         }
         self.unchanged = 0
         self.total_expected = total_expected
+
+        self.writer = plugin.index.writer()
 
     def __enter__(self):
         pass
