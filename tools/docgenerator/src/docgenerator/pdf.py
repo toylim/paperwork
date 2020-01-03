@@ -9,6 +9,8 @@ from . import words
 def generate(core, out_file, paper_size):
     dictionary = words.WordDict()
     nb_pages = int(random.expovariate(1 / 500))
+    if nb_pages > 2000:
+        nb_pages = 2000
 
     print("Generating PDF {}...".format(out_file))
     with core.call_success("fs_open", out_file, "wb") as fd:

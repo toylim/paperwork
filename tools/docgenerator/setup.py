@@ -24,6 +24,7 @@ setuptools.setup(
     entry_points={
         'console_scripts': [
             'docgenerator-one = docgenerator.main:main_generate_one',
+            'docgenerator-workdir = docgenerator.main:main_generate_workdir',
         ],
     },
     zip_safe=True,
