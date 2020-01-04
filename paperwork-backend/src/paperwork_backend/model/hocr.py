@@ -82,7 +82,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return True
 
     def page_get_text_by_url(self, doc_url, page_idx):
-        task = "hocr_load_page_text_{}_{}".format(doc_url, page_idx)
+        task = "hocr_load_page_text({} p{})".format(doc_url, page_idx)
         self.core.call_all("on_perfcheck_start", task)
 
         page_url = self.core.call_success(
@@ -122,7 +122,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def page_get_boxes_by_url(self, doc_url, page_idx):
-        task = "hocr_load_page_boxes_{}_{}".format(doc_url, page_idx)
+        task = "hocr_load_page_boxes({} p{})".format(doc_url, page_idx)
         self.core.call_all("on_perfcheck_start", task)
 
         page_url = self.core.call_success(

@@ -209,7 +209,7 @@ class Plugin(openpaperwork_core.PluginBase):
             yield(letters, rects)
 
     def doc_get_text_by_url(self, out: list, doc_url):
-        task = "pdf_get_text_by_url_{}".format(doc_url)
+        task = "pdf_get_text_by_url({})".format(doc_url)
         self.core.call_all("on_perfcheck_start", task)
 
         (pdf_url, pdf) = self._open_pdf(doc_url)
