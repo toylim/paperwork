@@ -77,6 +77,8 @@ def main_main(in_args, application_name, default_plugins, interactive):
     if r is None:
         print("Unknown command or argument(s): {}".format(in_args))
         sys.exit(1)
+
+    core.call_all("on_quit")
     return r
 
 
@@ -92,6 +94,7 @@ def json_main():
             separators=(',', ': '),
             sort_keys=True
         ))
+        core.call_all("on_quit")
     except Exception as exc:
         stack = traceback.format_exc().splitlines()
         print(json.dumps(

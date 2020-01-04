@@ -229,7 +229,6 @@ class LabelGuesserTransaction(object):
         # collect data about the document from the document itself and from
         # the sqlite database and compare them
         # --> deduce the actions that must be done when running commit()
-
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
 
         actual = self._get_actual_doc_data(doc_id, doc_url)
@@ -286,7 +285,7 @@ class LabelGuesserTransaction(object):
                 "mainloop_schedule", self.core.call_all,
                 "on_progress", "label_guesser_update", 0.99,
                 _(
-                    "Updating label guessing training for label '%s'"
+                    "Updating label guessing training for label '{}'"
                     " with all known documents ..."
                 ).format(todo['label'])
             )

@@ -13,65 +13,73 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with Paperwork.  If not, see <http://www.gnu.org/licenses/>.
+import collections
 import gettext
 import shutil
 import sys
+import threading
 import time
 
 import openpaperwork_core
 
 _ = gettext.gettext
 
-MIN_TIME_BETWEEN_PROGRESS = 0.5
+TIME_BETWEEN_PROGRESS = 0.3
 
 
-class Plugin(openpaperwork_core.PluginBase):
-    def __init__(self):
-        self.nb_written = 0
-        self.nb_obj_expected = 0
-        self.last_progress = 0
-
-    def doc_transaction_start(self, out: list, total_expected=-1):
-        self.nb_obj_expected = total_expected
-
-    def on_progress(self, upd_type, progress, description=None):
-        if progress >= 1.0:
-            self.nb_written = 0
-
-            line = (
-                "\r" + (("[%s] [%-20s] " + _("Done")) % (20 * "=", upd_type)) +
-                "\n"
-            )
-
-            term_width = shutil.get_terminal_size((500, 25)).columns
-            line = line[:term_width - 1]
-            sys.stdout.write("\033[K" + line + "\r")
-            return
-
-        now = time.time()
-        if now - self.last_progress < MIN_TIME_BETWEEN_PROGRESS:
-            return
-        self.last_progress = now
-
-        if description is None:
-            if self.nb_written > 0:
-                sys.stdout.write("\n")
-            self.nb_written = 0
-            return
-
-        if self.nb_obj_expected == 1:
-            line = ""
-        else:
-            str_progress = (
-                "=" * int(progress * 20)
-                + " " * (20 - int(progress * 20))
-            )
-            line = '[%s] ' % str_progress[:20]
-
-        line += '[%-20s] %s' % (upd_type[:20], description)
+def print_progress(upd_type, progress, description=None):
+    if progress >= 1.0:
+        line = (
+            "\r" + (("[%s] [%-20s] " + _("Done")) % (20 * "=", upd_type)) +
+            "\n"
+        )
 
         term_width = shutil.get_terminal_size((500, 25)).columns
         line = line[:term_width - 1]
         sys.stdout.write("\033[K" + line + "\r")
+        return
 
-        self.nb_written += 1
+    str_progress = (
+        "=" * int(progress * 20)
+        + " " * (20 - int(progress * 20))
+    )
+    line = '[%s] ' % str_progress[:20]
+    line += '[%-20s] %s' % (upd_type[:20], description)
+
+    term_width = shutil.get_terminal_size((500, 25)).columns
+    line = line[:term_width - 1]
+    sys.stdout.write("\033[K" + line + "\r")
+
+
+class Plugin(openpaperwork_core.PluginBase):
+    def __init__(self):
+        self.progresses = collections.OrderedDict()
+        self.thread = None
+        self.lock = threading.Lock()
+
+    def _thread(self):
+        while True:
+            time.sleep(TIME_BETWEEN_PROGRESS)
+
+            with self.lock:
+                if len(self.progresses) <= 0:
+                    self.thread = None
+                    return
+
+                upd_type = next(iter(self.progresses))
+                (progress, description) = self.progresses[upd_type]
+                print_progress(upd_type, progress, description)
+
+    def on_progress(self, upd_type, progress, description=None):
+        with self.lock:
+            if progress >= 1.0:
+                if upd_type not in self.progresses:
+                    return
+                self.progresses.pop(upd_type)
+                print_progress(upd_type, progress)
+            else:
+                self.progresses[upd_type] = (progress, description)
+
+            if self.thread is None:
+                self.thread = threading.Thread(target=self._thread)
+                self.thread.start()
