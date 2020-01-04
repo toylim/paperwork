@@ -36,10 +36,17 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def on_progress(self, upd_type, progress, description=None):
         if progress >= 1.0:
-            if self.nb_written > 0:
-                sys.stdout.write("\n")
             self.nb_written = 0
-            sys.stdout.write(_("[{}] Done").format(upd_type) + "\n")
+
+            line = (
+                "\r" + (("[%s] [%-20s] " + _("Done")) % (20 * "=", upd_type)) +
+                "\n"
+            )
+
+            term_width = shutil.get_terminal_size((500, 25)).columns
+            line = line[:term_width - 1]
+            sys.stdout.write("\033[K" + line + "\r")
+            return
 
         now = time.time()
         if now - self.last_progress < MIN_TIME_BETWEEN_PROGRESS:
@@ -57,7 +64,7 @@ class Plugin(openpaperwork_core.PluginBase):
         else:
             str_progress = (
                 "=" * int(progress * 20)
-                + " " * int((1.0 - progress) * 20)
+                + " " * (20 - int(progress * 20))
             )
             line = '[%s] ' % str_progress[:20]
 
