@@ -41,6 +41,9 @@ class Plugin(openpaperwork_core.PluginBase):
         """
         Convert an image object to a GDK pixbuf
         """
+        if not GDK_PIXBUF_AVAILABLE:
+            return None
+
         if img is None:
             return None
         img = img.convert("RGB")
