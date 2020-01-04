@@ -42,7 +42,7 @@ test:
   <<: *apt
   script:
     - source ./activate_test_env.sh && make install
-    - source ./activate_test_env.sh && paperwork-cli chkdeps -y && paperwork-gtk chkdeps -y
+    - source ./activate_test_env.sh && paperwork-gtk chkdeps -y && paperwork-cli chkdeps -y
     - source ./activate_test_env.sh && make test
 
 
