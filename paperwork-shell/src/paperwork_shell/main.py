@@ -94,7 +94,6 @@ def json_main():
             separators=(',', ': '),
             sort_keys=True
         ))
-        core.call_all("on_quit")
     except Exception as exc:
         stack = traceback.format_exc().splitlines()
         print(json.dumps(
