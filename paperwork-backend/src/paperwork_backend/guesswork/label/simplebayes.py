@@ -167,7 +167,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         for doc_label in actual['labels']:
             if doc_label in db['labels']:
                 continue
-            LOGGER.info("Label '%s' added on document '%s'", doc_label, doc_id)
+            LOGGER.debug("Label '%s' added on document '%s'", doc_label, doc_id)
             # check if this label is a new one
             if not self._check_label_exists_in_db(doc_label):
                 LOGGER.info(
@@ -200,7 +200,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         for db_label in db['labels']:
             if db_label in actual['labels']:
                 continue
-            LOGGER.info(
+            LOGGER.debug(
                 "Label '%s' removed from document '%s'", db_label, doc_id
             )
             self.core.call_one(
