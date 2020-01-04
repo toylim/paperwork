@@ -35,7 +35,7 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def _check_is_img(self, file_url):
-        return file_url.split(".")[-1] in self.FILE_EXTENSIONS
+        return file_url.rsplit(".", 1)[-1] in self.FILE_EXTENSIONS
 
     def url_to_img_size(self, file_url):
         if not self._check_is_img(file_url):
