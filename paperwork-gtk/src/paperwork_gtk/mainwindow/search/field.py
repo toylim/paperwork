@@ -24,6 +24,10 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return [
             {
+                'interface': 'document_storage',
+                'defaults': ['paperwork_backend.model.workdir'],
+            },
+            {
                 'interface': 'index',
                 'defaults': ['paperwork_backend.index.whoosh'],
             },
@@ -58,18 +62,36 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         self.search_entry.connect("stop-search", lambda w: self.search_stop())
 
+        self.core.call_one(
+            "mainloop_schedule", self.search_update_document_list
+        )
+
     def search_update_document_list(self, _=None):
         query = self.search_entry.get_text()
         LOGGER.info("Looking for [%s]", query)
 
         out = []
-        promise = openpaperwork_core.promise.ThreadedPromise(
-            self.core, lambda: self.core.call_all(
-                "index_search", out, query
+
+        if query == "":
+            promise = openpaperwork_core.promise.ThreadedPromise(
+                self.core, lambda: self.core.call_all(
+                    "storage_get_all_docs", out
+                )
             )
+            promise = promise.then(
+                lambda *args, **kwargs: [doc_id for (doc_id, doc_url) in out]
+            )
+        else:
+            promise = openpaperwork_core.promise.ThreadedPromise(
+                self.core, lambda: self.core.call_all(
+                    "index_search", out, query
+                )
+            )
+            promise = promise.then(lambda *args, **kwargs: out)
+        promise = promise.then(lambda doc_ids: sorted(doc_ids, reverse=True))
+        promise = promise.then(
+            lambda doc_ids: self.core.call_all("doclist_show", doc_ids)
         )
-        promise = promise.then(lambda _: out.sort(reverse=True))
-        promise = promise.then(self.core.call_all, "doclist_show", out)
         promise.schedule()
 
     def search_stop(self):
