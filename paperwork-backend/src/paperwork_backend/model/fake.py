@@ -138,6 +138,14 @@ class Plugin(openpaperwork_core.PluginBase):
             if doc['url'] == doc_url:
                 doc['labels'].add((label, color))
 
+    def page_has_text_by_url(self, doc_url, page_idx):
+        for doc in self.docs:
+            if doc['url'] == doc_url:
+                if page_idx >= len(doc['page_boxes']):
+                    return None
+                return True
+        return None
+
     def page_get_boxes_by_url(self, doc_url, page_idx):
         for doc in self.docs:
             if doc['url'] == doc_url:
