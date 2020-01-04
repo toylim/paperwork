@@ -1,5 +1,6 @@
 import logging
 import heapq
+import traceback
 
 from .. import PluginBase
 
@@ -13,6 +14,16 @@ class Task(object):
         self.insert_number = insert_number
         self.promise = promise
         self.active = True
+        self.created_by = traceback.extract_stack()
+
+    def _on_error(self, exc):
+        LOGGER.error("=== Promise was queued by ===")
+        for (idx, stack_el) in enumerate(self.created_by):
+            LOGGER.error(
+                "%2d: %20s: L%5d: %s",
+                idx, stack_el[0], stack_el[1], stack_el[2]
+            )
+        raise exc
 
     def __lt__(self, o):
         if self.priority < o.priority:
@@ -59,6 +70,7 @@ class WorkQueue(object):
             return
 
         promise = task.promise.then(self._run_next_promise)
+        promise.catch(task._on_error)
         promise.schedule()
 
     def cancel(self, promise):
