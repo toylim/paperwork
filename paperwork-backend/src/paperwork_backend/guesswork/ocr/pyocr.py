@@ -6,6 +6,8 @@ import pyocr.builders
 
 import openpaperwork_core
 
+from ... import sync
+
 
 LOGGER = logging.getLogger(__name__)
 _ = gettext.gettext
@@ -13,15 +15,14 @@ _ = gettext.gettext
 ID = "ocr"
 
 
-class OcrTransaction(object):
+class OcrTransaction(sync.BaseTransaction):
     def __init__(self, plugin, sync, total_expected=-1):
+        super().__init__(plugin.core, total_expected)
+
         self.priority = plugin.PRIORITY
 
         self.plugin = plugin
         self.sync = sync
-        self.core = plugin.core
-        self.total_expected = total_expected
-        self.count = 0
 
         # for each document, we need to track which pages have already been
         # OCR-ed, which have been modified (cropping, rotation, ...)
@@ -34,11 +35,6 @@ class OcrTransaction(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.cancel()
 
-    def _get_progression(self):
-        if self.total_expected <= 0:
-            return 0
-        return self.count / self.total_expected
-
     def _run_ocr_on_page(self, doc_id, doc_url, page_idx, wordless_only=False):
         if wordless_only:
             has_text = self.core.call_success(
@@ -50,19 +46,16 @@ class OcrTransaction(object):
                     "Page %s p%d has already some text. No OCR run",
                     doc_id, page_idx
                 )
-                self.core.call_one(
-                    "mainloop_schedule", self.core.call_all,
-                    "on_progress", ID, self._get_progression(),
+                self.notify_progress(
+                    ID,
                     _("Document %s p%d has already some text. No OCR run") % (
                         doc_id, page_idx
                     )
                 )
                 return
 
-        self.core.call_one(
-            "mainloop_schedule", self.core.call_all,
-            "on_progress", ID, self._get_progression(),
-            _("Running OCR on document %s page %d") % (
+        self.notify_progress(
+            ID, _("Running OCR on document %s page %d") % (
                 doc_id, page_idx
             )
         )
@@ -83,29 +76,23 @@ class OcrTransaction(object):
 
     def add_obj(self, doc_id):
         self._run_ocr_on_modified_pages(doc_id, wordless_only=True)
-        self.count += 1
+        super().add_obj(doc_id)
 
     def upd_obj(self, doc_id):
         self._run_ocr_on_modified_pages(doc_id, wordless_only=False)
-        self.count += 1
+        super().upd_obj(doc_id)
 
     def del_obj(self, doc_id):
         self.page_tracker.delete_doc(doc_id)
-        self.count += 1
-
-    def unchanged_obj(self, doc_id):
-        # not used here
-        self.count += 1
+        super().del_obj(doc_id)
 
     def cancel(self):
         self.page_tracker.cancel()
+        self.notify_done(ID)
 
     def commit(self):
         self.page_tracker.commit()
-        self.core.call_one(
-            "mainloop_schedule", self.core.call_all,
-            "on_progress", ID, 1.0
-        )
+        self.notify_done(ID)
 
 
 class Plugin(openpaperwork_core.PluginBase):

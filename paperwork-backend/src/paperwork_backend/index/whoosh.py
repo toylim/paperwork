@@ -20,6 +20,7 @@ from .. import sync
 
 _ = gettext.gettext
 LOGGER = logging.getLogger(__name__)
+ID = "index"
 
 WHOOSH_SCHEMA = whoosh.fields.Schema(
     docid=whoosh.fields.ID(stored=True, unique=True, sortable=True),
@@ -51,24 +52,19 @@ class CustomFuzzySearch(whoosh.qparser.query.FuzzyTerm):
         )
 
 
-class WhooshTransaction(object):
+class WhooshTransaction(sync.BaseTransaction):
     """
     Transaction to apply on the index. Methods may be slow but they
     are thread-safe.
     """
     def __init__(self, plugin, total_expected=-1):
+        super().__init__(plugin.core, total_expected)
+
         self.priority = plugin.PRIORITY
 
         LOGGER.debug("Starting Whoosh index transaction")
         self.core = plugin.core
         self.writer = None
-        self.counts = {
-            'add': 0,
-            'upd': 0,
-            'del': 0,
-        }
-        self.unchanged = 0
-        self.total_expected = total_expected
 
         self.writer = plugin.index.writer()
 
@@ -126,52 +122,36 @@ class WhooshTransaction(object):
             last_read=doc_mtime
         )
 
-    def _get_progression(self):
-        if self.total_expected <= 0:
-            return 0
-        total = sum(self.counts.values()) + self.unchanged
-        if total >= self.total_expected:
-            self.total_expected = total + 1
-        return total / self.total_expected
-
     def add_obj(self, doc_id):
         LOGGER.info("Adding document '%s' to index", doc_id)
-        self.core.call_one(
-            "mainloop_schedule", self.core.call_all,
-            "on_progress", "index_update", self._get_progression(),
-            _("Indexing new document %s") % doc_id
+        self.notify_progress(
+            ID, _("Indexing new document %s") % doc_id
         )
         self._update_doc_in_index(doc_id)
-        self.counts['add'] += 1
+        super().add_obj(doc_id)
 
     def del_obj(self, doc_id):
         LOGGER.info("Removing document '%s' from index", doc_id)
-        self.core.call_one(
-            "mainloop_schedule", self.core.call_all,
-            "on_progress", "index_update", self._get_progression(),
-            _("Removing document %s from index") % doc_id
+        self.notify_progress(
+            ID, _("Removing document %s from index") % doc_id
         )
         query = whoosh.query.Term("docid", doc_id)
         self.writer.delete_by_query(query)
-        self.counts['del'] += 1
+        super().del_obj(doc_id)
 
     def upd_obj(self, doc_id):
         LOGGER.info("Updating document '%s' in index", doc_id)
-        self.core.call_one(
-            "mainloop_schedule", self.core.call_all,
-            "on_progress", "index_update", self._get_progression(),
-            _("Indexing updated document %s") % doc_id
+        self.notify_progress(
+            ID, _("Indexing updated document %s") % doc_id
         )
         self._update_doc_in_index(doc_id)
-        self.counts['upd'] += 1
+        super().upd_obj(doc_id)
 
     def unchanged_obj(self, doc_id):
-        self.unchanged += 1
-        self.core.call_one(
-            "mainloop_schedule", self.core.call_all,
-            "on_progress", "index_update", self._get_progression(),
-            _("Document unchanged %s") % doc_id
+        self.notify_progress(
+            ID, _("Document unchanged %s") % doc_id
         )
+        super().unchanged_obj(doc_id)
 
     def cancel(self):
         if self.writer is None:
@@ -188,19 +168,17 @@ class WhooshTransaction(object):
             "mainloop_schedule", self.core.call_all,
             "on_index_updated"
         )
+        self.notify_done(ID)
 
     def commit(self):
-        total = sum(self.counts.values())
-        self.core.call_one(
-            "mainloop_schedule", self.core.call_all,
-            'on_progress', 'index_update', 0.99,
-            _("Committing changes in the index ...")
+        self.notify_progress(
+            ID, _("Committing changes in the index ...")
         )
         self.core.call_one(
             "mainloop_schedule", self.core.call_all,
             'on_index_commit_start'
         )
-        if total == 0:
+        if self.processed == 0:
             LOGGER.info(
                 "commit() called but nothing to commit."
                 " Cancelling transaction"
@@ -208,15 +186,10 @@ class WhooshTransaction(object):
             self.writer.cancel()
             self.writer = None
         else:
-            LOGGER.info(
-                "Committing changes to Whoosh index: %s", str(self.counts)
-            )
+            LOGGER.info("Committing changes to Whoosh index")
             self.writer.commit()
             self.writer = None
-        self.core.call_one(
-            "mainloop_schedule", self.core.call_all,
-            'on_progress', 'index_update', 1.0
-        )
+        self.notify_done(ID)
         self.core.call_all(
             "mainloop_schedule", self.core.call_all,
             'on_index_commit_end'

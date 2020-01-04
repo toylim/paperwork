@@ -8,6 +8,50 @@ import openpaperwork_core.promise
 LOGGER = logging.getLogger(__name__)
 
 
+class BaseTransaction(object):
+    def __init__(self, core, total_expected):
+        self.core = core
+        self.processed = 0
+        self.total = total_expected
+
+    def notify_progress(self, upd_type, description):
+        if self.total <= self.processed:
+            self.total = self.processed + 1
+        if self.total <= 0:
+            progression = 0
+        else:
+            progression = self.processed / self.total
+
+        self.core.call_one(
+            "mainloop_schedule", self.core.call_all,
+            "on_progress", upd_type, progression, description
+        )
+
+    def notify_done(self, upd_type):
+        self.core.call_one(
+            "mainloop_schedule", self.core.call_all,
+            "on_progress", upd_type, 1.0
+        )
+
+    def add_obj(self, doc_id):
+        self.processed += 1
+
+    def upd_obj(self, doc_id):
+        self.processed += 1
+
+    def del_obj(self, doc_id):
+        self.processed += 1
+
+    def unchanged_obj(self, doc_id):
+        self.processed += 1
+
+    def cancel(self):
+        pass
+
+    def commit(self):
+        pass
+
+
 def diff_lists(list_old, list_new):
     """
     Returns a dictionary giving the differences between both lists.

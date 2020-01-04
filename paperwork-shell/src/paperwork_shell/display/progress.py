@@ -15,6 +15,7 @@
 #    along with Paperwork.  If not, see <http://www.gnu.org/licenses/>.
 import collections
 import gettext
+import logging
 import shutil
 import sys
 import threading
@@ -24,6 +25,8 @@ import openpaperwork_core
 
 _ = gettext.gettext
 
+LOGGER = logging.getLogger(__name__)
+
 TIME_BETWEEN_PROGRESS = 0.3
 
 
@@ -32,8 +35,8 @@ def print_progress(upd_type, progress, description=None):
     if description is None:
         description = ""
     if progress >= 1.0:
-        progress = 1.0
-        description = _("Done")
+        if description is None:
+            description = _("Done")
         eol = "\n"
 
     str_progress = (
@@ -69,6 +72,12 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def on_progress(self, upd_type, progress, description=None):
         with self.lock:
+            if progress > 1.0:
+                LOGGER.warning(
+                    "Invalid progression (%f) for [%s]",
+                    progress, upd_type
+                )
+                progress = 1.0
             if progress >= 1.0:
                 if upd_type not in self.progresses:
                     return

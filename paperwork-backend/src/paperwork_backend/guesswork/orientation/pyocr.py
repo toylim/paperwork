@@ -8,6 +8,8 @@ import pyocr.builders
 
 import openpaperwork_core
 
+from ... import sync
+
 
 LOGGER = logging.getLogger(__name__)
 _ = gettext.gettext
@@ -15,15 +17,13 @@ _ = gettext.gettext
 ID = "orientation_guesser"
 
 
-class OrientationTransaction(object):
+class OrientationTransaction(sync.BaseTransaction):
     def __init__(self, plugin, sync, total_expected=-1):
+        super().__init__(plugin.core, total_expected)
         self.priority = plugin.PRIORITY
 
         self.plugin = plugin
         self.sync = sync
-        self.core = plugin.core
-        self.total_expected = total_expected
-        self.count = 0
 
         # for each document, we need to track on which pages we have already
         # guessed the orientation and on which page we didn't yet.
@@ -35,16 +35,9 @@ class OrientationTransaction(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.cancel()
 
-    def _get_progression(self):
-        if self.total_expected <= 0:
-            return 0
-        return self.count / self.total_expected
-
     def _guess_page_orientation(self, doc_id, doc_url, page_idx):
-        self.core.call_one(
-            "mainloop_schedule", self.core.call_all,
-            "on_progress", ID, self._get_progression(),
-            _("Guessing orientation on document %s page %d") % (
+        self.notify_progress(
+            ID, _("Guessing orientation on document %s page %d") % (
                 doc_id, page_idx
             )
         )
@@ -73,29 +66,23 @@ class OrientationTransaction(object):
 
     def add_obj(self, doc_id):
         self._guess_new_page_orientations(doc_id)
-        self.count += 1
+        super().add_obj(doc_id)
 
     def upd_obj(self, doc_id):
         self._guess_new_page_orientations(doc_id)
-        self.count += 1
+        super().upd_obj(doc_id)
 
     def del_obj(self, doc_id):
         self.page_tracker.delete_doc(doc_id)
-        self.count += 1
-
-    def unchanged_obj(self, doc_id):
-        # not used here
-        self.count += 1
+        super().del_obj(doc_id)
 
     def cancel(self):
         self.page_tracker.cancel()
+        self.notify_done(ID)
 
     def commit(self):
         self.page_tracker.commit()
-        self.core.call_one(
-            "mainloop_schedule", self.core.call_all,
-            "on_progress", ID, 1.0
-        )
+        self.notify_done(ID)
 
 
 class Plugin(openpaperwork_core.PluginBase):

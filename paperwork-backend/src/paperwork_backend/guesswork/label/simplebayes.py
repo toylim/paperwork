@@ -26,6 +26,7 @@ import simplebayes
 import openpaperwork_core
 import openpaperwork_core.promise
 
+from ... import sync
 from ... import util
 
 
@@ -36,6 +37,8 @@ from ... import util
 
 LOGGER = logging.getLogger(__name__)
 _ = gettext.gettext
+
+ID = "label_guesser"
 
 CREATE_TABLES = [
     (
@@ -48,14 +51,13 @@ CREATE_TABLES = [
 ]
 
 
-class LabelGuesserTransaction(object):
+class LabelGuesserTransaction(sync.BaseTransaction):
     def __init__(self, plugin, guess_labels=False, total_expected=-1):
+        super().__init__(plugin.core, total_expected)
         self.priority = plugin.PRIORITY
 
         self.plugin = plugin
-        self.core = plugin.core
         self.guess_labels = guess_labels
-        self.total_expected = total_expected
 
         # use a dedicated connection to ensure thread-safety regarding
         # SQL transactions
@@ -70,7 +72,6 @@ class LabelGuesserTransaction(object):
         # rollback command --> we track from what documents we have to train
         # and only train once `commit()` has been called.
         self.todo = []
-        self.count = 0
 
         all_labels = self.core.call_success(
             "mainloop_execute", self.cursor.execute,
@@ -88,11 +89,6 @@ class LabelGuesserTransaction(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.cancel()
 
-    def _get_progression(self):
-        if self.total_expected <= 0:
-            return 0
-        return self.count / self.total_expected
-
     def add_obj(self, doc_id):
         if self.guess_labels:
             doc_url = self.core.call_success("doc_id_to_url", doc_id)
@@ -100,31 +96,25 @@ class LabelGuesserTransaction(object):
             # time to update the document labels
             self.plugin._set_guessed_labels(doc_url)
 
-        self.core.call_one(
-            "mainloop_schedule", self.core.call_all,
-            "on_progress", "label_guesser_update", self._get_progression(),
-            _("Updating label guesser with added document %s") % doc_id
+        self.notify_progress(
+            ID, _("Updating label guesser with added document %s") % doc_id
         )
         self._upd_doc(doc_id)
-        self.count += 1
+        super().add_obj(doc_id)
 
     def del_obj(self, doc_id):
-        self.core.call_one(
-            "mainloop_schedule", self.core.call_all,
-            "on_progress", "label_guesser_update", self._get_progression(),
-            _("Updating label guesser due to deleted document %s") % doc_id
+        self.notify_progress(
+            ID, _("Updating label guesser due to deleted document %s") % doc_id
         )
         self._upd_doc(doc_id)
-        self.count += 1
+        super().del_obj(doc_id)
 
     def upd_obj(self, doc_id):
-        self.core.call_one(
-            "mainloop_schedule", self.core.call_all,
-            "on_progress", "label_guesser_update", self._get_progression(),
-            _("Updating label guesser with updated document %s") % doc_id
+        self.notify_progress(
+            ID, _("Updating label guesser with updated document %s") % doc_id
         )
         self._upd_doc(doc_id)
-        self.count += 1
+        super().upd_obj(doc_id)
 
     def _check_label_exists_in_db(self, label):
         r = self.core.call_success(
@@ -237,14 +227,6 @@ class LabelGuesserTransaction(object):
         self._check_for_new_labels(doc_id, doc_url, actual, db)
         self._check_for_removed_labels(doc_id, doc_url, actual, db)
 
-    def unchanged_obj(self, doc_id):
-        self.core.call_one(
-            "mainloop_schedule", self.core.call_all,
-            "on_progress", "label_guesser_update", self._get_progression(),
-            _("Document %s unchanged") % doc_id
-        )
-        self.count += 1
-
     def cancel(self):
         self.core.call_one(
             "mainloop_schedule", self.core.call_all,
@@ -254,6 +236,7 @@ class LabelGuesserTransaction(object):
         if self.cursor is not None:
             self.core.call_one("mainloop_execute", self.cursor.close)
         self.cursor = None
+        self.notify_done(ID)
 
     def commit(self):
         LOGGER.info("Updating training ...")
@@ -281,10 +264,8 @@ class LabelGuesserTransaction(object):
                 "Training from all already-known docs for new label '%s'",
                 todo['label']
             )
-            self.core.call_one(
-                "mainloop_schedule", self.core.call_all,
-                "on_progress", "label_guesser_update", 0.99,
-                _(
+            self.notify_progress(
+                ID, _(
                     "Updating label guessing training for label '{}'"
                     " with all known documents ..."
                 ).format(todo['label'])
@@ -299,10 +280,8 @@ class LabelGuesserTransaction(object):
                     continue
                 baye.train("no", text)
 
-        self.core.call_one(
-            "mainloop_schedule", self.core.call_all,
-            "on_progress", "label_guesser_update", 0.99,
-            _("Updating label guessing training ...")
+        self.notify_progress(
+            ID, _("Updating label guessing training ...")
         )
 
         for todo in self.todo:
@@ -348,10 +327,7 @@ class LabelGuesserTransaction(object):
         if self.cursor is not None:
             self.core.call_one("mainloop_execute", self.cursor.close)
         self.cursor = None
-        self.core.call_one(
-            "mainloop_schedule", self.core.call_all,
-            "on_progress", "label_guesser_update", 1.0
-        )
+        self.notify_done(ID)
         self.core.call_one(
             "mainloop_schedule", self.core.call_all,
             'on_label_guesser_commit_end'

@@ -33,13 +33,10 @@ ID = "doctracker"
 _ = gettext.gettext
 
 
-class DocTrackerTransaction(object):
+class DocTrackerTransaction(sync.BaseTransaction):
     def __init__(self, plugin, sql, total_expected=-1):
+        super().__init__(plugin.core, total_expected)
         self.priority = -10000
-        self.total_expected = total_expected
-        self.nb_processed = 0
-
-        self.core = plugin.core
 
         self.sql = self.core.call_success(
             "mainloop_execute", sql.cursor
@@ -59,14 +56,6 @@ class DocTrackerTransaction(object):
         self.core.call_success(
             "mainloop_execute", self.sql.execute, "BEGIN TRANSACTION"
         )
-
-    def _get_progression(self):
-        if self.nb_processed > self.total_expected:
-            # may happen if we have a lot of new documents
-            self.total_expected = self.nb_processed + 1
-        if self.total_expected <= 0:
-            return 0.0
-        return self.nb_processed / self.total_expected
 
     def _get_actual_doc_data(self, doc_id, doc_url):
         if (
@@ -91,20 +80,14 @@ class DocTrackerTransaction(object):
         }
 
     def add_obj(self, doc_id):
-        self.core.call_one(
-            "mainloop_schedule", self.core.call_all,
-            "on_progress", ID, self._get_progression(),
-            _("Document %s added") % (doc_id)
-        )
+        self.notify_progress(ID, _("Document %s added") % (doc_id))
         self._upd_obj(doc_id)
+        super().add_obj(doc_id)
 
     def upd_obj(self, doc_id):
-        self.core.call_one(
-            "mainloop_schedule", self.core.call_all,
-            "on_progress", ID, self._get_progression(),
-            _("Document %s updated") % (doc_id)
-        )
+        self.notify_progress(ID, _("Document %s updated") % (doc_id))
         self._upd_obj(doc_id)
+        super().upd_obj(doc_id)
 
     def _upd_obj(self, doc_id):
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
@@ -116,56 +99,33 @@ class DocTrackerTransaction(object):
             " VALUES (?, ?, ?)",
             (doc_id, actual['text'], actual['mtime'])
         )
-        self.nb_processed += 1
 
     def del_obj(self, doc_id):
-        self.core.call_one(
-            "mainloop_schedule", self.core.call_all,
-            "on_progress", ID, self._get_progression(),
-            _("Document %s deleted") % (doc_id)
-        )
+        self.notify_progress(ID, _("Document %s deleted") % (doc_id))
         self.core.call_success(
             "mainloop_execute", self.sql.execute,
             "DELETE FROM documents WHERE doc_id = ?",
             (doc_id,)
         )
-        self.nb_processed += 1
+        super().del_obj(doc_id)
 
     def unchanged_obj(self, doc_id):
-        self.core.call_one(
-            "mainloop_schedule", self.core.call_all,
-            "on_progress", ID, self._get_progression(),
-            _("Document %s unchanged") % (doc_id)
-        )
-        self.nb_processed += 1
+        self.notify_progress(ID, _("Document %s unchanged") % (doc_id))
+        super().unchanged_obj(doc_id)
 
     def cancel(self):
-        self.core.call_one(
-            "mainloop_schedule", self.core.call_all,
-            "on_progress", ID, 0.95,
-            _("Rolling back changes")
-        )
+        self.notify_progress(ID, _("Rolling back changes"))
         self.core.call_success(
             "mainloop_execute", self.sql.execute, "ROLLBACK"
         )
         self.core.call_success("mainloop_execute", self.sql.close)
-        self.core.call_one(
-            "mainloop_schedule", self.core.call_all,
-            "on_progress", ID, 1.0
-        )
+        self.notify_done(ID)
 
     def commit(self):
-        self.core.call_one(
-            "mainloop_schedule", self.core.call_all,
-            "on_progress", ID, 0.95,
-            _("Committing changes")
-        )
+        self.notify_progress(ID, _("Committing changes"))
         self.core.call_success("mainloop_execute", self.sql.execute, "COMMIT")
         self.core.call_success("mainloop_execute", self.sql.close)
-        self.core.call_one(
-            "mainloop_schedule", self.core.call_all,
-            "on_progress", ID, 1.0
-        )
+        self.notify_done(ID)
 
 
 class Plugin(openpaperwork_core.PluginBase):
