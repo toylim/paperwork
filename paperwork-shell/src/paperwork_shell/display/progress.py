@@ -28,27 +28,24 @@ TIME_BETWEEN_PROGRESS = 0.3
 
 
 def print_progress(upd_type, progress, description=None):
+    eol = "\r"
+    if description is None:
+        description = ""
     if progress >= 1.0:
-        line = (
-            "\r" + (("[%s] [%-20s] " + _("Done")) % (20 * "=", upd_type)) +
-            "\n"
-        )
-
-        term_width = shutil.get_terminal_size((500, 25)).columns
-        line = line[:term_width - 1]
-        sys.stdout.write("\033[K" + line + "\r")
-        return
+        progress = 1.0
+        description = _("Done")
+        eol = "\n"
 
     str_progress = (
         "=" * int(progress * 20)
         + " " * (20 - int(progress * 20))
     )
-    line = '[%s] ' % str_progress[:20]
+    line = '%3d%% [%s] ' % (progress * 100, str_progress[:20])
     line += '[%-20s] %s' % (upd_type[:20], description)
 
     term_width = shutil.get_terminal_size((500, 25)).columns
     line = line[:term_width - 1]
-    sys.stdout.write("\033[K" + line + "\r")
+    sys.stdout.write("\033[K" + line + eol)
 
 
 class Plugin(openpaperwork_core.PluginBase):
