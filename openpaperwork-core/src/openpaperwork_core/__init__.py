@@ -308,6 +308,13 @@ class Core(object):
             log_method("No method '%s' found", callback_name)
             return 0
         for (priority, plugin, callback) in callbacks:
+            if self.log_all:
+                print(
+                    "[{}] call_all({}, args={}, kwargs={}) -> {}:{}".format(
+                        time.time(), callback_name, args, kwargs,
+                        priority, callback
+                    )
+                )
             callback(*args, **kwargs)
         return len(callbacks)
 
@@ -347,6 +354,13 @@ class Core(object):
                 "More than one method '%s' found ! [%s]", callback_name,
                 ", ".join([callback[1] for callback in callbacks])
             )
+        if self.log_all:
+            print(
+                "[{}] call_all({}, args={}, kwargs={}) -> {}:{}".format(
+                    time.time(), callback_name, args, kwargs,
+                    callbacks[0][0], callbacks[0][2]
+                )
+            )
         return callbacks[0][2](*args, **kwargs)
 
     def call_success(self, callback_name, *args, **kwargs):
@@ -382,6 +396,13 @@ class Core(object):
         if len(callbacks) <= 0:
             LOGGER.warning("No method '%s' found", callback_name)
         for (priority, plugin, callback) in callbacks:
+            if self.log_all:
+                print(
+                    "[{}] call_all({}, args={}, kwargs={}) -> {}:{}".format(
+                        time.time(), callback_name, args, kwargs,
+                        priority, callback
+                    )
+                )
             try:
                 r = callback(*args, **kwargs)
             except Exception:
