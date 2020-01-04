@@ -7,7 +7,7 @@ from .. import PluginBase
 
 LOGGER = logging.getLogger(__name__)
 
-MIN_TIME_MS = 100
+MIN_TIME_MS = 200
 
 
 class Plugin(PluginBase):

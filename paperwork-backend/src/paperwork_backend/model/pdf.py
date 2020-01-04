@@ -209,9 +209,14 @@ class Plugin(openpaperwork_core.PluginBase):
             yield(letters, rects)
 
     def doc_get_text_by_url(self, out: list, doc_url):
+        task = "pdf_get_text_by_url_{}".format(doc_url)
+        self.core.call_all("on_perfcheck_start", task)
+
         (pdf_url, pdf) = self._open_pdf(doc_url)
         if pdf is None:
+            self.core.call_all("on_perfcheck_stop", task)
             return
+
         for page_idx in range(0, pdf.get_n_pages()):
             page = pdf.get_page(page_idx)
             txt = page.get_text()
@@ -219,6 +224,9 @@ class Plugin(openpaperwork_core.PluginBase):
             if txt == "":
                 continue
             out.append(txt)
+        self.core.call_all(
+            "on_perfcheck_stop", task, nb_pages=pdf.get_n_pages()
+        )
 
     def page_has_text_by_url(self, doc_url, page_idx):
         (pdf_url, pdf) = self._open_pdf(doc_url)
