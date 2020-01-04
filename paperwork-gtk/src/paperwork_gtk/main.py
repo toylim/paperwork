@@ -67,6 +67,7 @@ def main_main(in_args):
         LOGGER.info("Ready")
         core.call_one("mainloop", halt_on_uncatched_exception=False)
         LOGGER.info("Quitting")
+        core.call_all("on_quit")
 
     else:
 
@@ -84,6 +85,7 @@ def main_main(in_args):
         if r is None:
             print("Unknown command or argument(s): {}".format(in_args))
             sys.exit(1)
+        core.call_all("on_quit")
         return r
 
 
