@@ -17,7 +17,7 @@ check:
 
 .apt: &apt
   before_script:
-    - sh ./set_apt_proxy.sh
+    - sh ./ci/set_apt_proxy.sh
     # Only the build dependencies for Libinsane. Everything else should be
     # installed by paperwork-cli chkdeps
     - apt-get install -y -qq make meson build-essential gcc
