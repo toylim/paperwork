@@ -1,3 +1,4 @@
+import gettext
 import logging
 import random
 
@@ -9,19 +10,26 @@ LOGGER = logging.getLogger(__name__)
 
 LABELS_FILENAME = "labels"
 
+_ = gettext.gettext
+
 
 class LabelLoader(object):
     """
     Go through all the documents to figure out what labels exist.
     """
-    def __init__(self, plugin, all_docs):
+    def __init__(self, plugin):
         self.plugin = plugin
         self.core = plugin.core
-        self.all_docs = all_docs
+        self.all_docs = []
 
     def get_promise(self):
-        promise = openpaperwork_core.promise.Promise(
-            self.core, self.core.call_all, args=("on_label_loading_start",)
+        promise = openpaperwork_core.promise.ThreadedPromise(
+            self.core, self.core.call_all,
+            args=("storage_get_all_docs", self.all_docs)
+        )
+        promise = promise.then(lambda *args, **kwargs: None)
+        promise = promise.then(
+            self.core.call_all, "on_label_loading_start",
         )
         promise = promise.then(
             openpaperwork_core.promise.ThreadedPromise(
@@ -32,11 +40,19 @@ class LabelLoader(object):
         return promise
 
     def load_labels(self, *args, **kwargs):
-        for (doc_id, doc_url) in self.all_docs:
+        nb_docs = len(self.all_docs)
+
+        for (doc_idx, (doc_id, doc_url)) in enumerate(self.all_docs):
+            self.core.call_all(
+                "on_progress", "label_loading",
+                doc_idx / nb_docs,
+                _("Loading labels of document {}").format(doc_id)
+            )
             labels = set()
             self.plugin.doc_get_labels_by_url(labels, doc_url)
             for label in labels:
                 self.plugin.all_labels[label[0]] = label[1]
+        self.core.call_all("on_progress", "label_loading", 1.0)
 
     def notify_done(self):
         self.core.call_one(
@@ -230,10 +246,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def label_load_all(self, promises: list):
         self.all_labels = {}
-
-        storage_all_docs = []
-        self.core.call_all("storage_get_all_docs", storage_all_docs)
-        promises.append(LabelLoader(self, storage_all_docs).get_promise())
+        promises.append(LabelLoader(self).get_promise())
 
     def sync(self, promises: list):
         self.label_load_all(promises)

@@ -130,6 +130,8 @@ class WhooshTransaction(object):
         if self.total_expected <= 0:
             return 0
         total = sum(self.counts.values()) + self.unchanged
+        if total >= self.total_expected:
+            self.total_expected = total + 1
         return total / self.total_expected
 
     def add_obj(self, doc_id):
@@ -406,31 +408,50 @@ class Plugin(openpaperwork_core.PluginBase):
         This call is asynchronous and use the main loop to do its job.
         """
         storage_all_docs = []
-        self.core.call_all("storage_get_all_docs", storage_all_docs)
-        storage_all_docs.sort()
-        storage_all_docs = [
-            sync.StorageDoc(self.core, doc[0], doc[1])
-            for doc in storage_all_docs
-        ]
 
-        with self.index.searcher() as searcher:
-            index_all_docs = searcher.search(whoosh.query.Every(), limit=None)
-            index_all_docs = [
-                (result['docid'], result['last_read'])
-                for result in index_all_docs
-            ]
+        promise = openpaperwork_core.promise.ThreadedPromise(
+            self.core, self.core.call_all,
+            args=("storage_get_all_docs", storage_all_docs,)
+        )
+        promise = promise.then(lambda *args, **kwargs: None)
 
         class IndexDoc(object):
-            def __init__(self, index_result):
-                (self.key, self.extra) = index_result
+            def __init__(s, index_result):
+                (s.key, s.extra) = index_result
 
-        index_all_docs = [IndexDoc(r) for r in index_all_docs]
+        def get_index_docs():
+            with self.index.searcher() as searcher:
+                index_all_docs = searcher.search(
+                    whoosh.query.Every(), limit=None
+                )
+                index_all_docs = [
+                    (result['docid'], result['last_read'])
+                    for result in index_all_docs
+                ]
+                index_all_docs = [IndexDoc(r) for r in index_all_docs]
+            return index_all_docs
 
-        transaction = WhooshTransaction(
-            self, abs(len(storage_all_docs) - len(index_all_docs))
+        promise = promise.then(
+            lambda: (
+                [
+                    sync.StorageDoc(self.core, doc[0], doc[1])
+                    for doc in storage_all_docs
+                ],
+                get_index_docs()
+            )
         )
-
-        promises.append(sync.Syncer(
-            self.core, ["whoosh"], storage_all_docs, index_all_docs,
-            [transaction]
-        ).get_promise())
+        promise = promise.then(
+            lambda args: (
+                args[0], args[1],
+                [WhooshTransaction(
+                    self, abs(len(storage_all_docs) - len(args[1]))
+                )]
+            )
+        )
+        promise = promise.then(lambda args: sync.Syncer(
+            self.core, ["whoosh"], args[0], args[1], args[2]
+        ))
+        promise = promise.then(openpaperwork_core.promise.ThreadedPromise(
+            self.core, lambda syncer: syncer.run()
+        ))
+        promises.append(promise)

@@ -5,6 +5,7 @@ directory.
 """
 
 import datetime
+import gettext
 import os
 import sqlite3
 
@@ -27,10 +28,16 @@ CREATE_TABLES = [
     ),
 ]
 
+ID = "doctracker"
+
+_ = gettext.gettext
+
 
 class DocTrackerTransaction(object):
-    def __init__(self, plugin, sql):
-        self.priority = plugin.PRIORITY
+    def __init__(self, plugin, sql, total_expected=-1):
+        self.priority = -10000
+        self.total_expected = total_expected
+        self.nb_processed = 0
 
         self.core = plugin.core
 
@@ -40,6 +47,14 @@ class DocTrackerTransaction(object):
         self.core.call_success(
             "mainloop_execute", self.sql.execute, "BEGIN TRANSACTION"
         )
+
+    def _get_progression(self):
+        if self.nb_processed > self.total_expected:
+            # may happen if we have a lot of new documents
+            self.total_expected = self.nb_processed + 1
+        if self.total_expected <= 0:
+            return 0.0
+        return self.nb_processed / self.total_expected
 
     def _get_actual_doc_data(self, doc_id, doc_url):
         if (
@@ -64,9 +79,22 @@ class DocTrackerTransaction(object):
         }
 
     def add_obj(self, doc_id):
-        self.upd_obj(doc_id)
+        self.core.call_one(
+            "mainloop_schedule", self.core.call_all,
+            "on_progress", ID, self._get_progression(),
+            _("Document %s added") % (doc_id)
+        )
+        self._upd_obj(doc_id)
 
     def upd_obj(self, doc_id):
+        self.core.call_one(
+            "mainloop_schedule", self.core.call_all,
+            "on_progress", ID, self._get_progression(),
+            _("Document %s updated") % (doc_id)
+        )
+        self._upd_obj(doc_id)
+
+    def _upd_obj(self, doc_id):
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
         actual = self._get_actual_doc_data(doc_id, doc_url)
 
@@ -76,30 +104,60 @@ class DocTrackerTransaction(object):
             " VALUES (?, ?, ?)",
             (doc_id, actual['text'], actual['mtime'])
         )
+        self.nb_processed += 1
 
     def del_obj(self, doc_id):
+        self.core.call_one(
+            "mainloop_schedule", self.core.call_all,
+            "on_progress", ID, self._get_progression(),
+            _("Document %s deleted") % (doc_id)
+        )
         self.core.call_success(
             "mainloop_execute", self.sql.execute,
             "DELETE FROM documents WHERE doc_id = ?",
             (doc_id,)
         )
+        self.nb_processed += 1
 
     def unchanged_obj(self, doc_id):
-        pass
+        self.core.call_one(
+            "mainloop_schedule", self.core.call_all,
+            "on_progress", ID, self._get_progression(),
+            _("Document %s unchanged") % (doc_id)
+        )
+        self.nb_processed += 1
 
     def cancel(self):
+        self.core.call_one(
+            "mainloop_schedule", self.core.call_all,
+            "on_progress", ID, 0.95,
+            _("Rolling back changes")
+        )
         self.core.call_success(
             "mainloop_execute", self.sql.execute, "ROLLBACK"
         )
         self.core.call_success("mainloop_execute", self.sql.close)
+        self.core.call_one(
+            "mainloop_schedule", self.core.call_all,
+            "on_progress", ID, 1.0
+        )
 
     def commit(self):
+        self.core.call_one(
+            "mainloop_schedule", self.core.call_all,
+            "on_progress", ID, 0.95,
+            _("Committing changes")
+        )
         self.core.call_success("mainloop_execute", self.sql.execute, "COMMIT")
         self.core.call_success("mainloop_execute", self.sql.close)
+        self.core.call_one(
+            "mainloop_schedule", self.core.call_all,
+            "on_progress", ID, 1.0
+        )
 
 
 class Plugin(openpaperwork_core.PluginBase):
-    PRIORITY = -10000
+    PRIORITY = 10000
 
     def __init__(self):
         self.local_dir = os.path.expanduser("~/.local")
@@ -188,46 +246,55 @@ class Plugin(openpaperwork_core.PluginBase):
             out.append(transaction_factory(
                 sync=False, total_expected=total_expected
             ))
-        out.append(DocTrackerTransaction(self, self.sql))
+        out.append(DocTrackerTransaction(self, self.sql, total_expected))
 
     def sync(self, promises: list):
         storage_all_docs = []
-        self.core.call_all("storage_get_all_docs", storage_all_docs)
-        storage_all_docs.sort()
-        storage_all_docs = [
-            sync.StorageDoc(self.core, doc[0], doc[1])
-            for doc in storage_all_docs
-        ]
+        names = [t[0] for t in self.transaction_factories]
+        names.append('doc_tracker')
 
-        db_all_docs = self.core.call_success(
-            "mainloop_execute", self.sql.cursor
+        promise = openpaperwork_core.promise.ThreadedPromise(
+            self.core, self.core.call_all,
+            args=("storage_get_all_docs", storage_all_docs,)
         )
-        db_all_docs = self.core.call_success(
-            "mainloop_execute", db_all_docs.execute,
-            "SELECT doc_id, mtime FROM documents"
-        )
+        promise = promise.then(lambda *args, **kwargs: None)
+        promise = promise.then(storage_all_docs.sort)
 
         class DbDoc(object):
             def __init__(self, result):
                 self.key = result[0]
                 self.extra = datetime.datetime.fromtimestamp(result[1])
 
-        db_docs = self.core.call_success(
-            "mainloop_execute",
-            lambda docs: [DbDoc(r) for r in docs],
-            db_all_docs
-        )
-
-        transactions = []
-        for (name, transaction_factory) in self.transaction_factories:
-            transactions.append(transaction_factory(
-                sync=True, total_expected=len(storage_all_docs)
-            ))
-        transactions.append(DocTrackerTransaction(self, self.sql))
-
-        names = [t[0] for t in self.transaction_factories]
-        names.append('doc_tracker')
-
-        promises.append(sync.Syncer(
-            self.core, names, storage_all_docs, db_docs, transactions
-        ).get_promise())
+        promise = promise.then(self.sql.cursor)
+        promise = promise.then(lambda cursor: (
+            [
+                sync.StorageDoc(self.core, doc[0], doc[1])
+                for doc in storage_all_docs
+            ],
+            [
+                DbDoc(r)
+                for r in cursor.execute("SELECT doc_id, mtime FROM documents")
+            ],
+        ))
+        promise = promise.then(lambda args: (
+            *args,
+            sorted([
+                transaction_factory(
+                    sync=True,
+                    total_expected=max(len(storage_all_docs), len(args[1]))
+                )
+                for (name, transaction_factory) in self.transaction_factories
+            ] + [
+                DocTrackerTransaction(
+                    self, self.sql,
+                    total_expected=max(len(storage_all_docs), len(args[1]))
+                )
+            ], key=lambda t: -1 * t.priority),
+        ))
+        promise = promise.then(lambda args: sync.Syncer(
+            self.core, names, args[0], args[1], args[2]
+        ))
+        promise = promise.then(openpaperwork_core.promise.ThreadedPromise(
+            self.core, lambda syncer: syncer.run()
+        ))
+        promises.append(promise)

@@ -86,7 +86,6 @@ class Syncer(object):
         self.old_all = old_all
         self.transactions = transactions
         self.diff_generator = None
-        self.diff = set()
         self.start = None
         self.nb_compared = 0
 
@@ -99,16 +98,8 @@ class Syncer(object):
         self.start = time.time()
         self.diff_generator = diff_lists(self.old_all, self.new_all)
 
-        while True:
-            try:
-                diff = next(self.diff_generator)
-                self.diff.add(diff)
-            except StopIteration:
-                break
-
         try:
-            while len(self.diff) > 0:
-                (action, key) = self.diff.pop()
+            for (action, key) in self.diff_generator:
                 self.nb_compared += 1
                 if action != 'unchanged':
                     for name in self.names:
