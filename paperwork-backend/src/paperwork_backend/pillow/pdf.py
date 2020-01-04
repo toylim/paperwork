@@ -104,6 +104,10 @@ class Plugin(openpaperwork_core.PluginBase):
         return img
 
     def url_to_pillow_promise(self, file_url):
+        (_file_url, page_idx) = self._check_is_pdf(file_url)
+        if _file_url is None:
+            return None
+
         return openpaperwork_core.promise.Promise(
             self.core, self.url_to_pillow, args=(file_url,)
         )
