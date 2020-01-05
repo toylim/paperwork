@@ -24,6 +24,8 @@ class LabelingTask(object):
         self.flowlayout = flowlayout
 
     def show_labels(self, labels):
+        labels = list(labels)
+        labels.sort()
         for label in labels:
             color = self.core.call_success("label_color_to_rgb", label[1])
             widget = self.core.call_success(
