@@ -3,9 +3,9 @@ import logging
 
 try:
     from gi.repository import GObject
-    GI_AVAILABLE = True
+    GLIB_AVAILABLE = True
 except (ImportError, ValueError):
-    GI_AVAILABLE = False
+    GLIB_AVAILABLE = False
 
 try:
     import gi
@@ -224,6 +224,20 @@ class CustomFlowLayout(Gtk.Box):
         for widget in widgets:
             callback(widget)
 
+    def get_widget_at(self, x, y):
+        widgets = self.widgets.copy().values()
+        for widget in widgets:
+            min_x = widget.position[0] - self.spacing[0]
+            min_y = widget.position[1] - self.spacing[1]
+            max_x = widget.position[0] + widget.size[0] + self.spacing[0]
+            max_y = widget.position[1] + widget.size[1] + self.spacing[1]
+            if min_x <= x and x <= max_x and min_y <= y and y <= max_y:
+                return widget.widget
+        return None
+
+    def get_widget_position(self, widget):
+        return self.widgets[widget].position
+
     def set_alignment(self, widget, alignment):
         try:
             w = self.widgets[widget]
@@ -331,12 +345,12 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def chkdeps(self, out: dict):
-        if not GI_AVAILABLE:
-            out['gi'].update(openpaperwork_core.deps.GI)
+        if not GLIB_AVAILABLE:
+            out['glib'].update(openpaperwork_core.deps.GLIB)
         if not GTK_AVAILABLE:
             out['gtk'].update(openpaperwork_gtk.deps.GTK)
 
     def gtk_widget_flowlayout_new(self, spacing=(0, 0), scrollbars=None):
-        assert(GI_AVAILABLE)
+        assert(GLIB_AVAILABLE)
         assert(GTK_AVAILABLE)
         return CustomFlowLayout(self.core, spacing, scrollbars)

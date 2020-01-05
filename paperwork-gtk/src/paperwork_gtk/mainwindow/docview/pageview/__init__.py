@@ -2,7 +2,20 @@ import gettext
 import logging
 
 import openpaperwork_core
+import openpaperwork_core.deps
 import openpaperwork_core.promise
+
+
+try:
+    from gi.repository import GObject
+    GLIB_AVAILABLE = True
+except (ImportError, ValueError):
+    GLIB_AVAILABLE = False
+
+    # workaround so chkdeps can still be called
+    class GObject(object):
+        class GObject(object):
+            pass
 
 
 LOGGER = logging.getLogger(__name__)
@@ -10,8 +23,18 @@ LOGGER = logging.getLogger(__name__)
 _ = gettext.gettext
 
 
-class Page(object):
+class Page(GObject.GObject):
+    __gsignals__ = {
+        'getting_size': (GObject.SignalFlags.RUN_LAST, None, ()),
+        'size_obtained': (GObject.SignalFlags.RUN_LAST, None, ()),
+        'img_obtained': (GObject.SignalFlags.RUN_LAST, None, ()),
+        'visibility_changed': (GObject.SignalFlags.RUN_LAST, None, (
+            GObject.TYPE_BOOLEAN,
+        )),
+    }
+
     def __init__(self, core, flow_layout, doc_id, doc_url, page_idx, nb_pages):
+        super().__init__()
         self.core = core
         self.flow_layout = flow_layout
         self.doc_id = doc_id
@@ -28,8 +51,12 @@ class Page(object):
         self.widget_tree = None
         self.widget = None
 
-        flow_layout.connect("widget_visible", self._on_widget_visible)
-        flow_layout.connect("widget_hidden", self._on_widget_hidden)
+        self._on_widget_visible_handler_id = flow_layout.connect(
+            "widget_visible", self._on_widget_visible
+        )
+        self._on_widget_hidden_handler_id = flow_layout.connect(
+            "widget_hidden", self._on_widget_hidden
+        )
 
         self.renderer = core.call_success(
             "cairo_renderer_by_url", "page_loader", page_img_url
@@ -48,6 +75,7 @@ class Page(object):
             self.page_idx / self.nb_pages,
             _("Loading page {}/{} ...").format(self.page_idx, self.nb_pages)
         )
+        self.emit('getting_size')
 
     def _on_renderer_size(self, renderer):
         self.widget_tree = self.core.call_success(
@@ -57,12 +85,15 @@ class Page(object):
         self.widget = self.widget_tree.get_object("pageview_area")
         self.widget.connect("draw", self._on_draw)
         self.resize()
-        self.flow_layout.add(self.widget)
+        self.emit('size_obtained')
 
     def _on_renderer_img(self, renderer):
-        return self.refresh()
+        self.refresh()
+        self.emit('img_obtained')
 
     def close(self):
+        self.flow_layout.disconnect(self._on_widget_visible_handler_id)
+        self.flow_layout.disconnect(self._on_widget_hidden_handler_id)
         self.renderer.close()
 
     def set_height(self, height):
@@ -102,14 +133,20 @@ class Page(object):
         if widget != self.widget:
             return
         self.show()
+        self.emit('visibility_changed', True)
 
     def _on_widget_hidden(self, flowlayout, widget):
         if widget != self.widget:
             return
+        self.emit('visibility_changed', False)
         self.hide()
 
     def _on_draw(self, widget, cairo_ctx):
         self.renderer.draw(cairo_ctx)
+
+
+if GLIB_AVAILABLE:
+    GObject.type_register(Page)
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -150,11 +187,15 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
+    def chkdeps(self, out: dict):
+        if not GLIB_AVAILABLE:
+            out['glib'].update(openpaperwork_core.deps.GLIB)
+
     def init(self, core):
         super().init(core)
         self.core.call_all("work_queue_create", "page_loader")
 
-    def doc_open_components(self, doc_id, doc_url, page_container):
+    def doc_open_components(self, out: list, doc_id, doc_url, page_container):
         self.core.call_success("work_queue_cancel_all", "page_loader")
 
         for page in self.pages:
@@ -176,6 +217,7 @@ class Plugin(openpaperwork_core.PluginBase):
             ) for page_idx in range(0, nb_pages)
         ]
         for page in self.pages:
+            out.append(page)
             page.set_height(400)  # default
 
         promise = openpaperwork_core.promise.Promise(
