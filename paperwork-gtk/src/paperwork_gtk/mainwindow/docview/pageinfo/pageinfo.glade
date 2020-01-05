@@ -23,7 +23,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="icon_name">go-previous-symbolic</property>
-                <property name="icon_size">1</property>
+                <property name="icon_size">2</property>
               </object>
             </child>
             <style>
@@ -48,12 +48,34 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="icon_name">go-next-symbolic</property>
-                <property name="icon_size">1</property>
+                <property name="icon_size">2</property>
               </object>
             </child>
             <style>
               <class name="button-right"/>
             </style>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="pack_type">start</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="page_layout">
+            <property name="use_action_appearance">False</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="receives_default">False</property>
+            <property name="use_underline">True</property>
+            <child>
+              <object class="GtkImage" id="page_layout_icon">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="icon_size">2</property>
+              </object>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -163,7 +185,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="icon_name">view-more-symbolic</property>
-                <property name="icon_size">1</property>
+                <property name="icon_size">2</property>
               </object>
             </child>
           </object>

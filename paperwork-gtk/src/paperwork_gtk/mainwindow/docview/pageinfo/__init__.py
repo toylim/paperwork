@@ -1,20 +1,44 @@
 import logging
 
 import openpaperwork_core
+import openpaperwork_gtk.deps
+
+
+try:
+    import gi
+    gi.require_version('Gtk', '3.0')
+    from gi.repository import Gtk
+    GTK_AVAILABLE = True
+except (ImportError, ValueError):
+    GTK_AVAILABLE = False
 
 
 LOGGER = logging.getLogger(__name__)
 
 
 class Plugin(openpaperwork_core.PluginBase):
+    LAYOUTS = {
+        'inline': {
+            'icon': 'view-paged-symbolic',
+        },
+        'grid': {
+            'icon': 'view-grid-symbolic',
+        },
+    }
+
     def __init__(self):
         super().__init__()
         self.widget_tree = None
         self.page_info = None
         self.nb_pages = None
+        self.current_page = None
+        self.layout_icon = None
+        self.layout_button = None
+        self.nb_pages = None
 
     def get_interfaces(self):
         return [
+            'chkdeps',
             'gtk_docview_pageinfo',
         ]
 
@@ -29,6 +53,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_gtk.resources'],
             },
         ]
+
+    def chkdeps(self, out: dict):
+        if not GTK_AVAILABLE:
+            out['gtk'].update(openpaperwork_gtk.deps.GTK)
 
     def init(self, core):
         super().init(core)
@@ -48,9 +76,13 @@ class Plugin(openpaperwork_core.PluginBase):
             return
 
         self.page_info = self.widget_tree.get_object("page_info")
+        self.layout_icon = self.widget_tree.get_object("page_layout_icon")
         self.current_page = self.widget_tree.get_object("page_current_nb")
         self.current_page.connect("activate", self._change_page)
+        self.layout_button = self.widget_tree.get_object("page_layout")
         self.nb_pages = self.widget_tree.get_object("page_total")
+
+        self.layout_button.connect("clicked", self._open_layout_menu)
 
         button = self.widget_tree.get_object("page_prev")
         button.connect(
@@ -86,3 +118,17 @@ class Plugin(openpaperwork_core.PluginBase):
         txt = str(page_idx + 1)
         if txt != self.current_page.get_text():
             self.current_page.set_text(txt)
+
+    def on_layout_change(self, layout_name):
+        if self.layout_icon is None:
+            return
+
+        icon = self.LAYOUTS[layout_name]['icon']
+        # smallest icon size available
+        self.layout_icon.set_from_icon_name(icon, Gtk.IconSize.SMALL_TOOLBAR)
+
+    def set_zoom(self, factor):
+        pass
+
+    def _open_layout_menu(self, *args, **kwargs):
+        pass

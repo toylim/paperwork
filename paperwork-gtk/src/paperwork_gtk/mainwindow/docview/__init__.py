@@ -7,6 +7,12 @@ LOGGER = logging.getLogger(__name__)
 
 
 class Plugin(openpaperwork_core.PluginBase):
+    LAYOUTS = {
+        # name: pages per line
+        'inline': 1,
+        'grid': 3,
+    }
+
     def __init__(self):
         super().__init__()
         self.widget_tree = None
@@ -16,6 +22,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.page_widgets = {}
         self.active_page_idx = 0
         self._last_scroll = 0  # to avoid multiple calls
+        self._last_nb_columns = -1 # to avoid multiple calls
 
     def get_interfaces(self):
         return [
@@ -62,6 +69,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.page_container.connect(
             "widget_hidden", self._upd_current_page_idx
         )
+        self.page_container.connect("layout_rearranged", self._upd_layout)
         self.page_container.set_visible(True)
 
         self.scroll.add(self.page_container)
@@ -71,6 +79,8 @@ class Plugin(openpaperwork_core.PluginBase):
             header=self.widget_tree.get_object("docview_header"),
             body=self.widget_tree.get_object("docview_body"),
         )
+
+        self._upd_layout()
 
     def docview_get_headerbar(self):
         return self.widget_tree.get_object("docview_header")
@@ -94,6 +104,29 @@ class Plugin(openpaperwork_core.PluginBase):
             page.connect("size_obtained", self._on_page_size_obtained)
 
         self.doc_goto_page(0)
+
+    def doc_set_layout(self, layout_name="grid"):
+        pass
+
+    def _upd_layout(self, *args, **kwargs):
+        nb_columns = self.page_container.get_max_nb_columns()
+
+        if nb_columns == self._last_nb_columns:
+            return
+        self._last_nb_columns = nb_columns
+
+        # find the closest layout
+        max_columns = -1
+        layout_name = "inline"
+        for (l_name, required_columns) in self.LAYOUTS.items():
+            if nb_columns < required_columns:
+                continue
+            if max_columns >= required_columns:
+                continue
+            max_columns = required_columns
+            layout_name = l_name
+
+        self.core.call_all("on_layout_change", layout_name)
 
     def _on_page_size_obtained(self, page):
         self.page_widgets[page.widget] = page

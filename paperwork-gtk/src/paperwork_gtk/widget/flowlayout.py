@@ -126,14 +126,18 @@ def recompute_box_positions(core, widgets, width, spacing=(0, 0)):
 
     lines = [sort_widgets_per_alignments(line) for line in lines]
 
+    max_nb_columns = 0
+
     # position widgets in lines
     height = spacing[1]
     for (line, line_height) in zip(lines, line_heights):
+        nb_columns = 0
         w_start = 0
         w_end = width
 
         # start
         for widget in line[Gtk.Align.START]:
+            nb_columns += 1
             w_start += spacing[0]
             widget.position = (w_start, height)
             w_start += widget.size[0]
@@ -141,6 +145,7 @@ def recompute_box_positions(core, widgets, width, spacing=(0, 0)):
         # end
         line[Gtk.Align.END].reverse()
         for widget in line[Gtk.Align.END]:
+            nb_columns += 1
             w_end -= spacing[0]
             w_end -= widget.size[0]
             widget.position = (w_end, height)
@@ -151,6 +156,7 @@ def recompute_box_positions(core, widgets, width, spacing=(0, 0)):
         w_center = (width - w_center) / 2
         w_orig = w_center
         for widget in line[Gtk.Align.CENTER]:
+            nb_columns += 1
             if w_center != w_orig:
                 w_center += spacing[0]
             widget.position = (int(w_center), int(height))
@@ -159,11 +165,14 @@ def recompute_box_positions(core, widgets, width, spacing=(0, 0)):
         height += line_height
         height += spacing[1]
 
+        if nb_columns > max_nb_columns:
+            max_nb_columns = nb_columns
+
     core.call_all(
         "on_perfcheck_stop", "recompute_box_positions",
         nb_boxes=len(widgets)
     )
-    return widgets
+    return (widgets, (max_nb_columns, len(lines)))
 
 
 class CustomFlowLayout(Gtk.Box):
@@ -174,6 +183,7 @@ class CustomFlowLayout(Gtk.Box):
         'widget_hidden': (
             GObject.SignalFlags.RUN_LAST, None, (Gtk.Widget,)
         ),
+        'layout_rearranged': (GObject.SignalFlags.RUN_LAST, None, ()),
     }
 
     def __init__(self, core, spacing=(0, 0), scrollbars=None):
@@ -184,6 +194,7 @@ class CustomFlowLayout(Gtk.Box):
 
         self.spacing = spacing
         self.vadjustment = None
+        self.layout_max = (0, 0)
 
         self.set_has_window(False)
         self.set_redraw_on_allocate(False)
@@ -272,7 +283,7 @@ class CustomFlowLayout(Gtk.Box):
         return self.do_get_preferred_width()
 
     def _on_size_allocate(self, _, allocation):
-        recompute_box_positions(
+        (_, self.layout_max) = recompute_box_positions(
             self.core, self.widgets.values(), allocation.width, self.spacing
         )
 
@@ -284,6 +295,13 @@ class CustomFlowLayout(Gtk.Box):
             rect.width = widget.size[0]
             rect.height = widget.size[1]
             widget.widget.size_allocate(rect)
+        self.emit('layout_rearranged')
+
+    def get_max_nb_columns(self):
+        return self.layout_max[0]
+
+    def get_nb_lines(self):
+        return self.layout_max[1]
 
     def update_visibility(self):
         if self.vadjustment is None:
