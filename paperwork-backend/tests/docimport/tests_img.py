@@ -275,7 +275,7 @@ class TestImgImport(unittest.TestCase):
         self.assertEqual(self.upd_docs, [])
         self.assertEqual(self.nb_commits, 1)
 
-        self.assertEqual(file_import.ignored_files, set())
+        self.assertEqual(file_import.ignored_files, [])
         self.assertEqual(file_import.imported_files, {self.test_img_url})
         self.assertEqual(file_import.new_doc_ids, {'1'})
         self.assertEqual(file_import.upd_doc_ids, set())

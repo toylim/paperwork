@@ -6,7 +6,7 @@ from . import img
 from . import words
 
 
-def generate(core, out_file, paper_size):
+def generate(core, out_file, paper_size, *args, **kwargs):
     dictionary = words.WordDict()
     nb_pages = int(random.expovariate(1 / 100))
     if nb_pages <= 0:

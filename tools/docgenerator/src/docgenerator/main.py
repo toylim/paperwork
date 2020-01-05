@@ -145,7 +145,7 @@ def main_generate_workdir():
                         f, nb_files, doc_idx, nb_docs, tmp_file
                     )
                 )
-                generator(core, tmp_file, paper_size)
+                generator(core, tmp_file, paper_size, f, nb_files)
 
             file_import = paperwork_backend.docimport.FileImport(
                 tmp_files, active_doc_id=None

@@ -14,7 +14,7 @@ class FileImport(object):
     def __init__(self, file_uris_to_import, active_doc_id=None):
         self.active_doc_id = active_doc_id
         # those attributes will be updated by importers
-        self.ignored_files = set(file_uris_to_import)
+        self.ignored_files = list(file_uris_to_import)
         self.imported_files = set()
         self.new_doc_ids = set()
         self.upd_doc_ids = set()
@@ -34,10 +34,10 @@ class BaseFileImporter(object):
         return len(list(self._get_importables())) > 0
 
     @staticmethod
-    def _remove_from_set(s, k):
+    def _remove_from_list(s, k):
         try:
             s.remove(k)
-        except KeyError:
+        except ValueError:
             pass
 
     def _make_transactions(self, file_import):
@@ -78,7 +78,8 @@ class BaseFileImporter(object):
 
         for (orig_uri, file_uri) in to_import:
             promise = promise.then(
-                self._remove_from_set, self.file_import.ignored_files, orig_uri
+                self._remove_from_list,
+                self.file_import.ignored_files, orig_uri
             )
             promise = promise.then(
                 self.file_import.imported_files.add, file_uri
