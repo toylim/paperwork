@@ -100,7 +100,7 @@ def main_generate_workdir():
     work_dir = core.call_success("fs_safe", sys.argv[1])
     nb_docs = int(sys.argv[2])
 
-    core.call_all("set_interactive", True)
+    core.call_all("cmd_set_interactive", False)
 
     print("Creating {}...".format(work_dir))
     core.call_success("fs_mkdir_p", work_dir)

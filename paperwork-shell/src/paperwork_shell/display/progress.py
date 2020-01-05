@@ -56,6 +56,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.progresses = collections.OrderedDict()
         self.thread = None
         self.lock = threading.Lock()
+        self.interactive = False
 
     def _thread(self):
         while True:
@@ -70,7 +71,13 @@ class Plugin(openpaperwork_core.PluginBase):
                 (progress, description) = self.progresses[upd_type]
                 print_progress(upd_type, progress, description)
 
+    def cmd_set_interactive(self, interactive):
+        self.interactive = interactive
+
     def on_progress(self, upd_type, progress, description=None):
+        if not self.interactive:
+            return
+
         with self.lock:
             if progress > 1.0:
                 LOGGER.warning(
