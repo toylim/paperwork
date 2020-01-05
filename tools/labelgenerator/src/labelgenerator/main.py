@@ -79,9 +79,18 @@ def main():
         for _ in range(0, nb_labels_to_add):
             label = labels[random.randint(0, len(labels) - 1)]
             print("{} <- {}".format(doc_id, label))
-            core.call_all(
-                "doc_add_label_by_url", doc_url, label
-            )
+            core.call_all("doc_add_label_by_url", doc_url, label)
+
+        specials = [
+            ('doc.pdf', '_PDF'),
+            ('paper.1.jpg', '_IMG'),
+            ('paper.1.words', '_HOCR'),
+        ]
+        for (file_name, label) in specials:
+            file_path = core.call_success("fs_join", doc_url, file_name)
+            if core.call_success("fs_exists", file_path) is not None:
+                core.call_all("doc_add_label_by_url", doc_url, label)
+
         for t in transactions:
             t.upd_obj(doc_id)
 
