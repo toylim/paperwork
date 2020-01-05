@@ -11,7 +11,7 @@ from . import PluginBase
 
 LOGGER = logging.getLogger(__name__)
 
-LOG_FORMAT = '[%(levelname)-6s] [%(name)-30s] %(message)s\n'
+LOG_FORMAT = '[%(levelname)-7s] [%(name)-30s] %(message)s\n'
 
 RESET_SEQ = "\033[0m"
 COLOR_SEQ = "\033[1;{}m"
