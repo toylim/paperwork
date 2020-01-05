@@ -22,7 +22,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.page_widgets = {}
         self.active_page_idx = 0
         self._last_scroll = 0  # to avoid multiple calls
-        self._last_nb_columns = -1 # to avoid multiple calls
+        self._last_nb_columns = -1  # to avoid multiple calls
 
     def get_interfaces(self):
         return [
