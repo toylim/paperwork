@@ -24,6 +24,7 @@ DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'paperwork_gtk.mainwindow.doclist.thumbnailer',
     'paperwork_gtk.mainwindow.docview',
     'paperwork_gtk.mainwindow.docview.pageinfo',
+    'paperwork_gtk.mainwindow.docview.pageinfo.layout_settings',
     'paperwork_gtk.mainwindow.docview.pageview',
     'paperwork_gtk.mainwindow.scan.buttons',
     'paperwork_gtk.mainwindow.search.field',
