@@ -144,7 +144,7 @@ class Plugin(openpaperwork_core.PluginBase):
             + (bg_color[1] * 0.587)
             + (bg_color[2] * 0.114)
         )
-        if brightness > (186 / 255):
+        if brightness > (69 / 255):
             return (0, 0, 0)  # black
         else:
             return (1, 1, 1)  # white
