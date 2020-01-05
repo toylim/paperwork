@@ -57,10 +57,16 @@ class Plugin(openpaperwork_core.PluginBase):
 
         LOGGER.debug("Loading GTK widgets from %s:%s", pkg, filename)
 
-        filepath = self.core.call_success("resources_get_file", pkg, filename)
-        with self.core.call_success("fs_open", filepath, 'r') as fd:
-            content = fd.read()
-        return Gtk.Builder.new_from_string(content, -1)
+        try:
+            filepath = self.core.call_success(
+                "resources_get_file", pkg, filename
+            )
+            with self.core.call_success("fs_open", filepath, 'r') as fd:
+                content = fd.read()
+            return Gtk.Builder.new_from_string(content, -1)
+        except Exception:
+            LOGGER.error("Failed to load widget tree %s:%s", pkg, filename)
+            raise
 
     def gtk_load_css(self, pkg, filename):
         """
@@ -76,15 +82,21 @@ class Plugin(openpaperwork_core.PluginBase):
 
         LOGGER.debug("Loading CSS from %s:%s", pkg, filename)
 
-        filepath = self.core.call_success("resources_get_file", pkg, filename)
-        with self.core.call_success("fs_open", filepath, 'rb') as fd:
-            content = fd.read()
+        try:
+            filepath = self.core.call_success(
+                "resources_get_file", pkg, filename
+            )
+            with self.core.call_success("fs_open", filepath, 'rb') as fd:
+                content = fd.read()
 
-        css_provider = Gtk.CssProvider()
-        css_provider.load_from_data(content)
+            css_provider = Gtk.CssProvider()
+            css_provider.load_from_data(content)
 
-        Gtk.StyleContext.add_provider_for_screen(
-            Gdk.Screen.get_default(), css_provider,
-            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-        )
+            Gtk.StyleContext.add_provider_for_screen(
+                Gdk.Screen.get_default(), css_provider,
+                Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+            )
+        except Exception:
+            LOGGER.error("Failed to load CSS file %s:%s", pkg, filename)
+            raise
         return True
