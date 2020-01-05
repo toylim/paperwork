@@ -91,11 +91,15 @@ class CairoRenderer(GObject.GObject):
             size[1] * paperwork_backend.model.pdf.PDF_RENDER_FACTOR,
         ))
         promise.then(self._set_size)
-        # Gives back a bit of CPU time to GTK so the GUI remains
-        # usable
-        promise = promise.then(openpaperwork_core.promise.ThreadedPromise(
-            core, lambda *args, **kwargs: time.sleep(DELAY)
-        ))
+
+        if page_idx % 25 == 0:
+            # Gives back a bit of CPU time to GTK so the GUI remains
+            # usable, but not too much so we don't recompute the layout too
+            # often
+            promise = promise.then(openpaperwork_core.promise.ThreadedPromise(
+                core, lambda *args, **kwargs: time.sleep(DELAY)
+            ))
+
         self.get_size_promise = promise
 
     def __str__(self):
