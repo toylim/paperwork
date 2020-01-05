@@ -1,4 +1,5 @@
 import logging
+import time
 
 import openpaperwork_core
 import openpaperwork_core.deps
@@ -45,8 +46,7 @@ if GI_AVAILABLE:
 
 
 LOGGER = logging.getLogger(__name__)
-
-
+DELAY = 0.01
 POPPLER_DOCS = {}
 
 
@@ -80,17 +80,36 @@ class CairoRenderer(GObject.GObject):
 
         self.page = doc.get_page(page_idx)
 
+        promise = openpaperwork_core.promise.Promise(
+            self.core, self.emit, args=("getting_size",)
+        )
+        promise = promise.then(openpaperwork_core.promise.Promise(
+            self.core, self.page.get_size
+        ))
+        promise = promise.then(lambda size: (
+            size[0] * paperwork_backend.model.pdf.PDF_RENDER_FACTOR,
+            size[1] * paperwork_backend.model.pdf.PDF_RENDER_FACTOR,
+        ))
+        promise.then(self._set_size)
+        # Gives back a bit of CPU time to GTK so the GUI remains
+        # usable
+        promise = promise.then(openpaperwork_core.promise.ThreadedPromise(
+            core, lambda *args, **kwargs: time.sleep(DELAY)
+        ))
+        self.get_size_promise = promise
+
     def __str__(self):
         return "CairoRenderer({} p{})".format(self.file_url, self.page_idx)
 
-    def start(self):
-        self.emit('getting_size')
-        base_size = self.page.get_size()
-        self.size = (  # scale up because default size if too small for reading
-            int(base_size[0]) * paperwork_backend.model.pdf.PDF_RENDER_FACTOR,
-            int(base_size[1]) * paperwork_backend.model.pdf.PDF_RENDER_FACTOR,
-        )
+    def _set_size(self, size):
+        self.size = size
         self.emit('size_obtained')
+
+    def start(self):
+        self.core.call_success(
+            "work_queue_add_promise",
+            self.work_queue_name, self.get_size_promise
+        )
 
     def render(self):
         self.visible = True
@@ -113,7 +132,7 @@ class CairoRenderer(GObject.GObject):
         POPPLER_DOCS.pop(self.file_url)
 
     def draw(self, cairo_ctx):
-        if not self.visible or self.page is None:
+        if not self.visible or self.page is None or self.size[0] == 0:
             return
 
         task = "pdf_to_cairo_draw({}, p{})".format(

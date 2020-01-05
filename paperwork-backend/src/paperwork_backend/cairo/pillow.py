@@ -151,7 +151,12 @@ class CairoRenderer(GObject.GObject):
         self.cairo_surface = None
         self.background = self.DEFAULT_BACKGROUND
 
-        promise = core.call_success("url_to_img_size_promise", file_url)
+        promise = openpaperwork_core.promise.Promise(
+            self.core, self.emit, args=("getting_size",)
+        )
+        promise = promise.then(
+            core.call_success("url_to_img_size_promise", file_url)
+        )
         promise = promise.then(self._set_img_size)
         # Gives back a bit of CPU time to GTK so the GUI remains
         # usable
@@ -193,7 +198,6 @@ class CairoRenderer(GObject.GObject):
         self.hide()
 
     def _set_img_size(self, size):
-        self.emit("getting_size")
         self.size = size
         self.emit("size_obtained")
 
