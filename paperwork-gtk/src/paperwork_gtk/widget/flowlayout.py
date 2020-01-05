@@ -226,7 +226,8 @@ class CustomFlowLayout(Gtk.Box):
     def do_forall(self, include_internals: bool, callback, callback_data=None):
         if not hasattr(self, 'widgets'):
             return
-        for widget in self.widgets:
+        widgets = self.widgets.copy()
+        for widget in widgets:
             callback(widget)
 
     def set_alignment(self, widget, alignment):
