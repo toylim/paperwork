@@ -42,17 +42,6 @@ class DocTrackerTransaction(sync.BaseTransaction):
             "mainloop_execute", sql.cursor
         )
 
-        # disable synchronous write: If the database is corrupted, we must
-        # be able to rebuild it anyway.
-        self.core.call_success(
-            "mainloop_execute", self.sql.execute, "PRAGMA synchronous = OFF"
-        )
-        # disable journal on disk
-        self.core.call_success(
-            "mainloop_execute", self.sql.execute,
-            "PRAGMA journal_mode = MEMORY"
-        )
-
         self.core.call_success(
             "mainloop_execute", self.sql.execute, "BEGIN TRANSACTION"
         )
