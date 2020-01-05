@@ -1,5 +1,9 @@
 #page_info {
-	background-color: rgba(32, 32, 32, 0.75);
+	background-color: rgba(16, 16, 16, 0.90);
+}
+
+#page_info label {
+	color: white;
 }
 
 #page_info {
