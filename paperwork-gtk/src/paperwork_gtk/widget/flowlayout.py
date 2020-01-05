@@ -66,7 +66,7 @@ class WidgetInfo(object):
 
 
 def recompute_height_for_width(widgets, width, spacing=(0, 0)):
-    height = 0
+    height = spacing[1]
     line_height = 0
     line_width = 0
     for widget in widgets:
@@ -74,14 +74,12 @@ def recompute_height_for_width(widgets, width, spacing=(0, 0)):
             continue
         if widget.size == (0, 0):
             widget.update_widget_size()
-        if line_width + widget.size[0] >= width:
-            line_width = 0
-            if height > 0:
-                height += spacing[1]
+        if line_width + widget.size[0] + spacing[0] >= width:
+            height += spacing[1]
             height += line_height
+            line_width = 0
             line_height = 0
-        if line_width > 0:
-            line_width += spacing[0]
+        line_width += spacing[0]
         line_width += widget.size[0]
         line_height = max(line_height, widget.size[1])
     height += line_height
@@ -96,23 +94,20 @@ def recompute_box_positions(core, widgets, width, spacing=(0, 0)):
     lines = []
     line_heights = []
     line = []
-    line_width = 0
+    line_width = spacing[0]
     line_height = 0
     for widget in widgets:
         if not widget.is_visible():
             continue
         widget.update_widget_size()
-        if line_width + widget.size[0] >= width:
+        if line_width + widget.size[0] + spacing[0] >= width:
             lines.append(line)
-            if line_height > 0:
-                line_height += spacing[1]
             line_heights.append(line_height)
             line = []
             line_width = 0
             line_height = 0
         line.append(widget)
-        if line_width > 0:
-            line_width += spacing[0]
+        line_width += spacing[0]
         line_width += widget.size[0]
         line_height = max(line_height, widget.size[1])
     lines.append(line)
@@ -132,23 +127,21 @@ def recompute_box_positions(core, widgets, width, spacing=(0, 0)):
     lines = [sort_widgets_per_alignments(line) for line in lines]
 
     # position widgets in lines
-    height = 0
+    height = spacing[1]
     for (line, line_height) in zip(lines, line_heights):
         w_start = 0
         w_end = width
 
         # start
         for widget in line[Gtk.Align.START]:
+            w_start += spacing[0]
             widget.position = (w_start, height)
-            if w_start > 0:
-                w_start += spacing[0]
             w_start += widget.size[0]
 
         # end
         line[Gtk.Align.END].reverse()
         for widget in line[Gtk.Align.END]:
-            if w_end < width:
-                w_end -= spacing[0]
+            w_end -= spacing[0]
             w_end -= widget.size[0]
             widget.position = (w_end, height)
 
@@ -159,11 +152,12 @@ def recompute_box_positions(core, widgets, width, spacing=(0, 0)):
         w_orig = w_center
         for widget in line[Gtk.Align.CENTER]:
             if w_center != w_orig:
-                w_center += spacing[1]
-            widget.position = (w_center, height)
+                w_center += spacing[0]
+            widget.position = (int(w_center), int(height))
             w_center += widget.size[0]
 
         height += line_height
+        height += spacing[1]
 
     core.call_all(
         "on_perfcheck_stop", "recompute_box_positions",

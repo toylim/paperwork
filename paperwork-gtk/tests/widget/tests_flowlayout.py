@@ -81,10 +81,10 @@ class TestPositioning(unittest.TestCase):
             DummyCore(), widgets, width=150, spacing=(3, 4)
         )
 
-        self.assertEqual(widgets[0].position, (0, 0))
-        self.assertEqual(widgets[1].position, (67, 0))
-        self.assertEqual(widgets[2].position, (110, 0))
-        self.assertEqual(widgets[3].position, (55, 24))
+        self.assertEqual(widgets[0].position, (3, 4))
+        self.assertEqual(widgets[2].position, (107, 4))
+        self.assertEqual(widgets[1].position, (64, 4))
+        self.assertEqual(widgets[3].position, (55, 28))
 
     def test_position_center_spacing(self):
         widgets = [
@@ -95,5 +95,5 @@ class TestPositioning(unittest.TestCase):
             DummyCore(), widgets, width=500, spacing=(50, 50)
         )
 
-        self.assertEqual(widgets[0].position, (85, 0))
-        self.assertEqual(widgets[1].position, (275, 0))
+        self.assertEqual(widgets[0].position, (85, 50))
+        self.assertEqual(widgets[1].position, (275, 50))
