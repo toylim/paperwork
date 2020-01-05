@@ -213,20 +213,16 @@ class CustomFlowLayout(Gtk.Box):
         w = WidgetInfo(widget, Gtk.Align.CENTER)
         self.widgets[widget] = w
         self.queue_resize()
-        widget.size_allocate_handler_id = w.widget.connect(
+        w.size_allocate_handler_id = w.widget.connect(
             "size-allocate", self._on_widget_size_allocate
         )
 
     def _on_remove(self, _, widget):
-        try:
-            w = self.widgets.pop(widget)
-            self.queue_draw()
-            self.queue_resize()
-            if w.size_allocate_handler_id > 0:
-                w.widget.disconnect(w.size_allocate_handler_id)
-                w.size_allocate_handler_id = -1
-        except ValueError:
-            pass
+        w = self.widgets.pop(widget)
+        self.queue_draw()
+        self.queue_resize()
+        w.widget.disconnect(w.size_allocate_handler_id)
+        w.size_allocate_handler_id = -1
 
     def do_forall(self, include_internals: bool, callback, callback_data=None):
         if not hasattr(self, 'widgets'):
