@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <interface>
-  requires lib="gtk+" version="3.20"/>
+  <requires lib="gtk+" version="3.20"/>
   <object class="GtkBox" id="scan_buttons">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -11,7 +11,7 @@
         <property name="can_focus">False</property>
         <property name="label" translatable="yes">Scan</property>
         <style>
-          <class name="scan-button-left"/>
+          <class name="button-left"/>
         </style>
       </object>
       <packing>
@@ -25,7 +25,7 @@
         <property name="can_focus">False</property>
         <!-- <property name="menu_model">scan_menu</property> -->
         <style>
-          <class name="scan-button-right"/>
+          <class name="button-right"/>
         </style>
       </object>
       <packing>

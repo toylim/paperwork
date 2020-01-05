@@ -10,6 +10,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
         self.widget_tree = None
+        self.page_info = None
 
     def get_interfaces(self):
         return [
@@ -45,6 +46,8 @@ class Plugin(openpaperwork_core.PluginBase):
             LOGGER.error("Failed to load widget tree")
             return
 
-        self.core.call_success("docview_get_body").add_overlay(
-            self.widget_tree.get_object("page_info")
-        )
+        self.page_info = self.widget_tree.get_object("page_info")
+        self.core.call_success("docview_get_body").add_overlay(self.page_info)
+
+    def doc_open(self, doc_id, doc_url):
+        self.page_info.set_visible(True)

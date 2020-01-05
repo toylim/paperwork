@@ -1,1 +1,14 @@
+#page_info {
+	background-color: rgba(32, 32, 32, 0.75);
+}
 
+#page_info {
+	padding: 5px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+#page_info button, #page_info button * {
+	background-image: none;
+	background-color: #222222;
+}

@@ -35,6 +35,11 @@ class Plugin(openpaperwork_core.PluginBase):
 
         self.core.call_success(
             "gtk_load_css",
+            "paperwork_gtk.mainwindow", "global.css"
+        )
+
+        self.core.call_success(
+            "gtk_load_css",
             "paperwork_gtk.mainwindow.window", "mainwindow.css"
         )
 
