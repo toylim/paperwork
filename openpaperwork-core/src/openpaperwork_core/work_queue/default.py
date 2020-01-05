@@ -1,5 +1,6 @@
 import logging
 import heapq
+import threading
 import traceback
 
 from .. import PluginBase
@@ -42,6 +43,7 @@ class WorkQueue(object):
         self.insert_number = 0
 
         self.name = name
+        self.lock = threading.Lock()
         self.queue = []
         self.all_tasks = {}
         self.running = False
@@ -51,8 +53,9 @@ class WorkQueue(object):
 
         task = Task(-1 * priority, self.insert_number, promise)
 
-        heapq.heappush(self.queue, task)
-        self.all_tasks[promise] = task
+        with self.lock:
+            heapq.heappush(self.queue, task)
+            self.all_tasks[promise] = task
 
         if not self.running:
             self._run_next_promise()
@@ -63,8 +66,9 @@ class WorkQueue(object):
         try:
             task = None
             while task is None or not task.active:
-                task = heapq.heappop(self.queue)
-                self.all_tasks.pop(task.promise)
+                with self.lock:
+                    task = heapq.heappop(self.queue)
+                    self.all_tasks.pop(task.promise)
         except IndexError:
             self.running = False
             return
