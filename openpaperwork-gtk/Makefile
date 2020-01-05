@@ -25,7 +25,7 @@ doc: install_py
 doc/_build/html/index.html: doc
 
 upload_doc: doc/_build/html/index.html
-	cd .. && ./deliver_doc.sh ${CURDIR}/doc/_build/html openpaperwork_gtk
+	cd .. && ./ci/deliver_doc.sh ${CURDIR}/doc/_build/html openpaperwork_gtk
 
 check:
 	flake8 src/openpaperwork_gtk

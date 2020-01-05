@@ -25,7 +25,7 @@ doc: install_py
 doc/_build/html/index.html: doc
 
 upload_doc: doc/_build/html/index.html
-	cd .. && ./deliver_doc.sh ${CURDIR}/doc/_build/html paperwork_backend
+	cd .. && ./ci/deliver_doc.sh ${CURDIR}/doc/_build/html paperwork_backend
 
 check:
 	flake8 src/paperwork_backend
