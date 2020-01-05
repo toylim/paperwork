@@ -89,7 +89,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def init(self, core):
         super().init(core)
-        self.core.call_all("work_queue_create", "labeler")
+        self.core.call_all("work_queue_create", "labeler", stop_on_quit=True)
 
     def chkdeps(self, out: dict):
         if not GTK_AVAILABLE:

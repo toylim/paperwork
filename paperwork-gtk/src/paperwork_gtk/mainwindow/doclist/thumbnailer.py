@@ -92,7 +92,9 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         img = self.core.call_success("pillow_add_border", img)
         self.default_thumbnail = self.core.call_success("pillow2pixbuf", img)
-        self.core.call_all("work_queue_create", "thumbnailer")
+        self.core.call_all(
+            "work_queue_create", "thumbnailer", stop_on_quit=True
+        )
 
     def doclist_show(self, docids):
         self.core.call_all("work_queue_cancel_all", "thumbnailer")

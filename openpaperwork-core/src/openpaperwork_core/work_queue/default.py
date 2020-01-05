@@ -39,7 +39,7 @@ class Task(object):
 
 
 class WorkQueue(object):
-    def __init__(self, name):
+    def __init__(self, name, stop_on_quit):
         self.insert_number = 0
 
         self.name = name
@@ -47,6 +47,7 @@ class WorkQueue(object):
         self.queue = []
         self.all_tasks = {}
         self.running = False
+        self.stop_on_quit = stop_on_quit
 
     def add_promise(self, promise, priority=0):
         self.insert_number += 1
@@ -107,9 +108,12 @@ class Plugin(PluginBase):
             },
         ]
 
-    def work_queue_create(self, queue_name):
-        LOGGER.debug("Creating work queue [%s]", queue_name)
-        self.queues[queue_name] = WorkQueue(queue_name)
+    def work_queue_create(self, queue_name, stop_on_quit=False):
+        LOGGER.debug(
+            "Creating work queue [%s] (stop_on_quit=%s)",
+            queue_name, stop_on_quit
+        )
+        self.queues[queue_name] = WorkQueue(queue_name, stop_on_quit)
         return True
 
     def work_queue_add_promise(self, queue_name, promise, priority=0):
@@ -129,3 +133,16 @@ class Plugin(PluginBase):
             return None
         self.queues[queue_name].cancel_all()
         return True
+
+    def mainloop_quit(self):
+        # violent quit (does it ever happen ?)
+        for queue in self.queues.values():
+            queue.cancel_all()
+
+    def mainloop_quit_graceful(self):
+        for queue in self.queues.values():
+            if queue.stop_on_quit:
+                queue.cancel_all()
+
+    def on_quit(self):
+        self.mainloop_quit_graceful()
