@@ -85,6 +85,7 @@ def recompute_height_for_width(widgets, width, spacing=(0, 0)):
         line_width += widget.size[0]
         line_height = max(line_height, widget.size[1])
     height += line_height
+    height += spacing[1]
     return height
 
 
@@ -235,6 +236,9 @@ class CustomFlowLayout(Gtk.Box):
             self.queue_draw()
         except ValueError:
             pass
+
+    def do_get_request_mode(self):
+        return Gtk.SizeRequestMode.WIDTH_FOR_HEIGHT
 
     def do_get_preferred_width(self):
         min_width = 0
