@@ -31,6 +31,11 @@ class Plugin(openpaperwork_core.PluginBase):
     def init(self, core):
         super().init(core)
 
+        self.core.call_success(
+            "gtk_load_css",
+            "paperwork_gtk.mainwindow.statusbar", "statusbar.css"
+        )
+
         widget_tree = self.core.call_success(
             "gtk_load_widget_tree",
             "paperwork_gtk.mainwindow.statusbar", "statusbar.glade"
@@ -39,7 +44,7 @@ class Plugin(openpaperwork_core.PluginBase):
             # init must still work so 'chkdeps' is still available
             LOGGER.error("Failed to load widget tree")
             return
-        self.progressbar = widget_tree.get_object("progressbar")
+        self.progressbar = widget_tree.get_object("global_progressbar")
 
         mainwindow = self.core.call_success("mainwindow_get_main_container")
         mainwindow.pack_end(
@@ -57,18 +62,14 @@ class Plugin(openpaperwork_core.PluginBase):
             self.stack[upd_type] = (progress, description)
 
         if len(self.stack) <= 0:
-            self.progressbar.set_visible(False)
             self.progressbar.set_text("")
             self.progressbar.set_fraction(0.0)
+            self.progressbar.set_tooltip_text("")
             return
 
         upd_type = next(reversed(self.stack))
         (progress, description) = self.stack[upd_type]
-        if description != "":
-            self.progressbar.set_text(description)
-            self.progressbar.set_show_text(True)
-        else:
-            self.progressbar.set_text("")
-            self.progressbar.set_show_text(False)
+
+        self.progressbar.set_text(description)
+        self.progressbar.set_tooltip_text(description)
         self.progressbar.set_fraction(progress)
-        self.progressbar.set_visible(True)
