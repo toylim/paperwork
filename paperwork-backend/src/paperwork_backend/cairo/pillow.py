@@ -150,6 +150,7 @@ class CairoRenderer(GObject.GObject):
         self.size_factor = 1.0
         self.cairo_surface = None
         self.background = self.DEFAULT_BACKGROUND
+        self.visible = False
 
         promise = openpaperwork_core.promise.Promise(
             self.core, self.emit, args=("getting_size",)
@@ -183,13 +184,17 @@ class CairoRenderer(GObject.GObject):
         )
 
     def render(self):
+        self.visible = True
         self.core.call_success(
             "work_queue_add_promise",
             self.work_queue_name, self.render_img_promise, priority=100
         )
 
     def hide(self):
-        self.cairo_surface = None
+        self.visible = False
+        if self.cairo_surface is not None:
+            self.cairo_surface.finish()
+            self.cairo_surface = None
         self.core.call_all(
             "work_queue_cancel", self.work_queue_name, self.render_img_promise
         )
@@ -202,6 +207,9 @@ class CairoRenderer(GObject.GObject):
         self.emit("size_obtained")
 
     def _set_cairo_surface(self, surface):
+        if not self.visible:  # visibility has changed
+            surface.finish()
+            return
         self.cairo_surface = surface
         self.emit("img_obtained")
 

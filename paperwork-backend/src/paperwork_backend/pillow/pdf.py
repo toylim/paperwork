@@ -100,6 +100,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
         img = surface2image(self.core, surface)
+        surface.finish()
         img.load()
         return img
 
