@@ -96,6 +96,9 @@ class Plugin(openpaperwork_core.PluginBase):
         for child in self.page_container.get_children():
             self.page_container.remove(child)
 
+        self.core.call_all("on_memleak_track_stop")
+        self.core.call_all("on_memleak_track_start")
+
         self.core.call_all(
             "doc_open_components",
             self.pages, doc_id, doc_url, self.page_container
