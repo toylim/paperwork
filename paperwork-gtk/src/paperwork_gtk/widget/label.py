@@ -49,6 +49,7 @@ class LabelWidget(Gtk.DrawingArea):
         dummy = cairo.ImageSurface(cairo.Format.RGB24, 200, 200)
         ctx = cairo.Context(dummy)
         size = self.compute_size(ctx)
+        dummy.finish()
 
         self.set_size_request(size[0], size[1])
 
