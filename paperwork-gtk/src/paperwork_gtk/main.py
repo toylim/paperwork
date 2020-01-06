@@ -13,7 +13,6 @@ _ = gettext.gettext
 LOGGER = logging.getLogger(__name__)
 
 DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
-    'openpaperwork_core.log_collector',
     'openpaperwork_core.resources.setuptools',
     'openpaperwork_gtk.mainloop.glib',
     'openpaperwork_gtk.pixbuf.pillow',
@@ -46,7 +45,10 @@ def main_main(in_args):
         core.load(module_name)
     core.init()
 
-    core.load('openpaperwork_core.log_collector')
+    if len(in_args) <= 0:
+        core.load('openpaperwork_core.log_collector')
+    else:
+        core.load('openpaperwork_core.log_print')
     core.init()
 
     core.call_all(
