@@ -165,28 +165,28 @@ class Plugin(PluginBase):
             for callback in self.observers[key]:
                 callback(key, value)
 
-    def config_add_plugin(self, plugin, application=None):
-        if application is None:
-            application = self.application
-        self.core.call_all('config_backend_add_plugin', application, plugin)
+    def config_add_plugin(self, plugin, plugin_list_name=None):
+        if plugin_list_name is None:
+            plugin_list_name = self.plugin_list_name
+        self.core.call_all('config_backend_add_plugin', plugin_list_name, plugin)
 
-    def config_remove_plugin(self, plugin, application=None):
-        if application is None:
-            application = self.application
-        self.core.call_all('config_backend_remove_plugin', application, plugin)
+    def config_remove_plugin(self, plugin, plugin_list_name=None):
+        if plugin_list_name is None:
+            plugin_list_name = self.plugin_list_name
+        self.core.call_all('config_backend_remove_plugin', plugin_list_name, plugin)
 
-    def config_list_plugins(self, application=None):
-        if application is None:
-            application = self.application
+    def config_list_plugins(self, plugin_list_name=None):
+        if plugin_list_name is None:
+            plugin_list_name = self.plugin_list_name
         return self.core.call_success(
-            "config_backend_list_active_plugins", application
+            "config_backend_list_active_plugins", plugin_list_name
         )
 
-    def config_reset_plugins(self, application=None):
-        if application is None:
-            application = self.application
+    def config_reset_plugins(self, plugin_list_name=None):
+        if plugin_list_name is None:
+            plugin_list_name = self.plugin_list_name
         return self.core.call_success(
-            "config_backend_reset_plugins", application
+            "config_backend_reset_plugins", plugin_list_name
         )
 
     def config_add_observer(self, key: str, callback):
