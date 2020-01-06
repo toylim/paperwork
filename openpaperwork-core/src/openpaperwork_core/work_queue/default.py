@@ -80,8 +80,9 @@ class WorkQueue(object):
 
     def cancel(self, promise):
         try:
-            task = self.all_tasks[promise]
-            task.active = False
+            with self.lock:
+                task = self.all_tasks[promise]
+                task.active = False
         except KeyError:
             LOGGER.debug(
                 "Cannot cancel promise [%s]. (already running ?)", promise
@@ -89,8 +90,9 @@ class WorkQueue(object):
 
     def cancel_all(self):
         # reset the queue
-        self.queue = []
-        self.all_tasks = {}
+        with self.lock:
+            self.queue = []
+            self.all_tasks = {}
 
 
 class Plugin(PluginBase):
