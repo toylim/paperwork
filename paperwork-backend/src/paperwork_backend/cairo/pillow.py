@@ -152,7 +152,7 @@ class CairoRenderer(GObject.GObject):
         self.size_factor = 1.0
         self.cairo_surface = None
         self.background = self.DEFAULT_BACKGROUND
-        self.visible = False
+        self.visible = True
 
         promise = openpaperwork_core.promise.Promise(
             self.core, self.emit, args=("getting_size",)
@@ -208,11 +208,14 @@ class CairoRenderer(GObject.GObject):
 
     def _set_img_size(self, size):
         self.size = size
+        if self.get_size_promise is None:
+            # Document has been closed while we looked for its size
+            return
         self.emit("size_obtained")
 
     def _set_cairo_surface(self, surface):
         if not self.visible:  # visibility has changed
-            surface.finish()
+            surface.surface.finish()
             return
         self.cairo_surface = surface
         self.emit("img_obtained")

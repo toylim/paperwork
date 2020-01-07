@@ -107,6 +107,9 @@ class CairoRenderer(GObject.GObject):
         return "CairoRenderer({} p{})".format(self.file_url, self.page_idx)
 
     def _set_size(self, size):
+        if self.page is None:
+            # Document has been closed while we looked for its size
+            return
         self.size = size
         self.emit('size_obtained')
 
