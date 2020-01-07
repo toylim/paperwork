@@ -36,7 +36,6 @@ DEFAULT_CLI_PLUGINS = DEFAULT_SHELL_PLUGINS + [
     "paperwork_shell.display.docrendering.img",
     "paperwork_shell.display.docrendering.labels",
     "paperwork_shell.display.docrendering.text",
-    'paperwork_shell.display.print',
     'paperwork_shell.display.progress',
     "paperwork_shell.display.scan",
 ]
