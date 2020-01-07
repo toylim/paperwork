@@ -168,12 +168,16 @@ class Plugin(PluginBase):
     def config_add_plugin(self, plugin, plugin_list_name=None):
         if plugin_list_name is None:
             plugin_list_name = self.plugin_list_name
-        self.core.call_all('config_backend_add_plugin', plugin_list_name, plugin)
+        self.core.call_all(
+            'config_backend_add_plugin', plugin_list_name, plugin
+        )
 
     def config_remove_plugin(self, plugin, plugin_list_name=None):
         if plugin_list_name is None:
             plugin_list_name = self.plugin_list_name
-        self.core.call_all('config_backend_remove_plugin', plugin_list_name, plugin)
+        self.core.call_all(
+            'config_backend_remove_plugin', plugin_list_name, plugin
+        )
 
     def config_list_plugins(self, plugin_list_name=None):
         if plugin_list_name is None:
