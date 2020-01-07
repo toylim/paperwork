@@ -246,6 +246,13 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             "mainloop_schedule", self.core.call_all,
             "on_label_guesser_commit_start"
         )
+        if len(self.todo) <= 0:
+            self.core.call_one(
+                "mainloop_schedule", self.core.call_all,
+                'on_label_guesser_commit_end'
+            )
+            LOGGER.info("Nothing to do. Training left unchanged.")
+            return
 
         all_labels = self.core.call_success(
             "mainloop_execute", self.cursor.execute,
