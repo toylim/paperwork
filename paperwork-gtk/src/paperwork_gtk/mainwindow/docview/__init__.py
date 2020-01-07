@@ -1,6 +1,15 @@
 import logging
 
+try:
+    import gi
+    gi.require_version('Gtk', '3.0')
+    from gi.repository import Gtk
+    GTK_AVAILABLE = True
+except (ImportError, ValueError):
+    GTK_AVAILABLE = False
+
 import openpaperwork_core
+import openpaperwork_gtk.deps
 
 
 LOGGER = logging.getLogger(__name__)
@@ -26,6 +35,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_interfaces(self):
         return [
+            'chkdeps',
             'gtk_docview',
         ]
 
@@ -82,6 +92,10 @@ class Plugin(openpaperwork_core.PluginBase):
 
         self._upd_layout()
 
+    def chkdeps(self, out: dict):
+        if not GTK_AVAILABLE:
+            out['gtk'].update(openpaperwork_gtk.deps.GTK)
+
     def docview_get_headerbar(self):
         return self.widget_tree.get_object("docview_header")
 
@@ -137,7 +151,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _on_page_size_obtained(self, page):
         self.page_widgets[page.widget] = page
-        self.page_container.add(page.widget)
+        self.page_container.add_child(page.widget, Gtk.Align.CENTER)
         if page.page_idx == self.active_page_idx:
             self.doc_goto_page(self.active_page_idx)
 

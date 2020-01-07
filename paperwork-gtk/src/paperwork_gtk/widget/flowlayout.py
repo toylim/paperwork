@@ -1,5 +1,6 @@
 import collections
 import logging
+import threading
 
 try:
     from gi.repository import GObject
@@ -188,6 +189,7 @@ class CustomFlowLayout(Gtk.Box):
 
     def __init__(self, core, spacing=(0, 0), scrollbars=None):
         super().__init__()
+        self.mutex = threading.RLock()
         self.core = core
 
         self.widgets = collections.OrderedDict()
@@ -210,66 +212,70 @@ class CustomFlowLayout(Gtk.Box):
             )
 
     def _on_add(self, _, widget):
-        w = WidgetInfo(widget, Gtk.Align.CENTER)
-        self.widgets[widget] = w
         self.queue_resize()
-        w.size_allocate_handler_id = w.widget.connect(
-            "size-allocate", self._on_widget_size_allocate
-        )
 
     def _on_remove(self, _, widget):
-        w = self.widgets.pop(widget)
-        self.queue_draw()
-        self.queue_resize()
-        w.widget.disconnect(w.size_allocate_handler_id)
-        w.size_allocate_handler_id = -1
+        with self.mutex:
+            w = self.widgets.pop(widget)
+            self.queue_draw()
+            self.queue_resize()
+            w.widget.disconnect(w.size_allocate_handler_id)
+            w.size_allocate_handler_id = -1
 
     def do_forall(self, include_internals: bool, callback, callback_data=None):
-        if not hasattr(self, 'widgets'):
+        if not hasattr(self, 'mutex'):
             return
-        widgets = self.widgets.copy()
-        for widget in widgets:
-            callback(widget)
+        with self.mutex:
+            if not hasattr(self, 'widgets'):
+                return
+            widgets = self.widgets.copy()
+            for widget in widgets:
+                callback(widget)
 
     def get_widget_at(self, x, y):
-        widgets = self.widgets.copy().values()
-        for widget in widgets:
-            min_x = widget.position[0] - self.spacing[0]
-            min_y = widget.position[1] - self.spacing[1]
-            max_x = widget.position[0] + widget.size[0] + self.spacing[0]
-            max_y = widget.position[1] + widget.size[1] + self.spacing[1]
-            if min_x <= x and x <= max_x and min_y <= y and y <= max_y:
-                return widget.widget
-        return None
+        with self.mutex:
+            widgets = self.widgets.copy().values()
+            for widget in widgets:
+                min_x = widget.position[0] - self.spacing[0]
+                min_y = widget.position[1] - self.spacing[1]
+                max_x = widget.position[0] + widget.size[0] + self.spacing[0]
+                max_y = widget.position[1] + widget.size[1] + self.spacing[1]
+                if min_x <= x and x <= max_x and min_y <= y and y <= max_y:
+                    return widget.widget
+            return None
 
     def get_widget_position(self, widget):
-        return self.widgets[widget].position
+        with self.mutex:
+            return self.widgets[widget].position
 
-    def set_alignment(self, widget, alignment):
-        try:
-            w = self.widgets[widget]
-            w.alignment = alignment
-            self.queue_draw()
-        except ValueError:
-            pass
+    def add_child(self, widget, alignment):
+        with self.mutex:
+            w = WidgetInfo(widget, alignment)
+            self.widgets[widget] = w
+            self.add(widget)
+            w.size_allocate_handler_id = w.widget.connect(
+                "size-allocate", self._on_widget_size_allocate
+            )
 
     def do_get_request_mode(self):
         return Gtk.SizeRequestMode.WIDTH_FOR_HEIGHT
 
     def do_get_preferred_width(self):
-        min_width = 0
-        nat_width = 0
-        for widget in self.widgets.values():
-            widget.update_widget_size()
-            min_width = max(widget.size[0], min_width)
-            nat_width += widget.size[0]
-        return (min_width, nat_width)
+        with self.mutex:
+            min_width = 0
+            nat_width = 0
+            for widget in self.widgets.values():
+                widget.update_widget_size()
+                min_width = max(widget.size[0], min_width)
+                nat_width += widget.size[0]
+            return (min_width, nat_width)
 
     def do_get_preferred_height_for_width(self, width):
-        height = recompute_height_for_width(
-            self.widgets.values(), width, self.spacing
-        )
-        return (height, height)
+        with self.mutex:
+            height = recompute_height_for_width(
+                self.widgets.values(), width, self.spacing
+            )
+            return (height, height)
 
     def do_get_preferred_height(self):
         (min_width, nat_width) = self.do_get_preferred_width()
@@ -279,18 +285,20 @@ class CustomFlowLayout(Gtk.Box):
         return self.do_get_preferred_width()
 
     def _on_size_allocate(self, _, allocation):
-        (_, self.layout_max) = recompute_box_positions(
-            self.core, self.widgets.values(), allocation.width, self.spacing
-        )
+        with self.mutex:
+            (_, self.layout_max) = recompute_box_positions(
+                self.core, self.widgets.values(), allocation.width,
+                self.spacing
+            )
 
-        for widget in self.widgets.values():
-            widget.update_widget_size()
-            rect = Gdk.Rectangle()
-            rect.x = allocation.x + widget.position[0]
-            rect.y = allocation.y + widget.position[1]
-            rect.width = widget.size[0]
-            rect.height = widget.size[1]
-            widget.widget.size_allocate(rect)
+            for widget in self.widgets.values():
+                widget.update_widget_size()
+                rect = Gdk.Rectangle()
+                rect.x = allocation.x + widget.position[0]
+                rect.y = allocation.y + widget.position[1]
+                rect.width = widget.size[0]
+                rect.height = widget.size[1]
+                widget.widget.size_allocate(rect)
         self.emit('layout_rearranged')
 
     def get_max_nb_columns(self):
@@ -300,38 +308,40 @@ class CustomFlowLayout(Gtk.Box):
         return self.layout_max[1]
 
     def update_visibility(self):
-        if self.vadjustment is None:
-            return
+        with self.mutex:
+            if self.vadjustment is None:
+                return
 
-        # assumes the vadjustment values are in pixels
-        lower = self.vadjustment.get_lower()
-        p_min = self.vadjustment.get_value() - lower
-        p_max = (
-            self.vadjustment.get_value() +
-            self.vadjustment.get_page_size() -
-            lower
-        )
-
-        for widget in self.widgets.values():
-            p_lower = widget.position[1]
-            p_upper = widget.position[1] + widget.size[1]
-            visible = (
-                (p_min <= p_lower and p_lower <= p_max) or
-                (p_min <= p_upper and p_upper <= p_max)
+            # assumes the vadjustment values are in pixels
+            lower = self.vadjustment.get_lower()
+            p_min = self.vadjustment.get_value() - lower
+            p_max = (
+                self.vadjustment.get_value() +
+                self.vadjustment.get_page_size() -
+                lower
             )
 
-            if widget.visible != visible:
-                widget.visible = visible
-                if visible:
-                    self.emit("widget_visible", widget.widget)
-                else:
-                    self.emit("widget_hidden", widget.widget)
+            for widget in self.widgets.values():
+                p_lower = widget.position[1]
+                p_upper = widget.position[1] + widget.size[1]
+                visible = (
+                    (p_min <= p_lower and p_lower <= p_max) or
+                    (p_min <= p_upper and p_upper <= p_max)
+                )
+
+                if widget.visible != visible:
+                    widget.visible = visible
+                    if visible:
+                        self.emit("widget_visible", widget.widget)
+                    else:
+                        self.emit("widget_hidden", widget.widget)
 
     def is_widget_visible(self, widget):
-        w = self.widgets.get(widget, None)
-        if w is None:
-            return False
-        return w.visible
+        with self.mutex:
+            w = self.widgets.get(widget, None)
+            if w is None:
+                return False
+            return w.visible
 
     def _on_vadj_value_changed(self, vadjustment):
         self.update_visibility()
@@ -340,11 +350,12 @@ class CustomFlowLayout(Gtk.Box):
         self.update_visibility()
 
     def _on_destroy(self, _):
-        if not hasattr(self, 'widgets'):
-            return
-        for widget in self.widgets.keys():
-            widget.unparent()
-        self.widgets = collections.OrderedDict()
+        with self.mutex:
+            if not hasattr(self, 'widgets'):
+                return
+            for widget in self.widgets.keys():
+                widget.unparent()
+            self.widgets = collections.OrderedDict()
 
 
 if GTK_AVAILABLE:

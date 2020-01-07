@@ -52,5 +52,4 @@ class Plugin(openpaperwork_core.PluginBase):
         doc_date = self.core.call_success("i18n_date_short", doc_date)
         label = Gtk.Label.new(doc_date)
         label.set_visible(True)
-        custom_flowlayout.add(label)
-        custom_flowlayout.set_alignment(label, Gtk.Align.START)
+        custom_flowlayout.add_child(label, Gtk.Align.START)

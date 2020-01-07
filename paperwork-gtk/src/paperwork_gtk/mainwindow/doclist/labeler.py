@@ -32,8 +32,7 @@ class LabelingTask(object):
                 "gtk_widget_label_new", label[0], color
             )
             widget.set_visible(True)
-            self.flowlayout.add(widget)
-            self.flowlayout.set_alignment(widget, Gtk.Align.END)
+            self.flowlayout.add_child(widget, Gtk.Align.END)
 
     def get_promise(self):
         doc_url = self.core.call_success("doc_id_to_url", self.doc_id)
