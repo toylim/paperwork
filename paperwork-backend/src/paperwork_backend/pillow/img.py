@@ -69,6 +69,7 @@ class Plugin(openpaperwork_core.PluginBase):
         with self.core.call_success("fs_open", file_url, mode='rb') as fd:
             img = PIL.Image.open(fd)
             img.load()
+            self.core.call_all("on_objref_track", img)
             size = img.size
 
         self.core.call_all("on_perfcheck_stop", task, size=size)

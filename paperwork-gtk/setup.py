@@ -89,7 +89,6 @@ Main features are:
         "distro",
         "openpaperwork-core",
         "openpaperwork-gtk",
-        "Pillow",
         "pycountry",
         "pyocr >= 0.3.0",
         "python-dateutil",

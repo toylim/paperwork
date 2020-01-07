@@ -197,16 +197,22 @@ class Plugin(openpaperwork_core.PluginBase):
             "work_queue_create", "page_loader", stop_on_quit=True
         )
 
-    def doc_open_components(self, out: list, doc_id, doc_url, page_container):
+    def doc_close(self):
         self.core.call_success("work_queue_cancel_all", "page_loader")
 
         for page in self.pages:
             page.close()
+        self.pages = []
+
+    def doc_open_components(self, out: list, doc_id, doc_url, page_container):
+        self.doc_close()
 
         nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)
         if nb_pages is None:
             LOGGER.warning("Failed to get the number of pages in %s", doc_id)
             nb_pages = 0
+
+        self.core.call_all("on_objref_graph")
 
         self.core.call_all(
             "on_perfcheck_start",

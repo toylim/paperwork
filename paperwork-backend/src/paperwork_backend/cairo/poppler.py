@@ -75,6 +75,7 @@ class CairoRenderer(GObject.GObject):
             LOGGER.info("Opening PDF file {}".format(file_url))
             gio_file = Gio.File.new_for_uri(file_url)
             doc = Poppler.Document.new_from_gfile(gio_file, password=None)
+            self.core.call_all("on_objref_track", doc)
             refcount = 0
         POPPLER_DOCS[file_url] = (doc, refcount + 1)
 
@@ -239,6 +240,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         gio_file = Gio.File.new_for_uri(file_url)
         doc = Poppler.Document.new_from_gfile(gio_file, password=None)
+        self.core.call_all("on_objref_track", doc)
         page = doc.get_page(page_idx)
 
         base_size = page.get_size()
@@ -253,6 +255,7 @@ class Plugin(openpaperwork_core.PluginBase):
         factor_h = height / base_size[1]
 
         surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
+        self.core.call_all("on_objref_track", surface)
         ctx = cairo.Context(surface)
 
         ctx.save()

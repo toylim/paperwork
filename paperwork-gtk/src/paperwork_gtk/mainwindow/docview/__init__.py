@@ -88,13 +88,17 @@ class Plugin(openpaperwork_core.PluginBase):
     def docview_get_body(self):
         return self.widget_tree.get_object("docview_body")
 
-    def doc_open(self, doc_id, doc_url):
+    def doc_close(self):
         self._last_scroll = -1
         self.page_widgets = {}
         self.pages = []
 
         for child in self.page_container.get_children():
             self.page_container.remove(child)
+
+    def doc_open(self, doc_id, doc_url):
+        if len(self.pages) > 0:
+            self.core.call_all("doc_close")
 
         self.core.call_all("on_memleak_track_stop")
         self.core.call_all("on_memleak_track_start")

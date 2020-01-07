@@ -135,9 +135,9 @@ class Plugin(openpaperwork_core.PluginBase):
         if pdf_url is None:
             return (None, None)
         gio_file = Gio.File.new_for_uri(pdf_url)
-        return (
-            pdf_url, Poppler.Document.new_from_gfile(gio_file, password=None)
-        )
+        doc = Poppler.Document.new_from_gfile(gio_file, password=None)
+        self.core.call_all("on_objref_track", doc)
+        return (pdf_url, doc)
 
     def is_doc(self, doc_url):
         pdf_url = self._get_pdf_url(doc_url)

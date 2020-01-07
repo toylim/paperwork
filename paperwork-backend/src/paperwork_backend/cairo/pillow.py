@@ -49,6 +49,12 @@ if GI_AVAILABLE:
 LOGGER = logging.getLogger(__name__)
 
 
+class ImgSurface(object):
+    # wrapper so it can be weakref
+    def __init__(self, surface):
+        self.surface = surface
+
+
 def pillow_to_surface(core, img, intermediate="pixbuf", quality=90):
     """
     Convert a PIL image into a Cairo surface
@@ -66,8 +72,6 @@ def pillow_to_surface(core, img, intermediate="pixbuf", quality=90):
 
     # So we fall back to those methods:
 
-    core.call_all("on_perfcheck_start", "pillow_to_surface")
-
     if intermediate == "pixbuf" and (
                 not hasattr(GdkPixbuf.Pixbuf, 'new_from_bytes') or
                 img.getbands() != ('R', 'G', 'B')
@@ -78,14 +82,15 @@ def pillow_to_surface(core, img, intermediate="pixbuf", quality=90):
 
         data = GLib.Bytes.new(img.tobytes())
         (width, height) = img.size
+
         pixbuf = GdkPixbuf.Pixbuf.new_from_bytes(
             data, GdkPixbuf.Colorspace.RGB, False, 8,
             width, height, width * 3
         )
-        img_surface = cairo.ImageSurface(
+        img_surface = ImgSurface(cairo.ImageSurface(
             cairo.FORMAT_RGB24, width, height
-        )
-        ctx = cairo.Context(img_surface)
+        ))
+        ctx = cairo.Context(img_surface.surface)
         Gdk.cairo_set_source_pixbuf(ctx, pixbuf, 0.0, 0.0)
         ctx.rectangle(0, 0, width, height)
         ctx.fill()
@@ -104,31 +109,28 @@ def pillow_to_surface(core, img, intermediate="pixbuf", quality=90):
             # IMPORTANT: The actual surface will be empty.
             # but mime-data will have attached the correct data
             # to the surface that supports it
-            img_surface = cairo.ImageSurface(
+            img_surface = ImgSurface(cairo.ImageSurface(
                 cairo.FORMAT_RGB24, img.size[0], img.size[1]
-            )
+            ))
             img_io = io.BytesIO()
             img.save(img_io, format="JPEG", quality=quality)
             img_io.seek(0)
             data = img_io.read()
-            img_surface.set_mime_data(cairo.MIME_TYPE_JPEG, data)
+            img_surface.surface.set_mime_data(cairo.MIME_TYPE_JPEG, data)
 
     if intermediate == "png":
 
         img_io = io.BytesIO()
         img.save(img_io, format="PNG")
         img_io.seek(0)
-        img_surface = cairo.ImageSurface.create_from_png(img_io)
+        img_surface = ImgSurface(cairo.ImageSurface.create_from_png(img_io))
 
     if img_surface is None:
         raise Exception(
             "image2surface(): unknown intermediate: {}".format(intermediate)
         )
 
-    core.call_all(
-        "on_perfcheck_stop", "pillow_to_surface",
-        size=img.size, intermediate=intermediate
-    )
+    core.call_all("on_objref_track", img_surface)
     return img_surface
 
 
@@ -193,7 +195,7 @@ class CairoRenderer(GObject.GObject):
     def hide(self):
         self.visible = False
         if self.cairo_surface is not None:
-            self.cairo_surface.finish()
+            self.cairo_surface.surface.finish()
             self.cairo_surface = None
         self.core.call_all(
             "work_queue_cancel", self.work_queue_name, self.render_img_promise
@@ -201,6 +203,8 @@ class CairoRenderer(GObject.GObject):
 
     def close(self):
         self.hide()
+        self.get_size_promise = None
+        self.render_img_promise = None
 
     def _set_img_size(self, size):
         self.size = size
@@ -229,7 +233,7 @@ class CairoRenderer(GObject.GObject):
             cairo_ctx.save()
             try:
                 cairo_ctx.scale(self.size_factor, self.size_factor)
-                cairo_ctx.set_source_surface(self.cairo_surface)
+                cairo_ctx.set_source_surface(self.cairo_surface.surface)
                 cairo_ctx.paint()
             finally:
                 cairo_ctx.restore()

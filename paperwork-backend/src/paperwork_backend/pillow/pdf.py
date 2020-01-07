@@ -36,6 +36,7 @@ def surface2image(core, surface):
     surface.write_to_png(img_io)
     img_io.seek(0)
     img = PIL.Image.open(img_io)
+    core.call_all("on_objref_track", img)
     img.load()
 
     if "A" not in img.getbands():
@@ -43,6 +44,7 @@ def surface2image(core, surface):
         return img
 
     img_no_alpha = PIL.Image.new("RGB", img.size, (255, 255, 255))
+    core.call_all("on_objref_track", img_no_alpha)
     img_no_alpha.paste(img, mask=img.split()[3])  # 3 is the alpha channel
     core.call_all(
         "on_perfcheck_stop", "surface2image", size=img_no_alpha.size

@@ -175,7 +175,7 @@ class PdfCreator(object):
         try:
             self.pdf_context.identity_matrix()
             self.pdf_context.scale(self.scale_factor, self.scale_factor)
-            self.pdf_context.set_source_surface(img_surface)
+            self.pdf_context.set_source_surface(img_surface.surface)
             self.pdf_context.paint()
         finally:
             self.pdf_context.restore()
