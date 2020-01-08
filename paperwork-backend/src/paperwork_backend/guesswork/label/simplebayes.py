@@ -235,7 +235,9 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             "on_label_guesser_canceled"
         )
         if self.cursor is not None:
-            self.core.call_one("mainloop_execute", self.cursor.execute, "ROLLBACK")
+            self.core.call_one(
+                "mainloop_execute", self.cursor.execute, "ROLLBACK"
+            )
             self.core.call_one("mainloop_execute", self.cursor.close)
             self.cursor = None
         self.notify_done(ID)
@@ -247,7 +249,9 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             "on_label_guesser_commit_start"
         )
         if len(self.todo) <= 0:
-            self.core.call_one("mainloop_execute", self.cursor.execute, "ROLLBACK")
+            self.core.call_one(
+                "mainloop_execute", self.cursor.execute, "ROLLBACK"
+            )
             self.core.call_one("mainloop_execute", self.cursor.close)
             self.cursor = None
             self.notify_done(ID)
