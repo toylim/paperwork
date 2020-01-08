@@ -33,7 +33,7 @@ def surface2image(core, surface):
     core.call_all("on_perfcheck_start", "surface2image")
 
     img_io = io.BytesIO()
-    surface.write_to_png(img_io)
+    surface.surface.write_to_png(img_io)
     img_io.seek(0)
     img = PIL.Image.open(img_io)
     core.call_all("on_objref_track", img)
@@ -102,7 +102,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
         img = surface2image(self.core, surface)
-        surface.finish()
+        surface.surface.finish()
         img.load()
         return img
 

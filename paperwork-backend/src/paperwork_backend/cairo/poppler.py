@@ -50,6 +50,12 @@ DELAY = 0.01
 POPPLER_DOCS = {}
 
 
+class ImgSurface(object):
+    # wrapper so it can be weakref
+    def __init__(self, surface):
+        self.surface = surface
+
+
 class CairoRenderer(GObject.GObject):
     __gsignals__ = {
         'getting_size': (GObject.SignalFlags.RUN_LAST, None, ()),
@@ -257,9 +263,11 @@ class Plugin(openpaperwork_core.PluginBase):
         factor_w = width / base_size[0]
         factor_h = height / base_size[1]
 
-        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
+        surface = ImgSurface(cairo.ImageSurface(
+            cairo.FORMAT_ARGB32, width, height
+        ))
         self.core.call_all("on_objref_track", surface)
-        ctx = cairo.Context(surface)
+        ctx = cairo.Context(surface.surface)
 
         ctx.save()
         try:
