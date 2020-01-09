@@ -120,7 +120,7 @@ class Plugin(openpaperwork_core.PluginBase):
         args = (args, kwargs)
 
         if delay_s is None:
-            GLib.idle_add(decorator, func, args)
+            GLib.idle_add(decorator, func, args, priority=GLib.PRIORITY_LOW)
         else:
             GLib.timeout_add(delay_s * 1000, decorator, func, args)
 
