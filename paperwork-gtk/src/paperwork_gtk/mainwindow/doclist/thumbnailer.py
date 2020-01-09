@@ -1,4 +1,5 @@
 import logging
+import time
 
 import PIL
 
@@ -11,6 +12,8 @@ from paperwork_backend.model.thumbnail import (
 
 
 LOGGER = logging.getLogger(__name__)
+
+DELAY = 0.01
 
 
 class ThumbnailTask(object):
@@ -41,7 +44,13 @@ class ThumbnailTask(object):
         promise = promise.then(
             self.core.call_success("thumbnail_get_doc_promise", doc_url)
         )
-        return promise.then(self.set_thumbnail)
+        promise = promise.then(self.set_thumbnail)
+        # Gives back a bit of CPU time to GTK so the GUI remains
+        # usable
+        promise = promise.then(openpaperwork_core.promise.ThreadedPromise(
+            self.core, time.sleep, args=(DELAY,)
+        ))
+        return promise
 
 
 class Plugin(openpaperwork_core.PluginBase):
