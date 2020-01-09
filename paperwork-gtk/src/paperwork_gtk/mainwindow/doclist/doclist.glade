@@ -52,26 +52,42 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="orientation">vertical</property>
+    <property name="name">doclist_body</property>
 
     <child>
-      <object class="GtkScrolledWindow" id="doclist_scroll">
+      <object class="GtkOverlay">
         <property name="visible">True</property>
-        <property name="can_focus">True</property>
-        <property name="shadow_type">in</property>
-        <property name="kinetic_scrolling">False</property>
-        <child>
-          <object class="GtkBox">
+        <property name="can_focus">False</property>
+
+        <child type="overlay">
+          <object class="GtkSpinner" id="doclist_spinner">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="orientation">vertical</property>
+          </object>
+        </child>
+
+        <child>
+          <object class="GtkScrolledWindow" id="doclist_scroll">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="shadow_type">in</property>
+            <property name="kinetic_scrolling">False</property>
             <child>
-              <object class="GtkListBox" id="doclist_listbox">
+              <object class="GtkBox">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
+                <property name="can_focus">False</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkListBox" id="doclist_listbox">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                  </object>
+                </child>
               </object>
             </child>
           </object>
         </child>
+
       </object>
       <packing>
         <property name="expand">True</property>
