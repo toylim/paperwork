@@ -185,6 +185,13 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doc_ids = docs
         self.doclist_extend(NB_DOCS_PER_PAGE)
 
+    def on_search_start(self, query):
+        # TODO: Wait indicator
+        pass
+
+    def on_search_results(self, docs):
+        self.doclist_show(docs)
+
     def _on_scrollbar_value_changed(self, vadj):
         lower = vadj.get_lower()
         upper = vadj.get_upper() - lower

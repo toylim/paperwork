@@ -39,6 +39,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'gtk_resources',
                 'defaults': ['openpaperwork_gtk.resources'],
             },
+            {
+                'interface': 'work_queue',
+                'defaults': ['openpaperwork_core.work_queue.default'],
+            },
         ]
 
     def init(self, core):
@@ -62,17 +66,21 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         self.search_entry.connect("stop-search", lambda w: self.search_stop())
 
-        self.core.call_one(
-            "mainloop_schedule", self.search_update_document_list
-        )
+        self.core.call_all("work_queue_create", "doc_search")
+
+        self.search_update_document_list()
 
     def search_update_document_list(self, _=None):
+        self.core.call_all("work_queue_cancel_all", "doc_search")
+
         query = self.search_entry.get_text()
         LOGGER.info("Looking for [%s]", query)
+        self.core.call_all("search_by_keywords", query)
 
-        out = []
-
+    def search_by_keywords(self, query):
+        self.core.call_all("on_search_start", query)
         if query == "":
+            out = []
             promise = openpaperwork_core.promise.ThreadedPromise(
                 self.core, lambda: self.core.call_all(
                     "storage_get_all_docs", out
@@ -82,6 +90,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 lambda *args, **kwargs: [doc_id for (doc_id, doc_url) in out]
             )
         else:
+            out = []
             promise = openpaperwork_core.promise.ThreadedPromise(
                 self.core, lambda: self.core.call_all(
                     "index_search", out, query
@@ -89,16 +98,23 @@ class Plugin(openpaperwork_core.PluginBase):
             )
             promise = promise.then(lambda *args, **kwargs: out)
         promise = promise.then(lambda doc_ids: sorted(doc_ids, reverse=True))
-        promise = promise.then(
-            lambda doc_ids: self.core.call_all("doclist_show", doc_ids)
-        )
-        promise.schedule()
+
+        def show_if_query_still_valid(doc_ids):
+            # While we were looking for the documents, the query may have
+            # changed (user tying). No point in displaying obsolete results.
+            if query != self.search_entry.get_text():
+                return
+            self.core.call_all("on_search_results", doc_ids)
+
+        promise = promise.then(show_if_query_still_valid)
+
+        self.core.call_all("work_queue_add_promise", "doc_search", promise)
 
     def search_stop(self):
-        pass
+        self.core.call_all("work_queue_cancel_all", "doc_search")
 
     def doc_transaction_start(self, out: list, total_expected=-1):
-        class RefreshDocListTransaction(object):
+        class RefreshResultsTransaction(object):
             def add_obj(s, doc_id):
                 pass
 
@@ -117,7 +133,7 @@ class Plugin(openpaperwork_core.PluginBase):
             def commit(s):
                 self.search_update_document_list()
 
-        out.append(RefreshDocListTransaction())
+        out.append(RefreshResultsTransaction())
 
     def sync(self, promises: list):
         promises.append(openpaperwork_core.promise.Promise(
