@@ -23,6 +23,8 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doc_visibles = 0
         self.last_date = datetime.datetime(year=1, month=1, day=1)
         self.row_to_docid = {}
+        self.docid_to_row = {}
+        self.active_docid = None
 
     def get_interfaces(self):
         return ['gtk_doclist']
@@ -74,8 +76,10 @@ class Plugin(openpaperwork_core.PluginBase):
             body=self.widget_tree.get_object("doclist_body"),
         )
 
-        vadj = self.widget_tree.get_object("doclist_scroll").get_vadjustment()
-        vadj.connect("value-changed", self._on_scrollbar_value_changed)
+        self.vadj = self.widget_tree.get_object(
+            "doclist_scroll"
+        ).get_vadjustment()
+        self.vadj.connect("value-changed", self._on_scrollbar_value_changed)
 
         self.doclist.connect("row-activated", self._on_row_activated)
 
@@ -102,6 +106,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.last_date = datetime.datetime(year=1, month=1, day=1)
         self.doc_visibles = 0
         self.row_to_docid = {}
+        self.docid_to_row = {}
 
     def doclist_refresh(self):
         self._doclist_clear()
@@ -140,6 +145,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         row = widget_tree.get_object("doc_listbox")
         self.row_to_docid[row] = doc_id
+        self.docid_to_row[doc_id] = row
         self.doclist.insert(row, -1)
 
     def doclist_extend(self, nb_docs):
@@ -185,6 +191,8 @@ class Plugin(openpaperwork_core.PluginBase):
             len(doc_ids), (stop - start) * 1000, len(self.doc_ids)
         )
 
+        return len(doc_ids)
+
     def doclist_show(self, docs):
         self.doclist_clear()
         self.doc_ids = docs
@@ -200,6 +208,44 @@ class Plugin(openpaperwork_core.PluginBase):
         spinner = self.widget_tree.get_object("doclist_spinner")
         spinner.set_visible(False)
         spinner.stop()
+        self._reselect_current_doc()
+
+    def doc_close(self):
+        self.active_docid = None
+
+    def doc_open(self, doc_id, doc_url):
+        self.active_docid = doc_id
+
+    def _reselect_current_doc(self):
+        if self.active_docid not in self.doc_ids:
+            LOGGER.info(
+                "Document %s not found in the document list",
+                self.active_docid
+            )
+            return
+
+        row = self.docid_to_row.get(self.active_docid)
+        while row is None:
+            if self.doclist_extend(NB_DOCS_PER_PAGE) <= 0:
+                break
+            row = self.docid_to_row.get(self.active_docid)
+
+        assert(row is not None)
+        self.doclist.select_row(row)
+
+        handler_id = None
+
+        def scroll_to_row(row, allocation):
+            adj = allocation.y
+            adj -= self.vadj.get_page_size() / 2
+            adj += allocation.height / 2
+            min_val = self.vadj.get_lower()
+            if adj < min_val:
+                adj = min_val
+            self.vadj.set_value(adj)
+            row.disconnect(handler_id)
+
+        handler_id = row.connect("size-allocate", scroll_to_row)
 
     def _on_scrollbar_value_changed(self, vadj):
         lower = vadj.get_lower()
