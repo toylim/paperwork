@@ -354,6 +354,7 @@ class Plugin(openpaperwork_core.PluginBase):
             out['libinsane'] = {
                 'debian': 'gir1.2-libinsane-1.0',
                 'linuxmint': 'gir1.2-libinsane-1.0',
+                'raspbian': 'gir1.2-libinsane-1.0',
                 'ubuntu': 'gir1.2-libinsane-1.0',
             }
 

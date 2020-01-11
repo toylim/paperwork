@@ -178,6 +178,7 @@ class Plugin(openpaperwork_core.PluginBase):
             out['tesseract']['fedora'] = 'tesseract'
             out['tesseract']['gentoo'] = 'app-text/tesseract'
             out['tesseract']['linuxmint'] = 'tesseract-ocr'
+            out['tesseract']['raspbian'] = 'tesseract-ocr'
             out['tesseract']['ubuntu'] = 'tesseract-ocr'
         ocr_lang = get_default_ocr_lang(allow_none=True)
         if ocr_lang is None:
@@ -192,6 +193,7 @@ class Plugin(openpaperwork_core.PluginBase):
             out[name]['debian'] = 'tesseract-ocr-{}'.format(ocr_lang)
             out[name]['fedora'] = 'tesseract-langpack-{}'.format(ocr_lang)
             out[name]['linuxmint'] = 'tesseract-ocr-{}'.format(ocr_lang)
+            out[name]['raspbian'] = 'tesseract-ocr-{}'.format(ocr_lang)
             out[name]['ubuntu'] = 'tesseract-ocr-{}'.format(ocr_lang)
 
     def ocr_get_lang(self):

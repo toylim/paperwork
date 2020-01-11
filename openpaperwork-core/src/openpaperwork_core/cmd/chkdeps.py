@@ -20,8 +20,9 @@ PACKAGE_TOOLS = {
     'fedora': 'dnf install',
     'gentoo': 'emerge',
     'linuxmint': 'apt-get install -y',
-    'ubuntu': 'apt-get install -y',
+    'raspbian': 'apt-get install -y',
     'suse': 'zypper in',
+    'ubuntu': 'apt-get install -y',
 }
 
 

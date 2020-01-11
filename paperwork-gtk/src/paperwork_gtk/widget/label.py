@@ -28,6 +28,8 @@ except (ImportError, ValueError):
 
 
 import openpaperwork_core
+import openpaperwork_core.deps
+import openpaperwork_gtk.deps
 
 
 class LabelWidget(Gtk.DrawingArea):
@@ -137,22 +139,11 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def chkdeps(self, out: dict):
         if not CAIRO_AVAILABLE:
-            out['cairo']['debian'] = 'python3-gi-cairo'
-            out['cairo']['fedora'] = 'python3-gobject'
-            out['cairo']['linuxmint'] = 'python3-gi-cairo'
-            out['cairo']['ubuntu'] = 'python3-gi-cairo'
+            out['cairo'] = openpaperwork_core.deps.CAIRO
         if not GI_AVAILABLE:
-            out['gi']['debian'] = 'python3-gi'
-            out['gi']['fedora'] = 'python3-gobject-base'
-            out['gi']['linuxmint'] = 'python3-gi'
-            out['gi']['ubuntu'] = 'python3-gi'
+            out['gi'] = openpaperwork_core.deps.GI
         if not GTK_AVAILABLE:
-            out['gtk']['debian'] = 'gir1.2-gtk-3.0'
-            out['gtk']['fedora'] = 'gtk3'
-            out['gtk']['gentoo'] = 'x11-libs/gtk+'
-            out['gtk']['linuxmint'] = 'gir1.2-gtk-3.0'
-            out['gtk']['ubuntu'] = 'gir1.2-gtk-3.0'
-            out['gtk']['suse'] = 'python-gtk'
+            out['gtk'] = openpaperwork_gtk.deps.GTK
 
     def gtk_widget_label_new(self, label_txt, label_color, highlight=False):
         assert(CAIRO_AVAILABLE)
