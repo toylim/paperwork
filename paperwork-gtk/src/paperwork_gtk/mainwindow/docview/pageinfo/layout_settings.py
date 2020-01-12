@@ -18,7 +18,7 @@ LOGGER = logging.getLogger(__name__)
 
 class Plugin(openpaperwork_core.PluginBase):
     LAYOUTS = {
-        'inline': {
+        'paged': {
             'icon': 'view-paged-symbolic',
         },
         'grid': {
@@ -78,15 +78,47 @@ class Plugin(openpaperwork_core.PluginBase):
         self.zoom = self.widget_tree.get_object("adjustment_zoom")
         self.zoom.connect("value-changed", self._on_zoom_changed)
 
+        self.layout_buttons = {
+            self.widget_tree.get_object("layout_grid"): {
+                "handler": None,
+                "layout": "grid",
+            },
+            self.widget_tree.get_object("layout_paged"): {
+                "handler": None,
+                "layout": "paged",
+            },
+        }
+        for button in self.layout_buttons.keys():
+            self.layout_buttons[button]['handler'] = button.connect(
+                "toggled", self._on_layout_change
+            )
+
         self.core.call_success("page_info_add_left", self.layout_button)
 
     def on_layout_change(self, layout_name):
         if self.layout_icon is None:
+            LOGGER.warning("Unknown layout: %s", layout_name)
             return
 
         icon = self.LAYOUTS[layout_name]['icon']
         # smallest icon size available
         self.layout_icon.set_from_icon_name(icon, Gtk.IconSize.SMALL_TOOLBAR)
+
+        # block the signal handler to avoid a signal loop
+        for (button, info) in self.layout_buttons.items():
+            button.handler_block(info['handler'])
+        try:
+            for (button, info) in self.layout_buttons.items():
+                name = info['layout']
+                button.set_active(name == layout_name)
+        finally:
+            for (button, info) in self.layout_buttons.items():
+                button.handler_unblock(info['handler'])
+
+    def _on_layout_change(self, widget):
+        assert(widget in self.layout_buttons)
+        layout = self.layout_buttons[widget]['layout']
+        self.core.call_all("doc_view_set_layout", layout)
 
     def _open_layout_menu(self, *args, **kwargs):
         menu = self.widget_tree.get_object("layout_settings")

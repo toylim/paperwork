@@ -18,7 +18,7 @@ LOGGER = logging.getLogger(__name__)
 class Plugin(openpaperwork_core.PluginBase):
     LAYOUTS = {
         # name: pages per line (columns)
-        'inline': 1,
+        'paged': 1,
         'grid': 3,
     }
     MAX_PAGES = max(LAYOUTS.values())
@@ -209,7 +209,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         # find the closest layout
         max_columns = -1
-        layout_name = "inline"
+        layout_name = "paged"
         for (l_name, required_columns) in self.LAYOUTS.items():
             if nb_columns < required_columns:
                 continue
@@ -220,14 +220,14 @@ class Plugin(openpaperwork_core.PluginBase):
 
         self.core.call_all("on_layout_change", layout_name)
 
-    def doc_view_set_default_zoom(self, *args, **kwargs):
+    def _rearrange_pages(self, nb_columns):
         layout_width = self.page_container.get_width_without_margins(
-            self.MAX_PAGES
+            nb_columns
         )
         if layout_width is None:
             return
 
-        pages = self.pages[:self.MAX_PAGES]
+        pages = self.pages[:nb_columns]
         page_widths = [p.get_full_size()[0] for p in pages]
         zoom = layout_width / sum(page_widths)
         LOGGER.info(
@@ -235,6 +235,13 @@ class Plugin(openpaperwork_core.PluginBase):
             page_widths, layout_width, sum(page_widths), zoom
         )
         self.core.call_all("doc_view_set_zoom", zoom)
+
+    def doc_view_set_layout(self, name):
+        nb_columns = self.LAYOUTS[name]
+        self._rearrange_pages(nb_columns)
+
+    def doc_view_set_default_zoom(self, *args, **kwargs):
+        self._rearrange_pages(self.MAX_PAGES)
 
     def doc_view_get_soom(self):
         if len(self.pages) <= 0:
