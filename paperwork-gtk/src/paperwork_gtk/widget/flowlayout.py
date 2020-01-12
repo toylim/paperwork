@@ -322,13 +322,10 @@ class CustomFlowLayout(Gtk.Box):
             )
 
             for widget in self.widgets.values():
+
                 p_lower = widget.position[1]
                 p_upper = widget.position[1] + widget.size[1]
-                visible = (
-                    (p_min <= p_lower and p_lower <= p_max) or
-                    (p_min <= p_upper and p_upper <= p_max)
-                )
-
+                visible = (p_min <= p_upper and p_lower <= p_max)
                 if widget.visible != visible:
                     widget.visible = visible
                     if visible:
