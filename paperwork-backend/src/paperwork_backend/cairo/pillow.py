@@ -149,7 +149,7 @@ class CairoRenderer(GObject.GObject):
         self.work_queue_name = work_queue_name
         self.file_url = file_url
         self.size = (0, 0)
-        self.size_factor = 1.0
+        self.zoom = 1.0
         self.cairo_surface = None
         self.background = self.DEFAULT_BACKGROUND
         self.visible = True
@@ -235,7 +235,7 @@ class CairoRenderer(GObject.GObject):
         else:
             cairo_ctx.save()
             try:
-                cairo_ctx.scale(self.size_factor, self.size_factor)
+                cairo_ctx.scale(self.zoom, self.zoom)
                 cairo_ctx.set_source_surface(self.cairo_surface.surface)
                 cairo_ctx.paint()
             finally:

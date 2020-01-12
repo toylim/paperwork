@@ -17,10 +17,11 @@ LOGGER = logging.getLogger(__name__)
 
 class Plugin(openpaperwork_core.PluginBase):
     LAYOUTS = {
-        # name: pages per line
+        # name: pages per line (columns)
         'inline': 1,
         'grid': 3,
     }
+    MAX_PAGES = max(LAYOUTS.values())
 
     def __init__(self):
         super().__init__()
@@ -51,7 +52,7 @@ class Plugin(openpaperwork_core.PluginBase):
             },
             {
                 'interface': 'gtk_widget_flowlayout',
-                'defaults': ['paprwork_gtk.widget.flowlayout'],
+                'defaults': ['paperwork_gtk.widget.flowlayout'],
             },
         ]
 
@@ -123,31 +124,10 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         for page in self.pages:
             page.connect("size_obtained", self._on_page_size_obtained)
+        for page in self.pages[:self.MAX_PAGES]:
+            page.connect("size_obtained", self.doc_view_set_default_zoom)
 
         self.doc_goto_page(0)
-
-    def doc_set_layout(self, layout_name="grid"):
-        pass
-
-    def _upd_layout(self, *args, **kwargs):
-        nb_columns = self.page_container.get_max_nb_columns()
-
-        if nb_columns == self._last_nb_columns:
-            return
-        self._last_nb_columns = nb_columns
-
-        # find the closest layout
-        max_columns = -1
-        layout_name = "inline"
-        for (l_name, required_columns) in self.LAYOUTS.items():
-            if nb_columns < required_columns:
-                continue
-            if max_columns >= required_columns:
-                continue
-            max_columns = required_columns
-            layout_name = l_name
-
-        self.core.call_all("on_layout_change", layout_name)
 
     def _on_page_size_obtained(self, page):
         self.page_widgets[page.widget] = page
@@ -219,3 +199,48 @@ class Plugin(openpaperwork_core.PluginBase):
         if self.scroll.get_vadjustment().get_value() != w_height:
             self.scroll.get_vadjustment().set_value(w_height)
             self._last_scroll = w_height
+
+    def _upd_layout(self, *args, **kwargs):
+        nb_columns = self.page_container.get_max_nb_columns()
+
+        if nb_columns == self._last_nb_columns:
+            return
+        self._last_nb_columns = nb_columns
+
+        # find the closest layout
+        max_columns = -1
+        layout_name = "inline"
+        for (l_name, required_columns) in self.LAYOUTS.items():
+            if nb_columns < required_columns:
+                continue
+            if max_columns >= required_columns:
+                continue
+            max_columns = required_columns
+            layout_name = l_name
+
+        self.core.call_all("on_layout_change", layout_name)
+
+    def doc_view_set_default_zoom(self, *args, **kwargs):
+        layout_width = self.page_container.get_width_without_margins(
+            self.MAX_PAGES
+        )
+        if layout_width is None:
+            return
+
+        pages = self.pages[:self.MAX_PAGES]
+        page_widths = [p.get_full_size()[0] for p in pages]
+        zoom = layout_width / sum(page_widths)
+        LOGGER.info(
+            "Page widths = %s ==> Zoom: %d / %d = %f",
+            page_widths, layout_width, sum(page_widths), zoom
+        )
+        self.core.call_all("doc_view_set_zoom", zoom)
+
+    def doc_view_get_soom(self):
+        if len(self.pages) <= 0:
+            return 1.0
+        return self.pages[0].get_zoom()
+
+    def doc_view_set_zoom(self, zoom):
+        for page in self.pages:
+            page.set_zoom(zoom)

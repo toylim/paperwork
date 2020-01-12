@@ -73,7 +73,7 @@ class CairoRenderer(GObject.GObject):
         self.page_idx = page_idx
         self.visible = False
         self.size = (0, 0)
-        self.size_factor = 1.0
+        self.zoom = 1.0
 
         if file_url in POPPLER_DOCS:
             (doc, refcount) = POPPLER_DOCS[file_url]
@@ -163,9 +163,9 @@ class CairoRenderer(GObject.GObject):
 
             cairo_ctx.scale(
                 paperwork_backend.model.pdf.PDF_RENDER_FACTOR *
-                self.size_factor,
+                self.zoom,
                 paperwork_backend.model.pdf.PDF_RENDER_FACTOR *
-                self.size_factor,
+                self.zoom,
             )
             self.page.render(cairo_ctx)
         finally:

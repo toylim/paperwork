@@ -97,3 +97,19 @@ class TestPositioning(unittest.TestCase):
 
         self.assertEqual(widgets[0].position, (85, 50))
         self.assertEqual(widgets[1].position, (275, 50))
+
+    def test_position_center_spacing_tight(self):
+        widgets = [
+            flowlayout.WidgetInfo(None, Gtk.Align.CENTER, (100, 100)),
+            flowlayout.WidgetInfo(None, Gtk.Align.CENTER, (100, 100)),
+            flowlayout.WidgetInfo(None, Gtk.Align.CENTER, (100, 100)),
+            flowlayout.WidgetInfo(None, Gtk.Align.CENTER, (100, 100)),
+        ]
+        flowlayout.recompute_box_positions(
+            DummyCore(), widgets, width=350, spacing=(50, 50)
+        )
+
+        self.assertEqual(widgets[0].position, (50, 50))
+        self.assertEqual(widgets[1].position, (200, 50))
+        self.assertEqual(widgets[2].position, (50, 200))
+        self.assertEqual(widgets[3].position, (200, 200))

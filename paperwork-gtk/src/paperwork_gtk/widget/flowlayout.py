@@ -101,7 +101,7 @@ def recompute_box_positions(core, widgets, width, spacing=(0, 0)):
         if not widget.is_visible():
             continue
         widget.update_widget_size()
-        if line_width + widget.size[0] + spacing[0] >= width:
+        if line_width + widget.size[0] + spacing[0] > width:
             lines.append(line)
             line_heights.append(line_height)
             line = []
@@ -356,6 +356,24 @@ class CustomFlowLayout(Gtk.Box):
             for widget in self.widgets.keys():
                 widget.unparent()
             self.widgets = collections.OrderedDict()
+
+    def get_width_without_margins(self, nb_widgets=1):
+        nb_widgets = min(len(self.widgets), nb_widgets)
+        layout_width = self.get_allocated_width()
+        layout_width -= (nb_widgets + 1) * self.spacing[0]
+        if layout_width <= 0:
+            return None
+        return layout_width
+
+        widgets = list(self.widgets.values())[:nb_widgets]
+        widget_width = 0
+        for w in widgets:
+            widget_width += w.size[0]
+
+        if widget_width <= 0:
+            return None
+
+        return layout_width / widget_width
 
 
 if GTK_AVAILABLE:

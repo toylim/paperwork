@@ -42,7 +42,7 @@ class Page(GObject.GObject):
         self.page_idx = page_idx
         self.nb_pages = nb_pages
 
-        self.height = 1.0
+        self.zoom = 1.0
 
         page_img_url = self.core.call_success(
             "page_get_img_url", self.doc_url, self.page_idx
@@ -96,23 +96,26 @@ class Page(GObject.GObject):
         self.flow_layout.disconnect(self._on_widget_hidden_handler_id)
         self.renderer.close()
 
-    def set_height(self, height):
-        self.height = height
+    def get_zoom(self):
+        return self.zoom
+
+    def set_zoom(self, zoom):
+        self.zoom = zoom
         self.resize()
 
-    def get_size_factor(self):
-        if self.renderer.size[0] == 0:
-            return 0
-        return self.height / self.renderer.size[1]
+    def get_full_size(self):
+        return self.renderer.size
 
     def get_size(self):
-        factor = self.get_size_factor()
-        return (int(self.renderer.size[0]) * factor, self.height)
+        return (
+            int(self.renderer.size[0]) * self.zoom,
+            int(self.renderer.size[1]) * self.zoom
+        )
 
     def resize(self):
         if self.renderer.size[0] == 0:
             return
-        self.renderer.size_factor = self.get_size_factor()
+        self.renderer.zoom = self.zoom
         size = self.get_size()
         self.widget.set_size_request(size[0], size[1])
 
@@ -226,7 +229,6 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
         for page in self.pages:
             out.append(page)
-            page.set_height(400)  # default
 
         promise = openpaperwork_core.promise.Promise(
             self.core, self.core.call_one,
