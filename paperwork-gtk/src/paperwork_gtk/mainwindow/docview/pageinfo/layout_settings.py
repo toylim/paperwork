@@ -97,7 +97,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def on_layout_change(self, layout_name):
         if self.layout_icon is None:
-            LOGGER.warning("Unknown layout: %s", layout_name)
             return
 
         icon = self.LAYOUTS[layout_name]['icon']
