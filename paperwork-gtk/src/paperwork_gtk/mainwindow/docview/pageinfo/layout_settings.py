@@ -41,6 +41,10 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return [
             {
+                'interface': 'gtk_docview',
+                'defaults': ['paperwork_gtk.mainwindow.docview'],
+            },
+            {
                 'interface': 'gtk_docview_pageinfo',
                 'defaults': ['paperwork_gtk.mainwindow.docview.pageinfo'],
             },
@@ -71,6 +75,9 @@ class Plugin(openpaperwork_core.PluginBase):
         self.layout_button = self.widget_tree.get_object("page_layout")
         self.layout_button.connect("clicked", self._open_layout_menu)
 
+        self.zoom = self.widget_tree.get_object("adjustment_zoom")
+        self.zoom.connect("value-changed", self._on_zoom_changed)
+
         self.core.call_success("page_info_add_left", self.layout_button)
 
     def on_layout_change(self, layout_name):
@@ -85,3 +92,12 @@ class Plugin(openpaperwork_core.PluginBase):
         menu = self.widget_tree.get_object("layout_settings")
         menu.set_relative_to(self.layout_button)
         menu.set_visible(True)
+
+    def _on_zoom_changed(self, _=None):
+        new_value = self.zoom.get_value()
+        self.core.call_all("doc_view_set_zoom", new_value)
+
+    def doc_view_set_zoom(self, zoom):
+        current = self.zoom.get_value()
+        if current != zoom:
+            self.zoom.set_value(zoom)
