@@ -25,6 +25,10 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return [
             {
+                'interface': 'config',
+                'defaults': ['openpaperwork_core.config'],
+            },
+            {
                 'interface': 'gtk_resources',
                 'defaults': ['openpaperwork_gtk.resources'],
             },
@@ -52,10 +56,19 @@ class Plugin(openpaperwork_core.PluginBase):
             LOGGER.error("Failed to load widget tree")
             return
 
-        mainwindow = self.widget_tree.get_object("mainwindow")
-        mainwindow.connect(
-            "destroy", self.on_mainwindow_destroy
+        opt = self.core.call_success(
+            "config_build_simple", "GUI", "main_window_size",
+            lambda: (1024, 600)
         )
+        self.core.call_all("config_register", "main_window_size", opt)
+        main_win_size = self.core.call_success(
+            "config_get", "main_window_size"
+        )
+
+        mainwindow = self.widget_tree.get_object("mainwindow")
+        mainwindow.set_default_size(main_win_size[0], main_win_size[1])
+        mainwindow.connect("destroy", self._on_mainwindow_destroy)
+        mainwindow.connect("size-allocate", self._on_mainwindow_size_allocate)
 
         self.stacks = {
             "left": {
@@ -84,9 +97,18 @@ class Plugin(openpaperwork_core.PluginBase):
 
         self.widget_tree.get_object("mainwindow").set_visible(True)
 
-    def on_mainwindow_destroy(self, main_window):
+    def on_quit(self):
+        # needed to save window size
+        # TODO(JFlesch): not really config --> should not be stored in config ?
+        self.core.call_all("config_save")
+
+    def _on_mainwindow_destroy(self, main_window):
         LOGGER.info("Main window destroy. Quitting")
         self.core.call_all("mainloop_quit_graceful")
+
+    def _on_mainwindow_size_allocate(self, main_win, rectangle):
+        (w, h) = main_win.get_size()
+        self.core.call_all("config_put", "main_window_size", (w, h))
 
     def mainwindow_get_main_container(self):
         return self.widget_tree.get_object("main_box")
