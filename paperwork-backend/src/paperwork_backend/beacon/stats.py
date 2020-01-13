@@ -3,6 +3,7 @@ import logging
 import uuid
 
 import openpaperwork_core
+import openpaperwork_core.promise
 
 from . import (
     OpenpaperHttp,
@@ -37,12 +38,16 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return [
             {
+                'interface': 'config',
+                'defaults': ['openpaperwork_core.config'],
+            },
+            {
                 'interface': 'mainloop',
                 'defaults': ['openpaperwork_gtk.mainloop.glib'],
             },
             {
-                'interface': 'config',
-                'defaults': ['openpaperwork_core.config'],
+                'interface': 'thread',
+                'defaults': ['openpaperwork_core.thread.simple'],
             },
         ]
 

@@ -75,6 +75,10 @@ class AbstractExportPipePlugin(openpaperwork_core.PluginBase):
                 'interface': 'mainloop',
                 'defaults': ['openpaperwork_gtk.mainloop.glib'],
             },
+            {
+                'interface': 'thread',
+                'defaults': ['openpaperwork_core.thread.simple'],
+            },
         ]
 
     def export_get_pipe_by_name(self, name):

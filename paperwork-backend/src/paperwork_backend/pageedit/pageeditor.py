@@ -344,6 +344,10 @@ class Plugin(openpaperwork_core.PluginBase):
                     'paperwork_backend.pillow.pdf',
                 ]
             },
+            {
+                'interface': 'thread',
+                'defaults': ['openpaperwork_core.thread.simple'],
+            },
         ]
 
     def page_editor_get(self, doc_url, page_idx, page_editor_ui):

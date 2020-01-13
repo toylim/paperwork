@@ -21,6 +21,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['paperwork_backend.model.workdir'],
             },
             {
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_core.mainloop.asyncio'],
+            },
+            {
                 'interface': 'page_img',
                 'defaults': ['paperwork_backend.model.img'],
             },
@@ -31,7 +35,11 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'scan',
                 'defaults': ['paperwork_backend.docscan.libinsane'],
-            }
+            },
+            {
+                'interface': 'thread',
+                'defaults': ['openpaperwork_core.thread.simple'],
+            },
         ]
 
     def scan2doc_scan_id_to_doc_id(self, scan_id):

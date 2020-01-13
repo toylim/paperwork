@@ -133,6 +133,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'pillow',
                 'defaults': ['paperwork_backend.pillow.img'],
             },
+            {
+                'interface': 'thread',
+                'defaults': ['openpaperwork_core.thread.simple'],
+            },
         ]
 
     def get_import_mime_type(self, out: list):

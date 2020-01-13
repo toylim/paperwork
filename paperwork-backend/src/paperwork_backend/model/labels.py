@@ -86,6 +86,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'mainloop',
                 'defaults': ['openpaperwork_gtk.mainloop.glib'],
             },
+            {
+                'interface': 'thread',
+                'defaults': ['openpaperwork_core.thread.simple'],
+            },
         ]
 
     def doc_get_mtime_by_url(self, out: list, doc_url):

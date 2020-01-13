@@ -1,7 +1,6 @@
 import unittest
 
-import openpaperwork_core
-import openpaperwork_core.promise
+from .. import (Core, promise)
 
 
 class AbstractTestCallback(unittest.TestCase):
@@ -12,7 +11,7 @@ class AbstractTestCallback(unittest.TestCase):
         assert()
 
     def setUp(self):
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = Core(allow_unsatisfied=True)
         self.core.load(self.get_plugin_name())
         self.core.init()
 
@@ -39,7 +38,7 @@ class AbstractTestPromise(unittest.TestCase):
         assert()
 
     def setUp(self):
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = Core(allow_unsatisfied=True)
         self.core.load(self.get_plugin_name())
         self.core.init()
 
@@ -55,7 +54,7 @@ class AbstractTestPromise(unittest.TestCase):
         def stop():
             self.stop_called = True
 
-        p = openpaperwork_core.promise.Promise(self.core, stop)
+        p = promise.Promise(self.core, stop)
         p.schedule()
         self.core.call_all("mainloop_quit_graceful")
 
@@ -82,7 +81,7 @@ class AbstractTestPromise(unittest.TestCase):
             self.stop_called = self.idx
             self.idx += 1
 
-        p = openpaperwork_core.promise.Promise(self.core, alpha)
+        p = promise.Promise(self.core, alpha)
         p = p.then(beta)
         p = p.then(stop)
         p.schedule()
@@ -112,7 +111,7 @@ class AbstractTestPromise(unittest.TestCase):
         def on_exc(exc):
             self.exc_raised = True
 
-        p = openpaperwork_core.promise.Promise(self.core, alpha)
+        p = promise.Promise(self.core, alpha)
         p = p.then(beta)
         p = p.then(stop)
         p = p.catch(on_exc)

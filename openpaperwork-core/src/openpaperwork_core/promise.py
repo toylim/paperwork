@@ -178,7 +178,8 @@ class ThreadedPromise(BasePromise):
     """
     Promise for which the provided callback will be run in another thread,
     leaving the main loop thread free to do other things.
-    Requires a plugin implementing the interface 'mainloop'
+    Requires a plugin implementing the interface 'mainloop' and a plugin
+    implementing the interface 'thread'.
 
     IMPORTANT: This should ONLY be used for long-lasting tasks that cannot
     be split in small tasks (image processing, OCR, etc). The callback provided
@@ -206,8 +207,6 @@ class ThreadedPromise(BasePromise):
                 self.core.call_one("mainloop_schedule", t.do, our_r)
         except Exception as exc:
             self.on_error(exc)
-        finally:
-            self.core.call_all("mainloop_unref", self)
 
     def do(self, parent_r=None):
         self.parent_promise_return = parent_r
@@ -218,17 +217,7 @@ class ThreadedPromise(BasePromise):
                     self.core.call_one("mainloop_schedule", t.do, None)
                 return
 
-            thread = threading.Thread(
-                target=self._threaded_do, args=(parent_r,)
-            )
-
-            # The mainloop doesn't track other threads, but if there is
-            # a graceful shutdown waiting, we don't want it to stop the main
-            # loop before our thread is done.
-            # --> increment mainloop ref counter before
-            self.core.call_all("mainloop_ref", self)
-
-            thread.start()
+            self.core.call_one("thread_start", self._threaded_do, parent_r)
         except Exception as exc:
             self.on_error(exc)
             return

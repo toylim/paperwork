@@ -31,7 +31,15 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'fs',
                 'defaults': ['openpaperwork_gtk.fs.gio']
-            }
+            },
+            {
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_core.mainloop.asyncio'],
+            },
+            {
+                'interface': 'thread',
+                'defaults': ['openpaperwork_core.thread.simple'],
+            },
         ]
 
     def _check_is_img(self, file_url):

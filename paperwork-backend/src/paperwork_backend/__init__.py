@@ -10,6 +10,7 @@ DEFAULT_PLUGINS = [
     'openpaperwork_core.fs.memory',
     'openpaperwork_core.i18n.python',
     'openpaperwork_core.perfcheck.log',
+    'openpaperwork_core.thread.simple',
     'openpaperwork_core.work_queue.default',
     'openpaperwork_gtk.fs.gio',
     'paperwork_backend.beacon.stats',

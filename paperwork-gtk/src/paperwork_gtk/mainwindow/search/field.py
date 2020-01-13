@@ -40,8 +40,16 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_gtk.resources'],
             },
             {
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_gtk.mainloop.glib'],
+            },
+            {
                 'interface': 'work_queue',
                 'defaults': ['openpaperwork_core.work_queue.default'],
+            },
+            {
+                'interface': 'thread',
+                'defaults': ['openpaperwork_core.thread.simple'],
             },
         ]
 

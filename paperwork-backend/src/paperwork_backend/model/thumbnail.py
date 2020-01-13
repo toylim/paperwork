@@ -44,6 +44,10 @@ class Plugin(openpaperwork_core.PluginBase):
                     'paperwork_backend.pillow.pdf',
                 ],
             },
+            {
+                'interface': 'thread',
+                'defaults': ['openpaperwork_core.thread.simple'],
+            },
         ]
 
     def thumbnail_get_doc(self, doc_url):
