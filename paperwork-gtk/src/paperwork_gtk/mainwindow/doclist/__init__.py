@@ -222,6 +222,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 "Document %s not found in the document list",
                 self.active_docid
             )
+            self.vadj.set_value(self.vadj.get_lower())
             return
 
         row = self.docid_to_row.get(self.active_docid)
