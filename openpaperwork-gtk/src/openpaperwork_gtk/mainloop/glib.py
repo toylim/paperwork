@@ -48,10 +48,14 @@ class Plugin(openpaperwork_core.PluginBase):
 
         self.loop_ident = threading.current_thread().ident
 
+        self.mainloop_schedule(self.core.call_all, "on_mainloop_start")
+
         try:
             self.loop.run()
         finally:
             self.loop_ident = None
+
+        self.core.call_all("on_mainloop_quit")
 
         if self.halt_cause is not None:
             halt_cause = self.halt_cause

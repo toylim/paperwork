@@ -41,11 +41,16 @@ class Plugin(openpaperwork_core.PluginBase):
         self._check_mainloop_instantiated()
         self.halt_on_uncatched_exception = halt_on_uncatched_exception
 
+        self.mainloop_schedule(self.core.call_all, "on_mainloop_start")
+
         self.loop_ident = threading.current_thread().ident
         try:
             self.loop.run_forever()
         finally:
             self.loop_ident = None
+
+        self.core.call_all("on_mainloop_quit")
+
         if self.halt_cause is not None:
             halt_cause = self.halt_cause
             self.halt_cause = None

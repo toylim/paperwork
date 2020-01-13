@@ -43,6 +43,8 @@ class AbstractTestThread(unittest.TestCase):
             out['task_b_done'] = True
             sem.release()
 
+        self.core.call_all("on_mainloop_start")
+
         self.core.call_one("thread_start", task_a)
         self.core.call_one("thread_start", task_b)
 
@@ -51,3 +53,5 @@ class AbstractTestThread(unittest.TestCase):
 
         self.assertTrue(out['task_a_done'])
         self.assertTrue(out['task_b_done'])
+
+        self.core.call_all("on_mainloop_quit")
