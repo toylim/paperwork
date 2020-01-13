@@ -123,6 +123,11 @@ class BasePromise(object):
 
 
 class Promise(BasePromise):
+    """
+    Executed in the main loop thread.
+    Requires a plugin implementing the interface 'mainloop'.
+    """
+
     def do(self, parent_r=None):
         self.parent_promise_return = parent_r
         try:
@@ -148,10 +153,32 @@ class Promise(BasePromise):
             self.on_error(exc)
 
 
+class DelayPromise(BasePromise):
+    """
+    Promise adding delay between 2 other promises.
+    Requires a plugin implementing the interface 'mainloop'
+    """
+    def __init__(self, core, delay_s):
+        super().__init__(core)
+        self.delay_s = delay_s
+
+    def _call_then(self, parent_r):
+        for t in self._then:
+            self.core.call_one("mainloop_schedule", t.do, parent_r)
+
+    def do(self, parent_r=None):
+        LOGGER.debug("Promise: delay: %fs", self.delay_s)
+        self.core.call_one(
+            "mainloop_schedule", self._call_then, parent_r,
+            delay_s=self.delay_s
+        )
+
+
 class ThreadedPromise(BasePromise):
     """
     Promise for which the provided callback will be run in another thread,
     leaving the main loop thread free to do other things.
+    Requires a plugin implementing the interface 'mainloop'
 
     IMPORTANT: This should ONLY be used for long-lasting tasks that cannot
     be split in small tasks (image processing, OCR, etc). The callback provided

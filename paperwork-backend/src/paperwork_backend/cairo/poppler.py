@@ -1,5 +1,4 @@
 import logging
-import time
 
 import openpaperwork_core
 import openpaperwork_core.deps
@@ -103,8 +102,8 @@ class CairoRenderer(GObject.GObject):
             # Gives back a bit of CPU time to GTK so the GUI remains
             # usable, but not too much so we don't recompute the layout too
             # often
-            promise = promise.then(openpaperwork_core.promise.ThreadedPromise(
-                core, lambda *args, **kwargs: time.sleep(DELAY)
+            promise = promise.then(openpaperwork_core.promise.DelayPromise(
+                core, DELAY
             ))
 
         self.get_size_promise = promise

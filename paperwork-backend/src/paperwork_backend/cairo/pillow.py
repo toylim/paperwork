@@ -1,6 +1,5 @@
 import io
 import logging
-import time
 
 import openpaperwork_core
 import openpaperwork_core.deps
@@ -163,8 +162,8 @@ class CairoRenderer(GObject.GObject):
         promise = promise.then(self._set_img_size)
         # Gives back a bit of CPU time to GTK so the GUI remains
         # usable
-        promise = promise.then(openpaperwork_core.promise.ThreadedPromise(
-            core, time.sleep, args=(DELAY,)
+        promise = promise.then(openpaperwork_core.promise.DelayPromise(
+            core, DELAY
         ))
         self.get_size_promise = promise
 
@@ -174,8 +173,8 @@ class CairoRenderer(GObject.GObject):
         promise = promise.then(self._set_cairo_surface)
         # Gives back a bit of CPU time to GTK so the GUI remains
         # usable
-        promise = promise.then(openpaperwork_core.promise.ThreadedPromise(
-            core, time.sleep, args=(DELAY,)
+        promise = promise.then(openpaperwork_core.promise.DelayPromise(
+            core, DELAY
         ))
         self.render_img_promise = promise
 

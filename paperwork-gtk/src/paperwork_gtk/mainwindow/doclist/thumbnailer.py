@@ -1,5 +1,4 @@
 import logging
-import time
 
 import PIL
 
@@ -47,8 +46,8 @@ class ThumbnailTask(object):
         promise = promise.then(self.set_thumbnail)
         # Gives back a bit of CPU time to GTK so the GUI remains
         # usable
-        promise = promise.then(openpaperwork_core.promise.ThreadedPromise(
-            self.core, time.sleep, args=(DELAY,)
+        promise = promise.then(openpaperwork_core.promise.DelayPromise(
+            self.core, DELAY
         ))
         return promise
 
