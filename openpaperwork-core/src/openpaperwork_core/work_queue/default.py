@@ -58,25 +58,28 @@ class WorkQueue(object):
             heapq.heappush(self.queue, task)
             self.all_tasks[promise] = task
 
-        if not self.running:
-            self._run_next_promise()
+            if not self.running:
+                self._run_next_promise()
 
-    def _run_next_promise(self, *args, **kwargs):
+    def _run_next_promise(self):
         self.running = True
 
         try:
             task = None
             while task is None or not task.active:
-                with self.lock:
-                    task = heapq.heappop(self.queue)
-                    self.all_tasks.pop(task.promise)
+                task = heapq.heappop(self.queue)
+                self.all_tasks.pop(task.promise)
         except IndexError:
             self.running = False
             return
 
-        promise = task.promise.then(self._run_next_promise)
+        promise = task.promise.then(self._run_next_promise_locked)
         promise.catch(task._on_error)
         promise.schedule()
+
+    def _run_next_promise_locked(self, *args, **kwargs):
+        with self.lock:
+            self._run_next_promise()
 
     def cancel(self, promise):
         try:

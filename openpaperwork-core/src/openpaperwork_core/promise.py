@@ -162,6 +162,9 @@ class DelayPromise(BasePromise):
         super().__init__(core)
         self.delay_s = delay_s
 
+    def __str__(self):
+        return "DelayPromise<delay_s={}>({})".format(self.delay_s, id(self))
+
     def _call_then(self, parent_r):
         for t in self._then:
             self.core.call_one("mainloop_schedule", t.do, parent_r)
@@ -185,6 +188,9 @@ class ThreadedPromise(BasePromise):
     be split in small tasks (image processing, OCR, etc). The callback provided
     must be really careful regarding thread-safety.
     """
+
+    def __str__(self):
+        return "ThreadedPromise<{}>({})".format(str(self.func), id(self))
 
     def _threaded_do(self, parent_r):
         try:
