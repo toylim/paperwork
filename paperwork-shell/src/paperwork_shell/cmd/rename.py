@@ -63,6 +63,9 @@ class Plugin(openpaperwork_core.PluginBase):
         source_doc_url = self.core.call_success("doc_id_to_url", source_doc_id)
         dest_doc_url = self.core.call_success("doc_id_to_url", dest_doc_id)
 
+        if self.interactive:
+            print("Renaming: {} --> {}".format(source_doc_url, dest_doc_url))
+
         self.core.call_all("doc_rename_by_url", source_doc_url, dest_doc_url)
 
         transactions = []
