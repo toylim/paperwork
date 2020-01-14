@@ -113,7 +113,11 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'fs',
                 'defaults': ['openpaperwork_gtk.fs.gio'],
-            }
+            },
+            {
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_gtk.mainloop.glib'],
+            },
         ]
 
     def chkdeps(self, out: dict):
@@ -175,11 +179,17 @@ class Plugin(openpaperwork_core.PluginBase):
     def page_get_mtime_by_url(self, out: list, doc_url, page_idx):
         return self.doc_get_mtime_by_url(out, doc_url)
 
-    def doc_get_nb_pages_by_url(self, doc_url):
+    def _doc_get_nb_pages_by_url(self, doc_url):
         (pdf_url, pdf) = self._open_pdf(doc_url)
         if pdf is None:
             return None
         return pdf.get_n_pages()
+
+    def doc_get_nb_pages_by_url(self, doc_url):
+        # Poppler is not thread-safe
+        return self.core.call_success(
+            "mainloop_execute", self._doc_get_nb_pages_by_url, doc_url
+        )
 
     def page_get_img_url(self, doc_url, page_idx, write=False):
         if write:
@@ -208,7 +218,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 rects.append(rect)
             yield(letters, rects)
 
-    def doc_get_text_by_url(self, out: list, doc_url):
+    def _doc_get_text_by_url(self, out: list, doc_url):
         task = "pdf_get_text_by_url({})".format(doc_url)
         self.core.call_all("on_perfcheck_start", task)
 
@@ -227,14 +237,27 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all(
             "on_perfcheck_stop", task, nb_pages=pdf.get_n_pages()
         )
+        return True
 
-    def page_has_text_by_url(self, doc_url, page_idx):
+    def doc_get_text_by_url(self, out: list, doc_url):
+        # Poppler is not thread-safe
+        return self.core.call_success(
+            "mainloop_execute", self._doc_get_text_by_url, out, doc_url
+        )
+
+    def _page_has_text_by_url(self, doc_url, page_idx):
         (pdf_url, pdf) = self._open_pdf(doc_url)
         if pdf is None:
             return
         return len(pdf.get_page(page_idx).get_text().strip()) > 0
 
-    def page_get_boxes_by_url(self, doc_url, page_idx):
+    def page_has_text_by_url(self, doc_url, page_idx):
+        # Poppler is not thread-safe
+        return self.core.call_success(
+            "mainloop_execute", self._page_has_text_by_url, doc_url, page_idx
+        )
+
+    def _page_get_boxes_by_url(self, doc_url, page_idx):
         (pdf_url, pdf) = self._open_pdf(doc_url)
         if pdf is None:
             return
@@ -262,6 +285,12 @@ class Plugin(openpaperwork_core.PluginBase):
                 words.append(word_box)
             line_boxes.append(PdfLineBox(words, line_rects))
         return line_boxes
+
+    def page_get_boxes_by_url(self, doc_url, page_idx):
+        # Poppler is not thread-safe
+        return self.core.call_success(
+            "mainloop_execute", self._page_get_boxes_by_url, doc_url, page_idx
+        )
 
     def doc_pdf_import(self, src_file_uri):
         # check the PDF is readable before messing the content of the
@@ -292,7 +321,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 "Cannot move page from PDF file (doc=%s)", source_doc_url
             )
 
-    def page_get_paper_size_by_url(self, doc_url, page_idx):
+    def _page_get_paper_size_by_url(self, doc_url, page_idx):
         (pdf_url, pdf) = self._open_pdf(doc_url)
         if pdf is None:
             return None
@@ -305,4 +334,11 @@ class Plugin(openpaperwork_core.PluginBase):
         return (
             size[0] / 72.0 * 25.4,
             size[0] / 72.0 * 25.4,
+        )
+
+    def page_get_paper_size_by_url(self, doc_url, page_idx):
+        # Poppler is not thread-safe
+        return self.core.call_success(
+            "mainloop_execute",
+            self._page_get_paper_size_by_url, doc_url, page_idx
         )
