@@ -74,6 +74,7 @@ doc:
     - apt-get install -y -qq openjdk-11-jre
     - apt-get install -y -qq python3-sphinx python3-recommonmark
     - apt-get install -y -qq plantuml python3-sphinxcontrib.plantuml
+    - apt-get install -y -qq rclone
     - source ./activate_test_env.sh && make doc && make upload_doc
 
 
