@@ -1,0 +1,27 @@
+import logging
+
+
+LOGGER = logging.getLogger()
+
+
+class Task(object):
+    def __init__(self, core, func, args, kwargs):
+        self.core = core
+        self.func = func
+        self.args = args
+        self.kwargs = kwargs
+        # The mainloop can't track other threads, but if there is
+        # a graceful shutdown waiting, we don't want it to stop the main
+        # loop before our thread is done.
+        # --> increment mainloop ref counter before
+        core.call_all("mainloop_ref", self)
+
+    def do(self):
+        try:
+            self.func(*self.args, **self.kwargs)
+        except Exception as exc:
+            LOGGER.error(
+                "==== UNCATCHED EXCEPTION IN THREAD ===", exc_info=exc
+            )
+        finally:
+            self.core.call_all("mainloop_unref", self)

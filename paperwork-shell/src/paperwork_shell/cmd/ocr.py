@@ -1,0 +1,101 @@
+#    Paperwork - Using OCR to grep dead trees the easy way
+#    Copyright (C) 2012-2019  Jerome Flesch
+#
+#    Paperwork is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    Paperwork is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with Paperwork.  If not, see <http://www.gnu.org/licenses/>.
+import gettext
+import sys
+
+import openpaperwork_core
+
+from . import util
+
+
+_ = gettext.gettext
+
+
+class Plugin(openpaperwork_core.PluginBase):
+    def __init__(self):
+        super().__init__()
+        self.interactive = False
+
+    def get_interfaces(self):
+        return ['shell']
+
+    def get_deps(self):
+        return [
+            {
+                "interface": "ocr",
+                "defaults": ['paperwork_backend.guesswork.ocr.pyocr'],
+            },
+        ]
+
+    def cmd_set_interactive(self, interactive):
+        self.interactive = interactive
+
+    def cmd_complete_argparse(self, parser):
+        p = parser.add_parser(
+            'ocr', help=_(
+                "OCR document or pages"
+            )
+        )
+        p.add_argument(
+            'doc_id', type=str,
+            help=_("Document on which OCR must be run")
+        )
+        p.add_argument(
+            '--pages', '-p', type=str,
+            help=_(
+                "Pages to OCR"
+                " (single integer, range or comma-separated list,"
+                " default: all pages)"
+            )
+        )
+
+    def cmd_run(self, args):
+        if args.command != 'ocr':
+            return None
+
+        doc_id = args.doc_id
+        doc_url = self.core.call_success("doc_id_to_url", doc_id)
+
+        pages = util.parse_page_list(args)
+        if pages is None:
+            nb_pages = self.core.call_success(
+                "doc_get_nb_pages_by_url", doc_url
+            )
+            pages = range(0, nb_pages)
+
+        out = []
+
+        for page_idx in pages:
+            if self.interactive:
+                sys.stdout.write(
+                    (
+                        _("Running OCR on document %s page %d ...")
+                        % (doc_id, page_idx + 1)
+                    ) + " "
+                )
+                sys.stdout.flush()
+
+            self.core.call_all("ocr_page_by_url", doc_url, page_idx)
+
+            if self.interactive:
+                sys.stdout.write(_("Done") + "\n")
+
+            out.append((doc_id, page_idx))
+
+        if self.interactive:
+            print(_("All done !"))
+
+        return out

@@ -1,0 +1,74 @@
+from .. import PluginBase
+
+
+class Setting(object):
+    def __init__(self, value, default_func):
+        self.value = value
+        self.default_value_func = default_func
+
+    def get(self):
+        if self.value is None:
+            return self.default_value_func()
+        return self.value
+
+    def put(self, v):
+        self.value = v
+
+
+class Plugin(PluginBase):
+    """
+    Translate values from the configuration into more usable ones.
+    Provides default values (except for plugins).
+    """
+
+    def __init__(self):
+        super().__init__()
+        self._settings = {}
+
+    def __get_settings(self):
+        return {k: v.get() for (k, v) in self._settings.items()}
+
+    def __set_settings(self, new_settings):
+        self._settings = {
+            k: Setting(v, lambda: None)
+            for (k, v) in new_settings.items()
+        }
+
+    settings = property(__get_settings, __set_settings)
+
+    def get_interfaces(self):
+        return ['config']
+
+    def config_load(self, application, plugin_list_name, default_plugins=[]):
+        pass
+
+    def config_save(self):
+        pass
+
+    def config_build_simple(self, section, token, default):
+        return Setting(None, default)
+
+    def config_register(self, key, setting):
+        if key not in self._settings:  # don't smash test settings
+            self._settings[key] = setting
+
+    def config_get_setting(self, key):
+        return self._settings[key]
+
+    def config_get(self, key):
+        return self._settings[key].get()
+
+    def config_get_default(self, key):
+        return self._settings[key].default_value_func()
+
+    def config_put(self, key, value):
+        self._settings[key].put(value)
+
+    def config_add_plugin(self, plugin):
+        raise NotImplementedError()
+
+    def config_remove_plugin(self, plugin):
+        raise NotImplementedError()
+
+    def onfig_list_plugins(self):
+        raise NotImplementedError()

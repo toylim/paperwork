@@ -1,4 +1,4 @@
-VERSION_FILE = openpaperwork_core/_version.py
+VERSION_FILE = src/openpaperwork_core/_version.py
 PYTHON ?= python3
 
 build: build_c build_py
@@ -19,17 +19,24 @@ ${VERSION_FILE}:
 	echo -n $(shell git describe --always) >> $@
 	echo "\"" >> $@
 
-doc:
+doc: install_py
+	$(MAKE) -C doc html
+
+doc/_build/html/index.html: doc
+
+upload_doc: doc/_build/html/index.html
+	cd .. && ./ci/deliver_doc.sh ${CURDIR}/doc/_build/html openpaperwork_core
 
 check:
-	flake8 openpaperwork_core
+	flake8 src/openpaperwork_core
 
-test: ${VERSION_FILE}
-	tox
+test: install
+	python3 -m unittest discover --verbose -s tests
 
 linux_exe:
 
 windows_exe:
+	${PYTHON} /mingw32/bin/pip3-script.py install .
 
 release:
 ifeq (${RELEASE}, )
@@ -46,6 +53,7 @@ release_pypi:
 	@echo "All done"
 
 clean:
+	rm -rf doc/_build
 	rm -f ${VERSION_FILE}
 	rm -rf build dist *.egg-info
 

@@ -4,10 +4,11 @@ import sys
 
 from setuptools import setup, find_packages
 
+
 quiet = '--quiet' in sys.argv or '-q' in sys.argv
 
 try:
-    with open("openpaperwork_core/_version.py", "r") as file_descriptor:
+    with open("src/openpaperwork_core/_version.py", "r") as file_descriptor:
         version = file_descriptor.read().strip()
         version = version.split(" ")[2][1:-1]
     if not quiet:
@@ -51,7 +52,8 @@ There is no GUI here. The GUI is
     license="GPLv3+",
     author="Jerome Flesch",
     author_email="jflesch@openpaper.work",
-    packages=find_packages(),
+    packages=find_packages('src'),
+    package_dir={'': 'src'},
     zip_safe=True,
     install_requires=[]
 )

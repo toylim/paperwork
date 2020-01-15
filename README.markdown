@@ -53,6 +53,7 @@ In other words, let the machine do most of the work for you.
 * Keyword suggestions
 * Quick edit of scans
 * PDF support
+* [Kick-ass command line interface](http://storage.sbg.cloud.ovh.net/v1/AUTH_6c4273c748b243c58df3f6942075e0c9/gitlab.gnome.org/paperwork-shell/search.gif)
 
 Papers are organized into documents. Each document contains pages.
 
@@ -75,6 +76,12 @@ it first before installing the new version.
 * Microsoft Windows:
   * [Installation](https://openpaper.work)
   * [Development](doc/devel.windows.markdown)
+
+
+## Usage
+
+* [GTK interface](paperwork-gtk/README.markdown)
+* [Shell interface](paperwork-shell/README.markdown)
 
 
 ## Uninstall

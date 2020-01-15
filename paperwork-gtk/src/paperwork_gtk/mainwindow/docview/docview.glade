@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+  <object class="GtkHeaderBar" id="docview_header">
+    <property name="visible">True</property>
+    <property name="title"></property>
+    <property name="subtitle"></property>
+    <property name="show_close_button">True</property>
+    <property name="decoration_layout">:close</property>
+
+    <child>
+      <object class="GtkMenuButton" id="docview_doc_menu">
+        <property name="use_action_appearance">False</property>
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+          <!-- <property name="menu_model">advanced_window_menu</property> -->
+        <child>
+          <object class="GtkImage">
+            <property name="visible">True</property>
+            <property name="icon_name">view-more-symbolic</property>
+            <property name="can_focus">False</property>
+          </object>
+        </child>
+      </object>
+      <packing>
+        <property name="pack_type">end</property>
+      </packing>
+    </child>
+
+    <child>
+      <object class="GtkButton" id="docview_info">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="use_action_appearance">False</property>
+        <property name="use_underline">True</property>
+        <property name="sensitive">False</property>
+        <child>
+          <object class="GtkImage">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="icon_name">preferences-system-details-symbolic</property>
+            <property name="icon_size">1</property>
+          </object>
+        </child>
+      </object>
+      <packing>
+        <property name="pack_type">end</property>
+      </packing>
+    </child>
+
+  </object>
+
+  <object class="GtkOverlay" id="docview_body">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <child>
+      <object class="GtkScrolledWindow" id="docview_scroll">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="shadow_type">in</property>
+        <property name="kinetic_scrolling">False</property>
+        <child>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

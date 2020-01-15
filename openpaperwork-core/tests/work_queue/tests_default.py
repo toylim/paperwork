@@ -1,0 +1,151 @@
+import unittest
+
+import openpaperwork_core
+
+
+class TestQueue(unittest.TestCase):
+    def setUp(self):
+        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core.load("openpaperwork_core.work_queue.default")
+        self.core.init()
+
+    def test_single_task(self):
+        self.task_done = False
+
+        def do_task():
+            self.task_done = True
+
+        self.core.call_all("work_queue_create", "some_work_queue")
+        self.core.call_one(
+            "work_queue_add_promise", "some_work_queue",
+            openpaperwork_core.promise.Promise(self.core, do_task)
+        )
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
+        self.assertTrue(self.task_done)
+
+    def test_many_tasks(self):
+        self.task_a_done = False
+        self.task_b_done = False
+
+        def do_task_a():
+            self.assertFalse(self.task_a_done)
+            self.assertFalse(self.task_b_done)
+            self.task_a_done = True
+
+        def do_task_b():
+            self.assertTrue(self.task_a_done)
+            self.assertFalse(self.task_b_done)
+            self.task_b_done = True
+
+        self.core.call_all("work_queue_create", "some_work_queue")
+        self.core.call_one(
+            "work_queue_add_promise", "some_work_queue",
+            openpaperwork_core.promise.Promise(self.core, do_task_a)
+        )
+        self.core.call_one(
+            "work_queue_add_promise", "some_work_queue",
+            openpaperwork_core.promise.Promise(self.core, do_task_b)
+        )
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
+        self.assertTrue(self.task_a_done)
+        self.assertTrue(self.task_b_done)
+
+    def test_cancel_all(self):
+        self.task_a_done = False
+        self.task_b_done = False
+
+        def do_task_a():
+            self.assertFalse(self.task_a_done)
+            self.assertFalse(self.task_b_done)
+            self.task_a_done = True
+            return "some_crap"
+
+        def do_task_b():
+            self.assertTrue(self.task_a_done)
+            self.assertFalse(self.task_b_done)
+            self.task_b_done = True
+            self.core.call_all("work_queue_cancel_all", "some_work_queue")
+
+        def do_task_c():
+            self.assertTrue(False)
+
+        self.core.call_all("work_queue_create", "some_work_queue")
+        self.core.call_one(
+            "work_queue_add_promise", "some_work_queue",
+            openpaperwork_core.promise.Promise(self.core, do_task_a)
+        )
+        self.core.call_one(
+            "work_queue_add_promise", "some_work_queue",
+            openpaperwork_core.promise.Promise(self.core, do_task_b)
+        )
+        self.core.call_one(
+            "work_queue_add_promise", "some_work_queue",
+            openpaperwork_core.promise.Promise(self.core, do_task_c)
+        )
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
+        self.assertTrue(self.task_a_done)
+        self.assertTrue(self.task_b_done)
+
+    def test_cancel(self):
+        self.task_a_done = False
+        self.task_b_done = False
+        self.task_d_done = False
+
+        def do_task_a():
+            self.assertFalse(self.task_a_done)
+            self.assertFalse(self.task_b_done)
+            self.task_a_done = True
+            return "some_crap"
+
+        def do_task_b():
+            self.assertTrue(self.task_a_done)
+            self.assertFalse(self.task_b_done)
+            self.task_b_done = True
+            self.core.call_all(
+                "work_queue_cancel", "some_work_queue", task_c
+            )
+
+        def do_task_c():
+            self.assertTrue(False)
+
+        def do_task_d():
+            self.assertTrue(self.task_a_done)
+            self.assertTrue(self.task_b_done)
+            self.task_d_done = True
+            return "some_crap"
+
+        task_c = openpaperwork_core.promise.Promise(self.core, do_task_c)
+
+        self.core.call_all("work_queue_create", "some_work_queue")
+        self.core.call_one(
+            "work_queue_add_promise", "some_work_queue",
+            openpaperwork_core.promise.Promise(self.core, do_task_a)
+        )
+        self.core.call_one(
+            "work_queue_add_promise", "some_work_queue",
+            openpaperwork_core.promise.Promise(self.core, do_task_b)
+        )
+        self.core.call_one(
+            "work_queue_add_promise", "some_work_queue",
+            task_c
+        )
+        self.core.call_one(
+            "work_queue_add_promise", "some_work_queue",
+            openpaperwork_core.promise.Promise(self.core, do_task_d)
+        )
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
+        self.assertTrue(self.task_a_done)
+        self.assertTrue(self.task_b_done)
+        self.assertTrue(self.task_d_done)

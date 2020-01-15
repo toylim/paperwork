@@ -1,0 +1,11 @@
+#mainwindow_stack_header_left headerbar {
+  border-right-width: 1px;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+
+#mainwindow_stack_header_right headerbar {
+  border-left-width: 0px;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+}

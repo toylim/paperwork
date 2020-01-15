@@ -1,4 +1,4 @@
-VERSION_FILE = paperwork_backend/_version.py
+VERSION_FILE = src/paperwork_backend/_version.py
 PYTHON ?= python3
 
 build: build_c build_py
@@ -19,12 +19,19 @@ ${VERSION_FILE}:
 	echo -n $(shell git describe --always) >> $@
 	echo "\"" >> $@
 
-doc:
+doc: install_py
+	$(MAKE) -C doc html
+
+doc/_build/html/index.html: doc
+
+upload_doc: doc/_build/html/index.html
+	cd .. && ./ci/deliver_doc.sh ${CURDIR}/doc/_build/html paperwork_backend
 
 check:
-	flake8 paperwork_backend
+	flake8 src/paperwork_backend
 
-test:
+test: install
+	python3 -m unittest discover --verbose -s tests
 
 linux_exe:
 
@@ -82,6 +89,7 @@ help:
 	install_py \
 	release \
 	test \
+	upload_doc \
 	uninstall \
 	uninstall_c \
 	version

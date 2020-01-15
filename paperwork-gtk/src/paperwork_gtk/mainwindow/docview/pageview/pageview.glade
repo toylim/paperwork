@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+  <object class="GtkDrawingArea" id="pageview_area">
+    <property name="visible">True</property>
+  </object>
+</interface>

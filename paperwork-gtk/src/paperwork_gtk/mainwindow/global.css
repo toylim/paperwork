@@ -1,0 +1,19 @@
+.button-left {
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+  border-right-width: 0px;
+  margin-right: 0px;
+}
+
+.button-center {
+  border-radius: 0px;
+  border-right-width: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+.button-right {
+  margin-left: 0px;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+}

@@ -15,7 +15,7 @@ else:
 quiet = '--quiet' in sys.argv or '-q' in sys.argv
 
 try:
-    with open("paperwork_backend/_version.py", "r") as file_descriptor:
+    with open("src/paperwork_backend/_version.py", "r") as file_descriptor:
         version = file_descriptor.read().strip()
         version = version.split(" ")[2][1:-1]
     if not quiet:
@@ -30,9 +30,7 @@ except FileNotFoundError:
 setup(
     name="paperwork-backend",
     version=version,
-    description=(
-        "Paperwork's backend"
-    ),
+    description="Paperwork's backend",
     long_description="""Paperwork is a GUI to make papers searchable.
 
 This is the backend part of Paperwork. It manages:
@@ -71,21 +69,17 @@ There is no GUI here. The GUI is
     license="GPLv3+",
     author="Jerome Flesch",
     author_email="jflesch@openpaper.work",
-    packages=find_packages(),
-    entry_points={
-        'console_scripts': [
-            'paperwork-shell = paperwork_backend.shell_cmd:main',
-        ],
-    },
+    packages=find_packages('src'),
+    package_dir={'': 'src'},
     zip_safe=True,
     install_requires=[
         "distro",
-        "natsort",
+        "openpaperwork-core",
         "Pillow",
         "pycountry",
         "pyocr",
+        "pypillowfight>=0.3.0",
         "simplebayes",
-        "termcolor",  # used by paperwork-chkdeps
         "Whoosh",
         # paperwork-shell chkdeps take care of all the dependencies that can't
         # be handled here. Mainly, dependencies using gobject introspection
@@ -99,7 +93,7 @@ if quiet:
 print("============================================================")
 print("============================================================")
 print("||                       IMPORTANT                        ||")
-print("|| Please run 'paperwork-shell chkdeps paperwork_backend' ||")
+print("||          Please run 'paperwork-cli chkdeps'            ||")
 print("||            to find any missing dependency              ||")
 print("============================================================")
 print("============================================================")

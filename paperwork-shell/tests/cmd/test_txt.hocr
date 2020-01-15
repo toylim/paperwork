@@ -1,0 +1,16 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+ "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>OCR output</title>
+</head>
+<body>
+<p>
+    <span class="ocr_line" title="bbox 10 20 30 40">
+        <span class="ocrx_word" title="bbox 1 2 3 4">ABC</span>
+        <span class="ocrx_word" title="bbox 5 6 7 8">def</span>
+    </span>
+</p>
+</body>
+</html>
