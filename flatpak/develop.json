@@ -132,8 +132,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://files.pythonhosted.org/packages/bf/03/7523be28ff2c9c21cf7cd1623e4f63bf38e68ef8520494d5f4ba93d8e68c/fabulous-0.1.6.tar.gz",
-                    "sha256": "f410398ab427458526315113fc5c142977178194b45064a54c61248c67e5c4c7"
+                    "url": "https://files.pythonhosted.org/packages/53/2d/5750798dbb1cd3029c17b6f7456f79948b15f63e4781ffa0be8cf35cfc22/fabulous-0.3.0.tar.gz",
+                    "sha256": "54040da01d7ce1e937fc4b61d265e872b007463bea411a3a5762f4d6ee55c312"
                 },
                 {
                     "type": "file",
