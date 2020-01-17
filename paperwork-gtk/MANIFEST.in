@@ -1,7 +1,4 @@
 recursive-include src *.py *.glade *.xml *.css *.svg *.png
-recursive-include data *.desktop *.svg *.png *.xml *.py
-recursive-include locale *.mo *.po *.py
-recursive-include doc *.pdf *.py
 include AUTHORS
 include *.markdown
 include example-paperwork.conf

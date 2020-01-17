@@ -17,6 +17,7 @@ DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'openpaperwork_gtk.mainloop.glib',
     'openpaperwork_gtk.pixbuf.pillow',
     'openpaperwork_gtk.resources',
+    'paperwork_gtk.cmd.install',
     'paperwork_gtk.mainwindow.doclist',
     'paperwork_gtk.mainwindow.doclist.labeler',
     'paperwork_gtk.mainwindow.doclist.name',
