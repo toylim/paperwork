@@ -92,6 +92,14 @@ class Plugin(openpaperwork_core.PluginBase):
             css_provider = Gtk.CssProvider()
             css_provider.load_from_data(content)
 
+            screen = Gdk.Screen.get_default()
+            if screen is None:
+                LOGGER.warning(
+                    "Cannot apply CSS: Gdk.Screen.get_default()"
+                    " returned None"
+                )
+                return None
+
             Gtk.StyleContext.add_provider_for_screen(
                 Gdk.Screen.get_default(), css_provider,
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
