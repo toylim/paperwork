@@ -87,7 +87,9 @@ class Plugin(openpaperwork_core.PluginBase):
                     pkg_resources.resource_filename(
                         'paperwork_gtk.data', src_icon
                     ),
-                    os.path.join(icondir, "hicolor", "scalable", "apps", dst_icon)
+                    os.path.join(
+                        icondir, "hicolor", "scalable", "apps", dst_icon
+                    )
                 )
             )
 
