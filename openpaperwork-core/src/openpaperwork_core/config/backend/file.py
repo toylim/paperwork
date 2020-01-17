@@ -217,6 +217,7 @@ class Plugin(PluginBase):
             app_name=self.application_name,
         )
         LOGGER.info("Writing configuration '%s' ...", config_path)
+        os.makedirs(os.path.dirname(config_path), mode=0o700, exist_ok=True)
         with open(config_path, 'w') as fd:
             self.config.write(fd)
 
