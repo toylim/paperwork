@@ -4,7 +4,7 @@
     "runtime": "org.gnome.Platform",
     "runtime-version": "3.30",
     "sdk": "org.gnome.Sdk",
-    "command": "paperwork",
+    "command": "paperwork-gtk",
     "copy-icon": true,
     "finish-args": [
         "--share=ipc",
