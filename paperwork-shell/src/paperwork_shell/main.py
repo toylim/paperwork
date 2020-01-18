@@ -54,9 +54,9 @@ def main_main(in_args, application_name, default_plugins, interactive):
     core.init()
 
     core.load('openpaperwork_core.log_print')
+    core.init()
     core.call_all("set_log_output", sys.stderr)
     core.call_all("set_log_level", 'warning')
-    core.init()
 
     core.call_all(
         "config_load", "paperwork2", application_name, default_plugins
