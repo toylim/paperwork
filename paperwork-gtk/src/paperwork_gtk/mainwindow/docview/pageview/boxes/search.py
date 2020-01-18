@@ -10,6 +10,7 @@ LOGGER = logging.getLogger(__name__)
 MIN_WORD_LENGTH = 3
 SPLIT = r"\W+"
 
+
 class Plugin(openpaperwork_core.PluginBase):
     PRIORITY = 100
 

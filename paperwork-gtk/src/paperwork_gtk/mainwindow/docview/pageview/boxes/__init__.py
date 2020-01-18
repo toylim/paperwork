@@ -80,10 +80,9 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def page_draw_box(
-                self, cairo_ctx, page, box_position,
-                border_color, border_width=2,
-                box_content=None
-            ):
+            self, cairo_ctx, page, box_position,
+            border_color, border_width=2,
+            box_content=None):
         zoom = page.zoom
         ((tl_x, tl_y), (br_x, br_y)) = box_position
         tl_x *= zoom
