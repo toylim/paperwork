@@ -1,7 +1,7 @@
 import logging
 
 
-LOGGER = logging.getLogger()
+LOGGER = logging.getLogger(__name__)
 
 
 class Task(object):

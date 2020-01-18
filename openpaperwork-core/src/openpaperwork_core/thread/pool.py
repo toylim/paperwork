@@ -7,7 +7,7 @@ from . import Task
 from .. import PluginBase
 
 
-LOGGER = logging.getLogger()
+LOGGER = logging.getLogger(__name__)
 
 
 class Thread(threading.Thread):
