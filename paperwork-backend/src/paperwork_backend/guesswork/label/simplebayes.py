@@ -68,10 +68,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             "mainloop_execute", self.cursor.execute, "BEGIN TRANSACTION"
         )
 
-        # Training bayesian filter is quite fast, but there is no
-        # rollback command --> we track from what documents we have to train
-        # and only train once `commit()` has been called.
-        self.todo = []
+        self.nb_changes = 0
 
         all_labels = self.core.call_success(
             "mainloop_execute", self.cursor.execute,
@@ -163,7 +160,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             'labels': db_labels,
         }
 
-    def _check_for_new_labels(self, doc_id, doc_url, actual, db):
+    def _check_for_new_labels(self, todo, doc_id, doc_url, actual, db):
         for doc_label in actual['labels']:
             if doc_label in db['labels']:
                 continue
@@ -179,13 +176,14 @@ class LabelGuesserTransaction(sync.BaseTransaction):
                 # we need to figure out the known documents at this very
                 # moment to train first on those documents only.
                 doc_ids = self.core.call_success("doc_tracker_get_all_doc_ids")
-                self.todo.append({
+                todo.append({
                     "action": "new",
                     "label": doc_label,
                     "doc_ids": doc_ids,
                 })
+                self.all_labels.add(doc_label)
             else:
-                self.todo.append({
+                todo.append({
                     "action": "add",
                     "doc_id": doc_id,
                     "text": actual['text'],
@@ -198,7 +196,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
                 (doc_id, doc_label)
             )
 
-    def _check_for_removed_labels(self, doc_id, doc_url, actual, db):
+    def _check_for_removed_labels(self, todo, doc_id, doc_url, actual, db):
         for db_label in db['labels']:
             if db_label in actual['labels']:
                 continue
@@ -210,58 +208,14 @@ class LabelGuesserTransaction(sync.BaseTransaction):
                 "DELETE FROM labels WHERE doc_id = ? AND label = ?",
                 (doc_id, db_label)
             )
-            self.todo.append({
+            todo.append({
                 "action": "remove",
                 "doc_id": doc_id,
                 "text": db['text'],
                 "labels": [db_label],
             })
 
-    def _upd_doc(self, doc_id):
-        # collect data about the document from the document itself and from
-        # the sqlite database and compare them
-        # --> deduce the actions that must be done when running commit()
-        doc_url = self.core.call_success("doc_id_to_url", doc_id)
-
-        actual = self._get_actual_doc_data(doc_id, doc_url)
-        db = self._get_db_doc_data(doc_id, doc_url)
-
-        self._check_for_new_labels(doc_id, doc_url, actual, db)
-        self._check_for_removed_labels(doc_id, doc_url, actual, db)
-
-    def cancel(self):
-        self.core.call_one(
-            "mainloop_schedule", self.core.call_all,
-            "on_label_guesser_canceled"
-        )
-        if self.cursor is not None:
-            self.core.call_one(
-                "mainloop_execute", self.cursor.execute, "ROLLBACK"
-            )
-            self.core.call_one("mainloop_execute", self.cursor.close)
-            self.cursor = None
-        self.notify_done(ID)
-
-    def commit(self):
-        LOGGER.info("Updating training ...")
-        self.core.call_all(
-            "mainloop_schedule", self.core.call_all,
-            "on_label_guesser_commit_start"
-        )
-        if len(self.todo) <= 0:
-            self.core.call_one(
-                "mainloop_execute", self.cursor.execute, "ROLLBACK"
-            )
-            self.core.call_one("mainloop_execute", self.cursor.close)
-            self.cursor = None
-            self.notify_done(ID)
-            self.core.call_one(
-                "mainloop_schedule", self.core.call_all,
-                'on_label_guesser_commit_end'
-            )
-            LOGGER.info("Nothing to do. Training left unchanged.")
-            return
-
+    def _get_all_labels_from_db(self):
         all_labels = self.core.call_success(
             "mainloop_execute", self.cursor.execute,
             "SELECT DISTINCT label FROM labels"
@@ -271,10 +225,15 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             lambda all_labels: {l[0] for l in all_labels},
             all_labels
         )
-        self.all_labels.update(all_labels)
-        del all_labels
+        return all_labels
 
-        for todo in self.todo:
+    def _apply_changes(self, todos):
+        if len(todos) <= 0:
+            return
+
+        new_labels = set()
+
+        for todo in todos:
             if todo['action'] != "new":
                 continue
             LOGGER.debug(
@@ -297,11 +256,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
                     continue
                 baye.train("no", text)
 
-        self.notify_progress(
-            ID, _("Updating label guessing training ...")
-        )
-
-        for todo in self.todo:
+        for todo in todos:
             if todo['action'] != "remove":
                 continue
             for label in self.all_labels:
@@ -315,7 +270,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
                     todo['text']
                 )
 
-        for todo in self.todo:
+        for todo in todos:
             if todo['action'] != "add":
                 continue
             for label in self.all_labels:
@@ -328,6 +283,61 @@ class LabelGuesserTransaction(sync.BaseTransaction):
                     "yes" if label in todo['labels'] else "no",
                     todo['text']
                 )
+
+
+    def _upd_doc(self, doc_id):
+        # collect data about the document from the document itself and from
+        # the sqlite database and compare them
+        # --> deduce the actions that must be done when running commit()
+        doc_url = self.core.call_success("doc_id_to_url", doc_id)
+
+        actual = self._get_actual_doc_data(doc_id, doc_url)
+        db = self._get_db_doc_data(doc_id, doc_url)
+
+        todos = []
+        self._check_for_new_labels(todos, doc_id, doc_url, actual, db)
+        self._check_for_removed_labels(todos, doc_id, doc_url, actual, db)
+        self._apply_changes(todos)
+        self.nb_changes += len(todos)
+
+    def cancel(self):
+        self.core.call_one(
+            "mainloop_schedule", self.core.call_all,
+            "on_label_guesser_canceled"
+        )
+        for label in self.all_labels:
+            self.plugin._get_baye(label, force_reload=True)
+        if self.cursor is not None:
+            self.core.call_one(
+                "mainloop_execute", self.cursor.execute, "ROLLBACK"
+            )
+            self.core.call_one("mainloop_execute", self.cursor.close)
+            self.cursor = None
+        self.notify_done(ID)
+
+    def commit(self):
+        LOGGER.info("Updating training ...")
+        self.core.call_all(
+            "mainloop_schedule", self.core.call_all,
+            "on_label_guesser_commit_start"
+        )
+        if self.nb_changes <= 0:
+            self.core.call_one(
+                "mainloop_execute", self.cursor.execute, "ROLLBACK"
+            )
+            self.core.call_one("mainloop_execute", self.cursor.close)
+            self.cursor = None
+            self.notify_done(ID)
+            self.core.call_one(
+                "mainloop_schedule", self.core.call_all,
+                'on_label_guesser_commit_end'
+            )
+            LOGGER.info("Nothing to do. Training left unchanged.")
+            return
+
+        self.notify_progress(
+            ID, _("Updating label guessing training ...")
+        )
 
         for label in self.all_labels:
             baye = self.plugin._get_baye(label)
@@ -441,8 +451,8 @@ class Plugin(openpaperwork_core.PluginBase):
             )
         )
 
-    def _get_baye(self, label):
-        if label in self.bayes:
+    def _get_baye(self, label, force_reload=False):
+        if label in self.bayes and not force_reload:
             return self.bayes[label]
 
         baye_dir = self._get_baye_dir(label)
