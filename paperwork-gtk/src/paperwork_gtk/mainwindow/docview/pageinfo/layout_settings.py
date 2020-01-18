@@ -78,6 +78,9 @@ class Plugin(openpaperwork_core.PluginBase):
         self.zoom = self.widget_tree.get_object("adjustment_zoom")
         self.zoom.connect("value-changed", self._on_zoom_changed)
 
+        self.all_boxes = self.widget_tree.get_object("show_all_boxes")
+        self.all_boxes.connect("notify::active", self._notify_all_boxes)
+
         self.layout_buttons = {
             self.widget_tree.get_object("layout_grid"): {
                 "handler": None,
@@ -116,6 +119,10 @@ class Plugin(openpaperwork_core.PluginBase):
     def _on_zoom_changed(self, _=None):
         new_value = self.zoom.get_value()
         self.core.call_all("doc_view_set_zoom", new_value)
+
+    def _notify_all_boxes(self, *args, **kwargs):
+        active = self.all_boxes.get_active()
+        self.core.call_all("set_all_boxes_visible", active)
 
     def doc_view_set_zoom(self, zoom):
         current = self.zoom.get_value()

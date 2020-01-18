@@ -85,10 +85,12 @@ class Page(GObject.GObject):
         self.widget = self.widget_tree.get_object("pageview_area")
         self.widget.connect("draw", self._on_draw)
         self.resize()
+        self.core.call_all("on_page_size_obtained", self)
         self.emit('size_obtained')
 
     def _on_renderer_img(self, renderer):
         self.refresh()
+        self.core.call_all("on_page_img_obtained", self)
         self.emit('img_obtained')
 
     def close(self):
@@ -136,16 +138,19 @@ class Page(GObject.GObject):
         if widget != self.widget:
             return
         self.show()
+        self.core.call_all("on_page_visibility_changed", self, True)
         self.emit('visibility_changed', True)
 
     def _on_widget_hidden(self, flowlayout, widget):
         if widget != self.widget:
             return
+        self.core.call_all("on_page_visibility_changed", self, False)
         self.emit('visibility_changed', False)
         self.hide()
 
     def _on_draw(self, widget, cairo_ctx):
         self.renderer.draw(cairo_ctx)
+        self.core.call_all("on_page_draw", cairo_ctx, self)
 
 
 if GLIB_AVAILABLE:
@@ -161,7 +166,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_interfaces(self):
         return [
-            'gtk_docview',
+            'gtk_pageview',
         ]
 
     def get_deps(self):
@@ -228,6 +233,7 @@ class Plugin(openpaperwork_core.PluginBase):
             ) for page_idx in range(0, nb_pages)
         ]
         for page in self.pages:
+            self.core.call_all("on_new_page", page)
             out.append(page)
 
         promise = openpaperwork_core.promise.Promise(
@@ -246,3 +252,7 @@ class Plugin(openpaperwork_core.PluginBase):
             "pageview->doc_open_components({})".format(doc_id),
             nb_pages=nb_pages
         )
+
+    def pageview_refresh_all(self):
+        for page in self.pages:
+            page.refresh()
