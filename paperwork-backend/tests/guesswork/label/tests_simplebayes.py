@@ -274,6 +274,7 @@ class TestLabelGuesser(unittest.TestCase):
         self.core._load_module(
             "mainloop_stopper", FakeModuleToStopMainLoop()
         )
+        self.core.init()
 
         promises = []
         self.core.call_all('sync', promises)
@@ -335,7 +336,6 @@ class TestLabelGuesser(unittest.TestCase):
             transaction.add_obj("new_doc_2")
         for transaction in transactions:
             transaction.commit()
-
         self.assertEqual(len(self.fake_storage.docs[4]['labels']), 0)
 
         self.assertEqual(len(self.fake_storage.docs[3]['labels']), 1)

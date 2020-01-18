@@ -75,8 +75,9 @@ class Plugin(openpaperwork_core.PluginBase):
         self.search_entry.connect("stop-search", lambda w: self.search_stop())
 
         self.core.call_all("work_queue_create", "doc_search")
-
-        self.search_update_document_list()
+        self.core.call_one(
+            "mainloop_schedule", self.search_update_document_list
+        )
 
     def search_update_document_list(self, _=None):
         self.core.call_all("work_queue_cancel_all", "doc_search")

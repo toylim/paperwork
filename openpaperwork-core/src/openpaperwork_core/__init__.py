@@ -86,6 +86,7 @@ class Core(object):
         plugins. This should be only used for testing.
         """
         self.plugins = {}
+        self.initialized = False
         self._to_initialize = set()
         self._initialized = set()  # avoid double-init
         self.interfaces = collections.defaultdict(list)
@@ -124,26 +125,14 @@ class Core(object):
             LOGGER.debug("Module %s already loaded", module_name)
             return self.plugins[module_name]
 
+        self.initialized = False
+
         plugin = module.Plugin()
         self.plugins[module_name] = plugin
 
         for interface in plugin.get_interfaces():
-            LOGGER.debug("- '%s' provides '%s'", module_name, interface)
+            LOGGER.debug("- '%s' provides '%s'", str(type(plugin)), interface)
             self.interfaces[interface].append(plugin)
-
-        for attr_name in dir(plugin):
-            if attr_name[0] == "_":
-                continue
-            if attr_name in dir(PluginBase):  # ignore base methods of plugins
-                continue
-            callback = getattr(plugin, attr_name)
-            if not hasattr(callback, '__call__'):
-                continue
-            LOGGER.debug("- %s.%s()", module_name, attr_name)
-            self.callbacks[attr_name].append((
-                plugin.PRIORITY, str(type(plugin)), callback
-            ))
-            self.callbacks[attr_name].sort(reverse=True)
 
         self._to_initialize.add(plugin)
 
@@ -204,11 +193,28 @@ class Core(object):
 
         return True
 
+    def _register_plugin(self, plugin):
+        for attr_name in dir(plugin):
+            if attr_name[0] == "_":
+                continue
+            if attr_name in dir(PluginBase):  # ignore base methods of plugins
+                continue
+            callback = getattr(plugin, attr_name)
+            if not hasattr(callback, '__call__'):
+                continue
+            LOGGER.debug("- %s.%s()", str(type(plugin)), attr_name)
+            self.callbacks[attr_name].append((
+                plugin.PRIORITY, str(type(plugin)), callback
+            ))
+            self.callbacks[attr_name].sort(reverse=True)
+
     def _init(self, plugin):
         nb = 0
 
         if plugin in self._initialized:
             return nb
+
+        self.initialized = True
 
         deps = plugin.get_deps()
         for dep in deps:
@@ -217,11 +223,19 @@ class Core(object):
                 nb += self._init(dep_plugin)
 
         LOGGER.info("Initializing plugin '%s' ...", type(plugin))
-        plugin.init(self)
+        try:
+            plugin.init(self)
+        except Exception as exc:
+            LOGGER.error(
+                "Failed to initialized plugin '%s'",
+                type(plugin), exc_info=exc
+            )
+            return nb
+
+        self._register_plugin(plugin)
         nb += 1
 
         self._initialized.add(plugin)
-
         return nb
 
     def init(self):
@@ -295,6 +309,12 @@ class Core(object):
                     time.time(), callback_name, args, kwargs
                 )
             )
+
+        assert \
+            self.initialized, \
+            "A plugin has been loaded without being initialized." \
+            " Call core.init() first"
+
         self._check_call_limit(callback_name)
 
         callbacks = self.callbacks[callback_name]
@@ -337,6 +357,11 @@ class Core(object):
         when you're fairly sure there should be only one plugin with such
         callback (example: mainloop plugins).
         """
+        assert \
+            self.initialized, \
+            "A plugin has been loaded without being initialized." \
+            " Call core.init() first"
+
         self._check_call_limit(callback_name)
         if self.log_all:
             print(
@@ -385,6 +410,11 @@ class Core(object):
            Core <- "Plugin C": returns "something"
            Caller <- Core: returns "something"
         """
+        assert \
+            self.initialized, \
+            "A plugin has been loaded without being initialized." \
+            " Call core.init() first"
+
         self._check_call_limit(callback_name)
         if self.log_all:
             print(

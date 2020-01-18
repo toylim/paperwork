@@ -74,6 +74,7 @@ class TestLabels(unittest.TestCase):
                     core.call_all("mainloop_quit_graceful")
 
         self.core._load_module("mainloop_stopper", FakeModule())
+        self.core.init()
 
         promises = []
         self.core.call_all('sync', promises)

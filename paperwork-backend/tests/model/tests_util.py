@@ -18,6 +18,7 @@ class TestUtil(unittest.TestCase):
                     return len(self.fs.fs[doc_url])
 
         self.core._load_module("fake_module", FakeModule())
+        self.core.init()
 
         self.fs = self.core.get_by_name("openpaperwork_core.fs.fake")
 

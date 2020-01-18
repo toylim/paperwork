@@ -78,6 +78,7 @@ class TestIndex(unittest.TestCase):
         self.core._load_module(
             "mainloop_stopper", FakeModuleToStopMainLoop()
         )
+        self.core.init()
 
         promises = []
         self.core.call_all('sync', promises)
