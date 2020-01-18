@@ -7,6 +7,8 @@ LOGGER = logging.getLogger(__name__)
 
 
 class Plugin(openpaperwork_core.PluginBase):
+    PRIORITY = 1000
+
     def __init__(self):
         super().__init__()
         self.visible = False

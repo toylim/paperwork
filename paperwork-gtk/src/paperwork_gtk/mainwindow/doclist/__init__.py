@@ -28,7 +28,10 @@ class Plugin(openpaperwork_core.PluginBase):
         self.active_docid = None
 
     def get_interfaces(self):
-        return ['gtk_doclist']
+        return [
+            'gtk_doclist',
+            'search_listener',
+        ]
 
     def get_deps(self):
         return [

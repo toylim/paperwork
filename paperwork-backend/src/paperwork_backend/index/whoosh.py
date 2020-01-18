@@ -5,7 +5,6 @@ import logging
 import os
 import shutil
 import time
-import unicodedata
 
 import whoosh.fields
 import whoosh.index
@@ -16,6 +15,7 @@ import whoosh.sorting
 import openpaperwork_core
 
 from .. import sync
+from .. import util
 
 
 _ = gettext.gettext
@@ -30,15 +30,6 @@ WHOOSH_SCHEMA = whoosh.fields.Schema(
     date=whoosh.fields.DATETIME(sortable=True),
     last_read=whoosh.fields.DATETIME(stored=True),
 )
-
-
-def strip_accents(string):
-    """
-    Strip all the accents from the string
-    """
-    return u''.join(
-        (character for character in unicodedata.normalize('NFD', string)
-         if unicodedata.category(character) != 'Mn'))
 
 
 class CustomFuzzySearch(whoosh.qparser.query.FuzzyTerm):
@@ -99,12 +90,12 @@ class WhooshTransaction(sync.BaseTransaction):
         doc_text = []
         self.core.call_all("doc_get_text_by_url", doc_text, doc_url)
         doc_text = "\n\n".join(doc_text)
-        doc_text = strip_accents(doc_text)
+        doc_text = util.strip_accents(doc_text)
 
         doc_labels = set()
         self.core.call_all("doc_get_labels_by_url", doc_labels, doc_url)
         doc_labels = ",".join([label[0] for label in doc_labels])
-        doc_labels = strip_accents(doc_labels)
+        doc_labels = util.strip_accents(doc_labels)
 
         doc_date = self.core.call_success("doc_get_date_by_id", doc_id)
         if doc_date is None:
@@ -340,7 +331,7 @@ class Plugin(openpaperwork_core.PluginBase):
         start = time.time()
 
         query = query.strip()
-        query = strip_accents(query)
+        query = util.strip_accents(query)
         if query == "":
             queries = [whoosh.query.Every()]
         else:

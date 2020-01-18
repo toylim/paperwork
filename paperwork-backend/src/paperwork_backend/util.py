@@ -16,9 +16,22 @@
 
 import logging
 import os
+import unicodedata
 
 
 LOGGER = logging.getLogger(__name__)
+
+
+def strip_accents(string):
+    """
+    Strip all the accents from the string
+    """
+    return u''.join(
+        (
+            character for character in unicodedata.normalize('NFD', string)
+            if unicodedata.category(character) != 'Mn'
+        )
+    )
 
 
 def rm_rf(path):
