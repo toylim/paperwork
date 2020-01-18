@@ -19,6 +19,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.widget_tree = None
         self.doclist = None
         self.scrollbar = None
+        self._scrollbar_last_value = -1
         self.doc_ids = []
         self.doc_visibles = 0
         self.last_date = datetime.datetime(year=1, month=1, day=1)
@@ -260,7 +261,12 @@ class Plugin(openpaperwork_core.PluginBase):
         if value < 0.95:
             return
 
+        if self._scrollbar_last_value == vadj.get_value():
+            # Previous extend call hasn't been taken into account yet
+            return
+
         self.doclist_extend(NB_DOCS_PER_PAGE)
+        self._scrollbar_last_value = vadj.get_value()
 
     def _on_row_activated(self, list_box, row):
         doc_id = self.row_to_docid[row]
