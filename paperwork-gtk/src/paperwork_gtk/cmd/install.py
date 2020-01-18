@@ -105,7 +105,7 @@ class Plugin(openpaperwork_core.PluginBase):
         entry.set("Categories", "Office;Scanning;OCR;Archiving;GNOME;")
         entry.set("Terminal", "false")
         entry.set("Comment", "Grepping dead trees the easy way")
-        entry.set("Exec", "paperwork")
+        entry.set("Exec", "paperwork-gtk")
         entry.set("Name", "Paperwork")
         entry.set("Icon", "work.openpaper.Paperwork")
         entry.set("Keywords", "document;scanner;ocr;")
