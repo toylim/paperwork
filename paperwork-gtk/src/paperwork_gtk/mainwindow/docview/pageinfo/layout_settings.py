@@ -90,7 +90,7 @@ class Plugin(openpaperwork_core.PluginBase):
         }
         for button in self.layout_buttons.keys():
             self.layout_buttons[button]['handler'] = button.connect(
-                "toggled", self._on_layout_change
+                "clicked", self._on_layout_change
             )
 
         self.core.call_success("page_info_add_left", self.layout_button)
@@ -102,17 +102,6 @@ class Plugin(openpaperwork_core.PluginBase):
         icon = self.LAYOUTS[layout_name]['icon']
         # smallest icon size available
         self.layout_icon.set_from_icon_name(icon, Gtk.IconSize.SMALL_TOOLBAR)
-
-        # block the signal handler to avoid a signal loop
-        for (button, info) in self.layout_buttons.items():
-            button.handler_block(info['handler'])
-        try:
-            for (button, info) in self.layout_buttons.items():
-                name = info['layout']
-                button.set_active(name == layout_name)
-        finally:
-            for (button, info) in self.layout_buttons.items():
-                button.handler_unblock(info['handler'])
 
     def _on_layout_change(self, widget):
         assert(widget in self.layout_buttons)
