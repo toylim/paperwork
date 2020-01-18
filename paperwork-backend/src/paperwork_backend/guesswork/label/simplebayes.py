@@ -231,8 +231,6 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         if len(todos) <= 0:
             return
 
-        new_labels = set()
-
         for todo in todos:
             if todo['action'] != "new":
                 continue
@@ -283,7 +281,6 @@ class LabelGuesserTransaction(sync.BaseTransaction):
                     "yes" if label in todo['labels'] else "no",
                     todo['text']
                 )
-
 
     def _upd_doc(self, doc_id):
         # collect data about the document from the document itself and from
