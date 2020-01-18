@@ -6,6 +6,8 @@ import openpaperwork_core.promise
 
 LOGGER = logging.getLogger(__name__)
 
+DELAY = 0.01
+
 
 class Plugin(openpaperwork_core.PluginBase):
     """
@@ -74,9 +76,15 @@ class Plugin(openpaperwork_core.PluginBase):
         promise = promise.then(lambda boxes: self.core.call_all(
             "on_page_boxes_loaded", page, boxes
         ))
+        # Gives back a bit of CPU time to GTK so the GUI remains
+        # usable
+        promise = promise.then(openpaperwork_core.promise.DelayPromise(
+            self.core, DELAY
+        ))
+
         # Piggyback the work queue of pageview.
         self.core.call_success(
-            "work_queue_add_promise", "page_loader", promise
+            "work_queue_add_promise", "page_loader", promise, priority=-10
         )
 
     def page_draw_box(
