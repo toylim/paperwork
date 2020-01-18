@@ -57,6 +57,14 @@ class Plugin(openpaperwork_core.PluginBase):
 
         LOGGER.debug("Loading GTK widgets from %s:%s", pkg, filename)
 
+        screen = Gdk.Screen.get_default()
+        if screen is None:
+            LOGGER.warning(
+                "Cannot load widget tree: Gdk.Screen.get_default()"
+                " returned None"
+            )
+            return None
+
         try:
             filepath = self.core.call_success(
                 "resources_get_file", pkg, filename
