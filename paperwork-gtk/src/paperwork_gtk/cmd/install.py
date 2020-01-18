@@ -123,3 +123,4 @@ class Plugin(openpaperwork_core.PluginBase):
             data_base_dir = xdg.BaseDirectory.xdg_data_dirs[0]
 
         self._install(icon_base_dir, data_base_dir)
+        return True
