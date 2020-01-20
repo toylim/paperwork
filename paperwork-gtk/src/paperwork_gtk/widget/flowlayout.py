@@ -40,7 +40,7 @@ class WidgetInfo(object):
         self.widget = widget
         self.alignment = alignment
         if size is not None:
-            self.size = size
+            self.size = (int(size[0]), int(size[1]))
         else:
             self.size = (0, 0)
         self.position = (0, 0)
@@ -75,7 +75,7 @@ def recompute_height_for_width(widgets, width, spacing=(0, 0)):
             continue
         if widget.size == (0, 0):
             widget.update_widget_size()
-        if line_width + widget.size[0] + spacing[0] >= width:
+        if line_width + widget.size[0] + spacing[0] > width + 1:
             height += spacing[1]
             height += line_height
             line_width = 0
@@ -101,7 +101,7 @@ def recompute_box_positions(core, widgets, width, spacing=(0, 0)):
         if not widget.is_visible():
             continue
         widget.update_widget_size()
-        if line_width + widget.size[0] + spacing[0] > width:
+        if line_width + widget.size[0] + spacing[0] > width + 1:
             lines.append(line)
             line_heights.append(line_height)
             line = []
