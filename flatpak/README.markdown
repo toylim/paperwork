@@ -24,8 +24,8 @@ Its drawback:
 only builds Paperwork for amd64 (aka x86\_64). If you want to run Paperwork on i386 or arm, you can use the
 [Flathub version](https://flathub.org/apps/details/work.openpaper.Paperwork).
 
-If you don't know what architecture your computer is based and if it has more
-than 2GB of RAM, you can probably ignore this chapter and keep reading.
+If you don't know what architecture your computer is based and if your computer
+has more than 2GB of RAM, it is probably compatible with amd64.
 
 
 # Quick start
@@ -157,7 +157,7 @@ flatpak --user uninstall work.openpaper.Paperwork
 ### How do I run paperwork-shell ?
 
 When using Flatpak, paperwork-shell remains available. Note that it will run
-inside Paperwork's container and may not access files outside your home
+inside Paperwork's container and cannot access files outside your home
 directory.
 
 ```shell
@@ -222,6 +222,7 @@ means it's a permission problem.
 
 The Sane daemon (saned) runs as the user `saned`, not as your user. Therefore
 the default udev rules may not set the appropriate permissions.
+
 
 #### Fujitsu scanners
 
