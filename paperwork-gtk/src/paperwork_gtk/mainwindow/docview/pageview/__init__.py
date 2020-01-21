@@ -125,7 +125,7 @@ class Page(GObject.GObject):
         if reload:
             self.hide()
             self.show()
-        else:
+        elif self.widget is not None:
             self.widget.queue_draw()
 
     def hide(self):
