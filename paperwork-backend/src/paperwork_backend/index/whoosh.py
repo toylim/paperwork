@@ -56,6 +56,7 @@ class WhooshTransaction(sync.BaseTransaction):
         LOGGER.debug("Starting Whoosh index transaction")
         self.core = plugin.core
         self.writer = None
+        self.modified = 0
 
         self.writer = plugin.index.writer()
 
@@ -119,6 +120,7 @@ class WhooshTransaction(sync.BaseTransaction):
             ID, _("Indexing new document %s") % doc_id
         )
         self._update_doc_in_index(doc_id)
+        self.modified += 1
         super().add_obj(doc_id)
 
     def del_obj(self, doc_id):
@@ -128,6 +130,7 @@ class WhooshTransaction(sync.BaseTransaction):
         )
         query = whoosh.query.Term("docid", doc_id)
         self.writer.delete_by_query(query)
+        self.modified += 1
         super().del_obj(doc_id)
 
     def upd_obj(self, doc_id):
@@ -136,6 +139,7 @@ class WhooshTransaction(sync.BaseTransaction):
             ID, _("Indexing updated document %s") % doc_id
         )
         self._update_doc_in_index(doc_id)
+        self.modified += 1
         super().upd_obj(doc_id)
 
     def unchanged_obj(self, doc_id):
@@ -169,7 +173,7 @@ class WhooshTransaction(sync.BaseTransaction):
             "mainloop_schedule", self.core.call_all,
             'on_index_commit_start'
         )
-        if self.processed == 0:
+        if self.modified <= 0:
             LOGGER.info(
                 "commit() called but nothing to commit."
                 " Cancelling transaction"
@@ -177,7 +181,9 @@ class WhooshTransaction(sync.BaseTransaction):
             self.writer.cancel()
             self.writer = None
         else:
-            LOGGER.info("Committing changes to Whoosh index")
+            LOGGER.info(
+                "Committing %d changes to Whoosh index", self.modified
+            )
             self.writer.commit()
             self.writer = None
         self.notify_done(ID)
