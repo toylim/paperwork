@@ -370,7 +370,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         self.local_dir = os.path.expanduser("~/.local")
         self.bayes_dir = None
-        self.bayes = {}
+        self.bayes = None
         self.sql = None
         self.sql_file = None
 
@@ -434,12 +434,6 @@ class Plugin(openpaperwork_core.PluginBase):
         for query in CREATE_TABLES:
             self.sql.execute(query)
 
-        labels = self.sql.execute("SELECT DISTINCT label FROM labels")
-        for label in labels:
-            label = label[0]
-            LOGGER.info("Loading training for label '%s'", label)
-            self._get_baye(label)
-
         self.core.call_all(
             "doc_tracker_register",
             "label_guesser",
@@ -448,10 +442,28 @@ class Plugin(openpaperwork_core.PluginBase):
             )
         )
 
+    def _load_all_bayes(self):
+        self.bayes = {}
+        labels = self.core.call_success(
+            "mainloop_execute",
+            self.sql.execute, "SELECT DISTINCT label FROM labels"
+        )
+        labels = self.core.call_success(
+            "mainloop_execute",
+            lambda labels: [l[0] for l in labels],
+            labels
+        )
+        for label in labels:
+            self._get_baye(label)
+
     def _get_baye(self, label, force_reload=False):
+        if self.bayes is None:
+            self._load_all_bayes()
+
         if label in self.bayes and not force_reload:
             return self.bayes[label]
 
+        LOGGER.info("Loading training for label '%s'", label)
         baye_dir = self._get_baye_dir(label)
         os.makedirs(baye_dir, mode=0o700, exist_ok=True)
         self.bayes[label] = simplebayes.SimpleBayes(cache_path=baye_dir)
@@ -470,6 +482,8 @@ class Plugin(openpaperwork_core.PluginBase):
         doc_txt = "\n\n".join(doc_txt)
         if doc_txt == u"":
             return
+        if self.bayes is None:
+            self._load_all_bayes()
         for (label_name, guesser) in self.bayes.items():
             scores = guesser.score(doc_txt)
             yes = scores['yes'] if 'yes' in scores else 0.0
