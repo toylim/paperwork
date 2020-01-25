@@ -148,3 +148,6 @@ class Plugin(openpaperwork_core.PluginBase):
         promises.append(openpaperwork_core.promise.Promise(
             self.core, self.search_update_document_list
         ))
+
+    def config_save(self):
+        self.search_update_document_list()

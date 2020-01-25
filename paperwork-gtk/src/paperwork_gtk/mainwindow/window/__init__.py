@@ -16,9 +16,11 @@ class Plugin(openpaperwork_core.PluginBase):
         self.default = collections.defaultdict(
             lambda: (-1, "missing-component")
         )
+        self.mainwindow = None
 
     def get_interfaces(self):
         return [
+            'app_actions',
             'gtk_mainwindow',
         ]
 
@@ -65,10 +67,12 @@ class Plugin(openpaperwork_core.PluginBase):
             "config_get", "main_window_size"
         )
 
-        mainwindow = self.widget_tree.get_object("mainwindow")
-        mainwindow.set_default_size(main_win_size[0], main_win_size[1])
-        mainwindow.connect("destroy", self._on_mainwindow_destroy)
-        mainwindow.connect("size-allocate", self._on_mainwindow_size_allocate)
+        self.mainwindow = self.widget_tree.get_object("mainwindow")
+        self.mainwindow.set_default_size(main_win_size[0], main_win_size[1])
+        self.mainwindow.connect("destroy", self._on_mainwindow_destroy)
+        self.mainwindow.connect(
+            "size-allocate", self._on_mainwindow_size_allocate
+        )
 
         self.stacks = {
             "left": {
@@ -132,3 +136,11 @@ class Plugin(openpaperwork_core.PluginBase):
         for stack in stacks.values():
             stack.set_visible_child_name(name)
         return True
+
+    def mainwindow_set_transient_for(self, dialog):
+        dialog.set_transient_for(self.mainwindow)
+        return True
+
+    def actions_app_add(self, action):
+        if self.mainwindow is not None:
+            self.mainwindow.add_action(action)

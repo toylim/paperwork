@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.22.1 -->
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+  <object class="GtkBox" id="workdir">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="spacing">16</property>
+    <property name="homogeneous">True</property>
+    <child>
+      <object class="GtkLabel" id="setting_section_name">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="label" translatable="yes">Work directory</property>
+        <property name="xalign">0</property>
+        <attributes>
+          <attribute name="weight" value="bold"/>
+        </attributes>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkFileChooserButton" id="work_dir_chooser">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="action">select-folder</property>
+        <property name="local_only">False</property>
+        <property name="title" translatable="yes">Work directory</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">1</property>
+      </packing>
+    </child>
+  </object>
+</interface>

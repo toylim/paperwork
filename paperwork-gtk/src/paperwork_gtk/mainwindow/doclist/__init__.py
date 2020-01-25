@@ -3,6 +3,7 @@ import logging
 import time
 
 import openpaperwork_core
+import openpaperwork_core.deps
 
 
 LOGGER = logging.getLogger(__name__)
@@ -29,6 +30,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_interfaces(self):
         return [
+            'gtk_app_menu',
             'gtk_doclist',
             'search_listener',
         ]
@@ -73,6 +75,7 @@ class Plugin(openpaperwork_core.PluginBase):
             # init must still work so 'chkdeps' is still available
             LOGGER.error("Failed to load widget tree")
             return
+
         self.doclist = self.widget_tree.get_object("doclist_listbox")
         self.core.call_all(
             "mainwindow_add", side="left", name="doclist", prio=10000,
@@ -86,6 +89,8 @@ class Plugin(openpaperwork_core.PluginBase):
         self.vadj.connect("value-changed", self._on_scrollbar_value_changed)
 
         self.doclist.connect("row-activated", self._on_row_activated)
+
+        self.menu_model = self.widget_tree.get_object("doclist_menu_model")
 
     def doclist_add(self, widget, vposition):
         body = self.widget_tree.get_object("doclist_body")
@@ -276,3 +281,10 @@ class Plugin(openpaperwork_core.PluginBase):
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
         LOGGER.info("Opening document %s (%s)", doc_id, doc_url)
         self.core.call_all("doc_open", doc_id, doc_url)
+
+    def menu_app_append_item(self, item):
+        # they are actually the same menu
+        self.doclist_menu_append_item(item)
+
+    def doclist_menu_append_item(self, item):
+        self.menu_model.append_item(item)
