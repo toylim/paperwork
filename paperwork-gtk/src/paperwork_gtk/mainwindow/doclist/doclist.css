@@ -2,3 +2,6 @@
 	background-color: rgba(0, 0, 0, 0.25);
 }
 
+#doclist_scroll image {
+	border: 1px solid gray;
+}

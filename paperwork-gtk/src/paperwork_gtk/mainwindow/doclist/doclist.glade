@@ -72,6 +72,7 @@
             <property name="can_focus">True</property>
             <property name="shadow_type">in</property>
             <property name="kinetic_scrolling">False</property>
+            <property name="name">doclist_scroll</property>
             <child>
               <object class="GtkBox">
                 <property name="visible">True</property>

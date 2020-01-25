@@ -1,15 +1,11 @@
 #page_info {
-	background-color: rgba(16, 16, 16, 0.90);
+	background-color: rgba(16, 16, 16, 0.70);
+	color: white;
 	padding: 5px;
 	padding-left: 10px;
 	padding-right: 10px;
 }
 
-#page_info label {
+#page_info > box > label {
 	color: white;
-}
-
-#page_info button, #page_info button * {
-	background-image: none;
-	background-color: #222222;
 }
