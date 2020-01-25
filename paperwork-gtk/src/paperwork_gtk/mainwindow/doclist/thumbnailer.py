@@ -23,7 +23,7 @@ class ThumbnailTask(object):
         self.doc_id = doc_id
         self.gtk_image = gtk_image
 
-    def set_thumbnail(self, img):
+    def set_thumbnail(self, img=None):
         if img is None:
             LOGGER.warning(
                 "Failed to get thumbnail for document %s", self.doc_id
