@@ -220,8 +220,9 @@ To fix it:
 If it works with Simple-scan or with Paperwork outside of Flatpak, it probably
 means it's a permission problem.
 
-The Sane daemon (saned) runs as the user `saned`, not as your user. Therefore
-the default udev rules may not set the appropriate permissions.
+On Debian, Ubuntu, Mint, etc, the Sane daemon (saned) runs as the user `saned`,
+not as your user. Therefore the default udev rules may not set the appropriate
+permissions on the device files (`/dev/bus/usb`).
 
 
 #### Fujitsu scanners
