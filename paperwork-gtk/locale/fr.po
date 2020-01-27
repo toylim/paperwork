@@ -787,7 +787,7 @@ msgstr "_À propos de Paperwork"
 
 #: src/paperwork/frontend/mainwindow/mainwindow.glade.h:49
 msgid "Highlight words"
-msgstr "Mettre en évidence tout les mots"
+msgstr "Mettre en évidence tous les mots"
 
 #: src/paperwork/frontend/mainwindow/mainwindow.glade.h:50
 msgid ""
