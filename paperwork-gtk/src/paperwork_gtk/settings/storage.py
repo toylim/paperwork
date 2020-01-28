@@ -10,6 +10,8 @@ LOGGER = logging.getLogger(__name__)
 
 
 class Plugin(openpaperwork_core.PluginBase):
+    PRIORITY = 10000000
+
     def __init__(self):
         super().__init__()
 
@@ -39,9 +41,6 @@ class Plugin(openpaperwork_core.PluginBase):
         self.workdir = self.core.call_success("config_get", "workdir")
 
     def complete_settings_dialog(self, settings_box):
-        # We have many setting boxes to add to the settings box.
-        # --> we need many copies of the setting box --> we load many time
-        # the widget tree
         widget_tree = self.core.call_success(
             "gtk_load_widget_tree", "paperwork_gtk.settings", "storage.glade"
         )

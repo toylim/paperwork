@@ -1,14 +1,14 @@
 .section_box > * {
-	border: 1px solid black;
-	border-bottom: 0px solid black;
-	border-top: 1px solid gray;
+	border: 1px solid #aaaaaa;
+	border-bottom: 0px solid #aaaaaa;
+	border-top: 1px solid #aaaaaa;
 	padding: 16px;
 }
 
 .section_box > :first-child {
-	border-top: 1px solid black;
+	border-top: 1px solid #aaaaaa;
 }
 
 .section_box > :last-child {
-	border-bottom: 1px solid black;
+	border-bottom: 1px solid #aaaaaa;
 }
