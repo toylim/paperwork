@@ -224,18 +224,13 @@ On Debian, Ubuntu, Mint, etc, the Sane daemon (saned) runs as the user `saned`,
 not as your user. Therefore the default udev rules may not set the appropriate
 permissions on the device files (`/dev/bus/usb`).
 
-
-#### Fujitsu scanners
+On Debian, Ubuntu, Mint, Elementary, etc, the following commands usually fix this problem:
 
 ```
 sudo adduser saned plugdev
-```
-
-#### Other scanners
-
-```
 sudo adduser saned scanner
+sudo adduser saned lp
 ```
 
-You can find the instructions to fix the permissions using udev on the
+You can find more detailed instructions to fix the permissions using udev on the
 [ArchLinux wiki](https://wiki.archlinux.org/index.php/SANE#Permission_problem).
