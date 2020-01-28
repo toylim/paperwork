@@ -145,9 +145,10 @@ class Plugin(openpaperwork_core.PluginBase):
         out.append(RefreshResultsTransaction())
 
     def sync(self, promises: list):
+        # If someone requested a sync, assume something has changed
+        # --> try to keep the view as up-to-date as possible.
+        self.search_update_document_list()
+
         promises.append(openpaperwork_core.promise.Promise(
             self.core, self.search_update_document_list
         ))
-
-    def config_save(self):
-        self.search_update_document_list()
