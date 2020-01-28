@@ -108,7 +108,7 @@ class Plugin(openpaperwork_core.PluginBase):
         LOGGER.info("Counting documents for statistics...")
         all_docs = []
         self.storage_get_all_docs(all_docs)
-        self.stats['nb_documents'] += len(all_docs)
+        stats['nb_documents'] += len(all_docs)
 
     def page_delete_by_url(self, doc_url, page_idx):
         nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)
