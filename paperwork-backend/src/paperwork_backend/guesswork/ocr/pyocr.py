@@ -164,12 +164,12 @@ class Plugin(openpaperwork_core.PluginBase):
         ocr_tool = pyocr.get_available_tools()[0]
         LOGGER.info("Will use tool '%s'", ocr_tool.get_name())
 
-        ocr_lang = self.core.call_success("ocr_get_lang")
+        ocr_langs = self.core.call_success("ocr_get_langs")
 
         img = self.core.call_success("url_to_pillow", page_img_url)
 
         boxes = ocr_tool.image_to_string(
-            img, lang=ocr_lang,
+            img, lang="+".join(ocr_langs),
             builder=pyocr.builders.LineBoxBuilder()
         )
         self.core.call_all("page_set_boxes_by_url", doc_url, page_idx, boxes)

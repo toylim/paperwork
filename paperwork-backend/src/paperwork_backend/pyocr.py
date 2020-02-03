@@ -103,23 +103,23 @@ def find_language(lang_str=None, allow_none=False):
     return find_language(DEFAULT_OCR_LANG)
 
 
-def pycountry_to_tesseract(ocr_lang, possibles=None):
+def pycountry_to_tesseract(ocr_langs, possibles=None):
     attrs = [
         'iso639_3_code',
         'terminology',
         'alpha_3',
     ]
     for attr in attrs:
-        if not hasattr(ocr_lang, attr):
+        if not hasattr(ocr_langs, attr):
             continue
-        if possibles is None or getattr(ocr_lang, attr) in possibles:
-            r = getattr(ocr_lang, attr)
+        if possibles is None or getattr(ocr_langs, attr) in possibles:
+            r = getattr(ocr_langs, attr)
             if r is not None:
                 return r
     return None
 
 
-def get_default_ocr_lang(allow_none=False):
+def get_default_ocr_langs(allow_none=False):
     # Try to guess based on the system locale what would be
     # the best OCR language
 
@@ -128,7 +128,7 @@ def get_default_ocr_lang(allow_none=False):
         if allow_none:
             return None
         else:
-            return DEFAULT_OCR_LANG
+            return [DEFAULT_OCR_LANG]
     ocr_langs = ocr_tools[0].get_available_languages()
 
     lang = find_language(allow_none=True)
@@ -136,11 +136,11 @@ def get_default_ocr_lang(allow_none=False):
         return None
     lang = pycountry_to_tesseract(lang, ocr_langs)
     if lang is not None:
-        return lang
+        return [lang]
     if allow_none:
         return None
     else:
-        return DEFAULT_OCR_LANG
+        return [DEFAULT_OCR_LANG]
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -165,11 +165,11 @@ class Plugin(openpaperwork_core.PluginBase):
     def init(self, core):
         super().init(core)
 
-        ocr_lang = self.core.call_success(
+        ocr_langs = self.core.call_success(
             "config_build_simple",
-            "OCR", "Lang", get_default_ocr_lang
+            "OCR", "Lang", get_default_ocr_langs
         )
-        self.core.call_all("config_register", "ocr_lang", ocr_lang)
+        self.core.call_all("config_register", "ocr_langs", ocr_langs)
 
     def chkdeps(self, out: dict):
         ocr_tools = pyocr.get_available_tools()
@@ -180,7 +180,7 @@ class Plugin(openpaperwork_core.PluginBase):
             out['tesseract']['linuxmint'] = 'tesseract-ocr'
             out['tesseract']['raspbian'] = 'tesseract-ocr'
             out['tesseract']['ubuntu'] = 'tesseract-ocr'
-        ocr_lang = get_default_ocr_lang(allow_none=True)
+        ocr_lang = get_default_ocr_langs(allow_none=True)[0]
         if ocr_lang is None:
             ocr_lang = find_language(allow_none=True)
             if ocr_lang is None:
@@ -196,10 +196,10 @@ class Plugin(openpaperwork_core.PluginBase):
             out[name]['raspbian'] = 'tesseract-ocr-{}'.format(ocr_lang)
             out[name]['ubuntu'] = 'tesseract-ocr-{}'.format(ocr_lang)
 
-    def ocr_get_lang(self):
-        return self.core.call_success("config_get", "ocr_lang")
+    def ocr_get_langs(self):
+        return self.core.call_success("config_get", "ocr_langs")
 
     def ocr_set_lang(self, lang):
         return self.core.call_success(
-            "config_set", "ocr_lang", lang
+            "config_set", "ocr_langs", lang
         )
