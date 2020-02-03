@@ -258,7 +258,7 @@ class Plugin(openpaperwork_core.PluginBase):
             data_dir = os.getenv(
                 "XDG_DATA_HOME", os.path.join(self.local_dir, "share")
             )
-            self.index_dir = os.path.join(data_dir, "paperwork", "index")
+            self.index_dir = os.path.join(data_dir, "paperwork2", "index")
 
         need_index_rewrite = True
         while need_index_rewrite:

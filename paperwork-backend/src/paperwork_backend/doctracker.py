@@ -159,7 +159,7 @@ class Plugin(openpaperwork_core.PluginBase):
             data_dir = os.getenv(
                 "XDG_DATA_HOME", os.path.join(self.local_dir, "share")
             )
-            self.paperwork_dir = os.path.join(data_dir, "paperwork")
+            self.paperwork_dir = os.path.join(data_dir, "paperwork2")
 
         os.makedirs(self.paperwork_dir, mode=0o700, exist_ok=True)
         if os.name == 'nt':  # hide ~/.local on Windows
