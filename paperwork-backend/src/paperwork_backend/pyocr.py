@@ -180,7 +180,7 @@ class Plugin(openpaperwork_core.PluginBase):
             out['tesseract']['linuxmint'] = 'tesseract-ocr'
             out['tesseract']['raspbian'] = 'tesseract-ocr'
             out['tesseract']['ubuntu'] = 'tesseract-ocr'
-        ocr_lang = get_default_ocr_langs(allow_none=True)[0]
+        ocr_lang = get_default_ocr_langs(allow_none=True)
         if ocr_lang is None:
             ocr_lang = find_language(allow_none=True)
             if ocr_lang is None:
