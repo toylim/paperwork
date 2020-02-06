@@ -65,7 +65,7 @@ If you're reluctant to install system wide python libraries through pip,
 you can also use debian packages generated on the fly by [python-stdeb](https://pypi.python.org/pypi/stdeb)
 
 You will still have to install
-[Libinsane](https://doc.openpaper.work/libinsane/latest/libinsane/quickstart.html)
+[Libinsane](https://doc.openpaper.work/libinsane/latest/libinsane/install.html)
 manually.
 
 Also, Debian doesn't provide yet the command `pypi-install` for Python 3.
