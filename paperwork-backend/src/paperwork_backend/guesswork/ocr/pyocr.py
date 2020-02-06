@@ -164,7 +164,7 @@ class Plugin(openpaperwork_core.PluginBase):
         ocr_tool = pyocr.get_available_tools()[0]
         LOGGER.info("Will use tool '%s'", ocr_tool.get_name())
 
-        ocr_langs = self.core.call_success("ocr_get_langs")
+        ocr_langs = self.core.call_success("ocr_get_active_langs")
 
         img = self.core.call_success("url_to_pillow", page_img_url)
 
