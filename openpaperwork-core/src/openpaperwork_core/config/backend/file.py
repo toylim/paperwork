@@ -62,10 +62,11 @@ class ConfigList(object):
 
         if value is not None:
             if isinstance(value, str):
-                elements = value.split(self.SEPARATOR)
-                for i in elements:
-                    (t, v) = i.split(_TYPE_SEPARATOR, 1)
-                    self.elements.append(_STR_TO_TYPE[t](v))
+                if value != '':
+                    elements = value.split(self.SEPARATOR)
+                    for i in elements:
+                        (t, v) = i.split(_TYPE_SEPARATOR, 1)
+                        self.elements.append(_STR_TO_TYPE[t](v))
             elif hasattr(value, 'elements'):
                 self.elements = value.elements[:]
             else:
@@ -88,6 +89,9 @@ class ConfigList(object):
 
     def append(self, value):
         self.elements.append(value)
+
+    def remove(self, value):
+        self.elements.remove(value)
 
     def __str__(self):
         out = []

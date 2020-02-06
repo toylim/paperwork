@@ -196,8 +196,17 @@ class Plugin(openpaperwork_core.PluginBase):
             out[name]['raspbian'] = 'tesseract-ocr-{}'.format(ocr_lang)
             out[name]['ubuntu'] = 'tesseract-ocr-{}'.format(ocr_lang)
 
-    def ocr_get_langs(self):
+    def ocr_get_active_langs(self):
         return self.core.call_success("config_get", "ocr_langs")
+
+    def ocr_set_active_langs(self, langs):
+        return self.core.call_success("config_put", "ocr_langs", langs)
+
+    def ocr_get_available_langs(self):
+        ocr_tools = pyocr.get_available_tools()
+        if len(ocr_tools) <= 0:
+            return []
+        return ocr_tools[0].get_available_languages()
 
     def ocr_set_lang(self, lang):
         return self.core.call_success(

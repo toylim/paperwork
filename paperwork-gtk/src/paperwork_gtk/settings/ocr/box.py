@@ -40,25 +40,38 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def init(self, core):
-        super().init(core)
-
     def complete_settings_dialog(self, settings_box):
         widget_tree = self.core.call_success(
-            "gtk_load_widget_tree", "paperwork_gtk.settings", "ocr.glade"
+            "gtk_load_widget_tree", "paperwork_gtk.settings.ocr", "box.glade"
         )
 
-        langs = self.core.call_success("ocr_get_langs")
+        label = widget_tree.get_object("ocr_langs_label")
+        self._update_langs(label)
+
+        button = widget_tree.get_object("ocr_langs")
+
+        popover = self.core.call_success("get_ocr_lang_selector")
+        if popover is not None:
+            popover.connect("closed", self._on_ocr_langs_changed, label)
+            button.set_popover(popover)
+
+        self.core.call_success(
+            "add_setting_to_dialog", settings_box,
+            _("Optical Character Recognition"),
+            [button]
+        )
+
+    def _update_langs(self, label):
+        langs = self.core.call_success("ocr_get_active_langs")
         langs = [
             self.core.call_success("i18n_lang_iso639_3_to_full", lang)
             for lang in langs
         ]
         langs = ", ".join(langs)
+        if langs == "":
+            langs = _("None")
         LOGGER.info("OCR languages: %s", langs)
-        widget_tree.get_object("ocr_langs_label").set_text(str(langs))
+        label.set_text(langs)
 
-        self.core.call_success(
-            "add_setting_to_dialog", settings_box,
-            _("Optical Character Recognition"),
-            [widget_tree.get_object("ocr_langs_box")]
-        )
+    def _on_ocr_langs_changed(self, _, label):
+        self._update_langs(label)
