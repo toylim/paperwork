@@ -169,7 +169,7 @@ class Source(object):
         try:
             page_nb = 0
 
-            self.core.call_one(
+            self.core.call_all(
                 "mainloop_schedule", self.core.call_all,
                 "on_scan_feed_start", scan_id
             )
@@ -184,7 +184,7 @@ class Source(object):
                     scan_params.get_width(), scan_params.get_height(),
                     scan_params.get_image_size()
                 )
-                self.core.call_one(
+                self.core.call_all(
                     "mainloop_schedule", self.core.call_all,
                     "on_scan_page_start", scan_id, page_nb, scan_params
                 )
@@ -204,7 +204,7 @@ class Source(object):
                     chunk = image.get_last_chunk()
                     if chunk is not last_chunk:
                         last_chunk = chunk
-                        self.core.call_one(
+                        self.core.call_all(
                             "mainloop_schedule", self.core.call_all,
                             "on_scan_chunk", scan_id, scan_params,
                             raw_to_img(scan_params, chunk)
@@ -213,14 +213,14 @@ class Source(object):
                 LOGGER.info("Page %d/%d scanned", page_nb, max_pages)
                 img = raw_to_img(scan_params, image.get_image())
                 yield img
-                self.core.call_one(
+                self.core.call_all(
                     "mainloop_schedule", self.core.call_all,
                     "on_scan_page_end", scan_id, page_nb, img
                 )
                 page_nb += 1
             LOGGER.info("End of feed")
 
-            self.core.call_one(
+            self.core.call_all(
                 "mainloop_schedule", self.core.call_all,
                 "on_scan_feed_end", scan_id
             )
