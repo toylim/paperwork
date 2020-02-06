@@ -42,7 +42,7 @@ sudo pip3 uninstall pypillowfight # run it as many times as required
 ```
 
 To uninstall libinsane, please refer to
-[Libinsane documentation](https://doc.openpaper.work/libinsane/latest/libinsane/quickstart.html).
+[Libinsane documentation](https://doc.openpaper.work/libinsane/latest/libinsane/install.html).
 
 
 Paperwork itself:
