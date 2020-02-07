@@ -130,7 +130,7 @@ class Plugin(PluginBase):
     def _enable_logging(self):
         self.log_handler.out_fds = set()
         for file_path in self.log_file_paths:
-            if sys.stderr is not None:  # if app is frozen
+            if sys.stderr is not None:  # if app is not frozen
                 sys.stderr.write("Writing logs to {}\n".format(file_path))
             if file_path.lower() not in self.SPECIAL_FILES:
                 self.log_handler.out_fds.add(open(file_path, 'a'))
@@ -140,9 +140,12 @@ class Plugin(PluginBase):
                 )
 
     def _reload_config(self, *args, **kwargs):
+        LOGGER.info("Reloading logging configuration")
         self._disable_logging()
         try:
             log_level = self.core.call_success('config_get', "log_level")
+            if sys.stderr is not None:  # if app is not frozen
+                sys.stderr.write("Log level: {}\n".format(log_level))
             logging.getLogger().setLevel(self.LOG_LEVELS[log_level])
             self.log_file_paths = self.core.call_success(
                 'config_get', "log_files",

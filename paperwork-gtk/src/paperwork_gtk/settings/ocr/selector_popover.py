@@ -47,7 +47,11 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
         active_langs = set(self.core.call_success("ocr_get_active_langs"))
+        LOGGER.info("Looking for available OCR languages ...")
         all_langs = self.core.call_success("ocr_get_available_langs")
+        LOGGER.info("Found %d languages. Translating ...".format(
+            len(all_langs)
+        ))
         all_langs = [
             (
                 lang,
@@ -74,7 +78,7 @@ class Plugin(openpaperwork_core.PluginBase):
             check.set_active(lang[0] in active_langs)
             check.connect('toggled', self._on_toggle, lang[0])
             box_parent.pack_start(check, expand=False, fill=True, padding=0)
-
+        LOGGER.info("OCR selector ready")
         return widget_tree.get_object("ocr_selector")
 
     def _on_toggle(self, checkbox, lang):

@@ -144,6 +144,7 @@ class Syncer(object):
 
         try:
             for (action, key) in self.diff_generator:
+                LOGGER.info("Sync: %s, %s", action, key)
                 self.nb_compared += 1
                 if action != 'unchanged':
                     for name in self.names:
@@ -153,19 +154,37 @@ class Syncer(object):
                         )
                 if action == "added":
                     for transaction in self.transactions:
+                        LOGGER.debug(
+                            "transaction.add_obj<%s>(%s)",
+                            transaction.add_obj, key
+                        )
                         transaction.add_obj(key)
                 elif action == "updated":
                     for transaction in self.transactions:
+                        LOGGER.debug(
+                            "transaction.upd_obj<%s>(%s)",
+                            transaction.upd_obj, key
+                        )
                         transaction.upd_obj(key)
                 elif action == "deleted":
                     for transaction in self.transactions:
+                        LOGGER.debug(
+                            "transaction.del_obj<%s>(%s)",
+                            transaction.del_obj, key
+                        )
                         transaction.del_obj(key)
                 else:
                     for transaction in self.transactions:
+                        LOGGER.debug(
+                            "transaction.unchanged_obj<%s>(%s)",
+                            transaction.unchanged_obj, key
+                        )
                         transaction.unchanged_obj(key)
 
+            LOGGER.info("Sync: Committing ...")
             for transaction in self.transactions:
                 transaction.commit()
+            LOGGER.info("Sync: Committed")
             stop = time.time()
             LOGGER.info(
                 "%s: Has compared %d objects in %.3fs",

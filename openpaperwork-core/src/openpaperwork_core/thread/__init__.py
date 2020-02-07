@@ -16,6 +16,12 @@ class Task(object):
         # --> increment mainloop ref counter before
         core.call_all("mainloop_ref", self)
 
+    def __str__(self):
+        return "Task<{}>({}, {})".format(self.func, self.args, self.kwargs)
+
+    def __repr__(self):
+        return str(self)
+
     def do(self):
         try:
             self.func(*self.args, **self.kwargs)

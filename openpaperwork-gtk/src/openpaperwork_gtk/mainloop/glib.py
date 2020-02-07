@@ -1,3 +1,4 @@
+import collections
 import logging
 import threading
 
@@ -27,6 +28,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.loop_ident = None
         self.halt_cause = None
         self.task_count = 0
+        self.active_tasks = collections.defaultdict(lambda: 0)
 
     def get_interfaces(self):
         return [
@@ -74,24 +76,36 @@ class Plugin(openpaperwork_core.PluginBase):
             LOGGER.info(
                 "Quit graceful: Remaining tasks: %d", self.task_count - 1
             )
+            for (k, v) in self.active_tasks.items():
+                LOGGER.info("Quit graceful: Remaining: %s = %d", k, v)
             self.mainloop_schedule(self.mainloop_quit_graceful, delay_s=0.2)
             return
 
         LOGGER.info("Quit graceful: Quitting")
         self.mainloop_quit_now()
         self.task_count = 1  # we are actually the one task still running
+        self.active_tasks = collections.defaultdict(lambda: 0)
 
     def mainloop_quit_now(self):
         self.loop.quit()
         self.loop = None
         self.task_count = 0
+        self.active_tasks = collections.defaultdict(lambda: 0)
 
     def mainloop_ref(self, obj):
         self.task_count += 1
+        self.active_tasks[str(obj)] += 1
 
     def mainloop_unref(self, obj):
         self.task_count -= 1
         assert(self.task_count >= 0)
+        try:
+            s = str(obj)
+            self.active_tasks[s] -= 1
+            if self.active_tasks[s] <= 0:
+                self.active_tasks.pop(s)
+        except KeyError:
+            pass
 
     def mainloop_schedule(self, func, *args, delay_s=0, **kwargs):
         assert(hasattr(func, '__call__'))
@@ -99,6 +113,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self._check_mainloop_instantiated()
 
         self.task_count += 1
+        self.active_tasks[str(func)] += 1
 
         def decorator(func, args):
             (args, kwargs) = args
@@ -119,6 +134,13 @@ class Plugin(openpaperwork_core.PluginBase):
                     )
             finally:
                 self.task_count -= 1
+                try:
+                    s = str(func)
+                    self.active_tasks[s] -= 1
+                    if self.active_tasks[s] <= 0:
+                        self.active_tasks.pop(s)
+                except KeyError:
+                    pass
             return False
 
         args = (args, kwargs)
