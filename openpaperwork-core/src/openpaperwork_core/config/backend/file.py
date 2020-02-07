@@ -53,7 +53,7 @@ class ConfigDate(object):
 
 
 class ConfigList(object):
-    SEPARATOR = ", "
+    SEPARATOR = ";"
 
     def __init__(self, value=None, elements=None):
         if elements is None:
@@ -103,7 +103,7 @@ class ConfigList(object):
 
 
 class ConfigDict(object):
-    SEPARATOR_ITEMS = ", "
+    SEPARATOR_ITEMS = ";"
     SEPARATOR_KEYVALS = "="
 
     def __init__(self, value=None, elements={}):
