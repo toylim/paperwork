@@ -72,8 +72,8 @@ class Plugin(openpaperwork_core.PluginBase):
             self.core, self.core.call_success,
             args=("page_get_boxes_by_url", page.doc_url, page.page_idx,)
         ))
-        promise = promise.then(lambda boxes: self._set_boxes(boxes, page))
-        promise = promise.then(lambda boxes: self.core.call_all(
+        promise = promise.then(lambda boxes=[]: self._set_boxes(boxes, page))
+        promise = promise.then(lambda boxes=[]: self.core.call_all(
             "on_page_boxes_loaded", page, boxes
         ))
         # Gives back a bit of CPU time to GTK so the GUI remains
