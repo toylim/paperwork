@@ -89,9 +89,18 @@ class Plugin(PluginBase):
         self.settings = {}
 
     def config_load(self, application, plugin_list_name, default_plugins=[]):
+        LOGGER.info(
+            "Loading configuration for %s:%s", application, plugin_list_name
+        )
         self.application = application
         self.plugin_list_name = plugin_list_name
+
+        self.values = {}
         self.core.call_all('config_backend_load', application)
+        for observers in self.observers.values():
+            for observer in observers:
+                observer()
+
         self.core.call_all(
             'config_backend_load_plugins', plugin_list_name, default_plugins
         )
@@ -103,6 +112,7 @@ class Plugin(PluginBase):
         return self.plugin_list_name
 
     def config_save(self):
+        LOGGER.info("Saving configuration")
         self.core.call_all('config_backend_save')
 
     def config_build_simple(
@@ -131,6 +141,7 @@ class Plugin(PluginBase):
             and a method `put(value)`. See :func:`config_build_simple` to
             get quickly a default implementation.
         """
+        LOGGER.debug("Registering configuration: %s", key)
         self.settings[key] = setting
 
     def config_list_options(self):
@@ -140,6 +151,7 @@ class Plugin(PluginBase):
         return self.settings[key]
 
     def config_get(self, key: str):
+        LOGGER.debug("Config get: %s", key)
         if key not in self.settings:
             return None
         if key not in self.values:
@@ -159,6 +171,7 @@ class Plugin(PluginBase):
           - key: configuration key,
           - value: can be of many types (`str`, `int`, etc).
         """
+        LOGGER.debug("Config put: %s", key)
         self.settings[key].put(value)
         self.values[key] = value
         if key in self.observers:
@@ -168,6 +181,7 @@ class Plugin(PluginBase):
     def config_add_plugin(self, plugin, plugin_list_name=None):
         if plugin_list_name is None:
             plugin_list_name = self.plugin_list_name
+        LOGGER.debug("Config add plugin: %s -> %s", plugin, plugin_list_name)
         self.core.call_all(
             'config_backend_add_plugin', plugin_list_name, plugin
         )
@@ -175,6 +189,10 @@ class Plugin(PluginBase):
     def config_remove_plugin(self, plugin, plugin_list_name=None):
         if plugin_list_name is None:
             plugin_list_name = self.plugin_list_name
+        LOGGER.debug(
+            "Config remove plugin: %s -> %s",
+            plugin, plugin_list_name
+        )
         self.core.call_all(
             'config_backend_remove_plugin', plugin_list_name, plugin
         )
@@ -189,6 +207,7 @@ class Plugin(PluginBase):
     def config_reset_plugins(self, plugin_list_name=None):
         if plugin_list_name is None:
             plugin_list_name = self.plugin_list_name
+        LOGGER.debug("Config reset plugin: %s", plugin_list_name)
         return self.core.call_success(
             "config_backend_reset_plugins", plugin_list_name
         )

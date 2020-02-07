@@ -54,10 +54,7 @@ def main_main(in_args):
         core.load(module_name)
     core.init()
 
-    if len(in_args) <= 0:
-        core.load('openpaperwork_core.log_collector')
-    else:
-        core.load('openpaperwork_core.log_print')
+    core.load('openpaperwork_core.log_collector')
     core.init()
 
     core.call_all(
