@@ -37,7 +37,7 @@ class _LogHandler(logging.Handler):
         super().__init__()
         logging.getLogger().setLevel(logging.DEBUG)
         self.formatter = logging.Formatter(Plugin.DEFAULT_LOG_FORMAT)
-        self.out_fds = {sys.stderr}
+        self.out_fds = {sys.stdout}
         sys.excepthook = self.on_uncatched_exception_cb
 
     def emit(self, record):
@@ -59,7 +59,7 @@ class Plugin(PluginBase):
     CONFIG_FILE_SEPARATOR = ","
 
     DEFAULT_LOG_LEVEL = 'info'
-    DEFAULT_LOG_FILES = 'stderr' + CONFIG_FILE_SEPARATOR + 'temp'
+    DEFAULT_LOG_FILES = 'stdout' + CONFIG_FILE_SEPARATOR + 'temp'
     DEFAULT_LOG_FORMAT = '[%(levelname)-6s] [%(name)-30s] %(message)s'
 
     LOG_LEVELS = {
@@ -72,7 +72,8 @@ class Plugin(PluginBase):
         'debug': logging.DEBUG,
     }
     SPECIAL_FILES = {
-        'stderr': lambda: open("/dev/stderr", "w"),
+        'stdout': lambda: sys.stdout,
+        'stderr': lambda: sys.stderr,
         'temp': _get_tmp_file,
     }
 
@@ -123,9 +124,9 @@ class Plugin(PluginBase):
 
     def _disable_logging(self):
         for fd in self.log_handler.out_fds:
-            if fd != sys.stderr and fd != g_tmp_file:
+            if fd != sys.stdout and fd != sys.stderr and fd != g_tmp_file:
                 fd.close()
-        self.log_handler.out_fds = {sys.stderr}
+        self.log_handler.out_fds = {sys.stdout}
 
     def _enable_logging(self):
         self.log_handler.out_fds = set()
