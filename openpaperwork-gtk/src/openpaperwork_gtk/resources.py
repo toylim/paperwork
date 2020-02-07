@@ -21,6 +21,10 @@ LOGGER = logging.getLogger(__name__)
 
 
 class Plugin(openpaperwork_core.PluginBase):
+    def __init__(self):
+        super().__init__()
+        self.cache = {}
+
     def get_interfaces(self):
         return [
             'chkdeps',
@@ -65,12 +69,23 @@ class Plugin(openpaperwork_core.PluginBase):
             )
             return None
 
+        k = (pkg, filename)
+        if k not in self.cache:
+            try:
+                filepath = self.core.call_success(
+                    "resources_get_file", pkg, filename
+                )
+                with self.core.call_success("fs_open", filepath, 'r') as fd:
+                    self.cache[k] = fd.read()
+            except Exception:
+                LOGGER.error(
+                    "Failed to load widget tree from file %s:%s",
+                    pkg, filename
+                )
+                raise
+
         try:
-            filepath = self.core.call_success(
-                "resources_get_file", pkg, filename
-            )
-            with self.core.call_success("fs_open", filepath, 'r') as fd:
-                content = fd.read()
+            content = self.cache[k]
             return Gtk.Builder.new_from_string(content, -1)
         except Exception:
             LOGGER.error("Failed to load widget tree %s:%s", pkg, filename)
@@ -90,12 +105,21 @@ class Plugin(openpaperwork_core.PluginBase):
 
         LOGGER.debug("Loading CSS from %s:%s", pkg, filename)
 
+        k = (pkg, filename)
+
+        if k not in self.cache:
+            try:
+                filepath = self.core.call_success(
+                    "resources_get_file", pkg, filename
+                )
+                with self.core.call_success("fs_open", filepath, 'rb') as fd:
+                    self.cache[k] = fd.read()
+            except Exception:
+                LOGGER.error("Failed to load CSS file %s:%s", pkg, filename)
+                raise
+
         try:
-            filepath = self.core.call_success(
-                "resources_get_file", pkg, filename
-            )
-            with self.core.call_success("fs_open", filepath, 'rb') as fd:
-                content = fd.read()
+            content = self.cache[k]
 
             css_provider = Gtk.CssProvider()
             css_provider.load_from_data(content)
@@ -113,6 +137,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
             )
         except Exception:
-            LOGGER.error("Failed to load CSS file %s:%s", pkg, filename)
+            LOGGER.error("Failed to load CSS %s:%s", pkg, filename)
             raise
+
         return True
