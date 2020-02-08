@@ -2,7 +2,6 @@ import gettext
 import logging
 
 import openpaperwork_core
-import openpaperwork_core.deps
 
 
 _ = gettext.gettext
@@ -63,12 +62,14 @@ class Plugin(openpaperwork_core.PluginBase):
         box = widget_tree.get_object("selector_box")
 
         radios = []
-        for dev in devs:
+        # because of the way radio buttons work, we need always at least
+        # one choice --> add "no scanner"
+        for dev in ([(None, _("No scanner"))] + devs):
             radio = self.core.call_success(
                 "gtk_load_widget_tree", "paperwork_gtk.settings.scanner",
                 "popover_box.glade"
             )
-            radio = radio.get_object("scanner_dev_id_radio")
+            radio = radio.get_object("radio")
             radio.set_label(dev[1])
             box.pack_start(radio, expand=False, fill=True, padding=0)
             radios.append((dev[0], radio))
@@ -77,9 +78,11 @@ class Plugin(openpaperwork_core.PluginBase):
             radio.join_group(radios[0][1])
 
         active = self.core.call_success("config_get", "scanner_dev_id")
+
         for (dev_id, radio) in radios:
             if active == dev_id:
                 radio.set_active(True)
+                break
 
         for (dev_id, radio) in radios:
             radio.connect(

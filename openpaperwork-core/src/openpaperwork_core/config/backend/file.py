@@ -267,6 +267,10 @@ class Plugin(PluginBase):
         Key must be a string.
         """
         LOGGER.debug("Configuration: %s:%s <-- %s", section, key, str(value))
+        if value is None:
+            if key in self.config[section]:
+                self.config[section].pop(key)
+            return
         t_str = _TYPE_TO_STR[type(value)]
         t = _STR_TO_TYPE[t_str]
         value = t(value)
