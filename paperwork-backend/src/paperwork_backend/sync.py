@@ -144,9 +144,9 @@ class Syncer(object):
 
         try:
             for (action, key) in self.diff_generator:
-                LOGGER.info("Sync: %s, %s", action, key)
                 self.nb_compared += 1
                 if action != 'unchanged':
+                    LOGGER.info("Sync: %s, %s", action, key)
                     for name in self.names:
                         self.core.call_one(
                             "mainloop_schedule", self.core.call_all,

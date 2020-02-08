@@ -418,7 +418,7 @@ class Plugin(openpaperwork_core.PluginBase):
             lambda args: (
                 args[0], args[1],
                 [WhooshTransaction(
-                    self, abs(len(storage_all_docs) - len(args[1]))
+                    self, max(len(storage_all_docs), len(args[1]))
                 )]
             )
         )
