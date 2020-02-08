@@ -36,7 +36,7 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def complete_scanner_settings(
-            self, settings_widget_tree,
+            self, parent_widget_tree,
             list_scanner_promise):
         widget_tree = self.core.call_success(
             "gtk_load_widget_tree",
@@ -49,7 +49,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         widget_tree.get_object("spinner").start()
 
-        settings_widget_tree.get_object("scanner_device").set_popover(
+        parent_widget_tree.get_object("scanner_device").set_popover(
             widget_tree.get_object("scanner_dev_id_selector")
         )
 

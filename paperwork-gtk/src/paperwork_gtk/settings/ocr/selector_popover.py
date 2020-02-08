@@ -40,7 +40,7 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def get_ocr_lang_selector(self):
+    def complete_ocr_settings(self, parent_widget_tree):
         widget_tree = self.core.call_success(
             "gtk_load_widget_tree",
             "paperwork_gtk.settings.ocr", "selector_popover.glade"
@@ -79,7 +79,9 @@ class Plugin(openpaperwork_core.PluginBase):
             check.connect('toggled', self._on_toggle, lang[0])
             box_parent.pack_start(check, expand=False, fill=True, padding=0)
         LOGGER.info("OCR selector ready")
-        return widget_tree.get_object("ocr_selector")
+
+        popover = widget_tree.get_object("ocr_selector")
+        parent_widget_tree.get_object("ocr_langs").set_popover(popover)
 
     def _on_toggle(self, checkbox, lang):
         active_langs = self.core.call_success("ocr_get_active_langs")

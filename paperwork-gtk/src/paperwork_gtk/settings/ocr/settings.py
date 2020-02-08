@@ -46,17 +46,24 @@ class Plugin(openpaperwork_core.PluginBase):
         label = widget_tree.get_object("ocr_langs_label")
         self._update_langs(label)
 
-        button = widget_tree.get_object("ocr_langs")
+        self.core.call_all("complete_ocr_settings", widget_tree)
 
-        popover = self.core.call_success("get_ocr_lang_selector")
-        if popover is not None:
-            popover.connect("closed", self._on_ocr_langs_changed, label)
-            button.set_popover(popover)
+        def refresh(*args, **kwargs):
+            self._update_langs(label)
+
+        def disable_refresh(*args, **kwargs):
+            self.core.call_all("config_remove_observer", "ocr_langs", refresh)
+
+        self.core.call_all("config_add_observer", "ocr_langs", refresh)
+
+        global_widget_tree.get_object("settings_window").connect(
+            "destroy", disable_refresh
+        )
 
         self.core.call_success(
             "add_setting_to_dialog", global_widget_tree,
             _("Optical Character Recognition"),
-            [button]
+            [widget_tree.get_object("ocr_langs")]
         )
 
     def _update_langs(self, label):
@@ -70,6 +77,3 @@ class Plugin(openpaperwork_core.PluginBase):
             langs = _("None")
         LOGGER.info("OCR languages: %s", langs)
         label.set_text(langs)
-
-    def _on_ocr_langs_changed(self, _, label):
-        self._update_langs(label)
