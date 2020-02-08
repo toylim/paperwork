@@ -11,6 +11,11 @@ LOGGER = logging.getLogger(__name__)
 
 class Plugin(openpaperwork_core.PluginBase):
     PRIORITY = -400
+    MODES = {
+        'Color': _("Color"),
+        'Gray': _("Grayscale"),
+        'Lineart': _("Black & White"),
+    }
 
     def __init__(self):
         super().__init__()
@@ -89,11 +94,9 @@ class Plugin(openpaperwork_core.PluginBase):
         list_settings_promise.schedule()
 
     def _translate_mode(self, mode):
-        return {
-            'Color': _("Color"),
-            'Gray': _("Grayscale"),
-            'Lineart': _("Black & White"),
-        }[mode]
+        if mode in self.MODES:
+            return self.MODES[mode]
+        return mode
 
     def _refresh_settings(self, widget_tree):
         for (config_key, widget_name, default_value, fmt) in self.config:

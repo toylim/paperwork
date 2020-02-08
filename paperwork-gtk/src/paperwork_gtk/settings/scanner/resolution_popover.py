@@ -129,8 +129,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 "toggled", self._on_toggle, widget_tree, resolution
             )
 
-    def _on_toggle(
-            self, checkbox, widget_tree, resolution):
+    def _on_toggle(self, checkbox, widget_tree, resolution):
         LOGGER.info("Selected resolution: %d", resolution)
         widget_tree.get_object("selector").popdown()
         self.core.call_success("config_put", "scanner_resolution", resolution)
