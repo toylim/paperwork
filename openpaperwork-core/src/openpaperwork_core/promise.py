@@ -55,8 +55,8 @@ class BasePromise(object):
         self._then.append(next_promise)
         return last_promise
 
-    def catch(self, callback):
-        self._catch.append(callback)
+    def catch(self, callback, *args, **kwargs):
+        self._catch.append((callback, args, kwargs))
         return self
 
     def on_error(self, exc):
@@ -90,8 +90,10 @@ class BasePromise(object):
             )
 
         if len(self._catch) > 0:
-            for c in self._catch:
-                self.core.call_one("mainloop_schedule", c, exc)
+            for (c, args, kwargs) in self._catch:
+                self.core.call_one(
+                    "mainloop_schedule", c, exc, *args, **kwargs
+                )
             return
 
         raise exc

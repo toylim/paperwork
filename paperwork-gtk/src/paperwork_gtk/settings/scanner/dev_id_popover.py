@@ -12,7 +12,7 @@ LOGGER = logging.getLogger(__name__)
 class Plugin(openpaperwork_core.PluginBase):
     def get_interfaces(self):
         return [
-            'gtk_settings_scanner_dev_id',
+            'gtk_settings_scanner_setting',
         ]
 
     def get_deps(self):
@@ -40,8 +40,8 @@ class Plugin(openpaperwork_core.PluginBase):
             list_scanner_promise):
         widget_tree = self.core.call_success(
             "gtk_load_widget_tree",
-            "paperwork_gtk.settings.scanner.dev_id_selector",
-            "dev_id_selector.glade"
+            "paperwork_gtk.settings.scanner",
+            "popover.glade"
         )
 
         widget_tree.get_object("settings_stack").set_visible_child_name(
@@ -50,7 +50,7 @@ class Plugin(openpaperwork_core.PluginBase):
         widget_tree.get_object("spinner").start()
 
         parent_widget_tree.get_object("scanner_device").set_popover(
-            widget_tree.get_object("scanner_dev_id_selector")
+            widget_tree.get_object("selector")
         )
 
         list_scanner_promise.then(self._on_scanner_list, widget_tree)
@@ -58,15 +58,15 @@ class Plugin(openpaperwork_core.PluginBase):
     def _on_scanner_list(self, devs, widget_tree):
         widget_tree.get_object("spinner").stop()
         widget_tree.get_object("settings_stack").set_visible_child_name(
-            "dev_id_selector"
+            "selector"
         )
-        box = widget_tree.get_object("scanner_dev_id_selector_box")
+        box = widget_tree.get_object("selector_box")
 
         radios = []
         for dev in devs:
             radio = self.core.call_success(
                 "gtk_load_widget_tree", "paperwork_gtk.settings.scanner",
-                "dev_id_selector_box.glade"
+                "popover_box.glade"
             )
             radio = radio.get_object("scanner_dev_id_radio")
             radio.set_label(dev[1])
@@ -90,5 +90,5 @@ class Plugin(openpaperwork_core.PluginBase):
     def _on_toggle(
             self, checkbox, widget_tree, dev_id, dev_name):
         LOGGER.info("Selected scanner: %s - %s", dev_id, dev_name)
-        widget_tree.get_object("scanner_dev_id_selector").popdown()
+        widget_tree.get_object("selector").popdown()
         self.core.call_success("config_put", "scanner_dev_id", dev_id)
