@@ -152,10 +152,15 @@ class Source(object):
             resolution = self.core.call_success(
                 "config_get", "scanner_resolution"
             )
+        mode = self.core.call_success("config_get", "scanner_mode")
+
         options = self.source.get_options()
+
         opts = {opt.get_name(): opt for opt in options}
         if 'resolution' in opts:
             opts['resolution'].set_value(resolution)
+        if 'mode' in opts:
+            opts['mode'].set_value(mode)
 
         imgs = self._scan(scan_id, resolution, max_pages, close_on_end)
         return (self, scan_id, imgs)
@@ -344,6 +349,10 @@ class Plugin(openpaperwork_core.PluginBase):
             'scanner_resolution': self.core.call_success(
                 "config_build_simple", "scanner",
                 "resolution", lambda: 300
+            ),
+            'scanner_mode': self.core.call_success(
+                "config_build_simple", "scanner",
+                "mode", lambda: "Color"
             ),
         }
         for (k, setting) in settings.items():
