@@ -144,10 +144,13 @@ class Source(object):
                 self, scan_id=None, resolution=None, max_pages=9999,
                 close_on_end=False
             ):
+        """
+        Returns the source, the scan ID and an image generator
+        """
         if scan_id is None:
             scan_id = next(SCAN_ID_GENERATOR)
 
-        LOGGER.info("Setting scan options ...")
+        LOGGER.info("(id=%s) Setting scan options ...", scan_id)
         if resolution is None:
             resolution = self.core.call_success(
                 "config_get", "scanner_resolution"
@@ -166,10 +169,15 @@ class Source(object):
         return (self, scan_id, imgs)
 
     def _scan(self, scan_id, resolution, max_pages, close_on_end=False):
+        """
+        Returns an image generator
+        """
         # keep in mind that we are in a thread here, but listeners
         # must be called from the main loop
-
-        LOGGER.info("Scanning ...")
+        LOGGER.info(
+            "(id=%s) Scanning at resolution %d dpi ...",
+            scan_id, resolution
+        )
 
         try:
             page_nb = 0
@@ -409,7 +417,12 @@ class Plugin(openpaperwork_core.PluginBase):
         promise = promise.then(set_cache)
         return promise
 
-    def scan_get_scanner_promise(self, scanner_dev_id):
+    def scan_get_scanner_promise(self, scanner_dev_id=None):
+        if scanner_dev_id is None:
+            scanner_dev_id = self.core.call_success(
+                "config_get", "scanner_dev_id"
+            )
+
         if not scanner_dev_id.startswith("libinsane:"):
             return None
         scanner_dev_id = scanner_dev_id[len("libinsane:"):]
@@ -424,13 +437,14 @@ class Plugin(openpaperwork_core.PluginBase):
             self.core, get_scanner
         )
 
-    def scan_promise(self, *args, **kwargs):
+    def scan_promise(self, *args, source_id, **kwargs):
         scanner_dev_id = self.core.call_success(
             "config_get", "scanner_dev_id"
         )
-        source_id = self.core.call_success(
-            "config_get", "scanner_source_id"
-        )
+        if source_id is None:
+            source_id = self.core.call_success(
+                "config_get", "scanner_source_id"
+            )
         scan_id = next(SCAN_ID_GENERATOR)
 
         promise = self.scan_get_scanner_promise(scanner_dev_id)

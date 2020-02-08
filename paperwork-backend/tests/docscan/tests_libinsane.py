@@ -140,7 +140,6 @@ class TestLibinsane(unittest.TestCase):
 
         self.config.settings = {
             "scanner_dev_id": TEST_DEV_ID,
-            "scanner_source_id": "flatbed",
             "scanner_resolution": 150,
         }
 
@@ -165,7 +164,9 @@ class TestLibinsane(unittest.TestCase):
 
         self.core.init()
 
-        (scan_id, promise) = self.core.call_success("scan_promise")
+        (scan_id, promise) = self.core.call_success(
+            "scan_promise", source_id="flatbed"
+        )
         promise = promise.then(  # roll out the image generator
             lambda args: list(args[2])
         )

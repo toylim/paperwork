@@ -21,6 +21,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_core.config'],
             },
             {
+                'interface': 'gtk_resources',
+                'defaults': ['openpaperwork_gtk.resources'],
+            },
+            {
                 'interface': 'gtk_settings_scanner',
                 'defaults': ['paperwork_gtk.settings.scanner.settings'],
             },
@@ -28,14 +32,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'scan',
                 'defaults': ['paperwork_backend.docscan.libinsane'],
             },
-            {
-                'interface': 'gtk_resources',
-                'defaults': ['openpaperwork_gtk.resources'],
-            },
         ]
 
     def complete_scanner_settings(
-            self, parent_widget_tree,
+            self, global_widget_tree, parent_widget_tree,
             list_scanner_promise):
         widget_tree = self.core.call_success(
             "gtk_load_widget_tree",

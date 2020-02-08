@@ -89,7 +89,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
         list_settings_promise = self._refresh_settings(widget_tree)
         self.core.call_all(
-            "complete_scanner_settings", widget_tree, list_settings_promise
+            "complete_scanner_settings",
+            global_widget_tree, widget_tree,
+            list_settings_promise
         )
         list_settings_promise.schedule()
 
@@ -113,6 +115,18 @@ class Plugin(openpaperwork_core.PluginBase):
                     w.set_text(dev_name)
                     break
             return devs
+
+        buttons = [
+            'scanner_resolution',
+            'scanner_mode',
+            'scanner_calibration',
+        ]
+        active = self.core.call_success("config_get", "scanner_dev_id")
+        active = active is not None and active != ""
+        for button in buttons:
+            # XXX(Jflesch): set_sensitive() doesn't appear to work on
+            # GtkMenuButton
+            widget_tree.get_object(button).set_sensitive(active)
 
         promise = self.core.call_success("scan_list_scanners_promise")
         promise = promise.then(set_scanner_name)

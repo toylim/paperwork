@@ -17,8 +17,8 @@ class Plugin(openpaperwork_core.PluginBase):
     }
 
     RE_SPLIT_SOURCE_NAME = [
-        re.compile('([()])'),
-        re.compile('(\W)'),
+        re.compile(r'([()])'),
+        re.compile(r'(\W)'),
     ]
 
     def get_interfaces(self):
