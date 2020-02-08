@@ -91,4 +91,4 @@ class Plugin(openpaperwork_core.PluginBase):
             self, checkbox, widget_tree, dev_id, dev_name):
         LOGGER.info("Selected scanner: %s - %s", dev_id, dev_name)
         widget_tree.get_object("scanner_dev_id_selector").popdown()
-        active = self.core.call_success("config_put", "scanner_dev_id", dev_id)
+        self.core.call_success("config_put", "scanner_dev_id", dev_id)
