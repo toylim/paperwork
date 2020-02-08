@@ -306,6 +306,11 @@ class Scanner(object):
 
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
+        super().__init__()
+
+        # Looking for devices twice on Linux tends to crash ...
+        self.devices_cache = []
+
         LOGGER.info("Initializing Libinsane ...")
         self.libinsane_logger = LibinsaneLogger()
         Libinsane.register_logger(self.libinsane_logger)
@@ -372,6 +377,11 @@ class Plugin(openpaperwork_core.PluginBase):
             }
 
     def scan_list_scanners_promise(self):
+        if len(self.devices_cache) > 0:
+            return openpaperwork_core.promise.Promise(
+                self.core, lambda *args, **kwargs: self.devices_cache
+            )
+
         def list_scanners(*args, **kwargs):
             LOGGER.info("Looking for scan devices ...")
             devs = self.libinsane.list_devices(Libinsane.DeviceLocations.ANY)
@@ -379,15 +389,25 @@ class Plugin(openpaperwork_core.PluginBase):
                 # (id, human readable name)
                 # prefix the IDs with 'libinsane:' so we know it comes from
                 # our plugin and not another scan plugin
-                ('libinsane:' + dev.get_dev_id(), dev.to_string())
+                (
+                    'libinsane:' + dev.get_dev_id(),
+                    "{} {}".format(dev.get_dev_vendor(), dev.get_dev_model())
+                )
                 for dev in devs
             ]
+            devs.sort(key=lambda s: s[1])
             LOGGER.info("%d devices found: %s", len(devs), devs)
             return devs
 
-        return openpaperwork_core.promise.ThreadedPromise(
+        def set_cache(devs):
+            self.devices_cache = devs
+            return devs
+
+        promise = openpaperwork_core.promise.ThreadedPromise(
             self.core, list_scanners
         )
+        promise = promise.then(set_cache)
+        return promise
 
     def scan_get_scanner_promise(self, scanner_dev_id):
         if not scanner_dev_id.startswith("libinsane:"):
