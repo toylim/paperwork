@@ -17,6 +17,7 @@ class Plugin(openpaperwork_core.PluginBase):
             lambda: (-1, "missing-component")
         )
         self.mainwindow = None
+        self._mainwindow_size = None
 
     def get_interfaces(self):
         return [
@@ -114,6 +115,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _on_mainwindow_size_allocate(self, main_win, rectangle):
         (w, h) = main_win.get_size()
+        if self._mainwindow_size == (w, h):
+            return
+        self._mainwindow_size = (w, h)
         self.core.call_all("config_put", "main_window_size", (w, h))
 
     def mainwindow_get_main_container(self):
