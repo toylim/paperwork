@@ -15,8 +15,10 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="label" translatable="yes">Languages</property>
-            <property name="use_markup">True</property>
             <property name="xalign">0</property>
+            <style>
+              <class name="settings_name"/>
+            </style>
           </object>
           <packing>
             <property name="expand">True</property>
@@ -30,8 +32,10 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="label">xxxx</property>
-            <property name="use_markup">True</property>
             <property name="xalign">1.0</property>
+            <style>
+              <class name="settings_value"/>
+            </style>
           </object>
           <packing>
             <property name="expand">True</property>

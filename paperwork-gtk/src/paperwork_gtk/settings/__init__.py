@@ -57,20 +57,17 @@ class Plugin(openpaperwork_core.PluginBase):
             "paperwork_gtk.settings", "settings.css"
         )
 
-        widget_tree = self.core.call_success(
+        global_widget_tree = self.core.call_success(
             "gtk_load_widget_tree",
             "paperwork_gtk.settings", "settings.glade"
         )
-        self.core.call_all(
-            'complete_settings_dialog',
-            widget_tree.get_object("settings_box")
-        )
-        settings = widget_tree.get_object("settings_window")
+        self.core.call_all('complete_settings', global_widget_tree)
+        settings = global_widget_tree.get_object("settings_window")
         self.core.call_all('mainwindow_set_transient_for', settings)
         settings.connect("destroy", self._save_settings)
         settings.set_visible(True)
 
-    def add_setting_to_dialog(self, settings_box, title, widgets):
+    def add_setting_to_dialog(self, global_widget_tree, title, widgets):
         # We have many setting boxes to add to the settings box.
         # --> we need many copies of the setting box --> we load many time
         # the widget tree
@@ -82,7 +79,7 @@ class Plugin(openpaperwork_core.PluginBase):
         inner = widget_tree.get_object("setting_box")
         for widget in widgets:
             inner.pack_start(widget, expand=False, fill=True, padding=0)
-        settings_box.pack_start(
+        global_widget_tree.get_object("settings_box").pack_start(
             widget_tree.get_object("setting_section"),
             expand=False, fill=True, padding=0
         )

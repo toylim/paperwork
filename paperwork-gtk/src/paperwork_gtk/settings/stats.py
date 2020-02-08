@@ -39,7 +39,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def init(self, core):
         super().init(core)
 
-    def complete_settings_dialog(self, settings_box):
+    def complete_settings(self, global_widget_tree):
         widget_tree = self.core.call_success(
             "gtk_load_widget_tree", "paperwork_gtk.settings", "stats.glade"
         )
@@ -56,7 +56,8 @@ class Plugin(openpaperwork_core.PluginBase):
         button.connect("clicked", self._on_info_button, details)
 
         self.core.call_success(
-            "add_setting_to_dialog", settings_box, _("Help Improve Paperwork"),
+            "add_setting_to_dialog", global_widget_tree,
+            _("Help Improve Paperwork"),
             [widget_tree.get_object("stats")]
         )
 

@@ -40,7 +40,7 @@ class Plugin(openpaperwork_core.PluginBase):
         super().init(core)
         self.workdir = self.core.call_success("config_get", "workdir")
 
-    def complete_settings_dialog(self, settings_box):
+    def complete_settings(self, global_widget_tree):
         widget_tree = self.core.call_success(
             "gtk_load_widget_tree", "paperwork_gtk.settings", "storage.glade"
         )
@@ -50,7 +50,7 @@ class Plugin(openpaperwork_core.PluginBase):
         workdir_chooser.connect("file-set", self._on_file_set)
 
         self.core.call_success(
-            "add_setting_to_dialog", settings_box, _("Storage"),
+            "add_setting_to_dialog", global_widget_tree, _("Storage"),
             [widget_tree.get_object("workdir")]
         )
 

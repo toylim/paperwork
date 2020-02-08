@@ -1,14 +1,27 @@
 .section_box > * {
 	border: 1px solid #aaaaaa;
-	border-bottom: 0px solid #aaaaaa;
-	border-top: 1px solid #aaaaaa;
 	padding: 16px;
+	border-radius: 0px;
+	border-bottom: 0px solid #aaaaaa;
 }
 
 .section_box > :first-child {
-	border-top: 1px solid #aaaaaa;
+	border-radius: 5px 5px 0px 0px;
 }
 
 .section_box > :last-child {
 	border-bottom: 1px solid #aaaaaa;
+	border-radius: 0px 0px 5px 5px;
+}
+
+.section_box > :first-child:last-child {
+	border-radius: 5px 5px 5px 5px;
+}
+
+.settings_name {
+	font-weight: bold;
+}
+
+.settings_value {
+	color: gray;
 }

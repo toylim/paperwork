@@ -12,9 +12,6 @@ LOGGER = logging.getLogger(__name__)
 class Plugin(openpaperwork_core.PluginBase):
     PRIORITY = -500
 
-    def __init__(self):
-        super().__init__()
-
     def get_interfaces(self):
         return [
             'gtk_settings',
@@ -40,9 +37,10 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def complete_settings_dialog(self, settings_box):
+    def complete_settings(self, global_widget_tree):
         widget_tree = self.core.call_success(
-            "gtk_load_widget_tree", "paperwork_gtk.settings.ocr", "box.glade"
+            "gtk_load_widget_tree", "paperwork_gtk.settings.ocr",
+            "settings.glade"
         )
 
         label = widget_tree.get_object("ocr_langs_label")
@@ -56,7 +54,7 @@ class Plugin(openpaperwork_core.PluginBase):
             button.set_popover(popover)
 
         self.core.call_success(
-            "add_setting_to_dialog", settings_box,
+            "add_setting_to_dialog", global_widget_tree,
             _("Optical Character Recognition"),
             [button]
         )

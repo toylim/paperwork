@@ -36,6 +36,8 @@ DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'paperwork_gtk.settings',
     'paperwork_gtk.settings.ocr.settings',
     'paperwork_gtk.settings.ocr.selector_popover',
+    'paperwork_gtk.settings.scanner.dev_id_selector',
+    'paperwork_gtk.settings.scanner.settings',
     'paperwork_gtk.settings.stats',
     'paperwork_gtk.settings.storage',
     'paperwork_gtk.widget.flowlayout',
