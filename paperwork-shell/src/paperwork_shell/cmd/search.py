@@ -46,6 +46,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 "defaults": ['paperwork_backend.model.workdir'],
             },
             {
+                'interface': 'i18n',
+                'defaults': ['openpaperwork_core.i18n.python'],
+            },
+            {
                 "interface": "index",
                 "defaults": ['paperwork_backend.index.shell'],
             },
@@ -87,6 +91,12 @@ class Plugin(openpaperwork_core.PluginBase):
             for doc_id in doc_ids:
                 header = _("Document id: %s") % doc_id
                 self.core.call_all("print", header + "\n")
+
+                doc_date = self.core.call_success("doc_get_date_by_id", doc_id)
+                doc_date = self.core.call_success("i18n_date_short", doc_date)
+                header = _("Document date: %s") % doc_date
+                self.core.call_all("print", header + "\n")
+
                 if renderer is None:
                     continue
                 doc_url = self.core.call_success("doc_id_to_url", doc_id)

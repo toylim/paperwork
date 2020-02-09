@@ -35,7 +35,16 @@ class Plugin(openpaperwork_core.PluginBase):
         # if there are no doc_renderer loaded, nothing is displayed, which
         # may be fine.
         # (see paperwork-json)
-        return []
+        return [
+            {
+                'interface': 'document_storage',
+                'defaults': ['paperwork_backend.model.workdir'],
+            },
+            {
+                'interface': 'i18n',
+                'defaults': ['openpaperwork_core.i18n.python'],
+            },
+        ]
 
     def cmd_set_interactive(self, interactive):
         self.interactive = interactive
@@ -75,6 +84,11 @@ class Plugin(openpaperwork_core.PluginBase):
             header = _("Document id: %s") % doc_id
             self.core.call_all("print", header + "\n")
             self.core.call_all("print", "=" * len(header) + "\n")
+
+            doc_date = self.core.call_success("doc_get_date_by_id", doc_id)
+            doc_date = self.core.call_success("i18n_date_short", doc_date)
+            header = _("Document date: %s") % doc_date
+            self.core.call_all("print", header + "\n")
 
             lines = renderer.get_doc_output(
                 doc_id, doc_url, shutil.get_terminal_size()
