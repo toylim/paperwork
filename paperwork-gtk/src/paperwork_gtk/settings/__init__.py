@@ -66,6 +66,12 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all('mainwindow_set_transient_for', settings)
         settings.connect("destroy", self._save_settings)
         settings.set_visible(True)
+        self.core.call_all("on_gtk_window_opened", settings)
+
+    def _save_settings(self, window):
+        LOGGER.info("Settings closed. Saving configuration")
+        self.core.call_all("config_save")
+        self.core.call_all("on_gtk_window_closed", window)
 
     def add_setting_to_dialog(self, global_widget_tree, title, widgets):
         # We have many setting boxes to add to the settings box.
@@ -84,7 +90,3 @@ class Plugin(openpaperwork_core.PluginBase):
             expand=False, fill=True, padding=0
         )
         return True
-
-    def _save_settings(self, *args, **kwargs):
-        LOGGER.info("Settings closed. Saving configuration")
-        self.core.call_all("config_save")

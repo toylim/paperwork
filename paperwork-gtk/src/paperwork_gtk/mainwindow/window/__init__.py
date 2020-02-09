@@ -101,6 +101,7 @@ class Plugin(openpaperwork_core.PluginBase):
             self.mainwindow_show(side_name, side_default[1])
 
         self.widget_tree.get_object("mainwindow").set_visible(True)
+        self.core.call_all("on_gtk_window_opened", self.mainwindow)
 
     def on_quit(self):
         # needed to save window size
@@ -112,6 +113,7 @@ class Plugin(openpaperwork_core.PluginBase):
         LOGGER.info("Main window destroy. Quitting")
         self.core.call_all("on_quit")
         self.core.call_all("mainloop_quit_graceful")
+        self.core.call_all("on_gtk_window_closed", self.mainwindow)
 
     def _on_mainwindow_size_allocate(self, main_win, rectangle):
         (w, h) = main_win.get_size()
