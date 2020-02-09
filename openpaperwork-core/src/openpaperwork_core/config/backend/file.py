@@ -268,8 +268,11 @@ class Plugin(PluginBase):
         """
         LOGGER.debug("Configuration: %s:%s <-- %s", section, key, str(value))
         if value is None:
-            if key in self.config[section]:
-                self.config[section].pop(key)
+            if section not in self.config:
+                return
+            if key not in self.config[section]:
+                return
+            self.config[section].pop(key)
             return
         t_str = _TYPE_TO_STR[type(value)]
         t = _STR_TO_TYPE[t_str]
