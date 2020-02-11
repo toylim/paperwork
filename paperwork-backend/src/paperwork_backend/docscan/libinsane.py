@@ -56,7 +56,7 @@ def raw_to_img(params, img_bytes):
 
 
 class ImageAssembler(object):
-    MIN_CHUNK_SIZE = 128 * 1024
+    MIN_CHUNK_SIZE = 256 * 1024
 
     def __init__(self, line_width):
         # 'Pieces' are pieces of the images that may or may not contain
