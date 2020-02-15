@@ -29,7 +29,6 @@ DEFAULT_PLUGINS = [
     # ACE is disabled by default: it's slow, and actually makes some scans
     # harder to read.
     # 'paperwork_backend.guesswork.color.libpillowfight',
-    'paperwork_backend.guesswork.cropping.libpillowfight',
     'paperwork_backend.guesswork.label.simplebayes',
     'paperwork_backend.guesswork.ocr.pyocr',
     'paperwork_backend.guesswork.orientation.pyocr',

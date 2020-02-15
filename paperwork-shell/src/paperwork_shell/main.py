@@ -14,6 +14,7 @@ _ = gettext.gettext
 DEFAULT_SHELL_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'openpaperwork_core.log_print',
     'openpaperwork_core.mainloop.asyncio',
+    'paperwork_backend.guesswork.cropping.libpillowfight',
     'paperwork_shell.cmd.delete',
     'paperwork_shell.cmd.edit',
     'paperwork_shell.cmd.export',

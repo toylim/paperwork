@@ -1,13 +1,9 @@
 """
-Automatic page cropping using libpillowfight.find_scan_borders().
-May or may not work.
+Crop scanned images based on a predefined area.
 """
-
 
 import gettext
 import logging
-
-import pillowfight
 
 import openpaperwork_core
 
@@ -19,7 +15,7 @@ LOGGER = logging.getLogger(__name__)
 _ = gettext.gettext
 
 
-class PillowfightTransaction(sync.BaseTransaction):
+class CalibrationTransaction(sync.BaseTransaction):
     def __init__(self, plugin, sync, total_expected=-1):
         super().__init__(plugin.core, total_expected)
 
@@ -40,15 +36,12 @@ class PillowfightTransaction(sync.BaseTransaction):
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.cancel()
 
-    def _guess_page_borders(self, doc_id, doc_url, page_idx):
+    def _crop_page(self, doc_id, doc_url, page_idx):
         paper_size = self.core.call_success(
             "page_get_paper_size_by_url", doc_url, page_idx
         )
         if paper_size is not None:
-            # We don't want to guess page borders on PDF files since they
-            # are usually already well-cropped. Also the page borders won't
-            # appear in the document, so libpillowfight algorithm can only
-            # fail.
+            # We only want to crop scanned pages.
             LOGGER.info(
                 "Paper size for new page %d (document %s) is known."
                 " --> Assuming we don't need to crop automatically the page",
@@ -57,31 +50,32 @@ class PillowfightTransaction(sync.BaseTransaction):
             return
 
         self.notify_progress(
-            ID, _("Guessing page borders of document %s page %d") % (
-                doc_id, page_idx
-            )
+            ID,
+            _(
+                "Using calibration to crop page borders of document %s page %d"
+            ) % (doc_id, page_idx)
         )
         self.plugin.crop_page_borders_by_url(doc_url, page_idx)
 
-    def _guess_new_pages_borders(self, doc_id):
+    def _crop_new_pages(self, doc_id):
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
 
         modified_pages = self.page_tracker.find_changes(doc_id, doc_url)
 
         for (change, page_idx) in modified_pages:
             # Guess page borders on new pages, but only if we are
-            # not synchronizing with the work directory
+            # not currently synchronizing with the work directory
             # (when syncing we don't modify the documents, ever)
             if not self.sync and change == 'new':
-                self._guess_page_borders(doc_id, doc_url, page_idx)
+                self._crop_page(doc_id, doc_url, page_idx)
             self.page_tracker.ack_page(doc_id, doc_url, page_idx)
 
     def add_obj(self, doc_id):
-        self._guess_new_pages_borders(doc_id)
+        self._crop_new_pages(doc_id)
         super().add_obj(doc_id)
 
     def upd_obj(self, doc_id):
-        self._guess_new_pages_borders(doc_id)
+        self._crop_new_pages(doc_id)
         super().upd_obj(doc_id)
 
     def del_obj(self, doc_id):
@@ -109,6 +103,10 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return [
             {
+                'interface': 'config',
+                'defaults': ['openpaperwork_core.config'],
+            },
+            {
                 'interface': 'doc_tracking',
                 'defaults': ['paperwork_backend.doctracker'],
             },
@@ -128,14 +126,34 @@ class Plugin(openpaperwork_core.PluginBase):
     def init(self, core):
         super().init(core)
         self.core.call_all(
+            "config_register", "scanner_calibration",
+            self.core.call_success(
+                "config_build_simple", "scanner", "calibration",
+                lambda: None
+            )
+        )
+        self.core.call_all(
             "doc_tracker_register", ID,
-            lambda sync, total_expected=-1: PillowfightTransaction(
+            lambda sync, total_expected=-1: CalibrationTransaction(
                 self, sync, total_expected
             )
         )
 
     def crop_page_borders_by_url(self, doc_url, page_idx):
-        LOGGER.info("Cropping page %d of %s", page_idx, doc_url)
+        frame = self.core.call_success(
+            "config_get", "scanner_calibration"
+        )
+        if frame is None:
+            LOGGER.warning(
+                "No calibration found. Cannot crop page %s p%d",
+                doc_url, page_idx
+            )
+            return None
+
+        LOGGER.info(
+            "Cropping page %d of %s (calibration=%s)",
+            page_idx, doc_url, frame
+        )
 
         doc_id = self.core.call_success("doc_url_to_id", doc_url)
 
@@ -150,14 +168,6 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
         img = self.core.call_success("url_to_pillow", page_img_url)
-
-        frame = pillowfight.find_scan_borders(img)
-        if frame[0] >= frame[2] or frame[1] >= frame[3]:
-            LOGGER.warning(
-                "Invalid frame found for page %d of %s: %s. Cannot"
-                " crop automatically", page_idx, doc_url, frame
-            )
-            return None
 
         LOGGER.info("Cropping page %d of %s at %s", page_idx, doc_url, frame)
         img = img.crop(frame)
