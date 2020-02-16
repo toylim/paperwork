@@ -270,6 +270,8 @@ class Plugin(openpaperwork_core.PluginBase):
         return drawer
 
     def draw_frame_stop(self, drawing_area):
+        if drawing_area not in self.active_drawers:
+            return
         drawer = self.active_drawers.pop(drawing_area)
         drawer.stop()
         return drawer
