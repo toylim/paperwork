@@ -287,6 +287,10 @@ class Plugin(PluginBase):
             observer()
 
     def config_backend_del(self, section, key):
+        if section not in self.config:
+            return
+        if key not in self.config[section]:
+            return
         self.config.remove_option(section, key)
 
     def config_backend_get(self, section, key, default=None):
