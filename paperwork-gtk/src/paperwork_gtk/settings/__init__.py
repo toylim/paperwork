@@ -74,10 +74,6 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all("on_gtk_window_closed", window)
         self.core.call_all("on_settings_closed", global_widget_tree)
 
-    def _save_settings(self, *args, **kwargs):
-        LOGGER.info("Settings closed. Saving configuration")
-        self.core.call_all("config_save")
-
     def add_setting_to_dialog(self, global_widget_tree, title, widgets):
         """
         Add a setting or a set of settings to the main screen in the settings
