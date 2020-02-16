@@ -49,9 +49,7 @@ class Plugin(openpaperwork_core.PluginBase):
         active_langs = set(self.core.call_success("ocr_get_active_langs"))
         LOGGER.info("Looking for available OCR languages ...")
         all_langs = self.core.call_success("ocr_get_available_langs")
-        LOGGER.info("Found %d languages. Translating ...".format(
-            len(all_langs)
-        ))
+        LOGGER.info("Found %d languages. Translating ...", len(all_langs))
         all_langs = [
             (
                 lang,
