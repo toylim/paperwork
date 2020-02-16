@@ -21,6 +21,7 @@ DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'paperwork_gtk.busy.mouse',
     'paperwork_gtk.cmd.install',
     'paperwork_gtk.drawer.frame',
+    'paperwork_gtk.drawer.pillow',
     'paperwork_gtk.mainwindow.doclist',
     'paperwork_gtk.mainwindow.doclist.labeler',
     'paperwork_gtk.mainwindow.doclist.name',
