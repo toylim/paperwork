@@ -97,6 +97,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_interfaces(self):
         return [
             "cropping",
+            "scanner_calibration",
             "syncable",  # actually satisfied by the plugin 'doctracker'
         ]
 
