@@ -43,7 +43,10 @@ class Plugin(openpaperwork_core.PluginBase):
             },
             {
                 'interface': 'gtk_drawer_scan',
-                'defaults': ['paperwork_gtk.drawer.scan'],
+                'defaults': [
+                    'paperwork_gtk_drawer.calibration',
+                    'paperwork_gtk.drawer.scan'
+                ],
             },
             # Optional:
             # {
