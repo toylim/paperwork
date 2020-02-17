@@ -126,12 +126,13 @@ class Plugin(openpaperwork_core.PluginBase):
             page.connect("size_obtained", self._on_page_size_obtained)
         for page in self.pages[:self.MAX_PAGES]:
             page.connect("size_obtained", self.doc_view_set_default_zoom)
+        for page in self.pages:
+            self.page_widgets[page.widget] = page
+            self.page_container.add_child(page.widget, Gtk.Align.CENTER)
 
         self.doc_goto_page(0)
 
     def _on_page_size_obtained(self, page):
-        self.page_widgets[page.widget] = page
-        self.page_container.add_child(page.widget, Gtk.Align.CENTER)
         if page.page_idx == self.active_page_idx:
             self.doc_goto_page(self.active_page_idx)
 
@@ -243,7 +244,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def doc_view_set_default_zoom(self, *args, **kwargs):
         self._rearrange_pages(self.MAX_PAGES)
 
-    def doc_view_get_soom(self):
+    def doc_view_get_zoom(self):
         if len(self.pages) <= 0:
             return 1.0
         return self.pages[0].get_zoom()

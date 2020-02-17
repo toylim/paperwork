@@ -48,9 +48,16 @@ class Page(GObject.GObject):
             "page_get_img_url", self.doc_url, self.page_idx
         )
 
-        self.widget_tree = None
-        self.widget = None
+        self.widget_tree = self.core.call_success(
+            "gtk_load_widget_tree",
+            "paperwork_gtk.mainwindow.docview.pageview", "pageview.glade"
+        )
+        self.widget = self.widget_tree.get_object("pageview_area")
+        self.widget.set_visible(False)  # visible in the GTK sense
+        self.widget.connect("draw", self._on_draw)
 
+        # visible here means visible on screen (not hidden by the
+        # ScrolledWindow)
         self._on_widget_visible_handler_id = flow_layout.connect(
             "widget_visible", self._on_widget_visible
         )
@@ -78,12 +85,7 @@ class Page(GObject.GObject):
         self.emit('getting_size')
 
     def _on_renderer_size(self, renderer):
-        self.widget_tree = self.core.call_success(
-            "gtk_load_widget_tree",
-            "paperwork_gtk.mainwindow.docview.pageview", "pageview.glade"
-        )
-        self.widget = self.widget_tree.get_object("pageview_area")
-        self.widget.connect("draw", self._on_draw)
+        self.widget.set_visible(True)
         self.resize()
         self.core.call_all("on_page_size_obtained", self)
         self.emit('size_obtained')
