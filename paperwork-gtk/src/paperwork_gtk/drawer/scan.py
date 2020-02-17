@@ -1,4 +1,3 @@
-import collections
 import logging
 
 import openpaperwork_core
@@ -19,18 +18,42 @@ LOGGER = logging.getLogger(__name__)
 class Drawer(object):
     BACKGROUND = (0.75, 0.75, 0.75)
 
-    def __init__(self, core, drawing_area):
+    def __init__(self, core, drawing_area=None):
         self.core = core
-        self.drawing_area = drawing_area  # expected: Gtk.DrawingArea
-        self.draw_connect_id = drawing_area.connect("draw", self.on_draw)
+        self.drawing_areas = []
+        self.draw_connect_ids = {}
         self.scan_size = (0, 0)
         self.last_line = 0
         self.show_scan_border = False
         self.image = None
+        self.scan_ended = False
+
+        if drawing_area is not None:
+            self.add_drawing_area(drawing_area)
+
+    def add_drawing_area(self, drawing_area):
+        self.drawing_areas.append(drawing_area)
+        self.draw_connect_ids[drawing_area] = drawing_area.connect(
+            "draw", self.on_draw
+        )
+
+    def remove_drawing_area(self, drawing_area):
+        connect_id = self.draw_connect_ids.pop(drawing_area)
+        drawing_area.disconnect(connect_id)
+        self.drawing_areas.remove(drawing_area)
+        if len(self.drawing_areas) <= 0:
+            self.stop()
 
     def stop(self):
-        self.drawing_area.disconnect(self.draw_connect_id)
+        for (drawing_area, connect_id) in self.draw_connect_ids.items():
+            drawing_area.disconnect(connect_id)
+        self.draw_connect_ids = {}
+        self.drawing_areas = []
         self.image = None  # release the memory
+
+    def request_redraw(self):
+        for d in self.drawing_areas:
+            d.queue_draw()
 
     def on_scan_page_start(self, scan_params):
         self.scan_size = (scan_params.get_width(), scan_params.get_height())
@@ -48,11 +71,11 @@ class Drawer(object):
         cairo_ctx.fill()
 
         self.show_scan_border = True
-        self.drawing_area.queue_draw()
+        self.request_redraw()
 
     def on_scan_page_end(self):
         self.show_scan_border = False
-        self.drawing_area.queue_draw()
+        self.request_redraw()
 
     def on_scan_chunk(self, img_chunk):
         size = img_chunk.size
@@ -69,11 +92,11 @@ class Drawer(object):
         cairo_ctx.paint()
 
         self.last_line += size[1]
-        self.drawing_area.queue_draw()
+        self.request_redraw()
 
     def on_draw(self, drawing_area, cairo_ctx):
-        widget_height = self.drawing_area.get_allocated_height()
-        widget_width = self.drawing_area.get_allocated_width()
+        widget_height = drawing_area.get_allocated_height()
+        widget_width = drawing_area.get_allocated_width()
         factor_w = self.scan_size[0] / widget_width
         factor_h = self.scan_size[1] / widget_height
         factor = max(factor_w, factor_h)
@@ -124,8 +147,8 @@ class Drawer(object):
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
-        # scan id --> [Drawer, ...] (scan id = None ==> any scan)
-        self.active_drawers = collections.defaultdict(list)
+        # scan id --> Drawer (scan id = None ==> any scan)
+        self.active_drawers = {}
 
     def get_interfaces(self):
         return [
@@ -150,38 +173,56 @@ class Plugin(openpaperwork_core.PluginBase):
             out['cairo'].update(openpaperwork_core.deps.CAIRO)
 
     def draw_scan_start(self, drawing_area, scan_id=None):
-        drawer = Drawer(self.core, drawing_area)
-        self.active_drawers[scan_id].append(drawer)
+        if scan_id in self.active_drawers:
+            drawer = self.active_drawers[scan_id]
+        else:
+            drawer = Drawer(self.core)
+            self.active_drawers[scan_id] = drawer
+        drawer.add_drawing_area(drawing_area)
         return drawer
 
     def draw_scan_stop(self, drawing_area):
-        for (k, v) in self.active_drawers.items():
-            for drawer in v:
-                if drawer.drawing_area == drawing_area:
+        for (k, drawer) in self.active_drawers.items():
+            for d in drawer.drawing_areas:
+                if d == drawing_area:
                     break
             else:
                 continue
-            drawer.stop()
-            v.remove(drawer)
-            return drawer
+            break
+        else:
+            return None
+
+        drawer.remove_drawing_area(drawing_area)
+        if drawer.scan_ended and len(drawer.drawing_areas) <= 0:
+            self.active_drawers.pop(k)
+        return drawer
 
     def on_scan_page_start(self, scan_id, page_nb, scan_params):
-        for drawer in self.active_drawers[None]:
-            drawer.on_scan_page_start(scan_params)
-        for drawer in self.active_drawers[scan_id]:
-            drawer.on_scan_page_start(scan_params)
+        if None in self.active_drawers:
+            self.active_drawers[None].on_scan_page_start(scan_params)
+        if scan_id in self.active_drawers:
+            self.active_drawers[scan_id].on_scan_page_start(scan_params)
 
     def on_scan_chunk(self, scan_id, scan_params, img_chunk):
-        for drawer in self.active_drawers[None]:
-            drawer.on_scan_chunk(img_chunk)
-        for drawer in self.active_drawers[scan_id]:
-            drawer.on_scan_chunk(img_chunk)
+        for k in (None, scan_id):
+            if k not in self.active_drawers:
+                continue
+            self.active_drawers[k].on_scan_chunk(img_chunk)
 
     def on_scan_page_end(self, scan_id, page_nb, img):
-        for drawer in self.active_drawers[None]:
-            drawer.on_scan_page_end()
-        for drawer in self.active_drawers[scan_id]:
-            drawer.on_scan_page_end()
+        for k in (None, scan_id):
+            if k not in self.active_drawers:
+                continue
+            self.active_drawers[k].on_scan_page_end()
+            self.active_drawers[k].scan_ended = True
+            if len(self.active_drawers[k].drawing_areas) <= 0:
+                self.active_drawers.pop(k)
+
+    def on_scan_feed_end(self, scan_id):
+        for k in (None, scan_id):
+            if k not in self.active_drawers:
+                continue
+            self.active_drawers[k].scan_ended = True
 
 
 if __name__ == "__main__":
