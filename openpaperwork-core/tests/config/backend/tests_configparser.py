@@ -10,7 +10,7 @@ import openpaperwork_core
 class TestReadWrite(unittest.TestCase):
     def test_simple_getset(self):
         core = openpaperwork_core.Core(allow_unsatisfied=True)
-        core.load('openpaperwork_core.config.backend.file')
+        core.load('openpaperwork_core.config.backend.configparser')
 
         core.init()
 
@@ -35,10 +35,10 @@ class TestReadWrite(unittest.TestCase):
 
     def test_no_config_file(self):
         core = openpaperwork_core.Core(allow_unsatisfied=True)
-        core.load('openpaperwork_core.config.backend.file')
+        core.load('openpaperwork_core.config.backend.configparser')
 
         core.get_by_name(
-            'openpaperwork_core.config.backend.file'
+            'openpaperwork_core.config.backend.configparser'
         ).base_path = (
             tempfile.mkdtemp(prefix='openpaperwork_core_config_tests')
         )
@@ -50,15 +50,15 @@ class TestReadWrite(unittest.TestCase):
             core.call_all('config_backend_load', 'openpaperwork_test')
         finally:
             shutil.rmtree(core.get_by_name(
-                'openpaperwork_core.config.backend.file'
+                'openpaperwork_core.config.backend.configparser'
             ).base_path)
 
     def test_simple_readwrite(self):
         core = openpaperwork_core.Core(allow_unsatisfied=True)
-        core.load('openpaperwork_core.config.backend.file')
+        core.load('openpaperwork_core.config.backend.configparser')
 
         core.get_by_name(
-            'openpaperwork_core.config.backend.file'
+            'openpaperwork_core.config.backend.configparser'
         ).base_path = (
             tempfile.mkdtemp(prefix='openpaperwork_core_config_tests')
         )
@@ -88,19 +88,19 @@ class TestReadWrite(unittest.TestCase):
             )
         finally:
             shutil.rmtree(core.get_by_name(
-                'openpaperwork_core.config.backend.file'
+                'openpaperwork_core.config.backend.configparser'
             ).base_path)
 
     @unittest.mock.patch("importlib.import_module")
     def test_simple_load_module(self, import_module):
-        import openpaperwork_core.config.backend.file
+        import openpaperwork_core.config.backend.configparser
 
         core = openpaperwork_core.Core(allow_unsatisfied=True)
 
-        import_module.return_value = openpaperwork_core.config.backend.file
-        core.load('openpaperwork_core.config.backend.file')
+        import_module.return_value = openpaperwork_core.config.backend.configparser
+        core.load('openpaperwork_core.config.backend.configparser')
         import_module.assert_called_once_with(
-            'openpaperwork_core.config.backend.file'
+            'openpaperwork_core.config.backend.configparser'
         )
 
         core.init()
@@ -130,10 +130,10 @@ class TestReadWrite(unittest.TestCase):
 
     def test_observers(self):
         core = openpaperwork_core.Core(allow_unsatisfied=True)
-        core.load('openpaperwork_core.config.backend.file')
+        core.load('openpaperwork_core.config.backend.configparser')
 
         core.get_by_name(
-            'openpaperwork_core.config.backend.file'
+            'openpaperwork_core.config.backend.configparser'
         ).base_path = (
             tempfile.mkdtemp(prefix='openpaperwork_core_config_tests')
         )
@@ -175,15 +175,15 @@ class TestReadWrite(unittest.TestCase):
             self.assertEqual(obs.count, 2)
         finally:
             shutil.rmtree(core.get_by_name(
-                'openpaperwork_core.config.backend.file'
+                'openpaperwork_core.config.backend.configparser'
             ).base_path)
 
     def test_simple_readwrite_list(self):
         core = openpaperwork_core.Core(allow_unsatisfied=True)
-        core.load('openpaperwork_core.config.backend.file')
+        core.load('openpaperwork_core.config.backend.configparser')
 
         core.get_by_name(
-            'openpaperwork_core.config.backend.file'
+            'openpaperwork_core.config.backend.configparser'
         ).base_path = (
             tempfile.mkdtemp(prefix='openpaperwork_core_config_tests')
         )
@@ -219,15 +219,15 @@ class TestReadWrite(unittest.TestCase):
             self.assertEqual(v[1], "test_value_c")
         finally:
             shutil.rmtree(core.get_by_name(
-                'openpaperwork_core.config.backend.file'
+                'openpaperwork_core.config.backend.configparser'
             ).base_path)
 
     def test_simple_readwrite_dict(self):
         core = openpaperwork_core.Core(allow_unsatisfied=True)
-        core.load('openpaperwork_core.config.backend.file')
+        core.load('openpaperwork_core.config.backend.configparser')
 
         core.get_by_name(
-            'openpaperwork_core.config.backend.file'
+            'openpaperwork_core.config.backend.configparser'
         ).base_path = (
             tempfile.mkdtemp(prefix='openpaperwork_core_config_tests')
         )
@@ -272,15 +272,15 @@ class TestReadWrite(unittest.TestCase):
             self.assertEqual(v['test_key_b'], "test_value_c")
         finally:
             shutil.rmtree(core.get_by_name(
-                'openpaperwork_core.config.backend.file'
+                'openpaperwork_core.config.backend.configparser'
             ).base_path)
 
     def test_getset_date(self):
         core = openpaperwork_core.Core(allow_unsatisfied=True)
-        core.load('openpaperwork_core.config.backend.file')
+        core.load('openpaperwork_core.config.backend.configparser')
 
         core.get_by_name(
-            'openpaperwork_core.config.backend.file'
+            'openpaperwork_core.config.backend.configparser'
         ).base_path = (
             tempfile.mkdtemp(prefix='openpaperwork_core_config_tests')
         )
@@ -299,5 +299,5 @@ class TestReadWrite(unittest.TestCase):
             self.assertEqual(v, datetime.date(year=1985, month=1, day=1))
         finally:
             shutil.rmtree(core.get_by_name(
-                'openpaperwork_core.config.backend.file'
+                'openpaperwork_core.config.backend.configparser'
             ).base_path)

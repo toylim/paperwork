@@ -80,7 +80,7 @@ class Plugin(PluginBase):
         return [
             {
                 'interface': 'config_backend',
-                'defaults': ['openpaperwork_core.config.backend.file'],
+                'defaults': ['openpaperwork_core.config.backend.configparser'],
             },
         ]
 

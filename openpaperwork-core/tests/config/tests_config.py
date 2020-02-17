@@ -69,7 +69,7 @@ class TestConfig(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
         self.core._load_module(
-            "openpaperwork_core.config.backend.file",
+            "openpaperwork_core.config.backend.configparser",
             MockConfigBackendModule()
         )
         self.core.load("openpaperwork_core.config")
@@ -88,7 +88,7 @@ class TestConfig(unittest.TestCase):
         )
         self.assertEqual(
             self.core.get_by_name(
-                'openpaperwork_core.config.backend.file'
+                'openpaperwork_core.config.backend.configparser'
             ).calls,
             [
                 ('config_backend_load', ('paperwork-gtk',), {}),
@@ -103,7 +103,7 @@ class TestConfig(unittest.TestCase):
         default = self.core.call_success("config_get", "workdir")
         self.assertEqual(
             self.core.get_by_name(
-                'openpaperwork_core.config.backend.file'
+                'openpaperwork_core.config.backend.configparser'
             ).calls,
             [
                 ('config_backend_get', ('Global', "WorkDirectory", None), {}),
@@ -113,7 +113,7 @@ class TestConfig(unittest.TestCase):
 
     def test_get_nondefault(self):
         self.core.get_by_name(
-            'openpaperwork_core.config.backend.file'
+            'openpaperwork_core.config.backend.configparser'
         ).rets = {
             'config_backend_get': ['file:///pouet/path']
         }
@@ -123,7 +123,7 @@ class TestConfig(unittest.TestCase):
         )
         self.assertEqual(
             self.core.get_by_name(
-                'openpaperwork_core.config.backend.file'
+                'openpaperwork_core.config.backend.configparser'
             ).calls,
             [
                 ('config_backend_get', ('Global', "WorkDirectory", None), {}),
@@ -133,7 +133,7 @@ class TestConfig(unittest.TestCase):
 
     def test_get_cache(self):
         self.core.get_by_name(
-            'openpaperwork_core.config.backend.file'
+            'openpaperwork_core.config.backend.configparser'
         ).rets = {
             # only one call expected
             'config_backend_get': ['file:///pouet/path']
@@ -143,7 +143,7 @@ class TestConfig(unittest.TestCase):
         val2 = self.core.call_success("config_get", "workdir")
         self.assertEqual(
             self.core.get_by_name(
-                'openpaperwork_core.config.backend.file'
+                'openpaperwork_core.config.backend.configparser'
             ).calls,
             [
                 ('config_backend_get', ('Global', "WorkDirectory", None), {}),

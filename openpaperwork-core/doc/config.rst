@@ -14,7 +14,7 @@ settings registered by one of their dependency do not need to register them.
 
 Backends provide access to the configuration storage (Python's ConfigParser,
 Windows registry, Android Content Provider, etc). Reference implementation
-for backends is `openpaperwork_core.config.backend.file` (based on
+for backends is `openpaperwork_core.config.backend.configparser` (based on
 Python's ConfigParser).
 
 ----
@@ -31,6 +31,6 @@ Frontend plugin
 Backend plugin: File
 ~~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: openpaperwork_core.config.backend.file
+.. automodule:: openpaperwork_core.config.backend.configparser
    :members:
    :undoc-members:

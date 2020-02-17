@@ -76,7 +76,7 @@ class TestConfig(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
         self.core._load_module(
-            "openpaperwork_core.config.backend.file", MockConfigBackendModule()
+            "openpaperwork_core.config.backend.configparser", MockConfigBackendModule()
         )
         self.core.load("openpaperwork_core.cmd.config")
         self.core.init()
@@ -89,7 +89,7 @@ class TestConfig(unittest.TestCase):
 
     def test_get_put(self):
         self.core.get_by_name(
-            'openpaperwork_core.config.backend.file'
+            'openpaperwork_core.config.backend.configparser'
         ).returns = {
             'config_backend_put': [None],
             'config_backend_save': [None],
@@ -110,7 +110,7 @@ class TestConfig(unittest.TestCase):
         self.assertTrue(r)
         self.assertEqual(
             self.core.get_by_name(
-                'openpaperwork_core.config.backend.file'
+                'openpaperwork_core.config.backend.configparser'
             ).calls,
             [
                 (
@@ -127,7 +127,7 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(r, {"workdir": "file:///pouet/path"})
         self.assertEqual(
             self.core.get_by_name(
-                'openpaperwork_core.config.backend.file'
+                'openpaperwork_core.config.backend.configparser'
             ).calls,
             [
                 (
@@ -143,7 +143,7 @@ class TestConfig(unittest.TestCase):
 
     def test_add_remove_list_plugin(self):
         self.core.get_by_name(
-            'openpaperwork_core.config.backend.file'
+            'openpaperwork_core.config.backend.configparser'
         ).returns = {
             'config_backend_load': [None],
             'config_backend_load_plugins': [None],
@@ -176,7 +176,7 @@ class TestConfig(unittest.TestCase):
         self.assertTrue(r)
         self.assertEqual(
             self.core.get_by_name(
-                'openpaperwork_core.config.backend.file'
+                'openpaperwork_core.config.backend.configparser'
             ).calls,
             [
                 ('config_backend_load', ('paperwork-gtk',), {}),
@@ -197,7 +197,7 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(sorted(r), ['plugin_a', 'plugin_b', 'plugin_c'])
         self.assertEqual(
             self.core.get_by_name(
-                'openpaperwork_core.config.backend.file'
+                'openpaperwork_core.config.backend.configparser'
             ).calls,
             [
                 ('config_backend_load', ('paperwork-gtk',), {}),
@@ -223,7 +223,7 @@ class TestConfig(unittest.TestCase):
         r = self.core.call_success("cmd_run", args)
         self.assertTrue(r)
         self.assertEqual(
-            self.core.get_by_name('openpaperwork_core.config.backend.file').calls,
+            self.core.get_by_name('openpaperwork_core.config.backend.configparser').calls,
             [
                 ('config_backend_load', ('paperwork-gtk',), {}),
                 (
@@ -251,7 +251,7 @@ class TestConfig(unittest.TestCase):
         r = self.core.call_success("cmd_run", args)
         self.assertEqual(sorted(r), ['plugin_a', 'plugin_c'])
         self.assertEqual(
-            self.core.get_by_name('openpaperwork_core.config.backend.file').calls,
+            self.core.get_by_name('openpaperwork_core.config.backend.configparser').calls,
             [
                 ('config_backend_load', ('paperwork-gtk',), {}),
                 (
