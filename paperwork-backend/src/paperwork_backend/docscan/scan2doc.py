@@ -10,6 +10,7 @@ LOGGER = logging.getLogger(__name__)
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         self.scan_id_to_doc_id = {}
+        self.doc_id_to_scan_id = {}
 
     def get_interfaces(self):
         return ['scan2doc']
@@ -48,6 +49,12 @@ class Plugin(openpaperwork_core.PluginBase):
         except KeyError:
             return None
 
+    def scan2doc_doc_id_to_scan_id(self, doc_id):
+        try:
+            return self.doc_id_to_scan_id[doc_id]
+        except KeyError:
+            return None
+
     def scan2doc_promise(self, *args, doc_id=None, **kwargs):
         if doc_id is not None:
             doc_url = self.core.call_success("doc_id_to_url", doc_id)
@@ -68,6 +75,7 @@ class Plugin(openpaperwork_core.PluginBase):
         promise = promise.then(p)
 
         self.scan_id_to_doc_id[scan_id] = doc_id
+        self.doc_id_to_scan_id[doc_id] = scan_id
 
         transactions = []
         self.core.call_all("doc_transaction_start", transactions, 1)
@@ -108,6 +116,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         def drop_scan_id(*args, **kwargs):
             self.scan_id_to_doc_id.pop(scan_id)
+            self.doc_id_to_scan_id(doc_id)
             return (doc_id, doc_url)
 
         def notify_end(*args, **kwargs):
