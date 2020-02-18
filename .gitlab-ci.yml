@@ -52,7 +52,7 @@ linux_flatpak:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
   tags:
-    - flatpak
+    - openpaper-flatpak
   script:
     # not running as root, so we cannot actually install anything
     # - apt-get update
