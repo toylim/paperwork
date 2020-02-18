@@ -116,7 +116,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         def drop_scan_id(*args, **kwargs):
             self.scan_id_to_doc_id.pop(scan_id)
-            self.doc_id_to_scan_id(doc_id)
+            self.doc_id_to_scan_id.pop(doc_id)
             return (doc_id, doc_url)
 
         def notify_end(*args, **kwargs):
