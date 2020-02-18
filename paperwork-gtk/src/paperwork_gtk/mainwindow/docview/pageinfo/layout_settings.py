@@ -97,6 +97,7 @@ class Plugin(openpaperwork_core.PluginBase):
             )
 
         self.core.call_success("page_info_add_left", self.layout_button)
+        self.core.call_all("docview_set_zoom_adjustment", self.zoom)
 
     def on_layout_change(self, layout_name):
         if self.layout_icon is None:

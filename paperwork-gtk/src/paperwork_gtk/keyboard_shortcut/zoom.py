@@ -20,11 +20,17 @@ class Zoomer(object):
 
     def __init__(self, zoomable, adjustment):
         self.adjustment = adjustment
+        if zoomable.get_window() is not None:
+            self._enable_events(zoomable)
+        else:
+            zoomable.connect("realize", self._enable_events)
+        zoomable.connect("scroll-event", self._on_scroll)
+
+    def _enable_events(self, zoomable):
         zoomable.add_events(Gdk.EventMask.SCROLL_MASK)
         zoomable.get_window().set_events(
             zoomable.get_window().get_events() | Gdk.EventMask.SCROLL_MASK
         )
-        zoomable.connect("scroll-event", self._on_scroll)
 
     def _on_scroll(self, widget, event):
         if (event.state & Gdk.ModifierType.CONTROL_MASK):

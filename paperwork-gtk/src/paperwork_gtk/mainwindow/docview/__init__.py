@@ -54,6 +54,13 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'gtk_widget_flowlayout',
                 'defaults': ['paperwork_gtk.widget.flowlayout'],
             },
+            {
+                'interface': 'gtk_zoomable',
+                'defaults': [
+                    'paperwork_gtk.gesture.zoom',
+                    'paperwork_gtk.keyboard_shortcut.zoom',
+                ],
+            },
         ]
 
     def init(self, core):
@@ -96,6 +103,12 @@ class Plugin(openpaperwork_core.PluginBase):
     def chkdeps(self, out: dict):
         if not GTK_AVAILABLE:
             out['gtk'].update(openpaperwork_gtk.deps.GTK)
+
+    def docview_set_zoom_adjustment(self, adj):
+        self.core.call_all(
+            "on_zoomable_widget_new",
+            self.widget_tree.get_object("docview_scroll"), adj
+        )
 
     def docview_get_headerbar(self):
         return self.widget_tree.get_object("docview_header")
