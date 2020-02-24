@@ -197,6 +197,17 @@ class Plugin(openpaperwork_core.PluginBase):
             self.active_drawers.pop(k)
         return drawer
 
+    def draw_scan_get_max_size(self, scan_id):
+        if scan_id not in self.active_drawers:
+            return
+        self.active_drawers[scan_id].scan_size
+
+    def on_scan_feed_start(self, scan_id):
+        if scan_id in self.active_drawers:
+            return
+        # instantiate a default drawer to keep track of the size and the chunks
+        self.active_drawers[scan_id] = Drawer(self.core)
+
     def on_scan_page_start(self, scan_id, page_nb, scan_params):
         if None in self.active_drawers:
             self.active_drawers[None].on_scan_page_start(scan_params)

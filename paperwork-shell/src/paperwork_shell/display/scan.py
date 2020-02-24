@@ -136,7 +136,7 @@ class Plugin(openpaperwork_core.PluginBase):
         print()
         print(_("End of paper feed"))
 
-    def on_scan2doc_start(self, doc_id, doc_url):
+    def on_scan2doc_start(self, scan_id, doc_id, doc_url):
         self.doc_id = doc_id
         self.doc_url = doc_url
         renderers = []
@@ -151,7 +151,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         return functools.reduce(lambda x, y: x ^ y, page_hash)
 
-    def on_scan2doc_page_scanned(self, doc_id, doc_url, page_idx):
+    def on_scan2doc_page_scanned(self, scan_id, doc_id, doc_url, page_idx):
         print(_("Page {} in document {} created").format(
             page_idx, doc_id
         ))
@@ -159,7 +159,7 @@ class Plugin(openpaperwork_core.PluginBase):
             self.doc_url, page_idx
         )
 
-    def on_scan2doc_end(self, doc_id, doc_url):
+    def on_scan2doc_end(self, scan_id, doc_id, doc_url):
         self._show_last_page()
         self.doc_id = None
         self.doc_url = None

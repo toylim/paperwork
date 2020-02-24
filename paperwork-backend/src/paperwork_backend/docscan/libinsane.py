@@ -418,23 +418,25 @@ class Plugin(openpaperwork_core.PluginBase):
         return promise
 
     def scan_get_scanner_promise(self, scanner_dev_id=None):
-        if scanner_dev_id is None:
-            scanner_dev_id = self.core.call_success(
-                "config_get", "scanner_dev_id"
-            )
+        def get_scanner(scanner_dev_id):
+            if scanner_dev_id is None:
+                scanner_dev_id = self.core.call_success(
+                    "config_get", "scanner_dev_id"
+                )
+            if scanner_dev_id is None:
+                return None
 
-        if not scanner_dev_id.startswith("libinsane:"):
-            return None
-        scanner_dev_id = scanner_dev_id[len("libinsane:"):]
+            if not scanner_dev_id.startswith("libinsane:"):
+                return None
+            scanner_dev_id = scanner_dev_id[len("libinsane:"):]
 
-        def get_scanner(*args, **kwargs):
             LOGGER.info("Accessing scanner '%s' ...", scanner_dev_id)
             scanner = self.libinsane.get_device(scanner_dev_id)
             LOGGER.info("Scanner '%s' opened", scanner.get_name())
             return Scanner(self.core, scanner)
 
         return openpaperwork_core.promise.ThreadedPromise(
-            self.core, get_scanner
+            self.core, get_scanner, args=(scanner_dev_id,)
         )
 
     def scan_promise(self, *args, source_id, **kwargs):

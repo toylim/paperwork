@@ -66,12 +66,13 @@ class Plugin(openpaperwork_core.PluginBase):
             (doc_id, doc_url) = self.core.call_success("storage_get_new_doc")
             new = True
 
+        (scan_id, p) = self.core.call_success("scan_promise")
+
         promise = openpaperwork_core.promise.Promise(
             self.core, self.core.call_all,
-            args=("on_scan2doc_start", doc_id, doc_url)
+            args=("on_scan2doc_start", scan_id, doc_id, doc_url)
         )
         promise = promise.then(lambda *args, **kwargs: None)
-        (scan_id, p) = self.core.call_success("scan_promise")
         promise = promise.then(p)
 
         self.scan_id_to_doc_id[scan_id] = doc_id
@@ -97,7 +98,8 @@ class Plugin(openpaperwork_core.PluginBase):
                 self.core.call_success("pillow_to_url", img, page_url)
                 self.core.call_all(
                     "mainloop_schedule", self.core.call_all,
-                    "on_scan2doc_page_scanned", doc_id, doc_url, nb_pages
+                    "on_scan2doc_page_scanned",
+                    scan_id, doc_id, doc_url, nb_pages
                 )
             return nb
 
@@ -120,7 +122,7 @@ class Plugin(openpaperwork_core.PluginBase):
             return (doc_id, doc_url)
 
         def notify_end(*args, **kwargs):
-            self.core.call_all("on_scan2doc_end", doc_id, doc_url)
+            self.core.call_all("on_scan2doc_end", scan_id, doc_id, doc_url)
             return (doc_id, doc_url)
 
         def cancel(exc):
