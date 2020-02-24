@@ -176,7 +176,7 @@ class Plugin(PluginBase):
         self.values[key] = value
         if key in self.observers:
             for callback in self.observers[key]:
-                callback(key, value)
+                callback()
 
     def config_add_plugin(self, plugin, plugin_list_name=None):
         if plugin_list_name is None:
