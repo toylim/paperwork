@@ -112,8 +112,8 @@ class Page(GObject.GObject):
 
     def get_size(self):
         return (
-            int(self.renderer.size[0]) * self.zoom,
-            int(self.renderer.size[1]) * self.zoom
+            int(self.renderer.size[0] * self.zoom),
+            int(self.renderer.size[1] * self.zoom)
         )
 
     def resize(self):
