@@ -30,6 +30,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_interfaces(self):
         return [
+            'doc_open',
             'gtk_app_menu',
             'gtk_doclist',
             'search_listener',

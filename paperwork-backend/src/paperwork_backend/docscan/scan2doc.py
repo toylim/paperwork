@@ -66,7 +66,7 @@ class Plugin(openpaperwork_core.PluginBase):
             (doc_id, doc_url) = self.core.call_success("storage_get_new_doc")
             new = True
 
-        (scan_id, p) = self.core.call_success("scan_promise")
+        (scan_id, p) = self.core.call_success("scan_promise", *args, **kwargs)
 
         promise = openpaperwork_core.promise.Promise(
             self.core, self.core.call_all,

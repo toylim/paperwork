@@ -16,7 +16,10 @@ class Plugin(openpaperwork_core.PluginBase):
         self.nb_pages = None
 
     def get_interfaces(self):
-        return ['gtk_docview_pageinfo']
+        return [
+            'doc_open',
+            'gtk_docview_pageinfo',
+        ]
 
     def get_deps(self):
         return [

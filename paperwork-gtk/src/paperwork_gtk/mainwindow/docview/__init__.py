@@ -37,6 +37,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_interfaces(self):
         return [
             'chkdeps',
+            'doc_open',
             'gtk_docview',
         ]
 
@@ -181,7 +182,7 @@ class Plugin(openpaperwork_core.PluginBase):
             return
 
         page_idx = self.page_widgets[widget].page_idx
-        if self.active_page_idx != page_idx:
+        if self.active_page_idx != page_idx and page_idx >= 0:
             self.core.call_all("on_page_shown", page_idx)
 
     def doc_goto_previous_page(self):
