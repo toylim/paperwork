@@ -220,6 +220,10 @@ class Plugin(openpaperwork_core.PluginBase):
         promise = openpaperwork_core.promise.Promise(
             self.core, self.core.call_all, args=("on_busy",)
         )
+        promise = promise.then(
+            # drop the return value of call_all()
+            lambda *args, **kwargs: None
+        )
         # calibration is always done at 75 DPI
         promise = promise.then(
             self.core.call_success(
@@ -248,6 +252,8 @@ class Plugin(openpaperwork_core.PluginBase):
     def on_scan_page_start(self, scan_id, page_nb, scan_params):
         self.scan_height = scan_params.get_height()
         self.scan_width = scan_params.get_width()
+        if self.widget_tree is None:
+            return
         self._update_calibration_area_size_based_on_scroll()
         self._update_calibration_scroll_area_size()
 
@@ -306,16 +312,17 @@ class Plugin(openpaperwork_core.PluginBase):
             adj.set_lower(factor)
 
     def _on_scan_end(self, scan_img=None):
-        buttons = [
-            'calibration_automatic',
-            'calibration_maximize',
-            'calibration_scan'
-        ]
-        for button in buttons:
-            self.widget_tree.get_object(button).set_sensitive(True)
+        if self.widget_tree is not None:
+            buttons = [
+                'calibration_automatic',
+                'calibration_maximize',
+                'calibration_scan'
+            ]
+            for button in buttons:
+                self.widget_tree.get_object(button).set_sensitive(True)
 
-        drawing_area = self.widget_tree.get_object("calibration_area")
-        self.core.call_all("draw_scan_stop", drawing_area)
+            drawing_area = self.widget_tree.get_object("calibration_area")
+            self.core.call_all("draw_scan_stop", drawing_area)
 
         if scan_img is None:
             LOGGER.info("No page scanned. Can't do calibration")
