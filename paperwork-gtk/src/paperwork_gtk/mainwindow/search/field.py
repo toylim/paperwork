@@ -124,6 +124,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def doc_transaction_start(self, out: list, total_expected=-1):
         class RefreshResultsTransaction(object):
+            priority = -100000
+
             def add_obj(s, doc_id):
                 pass
 
