@@ -127,7 +127,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def doc_open(self, doc_id, doc_url):
         if len(self.pages) > 0:
-            self.core.call_all("doc_close")
+            self.doc_close()
 
         self.core.call_all("on_memleak_track_stop")
         self.core.call_all("on_memleak_track_start")
