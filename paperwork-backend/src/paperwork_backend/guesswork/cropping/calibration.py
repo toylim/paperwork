@@ -171,6 +171,13 @@ class Plugin(openpaperwork_core.PluginBase):
         img = self.core.call_success("url_to_pillow", page_img_url)
 
         LOGGER.info("Cropping page %d of %s at %s", page_idx, doc_url, frame)
+        # make sure we don't extend the image
+        frame = (
+            max(0, frame[0]),
+            max(0, frame[1]),
+            min(img.size[0], frame[2]),
+            min(img.size[1], frame[3]),
+        )
         img = img.crop(frame)
 
         page_img_url = self.core.call_success(
