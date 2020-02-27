@@ -2,7 +2,7 @@ import logging
 
 import openpaperwork_core
 import openpaperwork_core.promise
-
+import paperwork_backend.sync
 
 LOGGER = logging.getLogger(__name__)
 
@@ -123,28 +123,15 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all("work_queue_cancel_all", "doc_search")
 
     def doc_transaction_start(self, out: list, total_expected=-1):
-        class RefreshResultsTransaction(object):
+        class RefreshTransaction(paperwork_backend.sync.BaseTransaction):
             priority = -100000
 
-            def add_obj(s, doc_id):
-                pass
-
-            def upd_obj(s, doc_id):
-                pass
-
-            def del_obj(s, doc_id):
-                pass
-
-            def unchanged_obj(s, doc_id):
-                pass
-
-            def cancel(s):
-                pass
-
             def commit(s):
-                self.search_update_document_list()
+                self.core.call_one(
+                    "mainloop_schedule", self.search_update_document_list
+                )
 
-        out.append(RefreshResultsTransaction())
+        out.append(RefreshTransaction(self.core, total_expected))
 
     def sync(self, promises: list):
         # If someone requested a sync, assume something has changed

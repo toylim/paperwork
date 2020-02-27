@@ -10,7 +10,7 @@ except (ImportError, ValueError):
 
 import openpaperwork_core
 import openpaperwork_gtk.deps
-
+import paperwork_backend.sync
 
 LOGGER = logging.getLogger(__name__)
 
@@ -27,10 +27,11 @@ class Plugin(openpaperwork_core.PluginBase):
         super().__init__()
         self.widget_tree = None
         self.scroll = None
+        self.active_doc = ()
+        self.active_page_idx = 0
         self.page_container = None
         self.pages = []
         self.page_widgets = {}
-        self.active_page_idx = 0
         self._last_scroll = 0  # to avoid multiple calls
         self._last_nb_columns = -1  # to avoid multiple calls
 
@@ -39,6 +40,7 @@ class Plugin(openpaperwork_core.PluginBase):
             'chkdeps',
             'doc_open',
             'gtk_docview',
+            'syncable',
         ]
 
     def get_deps(self):
@@ -129,6 +131,8 @@ class Plugin(openpaperwork_core.PluginBase):
         if len(self.pages) > 0:
             self.doc_close()
 
+        self.active_doc = (doc_id, doc_url)
+
         self.core.call_all("on_memleak_track_stop")
         self.core.call_all("on_memleak_track_start")
 
@@ -184,6 +188,12 @@ class Plugin(openpaperwork_core.PluginBase):
         page_idx = self.page_widgets[widget].page_idx
         if self.active_page_idx != page_idx and page_idx >= 0:
             self.core.call_all("on_page_shown", page_idx)
+
+    def doc_get_active_doc(self):
+        return self.active_doc
+
+    def doc_get_active_page(self):
+        return self.active_page_idx
 
     def doc_goto_previous_page(self):
         self.doc_goto_page(self.active_page_idx - 1)
@@ -266,3 +276,52 @@ class Plugin(openpaperwork_core.PluginBase):
     def doc_view_set_zoom(self, zoom):
         for page in self.pages:
             page.set_zoom(zoom)
+
+    def doc_reload(self, doc_id, doc_url):
+        if doc_id != self.active_doc[0]:
+            return
+
+        active_page = self.active_page_idx
+        active_doc = self.active_doc
+
+        self.doc_close()
+        self.doc_open(*active_doc)
+        self.doc_goto_page(active_page)
+
+    def doc_transaction_start(self, out: list, total_expected=-1):
+        class RefreshTransaction(paperwork_backend.sync.BaseTransaction):
+            priority = -100000
+
+            def __init__(s, core, total_expected=-1):
+                super().__init__(core, total_expected)
+                s.refresh = False
+
+            def add_obj(s, doc_id):
+                if self.active_doc[0] == doc_id:
+                    s.refresh = True
+
+            def upd_obj(s, doc_id):
+                if self.active_doc[0] == doc_id:
+                    s.refresh = True
+
+            def del_obj(s, doc_id):
+                if self.active_doc[0] == doc_id:
+                    s.refresh = True
+
+            def cancel(s):
+                if s.refresh:
+                    self.core.call_one(
+                        "mainloop_schedule", self.doc_reload, *self.active_doc
+                    )
+
+            def commit(s):
+                if s.refresh:
+                    self.core.call_one(
+                        "mainloop_schedule", self.doc_reload, *self.active_doc
+                    )
+
+        out.append(RefreshTransaction(self.core, total_expected))
+
+    def sync(self, promises: list):
+        # nothing should change visually on a sync.
+        pass

@@ -1,6 +1,7 @@
 import logging
 
 import openpaperwork_core
+import paperwork_backend.sync
 
 
 LOGGER = logging.getLogger(__name__)
@@ -11,6 +12,7 @@ class Plugin(openpaperwork_core.PluginBase):
         super().__init__()
         self.widget_tree = None
         self.page_info = None
+        self.active_doc = ()
         self.nb_pages = None
         self.current_page = None
         self.nb_pages = None
@@ -19,6 +21,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return [
             'doc_open',
             'gtk_docview_pageinfo',
+            'syncable',
         ]
 
     def get_deps(self):
@@ -79,6 +82,8 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all("doc_goto_page", int(txt) - 1)
 
     def doc_open(self, doc_id, doc_url):
+        self.active_doc = (doc_id, doc_url)
+
         nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)
         if nb_pages is None:
             LOGGER.warning("Failed to get the number of pages in %s", doc_id)
@@ -97,3 +102,41 @@ class Plugin(openpaperwork_core.PluginBase):
             widget, expand=False, fill=True, padding=0
         )
         return True
+
+    def doc_transaction_start(self, out: list, total_expected=-1):
+        class RefreshTransaction(paperwork_backend.sync.BaseTransaction):
+            priority = -100000
+
+            def __init__(s, core, total_expected=-1):
+                super().__init__(core, total_expected)
+                s.refresh = False
+
+            def add_obj(s, doc_id):
+                if self.active_doc[0] == doc_id:
+                    s.refresh = True
+
+            def upd_obj(s, doc_id):
+                if self.active_doc[0] == doc_id:
+                    s.refresh = True
+
+            def del_obj(s, doc_id):
+                if self.active_doc[0] == doc_id:
+                    s.refresh = True
+
+            def cancel(s):
+                if s.refresh:
+                    self.core.call_one(
+                        "mainloop_schedule", self.doc_open, *self.active_doc
+                    )
+
+            def commit(s):
+                if s.refresh:
+                    self.core.call_one(
+                        "mainloop_schedule", self.doc_open, *self.active_doc
+                    )
+
+        out.append(RefreshTransaction(self.core, total_expected))
+
+    def sync(self, promises: list):
+        # sync don't change document content --> no need to refresh
+        pass
