@@ -15,11 +15,13 @@ class Plugin(openpaperwork_core.PluginBase):
         self.default_action_args = None
         self.active_doc_id = None
         self.active_doc_url = None
+        self.write_allowed = True
 
     def get_interfaces(self):
         return [
             'doc_open',
             'gtk_scan_buttons',
+            'readonly_listener',
         ]
 
     def get_deps(self):
@@ -70,13 +72,18 @@ class Plugin(openpaperwork_core.PluginBase):
     def pageadd_buttons_set_source_popover(self, selector):
         self.widget_tree.get_object("pageadd_switch").set_popover(selector)
 
+    def _update_sensitivity(self):
+        self.widget_tree.get_object("pageadd_button").set_sensitive(
+            self.default_action is not None and
+            self.active_doc_id is not None and
+            self.write_allowed
+        )
+
     def pageadd_set_default_action(self, txt, callback, *args):
         self.default_action = callback
         self.default_action_args = args
         self.widget_tree.get_object("pageadd_button").set_label(txt)
-        self.widget_tree.get_object("pageadd_button").set_sensitive(
-            self.default_action is not None and self.active_doc_id is not None
-        )
+        self._update_sensitivity()
 
     def _on_clicked(self, widget):
         self.default_action(
@@ -87,11 +94,17 @@ class Plugin(openpaperwork_core.PluginBase):
     def doc_open(self, doc_id, doc_url):
         self.active_doc_id = doc_id
         self.active_doc_url = doc_url
-        self.widget_tree.get_object("pageadd_button").set_sensitive(
-            self.default_action is not None and self.active_doc_id is not None
-        )
+        self._update_sensitivity()
 
     def doc_close(self):
         self.active_doc_id = None
         self.active_doc_url = None
-        self.widget_tree.get_object("pageadd_button").set_sensitive(False)
+        self._update_sensitivity()
+
+    def on_backend_readonly(self):
+        self.write_allowed = False
+        self._update_sensitivity()
+
+    def on_backend_readwrite(self):
+        self.write_allowed = True
+        self._update_sensitivity()
