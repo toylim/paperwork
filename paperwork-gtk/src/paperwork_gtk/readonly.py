@@ -2,7 +2,7 @@ import logging
 
 import openpaperwork_core
 import openpaperwork_core.promise
-import paperwork_backend.sync
+
 
 LOGGER = logging.getLogger(__name__)
 
