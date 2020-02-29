@@ -58,13 +58,16 @@ class Plugin(openpaperwork_core.PluginBase):
                 "Document to which the scanned pages must be added"
             )
         )
+        scan_parser.add_argument("source_id")
 
     def cmd_run(self, args):
         if args.command != 'scan':
             return None
 
         promise = self.core.call_success(
-            "scan2doc_promise", doc_id=args.doc_id
+            "scan2doc_promise",
+            doc_id=args.doc_id,
+            source_id=args.source_id
         )
         promise.schedule()
 

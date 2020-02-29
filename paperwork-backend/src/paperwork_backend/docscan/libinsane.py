@@ -303,7 +303,9 @@ class Scanner(object):
         )
 
     def get_source(self, source_id):
-        return self.get_sources()[source_id]
+        sources = self.get_sources()
+        src = sources[source_id]
+        return src
 
     def set_as_default(self):
         self.core.call_all(
@@ -439,7 +441,7 @@ class Plugin(openpaperwork_core.PluginBase):
             self.core, get_scanner, args=(scanner_dev_id,)
         )
 
-    def scan_promise(self, *args, source_id, **kwargs):
+    def scan_promise(self, *args, source_id=None, **kwargs):
         scanner_dev_id = self.core.call_success(
             "config_get", "scanner_dev_id"
         )
@@ -447,6 +449,8 @@ class Plugin(openpaperwork_core.PluginBase):
             source_id = self.core.call_success(
                 "config_get", "scanner_source_id"
             )
+        if source_id is None:
+            raise Exception("No source defined")
         scan_id = next(SCAN_ID_GENERATOR)
 
         promise = self.scan_get_scanner_promise(scanner_dev_id)
