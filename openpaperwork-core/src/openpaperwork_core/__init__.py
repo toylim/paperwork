@@ -114,8 +114,12 @@ class Core(object):
             return self.plugins[module_name]
 
         LOGGER.info("Loading plugin '%s' ...", module_name)
-        module = importlib.import_module(module_name)
-        return self._load_module(module_name, module)
+        try:
+            module = importlib.import_module(module_name)
+            return self._load_module(module_name, module)
+        except Exception as exc:
+            LOGGER.error("Failed to load '%s'", module_name, exc_info=exc)
+            return None
 
     def _load_module(self, module_name, module):
         """
