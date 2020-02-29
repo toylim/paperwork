@@ -196,7 +196,7 @@ class Source(object):
             while not session.end_of_feed() and page_nb < max_pages:
                 self.core.call_all(
                     "on_progress", "scan", 0.0,
-                    _("Scanning page %d ...") % page_nb
+                    _("Scanning page %d ...") % (page_nb + 1)
                 )
 
                 scan_params = session.get_scan_parameters()
@@ -230,9 +230,12 @@ class Source(object):
                         last_chunk = chunk
                         pil = raw_to_img(scan_params, chunk)
                         nb_lines += pil.size[1]
+                        progress = nb_lines / total_lines
+                        if progress >= 1.0:
+                            progress = 0.999
                         self.core.call_all(
-                            "on_progress", "scan", nb_lines / total_lines,
-                            _("Scanning page %d ...") % page_nb
+                            "on_progress", "scan", progress,
+                            _("Scanning page %d ...") % (page_nb + 1)
                         )
                         self.core.call_all(
                             "mainloop_schedule", self.core.call_all,
@@ -242,7 +245,7 @@ class Source(object):
                 LOGGER.info("Page %d/%d scanned", page_nb, max_pages)
                 self.core.call_all(
                     "on_progress", "scan", 0.999,
-                    _("Scanning page %d ...") % page_nb
+                    _("Scanning page %d ...") % (page_nb + 1)
                 )
                 img = raw_to_img(scan_params, image.get_image())
                 yield img
