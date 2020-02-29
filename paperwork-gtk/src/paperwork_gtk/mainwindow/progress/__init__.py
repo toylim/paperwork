@@ -91,7 +91,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 return
             widget_tree = self.progresses.pop(upd_type)
             box = self.details_widget_tree.get_object("progresses_box")
-            details = widget_tree.get_object("details")
+            details = widget_tree.get_object("progress_bar")
             box.remove(details)
             details.unparent()
             self.button_widget_tree.get_object("progress_button").queue_draw()
@@ -109,16 +109,15 @@ class Plugin(openpaperwork_core.PluginBase):
                 "progress_details.glade"
             )
             box = self.details_widget_tree.get_object("progresses_box")
-            box.add(widget_tree.get_object("details"))
+            box.add(widget_tree.get_object("progress_bar"))
             self.progresses[upd_type] = widget_tree
         else:
             widget_tree = self.progresses[upd_type]
 
         # update of progress
-        label = widget_tree.get_object("status")
-        label.set_text(description if description is not None else "")
         progress_bar = widget_tree.get_object("progress_bar")
         progress_bar.set_fraction(progress)
+        progress_bar.set_text(description if description is not None else "")
 
         self.button_widget_tree.get_object("progress_button").queue_draw()
 
