@@ -57,7 +57,7 @@ def raw_to_img(params, img_bytes):
 
 
 class ImageAssembler(object):
-    MIN_CHUNK_SIZE = 256 * 1024
+    MIN_CHUNK_SIZE = 512 * 1024
 
     def __init__(self, line_width):
         # 'Pieces' are pieces of the images that may or may not contain
@@ -222,7 +222,7 @@ class Source(object):
 
                 LOGGER.info("Scanning page %d/%d ...", page_nb, max_pages)
                 while not session.end_of_page():
-                    new_piece = session.read_bytes(64 * 1024).get_data()
+                    new_piece = session.read_bytes(128 * 1024).get_data()
                     image.add_piece(new_piece)
 
                     chunk = image.get_last_chunk()
