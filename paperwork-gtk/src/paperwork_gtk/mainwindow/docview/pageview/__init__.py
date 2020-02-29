@@ -41,6 +41,7 @@ class Page(GObject.GObject):
         self.doc_url = doc_url
         self.page_idx = page_idx
         self.nb_pages = nb_pages
+        self.visible = False
 
         self.zoom = 1.0
 
@@ -91,6 +92,7 @@ class Page(GObject.GObject):
         self.emit('size_obtained')
 
     def _on_renderer_img(self, renderer):
+        assert(self.visible)
         self.refresh()
         self.core.call_all("on_page_img_obtained", self)
         self.emit('img_obtained')
@@ -125,15 +127,18 @@ class Page(GObject.GObject):
 
     def refresh(self, reload=False):
         if reload:
-            self.hide()
-            self.show()
+            if self.visible:
+                self.hide()
+                self.show()
         elif self.widget is not None:
             self.widget.queue_draw()
 
     def hide(self):
+        self.visible = False
         self.renderer.hide()
 
     def show(self):
+        self.visible = True
         self.renderer.render()
 
     def _on_widget_visible(self, flowlayout, widget):
