@@ -178,6 +178,22 @@ class Plugin(openpaperwork_core.PluginBase):
         self.scan.size = (scan_params.get_width(), scan_params.get_height())
         self.scan.resize()
 
+        if page_nb == 0:
+            self.core.call_all(
+                "mainloop_schedule", self.core.call_all,
+                "docview_scroll_to_bottom"
+            )
+
+    def on_scan_page_end(self, scan_id, page_nb, img):
+        if self.scan is None:
+            return
+        if scan_id != self.scan.scan_id:
+            return
+        self.core.call_all(
+            "mainloop_schedule", self.core.call_all,
+            "docview_scroll_to_bottom"
+        )
+
     def on_scan_feed_end(self, scan_id):
         if self.scan is None:
             return

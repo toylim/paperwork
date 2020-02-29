@@ -189,10 +189,10 @@ class Plugin(openpaperwork_core.PluginBase):
         if self.active_page_idx != page_idx and page_idx >= 0:
             self.core.call_all("on_page_shown", page_idx)
 
-    def doc_get_active_doc(self):
+    def docview_get_active_doc(self):
         return self.active_doc
 
-    def doc_get_active_page(self):
+    def docview_get_active_page(self):
         return self.active_page_idx
 
     def doc_goto_previous_page(self):
@@ -287,6 +287,10 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doc_close()
         self.doc_open(*active_doc)
         self.doc_goto_page(active_page)
+
+    def docview_scroll_to_bottom(self):
+        vadj = self.scroll.get_vadjustment()
+        vadj.set_value(vadj.get_upper())
 
     def doc_transaction_start(self, out: list, total_expected=-1):
         class RefreshTransaction(paperwork_backend.sync.BaseTransaction):
