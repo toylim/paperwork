@@ -59,6 +59,11 @@ class Plugin(openpaperwork_core.PluginBase):
         self.interactive = False
         self.enabled = True
 
+    def get_interfaces(self):
+        return [
+            'progress_listener',
+        ]
+
     def _thread(self):
         while True:
             time.sleep(TIME_BETWEEN_PROGRESS)
@@ -67,6 +72,8 @@ class Plugin(openpaperwork_core.PluginBase):
                 if len(self.progresses) <= 0:
                     self.thread = None
                     return
+                if not self.enabled:
+                    continue
 
                 upd_type = next(iter(self.progresses))
                 (progress, description) = self.progresses[upd_type]
@@ -79,7 +86,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.enabled = enabled
 
     def on_progress(self, upd_type, progress, description=None):
-        if not self.interactive or not self.enabled:
+        if not self.interactive:
             return
 
         with self.lock:
