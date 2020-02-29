@@ -144,7 +144,7 @@ class WhooshTransaction(sync.BaseTransaction):
 
     def unchanged_obj(self, doc_id):
         self.notify_progress(
-            ID, _("Document unchanged %s") % doc_id
+            ID, _("Examining document %s: unchanged") % (doc_id)
         )
         super().unchanged_obj(doc_id)
 

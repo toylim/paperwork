@@ -99,7 +99,9 @@ class DocTrackerTransaction(sync.BaseTransaction):
         super().del_obj(doc_id)
 
     def unchanged_obj(self, doc_id):
-        self.notify_progress(ID, _("Document %s unchanged") % (doc_id))
+        self.notify_progress(
+            ID, _("Examining document %s: unchanged") % (doc_id)
+        )
         super().unchanged_obj(doc_id)
 
     def cancel(self):
