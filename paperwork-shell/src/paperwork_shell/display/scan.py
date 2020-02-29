@@ -81,7 +81,7 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def on_scan_feed_start(self, scan_id):
-        pass
+        self.core.call_all("shell_show_progress", False)
 
     def on_scan_page_start(self, scan_id, page_nb, scan_params):
         print()
@@ -133,6 +133,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def on_scan_feed_end(self, scan_id):
+        self.core.call_all("shell_show_progress", True)
         print()
         print(_("End of paper feed"))
 

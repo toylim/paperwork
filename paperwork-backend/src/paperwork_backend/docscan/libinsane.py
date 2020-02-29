@@ -1,3 +1,4 @@
+import gettext
 import itertools
 import logging
 
@@ -24,7 +25,7 @@ import openpaperwork_core.promise
 
 
 LOGGER = logging.getLogger(__name__)
-
+_ = gettext.gettext
 SCAN_ID_GENERATOR = itertools.count()
 
 
@@ -186,10 +187,18 @@ class Source(object):
                 "mainloop_schedule", self.core.call_all,
                 "on_scan_feed_start", scan_id
             )
+            self.core.call_all(
+                "on_progress", "scan", 0.0, _("Starting scan ...")
+            )
 
             session = self.source.scan_start()
 
             while not session.end_of_feed() and page_nb < max_pages:
+                self.core.call_all(
+                    "on_progress", "scan", 0.0,
+                    _("Scanning page %d ...") % page_nb
+                )
+
                 scan_params = session.get_scan_parameters()
                 LOGGER.info(
                     "Expected scan parameters: %s ; %dx%d = %d bytes",
@@ -208,6 +217,8 @@ class Source(object):
                 )
                 image = ImageAssembler(scan_params.get_width() * 3)
                 last_chunk = None
+                nb_lines = 0
+                total_lines = scan_params.get_height()
 
                 LOGGER.info("Scanning page %d/%d ...", page_nb, max_pages)
                 while not session.end_of_page():
@@ -217,13 +228,22 @@ class Source(object):
                     chunk = image.get_last_chunk()
                     if chunk is not last_chunk:
                         last_chunk = chunk
+                        pil = raw_to_img(scan_params, chunk)
+                        nb_lines += pil.size[1]
+                        self.core.call_all(
+                            "on_progress", "scan", nb_lines / total_lines,
+                            _("Scanning page %d ...") % page_nb
+                        )
                         self.core.call_all(
                             "mainloop_schedule", self.core.call_all,
-                            "on_scan_chunk", scan_id, scan_params,
-                            raw_to_img(scan_params, chunk)
+                            "on_scan_chunk", scan_id, scan_params, pil
                         )
 
                 LOGGER.info("Page %d/%d scanned", page_nb, max_pages)
+                self.core.call_all(
+                    "on_progress", "scan", 0.999,
+                    _("Scanning page %d ...") % page_nb
+                )
                 img = raw_to_img(scan_params, image.get_image())
                 yield img
                 self.core.call_all(
@@ -237,6 +257,7 @@ class Source(object):
                 "mainloop_schedule", self.core.call_all,
                 "on_scan_feed_end", scan_id
             )
+            self.core.call_all("on_progress", "scan", 1.0, _("Scanning done"))
         finally:
             session.cancel()
             if close_on_end:

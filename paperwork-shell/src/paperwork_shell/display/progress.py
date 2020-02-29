@@ -57,6 +57,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.thread = None
         self.lock = threading.Lock()
         self.interactive = False
+        self.enabled = True
 
     def _thread(self):
         while True:
@@ -74,8 +75,11 @@ class Plugin(openpaperwork_core.PluginBase):
     def cmd_set_interactive(self, interactive):
         self.interactive = interactive
 
+    def shell_show_progress(self, enabled):
+        self.enabled = enabled
+
     def on_progress(self, upd_type, progress, description=None):
-        if not self.interactive:
+        if not self.interactive or not self.enabled:
             return
 
         with self.lock:
