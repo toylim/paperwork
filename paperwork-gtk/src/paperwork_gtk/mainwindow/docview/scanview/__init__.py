@@ -107,6 +107,7 @@ class Scan(GObject.GObject):
             return
         size = self.get_size()
         self.widget.set_size_request(size[0], size[1])
+        self.emit("size_obtained")
 
     def refresh(self, reload=False):
         self.widget.queue_draw()
@@ -129,6 +130,7 @@ class Plugin(openpaperwork_core.PluginBase):
         super().__init__()
         self.scan = None
         self.doc_id = None
+        self.doc_url = None
 
     def get_interfaces(self):
         return [
@@ -152,8 +154,15 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def doc_open_components(self, pages, doc_id, doc_url, page_container):
         self.doc_id = doc_id
+        self.doc_url = doc_url
         scan_id = self.core.call_success("scan2doc_doc_id_to_scan_id", doc_id)
+
         self.scan = Scan(self.core, page_container, doc_id, scan_id)
+        nb_pages = self.core.call_success(
+            "doc_get_nb_pages_by_url", self.doc_url
+        )
+        self.scan.page_idx = nb_pages
+
         pages.append(self.scan)
 
     def on_scan2doc_start(self, scan_id, doc_id, doc_url):
@@ -175,24 +184,34 @@ class Plugin(openpaperwork_core.PluginBase):
             return
         if scan_id != self.scan.scan_id:
             return
+
         self.scan.size = (scan_params.get_width(), scan_params.get_height())
         self.scan.resize()
 
-        if page_nb == 0:
-            self.core.call_all(
-                "mainloop_schedule", self.core.call_all,
-                "docview_scroll_to_bottom"
-            )
+        nb_pages = self.core.call_success(
+            "doc_get_nb_pages_by_url", self.doc_url
+        )
 
-    def on_scan_page_end(self, scan_id, page_nb, img):
+        handle_id = None
+
+        def goto_page(*args, **kwargs):
+            self.scan.widget.disconnect(handle_id)
+            self.core.call_all("doc_goto_page", nb_pages)
+
+        handle_id = self.scan.widget.connect("size-allocate", goto_page)
+
+    def on_scan2doc_page_scanned(self, scan_id, doc_id, doc_url, page_idx):
         if self.scan is None:
             return
         if scan_id != self.scan.scan_id:
             return
-        self.core.call_all(
-            "mainloop_schedule", self.core.call_all,
-            "docview_scroll_to_bottom"
-        )
+
+        nb_pages = self.core.call_success(
+            "doc_get_nb_pages_by_url", self.doc_url
+        ) - 1
+        LOGGER.info("Displaying new page %d", nb_pages)
+        self.core.call_all("doc_reload", doc_id, doc_url)
+        self.core.call_all("doc_goto_page", nb_pages)
 
     def on_scan_feed_end(self, scan_id):
         if self.scan is None:

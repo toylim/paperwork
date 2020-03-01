@@ -99,6 +99,11 @@ class Plugin(openpaperwork_core.PluginBase):
         self.nb_pages.set_text(f"/ {nb_pages}")
         self.page_info.set_visible(True)
 
+    def doc_reload(self, doc_id, doc_url):
+        if doc_id != self.active_doc[0]:
+            return
+        self.doc_open(doc_id, doc_url)
+
     def on_page_shown(self, page_idx):
         txt = str(page_idx + 1)
         if txt != self.current_page.get_text():

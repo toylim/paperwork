@@ -10,7 +10,6 @@ except (ImportError, ValueError):
 
 import openpaperwork_core
 import openpaperwork_gtk.deps
-import paperwork_backend.sync
 
 LOGGER = logging.getLogger(__name__)
 
@@ -29,6 +28,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.scroll = None
         self.active_doc = ()
         self.active_page_idx = 0
+        self.target_page_idx = -1
         self.page_container = None
         self.pages = []
         self.page_widgets = {}
@@ -42,7 +42,6 @@ class Plugin(openpaperwork_core.PluginBase):
             'chkdeps',
             'doc_open',
             'gtk_docview',
-            'syncable',
         ]
 
     def get_deps(self):
@@ -144,17 +143,9 @@ class Plugin(openpaperwork_core.PluginBase):
             "doc_open_components",
             self.pages, doc_id, doc_url, self.page_container
         )
-        for page_idx in range(0, len(self.pages), 50):
-            self.pages[page_idx].connect(
-                "size_obtained", self.doc_view_set_default_zoom
-            )
-        if len(self.pages) >= self.MAX_PAGES:
-            self.pages[self.MAX_PAGES].connect(
-                "size_obtained", self.doc_view_set_default_zoom
-            )
-        # we cannot just listen to the last page, as it is the fake scan page
-        for page in self.pages[-self.MAX_PAGES:]:
-            page.connect("size_obtained", self.doc_view_set_default_zoom)
+
+        for page in self.pages:
+            page.connect("size_obtained", self._on_page_size_obtained)
 
         for page in self.pages:
             self.page_widgets[page.widget] = page
@@ -210,28 +201,38 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doc_goto_page(self.active_page_idx + 1)
 
     def doc_goto_page(self, page_idx):
+        assert(page_idx >= 0)
+        self.target_page_idx = page_idx
+
         if len(self.pages) <= 0:
             self.scroll.get_vadjustment().set_value(0)
             self.core.call_all("on_page_shown", 0)
-            return
+            return False
 
         if page_idx < 0:
             page_idx = 0
         if page_idx >= len(self.pages):
             page_idx = len(self.pages) - 1
-
-        LOGGER.info("Going to page %d", page_idx)
+        LOGGER.info(
+            "Going to page %d/%d (original: %d)",
+            page_idx, len(self.pages), self.target_page_idx
+        )
 
         self.core.call_all("on_page_shown", page_idx)
 
         widget = self.pages[page_idx].widget
         if widget is None:
-            return
+            LOGGER.warning("No widget yet for page %d", page_idx)
+            return False
 
         w_height = self.page_container.get_widget_position(widget)[1]
+        if w_height < 0:
+            LOGGER.warning("Failed to get widget height of page %d", page_idx)
+            return False
         if self.scroll.get_vadjustment().get_value() != w_height:
             self.scroll.get_vadjustment().set_value(w_height)
             self._last_scroll = w_height
+        return True
 
     def _upd_layout(self, *args, **kwargs):
         nb_columns = self.page_container.get_max_nb_columns()
@@ -284,6 +285,32 @@ class Plugin(openpaperwork_core.PluginBase):
     def doc_view_set_default_zoom(self, page, *args, **kwargs):
         self._rearrange_pages(self.nb_columns)
 
+    def _on_page_size_obtained(self, page):
+        if page.page_idx % 50 == 0:
+            self.doc_view_set_default_zoom(page)
+        elif page.page_idx >= len(self.pages) - self.MAX_PAGES:
+            self.doc_view_set_default_zoom(page)
+
+        if page.page_idx != self.target_page_idx:
+            return
+        target_page_idx = page.page_idx
+
+        # page container will be resized
+        # once it's resized, we want to jump back to the active page
+
+        handler_id = None
+
+        def scroll_on_resize(*args, **kwargs):
+            if page.widget.get_allocated_height() <= 1:
+                return
+            if self.doc_goto_page(target_page_idx):
+                self.page_container.disconnect(handler_id)
+            self.target_page_idx = -1
+
+        handler_id = self.page_container.connect(
+            "size-allocate", scroll_on_resize
+        )
+
     def doc_view_get_zoom(self):
         if len(self.pages) <= 0:
             return 1.0
@@ -298,54 +325,17 @@ class Plugin(openpaperwork_core.PluginBase):
         if doc_id != self.active_doc[0]:
             return
 
-        active_page = self.active_page_idx
+        if self.target_page_idx >= 0:
+            active_page = self.target_page_idx
+        else:
+            active_page = self.active_page_idx
         active_doc = self.active_doc
+        nb_columns = self.nb_columns
 
         self.doc_close()
         self.doc_open(*active_doc)
+        self.nb_columns = nb_columns
         self.doc_goto_page(active_page)
-
-    def docview_scroll_to_bottom(self):
-        vadj = self.scroll.get_vadjustment()
-        vadj.set_value(vadj.get_upper())
 
     def docview_set_bottom_margin(self, height):
         self.page_container.set_bottom_margin(height)
-
-    def doc_transaction_start(self, out: list, total_expected=-1):
-        class RefreshTransaction(paperwork_backend.sync.BaseTransaction):
-            priority = -100000
-
-            def __init__(s, core, total_expected=-1):
-                super().__init__(core, total_expected)
-                s.refresh = False
-
-            def add_obj(s, doc_id):
-                if self.active_doc[0] == doc_id:
-                    s.refresh = True
-
-            def upd_obj(s, doc_id):
-                if self.active_doc[0] == doc_id:
-                    s.refresh = True
-
-            def del_obj(s, doc_id):
-                if self.active_doc[0] == doc_id:
-                    s.refresh = True
-
-            def cancel(s):
-                if s.refresh:
-                    self.core.call_one(
-                        "mainloop_schedule", self.doc_reload, *self.active_doc
-                    )
-
-            def commit(s):
-                if s.refresh:
-                    self.core.call_one(
-                        "mainloop_schedule", self.doc_reload, *self.active_doc
-                    )
-
-        out.append(RefreshTransaction(self.core, total_expected))
-
-    def sync(self, promises: list):
-        # nothing should change visually on a sync.
-        pass
