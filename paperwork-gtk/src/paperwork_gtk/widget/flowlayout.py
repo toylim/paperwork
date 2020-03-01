@@ -379,7 +379,6 @@ class CustomFlowLayout(Gtk.Box):
         return layout_width / widget_width
 
     def set_bottom_margin(self, height):
-        print("##### BOTTOM: {}".format(height))
         self.bottom_margin = height
         self.queue_resize()
 
