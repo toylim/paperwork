@@ -29,7 +29,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.halt_cause = None
         self.task_count = 0
 
-        self.lock = threading.Lock()
+        self.lock = threading.RLock()
         self.active_tasks = collections.defaultdict(lambda: 0)
 
     def get_interfaces(self):
@@ -75,6 +75,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _mainloop_quit_graceful(self):
         quit_now = True
+
         with self.lock:
             # keep in mind this function is in a task too
             if self.task_count > 1:
