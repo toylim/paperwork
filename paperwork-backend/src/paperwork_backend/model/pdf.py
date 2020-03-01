@@ -254,10 +254,19 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def _page_has_text_by_url(self, doc_url, page_idx):
+        if doc_url in self.cache_nb_pages:
+            if page_idx >= self.cache_nb_pages[doc_url]:
+                return None
+
         (pdf_url, pdf) = self._open_pdf(doc_url)
         if pdf is None:
             return
-        return len(pdf.get_page(page_idx).get_text().strip()) > 0
+
+        page = pdf.get_page(page_idx)
+        if page is None:
+            return
+
+        return len(page.get_text().strip()) > 0
 
     def page_has_text_by_url(self, doc_url, page_idx):
         # Poppler is not thread-safe
@@ -266,11 +275,17 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def _page_get_boxes_by_url(self, doc_url, page_idx):
+        if doc_url in self.cache_nb_pages:
+            if page_idx >= self.cache_nb_pages[doc_url]:
+                return None
+
         (pdf_url, pdf) = self._open_pdf(doc_url)
         if pdf is None:
             return
 
         pdf_page = pdf.get_page(page_idx)
+        if pdf_page is None:
+            return
 
         txt = pdf_page.get_text()
         if txt.strip() == "":
@@ -330,11 +345,18 @@ class Plugin(openpaperwork_core.PluginBase):
             )
 
     def _page_get_paper_size_by_url(self, doc_url, page_idx):
+        if doc_url in self.cache_nb_pages:
+            if page_idx >= self.cache_nb_pages[doc_url]:
+                return None
+
         (pdf_url, pdf) = self._open_pdf(doc_url)
         if pdf is None:
             return None
 
         page = pdf.get_page(page_idx)
+        if page is None:
+            return
+
         size = page.get_size()
 
         # points --> inches: / 72

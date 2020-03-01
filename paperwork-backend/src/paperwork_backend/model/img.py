@@ -1,4 +1,5 @@
 import logging
+import re
 
 import openpaperwork_core
 
@@ -8,6 +9,7 @@ from . import util
 LOGGER = logging.getLogger(__name__)
 
 PAGE_FILENAME_FMT = "paper.{}.jpg"
+PAGE_FILENAME_REGEX = re.compile(r"paper\.(\d+)\.jpg")
 PAGE_FILE_FORMAT = 'JPEG'
 PAGE_QUALITY = 90
 
@@ -66,12 +68,17 @@ class Plugin(openpaperwork_core.PluginBase):
         out.append(self.core.call_success("fs_hash", page_url))
 
     def doc_get_nb_pages_by_url(self, doc_url):
-        page_idx = 0
-        while self.page_get_img_url(doc_url, page_idx) is not None:
-            page_idx += 1
-        if page_idx <= 0:
+        files = self.core.call_success("fs_listdir", doc_url)
+        nb_pages = -1
+        for f in files:
+            f = self.core.call_success("fs_basename", f)
+            match = PAGE_FILENAME_REGEX.match(f)
+            if match is None:
+                continue
+            nb_pages = max(nb_pages, int(match.group(1)))
+        if nb_pages < 0:
             return None
-        return page_idx
+        return nb_pages
 
     def page_get_img_url(self, doc_url, page_idx, write=False):
         page_url = self.core.call_success(

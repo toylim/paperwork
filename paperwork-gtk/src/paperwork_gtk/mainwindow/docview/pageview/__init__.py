@@ -48,6 +48,7 @@ class Page(GObject.GObject):
         page_img_url = self.core.call_success(
             "page_get_img_url", self.doc_url, self.page_idx
         )
+        assert(page_img_url is not None)
 
         self.widget_tree = self.core.call_success(
             "gtk_load_widget_tree",
