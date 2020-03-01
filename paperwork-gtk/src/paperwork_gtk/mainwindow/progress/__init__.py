@@ -1,5 +1,7 @@
 import logging
 import math
+import threading
+import time
 
 import openpaperwork_core
 import openpaperwork_core.deps
@@ -14,11 +16,19 @@ except (ImportError, ValueError):
 
 
 LOGGER = logging.getLogger(__name__)
+TIME_BETWEEN_UPDATES = 0.3
 
 
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
+        # A thread updates the widgets every 300ms. We don't update them
+        # each time on_progress() is called to not degrade performanes
+        self.thread = None
+        self.lock = threading.Lock()
+        self.progress_widget_trees = {}
+        # self.progresses is only used to transmist new progress updates
+        # to the thread
         self.progresses = {}
         self.button_widget_tree = None
         self.details_widget_tree = None
@@ -64,7 +74,9 @@ class Plugin(openpaperwork_core.PluginBase):
             return
 
         self.button_widget_tree.get_object("progress_button").set_popover(
-            self.details_widget_tree.get_object("progresses_popover")
+            self.details_widget_tree.get_object(
+                "progresses_popover"
+            )
         )
         self.button_widget_tree.get_object("progress_icon").connect(
             "draw", self._on_icon_draw
@@ -78,41 +90,55 @@ class Plugin(openpaperwork_core.PluginBase):
         if not GDK_AVAILABLE:
             out['gdk'].update(openpaperwork_core.deps.GDK)
 
-    def on_progress(self, upd_type, progress, description=None):
-        if progress > 1.0:
-            LOGGER.warning(
-                "Invalid progression (%f) for [%s]",
-                progress, upd_type
-            )
-            progress = 1.0
+    def _thread(self):
+        while self.thread is not None:
+            time.sleep(TIME_BETWEEN_UPDATES)
+            self.core.call_all("mainloop_execute", self._upd_progress_widgets)
 
+    def _upd_progress_widgets(self):
+        with self.lock:
+            for (upd_type, (progress, description)) in self.progresses.items():
+                r = self._upd_progress_widget(
+                    upd_type, progress, description
+                )
+                if not r:
+                    self.thread = None
+                    break
+            self.progresses = {}
+
+    def _upd_progress_widget(self, upd_type, progress, description):
         if progress >= 1.0:  # deletion of progress
-            if upd_type not in self.progresses:
+            if upd_type not in self.progress_widget_trees:
                 return
-            widget_tree = self.progresses.pop(upd_type)
-            box = self.details_widget_tree.get_object("progresses_box")
+            widget_tree = self.progress_widget_trees.pop(upd_type)
+            box = self.details_widget_tree.get_object(
+                "progresses_box"
+            )
             details = widget_tree.get_object("progress_bar")
             box.remove(details)
             details.unparent()
             self.button_widget_tree.get_object("progress_button").queue_draw()
 
-            if len(self.progresses) <= 0:
+            if len(self.progress_widget_trees) <= 0:
                 self.button_widget_tree.get_object(
                     "progress_revealer"
                 ).set_reveal_child(False)
-            return
+                return False
+            return True
 
-        if upd_type not in self.progresses:  # creation of progressa
+        if upd_type not in self.progress_widget_trees:  # creation of progress
             widget_tree = self.core.call_success(
                 "gtk_load_widget_tree",
                 "paperwork_gtk.mainwindow.progress",
                 "progress_details.glade"
             )
-            box = self.details_widget_tree.get_object("progresses_box")
+            box = self.details_widget_tree.get_object(
+                "progresses_box"
+            )
             box.add(widget_tree.get_object("progress_bar"))
-            self.progresses[upd_type] = widget_tree
+            self.progress_widget_trees[upd_type] = widget_tree
         else:
-            widget_tree = self.progresses[upd_type]
+            widget_tree = self.progress_widget_trees[upd_type]
 
         # update of progress
         progress_bar = widget_tree.get_object("progress_bar")
@@ -124,15 +150,31 @@ class Plugin(openpaperwork_core.PluginBase):
         self.button_widget_tree.get_object(
             "progress_revealer"
         ).set_reveal_child(True)
+        return True
+
+    def on_progress(self, upd_type, progress, description=None):
+        with self.lock:
+            if progress > 1.0:
+                LOGGER.warning(
+                    "Invalid progression (%f) for [%s]",
+                    progress, upd_type
+                )
+                progress = 1.0
+
+            self.progresses[upd_type] = (progress, description)
+
+            if self.thread is None:
+                self.thread = threading.Thread(target=self._thread)
+                self.thread.start()
 
     def _on_icon_draw(self, drawing_area, cairo_ctx):
-        if len(self.progresses) <= 0:
+        if len(self.progress_widget_trees) <= 0:
             ratio = 1.0
         else:
             ratio = sum([
                 widget_tree.get_object("progress_bar").get_fraction()
-                for widget_tree in self.progresses.values()
-            ]) / len(self.progresses)
+                for widget_tree in self.progress_widget_trees.values()
+            ]) / len(self.progress_widget_trees)
 
         # Translated in Python from Nautilus source code
         # (2020/02/29: src/nautilus-toolbar.c:on_operations_icon_draw())
