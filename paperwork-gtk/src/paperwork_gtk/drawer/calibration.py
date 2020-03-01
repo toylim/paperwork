@@ -20,11 +20,6 @@ class Drawer(object):
         self.active = False
         self.drawer = None
 
-        self.core.call_all(
-            "config_add_observer", "scanner_calibration",
-            self.request_redraw
-        )
-
     def _get_frame(self):
         return self.core.call_success("config_get", "scanner_calibration")
 
@@ -36,6 +31,10 @@ class Drawer(object):
             self.stop()
 
         self.content_full_size = size
+        self.core.call_all(
+            "config_add_observer", "scanner_calibration",
+            self.request_redraw
+        )
         self.drawer = self.core.call_success(
             "draw_frame_start", self.drawing_area, self.content_full_size,
             self._get_frame, self._set_frame
