@@ -74,20 +74,24 @@ class Plugin(openpaperwork_core.PluginBase):
         self.mainloop_schedule(self._mainloop_quit_graceful)
 
     def _mainloop_quit_graceful(self):
+        quit_now = True
         with self.lock:
             # keep in mind this function is in a task too
             if self.task_count > 1:
+                quit_now = False
                 LOGGER.info(
                     "Quit graceful: Remaining tasks: %d", self.task_count - 1
                 )
                 for (k, v) in self.active_tasks.items():
                     LOGGER.info("Quit graceful: Remaining: %s = %d", k, v)
-                self.mainloop_schedule(
-                    self.mainloop_quit_graceful, delay_s=0.2
-                )
-                return
 
-            LOGGER.info("Quit graceful: Quitting")
+        if not quit_now:
+            self.mainloop_schedule(
+                self.mainloop_quit_graceful, delay_s=0.2
+            )
+            return
+
+        LOGGER.info("Quit graceful: Quitting")
 
         self.mainloop_quit_now()
 
@@ -146,14 +150,15 @@ class Plugin(openpaperwork_core.PluginBase):
                         func, exc_info=exc
                     )
             finally:
-                self.task_count -= 1
-                try:
-                    s = str(func)
-                    self.active_tasks[s] -= 1
-                    if self.active_tasks[s] <= 0:
-                        self.active_tasks.pop(s)
-                except KeyError:
-                    pass
+                with self.lock:
+                    self.task_count -= 1
+                    try:
+                        s = str(func)
+                        self.active_tasks[s] -= 1
+                        if self.active_tasks[s] <= 0:
+                            self.active_tasks.pop(s)
+                    except KeyError:
+                        pass
             return False
 
         args = (args, kwargs)
@@ -173,10 +178,6 @@ class Plugin(openpaperwork_core.PluginBase):
         # loop.
         if self.loop_ident is None or current == self.loop_ident:
             return func(*args, **kwargs)
-
-        with self.lock:
-            self.task_count += 1
-            self.active_tasks[str(func)] += 1
 
         event = threading.Event()
         out = [None]
