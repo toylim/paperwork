@@ -45,7 +45,6 @@ class WidgetInfo(object):
             self.size = (0, 0)
         self.position = (-1, -1)
         self.visible = False
-        self.size_allocate_handler_id = -1
 
     def update_widget_size(self):
         if self.widget is None:  # test mode
@@ -198,6 +197,7 @@ class CustomFlowLayout(Gtk.Box):
         self.vadjustment = None
         self.layout_max = (0, 0)
         self.bottom_margin = 0
+        self.allocation = None
 
         self.set_has_window(False)
         self.set_redraw_on_allocate(False)
@@ -217,11 +217,9 @@ class CustomFlowLayout(Gtk.Box):
 
     def _on_remove(self, _, widget):
         with self.mutex:
-            w = self.widgets.pop(widget)
+            self.widgets.pop(widget)
             self.queue_draw()
             self.queue_resize()
-            w.widget.disconnect(w.size_allocate_handler_id)
-            w.size_allocate_handler_id = -1
 
     def do_forall(self, include_internals: bool, callback, callback_data=None):
         if not hasattr(self, 'mutex'):
@@ -254,9 +252,6 @@ class CustomFlowLayout(Gtk.Box):
             w = WidgetInfo(widget, alignment)
             self.widgets[widget] = w
             self.add(widget)
-            w.size_allocate_handler_id = w.widget.connect(
-                "size-allocate", self._on_widget_size_allocate
-            )
 
     def do_get_request_mode(self):
         return Gtk.SizeRequestMode.WIDTH_FOR_HEIGHT
@@ -287,27 +282,39 @@ class CustomFlowLayout(Gtk.Box):
         return self.do_get_preferred_width()
 
     def _on_size_allocate(self, _, allocation):
-        with self.mutex:
-            (_, self.layout_max) = recompute_box_positions(
-                self.core, self.widgets.values(), allocation.width,
-                self.spacing
-            )
-
-            for widget in self.widgets.values():
-                widget.update_widget_size()
-                rect = Gdk.Rectangle()
-                rect.x = allocation.x + widget.position[0]
-                rect.y = allocation.y + widget.position[1]
-                rect.width = widget.size[0]
-                rect.height = widget.size[1]
-                widget.widget.size_allocate(rect)
-        self.emit('layout_rearranged')
+        self.allocation = allocation
+        self.recompute_layout()
 
     def get_max_nb_columns(self):
         return self.layout_max[0]
 
     def get_nb_lines(self):
         return self.layout_max[1]
+
+    def recompute_layout(self):
+        if self.allocation is None:
+            return
+
+        with self.mutex:
+            self.recomputing = True
+            try:
+                (_, self.layout_max) = recompute_box_positions(
+                    self.core, self.widgets.values(), self.allocation.width,
+                    self.spacing
+                )
+
+                for widget in self.widgets.values():
+                    widget.update_widget_size()
+                    rect = Gdk.Rectangle()
+                    rect.x = self.allocation.x + widget.position[0]
+                    rect.y = self.allocation.y + widget.position[1]
+                    rect.width = widget.size[0]
+                    rect.height = widget.size[1]
+                    widget.widget.size_allocate(rect)
+            finally:
+                self.recomputing = False
+        self.emit('layout_rearranged')
+        self.update_visibility()
 
     def update_visibility(self):
         with self.mutex:
@@ -347,9 +354,6 @@ class CustomFlowLayout(Gtk.Box):
             return w.visible
 
     def _on_vadj_value_changed(self, vadjustment):
-        self.update_visibility()
-
-    def _on_widget_size_allocate(self, widget, allocation):
         self.update_visibility()
 
     def _on_destroy(self, _):

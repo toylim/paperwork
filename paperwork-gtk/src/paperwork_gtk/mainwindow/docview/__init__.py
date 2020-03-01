@@ -32,8 +32,10 @@ class Plugin(openpaperwork_core.PluginBase):
         self.page_container = None
         self.pages = []
         self.page_widgets = {}
+        self.nb_columns = self.MAX_PAGES
         self._last_scroll = 0  # to avoid multiple calls
         self._last_nb_columns = -1  # to avoid multiple calls
+        self._last_zoom_auto = -1
 
     def get_interfaces(self):
         return [
@@ -128,6 +130,8 @@ class Plugin(openpaperwork_core.PluginBase):
             self.page_container.remove(child)
 
     def doc_open(self, doc_id, doc_url):
+        self.nb_columns = self.MAX_PAGES
+
         if len(self.pages) > 0:
             self.doc_close()
 
@@ -140,19 +144,24 @@ class Plugin(openpaperwork_core.PluginBase):
             "doc_open_components",
             self.pages, doc_id, doc_url, self.page_container
         )
-        for page in self.pages:
-            page.connect("size_obtained", self._on_page_size_obtained)
-        for page in self.pages[:self.MAX_PAGES]:
-            page.connect("size_obtained", self.doc_view_set_default_zoom)
+        for page_idx in range(0, len(self.pages), 50):
+            self.pages[page_idx].connect(
+                "size_obtained", self.doc_view_set_default_zoom
+            )
+        self.pages[self.MAX_PAGES].connect(
+            "size_obtained", self.doc_view_set_default_zoom
+        )
+        # we cannot just listen to the last page, as it is the fake scan page
+        for page_idx in range(-self.MAX_PAGES, 1):
+            self.pages[page_idx].connect(
+                "size_obtained", self.doc_view_set_default_zoom
+            )
+
         for page in self.pages:
             self.page_widgets[page.widget] = page
             self.page_container.add_child(page.widget, Gtk.Align.CENTER)
 
         self.doc_goto_page(0)
-
-    def _on_page_size_obtained(self, page):
-        if page.page_idx == self.active_page_idx:
-            self.doc_goto_page(self.active_page_idx)
 
     def on_page_shown(self, page_idx):
         LOGGER.info("Active page %d", page_idx)
@@ -249,24 +258,33 @@ class Plugin(openpaperwork_core.PluginBase):
         layout_width = self.page_container.get_width_without_margins(
             nb_columns
         )
-        if layout_width is None:
+        if layout_width is None or len(self.pages) <= 0:
             return
 
-        pages = self.pages[:nb_columns]
-        page_widths = [p.get_full_size()[0] for p in pages]
-        zoom = layout_width / sum(page_widths)
+        page_widths = 0
+        for page_idx in range(0, len(self.pages), nb_columns):
+            pages = self.pages[page_idx:page_idx + nb_columns]
+            page_widths = max(
+                page_widths, sum([p.get_full_size()[0] for p in pages])
+            )
+
+        zoom = layout_width / page_widths
         LOGGER.info(
             "Page widths = %s ==> Zoom: %d / %d = %f",
-            page_widths, layout_width, sum(page_widths), zoom
+            page_widths, layout_width, page_widths, zoom
         )
-        self.core.call_all("doc_view_set_zoom", zoom)
+
+        if zoom != self._last_zoom_auto:
+            self._last_zoom_auto = zoom
+            self.core.call_all("doc_view_set_zoom", zoom)
 
     def doc_view_set_layout(self, name):
-        nb_columns = self.LAYOUTS[name]
-        self._rearrange_pages(nb_columns)
+        self.nb_columns = self.LAYOUTS[name]
+        self._rearrange_pages(self.nb_columns)
 
-    def doc_view_set_default_zoom(self, *args, **kwargs):
-        self._rearrange_pages(self.MAX_PAGES)
+    def doc_view_set_default_zoom(self, page, *args, **kwargs):
+        print("### DEFAULT: {} {}".format(page, self.nb_columns))
+        self._rearrange_pages(self.nb_columns)
 
     def doc_view_get_zoom(self):
         if len(self.pages) <= 0:
@@ -276,6 +294,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def doc_view_set_zoom(self, zoom):
         for page in self.pages:
             page.set_zoom(zoom)
+        self.page_container.recompute_layout()
 
     def doc_reload(self, doc_id, doc_url):
         if doc_id != self.active_doc[0]:
