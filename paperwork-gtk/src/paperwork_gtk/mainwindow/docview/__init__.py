@@ -283,7 +283,6 @@ class Plugin(openpaperwork_core.PluginBase):
         self._rearrange_pages(self.nb_columns)
 
     def doc_view_set_default_zoom(self, page, *args, **kwargs):
-        print("### DEFAULT: {} {}".format(page, self.nb_columns))
         self._rearrange_pages(self.nb_columns)
 
     def doc_view_get_zoom(self):
