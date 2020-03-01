@@ -148,14 +148,13 @@ class Plugin(openpaperwork_core.PluginBase):
             self.pages[page_idx].connect(
                 "size_obtained", self.doc_view_set_default_zoom
             )
-        self.pages[self.MAX_PAGES].connect(
-            "size_obtained", self.doc_view_set_default_zoom
-        )
-        # we cannot just listen to the last page, as it is the fake scan page
-        for page_idx in range(-self.MAX_PAGES, 1):
-            self.pages[page_idx].connect(
+        if len(self.pages) >= self.MAX_PAGES:
+            self.pages[self.MAX_PAGES].connect(
                 "size_obtained", self.doc_view_set_default_zoom
             )
+        # we cannot just listen to the last page, as it is the fake scan page
+        for page in self.pages[-self.MAX_PAGES:]:
+            page.connect("size_obtained", self.doc_view_set_default_zoom)
 
         for page in self.pages:
             self.page_widgets[page.widget] = page
