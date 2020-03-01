@@ -46,7 +46,7 @@ class Plugin(openpaperwork_core.PluginBase):
         }
         self.core.call_all("pageview_refresh_all")
 
-    def on_search_results(self, docs):
+    def on_search_results(self, query, docs):
         pass
 
     def on_page_draw(self, cairo_ctx, page):

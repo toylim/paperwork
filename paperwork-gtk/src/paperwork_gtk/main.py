@@ -45,6 +45,7 @@ DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'paperwork_gtk.mainwindow.progress',
     'paperwork_gtk.mainwindow.search.field',
     'paperwork_gtk.mainwindow.window',
+    'paperwork_gtk.new_doc',
     'paperwork_gtk.readonly',
     'paperwork_gtk.settings',
     'paperwork_gtk.settings.ocr.settings',

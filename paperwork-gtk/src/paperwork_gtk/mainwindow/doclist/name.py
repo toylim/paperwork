@@ -1,3 +1,4 @@
+import gettext
 import logging
 
 try:
@@ -12,6 +13,7 @@ import openpaperwork_core
 import openpaperwork_gtk.deps
 
 
+_ = gettext.gettext
 LOGGER = logging.getLogger(__name__)
 
 
@@ -48,8 +50,13 @@ class Plugin(openpaperwork_core.PluginBase):
             out['gtk'].update(openpaperwork_gtk.deps.GTK)
 
     def on_doc_box_creation(self, doc_id, gtk_row, custom_flowlayout):
-        doc_date = self.core.call_success("doc_get_date_by_id", doc_id)
-        doc_date = self.core.call_success("i18n_date_short", doc_date)
-        label = Gtk.Label.new(doc_date)
+        doc_url = self.core.call_success("doc_id_to_url", doc_id)
+        is_new = self.core.call_success("is_doc", doc_url) is None
+        if is_new:
+            doc_txt = _("New document")
+        else:
+            doc_date = self.core.call_success("doc_get_date_by_id", doc_id)
+            doc_txt = self.core.call_success("i18n_date_short", doc_date)
+        label = Gtk.Label.new(doc_txt)
         label.set_visible(True)
         custom_flowlayout.add_child(label, Gtk.Align.START)

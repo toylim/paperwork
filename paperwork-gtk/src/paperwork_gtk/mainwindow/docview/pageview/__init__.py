@@ -224,7 +224,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doc_close()
 
         nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)
-        LOGGER.info("Number of pages displayed: %d", nb_pages)
+        LOGGER.info("Number of pages displayed: %s", nb_pages)
         if nb_pages is None:
             LOGGER.warning("Failed to get the number of pages in %s", doc_id)
             nb_pages = 0

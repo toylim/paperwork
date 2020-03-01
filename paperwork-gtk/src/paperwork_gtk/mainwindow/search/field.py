@@ -113,7 +113,7 @@ class Plugin(openpaperwork_core.PluginBase):
             # changed (user tying). No point in displaying obsolete results.
             if query != self.search_entry.get_text():
                 return
-            self.core.call_all("on_search_results", doc_ids)
+            self.core.call_all("on_search_results", query, doc_ids)
 
         promise = promise.then(show_if_query_still_valid)
 

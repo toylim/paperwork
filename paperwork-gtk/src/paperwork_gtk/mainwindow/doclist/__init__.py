@@ -118,13 +118,6 @@ class Plugin(openpaperwork_core.PluginBase):
         self.row_to_docid = {}
         self.docid_to_row = {}
 
-    def doclist_refresh(self):
-        self._doclist_clear()
-        self.last_date = datetime.datetime(year=1, month=1, day=1)
-        currently_visible = self.doc_visibles
-        self.doc_visibles = 0
-        self.doclist_extend(currently_visible)
-
     def _add_date_box(self, name, txt):
         widget_tree = self.core.call_success(
             "gtk_load_widget_tree",
@@ -134,10 +127,10 @@ class Plugin(openpaperwork_core.PluginBase):
         row = widget_tree.get_object("date_box")
         self.doclist.insert(row, -1)
 
-    def _add_doc_box(self, doc_id):
+    def _add_doc_box(self, doc_id, box="doc_box.glade"):
         widget_tree = self.core.call_success(
             "gtk_load_widget_tree",
-            "paperwork_gtk.mainwindow.doclist", "doc_box.glade"
+            "paperwork_gtk.mainwindow.doclist", box
         )
 
         doc_box = widget_tree.get_object("doc_box")
@@ -203,9 +196,14 @@ class Plugin(openpaperwork_core.PluginBase):
 
         return len(doc_ids)
 
-    def doclist_show(self, docs):
+    def doclist_show(self, docs, show_new=True):
         self.doclist_clear()
         self.doc_ids = docs
+
+        if show_new:
+            new_doc = self.core.call_success("get_new_doc")
+            self._add_doc_box(new_doc[0])
+
         self.doclist_extend(NB_DOCS_PER_PAGE)
 
     def on_search_start(self, query):
@@ -213,8 +211,8 @@ class Plugin(openpaperwork_core.PluginBase):
         spinner.set_visible(True)
         spinner.start()
 
-    def on_search_results(self, docs):
-        self.doclist_show(docs)
+    def on_search_results(self, query, docs):
+        self.doclist_show(docs, show_new=(query == ""))
         spinner = self.widget_tree.get_object("doclist_spinner")
         spinner.set_visible(False)
         spinner.stop()
