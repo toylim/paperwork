@@ -92,7 +92,8 @@ class PdfLineBox(object):
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
-        self.cache = {}
+        self.cache_hash = {}
+        self.cache_nb_pages = {}
 
     def get_interfaces(self):
         return [
@@ -159,10 +160,10 @@ class Plugin(openpaperwork_core.PluginBase):
 
         # cache the hash to speed up imports
         cache_key = "hash_{}".format(doc_url)
-        if cache_key not in self.cache:
+        if cache_key not in self.cache_hash:
             h = self.core.call_success("fs_hash", pdf_url)
-            self.cache[cache_key] = h
-        out.append(self.cache[cache_key])
+            self.cache_hash[cache_key] = h
+        out.append(self.cache_hash[cache_key])
 
     def page_get_hash_by_url(self, out: list, doc_url, page_idx):
         return self.doc_get_hash_by_url(out, doc_url)
@@ -186,18 +187,25 @@ class Plugin(openpaperwork_core.PluginBase):
         return pdf.get_n_pages()
 
     def doc_get_nb_pages_by_url(self, doc_url):
+        if doc_url in self.cache_nb_pages:
+            return self.cache_nb_pages[doc_url]
+
         # Poppler is not thread-safe
-        return self.core.call_success(
+        r = self.core.call_success(
             "mainloop_execute", self._doc_get_nb_pages_by_url, doc_url
         )
+        if r is not None:
+            self.cache_nb_pages[doc_url] = r
+        return r
 
     def page_get_img_url(self, doc_url, page_idx, write=False):
         if write:
             return None
-        pdf_url = self._get_pdf_url(doc_url)
-        if pdf_url is None:
+        nb_pages = self.doc_get_nb_pages_by_url(doc_url)
+        if nb_pages is None or page_idx >= nb_pages:
             return None
         # same URL used in browsers
+        pdf_url = self._get_pdf_url(doc_url)
         return "{}#page={}".format(pdf_url, str(page_idx + 1))
 
     @staticmethod
