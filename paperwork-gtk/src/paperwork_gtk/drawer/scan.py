@@ -78,6 +78,9 @@ class Drawer(object):
         self.request_redraw()
 
     def on_scan_chunk(self, img_chunk):
+        if self.image is None:
+            return
+
         size = img_chunk.size
         LOGGER.debug("Scan chunk: %s", size)
         img_chunk = self.core.call_success(
@@ -203,12 +206,16 @@ class Plugin(openpaperwork_core.PluginBase):
         self.active_drawers[scan_id].scan_size
 
     def on_scan_feed_start(self, scan_id):
-        if scan_id in self.active_drawers:
+        self.core.call_all("on_busy")
+        if scan_id not in self.active_drawers:
             return
+        # we show the app as busy when the user clicks on 'scan'
+        # and we stop the busy indicator when a page is actually scanning
         # instantiate a default drawer to keep track of the size and the chunks
         self.active_drawers[scan_id] = Drawer(self.core)
 
     def on_scan_page_start(self, scan_id, page_nb, scan_params):
+        self.core.call_all("on_idle")
         if None in self.active_drawers:
             self.active_drawers[None].on_scan_page_start(scan_params)
         if scan_id in self.active_drawers:
@@ -221,6 +228,7 @@ class Plugin(openpaperwork_core.PluginBase):
             self.active_drawers[k].on_scan_chunk(img_chunk)
 
     def on_scan_page_end(self, scan_id, page_nb, img):
+        self.core.call_all("on_busy")
         for k in (None, scan_id):
             if k not in self.active_drawers:
                 continue
@@ -230,6 +238,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 self.active_drawers.pop(k)
 
     def on_scan_feed_end(self, scan_id):
+        self.core.call_all("on_idle")
         for k in (None, scan_id):
             if k not in self.active_drawers:
                 continue
