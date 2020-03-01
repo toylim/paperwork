@@ -292,6 +292,9 @@ class Plugin(openpaperwork_core.PluginBase):
         vadj = self.scroll.get_vadjustment()
         vadj.set_value(vadj.get_upper())
 
+    def docview_set_bottom_margin(self, height):
+        self.page_container.set_bottom_margin(height)
+
     def doc_transaction_start(self, out: list, total_expected=-1):
         class RefreshTransaction(paperwork_backend.sync.BaseTransaction):
             priority = -100000

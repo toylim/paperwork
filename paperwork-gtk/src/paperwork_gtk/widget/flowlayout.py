@@ -197,6 +197,7 @@ class CustomFlowLayout(Gtk.Box):
         self.spacing = spacing
         self.vadjustment = None
         self.layout_max = (0, 0)
+        self.bottom_margin = 0
 
         self.set_has_window(False)
         self.set_redraw_on_allocate(False)
@@ -275,6 +276,7 @@ class CustomFlowLayout(Gtk.Box):
             height = recompute_height_for_width(
                 self.widgets.values(), width, self.spacing
             )
+            height += self.bottom_margin
             return (height, height)
 
     def do_get_preferred_height(self):
@@ -375,6 +377,11 @@ class CustomFlowLayout(Gtk.Box):
             return None
 
         return layout_width / widget_width
+
+    def set_bottom_margin(self, height):
+        print("##### BOTTOM: {}".format(height))
+        self.bottom_margin = height
+        self.queue_resize()
 
 
 if GTK_AVAILABLE:

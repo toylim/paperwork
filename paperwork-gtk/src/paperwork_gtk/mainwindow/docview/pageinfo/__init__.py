@@ -75,6 +75,13 @@ class Plugin(openpaperwork_core.PluginBase):
 
         self.core.call_success("docview_get_body").add_overlay(self.page_info)
 
+        def _set_docview_margin(page_info, size_allocation):
+            self.core.call_all(
+                "docview_set_bottom_margin", page_info.get_allocated_height()
+            )
+
+        self.page_info.connect("size-allocate", _set_docview_margin)
+
     def _change_page(self, *args, **kwargs):
         txt = self.current_page.get_text()
         if txt == "":
