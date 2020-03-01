@@ -28,6 +28,8 @@ class Plugin(openpaperwork_core.PluginBase):
         self.loop_ident = None
         self.halt_cause = None
         self.task_count = 0
+
+        self.lock = threading.Lock()
         self.active_tasks = collections.defaultdict(lambda: 0)
 
     def get_interfaces(self):
@@ -72,48 +74,59 @@ class Plugin(openpaperwork_core.PluginBase):
         self.mainloop_schedule(self._mainloop_quit_graceful)
 
     def _mainloop_quit_graceful(self):
-        if self.task_count > 1:  # keep in mind this function is in a task too
-            LOGGER.info(
-                "Quit graceful: Remaining tasks: %d", self.task_count - 1
-            )
-            for (k, v) in self.active_tasks.items():
-                LOGGER.info("Quit graceful: Remaining: %s = %d", k, v)
-            self.mainloop_schedule(self.mainloop_quit_graceful, delay_s=0.2)
-            return
+        with self.lock:
+            # keep in mind this function is in a task too
+            if self.task_count > 1:
+                LOGGER.info(
+                    "Quit graceful: Remaining tasks: %d", self.task_count - 1
+                )
+                for (k, v) in self.active_tasks.items():
+                    LOGGER.info("Quit graceful: Remaining: %s = %d", k, v)
+                self.mainloop_schedule(
+                    self.mainloop_quit_graceful, delay_s=0.2
+                )
+                return
 
-        LOGGER.info("Quit graceful: Quitting")
+            LOGGER.info("Quit graceful: Quitting")
+
         self.mainloop_quit_now()
-        self.task_count = 1  # we are actually the one task still running
-        self.active_tasks = collections.defaultdict(lambda: 0)
+
+        with self.lock:
+            self.task_count = 1  # we are actually the one task still running
+            self.active_tasks = collections.defaultdict(lambda: 0)
 
     def mainloop_quit_now(self):
-        self.loop.quit()
-        self.loop = None
-        self.task_count = 0
-        self.active_tasks = collections.defaultdict(lambda: 0)
+        with self.lock:
+            self.loop.quit()
+            self.loop = None
+            self.task_count = 0
+            self.active_tasks = collections.defaultdict(lambda: 0)
 
     def mainloop_ref(self, obj):
-        self.task_count += 1
-        self.active_tasks[str(obj)] += 1
+        with self.lock:
+            self.task_count += 1
+            self.active_tasks[str(obj)] += 1
 
     def mainloop_unref(self, obj):
-        self.task_count -= 1
-        assert(self.task_count >= 0)
-        try:
-            s = str(obj)
-            self.active_tasks[s] -= 1
-            if self.active_tasks[s] <= 0:
-                self.active_tasks.pop(s)
-        except KeyError:
-            pass
+        with self.lock:
+            self.task_count -= 1
+            assert(self.task_count >= 0)
+            try:
+                s = str(obj)
+                self.active_tasks[s] -= 1
+                if self.active_tasks[s] <= 0:
+                    self.active_tasks.pop(s)
+            except KeyError:
+                pass
 
     def mainloop_schedule(self, func, *args, delay_s=0, **kwargs):
         assert(hasattr(func, '__call__'))
 
-        self._check_mainloop_instantiated()
+        with self.lock:
+            self._check_mainloop_instantiated()
 
-        self.task_count += 1
-        self.active_tasks[str(func)] += 1
+            self.task_count += 1
+            self.active_tasks[str(func)] += 1
 
         def decorator(func, args):
             (args, kwargs) = args
@@ -160,6 +173,10 @@ class Plugin(openpaperwork_core.PluginBase):
         # loop.
         if self.loop_ident is None or current == self.loop_ident:
             return func(*args, **kwargs)
+
+        with self.lock:
+            self.task_count += 1
+            self.active_tasks[str(func)] += 1
 
         event = threading.Event()
         out = [None]
