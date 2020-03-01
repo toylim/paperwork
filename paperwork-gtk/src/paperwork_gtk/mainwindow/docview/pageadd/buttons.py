@@ -16,6 +16,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.active_doc_id = None
         self.active_doc_url = None
         self.write_allowed = True
+        self.scanning = False
 
     def get_interfaces(self):
         return [
@@ -76,7 +77,8 @@ class Plugin(openpaperwork_core.PluginBase):
         self.widget_tree.get_object("pageadd_button").set_sensitive(
             self.default_action is not None and
             self.active_doc_id is not None and
-            self.write_allowed
+            self.write_allowed and
+            not self.scanning
         )
 
     def pageadd_set_default_action(self, txt, callback, *args):
@@ -107,4 +109,12 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def on_backend_readwrite(self):
         self.write_allowed = True
+        self._update_sensitivity()
+
+    def on_scan_feed_start(self, scan_id):
+        self.scanning = True
+        self._update_sensitivity()
+
+    def on_scan_feed_end(self, scan_id):
+        self.scanning = False
         self._update_sensitivity()
