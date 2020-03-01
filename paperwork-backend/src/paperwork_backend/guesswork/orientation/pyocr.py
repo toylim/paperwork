@@ -162,12 +162,12 @@ class Plugin(openpaperwork_core.PluginBase):
             )
             return None
 
-        ocr_lang = self.core.call_success("ocr_get_lang")
+        ocr_langs = self.core.call_success("ocr_get_active_langs")
 
         img = self.core.call_success("url_to_pillow", page_img_url)
 
         try:
-            r = ocr_tool.detect_orientation(img, lang=ocr_lang)
+            r = ocr_tool.detect_orientation(img, lang="+".join(ocr_langs))
         except pyocr.PyocrException as exc:
             LOGGER.warning(
                 "Orientation guessing: Failed to guess orientation",
