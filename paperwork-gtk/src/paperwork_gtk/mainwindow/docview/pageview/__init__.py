@@ -33,10 +33,9 @@ class Page(GObject.GObject):
         )),
     }
 
-    def __init__(self, core, flow_layout, doc_id, doc_url, page_idx, nb_pages):
+    def __init__(self, core, doc_id, doc_url, page_idx, nb_pages):
         super().__init__()
         self.core = core
-        self.flow_layout = flow_layout
         self.doc_id = doc_id
         self.doc_url = doc_url
         self.page_idx = page_idx
@@ -44,11 +43,6 @@ class Page(GObject.GObject):
         self.visible = False
 
         self.zoom = 1.0
-
-        page_img_url = self.core.call_success(
-            "page_get_img_url", self.doc_url, self.page_idx
-        )
-        assert(page_img_url is not None)
 
         self.widget_tree = self.core.call_success(
             "gtk_load_widget_tree",
@@ -58,22 +52,21 @@ class Page(GObject.GObject):
         self.widget.set_visible(False)  # visible in the GTK sense
         self.widget.connect("draw", self._on_draw)
 
-        # visible here means visible on screen (not hidden by the
-        # ScrolledWindow)
-        self._on_widget_visible_handler_id = flow_layout.connect(
-            "widget_visible", self._on_widget_visible
-        )
-        self._on_widget_hidden_handler_id = flow_layout.connect(
-            "widget_hidden", self._on_widget_hidden
-        )
+        self.renderer = None
+        self._load_renderer()
 
-        self.renderer = core.call_success(
+    def _load_renderer(self):
+        page_img_url = self.core.call_success(
+            "page_get_img_url", self.doc_url, self.page_idx
+        )
+        assert(page_img_url is not None)
+
+        self.renderer = self.core.call_success(
             "cairo_renderer_by_url", "page_loader", page_img_url
         )
         self.renderer.connect("getting_size", self._on_renderer_getting_size)
         self.renderer.connect("size_obtained", self._on_renderer_size)
         self.renderer.connect("img_obtained", self._on_renderer_img)
-        self.renderer.start()
 
     def __str__(self):
         return "{} p{}".format(self.doc_id, self.page_idx)
@@ -87,6 +80,10 @@ class Page(GObject.GObject):
         self.emit('getting_size')
 
     def _on_renderer_size(self, renderer):
+        LOGGER.info(
+            "Page %d: size %d x %d",
+            self.page_idx, self.renderer.size[0], self.renderer.size[1]
+        )
         self.widget.set_visible(True)
         self.resize()
         self.core.call_all("on_page_size_obtained", self)
@@ -98,9 +95,10 @@ class Page(GObject.GObject):
         self.core.call_all("on_page_img_obtained", self)
         self.emit('img_obtained')
 
+    def load(self):
+        self.renderer.start()
+
     def close(self):
-        self.flow_layout.disconnect(self._on_widget_visible_handler_id)
-        self.flow_layout.disconnect(self._on_widget_hidden_handler_id)
         self.renderer.close()
 
     def get_zoom(self):
@@ -129,8 +127,8 @@ class Page(GObject.GObject):
     def refresh(self, reload=False):
         if reload:
             if self.visible:
-                self.hide()
-                self.show()
+                self.close()
+                self._load_renderer()
         elif self.widget is not None:
             self.widget.queue_draw()
 
@@ -142,19 +140,18 @@ class Page(GObject.GObject):
         self.visible = True
         self.renderer.render()
 
-    def _on_widget_visible(self, flowlayout, widget):
-        if widget != self.widget:
+    def set_visible(self, visible):
+        if self.visible == visible:
             return
-        self.show()
-        self.core.call_all("on_page_visibility_changed", self, True)
-        self.emit('visibility_changed', True)
 
-    def _on_widget_hidden(self, flowlayout, widget):
-        if widget != self.widget:
-            return
-        self.core.call_all("on_page_visibility_changed", self, False)
-        self.emit('visibility_changed', False)
-        self.hide()
+        if visible:
+            self.show()
+
+        self.core.call_all("on_page_visibility_changed", self, visible)
+        self.emit('visibility_changed', visible)
+
+        if not visible:
+            self.hide()
 
     def _on_draw(self, widget, cairo_ctx):
         self.renderer.draw(cairo_ctx)
@@ -171,6 +168,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
         self.pages = []
+        self.nb_loaded = 0
 
     def get_interfaces(self):
         return [
@@ -220,7 +218,20 @@ class Plugin(openpaperwork_core.PluginBase):
             page.close()
         self.pages = []
 
-    def doc_open_components(self, out: list, doc_id, doc_url, page_container):
+    def doc_reload_page_component(self, doc_id, doc_url, page_idx):
+        nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)
+        if page_idx >= nb_pages:
+            return None
+        page = Page(self.core, doc_id, doc_url, page_idx, nb_pages)
+        if page_idx < len(self.pages):
+            self.pages[page_idx] = page
+        elif page_idx == len(self.pages):
+            self.pages.append(page)
+        else:
+            assert()
+        return page
+
+    def doc_open_components(self, out: list, doc_id, doc_url):
         self.doc_close()
 
         nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)
@@ -238,29 +249,26 @@ class Plugin(openpaperwork_core.PluginBase):
 
         self.pages = [
             Page(
-                self.core, page_container, doc_id, doc_url, page_idx, nb_pages
+                self.core, doc_id, doc_url, page_idx, nb_pages
             ) for page_idx in range(0, nb_pages)
         ]
+        self.nb_loaded = 0
         for page in self.pages:
             self.core.call_all("on_new_page", page)
+            page.connect("size_obtained", self._on_page_img_size_obtained)
             out.append(page)
-
-        promise = openpaperwork_core.promise.Promise(
-            self.core, self.core.call_one,
-            args=(
-                "mainloop_schedule", self.core.call_all,
-                "on_progress", "loading_page_sizes", 1.0
-            ),
-        )
-        self.core.call_success(
-            "work_queue_add_promise", "page_loader", promise, priority=-100
-        )
 
         self.core.call_all(
             "on_perfcheck_stop",
             "pageview->doc_open_components({})".format(doc_id),
             nb_pages=nb_pages
         )
+
+    def _on_page_img_size_obtained(self, page):
+        self.nb_loaded += 1
+        if self.nb_loaded < len(self.pages):
+            return
+        self.core.call_all("on_progress", "loading_page_sizes", 1.0)
 
     def pageview_refresh_all(self):
         for page in self.pages:

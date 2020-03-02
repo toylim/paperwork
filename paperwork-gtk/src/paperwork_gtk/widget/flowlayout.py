@@ -95,6 +95,7 @@ def recompute_box_positions(core, widgets, width, spacing=(0, 0)):
     line_heights = []
     line = []
     line_width = spacing[0]
+    max_line_width = 0
     line_height = 0
     for widget in widgets:
         if not widget.is_visible():
@@ -104,12 +105,14 @@ def recompute_box_positions(core, widgets, width, spacing=(0, 0)):
             lines.append(line)
             line_heights.append(line_height)
             line = []
+            max_line_width = max(max_line_width, line_width)
             line_width = 0
             line_height = 0
         line.append(widget)
         line_width += spacing[0]
         line_width += widget.size[0]
         line_height = max(line_height, widget.size[1])
+    max_line_width = max(max_line_width, line_width)
     lines.append(line)
     line_heights.append(line_height)
 
@@ -125,8 +128,6 @@ def recompute_box_positions(core, widgets, width, spacing=(0, 0)):
         return out
 
     lines = [sort_widgets_per_alignments(line) for line in lines]
-
-    max_nb_columns = 0
 
     # position widgets in lines
     height = spacing[1]
@@ -165,28 +166,15 @@ def recompute_box_positions(core, widgets, width, spacing=(0, 0)):
         height += line_height
         height += spacing[1]
 
-        if nb_columns > max_nb_columns:
-            max_nb_columns = nb_columns
-
     core.call_all(
         "on_perfcheck_stop", "recompute_box_positions",
         nb_boxes=len(widgets)
     )
-    return (widgets, (max_nb_columns, len(lines)))
+    return (widgets, max_line_width, height)
 
 
 class CustomFlowLayout(Gtk.Box):
-    __gsignals__ = {
-        'widget_visible': (
-            GObject.SignalFlags.RUN_LAST, None, (Gtk.Widget,)
-        ),
-        'widget_hidden': (
-            GObject.SignalFlags.RUN_LAST, None, (Gtk.Widget,)
-        ),
-        'layout_rearranged': (GObject.SignalFlags.RUN_LAST, None, ()),
-    }
-
-    def __init__(self, core, spacing=(0, 0), scrollbars=None):
+    def __init__(self, core, spacing=(0, 0)):
         super().__init__()
         self.mutex = threading.RLock()
         self.core = core
@@ -195,7 +183,6 @@ class CustomFlowLayout(Gtk.Box):
 
         self.spacing = spacing
         self.vadjustment = None
-        self.layout_max = (0, 0)
         self.bottom_margin = 0
         self.allocation = None
 
@@ -206,13 +193,8 @@ class CustomFlowLayout(Gtk.Box):
         self.connect("add", self._on_add)
         self.connect("remove", self._on_remove)
 
-        if scrollbars is not None:
-            self.vadjustment = scrollbars.get_vadjustment()
-            self.vadjustment.connect(
-                "value-changed", self._on_vadj_value_changed
-            )
-
     def _on_add(self, _, widget):
+        self.recompute_layout()
         self.queue_resize()
 
     def _on_remove(self, _, widget):
@@ -231,22 +213,6 @@ class CustomFlowLayout(Gtk.Box):
             for widget in widgets:
                 callback(widget)
 
-    def get_widget_at(self, x, y):
-        with self.mutex:
-            widgets = self.widgets.copy().values()
-            for widget in widgets:
-                min_x = widget.position[0] - self.spacing[0]
-                min_y = widget.position[1] - self.spacing[1]
-                max_x = widget.position[0] + widget.size[0] + self.spacing[0]
-                max_y = widget.position[1] + widget.size[1] + self.spacing[1]
-                if min_x <= x and x <= max_x and min_y <= y and y <= max_y:
-                    return widget.widget
-            return None
-
-    def get_widget_position(self, widget):
-        with self.mutex:
-            return self.widgets[widget].position
-
     def add_child(self, widget, alignment):
         with self.mutex:
             w = WidgetInfo(widget, alignment)
@@ -264,15 +230,15 @@ class CustomFlowLayout(Gtk.Box):
                 widget.update_widget_size()
                 min_width = max(widget.size[0], min_width)
                 nat_width += widget.size[0]
-            return (min_width, nat_width)
+        return (min_width, nat_width)
 
     def do_get_preferred_height_for_width(self, width):
         with self.mutex:
-            height = recompute_height_for_width(
+            requested_height = recompute_height_for_width(
                 self.widgets.values(), width, self.spacing
             )
-            height += self.bottom_margin
-            return (height, height)
+            requested_height += self.bottom_margin
+            return (requested_height, requested_height)
 
     def do_get_preferred_height(self):
         (min_width, nat_width) = self.do_get_preferred_width()
@@ -285,76 +251,29 @@ class CustomFlowLayout(Gtk.Box):
         self.allocation = allocation
         self.recompute_layout()
 
-    def get_max_nb_columns(self):
-        return self.layout_max[0]
-
-    def get_nb_lines(self):
-        return self.layout_max[1]
-
     def recompute_layout(self):
         if self.allocation is None:
             return
 
         with self.mutex:
-            self.recomputing = True
-            try:
-                (_, self.layout_max) = recompute_box_positions(
-                    self.core, self.widgets.values(), self.allocation.width,
-                    self.spacing
-                )
+            for widget in self.widgets.values():
+                widget.update_widget_size()
 
-                for widget in self.widgets.values():
-                    widget.update_widget_size()
-                    rect = Gdk.Rectangle()
-                    rect.x = self.allocation.x + widget.position[0]
-                    rect.y = self.allocation.y + widget.position[1]
-                    rect.width = widget.size[0]
-                    rect.height = widget.size[1]
-                    widget.widget.size_allocate(rect)
-            finally:
-                self.recomputing = False
-        self.emit('layout_rearranged')
-        self.update_visibility()
-
-    def update_visibility(self):
-        with self.mutex:
-            if self.vadjustment is None:
-                return
-
-            # assumes the vadjustment values are in pixels
-            lower = self.vadjustment.get_lower()
-            p_min = self.vadjustment.get_value() - lower
-            p_max = (
-                self.vadjustment.get_value() +
-                self.vadjustment.get_page_size() -
-                lower
+            (
+                _, self.requested_width, self.requested_height
+            ) = recompute_box_positions(
+                self.core, self.widgets.values(), self.allocation.width,
+                self.spacing
             )
+            self.requested_height += self.bottom_margin
 
             for widget in self.widgets.values():
-                p_lower = widget.position[1]
-                p_upper = widget.position[1] + widget.size[1]
-                if widget.size[0] == 0 or widget.size[1] == 0:
-                    visible = False
-                elif widget.position[0] < 0 or widget.position[1] < 0:
-                    visible = False
-                else:
-                    visible = (p_min <= p_upper and p_lower <= p_max)
-                if widget.visible != visible:
-                    widget.visible = visible
-                    if visible:
-                        self.emit("widget_visible", widget.widget)
-                    else:
-                        self.emit("widget_hidden", widget.widget)
-
-    def is_widget_visible(self, widget):
-        with self.mutex:
-            w = self.widgets.get(widget, None)
-            if w is None:
-                return False
-            return w.visible
-
-    def _on_vadj_value_changed(self, vadjustment):
-        self.update_visibility()
+                rect = Gdk.Rectangle()
+                rect.x = self.allocation.x + widget.position[0]
+                rect.y = self.allocation.y + widget.position[1]
+                rect.width = widget.size[0]
+                rect.height = widget.size[1]
+                widget.widget.size_allocate(rect)
 
     def _on_destroy(self, _):
         with self.mutex:
@@ -363,24 +282,6 @@ class CustomFlowLayout(Gtk.Box):
             for widget in self.widgets.keys():
                 widget.unparent()
             self.widgets = collections.OrderedDict()
-
-    def get_width_without_margins(self, nb_widgets=1):
-        nb_widgets = min(len(self.widgets), nb_widgets)
-        layout_width = self.get_allocated_width()
-        layout_width -= (nb_widgets + 1) * self.spacing[0]
-        if layout_width <= 0:
-            return None
-        return layout_width
-
-        widgets = list(self.widgets.values())[:nb_widgets]
-        widget_width = 0
-        for w in widgets:
-            widget_width += w.size[0]
-
-        if widget_width <= 0:
-            return None
-
-        return layout_width / widget_width
 
     def set_bottom_margin(self, height):
         self.bottom_margin = height
@@ -404,7 +305,7 @@ class Plugin(openpaperwork_core.PluginBase):
         if not GTK_AVAILABLE:
             out['gtk'].update(openpaperwork_gtk.deps.GTK)
 
-    def gtk_widget_flowlayout_new(self, spacing=(0, 0), scrollbars=None):
+    def gtk_widget_flowlayout_new(self, spacing=(0, 0)):
         assert(GLIB_AVAILABLE)
         assert(GTK_AVAILABLE)
-        return CustomFlowLayout(self.core, spacing, scrollbars)
+        return CustomFlowLayout(self.core, spacing)

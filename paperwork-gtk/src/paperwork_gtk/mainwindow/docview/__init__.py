@@ -11,7 +11,278 @@ except (ImportError, ValueError):
 import openpaperwork_core
 import openpaperwork_gtk.deps
 
+
 LOGGER = logging.getLogger(__name__)
+
+
+class BaseDocViewController(object):
+    def __init__(self, plugin):
+        self.plugin = plugin
+
+    def __str__(self):
+        return str(type(self))
+
+    def enter(self):
+        LOGGER.debug("%s", self.enter)
+
+    def exit(self):
+        LOGGER.debug("%s", self.exit)
+
+    def on_layout_size_allocate(self, layout):
+        LOGGER.debug("%s(%s)", self.on_layout_size_allocate, layout)
+
+    def on_page_size_obtained(self, page):
+        LOGGER.debug("%s(%d)", self.on_page_size_obtained, page.page_idx)
+
+    def on_vscroll(self, vadjustment):
+        LOGGER.debug(
+            "%s(%d, %d)",
+            self.on_vscroll,
+            vadjustment.get_value(),
+            vadjustment.get_upper()
+        )
+
+    def doc_goto_page(self, page_idx):
+        LOGGER.debug("%s(%d)", self.doc_goto_page, page_idx)
+
+    def docview_set_layout(self, name):
+        LOGGER.debug("%s(%s)", self.docview_set_layout, name)
+
+    def docview_set_zoom(self, zoom):
+        LOGGER.debug("%s(%f)", self.docview_set_zoom, zoom)
+
+    def doc_reload_page(self, page_id):
+        LOGGER.debug("%s()", self.doc_reload_page)
+
+
+class BaseLayoutController(BaseDocViewController):
+    def _update_visibility(self):
+        vadj = self.plugin.scroll.get_vadjustment()
+        lower = vadj.get_lower()
+        p_min = vadj.get_value() - lower
+        p_max = vadj.get_value() + vadj.get_page_size() - lower
+        for widget in self.plugin.page_layout.get_children():
+            alloc = widget.get_allocation()
+            p_lower = alloc.y
+            p_upper = alloc.y + alloc.height
+            visible = (p_min <= p_upper and p_lower <= p_max)
+            page = self.plugin.widget_to_page[widget]
+            page.set_visible(visible)
+
+    def on_vscroll(self, vadj):
+        super().on_vscroll(vadj)
+        self._update_visibility()
+
+    def on_page_size_obtained(self, page):
+        super().on_page_size_obtained(page)
+        self._update_visibility()
+
+    def on_layout_size_allocate(self, layout):
+        super().on_layout_size_allocate(layout)
+        self._update_visibility()
+
+    def doc_reload_page(self, page_idx):
+        super().doc_reload_page(page_idx)
+        for widget in list(self.plugin.page_layout.get_children()):
+            page = self.plugin.widget_to_page[widget]
+            if page.page_idx == page_idx:
+                self.plugin.widget_to_page.pop(widget)
+                self.plugin.page_layout.remove(widget)
+        component = self.plugin.core.call_success(
+            "doc_reload_page_component",
+            self.plugin.active_doc[0],
+            self.plugin.active_doc[1],
+            page_idx
+        )
+        widget = self.plugin._get_flow_box_child(component.widget)
+        if component is None:
+            if page_idx < len(self.plugin.pages):
+                self.plugin.pages.pop(page_idx)
+            return
+        if page_idx < len(self.plugin.pages):
+            self.plugin.pages[page_idx] = component
+        elif page_idx == len(self.plugin.pages):
+            self.plugin.pages.append(component)
+        else:
+            assert()
+        self.plugin.widget_to_page[widget] = component
+        self.plugin.page_layout.insert(widget, page_idx)
+        component.set_zoom(self.plugin.zoom)
+        component.load()
+
+
+class LayoutControllerLoading(BaseLayoutController):
+    def __init__(self, plugin):
+        super().__init__(plugin)
+        self.nb_loaded = 0
+
+    def enter(self):
+        super().enter()
+        if len(self.plugin.pages) <= 0:
+            self.plugin._switch_controller('layout', LayoutControllerLoaded)
+            return
+        self.nb_loaded = 0
+        for page in self.plugin.pages:
+            page.load()
+
+    def on_page_size_obtained(self, page):
+        super().on_page_size_obtained(page)
+        self.nb_loaded += 1
+        if self.nb_loaded >= len(self.plugin.pages):
+            self.plugin._switch_controller('layout', LayoutControllerLoaded)
+
+    def exit(self):
+        LOGGER.info(
+            "Size of all pages of doc %s loaded", self.plugin.active_doc[0]
+        )
+
+
+class LayoutControllerLoaded(BaseLayoutController):
+    def enter(self):
+        super().enter()
+        self._update_visibility()
+
+
+class PageNumberController(BaseDocViewController):
+    def _update_current_page(self):
+        vadj = self.plugin.scroll.get_vadjustment()
+        view_width = self.plugin.scroll.get_allocated_width()
+        view_height = self.plugin.scroll.get_allocated_height()
+        center = (
+            view_width / 2,
+            vadj.get_value() + (view_height / 2)
+        )
+
+        min_dist = (99999999999999999, None)
+        for widget in self.plugin.page_layout.get_children():
+            alloc = widget.get_allocation()
+            widget_center = (
+                (alloc.x + (alloc.width / 2)),
+                (alloc.y + (alloc.height / 2)),
+            )
+            dist_w = (center[0] - widget_center[0])
+            dist_h = (center[1] - widget_center[1])
+            dist = (dist_w * dist_w) + (dist_h * dist_h)
+            if dist < min_dist[0]:
+                min_dist = (dist, widget)
+
+        if min_dist[1] is None:
+            return
+
+        page = self.plugin.widget_to_page[min_dist[1]]
+        self.plugin.core.call_all("on_page_shown", page.page_idx)
+
+    def on_layout_size_allocate(self, layout):
+        super().on_layout_size_allocate(layout)
+        self._update_current_page()
+
+    def on_page_size_obtained(self, layout):
+        super().on_page_size_obtained(layout)
+        self._update_current_page()
+
+    def doc_goto_page(self, page_idx):
+        super().doc_goto_page(page_idx)
+        for widget in self.plugin.page_layout.get_children():
+            page = self.plugin.widget_to_page[widget]
+            if page.page_idx != page_idx:
+                continue
+            alloc = widget.get_allocation()
+            self.plugin.scroll.get_vadjustment().set_value(alloc.y)
+            break
+
+    def on_vscroll(self, layout):
+        super().on_vscroll(layout)
+        self._update_current_page()
+
+
+class ZoomLayoutController(BaseDocViewController):
+    def __init__(self, plugin):
+        super().__init__(plugin)
+        self.last_zoom = -1
+
+    def _recompute_zoom(self):
+        layout_name = self.plugin.layout_name
+        spacing = self.plugin.page_layout.get_column_spacing()
+        nb_columns = self.plugin.LAYOUTS[layout_name]
+        max_columns = 0
+        view_width = self.plugin.scroll.get_allocated_width()
+        zoom = 1.0
+        for page_idx in range(0, len(self.plugin.pages), nb_columns):
+            pages = self.plugin.pages[page_idx:page_idx + nb_columns]
+            pages_width = sum([p.get_full_size()[0] for p in pages])
+            pages_width += (len(pages) * 30 * spacing) + 1
+            zoom = min(zoom, view_width / pages_width)
+            max_columns = max(max_columns, len(pages))
+
+        if zoom == self.last_zoom:
+            return
+        self.last_zoom = zoom
+
+        self.plugin.core.call_all("docview_set_zoom", zoom)
+        for page in self.plugin.pages:
+            page.set_zoom(zoom)
+
+        layout = (-1, 'paged')
+        for (layout_name, nb_columns) in self.plugin.LAYOUTS.items():
+            if nb_columns <= layout[0]:
+                continue
+            if max_columns >= nb_columns:
+                layout = (nb_columns, layout_name)
+        self.plugin.core.call_all("on_layout_change", layout[1])
+
+    def enter(self):
+        super().enter()
+        self._recompute_zoom()
+
+    def docview_set_zoom(self, zoom):
+        super().docview_set_zoom(zoom)
+        if zoom == self.last_zoom:
+            return
+        self.plugin._switch_controller('zoom', ZoomCustomController)
+
+    def docview_set_layout(self, name):
+        super().docview_set_layout(name)
+        self._recompute_zoom()
+
+    def on_page_size_obtained(self, page):
+        super().on_page_size_obtained(page)
+        self._recompute_zoom()
+
+    def on_layout_size_allocate(self, layout):
+        self._recompute_zoom()
+
+
+class ZoomCustomController(BaseDocViewController):
+    def __init__(self, plugin):
+        super().__init__(plugin)
+        self.scroll_proportion = None
+
+    def _reapply_zoom(self):
+        vadj = self.plugin.scroll.get_vadjustment()
+        self.scroll_proportion = vadj.get_value() / vadj.get_upper()
+
+        zoom = self.plugin.zoom
+        for page in self.plugin.pages:
+            page.set_zoom(zoom)
+
+    def enter(self):
+        super().enter()
+        self._reapply_zoom()
+
+    def docview_set_zoom(self, zoom):
+        super().docview_set_zoom(zoom)
+        self._reapply_zoom()
+
+    def docview_set_layout(self, name):
+        super().docview_set_layout(name)
+        self.plugin._switch_controller('zoom', ZoomLayoutController)
+
+    def on_vscroll(self, adj):
+        if self.scroll_proportion is None:
+            return
+        pos = self.scroll_proportion * adj.get_upper()
+        self.scroll_proportion = None
+        adj.set_value(pos)
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -24,18 +295,20 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def __init__(self):
         super().__init__()
+        self.controllers = {}
         self.widget_tree = None
         self.scroll = None
-        self.active_doc = ()
-        self.active_page_idx = 0
-        self.target_page_idx = -1
-        self.page_container = None
+        self.page_layout = None
         self.pages = []
-        self.page_widgets = {}
+        self.widget_to_page = {}
         self.nb_columns = self.MAX_PAGES
-        self._last_scroll = 0  # to avoid multiple calls
-        self._last_nb_columns = -1  # to avoid multiple calls
-        self._last_zoom_auto = -1
+
+        self.zoom = 0.0
+        self.layout_name = None
+        self.requested_page_idx = 0
+
+        self.active_page_idx = 0
+        self.active_doc = (None, None)
 
     def get_interfaces(self):
         return [
@@ -53,10 +326,6 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'gtk_resources',
                 'defaults': ['openpaperwork_gtk.resources'],
-            },
-            {
-                'interface': 'gtk_widget_flowlayout',
-                'defaults': ['paperwork_gtk.widget.flowlayout'],
             },
             {
                 'interface': 'gtk_zoomable',
@@ -80,21 +349,15 @@ class Plugin(openpaperwork_core.PluginBase):
             return
 
         self.scroll = self.widget_tree.get_object("docview_scroll")
+        self.scroll.get_vadjustment().connect(
+            "value-changed", self._on_vscroll
+        )
+        self.scroll.get_vadjustment().connect("changed", self._on_vscroll)
 
-        self.page_container = self.core.call_success(
-            "gtk_widget_flowlayout_new", spacing=(20, 20),
-            scrollbars=self.scroll
+        self.page_layout = self.widget_tree.get_object("docview_page_layout")
+        self.page_layout.connect(
+            "size-allocate", self._on_layout_size_allocate
         )
-        self.page_container.connect(
-            "widget_visible", self._upd_current_page_idx
-        )
-        self.page_container.connect(
-            "widget_hidden", self._upd_current_page_idx
-        )
-        self.page_container.connect("layout_rearranged", self._upd_layout)
-        self.page_container.set_visible(True)
-
-        self.scroll.add(self.page_container)
 
         self.core.call_all(
             "mainwindow_add", side="right", name="docview", prio=10000,
@@ -102,17 +365,14 @@ class Plugin(openpaperwork_core.PluginBase):
             body=self.widget_tree.get_object("docview_body"),
         )
 
-        self._upd_layout()
-
     def chkdeps(self, out: dict):
         if not GTK_AVAILABLE:
             out['gtk'].update(openpaperwork_gtk.deps.GTK)
 
-    def docview_set_zoom_adjustment(self, adj):
-        self.core.call_all(
-            "on_zoomable_widget_new",
-            self.widget_tree.get_object("docview_scroll"), adj
-        )
+    def docview_set_bottom_margin(self, height):
+        # TODO
+        # self.page_layout.set_bottom_margin(height)
+        pass
 
     def docview_get_headerbar(self):
         return self.widget_tree.get_object("docview_header")
@@ -120,79 +380,76 @@ class Plugin(openpaperwork_core.PluginBase):
     def docview_get_body(self):
         return self.widget_tree.get_object("docview_body")
 
-    def doc_close(self):
-        self._last_scroll = -1
-        self.page_widgets = {}
-        self.pages = []
+    def docview_get_scrollwindow(self):
+        return self.widget_tree.get_object("docview_scroll")
 
-        for child in self.page_container.get_children():
-            self.page_container.remove(child)
+    def _switch_controller(self, name, new_controller_ctor):
+        self.controllers[name].exit()
+        new_controller = new_controller_ctor(self)
+        LOGGER.info(
+            "%s: %s --> %s",
+            name, str(self.controllers[name]), str(new_controller)
+        )
+        self.controllers[name] = new_controller
+        new_controller.enter()
+
+    def _on_layout_size_allocate(self, layout, allocation):
+        for controller in self.controllers.values():
+            controller.on_layout_size_allocate(layout)
+
+    def _on_vscroll(self, vadj):
+        for controller in self.controllers.values():
+            controller.on_vscroll(vadj)
+
+    def doc_close(self):
+        for controller in self.controllers.values():
+            controller.exit()
+        for page in self.page_layout.get_children():
+            self.page_layout.remove(page)
+        self.pages = []
+        self.widget_to_page = {}
+
+    def _get_flow_box_child(self, child):
+        widget = Gtk.FlowBoxChild.new()
+        widget.set_visible(True)
+        widget.set_property('halign', Gtk.Align.CENTER)
+        widget.add(child)
+        return widget
 
     def doc_open(self, doc_id, doc_url):
-        self.nb_columns = self.MAX_PAGES
+        self.doc_close()
 
-        if len(self.pages) > 0:
-            self.doc_close()
-
+        self.controllers = {
+            'layout': LayoutControllerLoading(self),
+            'page_number': PageNumberController(self),
+            'zoom': ZoomLayoutController(self),
+        }
+        self.zoom = 0.0
+        self.layout_name = 'grid'
         self.active_doc = (doc_id, doc_url)
+        self.active_page_idx = 0
 
-        self.core.call_all("on_memleak_track_stop")
-        self.core.call_all("on_memleak_track_start")
+        self.pages = []
+        self.widget_to_page = {}
 
-        self.core.call_all(
-            "doc_open_components",
-            self.pages, doc_id, doc_url, self.page_container
-        )
+        pages = []
+        self.core.call_all("doc_open_components", pages, doc_id, doc_url)
 
-        for page in self.pages:
-            page.connect("size_obtained", self._on_page_size_obtained)
+        for page in pages:
+            widget = self._get_flow_box_child(page.widget)
+            self.widget_to_page[widget] = page
+            self.pages.append(page)
+            self.page_layout.add(widget)
 
-        for page in self.pages:
-            self.page_widgets[page.widget] = page
-            self.page_container.add_child(page.widget, Gtk.Align.CENTER)
+        for controller in self.controllers.values():
+            controller.enter()
 
-        self.doc_goto_page(0)
+    def on_page_size_obtained(self, page):
+        for controller in self.controllers.values():
+            controller.on_page_size_obtained(page)
 
     def on_page_shown(self, page_idx):
-        LOGGER.info("Active page %d", page_idx)
         self.active_page_idx = page_idx
-
-    def _upd_current_page_idx(self, *args, **kwargs):
-        # figure out the current page: the current page is one the in the
-        # middle of the window
-        p_scroll = (0, self.scroll.get_vadjustment().get_value())
-
-        if p_scroll[1] == self._last_scroll:
-            return
-        self._last_scroll = p_scroll[1]
-
-        p_size = self.scroll.get_allocation()
-
-        p = (
-            (p_size.width / 2) + p_scroll[0],
-            (p_size.height / 2) + p_scroll[1]
-        )
-        widget = self.page_container.get_widget_at(p[0], p[1])
-
-        if widget is None:
-            # fall back on the top of the screen (there may not be enough pages
-            # to fill the window)
-            p = ((p_size.width / 2) + p_scroll[0], p_scroll[1])
-            widget = self.page_container.get_widget_at(p[0], p[1])
-
-        if widget is None:
-            # really no pages
-            return
-
-        page_idx = self.page_widgets[widget].page_idx
-        if self.active_page_idx != page_idx and page_idx >= 0:
-            self.core.call_all("on_page_shown", page_idx)
-
-    def docview_get_active_doc(self):
-        return self.active_doc
-
-    def docview_get_active_page(self):
-        return self.active_page_idx
 
     def doc_goto_previous_page(self):
         self.doc_goto_page(self.active_page_idx - 1)
@@ -201,141 +458,24 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doc_goto_page(self.active_page_idx + 1)
 
     def doc_goto_page(self, page_idx):
-        assert(page_idx >= 0)
-        self.target_page_idx = page_idx
+        LOGGER.info("Going to page %d", page_idx)
+        self.requested_page_idx = page_idx
+        for controller in self.controllers.values():
+            controller.doc_goto_page(page_idx)
 
-        if len(self.pages) <= 0:
-            self.scroll.get_vadjustment().set_value(0)
-            self.core.call_all("on_page_shown", 0)
-            return False
+    def docview_set_layout(self, name):
+        self.layout_name = name
+        for controller in self.controllers.values():
+            controller.docview_set_layout(name)
 
-        if page_idx < 0:
-            page_idx = 0
-        if page_idx >= len(self.pages):
-            page_idx = len(self.pages) - 1
-        LOGGER.info(
-            "Going to page %d/%d (original: %d)",
-            page_idx, len(self.pages), self.target_page_idx
-        )
+    def docview_set_zoom(self, zoom):
+        self.zoom = zoom
+        for controller in self.controllers.values():
+            controller.docview_set_zoom(zoom)
 
-        self.core.call_all("on_page_shown", page_idx)
-
-        widget = self.pages[page_idx].widget
-        if widget is None:
-            LOGGER.warning("No widget yet for page %d", page_idx)
-            return False
-
-        w_height = self.page_container.get_widget_position(widget)[1]
-        if w_height < 0:
-            LOGGER.warning("Failed to get widget height of page %d", page_idx)
-            return False
-        if self.scroll.get_vadjustment().get_value() != w_height:
-            self.scroll.get_vadjustment().set_value(w_height)
-            self._last_scroll = w_height
-        return True
-
-    def _upd_layout(self, *args, **kwargs):
-        nb_columns = self.page_container.get_max_nb_columns()
-
-        if nb_columns == self._last_nb_columns:
+    def doc_reload_page(self, doc_id, doc_url, page_idx):
+        if self.active_doc[0] != doc_id:
             return
-        self._last_nb_columns = nb_columns
-
-        # find the closest layout
-        max_columns = -1
-        layout_name = "paged"
-        for (l_name, required_columns) in self.LAYOUTS.items():
-            if nb_columns < required_columns:
-                continue
-            if max_columns >= required_columns:
-                continue
-            max_columns = required_columns
-            layout_name = l_name
-
-        self.core.call_all("on_layout_change", layout_name)
-
-    def _rearrange_pages(self, nb_columns):
-        layout_width = self.page_container.get_width_without_margins(
-            nb_columns
-        )
-        if layout_width is None or len(self.pages) <= 0:
-            return
-
-        page_widths = 0
-        for page_idx in range(0, len(self.pages), nb_columns):
-            pages = self.pages[page_idx:page_idx + nb_columns]
-            page_widths = max(
-                page_widths, sum([p.get_full_size()[0] for p in pages])
-            )
-
-        zoom = layout_width / page_widths
-        LOGGER.info(
-            "Page widths = %s ==> Zoom: %d / %d = %f",
-            page_widths, layout_width, page_widths, zoom
-        )
-
-        if zoom != self._last_zoom_auto:
-            self._last_zoom_auto = zoom
-            self.core.call_all("doc_view_set_zoom", zoom)
-
-    def doc_view_set_layout(self, name):
-        self.nb_columns = self.LAYOUTS[name]
-        self._rearrange_pages(self.nb_columns)
-
-    def doc_view_set_default_zoom(self, page, *args, **kwargs):
-        self._rearrange_pages(self.nb_columns)
-
-    def _on_page_size_obtained(self, page):
-        if page.page_idx % 50 == 0:
-            self.doc_view_set_default_zoom(page)
-        elif page.page_idx >= len(self.pages) - self.MAX_PAGES:
-            self.doc_view_set_default_zoom(page)
-
-        if page.page_idx != self.target_page_idx:
-            return
-        target_page_idx = page.page_idx
-
-        # page container will be resized
-        # once it's resized, we want to jump back to the active page
-
-        handler_id = None
-
-        def scroll_on_resize(*args, **kwargs):
-            if page.widget.get_allocated_height() <= 1:
-                return
-            if self.doc_goto_page(target_page_idx):
-                self.page_container.disconnect(handler_id)
-            self.target_page_idx = -1
-
-        handler_id = self.page_container.connect(
-            "size-allocate", scroll_on_resize
-        )
-
-    def doc_view_get_zoom(self):
-        if len(self.pages) <= 0:
-            return 1.0
-        return self.pages[0].get_zoom()
-
-    def doc_view_set_zoom(self, zoom):
-        for page in self.pages:
-            page.set_zoom(zoom)
-        self.page_container.recompute_layout()
-
-    def doc_reload(self, doc_id, doc_url):
-        if doc_id != self.active_doc[0]:
-            return
-
-        if self.target_page_idx >= 0:
-            active_page = self.target_page_idx
-        else:
-            active_page = self.active_page_idx
-        active_doc = self.active_doc
-        nb_columns = self.nb_columns
-
-        self.doc_close()
-        self.doc_open(*active_doc)
-        self.nb_columns = nb_columns
-        self.doc_goto_page(active_page)
-
-    def docview_set_bottom_margin(self, height):
-        self.page_container.set_bottom_margin(height)
+        LOGGER.info("Reloading page %d of document %s", page_idx, doc_id)
+        for controller in self.controllers.values():
+            controller.doc_reload_page(page_idx)

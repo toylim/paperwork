@@ -99,7 +99,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.nb_pages.set_text(f"/ {nb_pages}")
         self.page_info.set_visible(True)
 
-    def doc_reload(self, doc_id, doc_url):
+    def doc_reload_page(self, doc_id, doc_url, page_idx):
         if doc_id != self.active_doc[0]:
             return
         self.doc_open(doc_id, doc_url)

@@ -1,24 +1,52 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
+  <object class="GtkOverlay" id="docview_body">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <child>
+      <object class="GtkScrolledWindow" id="docview_scroll">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="shadow_type">in</property>
+        <property name="kinetic_scrolling">False</property>
+        <property name="overlay_scrolling">False</property>
+        <property name="propagate_natural_width">True</property>
+        <child>
+          <object class="GtkFlowBox" id="docview_page_layout">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+              <!-- <property name="halign">center</property> -->
+            <property name="row_spacing">10</property>
+            <property name="column_spacing">10</property>
+            <property name="min_children_per_line">1</property>
+            <property name="max_children_per_line">5</property>
+            <property name="orientation">horizontal</property>
+          </object>
+        </child>
+      </object>
+      <packing>
+        <property name="index">-1</property>
+      </packing>
+    </child>
+  </object>
   <object class="GtkHeaderBar" id="docview_header">
     <property name="visible">True</property>
-    <property name="title"></property>
-    <property name="subtitle"></property>
+    <property name="can_focus">False</property>
     <property name="show_close_button">True</property>
     <property name="decoration_layout">:close</property>
-
     <child>
       <object class="GtkMenuButton" id="docview_doc_menu">
         <property name="use_action_appearance">False</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-          <!-- <property name="menu_model">advanced_window_menu</property> -->
+        <property name="receives_default">False</property>
         <child>
           <object class="GtkImage">
             <property name="visible">True</property>
-            <property name="icon_name">view-more-symbolic</property>
             <property name="can_focus">False</property>
+            <property name="icon_name">view-more-symbolic</property>
           </object>
         </child>
       </object>
@@ -26,14 +54,14 @@
         <property name="pack_type">end</property>
       </packing>
     </child>
-
     <child>
       <object class="GtkButton" id="docview_info">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
         <property name="use_action_appearance">False</property>
-        <property name="use_underline">True</property>
+        <property name="visible">True</property>
         <property name="sensitive">False</property>
+        <property name="can_focus">False</property>
+        <property name="receives_default">False</property>
+        <property name="use_underline">True</property>
         <child>
           <object class="GtkImage">
             <property name="visible">True</property>
@@ -45,24 +73,8 @@
       </object>
       <packing>
         <property name="pack_type">end</property>
+        <property name="position">1</property>
       </packing>
-    </child>
-
-  </object>
-
-  <object class="GtkOverlay" id="docview_body">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <child>
-      <object class="GtkScrolledWindow" id="docview_scroll">
-        <property name="visible">True</property>
-        <property name="can_focus">True</property>
-        <property name="shadow_type">in</property>
-        <property name="kinetic_scrolling">False</property>
-        <property name="overlay_scrolling">false</property>
-        <child>
-        </child>
-      </object>
     </child>
   </object>
 </interface>

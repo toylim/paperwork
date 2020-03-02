@@ -31,6 +31,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.widget_tree = None
         self.layout_icon = None
         self.layout_button = None
+        self.notify = True
 
     def get_interfaces(self):
         return [
@@ -97,7 +98,9 @@ class Plugin(openpaperwork_core.PluginBase):
             )
 
         self.core.call_success("page_info_add_left", self.layout_button)
-        self.core.call_all("docview_set_zoom_adjustment", self.zoom)
+
+        scroll = self.core.call_success("docview_get_scrollwindow")
+        self.core.call_all("on_zoomable_widget_new", scroll, self.zoom)
 
     def on_layout_change(self, layout_name):
         if self.layout_icon is None:
@@ -110,7 +113,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def _on_layout_change(self, widget):
         assert(widget in self.layout_buttons)
         layout = self.layout_buttons[widget]['layout']
-        self.core.call_all("doc_view_set_layout", layout)
+        self.core.call_all("docview_set_layout", layout)
 
     def _open_layout_menu(self, *args, **kwargs):
         menu = self.widget_tree.get_object("layout_settings")
@@ -119,13 +122,18 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _on_zoom_changed(self, _=None):
         new_value = self.zoom.get_value()
-        self.core.call_all("doc_view_set_zoom", new_value)
+        if self.notify:
+            self.core.call_all("docview_set_zoom", new_value)
 
     def _notify_all_boxes(self, *args, **kwargs):
         active = self.all_boxes.get_active()
         self.core.call_all("set_all_boxes_visible", active)
 
-    def doc_view_set_zoom(self, zoom):
+    def docview_set_zoom(self, zoom):
         current = self.zoom.get_value()
         if current != zoom:
-            self.zoom.set_value(zoom)
+            self.notify = False
+            try:
+                self.zoom.set_value(zoom)
+            finally:
+                self.notify = True

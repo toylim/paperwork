@@ -31,7 +31,7 @@ class Scan(GObject.GObject):
         # never emitted
         'getting_size': (GObject.SignalFlags.RUN_LAST, None, ()),
 
-        # emitted when a scan is started
+        # emitted immediately and when a scan is started
         'size_obtained': (GObject.SignalFlags.RUN_LAST, None, ()),
 
         # never emitted
@@ -44,16 +44,16 @@ class Scan(GObject.GObject):
         )),
     }
 
-    def __init__(self, core, flow_layout, doc_id, scan_id=None):
+    def __init__(self, core, doc_id, page_idx, scan_id=None):
         super().__init__()
         self.core = core
-        self.flow_layout = flow_layout
         self.doc_id = doc_id
         self.zoom = 1.0
-        self.page_idx = -1
+        self.page_idx = page_idx
+        self.visible = False
 
         self.scan_id = scan_id
-        self.size = (0, 0)
+        self.size = (1, 1)
 
         if scan_id is not None:
             scan_id = self.core.call_success(
@@ -71,14 +71,29 @@ class Scan(GObject.GObject):
         return "Scan renderer ({})".format(self.doc_id)
 
     def set_visible(self, visible):
+        if visible == self.visible:
+            return
+        LOGGER.info("Scan renderer: Visible: {}".format(visible))
+        self.visible = visible
+
+        self.widget.set_visible(visible)
         if visible:
-            self.widget.set_visible(True)
             size = self.get_size()
+            LOGGER.info("Scan renderer: widget size: %dx%d", size[0], size[1])
             self.widget.set_size_request(size[0], size[1])
+            self.widget.queue_resize()
             self.core.call_all("draw_scan_start", self.widget, self.scan_id)
         else:
-            self.widget.set_visible(False)
             self.core.call_all("draw_scan_stop", self.widget)
+
+    def load(self):
+        # the docview rely on this signal to know when pagss have been loaded
+        # (in other words, when their size have been defined).
+        # It remains in state 'loading' as long as not all the pages have
+        # reported having be loaded --> we report immediately ourselves
+        # as loaded
+        self.core.call_all("on_page_size_obtained", self)
+        self.emit("size_obtained")
 
     def close(self):
         pass
@@ -95,6 +110,11 @@ class Scan(GObject.GObject):
             return (0, 0)
         return self.size
 
+    def set_scan_size(self, w, h):
+        LOGGER.info("Scan size: %dx%d", w, h)
+        self.size = (w, h)
+        self.resize()
+
     def get_size(self):
         size = self.get_full_size()
         return (
@@ -107,7 +127,9 @@ class Scan(GObject.GObject):
             return
         size = self.get_size()
         self.widget.set_size_request(size[0], size[1])
+        self.core.call_all("on_page_size_obtained", self)
         self.emit("size_obtained")
+        self.widget.queue_resize()
 
     def refresh(self, reload=False):
         self.widget.queue_draw()
@@ -152,18 +174,31 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def doc_open_components(self, pages, doc_id, doc_url, page_container):
+    def doc_reload_page_component(
+            self, doc_id, doc_url, page_idx, force=False):
+
+        if not force:
+            nb_pages = self.core.call_success(
+                "doc_get_nb_pages_by_url", self.doc_url
+            )
+            if page_idx < nb_pages:
+                return None
+
         self.doc_id = doc_id
         self.doc_url = doc_url
         scan_id = self.core.call_success("scan2doc_doc_id_to_scan_id", doc_id)
 
-        self.scan = Scan(self.core, page_container, doc_id, scan_id)
-        nb_pages = self.core.call_success(
-            "doc_get_nb_pages_by_url", self.doc_url
-        )
-        self.scan.page_idx = nb_pages
+        self.scan = Scan(self.core, doc_id, page_idx, scan_id)
+        return self.scan
 
-        pages.append(self.scan)
+    def doc_open_components(self, pages, doc_id, doc_url):
+        nb_pages = self.core.call_success(
+            "doc_get_nb_pages_by_url", doc_url
+        )
+        scan = self.doc_reload_page_component(
+            doc_id, doc_url, nb_pages, force=True
+        )
+        pages.append(scan)
 
     def on_scan2doc_start(self, scan_id, doc_id, doc_url):
         if self.scan is None:
@@ -185,8 +220,9 @@ class Plugin(openpaperwork_core.PluginBase):
         if scan_id != self.scan.scan_id:
             return
 
-        self.scan.size = (scan_params.get_width(), scan_params.get_height())
-        self.scan.resize()
+        self.scan.set_scan_size(
+            scan_params.get_width(), scan_params.get_height()
+        )
 
         nb_pages = self.core.call_success(
             "doc_get_nb_pages_by_url", self.doc_url
@@ -198,6 +234,7 @@ class Plugin(openpaperwork_core.PluginBase):
             self.scan.widget.disconnect(handle_id)
             self.core.call_all("doc_goto_page", nb_pages)
 
+        self.core.call_all("doc_goto_page", nb_pages)
         handle_id = self.scan.widget.connect("size-allocate", goto_page)
 
     def on_scan2doc_page_scanned(self, scan_id, doc_id, doc_url, page_idx):
@@ -208,10 +245,12 @@ class Plugin(openpaperwork_core.PluginBase):
 
         nb_pages = self.core.call_success(
             "doc_get_nb_pages_by_url", self.doc_url
-        ) - 1
-        LOGGER.info("Displaying new page %d", nb_pages)
-        self.core.call_all("doc_reload", doc_id, doc_url)
-        self.core.call_all("doc_goto_page", nb_pages)
+        )
+        LOGGER.info("Displaying new page %d", nb_pages - 1)
+        self.core.call_all("doc_reload_page", doc_id, doc_url, nb_pages - 1)
+        # and add back the scan drawer
+        self.core.call_all("doc_reload_page", doc_id, doc_url, nb_pages)
+        self.core.call_all("doc_goto_page", nb_pages - 1)
 
     def on_scan_feed_end(self, scan_id):
         if self.scan is None:
