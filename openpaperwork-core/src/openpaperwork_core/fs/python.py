@@ -44,7 +44,8 @@ class Plugin(CommonFsPluginBase):
         path = self._uri_to_path(uri)
         if path is None:
             return None
-
+        if not os.path.exists(path):
+            return None
         for f in os.listdir(path):
             yield self.fs_safe(os.path.join(path, f))
 

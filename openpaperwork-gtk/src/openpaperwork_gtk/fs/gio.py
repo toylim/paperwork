@@ -285,6 +285,8 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
 
         try:
             f = Gio.File.new_for_uri(url)
+            if not f.query_exists():
+                return None
             children = f.enumerate_children(
                 Gio.FILE_ATTRIBUTE_STANDARD_NAME, Gio.FileQueryInfoFlags.NONE,
                 None

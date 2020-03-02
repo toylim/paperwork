@@ -163,7 +163,10 @@ class Plugin(CommonFsPluginBase):
         path = self._get_path(url)
         f = self.fs
         for p in path:
-            f = f[p]
+            try:
+                f = f[p]
+            except KeyError:
+                return None
         assert(isinstance(f, dict))
         return [url + "/" + k for k in f.keys()]
 
