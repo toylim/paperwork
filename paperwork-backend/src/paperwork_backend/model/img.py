@@ -69,6 +69,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def doc_get_nb_pages_by_url(self, doc_url):
         files = self.core.call_success("fs_listdir", doc_url)
+        if files is None:
+            return None
         nb_pages = -1
         for f in files:
             f = self.core.call_success("fs_basename", f)
