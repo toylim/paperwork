@@ -56,6 +56,15 @@ class TestScan2Doc(unittest.TestCase):
                         return True
                     return None
 
+                def fs_listdir(self, file_url):
+                    if "exist" not in file_url:
+                        return None
+                    r = [
+                        (file_url + "/paper.{}.jpg".format(x))
+                        for x in range(1, 10)
+                    ]
+                    return r
+
                 def doc_id_to_url(s, doc_id):
                     return 'file:///some_existing_doc'
 
