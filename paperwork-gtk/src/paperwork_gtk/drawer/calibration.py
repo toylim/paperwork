@@ -47,6 +47,8 @@ class Drawer(object):
         self.drawer.request_redraw()
 
     def stop(self):
+        if not self.active:
+            return
         self.core.call_all("draw_frame_stop", self.drawing_area)
         self.core.call_all(
             "config_remove_observer", "scanner_calibration",
