@@ -151,7 +151,7 @@ class CairoRenderer(GObject.GObject):
         self.zoom = 1.0
         self.cairo_surface = None
         self.background = self.DEFAULT_BACKGROUND
-        self.visible = True
+        self.visible = False
 
         promise = openpaperwork_core.promise.Promise(
             self.core, self.emit, args=("getting_size",)
@@ -185,6 +185,8 @@ class CairoRenderer(GObject.GObject):
         )
 
     def render(self):
+        if self.visible:
+            return
         self.visible = True
         self.core.call_success(
             "work_queue_add_promise",
@@ -192,6 +194,8 @@ class CairoRenderer(GObject.GObject):
         )
 
     def hide(self):
+        if not self.visible:
+            return
         self.visible = False
         if self.cairo_surface is not None:
             self.cairo_surface.surface.finish()
