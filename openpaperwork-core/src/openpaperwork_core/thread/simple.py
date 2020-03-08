@@ -23,5 +23,6 @@ class Plugin(PluginBase):
     def thread_start(self, func, *args, **kwargs):
         task = Task(self.core, func, args, kwargs)
         thread = threading.Thread(target=task.do)
+        thread.daemon = True
         thread.start()
         return True

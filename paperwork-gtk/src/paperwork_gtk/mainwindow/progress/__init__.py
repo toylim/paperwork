@@ -193,6 +193,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
             if self.thread is None:
                 self.thread = threading.Thread(target=self._thread)
+                self.thread.daemon = True
                 self.thread.start()
 
     def _on_icon_draw(self, drawing_area, cairo_ctx):

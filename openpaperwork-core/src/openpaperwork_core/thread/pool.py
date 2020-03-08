@@ -13,6 +13,7 @@ LOGGER = logging.getLogger(__name__)
 class Thread(threading.Thread):
     def __init__(self, plugin, thread_id):
         super().__init__(name="paperwork_thread_{}".format(thread_id))
+        self.daemon = True
         self.plugin = plugin
         self.core = plugin.core
         self.running = True

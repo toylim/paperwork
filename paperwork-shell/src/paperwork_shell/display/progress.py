@@ -106,4 +106,5 @@ class Plugin(openpaperwork_core.PluginBase):
 
             if self.thread is None:
                 self.thread = threading.Thread(target=self._thread)
+                self.thread.daemon = True
                 self.thread.start()
