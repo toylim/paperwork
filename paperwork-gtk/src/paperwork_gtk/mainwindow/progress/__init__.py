@@ -109,7 +109,12 @@ class Plugin(openpaperwork_core.PluginBase):
     def _upd_progress_widget(self, upd_type, progress, description):
         if progress >= 1.0:  # deletion of progress
             if upd_type not in self.progress_widget_trees:
+                LOGGER.warning(
+                    "Got 2 notifications of end of task for '%s'",
+                    upd_type
+                )
                 return
+            LOGGER.info("Task '%s' has ended", upd_type)
             widget_tree = self.progress_widget_trees.pop(upd_type)
             box = self.details_widget_tree.get_object(
                 "progresses_box"
@@ -119,6 +124,10 @@ class Plugin(openpaperwork_core.PluginBase):
             details.unparent()
             self.button_widget_tree.get_object("progress_button").queue_draw()
 
+            LOGGER.info(
+                "Task '%s' has ended (%d remaining)",
+                upd_type, len(self.progress_widget_trees)
+            )
             if len(self.progress_widget_trees) <= 0:
                 self.button_widget_tree.get_object(
                     "progress_revealer"
@@ -127,6 +136,10 @@ class Plugin(openpaperwork_core.PluginBase):
             return True
 
         if upd_type not in self.progress_widget_trees:  # creation of progress
+            LOGGER.info(
+                "Task '%s' has started (%d already active)",
+                upd_type, len(self.progress_widget_trees)
+            )
             widget_tree = self.core.call_success(
                 "gtk_load_widget_tree",
                 "paperwork_gtk.mainwindow.progress",
