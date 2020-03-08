@@ -218,10 +218,10 @@ class Plugin(openpaperwork_core.PluginBase):
             page.close()
         self.pages = []
 
-    def doc_reload_page_component(self, doc_id, doc_url, page_idx):
+    def doc_reload_page_component(self, out: list, doc_id, doc_url, page_idx):
         nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)
         if page_idx >= nb_pages:
-            return None
+            return
         page = Page(self.core, doc_id, doc_url, page_idx, nb_pages)
         if page_idx < len(self.pages):
             self.pages[page_idx] = page
@@ -229,7 +229,7 @@ class Plugin(openpaperwork_core.PluginBase):
             self.pages.append(page)
         else:
             assert()
-        return page
+        out.append(page)
 
     def doc_open_components(self, out: list, doc_id, doc_url):
         self.doc_close()

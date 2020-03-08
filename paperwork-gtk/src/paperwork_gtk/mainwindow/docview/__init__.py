@@ -88,12 +88,16 @@ class BaseLayoutController(BaseDocViewController):
             if page.page_idx == page_idx:
                 self.plugin.widget_to_page.pop(widget)
                 self.plugin.page_layout.remove(widget)
-        component = self.plugin.core.call_success(
+        components = []
+        self.plugin.core.call_success(
             "doc_reload_page_component",
+            components,
             self.plugin.active_doc[0],
             self.plugin.active_doc[1],
             page_idx
         )
+        assert(len(components) <= 1)
+        component = components[0] if len(components) >= 1 else None
         widget = self.plugin._get_flow_box_child(component.widget)
         if component is None:
             if page_idx < len(self.plugin.pages):

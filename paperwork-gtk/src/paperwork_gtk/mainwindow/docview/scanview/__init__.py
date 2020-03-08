@@ -175,30 +175,35 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def doc_reload_page_component(
-            self, doc_id, doc_url, page_idx, force=False):
+            self, out: list, doc_id, doc_url, page_idx, force=False):
 
         if not force:
             nb_pages = self.core.call_success(
                 "doc_get_nb_pages_by_url", self.doc_url
             )
+            if nb_pages is None:
+                nb_pages = 0
             if page_idx < nb_pages:
-                return None
+                return
 
         self.doc_id = doc_id
         self.doc_url = doc_url
         scan_id = self.core.call_success("scan2doc_doc_id_to_scan_id", doc_id)
 
         self.scan = Scan(self.core, doc_id, page_idx, scan_id)
-        return self.scan
+        out.append(self.scan)
 
     def doc_open_components(self, pages, doc_id, doc_url):
         nb_pages = self.core.call_success(
             "doc_get_nb_pages_by_url", doc_url
         )
-        scan = self.doc_reload_page_component(
-            doc_id, doc_url, nb_pages, force=True
+        if nb_pages is None:
+            nb_pages = 0
+        components = []
+        self.doc_reload_page_component(
+            components, doc_id, doc_url, nb_pages, force=True
         )
-        pages.append(scan)
+        pages.append(components[0])
 
     def on_scan2doc_start(self, scan_id, doc_id, doc_url):
         if self.scan is None:
