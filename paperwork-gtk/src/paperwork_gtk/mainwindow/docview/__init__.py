@@ -34,13 +34,19 @@ class BaseDocViewController(object):
     def on_page_size_obtained(self, page):
         LOGGER.debug("%s(%d)", self.on_page_size_obtained, page.page_idx)
 
-    def on_vscroll(self, vadjustment):
+    def on_vscroll(self, vadj):
         LOGGER.debug(
             "%s(%d, %d)",
             self.on_vscroll,
-            vadjustment.get_value(),
-            vadjustment.get_upper()
+            vadj.get_value(),
+            vadj.get_upper()
         )
+
+    def on_vscroll_changed(self, vadj):
+        self.on_vscroll(vadj)
+
+    def on_vscroll_value_changed(self, vadj):
+        self.on_vscroll(vadj)
 
     def doc_goto_page(self, page_idx):
         LOGGER.debug("%s(%d)", self.doc_goto_page, page_idx)
@@ -51,7 +57,7 @@ class BaseDocViewController(object):
     def docview_set_zoom(self, zoom):
         LOGGER.debug("%s(%f)", self.docview_set_zoom, zoom)
 
-    def doc_reload_page(self, page_id):
+    def doc_reload_page(self, page_idx):
         LOGGER.debug("%s()", self.doc_reload_page)
 
 
@@ -69,8 +75,12 @@ class BaseLayoutController(BaseDocViewController):
             page = self.plugin.widget_to_page[widget]
             page.set_visible(visible)
 
-    def on_vscroll(self, vadj):
-        super().on_vscroll(vadj)
+    def on_vscroll_value_changed(self, vadj):
+        super().on_vscroll_value_changed(vadj)
+        self._update_visibility()
+
+    def on_vscroll_changed(self, vadj):
+        super().on_vscroll_changed(vadj)
         self._update_visibility()
 
     def on_page_size_obtained(self, page):
@@ -184,6 +194,26 @@ class PageNumberController(BaseDocViewController):
         super().on_page_size_obtained(layout)
         self._update_current_page()
 
+    def on_vscroll_changed(self, vadj):
+        super().on_vscroll_changed(vadj)
+        self._update_current_page()
+
+    def on_vscroll_value_changed(self, vadj):
+        super().on_vscroll_value_changed(vadj)
+        self._update_current_page()
+
+
+class ScrollPageLockedController(BaseDocViewController):
+    def __init__(self, plugin):
+        super().__init__(plugin)
+        self.last_upper = -1
+        self.last_value = -1
+
+    def enter(self):
+        self.last_value = self.plugin.scroll.get_vadjustment().get_value()
+        self.last_upper = self.plugin.scroll.get_vadjustment().get_upper()
+        self.doc_goto_page(self.plugin.requested_page_idx)
+
     def doc_goto_page(self, page_idx):
         super().doc_goto_page(page_idx)
         for widget in self.plugin.page_layout.get_children():
@@ -191,12 +221,80 @@ class PageNumberController(BaseDocViewController):
             if page.page_idx != page_idx:
                 continue
             alloc = widget.get_allocation()
+            self.last_value = alloc.y
             self.plugin.scroll.get_vadjustment().set_value(alloc.y)
-            break
+            return alloc.y
 
-    def on_vscroll(self, layout):
-        super().on_vscroll(layout)
-        self._update_current_page()
+    def on_page_size_obtained(self, page):
+        super().on_page_size_obtained(page)
+        self.doc_goto_page(self.plugin.requested_page_idx)
+
+    def on_layout_size_allocate(self, layout):
+        super().on_layout_size_allocate(layout)
+        self.doc_goto_page(self.plugin.requested_page_idx)
+
+    def docview_set_layout(self, name):
+        super().docview_set_layout(name)
+        self.doc_goto_page(self.plugin.requested_page_idx)
+
+    def docview_set_zoom(self, zoom):
+        super().docview_set_zoom(zoom)
+        self.doc_goto_page(self.plugin.requested_page_idx)
+
+    def docview_reload_page(self, page_idx):
+        super().docview_reload_page(page_idx)
+        self.doc_goto_page(self.plugin.requested_page_idx)
+
+    def on_vscroll_changed(self, adj):
+        super().on_vscroll_changed(adj)
+        if adj.get_upper() == self.last_upper:
+            return
+        self.last_upper = adj.get_upper()
+        self.doc_goto_page(self.plugin.requested_page_idx)
+
+    def on_vscroll_value_changed(self, adj):
+        super().on_vscroll_value_changed(adj)
+        if adj.get_value() == self.last_value:
+            return
+        self.last_value = adj.get_value()
+        self.plugin._switch_controller('scroll', ScrollFreeController)
+
+
+class ScrollFreeController(BaseDocViewController):
+    def __init__(self, plugin):
+        super().__init__(plugin)
+        self.scroll_proportion = None
+
+    def _upd_proportion(self):
+        vadj = self.plugin.scroll.get_vadjustment()
+        self.scroll_proportion = vadj.get_value() / vadj.get_upper()
+
+    def enter(self):
+        self._upd_proportion()
+
+    def doc_goto_page(self, page_idx):
+        self.plugin._switch_controller('scroll', ScrollPageLockedController)
+
+    def _on_vscroll(self, adj):
+        if self.scroll_proportion is None:
+            return
+        pos = self.scroll_proportion * adj.get_upper()
+        self.scroll_proportion = None
+        adj.set_value(pos)
+
+    def docview_set_zoom(self, zoom):
+        self._upd_proportion()
+
+    def docview_set_layout(self, name):
+        self._upd_proportion()
+
+    def on_vscroll_changed(self, adj):
+        super().on_vscroll_changed(adj)
+        self._on_vscroll(adj)
+
+    def on_vscroll_value_changed(self, adj):
+        super().on_vscroll_value_changed(adj)
+        self._on_vscroll(adj)
 
 
 class ZoomLayoutController(BaseDocViewController):
@@ -257,14 +355,7 @@ class ZoomLayoutController(BaseDocViewController):
 
 
 class ZoomCustomController(BaseDocViewController):
-    def __init__(self, plugin):
-        super().__init__(plugin)
-        self.scroll_proportion = None
-
     def _reapply_zoom(self):
-        vadj = self.plugin.scroll.get_vadjustment()
-        self.scroll_proportion = vadj.get_value() / vadj.get_upper()
-
         zoom = self.plugin.zoom
         for page in self.plugin.pages:
             page.set_zoom(zoom)
@@ -280,13 +371,6 @@ class ZoomCustomController(BaseDocViewController):
     def docview_set_layout(self, name):
         super().docview_set_layout(name)
         self.plugin._switch_controller('zoom', ZoomLayoutController)
-
-    def on_vscroll(self, adj):
-        if self.scroll_proportion is None:
-            return
-        pos = self.scroll_proportion * adj.get_upper()
-        self.scroll_proportion = None
-        adj.set_value(pos)
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -354,9 +438,11 @@ class Plugin(openpaperwork_core.PluginBase):
 
         self.scroll = self.widget_tree.get_object("docview_scroll")
         self.scroll.get_vadjustment().connect(
-            "value-changed", self._on_vscroll
+            "value-changed", self._on_vscroll_value_changed
         )
-        self.scroll.get_vadjustment().connect("changed", self._on_vscroll)
+        self.scroll.get_vadjustment().connect(
+            "changed", self._on_vscroll_changed
+        )
 
         self.page_layout = self.widget_tree.get_object("docview_page_layout")
         self.page_layout.connect(
@@ -401,9 +487,13 @@ class Plugin(openpaperwork_core.PluginBase):
         for controller in self.controllers.values():
             controller.on_layout_size_allocate(layout)
 
-    def _on_vscroll(self, vadj):
+    def _on_vscroll_value_changed(self, vadj):
         for controller in self.controllers.values():
-            controller.on_vscroll(vadj)
+            controller.on_vscroll_value_changed(vadj)
+
+    def _on_vscroll_changed(self, vadj):
+        for controller in self.controllers.values():
+            controller.on_vscroll_changed(vadj)
 
     def doc_close(self):
         for controller in self.controllers.values():
@@ -426,6 +516,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.controllers = {
             'layout': LayoutControllerLoading(self),
             'page_number': PageNumberController(self),
+            'scroll': ScrollPageLockedController(self),
             'zoom': ZoomLayoutController(self),
         }
         self.zoom = 0.0
