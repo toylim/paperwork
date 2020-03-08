@@ -57,7 +57,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         try:
             self.loop.run()
-        except:
+        except Exception:
             faulthandler.dump_traceback()
             raise
         finally:
