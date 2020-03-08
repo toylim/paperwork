@@ -16,14 +16,19 @@ LOGGER = logging.getLogger(__name__)
 
 
 class LabelingTask(object):
-    def __init__(self, plugin, doc_id, flowlayout):
+    def __init__(self, plugin, doc_id, doc_url, flowlayout):
         self.plugin = plugin
         self.core = plugin.core
 
         self.doc_id = doc_id
+        self.doc_url = doc_url
         self.flowlayout = flowlayout
 
     def show_labels(self, labels):
+        for widget in list(self.flowlayout.get_children()):
+            if hasattr(widget, 'txt'):
+                self.flowlayout.remove(widget)
+
         labels = list(labels)
         labels.sort()
         for label in labels:
@@ -35,8 +40,6 @@ class LabelingTask(object):
             self.flowlayout.add_child(widget, Gtk.Align.END)
 
     def get_promise(self):
-        doc_url = self.core.call_success("doc_id_to_url", self.doc_id)
-
         promise = openpaperwork_core.promise.Promise(
             self.core,
             LOGGER.debug, args=("Loading labels of document %s", self.doc_id,)
@@ -44,7 +47,10 @@ class LabelingTask(object):
         promise = promise.then(lambda *args: None)  # drop logger return value
 
         promises = []
-        self.core.call_all("doc_get_labels_by_url_promise", promises, doc_url)
+        self.core.call_all(
+            "doc_get_labels_by_url_promise",
+            promises, self.doc_url
+        )
         for p in promises:
             promise = promise.then(p)
 
@@ -58,6 +64,7 @@ class Plugin(openpaperwork_core.PluginBase):
         super().__init__()
         self.default_thumbnail = None
         self.running = False
+        self.tasks = {}
 
     def get_interfaces(self):
         return ['gtk_thumbnailer']
@@ -96,9 +103,31 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def doclist_show(self, docids):
         self.core.call_all("work_queue_cancel_all", "labeler")
+        self.task = {}
 
     def on_doc_box_creation(self, doc_id, gtk_row, gtk_custom_flowlayout):
-        task = LabelingTask(self, doc_id, gtk_custom_flowlayout)
+        doc_url = self.core.call_success("doc_id_to_url", doc_id)
+        task = LabelingTask(self, doc_id, doc_url, gtk_custom_flowlayout)
+        self.tasks[doc_url] = task
         self.core.call_success(
             "work_queue_add_promise", "labeler", task.get_promise()
         )
+
+    def _refresh_doc(self, doc_url):
+        if doc_url not in self.tasks:
+            LOGGER.info(
+                "Labels on '%s' have changed, but it is not displayed at"
+                " the moment", doc_url
+            )
+            return
+        LOGGER.info("Reloading labels of '%s'", doc_url)
+        self.core.call_success(
+            "work_queue_add_promise", "labeler",
+            self.tasks[doc_url].get_promise()
+        )
+
+    def doc_add_label_by_url(self, doc_url, label):
+        self._refresh_doc(doc_url)
+
+    def doc_remove_label_by_url(self, doc_url, label):
+        self._refresh_doc(doc_url)
