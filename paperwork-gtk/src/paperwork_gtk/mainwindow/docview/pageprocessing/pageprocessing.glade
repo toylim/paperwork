@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+  <object class="GtkOverlay" id="pageprocessing_overlay">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+
+    <child type="overlay">
+      <object class="GtkSpinner" id="pageprocessing_spinner">
+        <property name="visible">False</property>
+        <property name="can_focus">False</property>
+      </object>
+    </child>
+  </object>
+</interface>

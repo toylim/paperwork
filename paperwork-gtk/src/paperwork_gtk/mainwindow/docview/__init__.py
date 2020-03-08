@@ -449,6 +449,8 @@ class Plugin(openpaperwork_core.PluginBase):
             controller.enter()
 
     def on_page_size_obtained(self, page):
+        # page may been wrapped
+        page = self.pages[page.page_idx]
         for controller in self.controllers.values():
             controller.on_page_size_obtained(page)
 

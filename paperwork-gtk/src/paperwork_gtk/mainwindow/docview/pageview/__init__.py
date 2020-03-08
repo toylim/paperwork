@@ -126,9 +126,14 @@ class Page(GObject.GObject):
 
     def refresh(self, reload=False):
         if reload:
-            if self.visible:
-                self.close()
-                self._load_renderer()
+            visible = self.visible
+            self.hide()
+            self.close()
+            self._load_renderer()
+            self.load()
+            if visible:
+                self.show()
+
         elif self.widget is not None:
             self.widget.queue_draw()
 
@@ -172,6 +177,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_interfaces(self):
         return [
+            'chkdeps',
             'gtk_pageview',
         ]
 

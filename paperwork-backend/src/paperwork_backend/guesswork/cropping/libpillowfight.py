@@ -142,34 +142,37 @@ class Plugin(openpaperwork_core.PluginBase):
         if doc_id is not None:
             self.core.call_one(
                 "mainloop_schedule", self.core.call_all,
-                "on_page_cropping_start", doc_id, page_idx
+                "on_page_modification_start", doc_id, page_idx
             )
 
-        page_img_url = self.core.call_success(
-            "page_get_img_url", doc_url, page_idx
-        )
-
-        img = self.core.call_success("url_to_pillow", page_img_url)
-
-        frame = pillowfight.find_scan_borders(img)
-        if frame[0] >= frame[2] or frame[1] >= frame[3]:
-            LOGGER.warning(
-                "Invalid frame found for page %d of %s: %s. Cannot"
-                " crop automatically", page_idx, doc_url, frame
+        try:
+            page_img_url = self.core.call_success(
+                "page_get_img_url", doc_url, page_idx
             )
-            return None
 
-        LOGGER.info("Cropping page %d of %s at %s", page_idx, doc_url, frame)
-        img = img.crop(frame)
+            img = self.core.call_success("url_to_pillow", page_img_url)
 
-        page_img_url = self.core.call_success(
-            "page_get_img_url", doc_url, page_idx, write=True
-        )
-        self.core.call_success("pillow_to_url", img, page_img_url)
+            frame = pillowfight.find_scan_borders(img)
+            if frame[0] >= frame[2] or frame[1] >= frame[3]:
+                LOGGER.warning(
+                    "Invalid frame found for page %d of %s: %s. Cannot"
+                    " crop automatically", page_idx, doc_url, frame
+                )
+                return None
 
-        if doc_id is not None:
-            self.core.call_one(
-                "mainloop_schedule", self.core.call_all,
-                "on_page_cropping_end", doc_id, page_idx
+            LOGGER.info(
+                "Cropping page %d of %s at %s", page_idx, doc_url, frame
             )
+            img = img.crop(frame)
+
+            page_img_url = self.core.call_success(
+                "page_get_img_url", doc_url, page_idx, write=True
+            )
+            self.core.call_success("pillow_to_url", img, page_img_url)
+        finally:
+            if doc_id is not None:
+                self.core.call_one(
+                    "mainloop_schedule", self.core.call_all,
+                    "on_page_modification_end", doc_id, page_idx
+                )
         return frame

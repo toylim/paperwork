@@ -137,64 +137,65 @@ class Plugin(openpaperwork_core.PluginBase):
         if doc_id is not None:
             self.core.call_one(
                 "mainloop_schedule", self.core.call_all,
-                "on_orientation_guess_start", doc_id, page_idx
+                "on_page_modification_start", doc_id, page_idx
             )
-
-        page_img_url = self.core.call_success(
-            "page_get_img_url", doc_url, page_idx
-        )
-
-        for ocr_tool in pyocr.get_available_tools():
-            LOGGER.info(
-                "Orientation guessing: Will use tool '%s'",
-                ocr_tool.get_name()
-            )
-            if ocr_tool.can_detect_orientation():
-                break
-            LOGGER.warning(
-                "Orientation guessing: Tool '%s' cannot detect orientation",
-                ocr_tool.get_name()
-            )
-        else:
-            LOGGER.warning(
-                "Orientation guessing: No tool found able to detect"
-                " orientation"
-            )
-            return None
-
-        ocr_langs = self.core.call_success("ocr_get_active_langs")
-
-        img = self.core.call_success("url_to_pillow", page_img_url)
-
         try:
-            r = ocr_tool.detect_orientation(img, lang="+".join(ocr_langs))
-        except pyocr.PyocrException as exc:
-            LOGGER.warning(
-                "Orientation guessing: Failed to guess orientation",
-                exc_info=exc
+            page_img_url = self.core.call_success(
+                "page_get_img_url", doc_url, page_idx
             )
-            return None
 
-        angle = r['angle']
-        if angle == 0:
-            return 0
+            for ocr_tool in pyocr.get_available_tools():
+                LOGGER.info(
+                    "Orientation guessing: Will use tool '%s'",
+                    ocr_tool.get_name()
+                )
+                if ocr_tool.can_detect_orientation():
+                    break
+                LOGGER.warning(
+                    "Orientation guessing: Tool '%s' cannot detect"
+                    " orientation",
+                    ocr_tool.get_name()
+                )
+            else:
+                LOGGER.warning(
+                    "Orientation guessing: No tool found able to detect"
+                    " orientation"
+                )
+                return None
 
-        t_angle = {
-            90: PIL.Image.ROTATE_90,
-            180: PIL.Image.ROTATE_180,
-            270: PIL.Image.ROTATE_270,
-        }[angle]
-        img = img.transpose(t_angle)
+            ocr_langs = self.core.call_success("ocr_get_active_langs")
 
-        page_img_url = self.core.call_success(
-            "page_get_img_url", doc_url, page_idx, write=True
-        )
-        self.core.call_success("pillow_to_url", img, page_img_url)
+            img = self.core.call_success("url_to_pillow", page_img_url)
 
-        if doc_id is not None:
-            self.core.call_one(
-                "mainloop_schedule", self.core.call_all,
-                "on_orientation_guess_end", doc_id, page_idx
+            try:
+                r = ocr_tool.detect_orientation(img, lang="+".join(ocr_langs))
+            except pyocr.PyocrException as exc:
+                LOGGER.warning(
+                    "Orientation guessing: Failed to guess orientation",
+                    exc_info=exc
+                )
+                return None
+
+            angle = r['angle']
+            if angle == 0:
+                return 0
+
+            t_angle = {
+                90: PIL.Image.ROTATE_90,
+                180: PIL.Image.ROTATE_180,
+                270: PIL.Image.ROTATE_270,
+            }[angle]
+            img = img.transpose(t_angle)
+
+            page_img_url = self.core.call_success(
+                "page_get_img_url", doc_url, page_idx, write=True
             )
+            self.core.call_success("pillow_to_url", img, page_img_url)
+        finally:
+            if doc_id is not None:
+                self.core.call_one(
+                    "mainloop_schedule", self.core.call_all,
+                    "on_page_modification_end", doc_id, page_idx
+                )
 
         return angle

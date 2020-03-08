@@ -161,33 +161,35 @@ class Plugin(openpaperwork_core.PluginBase):
         if doc_id is not None:
             self.core.call_one(
                 "mainloop_schedule", self.core.call_all,
-                "on_page_cropping_start", doc_id, page_idx
+                "on_page_modification_start", doc_id, page_idx
+            )
+        try:
+            page_img_url = self.core.call_success(
+                "page_get_img_url", doc_url, page_idx
             )
 
-        page_img_url = self.core.call_success(
-            "page_get_img_url", doc_url, page_idx
-        )
+            img = self.core.call_success("url_to_pillow", page_img_url)
 
-        img = self.core.call_success("url_to_pillow", page_img_url)
-
-        LOGGER.info("Cropping page %d of %s at %s", page_idx, doc_url, frame)
-        # make sure we don't extend the image
-        frame = (
-            max(0, frame[0]),
-            max(0, frame[1]),
-            min(img.size[0], frame[2]),
-            min(img.size[1], frame[3]),
-        )
-        img = img.crop(frame)
-
-        page_img_url = self.core.call_success(
-            "page_get_img_url", doc_url, page_idx, write=True
-        )
-        self.core.call_success("pillow_to_url", img, page_img_url)
-
-        if doc_id is not None:
-            self.core.call_one(
-                "mainloop_schedule", self.core.call_all,
-                "on_page_cropping_end", doc_id, page_idx
+            LOGGER.info(
+                "Cropping page %d of %s at %s", page_idx, doc_url, frame
             )
+            # make sure we don't extend the image
+            frame = (
+                max(0, frame[0]),
+                max(0, frame[1]),
+                min(img.size[0], frame[2]),
+                min(img.size[1], frame[3]),
+            )
+            img = img.crop(frame)
+
+            page_img_url = self.core.call_success(
+                "page_get_img_url", doc_url, page_idx, write=True
+            )
+            self.core.call_success("pillow_to_url", img, page_img_url)
+        finally:
+            if doc_id is not None:
+                self.core.call_one(
+                    "mainloop_schedule", self.core.call_all,
+                    "on_page_modification_end", doc_id, page_idx
+                )
         return frame

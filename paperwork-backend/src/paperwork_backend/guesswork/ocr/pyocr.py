@@ -155,29 +155,31 @@ class Plugin(openpaperwork_core.PluginBase):
         if doc_id is not None:
             self.core.call_one(
                 "mainloop_schedule", self.core.call_all,
-                "on_ocr_start", doc_id, page_idx
+                "on_page_modification_start", doc_id, page_idx
             )
-
-        page_img_url = self.core.call_success(
-            "page_get_img_url", doc_url, page_idx
-        )
-        ocr_tool = pyocr.get_available_tools()[0]
-        LOGGER.info("Will use tool '%s'", ocr_tool.get_name())
-
-        ocr_langs = self.core.call_success("ocr_get_active_langs")
-
-        img = self.core.call_success("url_to_pillow", page_img_url)
-
-        boxes = ocr_tool.image_to_string(
-            img, lang="+".join(ocr_langs),
-            builder=pyocr.builders.LineBoxBuilder()
-        )
-        self.core.call_all("page_set_boxes_by_url", doc_url, page_idx, boxes)
-
-        if doc_id is not None:
-            self.core.call_one(
-                "mainloop_schedule", self.core.call_all,
-                "on_ocr_end", doc_id, page_idx
+        try:
+            page_img_url = self.core.call_success(
+                "page_get_img_url", doc_url, page_idx
             )
+            ocr_tool = pyocr.get_available_tools()[0]
+            LOGGER.info("Will use tool '%s'", ocr_tool.get_name())
+
+            ocr_langs = self.core.call_success("ocr_get_active_langs")
+
+            img = self.core.call_success("url_to_pillow", page_img_url)
+
+            boxes = ocr_tool.image_to_string(
+                img, lang="+".join(ocr_langs),
+                builder=pyocr.builders.LineBoxBuilder()
+            )
+            self.core.call_all(
+                "page_set_boxes_by_url", doc_url, page_idx, boxes
+            )
+        finally:
+            if doc_id is not None:
+                self.core.call_one(
+                    "mainloop_schedule", self.core.call_all,
+                    "on_page_modification_end", doc_id, page_idx
+                )
 
         return True

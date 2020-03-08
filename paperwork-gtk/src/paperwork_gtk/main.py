@@ -37,6 +37,7 @@ DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'paperwork_gtk.mainwindow.docview.pageadd.source_popover',
     'paperwork_gtk.mainwindow.docview.pageinfo',
     'paperwork_gtk.mainwindow.docview.pageinfo.layout_settings',
+    'paperwork_gtk.mainwindow.docview.pageprocessing',
     'paperwork_gtk.mainwindow.docview.pageview',
     'paperwork_gtk.mainwindow.docview.pageview.boxes',
     'paperwork_gtk.mainwindow.docview.pageview.boxes.all',

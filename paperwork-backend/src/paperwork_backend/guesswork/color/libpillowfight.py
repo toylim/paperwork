@@ -132,31 +132,31 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def adjust_page_colors_by_url(self, doc_url, page_idx):
         LOGGER.info("Adjusting colors of page %d of %s", page_idx, doc_url)
-
         doc_id = self.core.call_success("doc_url_to_id", doc_url)
 
         if doc_id is not None:
             self.core.call_one(
                 "mainloop_schedule", self.core.call_all,
-                "on_page_color_adjustment_start", doc_id, page_idx
+                "on_page_modification_start", doc_id, page_idx
+            )
+        try:
+            page_img_url = self.core.call_success(
+                "page_get_img_url", doc_url, page_idx
             )
 
-        page_img_url = self.core.call_success(
-            "page_get_img_url", doc_url, page_idx
-        )
+            img = self.core.call_success("url_to_pillow", page_img_url)
 
-        img = self.core.call_success("url_to_pillow", page_img_url)
+            img = pillowfight.ace(img, samples=200)
 
-        img = pillowfight.ace(img, samples=200)
-
-        page_img_url = self.core.call_success(
-            "page_get_img_url", doc_url, page_idx, write=True
-        )
-        self.core.call_success("pillow_to_url", img, page_img_url)
-
-        if doc_id is not None:
-            self.core.call_one(
-                "mainloop_schedule", self.core.call_all,
-                "on_page_color_adjustment_end", doc_id, page_idx
+            page_img_url = self.core.call_success(
+                "page_get_img_url", doc_url, page_idx, write=True
             )
+            self.core.call_success("pillow_to_url", img, page_img_url)
+        finally:
+            if doc_id is not None:
+                self.core.call_one(
+                    "mainloop_schedule", self.core.call_all,
+                    "on_page_modification_end", doc_id, page_idx
+                )
+
         return img

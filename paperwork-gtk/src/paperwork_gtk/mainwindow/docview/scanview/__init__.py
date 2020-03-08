@@ -146,7 +146,7 @@ if GLIB_AVAILABLE:
 
 
 class Plugin(openpaperwork_core.PluginBase):
-    PRIORITY = -1000
+    PRIORITY = -10000
 
     def __init__(self):
         super().__init__()
