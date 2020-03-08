@@ -117,6 +117,8 @@ class CairoRenderer(GObject.GObject):
             return
         self.size = size
         self.emit('size_obtained')
+        if self.visible:
+            self.render(force=True)
 
     def start(self):
         self.core.call_success(
@@ -124,8 +126,12 @@ class CairoRenderer(GObject.GObject):
             self.work_queue_name, self.get_size_promise
         )
 
-    def render(self):
+    def render(self, force=False):
+        if self.visible and not force:
+            return
         self.visible = True
+        if self.size == (0, 0):
+            return
         self.emit('img_obtained')
 
     def hide(self):

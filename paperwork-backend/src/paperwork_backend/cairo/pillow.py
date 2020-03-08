@@ -9,8 +9,8 @@ import openpaperwork_core.promise
 CAIRO_AVAILABLE = False
 GDK_AVAILABLE = False
 
-DELAY = 0.01
-
+DELAY_SHORT = 0.01
+DELAY_LONG = 0.3
 
 try:
     import gi
@@ -163,19 +163,20 @@ class CairoRenderer(GObject.GObject):
         # Gives back a bit of CPU time to GTK so the GUI remains
         # usable
         promise = promise.then(openpaperwork_core.promise.DelayPromise(
-            core, DELAY
+            core, DELAY_SHORT
         ))
         self.get_size_promise = promise
 
-        promise = core.call_success(
-            "url_to_cairo_surface_promise", file_url
-        )
-        promise = promise.then(self._set_cairo_surface)
         # Gives back a bit of CPU time to GTK so the GUI remains
         # usable
-        promise = promise.then(openpaperwork_core.promise.DelayPromise(
-            core, DELAY
+        # Give also time so the loading can be cancelled
+        promise = openpaperwork_core.promise.DelayPromise(
+            core, DELAY_LONG
+        )
+        promise = promise.then(core.call_success(
+            "url_to_cairo_surface_promise", file_url
         ))
+        promise = promise.then(self._set_cairo_surface)
         self.render_img_promise = promise
 
     def start(self):
@@ -184,10 +185,13 @@ class CairoRenderer(GObject.GObject):
             self.work_queue_name, self.get_size_promise
         )
 
-    def render(self):
-        if self.visible:
+    def render(self, force=False):
+        if self.visible and not force:
             return
         self.visible = True
+        if self.size == (0, 0):
+            return
+        print("#### RENDER {}".format(self.file_url))
         self.core.call_success(
             "work_queue_add_promise",
             self.work_queue_name, self.render_img_promise, priority=100
@@ -196,6 +200,7 @@ class CairoRenderer(GObject.GObject):
     def hide(self):
         if not self.visible:
             return
+        print("#### HIDE {}".format(self.file_url))
         self.visible = False
         if self.cairo_surface is not None:
             self.cairo_surface.surface.finish()
@@ -215,6 +220,8 @@ class CairoRenderer(GObject.GObject):
             # Document has been closed while we looked for its size
             return
         self.emit("size_obtained")
+        if self.visible:
+            self.render(force=True)
 
     def _set_cairo_surface(self, surface):
         if not self.visible:  # visibility has changed
