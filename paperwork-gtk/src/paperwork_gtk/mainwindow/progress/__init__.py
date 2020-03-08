@@ -18,6 +18,12 @@ except (ImportError, ValueError):
 LOGGER = logging.getLogger(__name__)
 TIME_BETWEEN_UPDATES = 0.3
 
+# Tasks are often chained one after the other. We don't want the button/popover
+# to disappear and reappear continually. So when a task ends, we
+# give them some extra time to live.
+# STAY_ALIVES is the number of updates we wait before hiding them.
+STAY_ALIVES = int(2.0 / TIME_BETWEEN_UPDATES)
+
 
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
@@ -32,6 +38,8 @@ class Plugin(openpaperwork_core.PluginBase):
         self.progresses = {}
         self.button_widget_tree = None
         self.details_widget_tree = None
+
+        self.stay_alives = STAY_ALIVES
 
     def get_interfaces(self):
         return [
@@ -91,6 +99,7 @@ class Plugin(openpaperwork_core.PluginBase):
             out['gdk'].update(openpaperwork_core.deps.GDK)
 
     def _thread(self):
+        self.stay_alives = STAY_ALIVES
         while self.thread is not None:
             time.sleep(TIME_BETWEEN_UPDATES)
             self.core.call_all("mainloop_execute", self._upd_progress_widgets)
@@ -98,13 +107,24 @@ class Plugin(openpaperwork_core.PluginBase):
     def _upd_progress_widgets(self):
         with self.lock:
             for (upd_type, (progress, description)) in self.progresses.items():
-                r = self._upd_progress_widget(
+                self._upd_progress_widget(
                     upd_type, progress, description
                 )
-                if not r:
-                    self.thread = None
-                    break
             self.progresses = {}
+
+            if len(self.progress_widget_trees) > 0:
+                self.stay_alives = STAY_ALIVES
+                return
+
+            if self.stay_alives > 0:
+                self.stay_alives -= 1
+                return
+
+            self.button_widget_tree.get_object(
+                "progress_revealer"
+            ).set_reveal_child(False)
+            self.thread = None
+            return
 
     def _upd_progress_widget(self, upd_type, progress, description):
         if progress >= 1.0:  # deletion of progress
@@ -128,12 +148,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 "Task '%s' has ended (%d remaining)",
                 upd_type, len(self.progress_widget_trees)
             )
-            if len(self.progress_widget_trees) <= 0:
-                self.button_widget_tree.get_object(
-                    "progress_revealer"
-                ).set_reveal_child(False)
-                return False
-            return True
+            return
 
         if upd_type not in self.progress_widget_trees:  # creation of progress
             LOGGER.info(
@@ -163,7 +178,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.button_widget_tree.get_object(
             "progress_revealer"
         ).set_reveal_child(True)
-        return True
+        return
 
     def on_progress(self, upd_type, progress, description=None):
         with self.lock:
