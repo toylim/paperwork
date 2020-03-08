@@ -152,6 +152,7 @@ class CairoRenderer(GObject.GObject):
         self.cairo_surface = None
         self.background = self.DEFAULT_BACKGROUND
         self.visible = False
+        self.render_job_in_queue = False
 
         # very often, the image is much bigger than what we actually display
         # --> keep a copy of the reduced image in memory
@@ -195,6 +196,9 @@ class CairoRenderer(GObject.GObject):
         self.visible = True
         if self.size == (0, 0):
             return
+        if self.render_job_in_queue:
+            return
+        self.render_job_in_queue = True
         self.core.call_success(
             "work_queue_add_promise",
             self.work_queue_name, self.render_img_promise, priority=100
@@ -227,6 +231,7 @@ class CairoRenderer(GObject.GObject):
             self.render(force=True)
 
     def _set_cairo_surface(self, surface):
+        self.render_job_in_queue = False
         if not self.visible:  # visibility has changed
             surface.surface.finish()
             return
