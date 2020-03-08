@@ -232,6 +232,8 @@ class Plugin(openpaperwork_core.PluginBase):
         nb_pages = self.core.call_success(
             "doc_get_nb_pages_by_url", self.doc_url
         )
+        if nb_pages is None:
+            nb_pages = 0
 
         handle_id = None
 
@@ -251,6 +253,8 @@ class Plugin(openpaperwork_core.PluginBase):
         nb_pages = self.core.call_success(
             "doc_get_nb_pages_by_url", self.doc_url
         )
+        assert(nb_pages is not None)
+
         LOGGER.info("Displaying new page %d", nb_pages - 1)
         self.core.call_all("doc_reload_page", doc_id, doc_url, nb_pages - 1)
         # and add back the scan drawer
