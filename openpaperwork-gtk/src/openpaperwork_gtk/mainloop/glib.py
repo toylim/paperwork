@@ -1,4 +1,5 @@
 import collections
+import faulthandler
 import logging
 import threading
 
@@ -56,6 +57,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
         try:
             self.loop.run()
+        except:
+            faulthandler.dump_traceback()
+            raise
         finally:
             self.loop_ident = None
 
