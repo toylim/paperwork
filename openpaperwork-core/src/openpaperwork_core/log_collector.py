@@ -1,4 +1,5 @@
 import datetime
+import faulthandler
 import logging
 import sys
 import tempfile
@@ -59,7 +60,7 @@ class Plugin(PluginBase):
     CONFIG_FILE_SEPARATOR = ","
 
     DEFAULT_LOG_LEVEL = 'info'
-    DEFAULT_LOG_FILES = 'stdout' + CONFIG_FILE_SEPARATOR + 'temp'
+    DEFAULT_LOG_FILES = 'temp' + CONFIG_FILE_SEPARATOR + 'stdout'
     DEFAULT_LOG_FORMAT = '[%(levelname)-6s] [%(name)-30s] %(message)s'
 
     LOG_LEVELS = {
@@ -130,15 +131,19 @@ class Plugin(PluginBase):
 
     def _enable_logging(self):
         self.log_handler.out_fds = set()
+        first = None
         for file_path in self.log_file_paths:
             if sys.stderr is not None:  # if app is not frozen
                 sys.stderr.write("Writing logs to {}\n".format(file_path))
             if file_path.lower() not in self.SPECIAL_FILES:
-                self.log_handler.out_fds.add(open(file_path, 'a'))
+                fd = open(file_path, 'a')
+                self.log_handler.out_fds.add(fd)
             else:
-                self.log_handler.out_fds.add(
-                    self.SPECIAL_FILES[file_path.lower()]()
-                )
+                fd = self.SPECIAL_FILES[file_path.lower()]()
+                self.log_handler.out_fds.add(fd)
+            if first is None:
+                first = fd
+        faulthandler.enable(file=first)
 
     def _reload_config(self, *args, **kwargs):
         LOGGER.info("Reloading logging configuration")
