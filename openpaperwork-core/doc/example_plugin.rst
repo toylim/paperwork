@@ -24,38 +24,38 @@ Plugin Example
            # implemented.
            return ['interface_name_toto', 'interface_name_tutu']
 
-       def get_deps(self):
-           # specify that we are looking for plugins implementing the
-           # specified interface(s).
-           # Provide also some default plugins to load if no plugins provide
-           # the requested interface yet.
-           # Note that plugins may be loaded in any order. Dependencies may
-           # not be satisfied yet when they are loaded.
-           # When initializing plugins, the core will make sure that
-           # all dependencies are satisfied, loaded and initialized before
-           # calling the method `init()` of this plugin.
-           return [
-               {
-                   'interface': 'interface_name_a',
-                   'defaults': [
-                       'suggested_default_plugin_a',
-                       'suggested_default_plugin_b',
-                   ],
-               },
-               {
+        def get_deps(self):
+            # specify that we are looking for plugins implementing the
+            # specified interface(s).
+            # Provide also some default plugins to load if no plugins provide
+            # the requested interface yet.
+            # Note that plugins may be loaded in any order. Dependencies may
+            # not be satisfied yet when they are loaded.
+            # When initializing plugins, the core will make sure that
+            # all dependencies are satisfied, loaded and initialized before
+            # calling the method `init()` of this plugin.
+            return [
+                {
+                    'interface': 'interface_name_a',
+                    'defaults': [
+                        'suggested_default_plugin_a',
+                        'suggested_default_plugin_b',
+                    ],
+                },
+                {
                    'interface': 'inteface_name_b',
-                   'defaults': [
-                       'suggested_default_plugin_d',
-                       'suggested_default_plugin_e',
-                   ],
-               }
-           ]
+                    'defaults': [
+                        'suggested_default_plugin_d',
+                        'suggested_default_plugin_e',
+                    ],
+                }
+            ]
 
-       def init(self, core):
-           # all the dependencies have loaded and initialized.
-           # we can safely rely on them here.
-           pass
+        def init(self, core):
+            # all the dependencies have loaded and initialized.
+            # we can safely rely on them here.
+            super().init(core)
 
-       def some_method_a(self, arg_a):
-           # do something
-           pass
+        def some_method_a(self, arg_a):
+            # do something
+            self.core.call_all("some_method_of_other_plugins", "arg_a", 22)
