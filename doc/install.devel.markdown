@@ -47,7 +47,8 @@ sudo apt install \
         libsane-dev \
         libgirepository1.0-dev gobject-introspection \
         python3-gi \
-        valac
+        valac \
+        gtk-doc-tools
 ```
 
 
