@@ -60,6 +60,9 @@ class BaseDocViewController(object):
     def doc_reload_page(self, page_idx):
         LOGGER.debug("%s()", self.doc_reload_page)
 
+    def on_page_activated(self, page):
+        LOGGER.debug("%s(%d)", self.on_page_activated, page.page_idx)
+
 
 class BaseLayoutController(BaseDocViewController):
     def _update_visibility(self):
@@ -373,6 +376,14 @@ class ZoomCustomController(BaseDocViewController):
         self.plugin._switch_controller('zoom', ZoomLayoutController)
 
 
+class ClickController(BaseDocViewController):
+    def on_page_activated(self, page):
+        super().on_page_activated(page)
+        LOGGER.info("User activated page %d", page.page_idx)
+        self.plugin.core.call_all("docview_set_layout", "paged")
+        self.plugin.core.call_all("doc_goto_page", page.page_idx)
+
+
 class Plugin(openpaperwork_core.PluginBase):
     LAYOUTS = {
         # name: pages per line (columns)
@@ -448,6 +459,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.page_layout.connect(
             "size-allocate", self._on_layout_size_allocate
         )
+        self.page_layout.connect("child-activated", self._on_child_activated)
 
         self.core.call_all(
             "mainwindow_add", side="right", name="docview", prio=10000,
@@ -458,6 +470,11 @@ class Plugin(openpaperwork_core.PluginBase):
     def chkdeps(self, out: dict):
         if not GTK_AVAILABLE:
             out['gtk'].update(openpaperwork_gtk.deps.GTK)
+
+    def _on_child_activated(self, page_layout, child):
+        page = self.widget_to_page[child]
+        for controller in self.controllers.values():
+            controller.on_page_activated(page)
 
     def docview_set_bottom_margin(self, height):
         # TODO
@@ -514,6 +531,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doc_close()
 
         self.controllers = {
+            'click': ClickController(self),
             'layout': LayoutControllerLoading(self),
             'page_number': PageNumberController(self),
             'scroll': ScrollPageLockedController(self),
