@@ -26,7 +26,6 @@ except FileNotFoundError:
     sys.exit(1)
 
 
-
 kwargs = {
     "name": "paperwork",
     "version": version,
@@ -95,6 +94,10 @@ Main features are:
         "python-Levenshtein",
         "pyxdg >= 0.25",
         "paperwork-backend>={}".format(version),
+
+        # for plugin 'paperwork_gtk.mainwindow.docview.pageview.boxes.hocr':
+        "rtree",
+
         # paperwork-chkdeps take care of all the dependencies that can't be
         # handled here. For instance:
         # - Dependencies using gobject introspection
@@ -180,7 +183,6 @@ else:
                 fullpath,
             ))
         common_include_files.append((fullpath, subpath))
-
 
     common_packages = [
         # XXX(Jflesch): known bug in cx_freeze

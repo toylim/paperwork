@@ -22,7 +22,7 @@ pypi.org and *cannot* be installed automatically with the command `pip`.
 ## Build dependencies
 
     sudo apt install python3-pip python3-setuptools
-    sudo apt install python3-dev python3-pil
+    sudo apt install python3-dev python3-pil python3-rtree
 
     # PyEnchant dependency
     sudo apt install libenchant-dev

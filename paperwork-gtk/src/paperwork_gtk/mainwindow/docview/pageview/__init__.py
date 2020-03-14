@@ -158,6 +158,9 @@ class Page(GObject.GObject):
         if not visible:
             self.hide()
 
+    def get_visible(self):
+        return self.visible
+
     def _on_draw(self, widget, cairo_ctx):
         self.renderer.draw(cairo_ctx)
         self.core.call_all("on_page_draw", cairo_ctx, self)
@@ -260,7 +263,6 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
         self.nb_loaded = 0
         for page in self.pages:
-            self.core.call_all("on_new_page", page)
             page.connect("size_obtained", self._on_page_img_size_obtained)
             out.append(page)
 

@@ -86,6 +86,9 @@ class Scan(GObject.GObject):
         else:
             self.core.call_all("draw_scan_stop", self.widget)
 
+    def get_visible(self):
+        return self.visible()
+
     def load(self):
         # the docview rely on this signal to know when pagss have been loaded
         # (in other words, when their size have been defined).

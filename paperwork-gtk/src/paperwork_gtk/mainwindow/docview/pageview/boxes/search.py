@@ -20,7 +20,10 @@ class Plugin(openpaperwork_core.PluginBase):
         self.keywords = set()
 
     def get_interfaces(self):
-        return ['search_listener']
+        return [
+            'gtk_pageview_boxes_listener',
+            'search_listener',
+        ]
 
     def get_deps(self):
         return [

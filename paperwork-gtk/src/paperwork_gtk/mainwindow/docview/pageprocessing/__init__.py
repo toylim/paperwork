@@ -88,6 +88,9 @@ class PageWrapper(GObject.GObject):
     def set_visible(self, visible):
         return self.page.set_visible(visible)
 
+    def get_visible(self):
+        return self.page.get_visible()
+
     def _on_draw(self, overlay, cairo_ctx):
         if not self.busy:
             return

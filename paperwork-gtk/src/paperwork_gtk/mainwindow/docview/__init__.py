@@ -102,7 +102,7 @@ class BaseLayoutController(BaseDocViewController):
                 self.plugin.widget_to_page.pop(widget)
                 self.plugin.page_layout.remove(widget)
         components = []
-        self.plugin.core.call_success(
+        self.plugin.core.call_all(
             "doc_reload_page_component",
             components,
             self.plugin.active_doc[0],
@@ -517,6 +517,8 @@ class Plugin(openpaperwork_core.PluginBase):
             controller.exit()
         for page in self.page_layout.get_children():
             self.page_layout.remove(page)
+        for page in self.pages:
+            page.set_visible(False)
         self.pages = []
         self.widget_to_page = {}
 

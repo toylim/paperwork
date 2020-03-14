@@ -281,6 +281,34 @@
             ]
         },
         {
+            "name": "libspatialindex",
+            "buildsystem": "cmake",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/libspatialindex/libspatialindex/releases/download/1.9.3/spatialindex-src-1.9.3.tar.gz",
+                    "sha256": "47d8779e32477b330e46b62fb7e62cb812caee5d8e684c35cb635a42a749f3fc"
+                }
+            ]
+        },
+        {
+            "name": "python-rtree",
+            "no-autogen": true,
+            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://files.pythonhosted.org/packages/56/6f/f1e91001d5ad9fa9bed65875152f5a1c7955c5763168cae309546e6e9fda/Rtree-0.9.4.tar.gz",
+                    "sha256": "cae327e2c03b3da4ea40d0fdf68f3e55fe9f302c56b9f31e1bfeb36dbea73f44"
+                },
+                {
+                    "type": "file",
+                    "path": "pip-Makefile",
+                    "dest-filename": "Makefile"
+                }
+            ]
+        },
+        {
             "name": "poppler-data",
             "buildsystem": "cmake-ninja",
             "sources": [

@@ -16,6 +16,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_interfaces(self):
         return [
             'gtk_pageview_boxes_all',
+            'gtk_pageview_boxes_listener',
         ]
 
     def get_deps(self):
