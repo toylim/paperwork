@@ -74,6 +74,9 @@ class PageHoverHandler(object):
             )
 
     def on_motion(self, widget, event):
+        if self.boxes is None:
+            self.actives = []
+            return
         zoom = self.page.get_zoom()
         pos = (int(event.x / zoom), int(event.y / zoom))
         actives = list(self.boxes.intersection(pos, objects=True))
