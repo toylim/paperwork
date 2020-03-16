@@ -8,7 +8,7 @@ try:
     from gi.repository import PangoCairo
     PANGO_AVAILABLE = True
 except (ImportError, ValueError):
-    pass
+    PANGO_AVAILABLE = False
 
 import openpaperwork_core
 import openpaperwork_core.deps
