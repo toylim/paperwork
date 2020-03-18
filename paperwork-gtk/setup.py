@@ -95,9 +95,6 @@ Main features are:
         "pyxdg >= 0.25",
         "paperwork-backend>={}".format(version),
 
-        # for plugin 'paperwork_gtk.mainwindow.docview.pageview.boxes.hocr':
-        "rtree",
-
         # paperwork-chkdeps take care of all the dependencies that can't be
         # handled here. For instance:
         # - Dependencies using gobject introspection

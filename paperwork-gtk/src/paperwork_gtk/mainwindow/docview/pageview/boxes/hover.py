@@ -1,8 +1,4 @@
-import itertools
 import logging
-
-import rtree
-import rtree.index
 
 try:
     import gi
@@ -17,7 +13,6 @@ import openpaperwork_gtk.deps
 
 
 LOGGER = logging.getLogger(__name__)
-IDX_GENERATOR = itertools.count()
 
 
 class PageHoverHandler(object):
@@ -30,21 +25,16 @@ class PageHoverHandler(object):
         self.realize_handler_id = None
         self.motion_handler_id = None
 
-    def set_boxes(self, boxes):
-        self.boxes = rtree.index.Index()
-
-        for line_box in boxes:
+    def _get_word_boxes(self, line_boxes):
+        for line_box in line_boxes:
             for word_box in line_box.word_boxes:
                 if word_box.content.strip() == "":
                     continue
-                position = (
-                    word_box.position[0][0],
-                    word_box.position[0][1],
-                    word_box.position[1][0],
-                    word_box.position[1][1],
-                )
-                idx = next(IDX_GENERATOR)
-                self.boxes.insert(idx, position, word_box)
+                yield (word_box.position, word_box)
+
+    def set_boxes(self, boxes):
+        boxes = self._get_word_boxes(boxes)
+        self.boxes = self.core.call_success("spatial_indexer_get", boxes)
 
     def connect(self):
         assert(self.realize_handler_id is None)
@@ -78,19 +68,30 @@ class PageHoverHandler(object):
             self.actives = []
             return
         zoom = self.page.get_zoom()
-        pos = (int(event.x / zoom), int(event.y / zoom))
-        actives = list(self.boxes.intersection(pos, objects=True))
+        x = int(event.x / zoom)
+        y = int(event.y / zoom)
+        actives = list(self.boxes.get_boxes(x, y))
+
+        actives = [
+            # smaller areas last
+            (((a[0][1][0] - a[0][0][0]) * (a[0][1][1] - a[0][0][1])), a)
+            for a in actives
+        ]
+        actives.sort(reverse=True)
+        actives = [
+            a[1] for a in actives
+        ]
+
         if actives != self.actives:
             self.page.widget.queue_draw()
         self.actives = actives
 
     def draw(self, cairo_ctx):
-        for active in self.actives:
-            box = active.object
+        for (rect, box) in self.actives:
             self.core.call_all(
                 "page_draw_box",
                 cairo_ctx, self.page,
-                box.position, (0.0, 0.0, 1.0),
+                rect, (0.0, 0.0, 1.0),
                 border_width=2, box_content=box.content
             )
 
@@ -119,6 +120,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': [
                     'paperwork_gtk.mainwindow.docview.pageview.boxes'
                 ],
+            },
+            {
+                'interface': 'spatial_index',
+                'defaults': ['openpaperwork_core.spatial.simple'],
             },
         ]
 

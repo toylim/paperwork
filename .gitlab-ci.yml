@@ -29,7 +29,6 @@ check:
     - apt-get install -y -qq python3-dev git
     - apt-get install -y -qq zlib1g-dev libjpeg-dev
     - apt-get install -y -qq python3-gi
-    - apt-get install -y -qq python3-rtree
 
 
 test:
