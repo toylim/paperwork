@@ -2,7 +2,8 @@
 Spatial indexer that works in a way very similar to R-tree. Except for the
 way the nodes are split because I'm a lazy bastard and it's good enough.
 """
-
+# TODO(Jflesch): balancing is just wrong. --> splitting should be done with
+# Guttman Quadratic or any better heuristic.
 
 import math
 import logging
@@ -184,9 +185,11 @@ class RTreeSpatialIndexer(object):
         """
         Returns all the boxes that contains the point (pt_x, pt_y)
         """
+        examined = 0
         to_examine = [self.root]
         while len(to_examine) > 0:
             n = to_examine.pop(0)
+            examined += 1
             if not n.leaf:
                 for c in n.children:
                     if self.is_in(c.box, pt_x, pt_y):
@@ -195,6 +198,7 @@ class RTreeSpatialIndexer(object):
                 for c in n.children:
                     if self.is_in(c[0], pt_x, pt_y):
                         yield (c[0], c[1])
+        # LOGGER.debug("Examined nodes: %d", examined)
 
 
 class Plugin(openpaperwork_core.PluginBase):
