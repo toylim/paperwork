@@ -72,9 +72,9 @@ class PageHoverHandler(object):
         y = int(event.y / zoom)
         actives = list(self.boxes.get_boxes(x, y))
 
+        # will sort smaller areas last
         actives = [
-            # smaller areas last
-            (((a[0][1][0] - a[0][0][0]) * (a[0][1][1] - a[0][0][1])), a)
+            (abs((a[0][1][0] - a[0][0][0]) * (a[0][1][1] - a[0][0][1])), a)
             for a in actives
         ]
         actives.sort(reverse=True)

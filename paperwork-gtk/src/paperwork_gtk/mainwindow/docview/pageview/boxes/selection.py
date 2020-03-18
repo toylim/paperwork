@@ -17,27 +17,55 @@ LOGGER = logging.getLogger(__name__)
 IDX_GENERATOR = itertools.count()
 
 
+class NBox(object):
+    def __init__(self, box, index):
+        self.box = box
+        self.next = None
+        self.index = index
+
+
 class PageSelectionHandler(object):
     def __init__(self, core, page):
         self.core = core
         self.page = page
-        self.line_boxes = None
-        self.word_boxes = None
+
         self.actives = []
+        self.boxes = None
 
         self.orig = (-1, -1)
         self.first = None
+        self.last = None
 
         self.gesture = Gtk.GestureDrag.new(page.widget)
         self.gesture.set_propagation_phase(Gtk.PropagationPhase.CAPTURE)
 
         self.signal_handlers = []
 
-    def set_boxes(self, boxes):
-        self.line_boxes = boxes
-        self.word_boxes = []
-        for line in boxes:
-            self.word_boxes += line.word_boxes
+    def set_boxes(self, line_boxes):
+        # chain the boxes
+        chained_boxes = []
+        pbox = None
+        index = 0
+        for line in line_boxes:
+            for word in line.word_boxes:
+                if word.content.strip() == "":
+                    continue
+                new_box = NBox(word, index)
+                index += 1
+                if pbox is not None:
+                    pbox.next = new_box
+                    chained_boxes.append(pbox)
+                pbox = new_box
+        if pbox is not None:
+            chained_boxes.append(pbox)
+
+        # and then index them
+        self.boxes = self.core.call_success(
+            "spatial_indexer_get", [
+                (b.box.position, b)
+                for b in chained_boxes
+            ]
+        )
 
     def connect(self):
         self.disconnect()
@@ -56,68 +84,85 @@ class PageSelectionHandler(object):
             self.gesture.disconnect(handler_id)
         self.signal_handlers = []
 
-    def _get_boxes(self, x, y):
+    def _find_box(self, x, y):
         if self.boxes is None:
-            return set()
-        x += self.orig[0]
-        y += self.orig[1]
-        zoom = self.page.get_zoom()
-        pos = (int(x / zoom), int(y / zoom))
-        return set(self.boxes.intersection(pos, objects=True))
-
-    def _find_closest(self, x, y):
-        if self.word_boxes is None:
-            return
+            return None
         zoom = self.page.get_zoom()
         x /= zoom
         y /= zoom
-        return min({
-            (
-                # distance squared
-                ((x - ((box.position[0][0] + box.position[1][0]) / 2)) ** 2) +
-                ((y - ((box.position[0][1] + box.position[1][1]) / 2)) ** 2),
-                box
-            )
-            for box in self.word_boxes
-        })[1]
+        nboxes = self.boxes.get_boxes(x, y)
 
-    def _get_selected(self, last):
-        actives = None
-        for line in self.line_boxes:
-            for word in line.word_boxes:
-                if word is self.first or word is last:
-                    if actives is None:
-                        actives = []
-                    else:
-                        return actives
-                if actives is not None:
-                    actives.append(word)
-        return []
+        # take the box with the smallest area
+        try:
+            nbox = min({
+                (
+                    abs(
+                        (n[1].box.position[1][0] - n[1].box.position[0][0]) *
+                        (n[1].box.position[1][1] - n[1].box.position[0][1])
+                    ), n[1]
+                )
+                for n in nboxes
+            })[1]
+        except ValueError:
+            return None
+        return nbox
+
+    def _get_selected(self):
+        if self.first is None:
+            return []
+
+        if self.first.index <= self.last.index:
+            first = self.first
+            last = self.last
+        else:
+            first = self.last
+            last = self.first
+
+        current = first
+
+        while current is not None and current != last:
+            yield current.box
+            current = current.next
+
+        yield last.box
 
     def on_drag_begin(self, gesture, x, y):
         self.actives = []
         self.orig = (x, y)
-        self.first = self._find_closest(x, y)
+        self.first = self._find_box(x, y)
+        self.last = self.first
 
     def on_drag_update(self, gesture, x, y):
+        if self.first is None:
+            return
+
         (x, y) = (self.orig[0] + x, self.orig[1] + y)
-        last = self._find_closest(x, y)
-        actives = self._get_selected(last)
-        if len(self.actives) != len(actives):
-            self.page.widget.queue_draw()
-        self.actives = actives
-        LOGGER.info("%d selected boxes", len(self.actives))
+        last = self._find_box(x, y)
+
+        if last is None or last == self.last:
+            return
+
+        self.last = last
+        self.page.widget.queue_draw()
+
+        LOGGER.info(
+            "Text selection: first: %s ; last: %s",
+            self.first.box.content, self.last.box.content
+        )
 
     def on_drag_end(self, gesture, x, y):
+        if self.first is None:
+            return
+
         self.on_drag_update(gesture, x, y)
         self.core.call_all(
             "on_page_boxes_selected",
             self.page.doc_id, self.page.doc_url, self.page.page_idx,
-            self.actives
+            list(self._get_selected())
         )
 
     def draw(self, cairo_ctx):
-        for box in self.actives:
+        for box in self._get_selected():
             self.core.call_all(
                 "page_draw_box",
                 cairo_ctx, self.page,
@@ -150,6 +195,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': [
                     'paperwork_gtk.mainwindow.docview.pageview.boxes'
                 ],
+            },
+            {
+                'interface': 'spatial_index',
+                'defaults': ['openpaperwork_core.spatial.rtree'],
             },
         ]
 
