@@ -117,7 +117,7 @@ class RTreeSpatialIndexer(object):
         for (pos, obj) in boxes:
             self.insert(pos, obj)
 
-        self._print_stats()
+        # self._print_stats()
 
     def _print_stats(self):
         """
