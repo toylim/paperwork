@@ -14,7 +14,7 @@ LOGGER = logging.getLogger(__name__)
 
 DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'openpaperwork_core.resources.setuptools',
-    'openpaperwork_core.spatial.simple',
+    'openpaperwork_core.spatial.rtree',
     'openpaperwork_gtk.mainloop.glib',
     'openpaperwork_gtk.pixbuf.pillow',
     'openpaperwork_gtk.resources',

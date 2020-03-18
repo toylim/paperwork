@@ -123,7 +123,7 @@ class Plugin(openpaperwork_core.PluginBase):
             },
             {
                 'interface': 'spatial_index',
-                'defaults': ['openpaperwork_core.spatial.simple'],
+                'defaults': ['openpaperwork_core.spatial.rtree'],
             },
         ]
 

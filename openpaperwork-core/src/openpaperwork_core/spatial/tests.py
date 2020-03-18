@@ -53,3 +53,19 @@ class AbstractTest(unittest.TestCase):
                 (((25, 25), (100, 100)), "c"),
             ]
         )
+
+    def test_real(self):
+        boxes = [
+            (((584, 360), (1097, 415)), "CROIX-ROUGE"),
+            (((1126, 361), (1540, 428)), "FRANCAISE"),
+            (((865, 430), (1006, 464)), "EQUIPES"),
+            (((1028, 437), (1258, 462)), "SECOURISTES"),
+            (((724, 675), (911, 718)), "Madame"),
+        ]
+        indexer = self.core.call_success("spatial_indexer_get", boxes)
+        self.assertEqual(
+            list(indexer.get_boxes(836, 701)),
+            [
+                (((724, 675), (911, 718)), "Madame"),
+            ]
+        )
