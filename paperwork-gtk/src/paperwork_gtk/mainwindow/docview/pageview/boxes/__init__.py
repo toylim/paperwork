@@ -60,6 +60,17 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doc_close()
 
     def _set_boxes(self, boxes, page):
+        # Tesseract seems to have (seemed ?) a bug: boxes taking the whole
+        # page. --> we remove them
+        boxes = [
+            line_box for line_box in boxes
+            if line_box.position[0][0] > 0 or line_box.position[0][1] > 0
+        ]
+        for line_box in boxes:
+            line_box.word_boxes = [
+                word_box for word_box in line_box.word_boxes
+                if word_box.position[0][0] > 0 or word_box.position[0][1] > 0
+            ]
         ref = (page.doc_id, page.page_idx)
         self.cache[ref] = boxes
         return boxes
