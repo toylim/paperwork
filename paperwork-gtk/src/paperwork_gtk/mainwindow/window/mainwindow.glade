@@ -17,6 +17,8 @@
             <property name="visible">True</property>
             <property name="name">mainwindow_stack_header_left</property>
             <property name="width_request">300</property>
+            <property name="transition-type">slide-left</property>
+            <property name="transition-duration">333</property>
           </object>
           <packing>
             <property name="pack_type">start</property>
@@ -28,6 +30,8 @@
           <object class="GtkStack" id="mainwindow_stack_header_right">
             <property name="visible">True</property>
             <property name="name">mainwindow_stack_header_right</property>
+            <property name="transition-type">slide-right</property>
+            <property name="transition-duration">333</property>
           </object>
           <packing>
             <property name="pack_type">end</property>
@@ -53,6 +57,8 @@
               <object class="GtkStack" id="mainwindow_stack_body_left">
                 <property name="name">mainwindow_stack_body_left</property>
                 <property name="visible">True</property>
+                <property name="transition-type">slide-right</property>
+                <property name="transition-duration">333</property>
               </object>
               <packing>
                 <property name="pack_type">start</property>
@@ -64,6 +70,8 @@
               <object class="GtkStack" id="mainwindow_stack_body_right">
                 <property name="name">mainwindow_stack_body_right</property>
                 <property name="visible">True</property>
+                <property name="transition-type">slide-left</property>
+                <property name="transition-duration">333</property>
               </object>
               <packing>
                 <property name="pack_type">end</property>

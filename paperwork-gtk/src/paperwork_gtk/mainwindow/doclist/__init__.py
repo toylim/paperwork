@@ -67,6 +67,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'i18n',
                 'defaults': ['openpaperwork_core.i18n.python'],
             },
+            {
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_gtk.mainloop.glib'],
+            },
         ]
 
     def init(self, core):
@@ -103,6 +107,10 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doclist.connect("row-activated", self._on_row_activated)
 
         self.menu_model = self.widget_tree.get_object("doclist_menu_model")
+
+        self.core.call_one(
+            "mainloop_schedule", self.core.call_all, "on_doclist_initialized"
+        )
 
     def chkdeps(self, out: dict):
         if not GLIB_AVAILABLE:

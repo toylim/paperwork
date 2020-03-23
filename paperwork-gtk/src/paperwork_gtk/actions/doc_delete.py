@@ -26,6 +26,8 @@ ACTION_NAME = "doc_delete"
 
 
 class Plugin(openpaperwork_core.PluginBase):
+    PRIORITY = -100
+
     def __init__(self):
         super().__init__()
         self.active_doc = None
@@ -54,12 +56,7 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def init(self, core):
-        super().init(core)
-
-        if not GLIB_AVAILABLE:
-            return
-
+    def on_doclist_initialized(self):
         action = Gio.SimpleAction.new(ACTION_NAME, None)
         action.connect("activate", self._delete)
         self.core.call_all("app_actions_add", action)

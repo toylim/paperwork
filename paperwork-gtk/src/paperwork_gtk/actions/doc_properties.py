@@ -1,0 +1,67 @@
+import gettext
+import logging
+
+try:
+    from gi.repository import Gio
+    GLIB_AVAILABLE = True
+except (ImportError, ValueError):
+    GLIB_AVAILABLE = False
+
+import openpaperwork_core
+import openpaperwork_core.promise
+import openpaperwork_gtk.deps
+
+
+LOGGER = logging.getLogger(__name__)
+_ = gettext.gettext
+ACTION_NAME = "doc_properties"
+
+
+class Plugin(openpaperwork_core.PluginBase):
+    def __init__(self):
+        super().__init__()
+        self.active_doc = None
+
+    def get_interfaces(self):
+        return [
+            'chkdeps',
+            'doc_action',
+            'gtk_window_listener',
+        ]
+
+    def get_deps(self):
+        return [
+            {
+                'interface': 'app_actions',
+                'defaults': ['paperwork_gtk.mainwindow.window'],
+            },
+            {
+                'interface': 'doc_actions',
+                'defaults': ['paperwork_gtk.mainwindow.doclist'],
+            },
+        ]
+
+    def on_doclist_initialized(self):
+        action = Gio.SimpleAction.new(ACTION_NAME, None)
+        action.connect("activate", self._open_properties)
+        self.core.call_all("app_actions_add", action)
+        self.core.call_all(
+            "add_doc_action", _("Properties"), "win." + ACTION_NAME
+        )
+
+    def chkdeps(self, out: dict):
+        if not GLIB_AVAILABLE:
+            out['glib'].update(openpaperwork_gtk.deps.GLIB)
+
+    def doc_open(self, doc_id, doc_url):
+        self.active_doc = (doc_id, doc_url)
+
+    def doc_close(self):
+        self.active_doc = None
+
+    def _open_properties(self, action, parameter):
+        assert(self.active_doc is not None)
+        active = self.active_doc
+
+        LOGGER.info("Opening properties of document %s", active[0])
+        self.core.call_all("open_doc_properties", *active)
