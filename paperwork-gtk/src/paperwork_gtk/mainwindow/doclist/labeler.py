@@ -67,7 +67,9 @@ class Plugin(openpaperwork_core.PluginBase):
         self.tasks = {}
 
     def get_interfaces(self):
-        return ['gtk_thumbnailer']
+        return [
+            'gtk_doclist_listener',
+        ]
 
     def get_deps(self):
         return [

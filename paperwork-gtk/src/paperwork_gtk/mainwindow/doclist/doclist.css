@@ -5,3 +5,7 @@
 #doclist_scroll image {
 	border: 1px solid gray;
 }
+
+#doclist_scroll button image {
+	border: 0px;
+}

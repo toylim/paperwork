@@ -26,6 +26,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_interfaces(self):
         return [
             'chkdeps',
+            'gtk_doclist_listener',
             'gtk_doclist_name',
         ]
 

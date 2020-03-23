@@ -2,8 +2,14 @@ import datetime
 import logging
 import time
 
+try:
+    from gi.repository import Gio
+    GLIB_AVAILABLE = True
+except (ImportError, ValueError):
+    GLIB_AVAILABLE = False
+
 import openpaperwork_core
-import openpaperwork_core.deps
+import openpaperwork_gtk.deps
 
 
 LOGGER = logging.getLogger(__name__)
@@ -27,9 +33,12 @@ class Plugin(openpaperwork_core.PluginBase):
         self.row_to_docid = {}
         self.docid_to_row = {}
         self.active_docid = None
+        self.actions = None
 
     def get_interfaces(self):
         return [
+            'chkdeps',
+            'doc_actions',
             'doc_open',
             'gtk_app_menu',
             'gtk_doclist',
@@ -77,6 +86,8 @@ class Plugin(openpaperwork_core.PluginBase):
             LOGGER.error("Failed to load widget tree")
             return
 
+        self.actions = Gio.Menu.new()
+
         self.doclist = self.widget_tree.get_object("doclist_listbox")
         self.core.call_all(
             "mainwindow_add", side="left", name="doclist", prio=10000,
@@ -92,6 +103,10 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doclist.connect("row-activated", self._on_row_activated)
 
         self.menu_model = self.widget_tree.get_object("doclist_menu_model")
+
+    def chkdeps(self, out: dict):
+        if not GLIB_AVAILABLE:
+            out['glib'].update(openpaperwork_gtk.deps.GLIB)
 
     def doclist_add(self, widget, vposition):
         body = self.widget_tree.get_object("doclist_body")
@@ -127,7 +142,7 @@ class Plugin(openpaperwork_core.PluginBase):
         row = widget_tree.get_object("date_box")
         self.doclist.insert(row, -1)
 
-    def _add_doc_box(self, doc_id, box="doc_box.glade"):
+    def _add_doc_box(self, doc_id, box="doc_box.glade", new=False):
         widget_tree = self.core.call_success(
             "gtk_load_widget_tree",
             "paperwork_gtk.mainwindow.doclist", box
@@ -145,6 +160,13 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all(
             "on_doc_box_creation", doc_id, widget_tree, flowlayout
         )
+
+        doc_actions = widget_tree.get_object("doc_actions")
+        if new:
+            doc_actions.set_visible(False)
+        else:
+            doc_actions.set_menu_model(self.actions)
+            doc_actions.connect("toggled", self._on_doc_actions_menu, doc_id)
 
         row = widget_tree.get_object("doc_listbox")
         self.row_to_docid[row] = doc_id
@@ -202,7 +224,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         if show_new:
             new_doc = self.core.call_success("get_new_doc")
-            self._add_doc_box(new_doc[0])
+            self._add_doc_box(new_doc[0], new=True)
 
         self.doclist_extend(NB_DOCS_PER_PAGE)
 
@@ -275,11 +297,21 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doclist_extend(NB_DOCS_PER_PAGE)
         self._scrollbar_last_value = vadj.get_value()
 
-    def _on_row_activated(self, list_box, row):
-        doc_id = self.row_to_docid[row]
+    def _doc_open(self, doc_id):
+        if self.active_docid == doc_id:
+            return
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
         LOGGER.info("Opening document %s (%s)", doc_id, doc_url)
         self.core.call_all("doc_open", doc_id, doc_url)
+
+    def _on_row_activated(self, list_box, row):
+        doc_id = self.row_to_docid[row]
+        self._doc_open(doc_id)
+
+    def _on_doc_actions_menu(self, menu_button, doc_id):
+        if not menu_button.get_active():
+            return
+        self._doc_open(doc_id)
 
     def menu_app_append_item(self, item):
         # they are actually the same menu
@@ -287,3 +319,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def doclist_menu_append_item(self, item):
         self.menu_model.append_item(item)
+
+    def add_doc_action(self, action_label, action_name):
+        self.actions.append(action_label, action_name)

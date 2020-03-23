@@ -1,10 +1,28 @@
 import collections
+import gettext
 import logging
 
+try:
+    from gi.repository import Gio
+    from gi.repository import GLib
+    GLIB_AVAILABLE = True
+except (ImportError, ValueError):
+    GLIB_AVAILABLE = False
+
+try:
+    import gi
+    gi.require_version('Gtk', '3.0')
+    from gi.repository import Gtk
+    GTK_AVAILABLE = True
+except (ImportError, ValueError):
+    GTK_AVAILABLE = False
+
 import openpaperwork_core
+import openpaperwork_gtk.deps
 
 
 LOGGER = logging.getLogger(__name__)
+_ = gettext.gettext
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -22,6 +40,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_interfaces(self):
         return [
             'app_actions',
+            'chkdeps',
             'gtk_mainwindow',
         ]
 
@@ -75,6 +94,18 @@ class Plugin(openpaperwork_core.PluginBase):
             "size-allocate", self._on_mainwindow_size_allocate
         )
 
+        if hasattr(GLib, 'set_application_name'):
+            GLib.set_application_name(_("Paperwork"))
+        GLib.set_prgname("paperwork")
+
+        app = Gtk.Application(
+            application_id=None,
+            flags=Gio.ApplicationFlags.FLAGS_NONE
+        )
+        app.register(None)
+        Gtk.Application.set_default(app)
+        self.mainwindow.set_application(app)
+
         self.stacks = {
             "left": {
                 "header": self.widget_tree.get_object(
@@ -93,6 +124,12 @@ class Plugin(openpaperwork_core.PluginBase):
                 ),
             },
         }
+
+    def chkdeps(self, out: dict):
+        if not GLIB_AVAILABLE:
+            out['glib'].update(openpaperwork_gtk.deps.GLIB)
+        if not GTK_AVAILABLE:
+            out['gtk'].update(openpaperwork_gtk.deps.GTK)
 
     def on_initialized(self):
         for (side_name, side_default) in self.default.items():

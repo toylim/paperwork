@@ -23,11 +23,12 @@
         </child>
 
         <child>
-          <object class="GtkButton" id="doc_actions">
+          <object class="GtkMenuButton" id="doc_actions">
             <property name="use_action_appearance">False</property>
-            <property name="visible">False</property>
+            <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="use_underline">True</property>
+            <property name="use_underline">False</property>
+            <property name="relief">none</property>
             <child>
               <object class="GtkImage">
                 <property name="visible">True</property>
@@ -43,6 +44,7 @@
             <property name="fill">True</property>
           </packing>
         </child>
+
       </object>
     </child>
   </object>
