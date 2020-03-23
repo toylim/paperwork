@@ -146,8 +146,8 @@ class PageSelectionHandler(object):
         self.page.widget.queue_draw()
 
         LOGGER.info(
-            "Text selection: first: %s ; last: %s",
-            self.first.box.content, self.last.box.content
+            "Text selection: first: %d ; last: %d",
+            self.first.index, self.last.index
         )
 
     def on_drag_end(self, gesture, x, y):
