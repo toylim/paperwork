@@ -35,6 +35,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return [
             'busy',
             'chkdeps',
+            'gtk_window_listener',
         ]
 
     def get_deps(self):

@@ -186,6 +186,6 @@ class Plugin(openpaperwork_core.PluginBase):
         dialog.set_transient_for(self.mainwindow)
         return True
 
-    def actions_app_add(self, action):
+    def app_actions_add(self, action):
         if self.mainwindow is not None:
             self.mainwindow.add_action(action)

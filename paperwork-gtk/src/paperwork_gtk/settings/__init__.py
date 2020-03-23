@@ -49,7 +49,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         action = Gio.SimpleAction.new('open_settings', None)
         action.connect("activate", self.open_settings)
-        self.core.call_all("actions_app_add", action)
+        self.core.call_all("app_actions_add", action)
 
     def open_settings(self, *args, **kwargs):
         self.core.call_success(
