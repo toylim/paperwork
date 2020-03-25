@@ -80,6 +80,9 @@ class Plugin(openpaperwork_core.PluginBase):
         except ValueError:
             return None
 
+    def doc_get_id_by_date(self, date):
+        return date.strftime(DOCNAME_FORMAT)
+
     # datetime.datetime.now cannot be mocked with unittest.mock.patch
     # (datetime is built-in) --> allow dependency injection here
     def storage_get_new_doc(self, now_func=datetime.datetime.now):
