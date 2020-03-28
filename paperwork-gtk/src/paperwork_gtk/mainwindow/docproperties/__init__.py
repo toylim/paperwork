@@ -12,7 +12,10 @@ _ = gettext.gettext
 class DocPropertiesUpdate(object):
     def __init__(self, doc_id):
         self.doc_id = doc_id
-        self.modified = False
+
+        self.new_docs = set()
+        self.upd_docs = set()
+        self.del_docs = set()
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -38,6 +41,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'i18n',
                 'defaults': ['openpaperwork_core.i18n.python'],
             },
+            {
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_gtk.mainloop.glib'],
+            },
         ]
 
     def init(self, core):
@@ -54,7 +61,10 @@ class Plugin(openpaperwork_core.PluginBase):
             return
 
         self.widget_tree.get_object("docproperties_back").connect(
-            "clicked", self._close_doc_properties
+            "clicked", self._apply
+        )
+        self.widget_tree.get_object("docproperties_cancel").connect(
+            "clicked", self._cancel
         )
 
         self.core.call_all(
@@ -69,7 +79,7 @@ class Plugin(openpaperwork_core.PluginBase):
         components = []
         self.core.call_all("doc_properties_components_get", components)
         for component in components:
-            self.widget_tree.get_object("docproperties_body").pack_start(
+            self.widget_tree.get_object("docproperties_box").pack_start(
                 component, expand=False, fill=True, padding=0
             )
 
@@ -90,35 +100,56 @@ class Plugin(openpaperwork_core.PluginBase):
             "mainwindow_show", side="left", name="docproperties"
         )
 
-    def _close_doc_properties(self, *args, **kwargs):
+    def _apply(self, *args, **kwargs):
+        LOGGER.info("Changes validated by the user")
         upd = DocPropertiesUpdate(self.active_doc[0])
-        self.core.call_all("doc_properties_components_apply_changes", upd)
 
-        if upd.modified or upd.doc_id != self.active_doc[0]:
-            promise = openpaperwork_core.promise.ThreadedPromise(
-                self.core, self._upd_index, args=(self.active_doc[0], upd,),
-            )
-            promise.schedule()
+        promise = openpaperwork_core.promise.ThreadedPromise(
+            self.core, self.core.call_all,
+            args=("doc_properties_components_apply_changes", upd)
+        )
+        # drop call_all return value
+        promise = promise.then(lambda *args, **kwargs: None)
+        promise = promise.then(openpaperwork_core.promise.ThreadedPromise(
+            self.core, self._upd_index, args=(upd,),
+        ))
+        promise.schedule()
 
         self.core.call_all(
             "mainwindow_show", side="left", name="doclist"
         )
 
-    def _upd_index(self, doc_id, upd):
+    def _cancel(self, *args, **kwargs):
+        LOGGER.info("Changes cancelled by the user")
+        self.core.call_all("doc_properties_components_cancel_changes")
+        self.core.call_all(
+            "mainwindow_show", side="left", name="doclist"
+        )
+
+    def _upd_index(self, upd):
+        total = len(upd.new_docs) + len(upd.upd_docs) + len(upd.del_docs)
+
+        if total <= 0:
+            LOGGER.info("Document %s not modified. Nothing to do", upd.doc_id)
+            return
+
+        LOGGER.info(
+            "Document %s modified. %d documents impacted", upd.doc_id, total
+        )
+
         transactions = []
-        self.core.call_all("doc_transaction_start", transactions, 1)
+        self.core.call_all("doc_transaction_start", transactions, total)
         transactions.sort(key=lambda transaction: -transaction.priority)
 
-        if doc_id == upd.doc_id:
-            # doc id hasn't changed --> it's just an update
+        for doc_id in upd.new_docs:
             for transaction in transactions:
-                transaction.upd_obj(upd.doc_id)
-        else:
-            # doc id changed
+                transaction.add_obj(doc_id)
+        for doc_id in upd.upd_docs:
+            for transaction in transactions:
+                transaction.upd_obj(doc_id)
+        for doc_id in upd.del_docs:
             for transaction in transactions:
                 transaction.del_obj(doc_id)
-            for transaction in transactions:
-                transaction.add_obj(upd.doc_id)
 
         for transaction in transactions:
             transaction.commit()

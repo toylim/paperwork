@@ -15,6 +15,9 @@
         <property name="can_focus">False</property>
         <property name="use_action_appearance">False</property>
         <property name="use_underline">True</property>
+        <property name="use_underline">True</property>
+        <property name="has_tooltip">True</property>
+        <property name="tooltip_text" translatable="yes">Validate changes</property>
         <child>
           <object class="GtkImage">
             <property name="visible">True</property>
@@ -28,12 +31,40 @@
         <property name="pack_type">start</property>
       </packing>
     </child>
+
+    <child>
+      <object class="GtkButton" id="docproperties_cancel">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="use_action_appearance">False</property>
+        <property name="use_underline">True</property>
+        <property name="has_tooltip">True</property>
+        <property name="tooltip_text" translatable="yes">Cancel changes</property>
+        <child>
+          <object class="GtkImage">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="icon_name">edit-undo-symbolic</property>
+            <property name="icon_size">1</property>
+          </object>
+        </child>
+      </object>
+      <packing>
+        <property name="pack_type">start</property>
+      </packing>
+    </child>
   </object>
 
-  <object class="GtkBox" id="docproperties_body">
+  <object class="GtkScrolledWindow" id="docproperties_body">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="orientation">vertical</property>
-    <property name="name">docproperties_body</property>
+    <child>
+      <object class="GtkBox" id="docproperties_box">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="name">docproperties_body</property>
+      </object>
+    </child>
   </object>
 </interface>

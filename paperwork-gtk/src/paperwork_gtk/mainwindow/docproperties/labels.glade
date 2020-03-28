@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<interface>
+  <object class="GtkBox" id="listbox_global">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="orientation">vertical</property>
+    <property name="margin">10</property>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="label">Labels</property>
+        <property name="halign">start</property>
+        <attributes>
+          <attribute name="weight" value="PANGO_WEIGHT_BOLD"/>
+        </attributes>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+
+    <child>
+      <object class="GtkScrolledWindow">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="hscrollbar_policy">automatic</property>
+        <property name="vscrollbar_policy">never</property>
+        <child>
+          <object class="GtkListBox" id="listbox_labels">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+          </object>
+        </child>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">1</property>
+      </packing>
+    </child>
+  </object>
+
+
+  <object class="GtkListBoxRow" id="row_add_label">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="height_request">30</property>
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="orientation">horizontal</property>
+
+        <child>
+          <object class="GtkColorButton" id="new_label_color">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="relief">none</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+
+        <child>
+          <object class="GtkEntry" id="new_label_entry">
+            <property name="visible">True</property>
+            <property name="sensitive">True</property>
+            <property name="can_focus">True</property>
+            <property name="editable">True</property>
+            <property name="invisible_char">●</property>
+            <property name="text"></property>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+
+        <child>
+          <object class="GtkButton" id="new_label_button">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="relief">GTK_RELIEF_NONE</property>
+            <child>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="icon_size">1</property>
+                <property name="icon_name">list-add-symbolic</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <style>
+      <class name="list-row-last"/>
+    </style>
+  </object>
+</interface>

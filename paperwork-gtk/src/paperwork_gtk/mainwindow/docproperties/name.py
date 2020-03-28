@@ -8,7 +8,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 class Plugin(openpaperwork_core.PluginBase):
-    PRIORITY = 100
+    PRIORITY = 10000
 
     def __init__(self):
         super().__init__()
@@ -113,4 +113,9 @@ class Plugin(openpaperwork_core.PluginBase):
         LOGGER.info("Renaming document %s into %s", orig_id, dest_id)
         self.core.call_all("doc_rename_by_url", orig_url, dest_url)
 
+        out.del_docs.add(out.doc_id)
+        out.new_docs.add(dest_id)
         out.doc_id = dest_id
+
+    def doc_properties_components_cancel_changes(self):
+        self.doc_properties_components_set_active_doc(*self.active_doc)

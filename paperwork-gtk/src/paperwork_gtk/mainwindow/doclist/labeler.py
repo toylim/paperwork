@@ -32,7 +32,14 @@ class LabelingTask(object):
         labels = list(labels)
         labels.sort()
         for label in labels:
-            color = self.core.call_success("label_color_to_rgb", label[1])
+            try:
+                color = self.core.call_success("label_color_to_rgb", label[1])
+            except Exception as exc:
+                LOGGER.warning(
+                    "Invalid label %s on document %s", label, self.doc_id,
+                    exc_info=exc
+                )
+                continue
             widget = self.core.call_success(
                 "gtk_widget_label_new", label[0], color
             )
@@ -117,7 +124,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _refresh_doc(self, doc_url):
         if doc_url not in self.tasks:
-            LOGGER.info(
+            LOGGER.debug(
                 "Labels on '%s' have changed, but it is not displayed at"
                 " the moment", doc_url
             )
@@ -128,7 +135,7 @@ class Plugin(openpaperwork_core.PluginBase):
             self.tasks[doc_url].get_promise()
         )
 
-    def doc_add_label_by_url(self, doc_url, label):
+    def doc_add_label_by_url(self, doc_url, label, color=None):
         self._refresh_doc(doc_url)
 
     def doc_remove_label_by_url(self, doc_url, label):

@@ -155,7 +155,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def doc_add_label_by_url(self, doc_url, label, color=None):
         assert("," not in label)
-        assert(color is None or "," not in color)
 
         current = set()
         self.doc_get_labels_by_url(current, doc_url)
@@ -167,10 +166,6 @@ class Plugin(openpaperwork_core.PluginBase):
             return
 
         if color is not None:
-            assert(
-                label not in self.all_labels
-                or self.all_labels[label] == color
-            )
             self.all_labels[label] = color
         if label in self.all_labels:
             color = self.all_labels[label]
@@ -250,7 +245,11 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def label_load_all(self, promises: list):
         self.all_labels = {}
-        promises.append(LabelLoader(self).get_promise())
+        promise = LabelLoader(self).get_promise()
+        promise = promise.then(self.core.call_all, "on_all_labels_loaded")
+        # drop the return value of 'call_all'
+        promise = promise.then(lambda *args, **kwargs: None)
+        promises.append(promise)
 
     def sync(self, promises: list):
         self.label_load_all(promises)

@@ -34,6 +34,7 @@ DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'paperwork_gtk.mainwindow.doclist.name',
     'paperwork_gtk.mainwindow.doclist.thumbnailer',
     'paperwork_gtk.mainwindow.docproperties',
+    'paperwork_gtk.mainwindow.docproperties.labels',
     'paperwork_gtk.mainwindow.docproperties.name',
     'paperwork_gtk.mainwindow.docview',
     'paperwork_gtk.mainwindow.docview.controllers.click',

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<interface>
+  <object class="GtkListBoxRow" id="label_row">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="height_request">30</property>
+
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="orientation">horizontal</property>
+
+        <child>
+          <object class="GtkToggleButton" id="toggle_button">
+            <property name="relief">none</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="always_show-image">True</property>
+            <child>
+              <object class="GtkImage">
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+
+        <child>
+          <object class="GtkColorButton" id="color_button">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="relief">none</property>
+            <property name="has_tooltip">True</property>
+            <property name="tooltip_text" translatable="yes">Change the label color</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+
+        <child>
+          <object class="GtkLabel" id="label_label">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="halign">start</property>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+
+        <child>
+          <object class="GtkButton" id="delete_button">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="relief">none</property>
+            <property name="has_tooltip">True</property>
+            <property name="tooltip_text" translatable="yes">Delete the label from all documents</property>
+            <child>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="icon_size">1</property>
+                <property name="icon_name">edit-delete-symbolic</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
