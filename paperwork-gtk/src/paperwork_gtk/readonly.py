@@ -17,6 +17,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_interfaces(self):
         return [
+            'backend_readonly',
             'syncable',
         ]
 
