@@ -121,7 +121,8 @@ class Plugin(openpaperwork_core.PluginBase):
         ))
 
         def stop_promise_tracking(*args, **kwargs):
-            self.running_promises.pop(ref)
+            if ref in self.running_promises:
+                self.running_promises.pop(ref)
 
         promise = promise.then(stop_promise_tracking)
 
