@@ -30,6 +30,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
         self.cache = {}
+        self.running_promises = {}
 
     def get_interfaces(self):
         return [
@@ -48,6 +49,12 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_core.work_queue.default'],
             },
         ]
+
+    def init(self, core):
+        super().init(core)
+        self.core.call_all(
+            "work_queue_create", "box_loader", stop_on_quit=True
+        )
 
     def chkdeps(self, out: dict):
         if not PANGO_AVAILABLE:
@@ -82,10 +89,15 @@ class Plugin(openpaperwork_core.PluginBase):
         return self.cache[ref]
 
     def on_page_visibility_changed(self, page, visible):
+        ref = (page.doc_id, page.page_idx)
         if not visible:
+            if ref in self.running_promises:
+                promise = self.running_promises.pop(ref)
+                self.core.call_all("work_queue_cancel", "box_loader", promise)
+            if ref in self.cache:
+                self.cache.pop(ref)
             return
 
-        ref = (page.doc_id, page.page_idx)
         if ref in self.cache:
             return
 
@@ -107,15 +119,22 @@ class Plugin(openpaperwork_core.PluginBase):
         promise = promise.then(lambda boxes=[]: self.core.call_all(
             "on_page_boxes_loaded", page, boxes
         ))
+
+        def stop_promise_tracking(*args, **kwargs):
+            self.running_promises.pop(ref)
+
+        promise = promise.then(stop_promise_tracking)
+
         # Gives back a bit of CPU time to GTK so the GUI remains
         # usable
         promise = promise.then(openpaperwork_core.promise.DelayPromise(
             self.core, DELAY
         ))
 
-        # Piggyback the work queue of pageview.
+        self.running_promises[ref] = promise
+
         self.core.call_success(
-            "work_queue_add_promise", "page_loader", promise, priority=-10
+            "work_queue_add_promise", "box_loader", promise, priority=-10
         )
 
     def on_page_boxes_loaded(self, page, boxes):
