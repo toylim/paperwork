@@ -221,7 +221,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _show_result_doc(self, doc_id):
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
-        self.core.call_all("doc_open", doc_id, doc_url)
+
+        if self.active_doc_id != doc_id:
+            self.core.call_all("doc_open", doc_id, doc_url)
 
         nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)
         if nb_pages <= 0:
@@ -269,6 +271,16 @@ class Plugin(openpaperwork_core.PluginBase):
         self._show_result_doc(doc_id)
         self._show_result_notification(file_import)
 
+    def _add_to_recent(self, file_uris):
+        for file_uri in file_uris:
+            if self.core.call_success("fs_isdir", file_uri) is None:
+                # If the user imported a file, assume they won't import it
+                # twice but they may import again other files from the same
+                # directory
+                file_uri = self.core.call_success("fs_dirname", file_uri)
+            LOGGER.info("Adding %s to recently used files", file_uri)
+            Gtk.RecentManager().add_item(file_uri)
+
     def _on_dialog_response(self, dialog, response_id):
         if (response_id != 0 and
                 response_id != Gtk.ResponseType.ACCEPT and
@@ -294,6 +306,8 @@ class Plugin(openpaperwork_core.PluginBase):
             return
         # TODO(Jflesch): Should ask the user what must be done
         importer = importers[0]
+
+        self._add_to_recent(selected)
 
         promise = importer.get_import_promise()
         promise = promise.then(lambda *args, **kwargs: None)
