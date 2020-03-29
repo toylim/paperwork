@@ -15,6 +15,18 @@ class ClickController(BaseDocViewController):
         self.plugin.core.call_all("docview_set_layout", "paged")
         self.plugin.core.call_all("doc_goto_page", page.page_idx)
 
+    def docview_set_layout(self, name):
+        if name == 'grid':
+            return
+        self.plugin.docview_switch_controller('click', NoClickController)
+
+
+class NoClickController(BaseDocViewController):
+    def docview_set_layout(self, name):
+        if name != 'grid':
+            return
+        self.plugin.docview_switch_controller('click', ClickController)
+
 
 class Plugin(openpaperwork_core.PluginBase):
     def get_interfaces(self):
