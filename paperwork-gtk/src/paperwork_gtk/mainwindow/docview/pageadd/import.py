@@ -144,7 +144,9 @@ class Plugin(openpaperwork_core.PluginBase):
             Gtk.FileChooserAction.OPEN,
             (
                 Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                Gtk.STOCK_OPEN, Gtk.ResponseType.OK
+                # WORKAROUND(Jflesch): Use response ID 0 so the user
+                # can select a folder.
+                Gtk.STOCK_OPEN, 0
             )
         )
         dialog.set_select_multiple(True)
@@ -268,7 +270,8 @@ class Plugin(openpaperwork_core.PluginBase):
         self._show_result_notification(file_import)
 
     def _on_dialog_response(self, dialog, response_id):
-        if (response_id != Gtk.ResponseType.ACCEPT and
+        if (response_id != 0 and
+                response_id != Gtk.ResponseType.ACCEPT and
                 response_id != Gtk.ResponseType.OK and
                 response_id != Gtk.ResponseType.YES and
                 response_id != Gtk.ResponseType.APPLY):
