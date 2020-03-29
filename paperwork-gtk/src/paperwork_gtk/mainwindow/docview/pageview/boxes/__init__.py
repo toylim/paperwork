@@ -50,12 +50,6 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def init(self, core):
-        super().init(core)
-        self.core.call_all(
-            "work_queue_create", "box_loader", stop_on_quit=True
-        )
-
     def chkdeps(self, out: dict):
         if not PANGO_AVAILABLE:
             out['pango'].update(openpaperwork_core.deps.PANGO)
@@ -93,7 +87,7 @@ class Plugin(openpaperwork_core.PluginBase):
         if not visible:
             if ref in self.running_promises:
                 promise = self.running_promises.pop(ref)
-                self.core.call_all("work_queue_cancel", "box_loader", promise)
+                self.core.call_all("work_queue_cancel", "page_loader", promise)
             if ref in self.cache:
                 self.cache.pop(ref)
             return
@@ -134,8 +128,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
         self.running_promises[ref] = promise
 
+        # piggy back page loader work queue, but with a low priority
         self.core.call_success(
-            "work_queue_add_promise", "box_loader", promise, priority=-10
+            "work_queue_add_promise", "page_loader", promise, priority=-10
         )
 
     def on_page_boxes_loaded(self, page, boxes):
