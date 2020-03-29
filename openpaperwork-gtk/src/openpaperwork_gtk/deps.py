@@ -15,6 +15,12 @@ GTK = {
     'ubuntu': 'gir1.2-gtk-3.0',
 }
 
+NOTIFY = {
+    'debian': 'gir1.2-notify-0.7',
+    'fedora': 'libnotify',
+    'ubuntu': 'gir1.2-notify-0.7',
+}
+
 PANGO = {
     'debian': 'gir1.2-pango-1.0',
     'linuxmint': 'gir1.2-pango-1.0',
