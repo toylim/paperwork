@@ -43,6 +43,7 @@ DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'paperwork_gtk.mainwindow.docview.controllers.page_number',
     'paperwork_gtk.mainwindow.docview.controllers.scroll',
     'paperwork_gtk.mainwindow.docview.controllers.zoom',
+    'paperwork_gtk.mainwindow.docview.drag',
     'paperwork_gtk.mainwindow.docview.pageadd.buttons',
     'paperwork_gtk.mainwindow.docview.pageadd.import',
     'paperwork_gtk.mainwindow.docview.pageadd.scan',
