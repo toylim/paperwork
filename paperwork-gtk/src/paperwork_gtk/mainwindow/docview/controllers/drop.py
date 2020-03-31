@@ -126,7 +126,7 @@ class DropController(BaseDocViewController):
     def _parse_paperwork_uri(self, uri):
         infos = uri.split("#", 1)[1]
         infos = infos.split("&")
-        infos = (i.split("=") for i in infos)
+        infos = (i.split("=", 1) for i in infos)
         infos = {k: v for (k, v) in infos}
         return (infos['doc_id'], int(infos['page']))
 
