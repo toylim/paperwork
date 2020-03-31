@@ -436,7 +436,7 @@ class JobCalibrationScan(Job):
         while self.can_run and not scan_session.end_of_page():
             r = 0
             while r <= 128 * 1024 and not scan_session.end_of_page():
-                out = scan_session.read_bytes(64 * 1024).get_data()
+                out = scan_session.read_bytes(line_length + 1).get_data()
                 r += len(out)
                 chunk.extend(out)
 
