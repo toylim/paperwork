@@ -1,3 +1,9 @@
+import logging
+
+
+LOGGER = logging.getLogger(__name__)
+
+
 def _shift_pages(core, page_filename_fmt, doc_url, start_page_idx, offset):
     assert(offset != 0)
 
@@ -21,6 +27,7 @@ def _shift_pages(core, page_filename_fmt, doc_url, start_page_idx, offset):
                 page_idx + 1 + offset
             )
         )
+        LOGGER.info("  - %s --> %s", old_url, new_url)
         core.call_all("fs_rename", old_url, new_url)
 
 
@@ -28,9 +35,11 @@ def delete_page_file(core, page_filename_fmt, doc_url, page_idx):
     file_url = core.call_success(
         "fs_join", doc_url, page_filename_fmt.format(page_idx + 1)
     )
-    if core.call_success("fs_exists", file_url) is None:
-        return None
-    core.call_all("fs_unlink", file_url)
+    if core.call_success("fs_exists", file_url) is not None:
+        LOGGER.info(
+            "(%s) Deleting %s p%d:", page_filename_fmt, doc_url, page_idx
+        )
+        core.call_all("fs_unlink", file_url)
 
     # move all the other pages 1 level down
     _shift_pages(core, page_filename_fmt, doc_url, page_idx, -1)
@@ -44,6 +53,12 @@ def move_page_file(
         ):
     assert(core.call_success("fs_exists", dest_doc_url) is not None)
 
+    LOGGER.info(
+        "(%s) Move %s p%d --> %s p%d:", page_filename_fmt,
+        source_doc_url, source_page_idx,
+        dest_doc_url, dest_page_idx
+    )
+
     # source_doc_url and dest_doc_url can be the same document, making
     # this change a little bit tricky. The simplest way to handle all the cases
     # is to:
@@ -56,12 +71,13 @@ def move_page_file(
         "fs_join", source_doc_url,
         page_filename_fmt.format(source_page_idx + 1)
     )
-    if core.call_success("fs_exists", src) is None:
-        return False
     dst = core.call_success(
         "fs_join", dest_doc_url, page_filename_fmt.format(0)
     )
-    core.call_all("fs_rename", src, dst)
+    if core.call_success("fs_exists", src) is not None:
+        LOGGER.info("  - %s --> %s", src, dst)
+        core.call_all("fs_rename", src, dst)
+
     _shift_pages(core, page_filename_fmt, source_doc_url, source_page_idx, -1)
 
     # Move the page in the destination document
@@ -70,5 +86,8 @@ def move_page_file(
         "fs_join", dest_doc_url, page_filename_fmt.format(dest_page_idx + 1)
     )
     _shift_pages(core, page_filename_fmt, dest_doc_url, dest_page_idx, 1)
-    core.call_all("fs_rename", src, dst)
+
+    if core.call_success("fs_exists", src) is not None:
+        LOGGER.info("  - %s --> %s", src, dst)
+        core.call_all("fs_rename", src, dst)
     return True
