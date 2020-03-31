@@ -111,14 +111,14 @@ class Plugin(openpaperwork_core.PluginBase):
 
         def line_txt_generator(line):
             return " ".join(
-                [word_box.content for word_box in line.word_boxes]
+                (word_box.content for word_box in line.word_boxes)
             )
 
         line_boxes = self.page_get_boxes_by_url(doc_url, page_idx)
         if line_boxes is None:
             return None
         return "\n".join(
-            [line_txt_generator(line_box) for line_box in line_boxes]
+            (line_txt_generator(line_box) for line_box in line_boxes)
         )
 
     def page_get_boxes_by_url(self, doc_url, page_idx):
