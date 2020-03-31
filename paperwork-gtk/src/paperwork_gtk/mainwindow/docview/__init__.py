@@ -124,9 +124,9 @@ class Plugin(openpaperwork_core.PluginBase):
             controller.on_page_activated(page)
 
     def docview_set_bottom_margin(self, height):
-        # TODO
-        # self.page_layout.set_bottom_margin(height)
-        pass
+        self.widget_tree.get_object("docview_padding").set_size_request(
+            1, height + 10
+        )
 
     def docview_get_headerbar(self):
         return self.widget_tree.get_object("docview_header")
