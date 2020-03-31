@@ -37,6 +37,7 @@ class PageWrapper(GObject.GObject):
         self.plugin = plugin
         self.page = page
         self.page_idx = page.page_idx
+        self.busy = False
 
         self.widget_tree = self.plugin.core.call_success(
             "gtk_load_widget_tree",
@@ -55,11 +56,7 @@ class PageWrapper(GObject.GObject):
             lambda p, v: self.emit("visibility_changed", v)
         )
 
-        page.widget.connect(
-            "draw", self._on_draw
-        )
-
-        self.busy = False
+        page.widget.connect("draw", self._on_draw)
 
     def load(self):
         self.page.load()
