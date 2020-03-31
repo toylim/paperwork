@@ -176,7 +176,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
         self.pages = []
-        self.nb_loaded = 0
+        self.nb_to_load = 0
 
     def get_interfaces(self):
         return [
@@ -231,7 +231,9 @@ class Plugin(openpaperwork_core.PluginBase):
         nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)
         if page_idx >= nb_pages:
             return
+        self.nb_to_load += 1
         page = Page(self.core, doc_id, doc_url, page_idx, nb_pages)
+        page.connect("size_obtained", self._on_page_img_size_obtained)
         if page_idx < len(self.pages):
             self.pages[page_idx] = page
         elif page_idx == len(self.pages):
@@ -261,7 +263,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 self.core, doc_id, doc_url, page_idx, nb_pages
             ) for page_idx in range(0, nb_pages)
         ]
-        self.nb_loaded = 0
+        self.nb_to_load = len(self.pages)
         for page in self.pages:
             page.connect("size_obtained", self._on_page_img_size_obtained)
             out.append(page)
@@ -273,9 +275,10 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def _on_page_img_size_obtained(self, page):
-        self.nb_loaded += 1
-        if self.nb_loaded < len(self.pages):
+        self.nb_to_load -= 1
+        if self.nb_to_load > 0:
             return
+        self.nb_to_load = 0
         self.core.call_all("on_progress", "loading_page_sizes", 1.0)
 
     def pageview_refresh_all(self):
