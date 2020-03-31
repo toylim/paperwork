@@ -1,6 +1,7 @@
 import gettext
 import itertools
 import logging
+import threading
 
 try:
     import gi
@@ -27,6 +28,10 @@ import openpaperwork_core.promise
 LOGGER = logging.getLogger(__name__)
 _ = gettext.gettext
 SCAN_ID_GENERATOR = itertools.count()
+
+# Prevent closing or other operations on scanner and source instances when
+# they are being used (scanning)
+LOCK = threading.RLock()
 
 
 class LibinsaneLogger(GObject.GObject, Libinsane.Logger):
@@ -116,20 +121,21 @@ class Source(object):
         )
 
     def get_resolutions(self):
-        LOGGER.info(
-            "Looking for possible values for option 'resolution' on %s"
-            " : %s ...", str(self.scanner), self.source_id
-        )
-        options = self.source.get_options()
-        options = {opt.get_name(): opt for opt in options}
+        with LOCK:
+            LOGGER.info(
+                "Looking for possible values for option 'resolution' on %s"
+                " : %s ...", str(self.scanner), self.source_id
+            )
+            options = self.source.get_options()
+            options = {opt.get_name(): opt for opt in options}
 
-        opt = options['resolution']
-        constraint = opt.get_constraint()
-        LOGGER.info(
-            "%s : %s : resolution : Possible values: %s",
-            str(self.scanner), self.source_id, constraint
-        )
-        return constraint
+            opt = options['resolution']
+            constraint = opt.get_constraint()
+            LOGGER.info(
+                "%s : %s : resolution : Possible values: %s",
+                str(self.scanner), self.source_id, constraint
+            )
+            return constraint
 
     def get_resolutions_promise(self):
         return openpaperwork_core.promise.ThreadedPromise(
@@ -148,26 +154,27 @@ class Source(object):
         """
         Returns the source, the scan ID and an image generator
         """
-        if scan_id is None:
-            scan_id = next(SCAN_ID_GENERATOR)
+        with LOCK:
+            if scan_id is None:
+                scan_id = next(SCAN_ID_GENERATOR)
 
-        LOGGER.info("(id=%s) Setting scan options ...", scan_id)
-        if resolution is None:
-            resolution = self.core.call_success(
-                "config_get", "scanner_resolution"
-            )
-        mode = self.core.call_success("config_get", "scanner_mode")
+            LOGGER.info("(id=%s) Setting scan options ...", scan_id)
+            if resolution is None:
+                resolution = self.core.call_success(
+                    "config_get", "scanner_resolution"
+                )
+            mode = self.core.call_success("config_get", "scanner_mode")
 
-        options = self.source.get_options()
+            options = self.source.get_options()
 
-        opts = {opt.get_name(): opt for opt in options}
-        if 'resolution' in opts:
-            opts['resolution'].set_value(resolution)
-        if 'mode' in opts:
-            opts['mode'].set_value(mode)
+            opts = {opt.get_name(): opt for opt in options}
+            if 'resolution' in opts:
+                opts['resolution'].set_value(resolution)
+            if 'mode' in opts:
+                opts['mode'].set_value(mode)
 
-        imgs = self._scan(scan_id, resolution, max_pages, close_on_end)
-        return (self, scan_id, imgs)
+            imgs = self._scan(scan_id, resolution, max_pages, close_on_end)
+            return (self, scan_id, imgs)
 
     def _scan(self, scan_id, resolution, max_pages, close_on_end=False):
         """
@@ -281,11 +288,12 @@ class Source(object):
         )
 
     def close(self, *args, **kwargs):
-        self.scanner.close()
-        # return the args for convience when used with promises
-        if len(args) == 1 and len(kwargs) == 0:
-            return args
-        return (args, kwargs)
+        with LOCK:
+            self.scanner.close()
+            # return the args for convience when used with promises
+            if len(args) == 1 and len(kwargs) == 0:
+                return args
+            return (args, kwargs)
 
 
 class Scanner(object):
@@ -298,31 +306,39 @@ class Scanner(object):
         return self.dev_id
 
     def __del__(self):
+        if self.dev is not None:
+            # Shouldn't happen.
+            LOGGER.warning(
+                "Scanner(%s, %s) is being garbage-collected",
+                self.dev_id, id(self)
+            )
         self.close()
 
     def close(self, *args, **kwargs):
-        if self.dev is not None:
-            LOGGER.info("Closing device %s", self.dev_id)
-            self.dev.close()
-            self.dev = None
-        # return the args for convenience when used with promises
-        if len(args) == 1 and len(kwargs) == 0:
-            return args
-        return (args, kwargs)
+        with LOCK:
+            if self.dev is not None:
+                LOGGER.info("Closing device %s (%s)", self.dev_id, id(self))
+                self.dev.close()
+                self.dev = None
+            # return the args for convenience when used with promises
+            if len(args) == 1 and len(kwargs) == 0:
+                return args
+            return (args, kwargs)
 
     def get_sources(self):
-        LOGGER.info("Looking for scan sources on %s ...", self.dev_id)
-        sources = self.dev.get_children()
-        sources = [
-            Source(self.core, self.dev, source)
-            for source in sources
-        ]
-        sources = {
-            source.source_id: source
-            for source in sources
-        }
-        LOGGER.info("%d sources found: %s", len(sources), sources)
-        return sources
+        with LOCK:
+            LOGGER.info("Looking for scan sources on %s ...", self.dev_id)
+            sources = self.dev.get_children()
+            sources = [
+                Source(self.core, self, source)
+                for source in sources
+            ]
+            sources = {
+                source.source_id: source
+                for source in sources
+            }
+            LOGGER.info("%d sources found: %s", len(sources), sources)
+            return sources
 
     def get_sources_promise(self):
         return openpaperwork_core.promise.ThreadedPromise(
@@ -353,6 +369,8 @@ class Plugin(openpaperwork_core.PluginBase):
         Libinsane.register_logger(self.libinsane_logger)
         self.libinsane = Libinsane.Api.new_safebet()
         LOGGER.info("Libinsane %s initialized", self.libinsane.get_version())
+
+        self._last_scanner = None
 
     def get_interfaces(self):
         return [
@@ -420,21 +438,26 @@ class Plugin(openpaperwork_core.PluginBase):
             )
 
         def list_scanners(*args, **kwargs):
-            LOGGER.info("Looking for scan devices ...")
-            devs = self.libinsane.list_devices(Libinsane.DeviceLocations.ANY)
-            devs = [
-                # (id, human readable name)
-                # prefix the IDs with 'libinsane:' so we know it comes from
-                # our plugin and not another scan plugin
-                (
-                    'libinsane:' + dev.get_dev_id(),
-                    "{} {}".format(dev.get_dev_vendor(), dev.get_dev_model())
+            with LOCK:
+                LOGGER.info("Looking for scan devices ...")
+                devs = self.libinsane.list_devices(
+                    Libinsane.DeviceLocations.ANY
                 )
-                for dev in devs
-            ]
-            devs.sort(key=lambda s: s[1])
-            LOGGER.info("%d devices found: %s", len(devs), devs)
-            return devs
+                devs = [
+                    # (id, human readable name)
+                    # prefix the IDs with 'libinsane:' so we know it comes from
+                    # our plugin and not another scan plugin
+                    (
+                        'libinsane:' + dev.get_dev_id(),
+                        "{} {}".format(
+                            dev.get_dev_vendor(), dev.get_dev_model()
+                        )
+                    )
+                    for dev in devs
+                ]
+                devs.sort(key=lambda s: s[1])
+                LOGGER.info("%d devices found: %s", len(devs), devs)
+                return devs
 
         def set_cache(devs):
             self.devices_cache = devs
@@ -448,6 +471,10 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def scan_get_scanner_promise(self, scanner_dev_id=None):
         def get_scanner(scanner_dev_id):
+            if self._last_scanner is not None:
+                self._last_scanner.close()
+                self._last_scanner = None
+
             if scanner_dev_id is None:
                 scanner_dev_id = self.core.call_success(
                     "config_get", "scanner_dev_id"
@@ -459,10 +486,12 @@ class Plugin(openpaperwork_core.PluginBase):
                 return None
             scanner_dev_id = scanner_dev_id[len("libinsane:"):]
 
-            LOGGER.info("Accessing scanner '%s' ...", scanner_dev_id)
-            scanner = self.libinsane.get_device(scanner_dev_id)
-            LOGGER.info("Scanner '%s' opened", scanner.get_name())
-            return Scanner(self.core, scanner)
+            with LOCK:
+                LOGGER.info("Accessing scanner '%s' ...", scanner_dev_id)
+                scanner = self.libinsane.get_device(scanner_dev_id)
+                LOGGER.info("Scanner '%s' opened", scanner.get_name())
+                self._last_scanner = Scanner(self.core, scanner)
+                return self._last_scanner
 
         return openpaperwork_core.promise.ThreadedPromise(
             self.core, get_scanner, args=(scanner_dev_id,)
