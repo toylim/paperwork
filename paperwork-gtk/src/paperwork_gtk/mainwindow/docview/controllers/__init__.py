@@ -51,3 +51,18 @@ class BaseDocViewController(object):
 
     def on_page_activated(self, page):
         LOGGER.debug("%s(%d)", self.on_page_activated, page.page_idx)
+
+    def on_drag_data_received(
+            self, drag_context, x, y, selection_data,
+            info, time):
+        LOGGER.debug("%s()", self.on_drag_data_received)
+
+    def on_drag_motion(self, drag_context, x, y, time):
+        LOGGER.debug("%s()", self.on_drag_motion)
+
+    def on_drag_leave(self, drag_context, time):
+        LOGGER.debug("%s()", self.on_drag_leave)
+
+    def on_draw(self, cairo_context):
+        # no LOGGER.debug() here for performance reasons
+        pass

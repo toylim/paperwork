@@ -64,6 +64,10 @@ class Plugin(openpaperwork_core.PluginBase):
                     'paperwork_gtk.keyboard_shortcut.zoom',
                 ],
             },
+            {
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_gtk.mainloop.glib'],
+            },
         ]
 
     def init(self, core):
@@ -92,10 +96,22 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         self.page_layout.connect("child-activated", self._on_child_activated)
 
+        self.page_layout.connect(
+            "drag-data-received", self._on_drag_data_received
+        )
+        self.page_layout.connect("drag-motion", self._on_drag_motion)
+        self.page_layout.connect("drag-leave", self._on_drag_leave)
+        self.page_layout.connect("draw", self._on_draw)
+
         self.core.call_all(
             "mainwindow_add", side="right", name="docview", prio=10000,
             header=self.widget_tree.get_object("docview_header"),
             body=self.widget_tree.get_object("docview_body"),
+        )
+
+        self.core.call_success(
+            "mainloop_schedule", self.core.call_all,
+            "on_gtk_docview_init", self
         )
 
     def chkdeps(self, out: dict):
@@ -142,6 +158,25 @@ class Plugin(openpaperwork_core.PluginBase):
     def _on_vscroll_changed(self, vadj):
         for controller in self.controllers.values():
             controller.on_vscroll_changed(vadj)
+
+    def _on_drag_data_received(
+            self, layout, drag_context, x, y, selection_data, info, time):
+        for controller in self.controllers.values():
+            controller.on_drag_data_received(
+                drag_context, x, y, selection_data, info, time
+            )
+
+    def _on_drag_motion(self, layout, drag_context, x, y, time):
+        for controller in self.controllers.values():
+            controller.on_drag_motion(drag_context, x, y, time)
+
+    def _on_drag_leave(self, layout, drag_context, time):
+        for controller in self.controllers.values():
+            controller.on_drag_leave(drag_context, time)
+
+    def _on_draw(self, layout, cairo_context):
+        for controller in self.controllers.values():
+            controller.on_draw(cairo_context)
 
     def doc_close(self):
         for controller in self.controllers.values():
