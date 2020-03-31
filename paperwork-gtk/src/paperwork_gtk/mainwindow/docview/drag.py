@@ -20,8 +20,7 @@ import openpaperwork_gtk.deps
 
 LOGGER = logging.getLogger(__name__)
 
-TARGET_ENTRY_URI_FILE = 1
-TARGET_ENTRY_URI_INTERNAL = 2
+TARGET_ENTRY_URI = 0
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -54,8 +53,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
         targets = Gtk.TargetList.new([])
-        targets.add_uri_targets(TARGET_ENTRY_URI_FILE)
-        targets.add_uri_targets(TARGET_ENTRY_URI_INTERNAL)
+        targets.add_uri_targets(TARGET_ENTRY_URI)
         widget.drag_source_set_target_list(targets)
 
         widget.drag_source_set_icon_name("document-send-symbolic")
@@ -69,17 +67,18 @@ class Plugin(openpaperwork_core.PluginBase):
             doc_id, doc_url, page_idx):
         LOGGER.info("drag_data_get(%s, p%d, type=%d)", doc_id, page_idx, info)
 
-        img_url = self.core.call_success(
-            "page_get_img_url", doc_url, page_idx
-        )
-        LOGGER.info("Img URL: {}".format(img_url))
-
-        if info == TARGET_ENTRY_URI_FILE:
+        if info == TARGET_ENTRY_URI:
+            # drag'n'drop API allows us to provide many URIs. But if we
+            # do, applications like Firefox will try to display them all,
+            # even if they don't understand the URI scheme.
+            # --> we cheat and use the URI target for the extra info we may
+            # need in Paperwork
+            img_url = self.core.call_success(
+                "page_get_img_url", doc_url, page_idx
+            )
+            img_url += "#doc_id={}&page={}".format(doc_id, page_idx)
+            LOGGER.info("Img URL: {}".format(img_url))
             data.set_uris([img_url])
-            return
-
-        if info == TARGET_ENTRY_URI_INTERNAL:
-            data.set_uris(["paperwork://{}/{}".format(doc_id, page_idx)])
             return
 
         assert()
