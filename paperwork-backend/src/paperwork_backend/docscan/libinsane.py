@@ -180,6 +180,7 @@ class Source(object):
             scan_id, resolution
         )
 
+        session = None
         try:
             page_nb = 0
 
@@ -262,7 +263,8 @@ class Source(object):
             )
             self.core.call_all("on_progress", "scan", 1.0, _("Scanning done"))
         finally:
-            session.cancel()
+            if session is not None:
+                session.cancel()
             if close_on_end:
                 self.close()
 
