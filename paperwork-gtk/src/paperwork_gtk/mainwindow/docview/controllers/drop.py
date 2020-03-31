@@ -152,7 +152,7 @@ class DropController(BaseDocViewController):
         for uri in uris:
             LOGGER.info("Drop: URI: %s", uri)
 
-            if "doc_id=" not in uri or not "page=" in uri:
+            if "doc_id=" not in uri or "page=" not in uri:
                 # treat it as an import
                 # TODO
                 continue
