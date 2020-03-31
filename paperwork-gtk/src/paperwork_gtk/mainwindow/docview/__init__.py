@@ -153,7 +153,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.pages = []
         self.widget_to_page = {}
 
-    def _get_flow_box_child(self, child):
+    def _build_flow_box_child(self, child):
         widget = Gtk.FlowBoxChild.new()
         widget.set_visible(True)
         widget.set_property('halign', Gtk.Align.CENTER)
@@ -168,22 +168,13 @@ class Plugin(openpaperwork_core.PluginBase):
         self.active_doc = (doc_id, doc_url)
         self.active_page_idx = 0
 
+        self.pages = []
+        self.widget_to_page = {}
+
         self.controllers = {}
         self.core.call_all(
             "gtk_docview_get_controllers", self.controllers, self
         )
-
-        self.pages = []
-        self.widget_to_page = {}
-
-        pages = []
-        self.core.call_all("doc_open_components", pages, doc_id, doc_url)
-
-        for page in pages:
-            widget = self._get_flow_box_child(page.widget)
-            self.widget_to_page[widget] = page
-            self.pages.append(page)
-            self.page_layout.add(widget)
 
         for controller in self.controllers.values():
             controller.enter()

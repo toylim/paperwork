@@ -55,7 +55,7 @@ class BaseLayoutController(BaseDocViewController):
         )
         assert(len(components) <= 1)
         component = components[0] if len(components) >= 1 else None
-        widget = self.plugin._get_flow_box_child(component.widget)
+        widget = self.plugin._build_flow_box_child(component.widget)
         if component is None:
             if page_idx < len(self.plugin.pages):
                 self.plugin.pages.pop(page_idx)
@@ -73,9 +73,25 @@ class BaseLayoutController(BaseDocViewController):
 
 
 class LayoutControllerLoading(BaseLayoutController):
-    def __init__(self, plugin):
+    def __init__(self, core, plugin):
         super().__init__(plugin)
+        self.core = core
         self.nb_loaded = 0
+
+        # page instantiation must be done before the calls to enter()
+        # because other controllers may need the pages. So we cheat a little
+        # bit and make it in the constructor.
+
+        pages = []
+        self.core.call_all(
+            "doc_open_components", pages, *self.plugin.active_doc
+        )
+
+        for page in pages:
+            widget = self.plugin._build_flow_box_child(page.widget)
+            self.plugin.widget_to_page[widget] = page
+            self.plugin.pages.append(page)
+            self.plugin.page_layout.add(widget)
 
     def enter(self):
         super().enter()
@@ -121,4 +137,4 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def gtk_docview_get_controllers(self, out: dict, docview):
-        out['layout'] = LayoutControllerLoading(docview)
+        out['layout'] = LayoutControllerLoading(self.core, docview)
