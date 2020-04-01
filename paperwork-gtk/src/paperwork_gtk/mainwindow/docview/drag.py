@@ -84,6 +84,7 @@ class Plugin(openpaperwork_core.PluginBase):
         assert()
 
     def doc_reload_page_component(self, out: list, doc_id, doc_url, page_idx):
+        # TODO(Jflesch): Doesn't seem to work. Not sure why yet.
         for page in out:
             self._enable_drag(page.widget, doc_id, doc_url, page.page_idx)
 
