@@ -16,7 +16,7 @@ import openpaperwork_core.promise
 
 
 LOGGER = logging.getLogger(__name__)
-DELAY = 0.01
+DELAY = 0.05
 
 
 class Plugin(openpaperwork_core.PluginBase):

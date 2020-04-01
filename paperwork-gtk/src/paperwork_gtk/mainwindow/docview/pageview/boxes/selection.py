@@ -25,8 +25,9 @@ class NBox(object):
 
 
 class PageSelectionHandler(object):
-    def __init__(self, core, page):
+    def __init__(self, core, plugin, page):
         self.core = core
+        self.plugin = plugin
         self.page = page
 
         self.actives = []
@@ -127,6 +128,11 @@ class PageSelectionHandler(object):
         yield last.box
 
     def on_drag_begin(self, gesture, x, y):
+        if not self.plugin.enabled:
+            self.first = None
+            self.last = None
+            return
+
         self.actives = []
         self.orig = (x, y)
         self.first = self._find_box(x, y)
@@ -162,6 +168,9 @@ class PageSelectionHandler(object):
         )
 
     def draw(self, cairo_ctx):
+        if not self.plugin.enabled:
+            return
+
         for box in self._get_selected():
             self.core.call_all(
                 "page_draw_box",
@@ -177,6 +186,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
         self.handlers = {}
+        self.enabled = False
 
     def get_interfaces(self):
         return [
@@ -210,7 +220,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.handlers.pop(page.widget).disconnect()
 
     def on_page_boxes_loaded(self, page, boxes):
-        h = PageSelectionHandler(self.core, page)
+        h = PageSelectionHandler(self.core, self, page)
         self.handlers[page.widget] = h
 
         assert(page.widget in self.handlers)
@@ -232,3 +242,6 @@ class Plugin(openpaperwork_core.PluginBase):
         if page.widget not in self.handlers:
             return
         self.handlers[page.widget].draw(cairo_ctx)
+
+    def on_layout_change(self, layout_name):
+        self.enabled = (layout_name == 'paged')
