@@ -35,13 +35,11 @@ class ZoomLayoutController(BaseDocViewController):
         for page in self.plugin.pages:
             page.set_zoom(zoom)
 
-        layout = (-1, 'paged')
-        for (layout_name, nb_columns) in self.plugin.LAYOUTS.items():
-            if nb_columns <= layout[0]:
-                continue
-            if max_columns >= nb_columns:
-                layout = (nb_columns, layout_name)
-        self.plugin.core.call_all("on_layout_change", layout[1])
+        if nb_columns > 1:
+            layout = 'grid'
+        else:
+            layout = 'paged'
+        self.plugin.core.call_all("on_layout_change", layout)
 
     def enter(self):
         super().enter()

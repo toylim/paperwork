@@ -26,6 +26,12 @@ TARGET_ENTRY_URI = 0
 class Plugin(openpaperwork_core.PluginBase):
     PRIORITY = -10000
 
+    def __init__(self):
+        super().__init__()
+        self.pages = []
+        self.active_doc = None
+        self.enabled = False
+
     def get_interfaces(self):
         return [
             'chkdeps',
@@ -62,6 +68,9 @@ class Plugin(openpaperwork_core.PluginBase):
             "drag-data-get", self._on_drag_data_get, doc_id, doc_url, page_idx
         )
 
+    def _disable_drag(self, widget):
+        widget.drag_source_unset()
+
     def _on_drag_data_get(
             self, widget, drag_context, data, info, time,
             doc_id, doc_url, page_idx):
@@ -86,8 +95,27 @@ class Plugin(openpaperwork_core.PluginBase):
     def doc_reload_page_component(self, out: list, doc_id, doc_url, page_idx):
         # TODO(Jflesch): Doesn't seem to work. Not sure why yet.
         for page in out:
-            self._enable_drag(page.widget, doc_id, doc_url, page.page_idx)
+            if self.enabled:
+                self._enable_drag(page.widget, doc_id, doc_url, page.page_idx)
+            self.pages.append(page)
 
     def doc_open_components(self, out: list, doc_id, doc_url):
-        for page in out:
-            self._enable_drag(page.widget, doc_id, doc_url, page.page_idx)
+        self.active_doc = (doc_id, doc_url)
+        self.pages = out
+        if self.enabled:
+            for page in out:
+                self._enable_drag(page.widget, doc_id, doc_url, page.page_idx)
+
+    def on_layout_change(self, layout_name):
+        enabled = (layout_name == 'grid')
+        if enabled == self.enabled:
+            return
+        if enabled:
+            LOGGER.info("Layout %s --> Enabling drag(-and-drop)", layout_name)
+            for page in self.pages:
+                self._enable_drag(page.widget, *self.active_doc, page.page_idx)
+        else:
+            LOGGER.info("Layout %s --> Disabling drag(-and-drop)", layout_name)
+            for page in self.pages:
+                self._disable_drag(page.widget)
+        self.enabled = enabled
