@@ -234,26 +234,30 @@ class Plugin(openpaperwork_core.PluginBase):
         LOGGER.info("New labels: %s", self.new_labels)
         LOGGER.info("Deleted labels: %s", self.deleted_labels)
 
+        # The document may have been renamed: use out.doc_id instead of
+        # self.active_doc
+        doc_id = out.doc_id
+        doc_url = self.core.call_success("doc_id_to_url", doc_id)
+        self.active_doc = (doc_id, doc_url)
+
         if len(self.toggled_labels) > 0:
             for (label, selected) in self.toggled_labels.items():
                 if selected:
                     self.core.call_all(
-                        "doc_add_label_by_url", self.active_doc[1],
-                        label[0], label[1]
+                        "doc_add_label_by_url", doc_url, label[0], label[1]
                     )
                 else:
                     self.core.call_all(
-                        "doc_remove_label_by_url", self.active_doc[1], label[0]
+                        "doc_remove_label_by_url", doc_url, label[0]
                     )
-            out.upd_docs.add(self.active_doc[0])
+            out.upd_docs.add(doc_id)
 
         if len(self.new_labels) > 0:
             for label in self.new_labels:
                 self.core.call_all(
-                    "doc_add_label_by_url", self.active_doc[1],
-                    label[0], label[1]
+                    "doc_add_label_by_url", doc_url, label[0], label[1]
                 )
-            out.upd_docs.add(self.active_doc[0])
+            out.upd_docs.add(doc_id)
 
         if len(self.changed_labels) <= 0 and len(self.deleted_labels) <= 0:
             return

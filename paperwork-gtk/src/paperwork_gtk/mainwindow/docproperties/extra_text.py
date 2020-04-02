@@ -57,9 +57,15 @@ class Plugin(openpaperwork_core.PluginBase):
         self.widget_tree.get_object("doctext_text").get_buffer().set_text(txt)
 
     def doc_properties_components_apply_changes(self, out):
+        # The document may have been renamed: use out.doc_id instead of
+        # self.active_doc
+        doc_id = out.doc_id
+        doc_url = self.core.call_success("doc_id_to_url", doc_id)
+        self.active_doc = (doc_id, doc_url)
+
         orig_txt = []
         self.core.call_all(
-            "doc_get_extra_text_by_url", orig_txt, self.active_doc[1]
+            "doc_get_extra_text_by_url", orig_txt, doc_url
         )
         orig_txt = "\n".join(orig_txt).strip()
 
@@ -68,15 +74,12 @@ class Plugin(openpaperwork_core.PluginBase):
         if new_txt == orig_txt:
             return
 
-        LOGGER.info(
-            "Extra keywords have been changed in document %s",
-            self.active_doc[0]
-        )
+        LOGGER.info("Extra keywords have been changed in document %s", doc_id)
         self.core.call_all(
-            "doc_set_extra_text_by_url", self.active_doc[1], new_txt
+            "doc_set_extra_text_by_url", doc_url, new_txt
         )
 
-        out.upd_docs.add(self.active_doc[0])
+        out.upd_docs.add(doc_id)
 
     def doc_properties_components_cancel_changes(self):
         self.doc_properties_components_set_active_doc(*self.active_doc)
