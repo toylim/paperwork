@@ -110,6 +110,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         # drop call_all return value
         promise = promise.then(lambda *args, **kwargs: None)
+        promise = promise.then(self._reload_doc, upd)
         promise = promise.then(openpaperwork_core.promise.ThreadedPromise(
             self.core, self._upd_index, args=(upd,),
         ))
@@ -125,6 +126,14 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all(
             "mainwindow_show", side="left", name="doclist"
         )
+
+    def _reload_doc(self, upd):
+        if upd.doc_id == self.active_doc[0]:
+            return
+        doc_url = self.core.call_success("doc_id_to_url", upd.doc_id)
+        LOGGER.info("Document renamed. Opening %s (%s)", upd.doc_id, doc_url)
+        self.core.call_all("doc_close")
+        self.core.call_all("doc_open", upd.doc_id, doc_url)
 
     def _upd_index(self, upd):
         total = len(upd.new_docs) + len(upd.upd_docs) + len(upd.del_docs)
