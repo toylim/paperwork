@@ -110,6 +110,8 @@ class Plugin(openpaperwork_core.PluginBase):
         self.vadj.connect("value-changed", self._on_scrollbar_value_changed)
 
         self.doclist.connect("row-activated", self._on_row_activated)
+        self.doclist.connect("drag-motion", self._on_drag_motion)
+        self.doclist.connect("drag-leave", self._on_drag_leave)
 
         self.menu_model = self.widget_tree.get_object("doclist_menu_model")
 
@@ -337,6 +339,15 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def add_doc_action(self, action_label, action_name):
         self.actions.append(action_label, action_name)
+
+    def _on_drag_motion(self, widget, drag_context, x, y, time):
+        widget.drag_unhighlight_row()
+        row = widget.get_row_at_y(y)
+        if row is not None:
+            widget.drag_highlight_row(row)
+
+    def _on_drag_leave(self, widget, drag_context, time):
+        widget.drag_unhighlight_row()
 
     def drag_and_drop_get_destination(self, widget, x, y):
         if self.doclist != widget:
