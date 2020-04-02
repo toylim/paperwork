@@ -8,6 +8,16 @@ try:
 except (ImportError, ValueError):
     GLIB_AVAILABLE = False
 
+try:
+    import gi
+    gi.require_version('Gdk', '3.0')
+    gi.require_version('Gtk', '3.0')
+    from gi.repository import Gdk
+    from gi.repository import Gtk
+    GTK_AVAILABLE = True
+except (ImportError, ValueError):
+    GTK_AVAILABLE = False
+
 import openpaperwork_core
 import openpaperwork_gtk.deps
 
@@ -115,6 +125,8 @@ class Plugin(openpaperwork_core.PluginBase):
     def chkdeps(self, out: dict):
         if not GLIB_AVAILABLE:
             out['glib'].update(openpaperwork_gtk.deps.GLIB)
+        if not GTK_AVAILABLE:
+            out['gtk'].update(openpaperwork_gtk.deps.GTK)
 
     def doclist_add(self, widget, vposition):
         body = self.widget_tree.get_object("doclist_body")

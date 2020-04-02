@@ -27,6 +27,7 @@ DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'paperwork_gtk.drawer.frame',
     'paperwork_gtk.drawer.pillow',
     'paperwork_gtk.drawer.scan',
+    'paperwork_gtk.gesture.drag_and_drop',
     'paperwork_gtk.gesture.zoom',
     'paperwork_gtk.keyboard_shortcut.zoom',
     'paperwork_gtk.mainwindow.doclist',

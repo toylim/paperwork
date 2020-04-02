@@ -44,6 +44,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return [
             'chkdeps',
             'doc_open',
+            'drag_and_drop_destination',
             'gtk_docview',
         ]
 
@@ -96,9 +97,6 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         self.page_layout.connect("child-activated", self._on_child_activated)
 
-        self.page_layout.connect(
-            "drag-data-received", self._on_drag_data_received
-        )
         self.page_layout.connect("drag-motion", self._on_drag_motion)
         self.page_layout.connect("drag-leave", self._on_drag_leave)
         self.page_layout.connect("draw", self._on_draw)
@@ -159,13 +157,6 @@ class Plugin(openpaperwork_core.PluginBase):
         for controller in self.controllers.values():
             controller.on_vscroll_changed(vadj)
 
-    def _on_drag_data_received(
-            self, layout, drag_context, x, y, selection_data, info, time):
-        for controller in self.controllers.values():
-            controller.on_drag_data_received(
-                drag_context, x, y, selection_data, info, time
-            )
-
     def _on_drag_motion(self, layout, drag_context, x, y, time):
         for controller in self.controllers.values():
             controller.on_drag_motion(drag_context, x, y, time)
@@ -173,6 +164,15 @@ class Plugin(openpaperwork_core.PluginBase):
     def _on_drag_leave(self, layout, drag_context, time):
         for controller in self.controllers.values():
             controller.on_drag_leave(drag_context, time)
+
+    def drag_and_drop_get_destination(self, widget, x, y):
+        if widget != self.page_layout:
+            return None
+        for controller in self.controllers.values():
+            r = controller.drag_and_drop_get_destination(x, y)
+            if r is not None:
+                return r
+        return None
 
     def _on_draw(self, layout, cairo_context):
         for controller in self.controllers.values():
