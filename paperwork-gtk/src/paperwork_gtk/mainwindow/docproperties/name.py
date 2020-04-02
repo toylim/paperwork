@@ -99,13 +99,18 @@ class Plugin(openpaperwork_core.PluginBase):
             )
 
         orig_id = out.doc_id
-        dest_id = doc_id
+        orig_date = self.core.call_success("doc_get_date_by_id", orig_id)
+        orig_date = orig_date.date()
 
-        if orig_id == dest_id:
+        dest_id = doc_id
+        dest_date = self.core.call_success("doc_get_date_by_id", dest_id)
+        dest_date = dest_date.date()
+
+        if orig_date == dest_date:
             return
 
-        LOGGER.info("Previous document id: %s", orig_id)
-        LOGGER.info("New document id: %s", dest_id)
+        LOGGER.info("Previous document id: %s (%s)", orig_id, orig_date)
+        LOGGER.info("New document id: %s (%s)", dest_id, dest_date)
 
         orig_url = self.core.call_success("doc_id_to_url", orig_id)
         dest_url = self.core.call_success("doc_id_to_url", dest_id)
