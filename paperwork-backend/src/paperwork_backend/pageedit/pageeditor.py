@@ -136,7 +136,9 @@ class PageEditor(object):
                 "modifier": 'color_equalization',
                 "default_kwargs": {},
                 "need_frame": False,
-                "togglable": False,
+                "togglable": True,
+                "enabled": False,
+                "priority": -999,
             }
         if ('cropping' in modifiers
                 and self.ui.can(self.ui.CAPABILITY_SHOW_FRAME)):
@@ -148,6 +150,7 @@ class PageEditor(object):
                 "need_frame": True,
                 "togglable": True,
                 "enabled": False,
+                "priority": 100,
             }
         if 'rotation' in modifiers:
             self.modifier_descriptors['rotate_clockwise'] = {
@@ -157,6 +160,7 @@ class PageEditor(object):
                 "default_kwargs": {'angle': 90},
                 "need_frame": False,
                 "togglable": False,
+                "priority": 50,
             }
             self.modifier_descriptors['rotate_counterclockwise'] = {
                 "id": "rotate_counterclockwise",
@@ -165,6 +169,7 @@ class PageEditor(object):
                 "default_kwargs": {'angle': -90},
                 "need_frame": False,
                 "togglable": False,
+                "priority": 49,
             }
         self.active_modifiers = []
         # image sizes before transformation of each modifier
@@ -177,7 +182,9 @@ class PageEditor(object):
             self._refresh_frame()
 
     def get_modifiers(self):
-        return self.modifier_descriptors.values()
+        r = list(self.modifier_descriptors.values())
+        r.sort(key=lambda m: -m['priority'])
+        return r
 
     def _recompute_frame(self):
         frame = self.frame.coords
@@ -240,7 +247,7 @@ class PageEditor(object):
                 self.active_modifiers,
                 modifier_descriptor['modifier']
             )
-            modifier_descriptor['enabled'] = True
+            modifier_descriptor['enabled'] = False
         else:
             self.core.call_all(
                 "img_editor_set",
@@ -248,7 +255,7 @@ class PageEditor(object):
                 modifier_descriptor['modifier'],
                 **modifier_descriptor['default_kwargs']
             )
-            modifier_descriptor['enabled'] = False
+            modifier_descriptor['enabled'] = True
 
         self._refresh_modifiers()
         self._refresh_preview()

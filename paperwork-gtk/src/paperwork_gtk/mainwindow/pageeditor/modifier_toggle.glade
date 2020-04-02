@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+  <object class="GtkToggleButton" id="pageeditor_modifier">
+    <property name="visible">True</property>
+    <property name="can_focus">True</property>
+    <property name="use_action_appearance">False</property>
+    <property name="has_tooltip">True</property>
+    <property name="tooltip_text"></property>
+    <child>
+      <object class="GtkImage" id="pageeditor_modifier_img">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="icon_size">1</property>
+      </object>
+    </child>
+  </object>
+</interface>

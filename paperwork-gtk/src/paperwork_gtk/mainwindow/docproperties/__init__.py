@@ -116,9 +116,7 @@ class Plugin(openpaperwork_core.PluginBase):
         ))
         promise.schedule()
 
-        self.core.call_all(
-            "mainwindow_show", side="left", name="doclist"
-        )
+        self.core.call_all("mainwindow_show_default", side="left")
 
     def _cancel(self, *args, **kwargs):
         LOGGER.info("Changes cancelled by the user")

@@ -93,6 +93,7 @@ class Plugin(openpaperwork_core.PluginBase):
             # If so, update it instead of adding another one
             index = inout.index(c)
             inout[index].angle += angle
+            inout[index].angle %= 360
         except ValueError:
             inout.append(c)
 

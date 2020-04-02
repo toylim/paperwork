@@ -182,6 +182,9 @@ class Plugin(openpaperwork_core.PluginBase):
             stack.set_visible_child_name(name)
         return True
 
+    def mainwindow_show_default(self, side: str):
+        self.core.call_all("mainwindow_show", side, self.default[side][1])
+
     def mainwindow_set_transient_for(self, dialog):
         dialog.set_transient_for(self.mainwindow)
         return True

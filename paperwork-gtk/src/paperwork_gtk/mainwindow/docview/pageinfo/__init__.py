@@ -115,6 +115,12 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         return True
 
+    def page_info_add_right(self, widget):
+        self.widget_tree.get_object("page_info").pack_end(
+            widget, expand=False, fill=True, padding=0
+        )
+        return True
+
     def doc_transaction_start(self, out: list, total_expected=-1):
         class RefreshTransaction(paperwork_backend.sync.BaseTransaction):
             priority = -100000
