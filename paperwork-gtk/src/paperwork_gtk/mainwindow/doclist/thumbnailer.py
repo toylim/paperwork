@@ -1,3 +1,4 @@
+import gettext
 import logging
 
 import PIL
@@ -10,6 +11,7 @@ from paperwork_backend.model.thumbnail import (
 )
 
 
+_ = gettext.gettext
 LOGGER = logging.getLogger(__name__)
 
 DELAY = 0.01
@@ -44,11 +46,6 @@ class ThumbnailTask(object):
             self.core.call_success("thumbnail_get_doc_promise", doc_url)
         )
         promise = promise.then(self.set_thumbnail)
-        # Gives back a bit of CPU time to GTK so the GUI remains
-        # usable
-        promise = promise.then(openpaperwork_core.promise.DelayPromise(
-            self.core, DELAY
-        ))
         return promise
 
 
@@ -59,6 +56,10 @@ class Plugin(openpaperwork_core.PluginBase):
         super().__init__()
         self.default_thumbnail = None
         self.running = False
+
+        self.nb_loaded = 0
+        self.nb_to_load = 0
+        self._progress_str = None
 
     def get_interfaces(self):
         return [
@@ -106,6 +107,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all(
             "work_queue_create", "thumbnailer", stop_on_quit=True
         )
+        self._progress_str = _("Loading document thumbnails")
 
     def doclist_show(self, docids):
         self.core.call_all("work_queue_cancel_all", "thumbnailer")
@@ -116,7 +118,36 @@ class Plugin(openpaperwork_core.PluginBase):
         gtk_img.set_size_request(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT)
         gtk_img.set_visible(True)
 
+        self.nb_to_load += 1
+
         task = ThumbnailTask(self, doc_id, gtk_img)
+        promise = task.get_promise()
+
+        def _when_loaded():
+            self.nb_loaded += 1
+            self._update_progress()
+
+        promise = promise.then(_when_loaded)
+
+        # Gives back a bit of CPU time to GTK so the GUI remains
+        # usable
+        promise = promise.then(openpaperwork_core.promise.DelayPromise(
+            self.core, DELAY
+        ))
+
         self.core.call_success(
-            "work_queue_add_promise", "thumbnailer", task.get_promise()
+            "work_queue_add_promise", "thumbnailer", promise
+        )
+
+    def _update_progress(self):
+        assert(self.nb_to_load > 0)
+        if self.nb_loaded > self.nb_to_load:
+            self.nb_loaded = 0
+            self.nb_to_load = 0
+            self.core.call_all("on_progress", "thumbnailing", 1.0)
+            return
+
+        self.core.call_all(
+            "on_progress", "thumbnailing", self.nb_loaded / self.nb_to_load,
+            self._progress_str
         )
