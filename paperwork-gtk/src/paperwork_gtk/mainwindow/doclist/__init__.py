@@ -355,7 +355,7 @@ class Plugin(openpaperwork_core.PluginBase):
         row = self.doclist.get_row_at_y(y)
         if row is None:
             LOGGER.warning("No row at %d. Can't get drop destination", y)
-            return
+            return None
         doc_id = self.row_to_docid[row]
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
         nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)
