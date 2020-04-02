@@ -195,6 +195,16 @@ class CairoRenderer(GObject.GObject):
             return
         self.visible = True
         if self.size == (0, 0):
+            self.core.call_all(
+                "work_queue_cancel", self.work_queue_name,
+                self.get_size_promise
+            )
+            # re add with a higher priority
+            self.core.call_success(
+                "work_queue_add_promise",
+                self.work_queue_name, self.get_size_promise,
+                priority=200
+            )
             return
         if self.render_job_in_queue:
             return
@@ -208,6 +218,16 @@ class CairoRenderer(GObject.GObject):
         if not self.visible:
             return
         self.visible = False
+        if self.size == (0, 0):
+            self.core.call_all(
+                "work_queue_cancel", self.work_queue_name,
+                self.get_size_promise
+            )
+            # re add with a lower priority
+            self.core.call_success(
+                "work_queue_add_promise",
+                self.work_queue_name, self.get_size_promise
+            )
         if self.cairo_surface is not None:
             self.cairo_surface.surface.finish()
             self.cairo_surface = None

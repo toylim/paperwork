@@ -56,7 +56,10 @@ class WorkQueue(object):
 
         with self.lock:
             heapq.heappush(self.queue, task)
-            assert(promise not in self.all_tasks)
+            assert(
+                promise not in self.all_tasks or
+                not self.all_tasks[promise].active
+            )
             self.all_tasks[promise] = task
 
             if not self.running:
@@ -69,7 +72,8 @@ class WorkQueue(object):
             task = None
             while task is None or not task.active:
                 task = heapq.heappop(self.queue)
-                self.all_tasks.pop(task.promise)
+                if task.active:
+                    self.all_tasks.pop(task.promise)
         except IndexError:
             self.running = False
             return
