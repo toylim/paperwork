@@ -8,16 +8,6 @@ try:
 except (ImportError, ValueError):
     GLIB_AVAILABLE = False
 
-try:
-    import gi
-    gi.require_version('Gdk', '3.0')
-    gi.require_version('Gtk', '3.0')
-    from gi.repository import Gdk
-    from gi.repository import Gtk
-    GTK_AVAILABLE = True
-except (ImportError, ValueError):
-    GTK_AVAILABLE = False
-
 import openpaperwork_core
 import openpaperwork_gtk.deps
 
@@ -50,6 +40,7 @@ class Plugin(openpaperwork_core.PluginBase):
             'chkdeps',
             'doc_actions',
             'doc_open',
+            'drag_and_drop_destination',
             'gtk_app_menu',
             'gtk_doclist',
             'search_listener',
@@ -60,6 +51,10 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'document_storage',
                 'defaults': ['paperwork_backend.model.workdir'],
+            },
+            {
+                'interface': 'gtk_drag_and_drop',
+                'defaults': ['paperwork_gtk.gesture.drag_and_drop'],
             },
             {
                 'interface': 'gtk_resources',
@@ -118,6 +113,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
         self.menu_model = self.widget_tree.get_object("doclist_menu_model")
 
+        self.core.call_all("drag_and_drop_page_enable", self.doclist)
+
         self.core.call_one(
             "mainloop_schedule", self.core.call_all, "on_doclist_initialized"
         )
@@ -125,8 +122,6 @@ class Plugin(openpaperwork_core.PluginBase):
     def chkdeps(self, out: dict):
         if not GLIB_AVAILABLE:
             out['glib'].update(openpaperwork_gtk.deps.GLIB)
-        if not GTK_AVAILABLE:
-            out['gtk'].update(openpaperwork_gtk.deps.GTK)
 
     def doclist_add(self, widget, vposition):
         body = self.widget_tree.get_object("doclist_body")
@@ -342,3 +337,17 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def add_doc_action(self, action_label, action_name):
         self.actions.append(action_label, action_name)
+
+    def drag_and_drop_get_destination(self, widget, x, y):
+        if self.doclist != widget:
+            return None
+        row = self.doclist.get_row_at_y(y)
+        if row is None:
+            LOGGER.warning("No row at %d. Can't get drop destination", y)
+            return
+        doc_id = self.row_to_docid[row]
+        doc_url = self.core.call_success("doc_id_to_url", doc_id)
+        nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)
+        if nb_pages is None:
+            nb_pages = 0
+        return (doc_id, nb_pages)

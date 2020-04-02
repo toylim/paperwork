@@ -32,7 +32,12 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def get_deps(self):
-        return []
+        return [
+            {
+                'interface': 'document_storage',
+                'defaults': ['paperwork_backend.model.workdir'],
+            },
+        ]
 
     def init(self, core):
         super().init(core)
@@ -79,21 +84,27 @@ class Plugin(openpaperwork_core.PluginBase):
             widget, x, y, uris, info
         )
 
-        (dst_doc_id, dst_page_idx) = self.core.call_success(
+        dst = self.core.call_success(
             "drag_and_drop_get_destination", widget, x, y
         )
+        if dst is None:
+            LOGGER.error("Nobody accepted a drop on %s (%d, %d)", widget, x, y)
+            return
 
-        for uri in uris:
+        (dst_doc_id, dst_page_idx) = dst
+
+        for uri in reversed(uris):
             LOGGER.info("Drop: URI: %s", uri)
 
             self.core.call_all(
-                "drag_and_drop_page_add",
-                uri, dst_doc_id, dst_page_idx
+                "drag_and_drop_page_add", uri, dst_doc_id, dst_page_idx
             )
 
         self.core.call_all("drag_and_drop_apply")
 
     def drag_and_drop_page_add(self, src_uri, dst_doc_id, dst_page_idx):
+        LOGGER.info("Drop: %s --> %s p%d", src_uri, dst_doc_id, dst_page_idx)
+
         if "doc_id=" not in src_uri or "page=" not in src_uri:
             # treat it as an import
             # TODO(Jflesch)
@@ -115,7 +126,7 @@ class Plugin(openpaperwork_core.PluginBase):
             dst_doc_id, dst_page_idx
         )
 
-        if src_page_idx == dst_page_idx:
+        if src_doc_id == dst_doc_id and src_page_idx == dst_page_idx:
             return
 
         self.promise = self.promise.then(
@@ -161,7 +172,14 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _run_transactions(self, transactions, updated_doc_ids):
         for doc_id in updated_doc_ids:
+            doc_url = self.core.call_success("doc_id_to_url", doc_id)
+            upd = (self.core.call_success("is_doc", doc_url) is not None)
             for transaction in transactions:
-                transaction.upd_obj(doc_id)
+                if upd:
+                    transaction.upd_obj(doc_id)
+                else:
+                    # drag'n'dropping deletes a document when there are no
+                    # pages left in it.
+                    transaction.del_obj(doc_id)
         for transaction in transactions:
             transaction.commit()

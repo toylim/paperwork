@@ -9,6 +9,15 @@ LOGGER = logging.getLogger(__name__)
 
 
 class BaseLayoutController(BaseDocViewController):
+    def __init__(self, core, plugin):
+        super().__init__(plugin)
+        self.core = core
+        self.real_nb_pages = self.core.call_success(
+            "doc_get_nb_pages_by_url", self.plugin.active_doc[1]
+        )
+        if self.real_nb_pages is None:
+            self.real_nb_pages = 0
+
     def _update_visibility(self):
         vadj = self.plugin.scroll.get_vadjustment()
         lower = vadj.get_lower()
@@ -38,15 +47,19 @@ class BaseLayoutController(BaseDocViewController):
         super().on_layout_size_allocate(layout)
         self._update_visibility()
 
-    def doc_reload_page(self, page_idx):
-        super().doc_reload_page(page_idx)
+    def _doc_remove_page(self, page_idx):
+        LOGGER.info("Removing page %d from layout", page_idx)
         for widget in list(self.plugin.page_layout.get_children()):
             page = self.plugin.widget_to_page[widget]
             if page.page_idx == page_idx:
                 self.plugin.widget_to_page.pop(widget)
                 self.plugin.page_layout.remove(widget)
+                self.plugin.pages.remove(page)
+
+    def _doc_add_page(self, page_idx):
+        LOGGER.info("Adding page %d to layout", page_idx)
         components = []
-        self.plugin.core.call_all(
+        self.core.call_all(
             "doc_reload_page_component",
             components,
             self.plugin.active_doc[0],
@@ -56,26 +69,56 @@ class BaseLayoutController(BaseDocViewController):
         assert(len(components) <= 1)
         component = components[0] if len(components) >= 1 else None
         widget = self.plugin._build_flow_box_child(component.widget)
-        if component is None:
-            if page_idx < len(self.plugin.pages):
-                self.plugin.pages.pop(page_idx)
-            return
-        if page_idx < len(self.plugin.pages):
-            self.plugin.pages[page_idx] = component
-        elif page_idx == len(self.plugin.pages):
-            self.plugin.pages.append(component)
-        else:
-            assert()
+        self.plugin.pages.insert(page_idx, component)
         self.plugin.widget_to_page[widget] = component
         self.plugin.page_layout.insert(widget, page_idx)
         component.set_zoom(self.plugin.zoom)
         component.load()
 
+    def _doc_reload_for_removed_page(
+            self, start_page_idx, old_nb_pages, new_nb_pages):
+        # remove all pages that are probably obsolete
+        # Keep in mind we cannot simply remove all the page after
+        # start_page_idx because some plugins add 'fake' page widgets (see
+        # scanview for instance). And those 'fake' widgets must remain.
+        for page_idx in range(start_page_idx, old_nb_pages):
+            self._doc_remove_page(page_idx)
+
+        # rebuild the pages
+        for page_idx in range(start_page_idx, new_nb_pages):
+            self._doc_add_page(page_idx)
+
+    def doc_reload_page(self, page_idx):
+        super().doc_reload_page(page_idx)
+
+        LOGGER.info("Reloading page %d", page_idx)
+
+        real_nb_pages = self.core.call_success(
+            "doc_get_nb_pages_by_url", self.plugin.active_doc[1]
+        )
+        if real_nb_pages is None:
+            real_nb_pages = 0
+
+        if real_nb_pages < self.real_nb_pages:
+            LOGGER.info(
+                "Number of pages has decreased (%d < %d)",
+                real_nb_pages, self.real_nb_pages
+            )
+            # the number of pages has been reduced --> assume that page_idx
+            # has been deleted
+            self._doc_reload_for_removed_page(
+                page_idx, self.real_nb_pages, real_nb_pages
+            )
+            return
+
+        self._doc_remove_page(page_idx)
+        self._doc_add_page(page_idx)
+        self.real_nb_pages = real_nb_pages
+
 
 class LayoutControllerLoading(BaseLayoutController):
     def __init__(self, core, plugin):
-        super().__init__(plugin)
-        self.core = core
+        super().__init__(core, plugin)
         self.nb_loaded = 0
 
         # page instantiation must be done before the calls to enter()
@@ -109,7 +152,8 @@ class LayoutControllerLoading(BaseLayoutController):
         self.nb_loaded += 1
         if self.nb_loaded >= len(self.plugin.pages):
             self.plugin.docview_switch_controller(
-                'layout', LayoutControllerLoaded
+                'layout',
+                lambda plugin: LayoutControllerLoaded(self.core, plugin)
             )
 
     def exit(self):
