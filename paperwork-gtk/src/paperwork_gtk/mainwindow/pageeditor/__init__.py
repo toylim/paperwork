@@ -183,25 +183,20 @@ class GtkPageEditorUI(paperwork_backend.pageedit.AbstractPageEditorUI):
         self.refresh()
         LOGGER.info("Preview refreshed (%s)", img.size)
 
-    def _get_frame(self):
-        return self.editor.frame.frame
-
-    def _set_frame(self, frame):
-        self.editor.frame.frame = frame
-
-    def show_frame_selector(self, frame):
-        super().show_frame_selector(frame)
+    def show_frame_selector(self):
+        super().show_frame_selector()
         if self.pil_img is None:
             return
         img = self.plugin.widget_tree.get_object("pageeditor_img")
         self.core.call_all("draw_frame_stop", img)
+
         LOGGER.info(
-            "show_frame_selector(%s) (img size: %s ; frame: %s)",
-            frame, self.pil_img.size, self._get_frame()
+            "show_frame_selector() (img size: %s ; frame: %s)",
+            self.pil_img.size, self.editor.frame.get()
         )
         self.core.call_all(
             "draw_frame_start", img, self.pil_img.size,
-            self._get_frame, self._set_frame
+            self.editor.frame.get, self.editor.frame.set
         )
 
     def hide_frame_selector(self):
@@ -209,10 +204,6 @@ class GtkPageEditorUI(paperwork_backend.pageedit.AbstractPageEditorUI):
         LOGGER.info("hide_frame_selector()")
         img = self.plugin.widget_tree.get_object("pageeditor_img")
         self.core.call_all("draw_frame_stop", img)
-
-    def highlight_frame_corner(self, x, y):
-        super().highlight_frame_corner(x, y)
-        # TODO(Jflesch): code to remove
 
     def on_edit_end(self, doc_url, page_idx):
         super().on_edit_end(doc_url, page_idx)
@@ -376,6 +367,9 @@ class Plugin(openpaperwork_core.PluginBase):
     def _on_edit_end(self, doc_url, page_idx):
         self.core.call_all("mainwindow_show_default", side="right")
         self.core.call_all("doc_reload_page", *self.active_doc, page_idx)
+        self.core.call_success(
+            "mainloop_schedule", self.core.call_all, "doc_goto_page", page_idx
+        )
         self.ui = None
 
     def _show_page_editor(self, page_editor, ui, doc_id, doc_url, page_idx):

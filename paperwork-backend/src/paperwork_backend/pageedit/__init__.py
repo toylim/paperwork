@@ -20,32 +20,22 @@ class AbstractPageEditorUI(object):
         """
         return
 
-    def show_frame_selector(self, frame):
+    def show_frame_selector(self):
         """
         Tells the UI that it must let the user select a frame on the image
         (image provided by `show_image`). It also specify the current frame
         to display to the user.
 
-        Called every time the image changes (if we want the frame to be shown).
-        May be called each time the cursor moves.
+        Called every time the image changes if we want the frame to be shown.
+
+        Frame can be obtained by calling PageEditor.frame.get() and
+        can be updated with PageEditor.frame.set().
         """
         return
 
     def hide_frame_selector(self):
         """
         Tells the UI to not let the user select a frame anymore.
-
-        Called every time the image changes (if we want the frame to be
-        hidden).
-        """
-        return
-
-    def highlight_frame_corner(self, x, y):
-        """
-        When the user cursor is getting close to one of the corners, we want
-        the UI to highlight it so the user knows it can be moved.
-
-        Called each time the cursor moves.
         """
         return
 

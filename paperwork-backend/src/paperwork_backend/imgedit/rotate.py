@@ -27,10 +27,10 @@ class RotationImgEditor(AbstractImgEditor):
         }[self.angle]
         return img.transpose(angle)
 
-    def transform_frame(self, img_size, frame):
+    def _transform_frame(self, img_size, frame, transform_pt):
         frame = (
-            self.transform_point(img_size, frame[0]),
-            self.transform_point(img_size, frame[1]),
+            transform_pt(img_size, frame[0]),
+            transform_pt(img_size, frame[1]),
         )
         return (
             (
@@ -43,12 +43,18 @@ class RotationImgEditor(AbstractImgEditor):
             ),
         )
 
+    def transform_frame(self, img_size, frame):
+        return self._transform_frame(img_size, frame, self.transform_point)
+
+    def untransform_frame(self, img_size, frame):
+        return self._transform_frame(img_size, frame, self.untransform_point)
+
     def _transform_pt(self, img_size, pt, angle):
         r = {
             0: pt,
-            90: (img_size[1] - pt[1], pt[0]),
+            90: (pt[1], img_size[0] - pt[0]),
+            270: (img_size[1] - pt[1], pt[0]),
             180: (img_size[0] - pt[0], img_size[1] - pt[1]),
-            270: (pt[1], img_size[0] - pt[0]),
         }[angle]
         return r
 
@@ -61,8 +67,8 @@ class RotationImgEditor(AbstractImgEditor):
         img_size = {
             0: img_size,
             90: (img_size[1], img_size[0]),
-            180: img_size,
             270: (img_size[1], img_size[0]),
+            180: img_size,
         }[self.angle]
         angle = ((-1 * self.angle) % 360)
         return self._transform_pt(img_size, pt, angle)

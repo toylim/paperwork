@@ -7,7 +7,6 @@ controller object.
 
 import gettext
 import logging
-import math
 
 import openpaperwork_core
 import openpaperwork_core.promise
@@ -17,73 +16,15 @@ LOGGER = logging.getLogger(__name__)
 _ = gettext.gettext
 
 
-def compute_squared_distance(pt_a, pt_b):
-    """
-    Compute the distance between point A and point B, but return the square
-    of the distance (because it's faster, and we usually only want to compare
-    those distances between themselves).
-    """
-    x = pt_a[0] - pt_b[0]
-    y = pt_a[1] - pt_b[1]
-    return ((x * x) + (y * y))
-
-
-class Corner(object):
-    """
-    Each instance of this class represents one of the corner of the frame.
-    Modifying the coordinates of the corner modifies the frame and the
-    coordinates of 2 other corners.
-    """
-    def __init__(self, frame, corner_x_idx, corner_y_idx):
-        self.frame = frame
-        self.corner_x_idx = corner_x_idx
-        self.corner_y_idx = corner_y_idx
-
-    def _get_coords(self):
-        return (
-            self.frame[self.corner_x_idx],
-            self.frame[self.corner_y_idx]
-        )
-
-    def _set_coords(self, pt):
-        (x, y) = pt
-        self.frame[self.corner_x_idx] = x
-        self.frame[self.corner_y_idx] = y
-
-    coords = property(_get_coords, _set_coords)
-
-    def compute_squared_distance(self, pt):
-        return compute_squared_distance(self.coords, pt)
-
-
 class Frame(object):
-    def __init__(self, original):
+    def __init__(self, editor, original):
         # convert the frame coordinates into a more convenient format
-        self.frame = [
+        self.editor = editor
+        self.original = original
+        self.frame = (
             original[0][0], original[0][1],
             original[1][0], original[1][1]
-        ]
-        self.corners = [
-            Corner(self.frame, corner_idx_x, corner_idx_y)
-            for (corner_idx_x, corner_idx_y)
-            in ((0, 1), (2, 3), (0, 3), (2, 1))
-        ]
-
-    def get_corner(self, x, y):
-        """
-        Arguments:
-        x - cursor position in X
-        y - cursor position in Y
-        """
-        # We always return one of the corners: the closest one
-        pt = (x, y)
-        m_corner = (math.inf, None)
-        for corner in self.corners:
-            dist = corner.compute_squared_distance(pt)
-            if dist < m_corner[0]:
-                m_corner = (dist, corner)
-        assert(m_corner[1] is not None)
-        return m_corner[1]
+        )
 
     @property
     def coords(self):
@@ -97,6 +38,30 @@ class Frame(object):
                 max(self.frame[1], self.frame[3]),
             ),
         )
+
+    def get(self):
+        frame = self.coords
+        for (e, img_size) in zip(
+                    self.editor.active_modifiers, self.editor.img_sizes
+                ):
+            if hasattr(e, 'frame'):
+                e.frame = frame
+            frame = e.transform_frame(img_size, frame)
+        return (frame[0][0], frame[0][1], frame[1][0], frame[1][1])
+
+    def set(self, frame):
+        frame = ((frame[0], frame[1]), (frame[2], frame[3]))
+        for (e, img_size) in zip(
+                    reversed(self.editor.active_modifiers),
+                    reversed(self.editor.img_sizes)
+                ):
+            frame = e.untransform_frame(img_size, frame)
+        self.frame = (
+            min(frame[0][0], frame[1][0]),
+            min(frame[0][1], frame[1][1]),
+            max(frame[0][0], frame[1][0]),
+            max(frame[0][1], frame[1][1]),
+            )
 
 
 class PageEditor(object):
@@ -119,12 +84,12 @@ class PageEditor(object):
             # rotated)
             # TODO(Jflesch): We should use libpillowfight.scan_border()
             # to predefined an useful frame.
-            self.original_frame = ((0, 0), self.original_img.size)
+            original_frame = ((0, 0), self.original_img.size)
         else:
             self.original_img = None
-            self.original_frame = ((0, 0), (0, 0))
+            original_frame = ((0, 0), (0, 0))
 
-        self.frame = Frame(self.original_frame)
+        self.frame = Frame(self, original_frame)
         modifiers = []
         self.core.call_all("img_editor_get_names", modifiers)
 
@@ -146,7 +111,7 @@ class PageEditor(object):
                 "id": "crop",
                 "name": _("Cropping"),
                 "modifier": 'cropping',
-                "default_kwargs": {'frame': self.original_frame},
+                "default_kwargs": {'frame': self.frame.original},
                 "need_frame": True,
                 "togglable": True,
                 "enabled": False,
@@ -174,8 +139,6 @@ class PageEditor(object):
         self.active_modifiers = []
         # image sizes before transformation of each modifier
         self.img_sizes = []
-        self.highlighted_corner = None
-        self.selected_corner = None
 
         if self.ui is not None:
             self._refresh_preview()
@@ -185,14 +148,6 @@ class PageEditor(object):
         r = list(self.modifier_descriptors.values())
         r.sort(key=lambda m: -m['priority'])
         return r
-
-    def _recompute_frame(self):
-        frame = self.frame.coords
-        for (e, img_size) in zip(self.active_modifiers, self.img_sizes):
-            if hasattr(e, 'frame'):
-                e.frame = frame
-            frame = e.transform_frame(img_size, frame)
-        return frame
 
     def _needs_frame(self):
         if not self.ui.can(self.ui.CAPABILITY_SHOW_FRAME):
@@ -221,21 +176,8 @@ class PageEditor(object):
         if not self._needs_frame():
             self.core.call_one("mainloop_execute", self.ui.hide_frame_selector)
             return
-        frame = self._recompute_frame()
         self.core.call_one(
-            "mainloop_execute", self.ui.show_frame_selector, frame
-        )
-
-        if self.highlighted_corner is None:
-            return
-
-        pt = self.highlighted_corner.coords
-        for (e, img_size) in zip(self.active_modifiers, self.img_sizes):
-            pt = e.transform_point(img_size, pt)
-        self.core.call_one(
-            "mainloop_execute",
-            self.ui.highlight_frame_corner,
-            pt[0], pt[1]
+            "mainloop_execute", self.ui.show_frame_selector
         )
 
     def _on_modifier_selected(self, modifier_id):
@@ -264,46 +206,6 @@ class PageEditor(object):
     def on_modifier_selected(self, modifier_id):
         return openpaperwork_core.promise.ThreadedPromise(
             self.core, self._on_modifier_selected, args=(modifier_id,)
-        )
-
-    def _untransform_pt(self, x, y):
-        pt = (x, y)
-        for (e, img_size) in zip(
-                    reversed(self.active_modifiers),
-                    reversed(self.img_sizes)
-                ):
-            pt = e.untransform_point(img_size, pt)
-        return pt
-
-    def _on_cursor_moved(self, x, y):
-        (x, y) = self._untransform_pt(x, y)
-        if self.selected_corner is not None:
-            self.selected_corner.coords = (x, y)
-        self.highlighted_corner = self.frame.get_corner(x, y)
-        self._refresh_frame()
-
-    def on_cursor_moved(self, x, y):
-        return openpaperwork_core.promise.Promise(
-            self.core, self._on_cursor_moved, args=(x, y)
-        )
-
-    def _on_button_pressed(self, x, y):
-        (orig_x, orig_y) = self._untransform_pt(x, y)
-        self.selected_corner = self.frame.get_corner(orig_x, orig_y)
-        self._on_cursor_moved(x, y)
-
-    def on_button_pressed(self, x, y):
-        return openpaperwork_core.promise.Promise(
-            self.core, self._on_button_pressed, args=(x, y)
-        )
-
-    def _on_button_released(self, x, y):
-        self.selected_corner = None
-        self._on_cursor_moved(x, y)
-
-    def on_button_released(self, x, y):
-        return openpaperwork_core.promise.Promise(
-            self.core, self._on_button_pressed, args=(x, y)
         )
 
     def _on_save(self):

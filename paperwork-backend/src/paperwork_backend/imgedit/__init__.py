@@ -11,13 +11,16 @@ class AbstractImgEditor(object):
         assert()
 
     def transform_frame(self, img_size, frame):
+        """
+        From the frame applied to the original image to the resulting image.
+        """
         return frame
 
-    def transform_point(self, img_size, point):
-        return point
-
-    def untransform_point(self, img_size, point):
-        return point
+    def untransform_frame(self, img_size, frame):
+        """
+        From the frame on the resulting image to the original image.
+        """
+        return frame
 
     def __eq__(self, o):
         return type(self) == type(o)

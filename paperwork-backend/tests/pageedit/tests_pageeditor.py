@@ -18,11 +18,8 @@ class FakeUI(AbstractPageEditorUI):
     def show_preview(self, img):
         self.tests.ui_calls.append(('show_preview', img))
 
-    def show_frame_selector(self, frame):
-        self.tests.ui_calls.append(('show_frame_selector', frame))
-
-    def highlight_frame_corner(self, x, y):
-        self.tests.ui_calls.append(('highlight_frame_corner', x, y))
+    def show_frame_selector(self):
+        self.tests.ui_calls.append(('show_frame_selector',))
 
     def hide_frame_selector(self):
         self.tests.ui_calls.append(('hide_frame_selector',))
@@ -138,59 +135,9 @@ class TestPageEdit(unittest.TestCase):
         self.assertEqual(self.ui_calls[0][0], 'show_preview')
         self.assertEqual(self.ui_calls[0][1].size, (100, 200))
         self.assertEqual(self.ui_calls[1][0], 'show_frame_selector')
-        self.assertEqual(self.ui_calls[1][1], ((0, 0), (100, 200)))
 
-        # move the cursor close to the top right corner
-        self.pillowed = []
-        self.ui_calls = []
-        page_editor.on_cursor_moved(95, 5).schedule()
-        self.core.call_all("mainloop_quit_graceful")
-        self.core.call_all("mainloop")
-        self.assertEqual(self.pillowed, [])
-        self.assertEqual(len(self.ui_calls), 2)
-        self.assertEqual(self.ui_calls[0][0], 'show_frame_selector')
-        self.assertEqual(self.ui_calls[0][1], ((0, 0), (100, 200)))
-        self.assertEqual(self.ui_calls[1][0], 'highlight_frame_corner')
-        self.assertEqual(self.ui_calls[1][1], 100)
-        self.assertEqual(self.ui_calls[1][2], 0)
-
-        # start moving the corner
-        self.pillowed = []
-        self.ui_calls = []
-        page_editor.on_button_pressed(90, 10).schedule()
-        self.core.call_all("mainloop_quit_graceful")
-        self.core.call_all("mainloop")
-        self.assertEqual(self.pillowed, [])
-        self.assertEqual(len(self.ui_calls), 2)
-        self.assertEqual(self.ui_calls[0][0], 'show_frame_selector')
-        self.assertEqual(self.ui_calls[0][1], ((0, 10), (90, 200)))
-        self.assertEqual(self.ui_calls[1][0], 'highlight_frame_corner')
-        self.assertEqual(self.ui_calls[1][1], 90)
-        self.assertEqual(self.ui_calls[1][2], 10)
-
-        # move the corner close to the opposite one
-        self.pillowed = []
-        self.ui_calls = []
-        page_editor.on_cursor_moved(10, 190).schedule()
-        self.core.call_all("mainloop_quit_graceful")
-        self.core.call_all("mainloop")
-        self.assertEqual(self.pillowed, [])
-        self.assertEqual(len(self.ui_calls), 2)
-        self.assertEqual(self.ui_calls[0][0], 'show_frame_selector')
-        self.assertEqual(self.ui_calls[0][1], ((0, 190), (10, 200)))
-        self.assertEqual(self.ui_calls[1], ('highlight_frame_corner', 10, 190))
-
-        # release the button
-        self.pillowed = []
-        self.ui_calls = []
-        page_editor.on_button_released(10, 190).schedule()
-        self.core.call_all("mainloop_quit_graceful")
-        self.core.call_all("mainloop")
-        self.assertEqual(self.pillowed, [])
-        self.assertEqual(len(self.ui_calls), 2)
-        self.assertEqual(self.ui_calls[0][0], 'show_frame_selector')
-        self.assertEqual(self.ui_calls[0][1], ((0, 190), (10, 200)))
-        self.assertEqual(self.ui_calls[1], ('highlight_frame_corner', 10, 190))
+        self.assertEqual(page_editor.frame.get(), (0, 0, 100, 200))
+        page_editor.frame.set((0, 190, 10, 200))
 
         # rotation again (180°)
         self.pillowed = []
@@ -198,12 +145,11 @@ class TestPageEdit(unittest.TestCase):
         page_editor.on_modifier_selected("rotate_clockwise").schedule()
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_all("mainloop")
-        self.assertEqual(len(self.ui_calls), 3)
+        self.assertEqual(len(self.ui_calls), 2)
         self.assertEqual(self.ui_calls[0][0], 'show_preview')
         self.assertEqual(self.ui_calls[0][1].size, (200, 100))
         self.assertEqual(self.ui_calls[1][0], 'show_frame_selector')
-        self.assertEqual(self.ui_calls[1][1], ((0, 0), (10, 10)))
-        self.assertEqual(self.ui_calls[2][0], 'highlight_frame_corner')
+        self.assertEqual(page_editor.frame.get(), (190, 90, 200, 100))
 
         # .. and again (270°)
         self.pillowed = []
@@ -211,12 +157,11 @@ class TestPageEdit(unittest.TestCase):
         page_editor.on_modifier_selected("rotate_clockwise").schedule()
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_all("mainloop")
-        self.assertEqual(len(self.ui_calls), 3)
+        self.assertEqual(len(self.ui_calls), 2)
         self.assertEqual(self.ui_calls[0][0], 'show_preview')
         self.assertEqual(self.ui_calls[0][1].size, (100, 200))
         self.assertEqual(self.ui_calls[1][0], 'show_frame_selector')
-        self.assertEqual(self.ui_calls[1][1], ((90, 0), (100, 10)))
-        self.assertEqual(self.ui_calls[2][0], 'highlight_frame_corner')
+        self.assertEqual(page_editor.frame.get(), (90, 0, 100, 10))
 
         # and save !
         self.pillowed = []
