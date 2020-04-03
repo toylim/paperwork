@@ -157,9 +157,10 @@ class GtkPageEditorUI(paperwork_backend.pageedit.AbstractPageEditorUI):
         widget_size = self._get_scaled_image_size()
         img = self.plugin.widget_tree.get_object("pageeditor_img")
         img.set_size_request(widget_size[0], widget_size[1])
-        img.queue_resize()
-        self.plugin.widget_tree.get_object("pageeditor_scroll").queue_resize()
-        img.queue_draw()
+
+        # WORKAROUND(JFlesch): I shouldn't have to use 'mainloop_schedule'
+        # here. But somehow, I do have to use it :/
+        self.core.call_all("mainloop_schedule", img.queue_resize)
 
     def _on_zoom_changed(self, adj=None):
         self.refresh()
