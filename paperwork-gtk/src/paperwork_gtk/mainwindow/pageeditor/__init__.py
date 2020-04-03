@@ -281,6 +281,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_gtk.resources'],
             },
             {
+                'interface': 'gtk_zoomable',
+                'defaults': ['paperwork_gtk.gesture.zoom'],
+            },
+            {
                 'interface': 'page_editor',
                 'defaults': ['paperwork_backend.pageedit.pageeditor'],
             },
@@ -311,6 +315,12 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         self.widget_tree.get_object("pageeditor_back").connect(
             "clicked", self._on_apply
+        )
+
+        self.core.call_all(
+            "on_zoomable_widget_new",
+            self.widget_tree.get_object("pageeditor_scroll"),
+            self.widget_tree.get_object("pageeditor_zoom_adjustment"),
         )
 
         self.core.call_all(
