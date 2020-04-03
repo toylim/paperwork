@@ -152,7 +152,6 @@ class CairoRenderer(GObject.GObject):
         self.cairo_surface = None
         self.background = self.DEFAULT_BACKGROUND
         self.visible = False
-        self.render_job_in_queue = False
 
         # very often, the image is much bigger than what we actually display
         # --> keep a copy of the reduced image in memory
@@ -171,6 +170,7 @@ class CairoRenderer(GObject.GObject):
             core, DELAY_SHORT
         ))
         self.get_size_promise = promise
+        self.getting_size = False
 
         # Gives back a bit of CPU time to GTK so the GUI remains
         # usable
@@ -183,12 +183,18 @@ class CairoRenderer(GObject.GObject):
         ))
         promise = promise.then(self._set_cairo_surface)
         self.render_img_promise = promise
+        self.render_job_in_queue = False
 
     def start(self):
+        if self.getting_size:
+            # seems render() may be called before start() in some cases
+            # --> avoid calling twice work_queue_add_promise() to get the size
+            return
         self.core.call_success(
             "work_queue_add_promise",
             self.work_queue_name, self.get_size_promise
         )
+        self.getting_size = True
 
     def render(self, force=False):
         if self.visible and not force:
@@ -205,6 +211,7 @@ class CairoRenderer(GObject.GObject):
                 self.work_queue_name, self.get_size_promise,
                 priority=200
             )
+            self.getting_size = True
             return
         if self.render_job_in_queue:
             return
@@ -228,6 +235,7 @@ class CairoRenderer(GObject.GObject):
                 "work_queue_add_promise",
                 self.work_queue_name, self.get_size_promise
             )
+            self.getting_size = True
         if self.cairo_surface is not None:
             self.cairo_surface.surface.finish()
             self.cairo_surface = None
@@ -238,11 +246,17 @@ class CairoRenderer(GObject.GObject):
 
     def close(self):
         self.hide()
+        self.core.call_all(
+            "work_queue_cancel", self.work_queue_name,
+            self.get_size_promise
+        )
         self.get_size_promise = None
+        self.getting_size = False
         self.render_img_promise = None
 
     def _set_img_size(self, size):
         self.size = size
+        self.getting_size = False
         if self.get_size_promise is None:
             # Document has been closed while we looked for its size
             return
