@@ -85,6 +85,7 @@ class Plugin(openpaperwork_core.PluginBase):
             img_url = self.core.call_success(
                 "page_get_img_url", doc_url, page_idx
             )
+            img_url = img_url.split("#", 1)[0]
             img_url += "#doc_id={}&page={}".format(doc_id, page_idx)
             LOGGER.info("Img URL: {}".format(img_url))
             data.set_uris([img_url])
