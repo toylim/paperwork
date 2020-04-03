@@ -15,7 +15,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_interfaces(self):
         return [
             'doc_open',
-            'gtk_page_actions',
+            'page_actions',
         ]
 
     def get_deps(self):
