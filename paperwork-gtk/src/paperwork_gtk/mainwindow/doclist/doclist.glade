@@ -80,6 +80,7 @@
             <property name="kinetic_scrolling">False</property>
             <property name="name">doclist_scroll</property>
             <property name="vscrollbar_policy">always</property>
+            <property name="overlay_scrolling">False</property>
             <child>
               <object class="GtkBox">
                 <property name="visible">True</property>
