@@ -78,6 +78,9 @@ class PdfDocUrlToPdfUrlExportPipe(AbstractExportPipe):
 
         return openpaperwork_core.promise.Promise(self.core, do)
 
+    def get_output_mime(self):
+        return ("application/pdf", ("pdf",))
+
     def __str__(self):
         return _("Original PDF")
 
@@ -231,6 +234,9 @@ class PagesToPdfUrlExportPipe(AbstractExportPipe):
         return openpaperwork_core.promise.Promise(
             self.core, do, kwargs={'target_file_url': target_file_url}
         )
+
+    def get_output_mime(self):
+        return ("application/pdf", ("pdf",))
 
     def __str__(self):
         return _("Generated PDF")

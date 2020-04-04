@@ -114,15 +114,16 @@ class DocToPillowBoxesExportPipe(AbstractExportPipe):
 
 
 class PageToImageExportPipe(AbstractExportPipe):
-    def __init__(self, core, name, format, file_extension):
+    def __init__(self, core, name, format, file_extensions, mime, has_quality):
         super().__init__(
             name=name,
             input_types=['pages'],
             output_type='file_url'
         )
-        self.can_change_quality = True
+        self.can_change_quality = has_quality
         self.format = format
-        self.file_extension = file_extension
+        self.file_extensions = file_extensions
+        self.mime = mime
         self.core = core
 
     def get_promise(self, result='final', target_file_url=None):
@@ -132,7 +133,7 @@ class PageToImageExportPipe(AbstractExportPipe):
             if target_file_url is None:
                 (target_file_url, file_desc) = self.core.call_success(
                     "fs_mktemp", prefix="paperwork-export-",
-                    suffix=self.file_extension,
+                    suffix="." + self.file_extensions[0],
                     mode="w"
                 )
                 file_desc.close()
@@ -154,6 +155,9 @@ class PageToImageExportPipe(AbstractExportPipe):
             self.core, page_to_image,
             kwargs={'target_file_url': target_file_url}
         )
+
+    def get_output_mime(self):
+        return (self.mime, self.file_extensions)
 
     def __str__(self):
         return _("Image file ({})".format(self.format))
@@ -190,11 +194,21 @@ class Plugin(AbstractExportPipePlugin):
             BlackAndWhiteExportPipe(core),
             DocToPillowBoxesExportPipe(core),
             GrayscaleExportPipe(core),
-            PageToImageExportPipe(core, "bmp", "BMP", ".bmp"),
-            PageToImageExportPipe(core, "gif", "GIF", ".gif"),
-            PageToImageExportPipe(core, "jpeg", "JPEG", ".jpeg"),
-            PageToImageExportPipe(core, "png", "PNG", ".png"),
-            PageToImageExportPipe(core, "tiff", "TIFF", ".tiff"),
+            PageToImageExportPipe(
+                core, "bmp", "BMP", ("bmp",), "image/x-ms.bmp", False
+            ),
+            PageToImageExportPipe(
+                core, "gif", "GIF", ("gif",), "image/gif", False
+            ),
+            PageToImageExportPipe(
+                core, "jpeg", "JPEG", ("jpeg", "jpg"), "image/jpeg", True
+            ),
+            PageToImageExportPipe(
+                core, "png", "PNG", ("png",), "image/png", False
+            ),
+            PageToImageExportPipe(
+                core, "tiff", "TIFF", ("tiff",), "image/tiff", False
+            ),
         ]
 
     def get_deps(self):

@@ -67,6 +67,14 @@ class AbstractExportPipe(object):
         assert(self.can_change_page_format)
         self.page_format = page_format
 
+    def get_output_mime(self):
+        """
+        If the pipe outputs a file, specifies its mime type and
+        a list of possible file extensions.
+        None if it doesn't outputs a file.
+        """
+        return None
+
     def __str__(self):
         assert()  # must be implemented by subclasses
 
