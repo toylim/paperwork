@@ -54,9 +54,11 @@ class AbstractExportPipe(object):
 
     def set_quality(self, quality):
         assert(self.can_change_quality)
+        self.quality = quality
 
     def set_page_format(self, page_format):
         assert(self.can_change_page_format)
+        self.page_format = page_format
 
     def __str__(self):
         assert()  # must be implemented by subclasses
