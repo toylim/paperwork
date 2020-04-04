@@ -198,6 +198,8 @@ class Plugin(openpaperwork_core.PluginBase):
     def doc_open(self, doc_id, doc_url):
         self.doc_close()
 
+        self.core.call_all("mainwindow_show", side="right", name="docview")
+
         self.zoom = 0.0
         self.layout_name = 'grid'
         self.active_doc = (doc_id, doc_url)
