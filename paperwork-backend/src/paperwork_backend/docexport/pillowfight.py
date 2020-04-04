@@ -40,14 +40,14 @@ class SwtExportPipe(AbstractSimpleTransformExportPipe):
             if swt_output_type == pillowfight.SWT_OUTPUT_ORIGINAL_BOXES
             else "swt_hard"
         )
-        self.output_type = swt_output_type
+        self.swt_output_type = swt_output_type
 
     def transform(self, pil_img):
         pil_img = pil_img.convert("L")
-        return pillowfight.swt(pil_img, output_type=self.output_type)
+        return pillowfight.swt(pil_img, output_type=self.swt_output_type)
 
     def __str__(self):
-        if self.output_type == pillowfight.SWT_OUTPUT_ORIGINAL_BOXES:
+        if self.swt_output_type == pillowfight.SWT_OUTPUT_ORIGINAL_BOXES:
             return _("Hard")
         else:
             return _("Extreme")
