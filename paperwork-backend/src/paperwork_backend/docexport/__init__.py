@@ -136,12 +136,7 @@ class AbstractSimpleTransformExportPipe(AbstractExportPipe):
 
     def get_promise(self, result='final', target_file_url=None):
         def do(pages):
-            if result != 'final':
-                pages = [pages[0]]
-
-            return [
-                (self.transform(img), boxes)
-                for (img, boxes) in pages
-            ]
+            for (img, boxes) in pages:
+                yield (self.transform(img), boxes)
 
         return openpaperwork_core.promise.ThreadedPromise(self.core, func=do)

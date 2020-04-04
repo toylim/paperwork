@@ -41,6 +41,35 @@ class DocToPillowBoxesExportPipe(AbstractExportPipe):
         return len(input_data[1])
 
     def get_promise(self, result='final', target_file_url=None):
+        def _to_img_urls_to_boxes(doc_url, page_indexes):
+            page_indexes = list(page_indexes)
+
+            self.core.call_success(
+                "mainloop_schedule", self.core.call_all,
+                "on_progress", "export", 0.0,
+                _("Exporting %s to %s ...") % (doc_url, target_file_url)
+            )
+            try:
+                for (idx, page_idx) in enumerate(page_indexes):
+                    self.core.call_success(
+                        "mainloop_schedule", self.core.call_all,
+                        "on_progress", "export", idx / len(page_indexes),
+                        _("Exporting %s p%d to %s ...") % (
+                            doc_url, page_idx + 1, target_file_url
+                        )
+                    )
+                    yield (
+                        self.core.call_success(
+                            "page_get_img_url", doc_url, page_idx
+                        ),
+                        (doc_url, page_idx)
+                    )
+            finally:
+                self.core.call_success(
+                    "mainloop_schedule", self.core.call_all,
+                    "on_progress", "export", 1.0
+                )
+
         def to_img_urls_and_boxes(input_data):
             if isinstance(input_data, str) and result == 'preview':
                 input_data = (input_data, 0)
@@ -50,17 +79,7 @@ class DocToPillowBoxesExportPipe(AbstractExportPipe):
                 nb_pages = self.core.call_success(
                     "doc_get_nb_pages_by_url", doc_url
                 )
-                pages = [
-                    (
-                        self.core.call_success(
-                            "page_get_img_url", doc_url, page_idx
-                        ),
-                        self.core.call_success(
-                            "page_get_boxes_by_url", doc_url, page_idx
-                        )
-                    )
-                    for page_idx in range(0, nb_pages)
-                ]
+                return _to_img_urls_to_boxes(doc_url, range(0, nb_pages))
             else:
                 if isinstance(input_data[1], int):
                     (doc_url, page_idx) = input_data
@@ -70,44 +89,22 @@ class DocToPillowBoxesExportPipe(AbstractExportPipe):
                     page_indexes = [input_data[1][0]]
                 else:
                     (doc_url, page_indexes) = input_data
-                pages = [
-                    (
-                        self.core.call_success(
-                            "page_get_img_url", doc_url, page_idx
-                        ),
-                        self.core.call_success(
-                            "page_get_boxes_by_url", doc_url, page_idx
-                        ) or []
-                    )
-                    for page_idx in page_indexes
-                ]
-
-            for page in pages:
-                assert(page[0] is not None)
-                assert(page[1] is not None)
-            return pages
+                return _to_img_urls_to_boxes(doc_url, page_indexes)
 
         def load_pillow(img_urls_and_boxes):
-            pages = [
-                (
+            for page in img_urls_and_boxes:
+                yield (
                     self.core.call_success("url_to_pillow", page[0]),
-                    page[1],
+                    self.core.call_success(
+                        "page_get_boxes_by_url", *page[1]
+                    ) or [],
                 )
-                for page in img_urls_and_boxes
-            ]
-            for page in pages:
-                assert(page[0] is not None)
-                assert(page[1] is not None)
-            return pages
 
         promise = openpaperwork_core.promise.Promise(
             self.core, to_img_urls_and_boxes
         )
-        return promise.then(
-            openpaperwork_core.promise.ThreadedPromise(
-                self.core, func=load_pillow
-            )
-        )
+        promise = promise.then(load_pillow)
+        return promise
 
     def __str__(self):
         return _("Page(s) to image(s) and text(s)")

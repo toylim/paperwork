@@ -1,5 +1,6 @@
 import gettext
 import logging
+import time
 
 import PIL
 import PIL.Image
@@ -216,22 +217,30 @@ class PagesToPdfUrlExportPipe(AbstractExportPipe):
                 # we need the file name, not the file descriptor
                 file_desc.close()
 
-            if result != 'final':
-                pages = [pages[0]]
-
-            creator = PdfCreator(
+            creator = self.core.call_success(
+                "mainloop_execute", PdfCreator,
                 self.core, target_file_url, self.page_format, self.quality
             )
             for (img, boxes) in pages:
-                creator.set_page_size(img)
-                creator.paint_txt(boxes)
-                creator.paint_img(img)
-                creator.next_page()
-            creator.finish()
+                # PDFCreator is not thread-safe. Still we can not keep
+                # the UI blocked for so long --> give some CPU time back to
+                # the UI
+                time.sleep(0.1)
+                self.core.call_success(
+                    "mainloop_execute", creator.set_page_size, img
+                )
+                self.core.call_success(
+                    "mainloop_execute", creator.paint_txt, boxes
+                )
+                self.core.call_success(
+                    "mainloop_execute", creator.paint_img, img
+                )
+                self.core.call_success("mainloop_execute", creator.next_page)
+            self.core.call_success("mainloop_execute", creator.finish)
 
             return target_file_url
 
-        return openpaperwork_core.promise.Promise(
+        return openpaperwork_core.promise.ThreadedPromise(
             self.core, do, kwargs={'target_file_url': target_file_url}
         )
 

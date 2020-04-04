@@ -566,21 +566,8 @@ class Plugin(openpaperwork_core.PluginBase):
             selected += "." + file_extensions[0]
 
         promise = openpaperwork_core.promise.Promise(
-            self.core, self.core.call_all, args=(
-                "on_progress", "export", 0.0,
-                _("Exporting %s to to %s ...") % (
-                    self.export_input, selected
-                )
-            )
+            self.core, lambda: self.export_input
         )
-        promise = promise.then(lambda *args, **kwargs: None)
-        promise = promise.then(self.core.call_all, "on_busy")
-        promise = promise.then(lambda *args, **kwargs: None)
-        # give some time to the UI to refresh
-        promise = promise.then(openpaperwork_core.promise.DelayPromise(
-            self.core, 0.5
-        ))
-        promise = promise.then(lambda *args, **kwargs: self.export_input)
         for pipe in self.pipeline:
             promise = promise.then(pipe.get_promise(
                 result='final', target_file_url=selected
@@ -591,8 +578,6 @@ class Plugin(openpaperwork_core.PluginBase):
         promise = promise.then(
             self.core.call_all, "on_progress", "export", 1.0
         )
-        promise = promise.then(lambda *args, **kwargs: None)
-        promise = promise.then(self.core.call_all, "on_idle")
 
         # do not use the work queue ; must never be canceled
         promise.schedule()
