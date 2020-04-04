@@ -8,6 +8,13 @@ _ = gettext.gettext
 
 TODAY = _("Today")
 YESTERDAY = _("Yesterday")
+_SIZE_FMT_STRINGS = (
+    _('%3.1f bytes'),
+    _('%3.1f KiB'),
+    _('%3.1f MiB'),
+    _('%3.1f GiB'),
+    _('%3.1f TiB'),
+)
 
 
 class Plugin(PluginBase):
@@ -45,3 +52,10 @@ class Plugin(PluginBase):
         if hasattr(date, 'date'):
             date = date.date()  # datetime --> date
         return date.strftime("%B")
+
+    def i18n_file_size(self, num):
+        for string in _SIZE_FMT_STRINGS:
+            if num < 1024.0:
+                return string % (num)
+            num /= 1024.0
+        return _SIZE_FMT_STRINGS[-1] % (num)
