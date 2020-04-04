@@ -209,6 +209,8 @@ class Plugin(openpaperwork_core.PluginBase):
             out['poppler'] = openpaperwork_core.deps.POPPLER
 
     def _check_is_pdf(self, file_url):
+        if file_url.lower().endswith(".pdf"):
+            return (file_url, 0)
         if (self.FILE_EXTENSION + "#page=") not in file_url.lower():
             return (None, None)
         if "#" in file_url:
