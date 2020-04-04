@@ -575,9 +575,6 @@ class Plugin(openpaperwork_core.PluginBase):
         promise = promise.then(lambda *args, **kwargs: None)
         promise = promise.then(Gtk.RecentManager().add_item, selected)
         promise = promise.then(lambda *args, **kwargs: None)
-        promise = promise.then(
-            self.core.call_all, "on_progress", "export", 1.0
-        )
 
         # do not use the work queue ; must never be canceled
         promise.schedule()
