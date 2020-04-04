@@ -79,7 +79,7 @@ class PdfDocUrlToPdfUrlExportPipe(AbstractExportPipe):
         return openpaperwork_core.promise.Promise(self.core, do)
 
     def __str__(self):
-        _("Original PDF")
+        return _("Original PDF")
 
 
 class PdfCreator(object):
@@ -233,7 +233,7 @@ class PagesToPdfUrlExportPipe(AbstractExportPipe):
         )
 
     def __str__(self):
-        _("Generated PDF")
+        return _("Generated PDF")
 
 
 class Plugin(AbstractExportPipePlugin):

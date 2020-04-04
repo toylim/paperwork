@@ -95,7 +95,7 @@ class DocToPillowBoxesExportPipe(AbstractExportPipe):
         )
 
     def __str__(self):
-        _("Page(s) to image(s) and text(s)")
+        return _("Page(s) to image(s) and text(s)")
 
 
 class PageToImageExportPipe(AbstractExportPipe):
@@ -157,7 +157,7 @@ class BlackAndWhiteExportPipe(AbstractSimpleTransformExportPipe):
         return pil_img
 
     def __str__(self):
-        _("Black & White")
+        return _("Black & White")
 
 
 class GrayscaleExportPipe(AbstractSimpleTransformExportPipe):
@@ -168,7 +168,7 @@ class GrayscaleExportPipe(AbstractSimpleTransformExportPipe):
         return pil_img.convert("L")
 
     def __str__(self):
-        _("Grayscale")
+        return _("Grayscale")
 
 
 class Plugin(AbstractExportPipePlugin):

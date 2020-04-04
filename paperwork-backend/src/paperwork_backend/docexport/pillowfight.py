@@ -29,7 +29,7 @@ class UnpaperExportPipe(AbstractSimpleTransformExportPipe):
         return img
 
     def __str__(self):
-        _("Soft simplification")
+        return _("Soft simplification")
 
 
 class SwtExportPipe(AbstractSimpleTransformExportPipe):
@@ -48,9 +48,9 @@ class SwtExportPipe(AbstractSimpleTransformExportPipe):
 
     def __str__(self):
         if self.output_type == pillowfight.SWT_OUTPUT_ORIGINAL_BOXES:
-            _("Hard")
+            return _("Hard")
         else:
-            _("Extreme")
+            return _("Extreme")
 
 
 class Plugin(AbstractExportPipePlugin):
