@@ -63,6 +63,11 @@ class Plugin(openpaperwork_core.PluginBase):
             "page_info_add_right", self.widget_tree.get_object("page_actions")
         )
 
+        self.core.call_success(
+            "mainloop_schedule", self.core.call_all,
+            "on_page_menu_ready"
+        )
+
     def doc_open(self, doc_id, doc_url):
         self.active_doc = (doc_id, doc_url)
 

@@ -71,13 +71,15 @@ class Plugin(openpaperwork_core.PluginBase):
         if not GLIB_AVAILABLE:
             return
 
-        self.core.call_all("page_menu_append_item", item)
         self.item = Gio.MenuItem.new(_("Delete page"), "win." + ACTION_NAME)
 
         self.action = Gio.SimpleAction.new(ACTION_NAME, None)
         self.action.connect("activate", self._delete)
 
         self.core.call_all("app_actions_add", self.action)
+
+    def on_page_menu_ready(self):
+        self.core.call_all("page_menu_append_item", self.item)
 
     def chkdeps(self, out: dict):
         if not GLIB_AVAILABLE:
