@@ -58,7 +58,7 @@ class Plugin(CommonFsPluginBase):
         os.rename(old_path, new_path)
         return True
 
-    def fs_unlink(self, uri):
+    def fs_unlink(self, uri, **kwargs):
         path = self._uri_to_path(uri)
         if path is None:
             return

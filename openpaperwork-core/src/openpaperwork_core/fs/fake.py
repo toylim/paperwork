@@ -184,7 +184,7 @@ class Plugin(CommonFsPluginBase):
         old_file = old_dir.pop(old_path[-1])
         new_dir[new_path[-1]] = old_file
 
-    def fs_unlink(self, url):
+    def fs_unlink(self, url, **kwargs):
         self.fs_rm_rf(url)
 
     def fs_rm_rf(self, url):

@@ -313,13 +313,18 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             LOGGER.warning("Gio.Gerror", exc_info=exc)
             raise IOError(str(exc))
 
-    def fs_unlink(self, url):
+    def fs_unlink(self, url, trash=True, **kwargs):
         if not self._is_file_uri(url):
             return None
 
         try:
-            LOGGER.info("Deleting %s ...", url)
+            LOGGER.info("Deleting %s (trash=%s) ...", url, trash)
             f = Gio.File.new_for_uri(url)
+
+            if not trash:
+                deleted = f.delete()
+                return
+
             deleted = False
             try:
                 deleted = f.trash()
