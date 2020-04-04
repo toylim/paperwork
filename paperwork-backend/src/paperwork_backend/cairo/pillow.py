@@ -247,8 +247,7 @@ class CairoRenderer(GObject.GObject):
     def close(self):
         self.hide()
         self.core.call_all(
-            "work_queue_cancel", self.work_queue_name,
-            self.get_size_promise
+            "work_queue_cancel", self.work_queue_name, self.get_size_promise
         )
         self.get_size_promise = None
         self.getting_size = False
