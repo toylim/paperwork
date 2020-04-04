@@ -52,6 +52,13 @@ class AbstractExportPipe(object):
         """
         assert()  # must be implemented by subclasses
 
+    def get_estimated_size_factor(self, input_data):
+        """
+        Return the factor to apply to the preview size to get an estimation
+        of the final result size.
+        """
+        return 1
+
     def set_quality(self, quality):
         assert(self.can_change_quality)
         self.quality = quality

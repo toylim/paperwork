@@ -31,8 +31,20 @@ class DocToPillowBoxesExportPipe(AbstractExportPipe):
     def can_export_page(self, doc_url, page_nb):
         return True
 
+    def get_estimated_size_factor(self, input_data):
+        if isinstance(input_data, str):
+            return self.core.call_success(
+                "doc_get_nb_pages_by_url", input_data
+            )
+        if isinstance(input_data[1], int):
+            return 1
+        return len(input_data[1])
+
     def get_promise(self, result='final', target_file_url=None):
         def to_img_urls_and_boxes(input_data):
+            if isinstance(input_data, str) and result == 'preview':
+                input_data = (input_data, 0)
+
             if isinstance(input_data, str):
                 doc_url = input_data
                 nb_pages = self.core.call_success(
@@ -53,6 +65,9 @@ class DocToPillowBoxesExportPipe(AbstractExportPipe):
                 if isinstance(input_data[1], int):
                     (doc_url, page_idx) = input_data
                     page_indexes = [page_idx]
+                elif result == 'preview':
+                    doc_url = input_data[0]
+                    page_indexes = [input_data[1][0]]
                 else:
                     (doc_url, page_indexes) = input_data
                 pages = [
@@ -121,9 +136,6 @@ class PageToImageExportPipe(AbstractExportPipe):
                     mode="w"
                 )
                 file_desc.close()
-
-            if result != 'final':
-                pages = [pages[0]]
 
             for (page_idx, (pil_img, boxes)) in enumerate(pages):
                 out = target_file_url
