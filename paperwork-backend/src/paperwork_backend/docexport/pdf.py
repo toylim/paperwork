@@ -68,7 +68,7 @@ class PdfDocUrlToPdfUrlExportPipe(AbstractExportPipe):
             if target is None:
                 (target, file_desc) = self.core.call_success(
                     "fs_mktemp", prefix="paperwork-export-", suffix=".pdf",
-                    mode="w"
+                    mode="wb", on_disk=True
                 )
                 file_desc.close()
 
@@ -208,7 +208,7 @@ class PagesToPdfUrlExportPipe(AbstractExportPipe):
             if target_file_url is None:
                 (target_file_url, file_desc) = self.core.call_success(
                     "fs_mktemp", prefix="paperwork-export-", suffix=".pdf",
-                    mode="w"
+                    mode="w", on_disk=True
                 )
                 # we need the file name, not the file descriptor
                 file_desc.close()
@@ -228,7 +228,7 @@ class PagesToPdfUrlExportPipe(AbstractExportPipe):
 
             return target_file_url
 
-        return openpaperwork_core.promise.ThreadedPromise(
+        return openpaperwork_core.promise.Promise(
             self.core, do, kwargs={'target_file_url': target_file_url}
         )
 

@@ -51,7 +51,7 @@ class TestExport(unittest.TestCase):
         self.core.call_one("mainloop")
 
         self.assertTrue(self.result.startswith("memory://"))
-        self.core.call_all("fs_unlink", self.result)
+        self.core.call_all("fs_unlink", self.result, trash=False)
 
         (tmp_file, fd) = self.core.call_success(
             "fs_mktemp", prefix="paperwork-test-", suffix=".png"
@@ -90,8 +90,9 @@ class TestExport(unittest.TestCase):
         promise = promise.schedule()
         self.core.call_one("mainloop")
 
-        self.assertTrue(self.result.startswith("memory://"))
-        self.core.call_all("fs_unlink", self.result)
+        # required by Poppler
+        self.assertTrue(self.result.startswith("file://"))
+        self.core.call_all("fs_unlink", self.result, trash=False)
 
         (tmp_file, fd) = self.core.call_success(
             "fs_mktemp", prefix="paperwork-test-", suffix=".png"
