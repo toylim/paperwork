@@ -101,9 +101,7 @@ class PdfCreator(object):
         )
         self.pdf_context = cairo.Context(self.pdf_surface)
 
-    def set_page_size(self, img):
-        img_size = img.size
-
+    def set_page_size(self, img_size):
         # portrait or landscape
         if (img_size[0] < img_size[1]):
             self.pdf_size = (
@@ -117,23 +115,21 @@ class PdfCreator(object):
             )
         self.pdf_surface.set_size(self.pdf_size[0], self.pdf_size[1])
 
-        self.img_size = (
-            int(self.quality * img.size[0]),
-            int(self.quality * img.size[1])
-        )
+    def paint_txt(self, boxes, img_size):
+        scale_factor_x = self.pdf_size[0] / img_size[0]
+        scale_factor_y = self.pdf_size[1] / img_size[1]
+        scale_factor = min(scale_factor_x, scale_factor_y)
 
-        scale_factor_x = self.pdf_size[0] / self.img_size[0]
-        scale_factor_y = self.pdf_size[1] / self.img_size[1]
-        self.scale_factor = min(scale_factor_x, scale_factor_y)
-
-    def paint_txt(self, boxes):
         for line in boxes:
             for word in line.word_boxes:
+                if word.position[0][0] <= 0 and word.position[0][1] <= 0:
+                    continue
+
                 box_size = (
                     (word.position[1][0] - word.position[0][0])
-                    * self.scale_factor,
+                    * scale_factor,
                     (word.position[1][1] - word.position[0][1])
-                    * self.scale_factor
+                    * scale_factor
                 )
                 if 0 in box_size:
                     continue
@@ -154,8 +150,8 @@ class PdfCreator(object):
                 try:
                     self.pdf_context.set_source_rgb(0, 0, 0)
                     self.pdf_context.translate(
-                        word.position[0][0] * self.scale_factor,
-                        word.position[0][1] * self.scale_factor
+                        word.position[0][0] * scale_factor,
+                        word.position[0][1] * scale_factor
                     )
 
                     # make the text use the whole box space
@@ -168,7 +164,10 @@ class PdfCreator(object):
         return self
 
     def paint_img(self, img):
-        img = img.resize(self.img_size, PIL.Image.ANTIALIAS)
+        img_size = img.size
+        scale_factor_x = self.pdf_size[0] / img_size[0]
+        scale_factor_y = self.pdf_size[1] / img_size[1]
+        scale_factor = min(scale_factor_x, scale_factor_y)
 
         img_surface = self.core.call_success(
             "pillow_to_surface", img,
@@ -178,7 +177,7 @@ class PdfCreator(object):
         self.pdf_context.save()
         try:
             self.pdf_context.identity_matrix()
-            self.pdf_context.scale(self.scale_factor, self.scale_factor)
+            self.pdf_context.scale(scale_factor, scale_factor)
             self.pdf_context.set_source_surface(img_surface.surface)
             self.pdf_context.paint()
         finally:
@@ -227,11 +226,18 @@ class PagesToPdfUrlExportPipe(AbstractExportPipe):
                 # the UI
                 time.sleep(0.1)
                 self.core.call_success(
-                    "mainloop_execute", creator.set_page_size, img
+                    "mainloop_execute", creator.set_page_size, img.size
                 )
                 self.core.call_success(
-                    "mainloop_execute", creator.paint_txt, boxes
+                    "mainloop_execute", creator.paint_txt, boxes,
+                    img.size
                 )
+                img_size = img.size
+                img_size = (
+                    int(self.quality * img_size[0]),
+                    int(self.quality * img_size[1])
+                )
+                img = img.resize(img_size, PIL.Image.ANTIALIAS)
                 self.core.call_success(
                     "mainloop_execute", creator.paint_img, img
                 )
