@@ -11,6 +11,7 @@ class Plugin(openpaperwork_core.PluginBase):
         super().__init__()
         self.active_doc = None
         self.active_page = None
+        self.button_edit = None
 
     def get_interfaces(self):
         return [
@@ -20,6 +21,10 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_deps(self):
         return [
+            {
+                'interface': 'backend_readonly',
+                'defaults': ['paperwork_gtk.readonly'],
+            },
             {
                 'interface': 'gtk_docview_pageinfo',
                 'defaults': ['paperwork_gtk.mainwindow.docview.pageinfo'],
@@ -48,7 +53,9 @@ class Plugin(openpaperwork_core.PluginBase):
             return
 
         self.menu_model = self.widget_tree.get_object("page_menu_model")
-        self.widget_tree.get_object("page_action_edit").connect(
+
+        self.button_edit = self.widget_tree.get_object("page_action_edit")
+        self.button_edit.connect(
             "clicked", self._on_edit
         )
 
@@ -58,6 +65,12 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def doc_open(self, doc_id, doc_url):
         self.active_doc = (doc_id, doc_url)
+
+    def on_backend_readonly(self):
+        self.button_edit.set_sensitive(False)
+
+    def on_backend_readwrite(self):
+        self.button_edit.set_sensitive(True)
 
     def on_page_shown(self, page_idx):
         self.active_page = page_idx
