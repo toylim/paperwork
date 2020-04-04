@@ -38,6 +38,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return [
             'chkdeps',
             'doc_action',
+            'doc_open',
             'gtk_window_listener',
         ]
 
@@ -59,6 +60,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'document_storage',
                 'defaults': ['paperwork_backend.model.workdir'],
             },
+            {
+                'interface': 'gtk_doclist',
+                'defaults': ['paperwork_gtk.mainwindow.doclist'],
+            },
         ]
 
     def init(self, core):
@@ -76,7 +81,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def on_doclist_initialized(self):
         self.core.call_all("app_actions_add", self.action)
-        self.core.call_all("add_doc_action", _("Delete"), "win." + ACTION_NAME)
+        self.core.call_all(
+            "add_doc_action", _("Delete document"), "win." + ACTION_NAME
+        )
 
     def on_backend_readonly(self):
         self.action.set_enabled(False)

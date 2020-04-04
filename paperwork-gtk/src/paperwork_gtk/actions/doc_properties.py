@@ -18,6 +18,8 @@ ACTION_NAME = "doc_properties"
 
 
 class Plugin(openpaperwork_core.PluginBase):
+    PRIORITY = 100
+
     def __init__(self):
         super().__init__()
         self.active_doc = None
@@ -27,6 +29,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return [
             'chkdeps',
             'doc_action',
+            'doc_open',
             'gtk_window_listener',
         ]
 
@@ -42,6 +45,10 @@ class Plugin(openpaperwork_core.PluginBase):
             },
             {
                 'interface': 'doc_actions',
+                'defaults': ['paperwork_gtk.mainwindow.doclist'],
+            },
+            {
+                'interface': 'gtk_doclist',
                 'defaults': ['paperwork_gtk.mainwindow.doclist'],
             },
         ]
@@ -60,7 +67,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def on_doclist_initialized(self):
         self.core.call_all("app_actions_add", self.action)
         self.core.call_all(
-            "add_doc_action", _("Properties"), "win." + ACTION_NAME
+            "add_doc_action", _("Document properties"), "win." + ACTION_NAME
         )
 
     def on_backend_readonly(self):

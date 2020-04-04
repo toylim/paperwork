@@ -34,11 +34,13 @@ class Plugin(openpaperwork_core.PluginBase):
         self.active_page_idx = -1
         self.active_windows = []
         self.action = None
+        self.item = None
 
     def get_interfaces(self):
         return [
             'chkdeps',
             'doc_action',
+            'doc_open',
             'gtk_window_listener',
         ]
 
@@ -69,14 +71,13 @@ class Plugin(openpaperwork_core.PluginBase):
         if not GLIB_AVAILABLE:
             return
 
-        item = Gio.MenuItem.new(_("Delete page"), "win." + ACTION_NAME)
         self.core.call_all("page_menu_append_item", item)
+        self.item = Gio.MenuItem.new(_("Delete page"), "win." + ACTION_NAME)
 
         self.action = Gio.SimpleAction.new(ACTION_NAME, None)
         self.action.connect("activate", self._delete)
 
         self.core.call_all("app_actions_add", self.action)
-        self.core.call_all("add_doc_action", _("Delete"), "win." + ACTION_NAME)
 
     def chkdeps(self, out: dict):
         if not GLIB_AVAILABLE:
