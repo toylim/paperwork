@@ -93,7 +93,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 " {})"
             ).format(modifiers)
         )
-        # we need page number(s), but for consistency with other commnads,
+        # we need page number(s), but for consistency with other commands,
         # we require this argument as an option like '--opt' instead of
         # a positional argument.
         edit_parser.add_argument('--pages', '-p', type=str, required=True)
