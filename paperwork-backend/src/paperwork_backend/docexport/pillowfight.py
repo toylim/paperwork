@@ -48,9 +48,9 @@ class SwtExportPipe(AbstractSimpleTransformExportPipe):
 
     def __str__(self):
         if self.swt_output_type == pillowfight.SWT_OUTPUT_ORIGINAL_BOXES:
-            return _("Hard")
+            return _("Hard simplification")
         else:
-            return _("Extreme")
+            return _("Extreme simplification")
 
 
 class Plugin(AbstractExportPipePlugin):
