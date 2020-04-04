@@ -42,7 +42,6 @@ class Plugin(openpaperwork_core.PluginBase):
         # (see paperwork_backend.docexport)
 
         self.ref_input = None
-        self.ref_input_type = None
         self.export_input_type = None
         self.export_input = None
         self.need_zoom_auto = True
@@ -424,6 +423,12 @@ class Plugin(openpaperwork_core.PluginBase):
             )
             return
 
+        ref_input = self.ref_input
+        if (isinstance(ref_input, tuple) and
+                'page_url' not in self.pipeline[-1].input_types):
+            # this pipeline needs a document as input
+            ref_input = self.ref_input[0]
+
         pipe_plug = self._get_pipe_plug()
         if pipe_plug is not None:
             if pipe_plug.can_change_quality:
@@ -444,7 +449,7 @@ class Plugin(openpaperwork_core.PluginBase):
             return
 
         promise = promise.then(self.core.call_all, "on_busy")
-        promise = promise.then(lambda *args, **kwargs: self.ref_input)
+        promise = promise.then(lambda *args, **kwargs: ref_input)
         for pipe in self.pipeline:
             promise = promise.then(pipe.get_promise(result='preview'))
         if pipe_plug is not None:
@@ -467,7 +472,6 @@ class Plugin(openpaperwork_core.PluginBase):
             ref_page_idx = self.active_page_idx
 
         self.ref_input = (doc_url, ref_page_idx)
-        self.ref_input_type = 'page_url'
 
         self.export_input_type = 'doc_url' if page_idx is None else 'page_url'
         self.export_input = (
