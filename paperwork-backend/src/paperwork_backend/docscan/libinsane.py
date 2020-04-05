@@ -316,6 +316,7 @@ class Scanner(object):
         self.core = core
         self.dev_id = scanner.get_name()
         self.dev = scanner
+        self.sources = None  # WORKAROUND(Jflesch): just to keep ref on them
 
     def __str__(self):
         return self.dev_id
@@ -348,12 +349,12 @@ class Scanner(object):
                 Source(self.core, self, source)
                 for source in sources
             ]
-            sources = {
+            self.sources = {
                 source.source_id: source
                 for source in sources
             }
             LOGGER.info("%d sources found: %s", len(sources), sources)
-            return sources
+            return self.sources
 
     def get_sources_promise(self):
         return openpaperwork_core.promise.ThreadedPromise(
