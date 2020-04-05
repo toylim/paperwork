@@ -144,7 +144,6 @@
     </child>
     <child>
       <object class="GtkLabel" id="stats_details">
-        <property name="visible">False</property>
         <property name="can_focus">True</property>
         <property name="label" translatable="yes">&lt;span foreground="gray"&gt;Those clues will help us to make Paperwork an even better piece of software, for you. Statistics also show us that people are actually using our work, keeping us motivated to improve it.
 
@@ -152,6 +151,7 @@ Here are the data we gather:
 - Hardware: CPU, RAM, screen resolution.
 - Software: Version of Paperwork, Operating system, desktop environment.
 - Data metrics: number of documents, maximum and average number of pages, number of labels.
+- Number of times you used each feature.
 
 We do not collect document content nor any other sensitive or personal information. Still we think it's fair to request your authorization ;-).
 
