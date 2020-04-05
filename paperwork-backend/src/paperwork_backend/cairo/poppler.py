@@ -162,16 +162,18 @@ class CairoRenderer(GObject.GObject):
         cairo_ctx.save()
         try:
             cairo_ctx.set_source_rgb(1.0, 1.0, 1.0)
+            cairo_ctx.scale(
+                self.zoom,
+                self.zoom,
+            )
             cairo_ctx.rectangle(0, 0, self.size[0], self.size[1])
+            cairo_ctx.scale(
+                paperwork_backend.model.pdf.PDF_RENDER_FACTOR,
+                paperwork_backend.model.pdf.PDF_RENDER_FACTOR,
+            )
             cairo_ctx.clip()
             cairo_ctx.paint()
 
-            cairo_ctx.scale(
-                paperwork_backend.model.pdf.PDF_RENDER_FACTOR *
-                self.zoom,
-                paperwork_backend.model.pdf.PDF_RENDER_FACTOR *
-                self.zoom,
-            )
             self.page.render(cairo_ctx)
         finally:
             cairo_ctx.restore()
