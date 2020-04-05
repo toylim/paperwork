@@ -26,6 +26,7 @@ DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'paperwork_gtk.actions.page_delete',
     'paperwork_gtk.actions.page_export',
     'paperwork_gtk.actions.page_print',
+    'paperwork_gtk.actions.page_reset',
     'paperwork_gtk.busy.mouse',
     'paperwork_gtk.cmd.install',
     'paperwork_gtk.drawer.calibration',
