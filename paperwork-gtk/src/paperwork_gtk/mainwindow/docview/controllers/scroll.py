@@ -8,6 +8,31 @@ from . import BaseDocViewController
 LOGGER = logging.getLogger(__name__)
 
 
+class Scroller(object):
+    def __init__(self, controller, widget):
+        self.controller = controller
+        self.widget = widget
+        self.allocate_handler_id = None
+
+    def goto(self):
+        alloc = self.widget.get_allocation()
+        if alloc.y < 0:
+            self.allocate_handler_id = self.widget.connect(
+                "size-allocate", self._goto_on_allocate
+            )
+        else:
+            self._goto_on_allocate()
+
+    def _goto_on_allocate(self, *args, **kwargs):
+        alloc = self.widget.get_allocation()
+        assert(alloc.y >= 0)
+        self.controller.last_value = alloc.y
+        self.controller.plugin.scroll.get_vadjustment().set_value(alloc.y)
+        if self.allocate_handler_id is not None:
+            self.widget.disconnect(self.allocate_handler_id)
+            self.allocate_handler_id = None
+
+
 class ScrollPageLockedController(BaseDocViewController):
     def __init__(self, plugin):
         super().__init__(plugin)
@@ -25,10 +50,7 @@ class ScrollPageLockedController(BaseDocViewController):
             page = self.plugin.widget_to_page[widget]
             if page.page_idx != page_idx:
                 continue
-            alloc = widget.get_allocation()
-            self.last_value = alloc.y
-            self.plugin.scroll.get_vadjustment().set_value(alloc.y)
-            return alloc.y
+            Scroller(self, widget).goto()
 
     def on_page_size_obtained(self, page):
         super().on_page_size_obtained(page)
