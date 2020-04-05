@@ -1,6 +1,8 @@
 import gettext
 import logging
 
+import PIL
+import PIL.Image
 import pillowfight
 
 import openpaperwork_core
@@ -101,7 +103,7 @@ class Plugin(openpaperwork_core.PluginBase):
             "clicked", self._on_maximize
         )
         self.widget_tree.get_object("calibration_automatic").connect(
-            "clicked", self._on_automatic
+            "clicked", self._guess_scan_borders
         )
 
         drawing_area = self.widget_tree.get_object("calibration_area")
@@ -346,8 +348,35 @@ class Plugin(openpaperwork_core.PluginBase):
             [0, 0, self.scan_width, self.scan_height]
         )
 
-    def _on_automatic(self, button):
+    def _guess_scan_borders(self, button=None):
         if self.scan_img is None:
             return
-        frame = pillowfight.find_scan_borders(self.scan_img)
-        self.core.call_all("config_put", "scanner_calibration", list(frame))
+
+        LOGGER.info("Guessing scan borders")
+
+        def find_scan_borders(scan_img):
+            # It's actually faster to resize down the image than look
+            # for the scan borders on the full-size image.
+            scan_img = scan_img.resize(
+                (int(scan_img.size[0] / 2), int(scan_img.size[1] / 2)),
+                PIL.Image.ANTIALIAS
+            )
+            frame = pillowfight.find_scan_borders(scan_img)
+            frame = (frame[0] * 2, frame[1] * 2, frame[2] * 2, frame[3] * 2)
+            return frame
+
+        promise = openpaperwork_core.promise.Promise(
+            self.core, self.core.call_all, args=("on_busy",)
+        )
+        promise = promise.then(lambda *args, **kwargs: self.scan_img)
+        promise = promise.then(openpaperwork_core.promise.ThreadedPromise(
+            self.core, find_scan_borders
+        ))
+        promise = promise.then(
+            lambda frame: self.core.call_all(
+                "config_put", "scanner_calibration", list(frame)
+            )
+        )
+        promise = promise.then(lambda *args, **kwargs: None)
+        promise = promise.then(self.core.call_all, "on_idle")
+        promise.schedule()
