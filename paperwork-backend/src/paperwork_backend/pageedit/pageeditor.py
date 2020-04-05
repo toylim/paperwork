@@ -21,47 +21,27 @@ class Frame(object):
         # convert the frame coordinates into a more convenient format
         self.editor = editor
         self.original = original
-        self.frame = (
-            original[0][0], original[0][1],
-            original[1][0], original[1][1]
-        )
-
-    @property
-    def coords(self):
-        return (
-            (
-                min(self.frame[0], self.frame[2]),
-                min(self.frame[1], self.frame[3]),
-            ),
-            (
-                max(self.frame[0], self.frame[2]),
-                max(self.frame[1], self.frame[3]),
-            ),
-        )
 
     def get(self):
-        frame = self.coords
+        frame = None
         for (e, img_size) in zip(
                     self.editor.active_modifiers, self.editor.img_sizes
                 ):
             if hasattr(e, 'frame'):
-                e.frame = frame
-            frame = e.transform_frame(img_size, frame)
-        return (frame[0][0], frame[0][1], frame[1][0], frame[1][1])
+                frame = e.frame
+            elif frame is not None:
+                frame = e.transform_frame(img_size, frame)
+        return frame
 
     def set(self, frame):
-        frame = ((frame[0], frame[1]), (frame[2], frame[3]))
         for (e, img_size) in zip(
                     reversed(self.editor.active_modifiers),
                     reversed(self.editor.img_sizes)
                 ):
-            frame = e.untransform_frame(img_size, frame)
-        self.frame = (
-            min(frame[0][0], frame[1][0]),
-            min(frame[0][1], frame[1][1]),
-            max(frame[0][0], frame[1][0]),
-            max(frame[0][1], frame[1][1]),
-            )
+            if hasattr(e, 'frame'):
+                e.frame = frame
+            else:
+                frame = e.untransform_frame(img_size, frame)
 
 
 class PageEditor(object):
@@ -111,7 +91,7 @@ class PageEditor(object):
                 "id": "crop",
                 "name": _("Cropping"),
                 "modifier": 'cropping',
-                "default_kwargs": {'frame': self.frame.original},
+                "default_kwargs": {},
                 "need_frame": True,
                 "togglable": True,
                 "enabled": False,

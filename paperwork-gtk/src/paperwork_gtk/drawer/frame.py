@@ -154,12 +154,12 @@ class Drawer(object):
             y = event.y * factor
             frame[self.selected_handle[0]] = x
             frame[self.selected_handle[1]] = y
-            frame = [
+            frame = (
                 max(0, min(frame[0], frame[2])),
                 max(0, min(frame[1], frame[3])),
                 min(self.content_full_size[0], max(frame[0], frame[2])),
                 min(self.content_full_size[1], max(frame[1], frame[3])),
-            ]
+            )
             self.set_frame_cb(frame)
             self.request_redraw()
 

@@ -1,24 +1,53 @@
 import gettext
+import logging
+
+import PIL
+import PIL.Image
+import pillowfight
 
 import openpaperwork_core
 
 from . import AbstractImgEditor
 
 
+LOGGER = logging.getLogger(__name__)
 _ = gettext.gettext
 
 
 class CropImgEditor(AbstractImgEditor):
-    def __init__(self, frame):
-        self.frame = frame
+    def __init__(self):
+        self.frame = None
 
     def transform(self, img, preview=False):
+        if self.frame is None:
+            # optimize the default frame
+            LOGGER.info("Guessing new default cropping frame ...")
+
+            # It's actually faster to resize down the image than look
+            # for the scan borders on the full-size image.
+            smaller_img = img.resize(
+                (int(img.size[0] / 2), int(img.size[1] / 2)),
+                PIL.Image.ANTIALIAS
+            )
+            frame = pillowfight.find_scan_borders(smaller_img)
+
+            if frame[0] >= frame[2] or frame[1] >= frame[3]:
+                LOGGER.info("Failed to guess a cropping frame")
+                # defaulting to the whole image
+                self.frame = (0, 0, img.size[0], img.sixe[1])
+            else:
+                # if we have found a valid frame
+                LOGGER.info("Guessed cropping frame: %s", frame)
+                self.frame = (
+                    frame[0] * 2, frame[1] * 2, frame[2] * 2, frame[3] * 2
+                )
+
         if preview:
             # we do not crop the preview. The UI displays a frame on top
             # of it showing where the cropping will happen.
             return img
-        ((tl_x, tl_y), (br_x, br_y)) = self.frame
-        img = img.crop((tl_x, tl_y, br_x, br_y))
+
+        img = img.crop(frame)
         return img
 
 
@@ -34,25 +63,22 @@ class Plugin(openpaperwork_core.PluginBase):
     def img_editor_get(self, name, *args, **kwargs):
         if name != self.NAME:
             return None
-        frame = kwargs.pop('frame')
-        return CropImgEditor(frame)
+        return CropImgEditor()
 
     def img_editor_set(self, inout: list, name, *args, **kwargs):
         if name != self.NAME:
             return None
-        frame = kwargs.pop('frame')
-        c = CropImgEditor(frame)
+        c = CropImgEditor()
         try:
             # Check if we already have a CropImgEditor in the list.
-            # If so, update it instead of adding another one
-            index = inout.index(c)
-            inout[index].frame = frame
+            # If so, do nothing
+            inout.index(c)
         except ValueError:
             inout.append(c)
 
     def img_editor_unset(self, inout: list, name):
         if name != self.NAME:
             return None
-        c = CropImgEditor(((0, 0), (0, 0)))  # frame doesn't matter here
+        c = CropImgEditor()
         while c in inout:
             inout.remove(c)
