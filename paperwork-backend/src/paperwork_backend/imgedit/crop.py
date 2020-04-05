@@ -15,8 +15,8 @@ _ = gettext.gettext
 
 
 class CropImgEditor(AbstractImgEditor):
-    def __init__(self):
-        self.frame = None
+    def __init__(self, frame=None, **kwargs):
+        self.frame = frame
 
     def transform(self, img, preview=False):
         if self.frame is None:
@@ -47,7 +47,7 @@ class CropImgEditor(AbstractImgEditor):
             # of it showing where the cropping will happen.
             return img
 
-        img = img.crop(frame)
+        img = img.crop(self.frame)
         return img
 
 
@@ -63,12 +63,12 @@ class Plugin(openpaperwork_core.PluginBase):
     def img_editor_get(self, name, *args, **kwargs):
         if name != self.NAME:
             return None
-        return CropImgEditor()
+        return CropImgEditor(**kwargs)
 
     def img_editor_set(self, inout: list, name, *args, **kwargs):
         if name != self.NAME:
             return None
-        c = CropImgEditor()
+        c = CropImgEditor(**kwargs)
         try:
             # Check if we already have a CropImgEditor in the list.
             # If so, do nothing

@@ -34,7 +34,7 @@ class TestImgEdit(unittest.TestCase):
         ]
 
         # the input image is 200x100
-        frame = ((50, 25), (150, 75))
+        frame = (50, 25, 150, 75)
         for e in editors:
             frame = e.transform_frame(self.test_img.size, frame)
         editors.append(

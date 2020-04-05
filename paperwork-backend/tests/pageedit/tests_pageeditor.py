@@ -136,8 +136,8 @@ class TestPageEdit(unittest.TestCase):
         self.assertEqual(self.ui_calls[0][1].size, (100, 200))
         self.assertEqual(self.ui_calls[1][0], 'show_frame_selector')
 
-        self.assertEqual(page_editor.frame.get(), (0, 0, 100, 200))
         page_editor.frame.set((0, 190, 10, 200))
+        self.assertEqual(page_editor.frame.get(), (0, 190, 10, 200))
 
         # rotation again (180°)
         self.pillowed = []

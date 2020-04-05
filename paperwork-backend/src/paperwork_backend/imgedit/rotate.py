@@ -29,18 +29,14 @@ class RotationImgEditor(AbstractImgEditor):
 
     def _transform_frame(self, img_size, frame, transform_pt):
         frame = (
-            transform_pt(img_size, frame[0]),
-            transform_pt(img_size, frame[1]),
+            transform_pt(img_size, (frame[0], frame[1])),
+            transform_pt(img_size, (frame[2], frame[3])),
         )
         return (
-            (
-                min(frame[0][0], frame[1][0]),
-                min(frame[0][1], frame[1][1]),
-            ),
-            (
-                max(frame[0][0], frame[1][0]),
-                max(frame[0][1], frame[1][1]),
-            ),
+            min(frame[0][0], frame[1][0]),
+            min(frame[0][1], frame[1][1]),
+            max(frame[0][0], frame[1][0]),
+            max(frame[0][1], frame[1][1]),
         )
 
     def transform_frame(self, img_size, frame):
@@ -94,13 +90,14 @@ class Plugin(openpaperwork_core.PluginBase):
             return None
         angle = kwargs.pop('angle')
         c = RotationImgEditor(angle)
-        try:
-            # Check if we already have a RotationImgEditor in the list.
-            # If so, update it instead of adding another one
-            index = inout.index(c)
-            inout[index].angle += angle
-            inout[index].angle %= 360
-        except ValueError:
+        # Check if we already have a RotationImgEditor in the list.
+        # If so, update it instead of adding another one
+        # Only if its the latest element in the list -> otherwise we may
+        # mess up the cropping frame
+        if len(inout) > 0 and inout[-1] == c:
+            inout[-1].angle += angle
+            inout[-1].angle %= 360
+        else:
             inout.append(c)
 
     def img_editor_unset(self, inout: list, name):
