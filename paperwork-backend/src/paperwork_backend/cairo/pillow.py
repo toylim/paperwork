@@ -240,6 +240,7 @@ class CairoRenderer(GObject.GObject):
             self.cairo_surface.surface.finish()
             self.cairo_surface = None
             self.cache = (-1.0, None)
+        self.render_job_in_queue = False
         self.core.call_all(
             "work_queue_cancel", self.work_queue_name, self.render_img_promise
         )
