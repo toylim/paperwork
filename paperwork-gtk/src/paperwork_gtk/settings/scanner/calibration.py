@@ -297,7 +297,7 @@ class Plugin(openpaperwork_core.PluginBase):
             ratio = 1.0 / 1.414
         else:
             ratio = self.scan_width / self.scan_height
-        widget_width = widget_height * ratio
+        widget_width = max(widget_height * ratio, 300)
         LOGGER.debug(
             "Calibration scroll window size: (%d, %d)",
             widget_width, widget_height
