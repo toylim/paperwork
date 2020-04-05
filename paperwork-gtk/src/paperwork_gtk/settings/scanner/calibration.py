@@ -340,6 +340,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
         LOGGER.info("Calibration scan ready")
 
+        if self.core.call_success("config_get", "scanner_calibration") is None:
+            self._guess_scan_borders()
+
     def _on_maximize(self, button):
         if self.scan_height <= 0 or self.scan_width <= 0:
             return
