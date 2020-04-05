@@ -209,8 +209,12 @@ class GtkPageEditorUI(paperwork_backend.pageedit.AbstractPageEditorUI):
     def on_edit_end(self, doc_url, page_idx):
         super().on_edit_end(doc_url, page_idx)
         self.plugin._on_edit_end(doc_url, page_idx)
+        self._disconnect_draw()
+        self.surface_img = None
 
     def _disconnect_draw(self):
+        if self.draw_handler_id is None:
+            return
         self.plugin.widget_tree.get_object(
             "pageeditor_img"
         ).disconnect(self.draw_handler_id)
@@ -232,7 +236,6 @@ class GtkPageEditorUI(paperwork_backend.pageedit.AbstractPageEditorUI):
             self.core, self._do_transaction
         ))
         promise.schedule()
-        self._disconnect_draw()
 
     def _do_transaction(self):
         transactions = []
@@ -244,6 +247,8 @@ class GtkPageEditorUI(paperwork_backend.pageedit.AbstractPageEditorUI):
             transaction.commit()
 
     def draw(self, widget, cairo_ctx):
+        if self.surface_img is None:
+            return
         cairo_ctx.save()
         try:
             zoom = self.zoom.get_value()
@@ -373,7 +378,6 @@ class Plugin(openpaperwork_core.PluginBase):
         if self.ui is None:
             return
         self.ui.save()
-        self.ui = None
 
     def _on_edit_end(self, doc_url, page_idx):
         self.core.call_all("mainwindow_show_default", side="right")
