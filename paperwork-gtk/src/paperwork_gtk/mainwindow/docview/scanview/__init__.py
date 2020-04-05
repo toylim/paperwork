@@ -50,7 +50,6 @@ class Scan(GObject.GObject):
         self.doc_id = doc_id
         self.zoom = 1.0
         self.page_idx = page_idx
-        self.visible = False
 
         self.scan_id = scan_id
         self.size = (1, 1)
@@ -65,7 +64,7 @@ class Scan(GObject.GObject):
             "paperwork_gtk.mainwindow.docview.scanview", "scanview.glade"
         )
         self.widget = self.widget_tree.get_object("scanview_area")
-        self.set_visible(False)
+        self.visible = False
 
     def __str__(self):
         return "Scan renderer ({})".format(self.doc_id)
@@ -76,18 +75,21 @@ class Scan(GObject.GObject):
         LOGGER.info("Scan renderer: Visible: {}".format(visible))
         self.visible = visible
 
-        self.widget.set_visible(visible)
-        if visible:
-            size = self.get_size()
-            LOGGER.info("Scan renderer: widget size: %dx%d", size[0], size[1])
-            self.widget.set_size_request(size[0], size[1])
-            self.widget.queue_resize()
-            self.core.call_all("draw_scan_start", self.widget, self.scan_id)
-        else:
-            self.core.call_all("draw_scan_stop", self.widget)
+    def start(self):
+        LOGGER.info("Scan renderer: start")
+        size = self.get_size()
+        self.widget.set_size_request(size[0], size[1])
+        self.widget.queue_resize()
+        self.core.call_all("draw_scan_start", self.widget, self.scan_id)
+        self.widget.set_visible(True)
+
+    def stop(self):
+        LOGGER.info("Scan renderer: stop")
+        self.core.call_all("draw_scan_stop", self.widget)
+        self.widget.set_visible(False)
 
     def get_visible(self):
-        return self.visible()
+        return self.visible
 
     def load(self):
         # the docview rely on this signal to know when pagss have been loaded
@@ -220,7 +222,7 @@ class Plugin(openpaperwork_core.PluginBase):
             return
         if scan_id != self.scan.scan_id:
             return
-        self.scan.set_visible(True)
+        self.scan.start()
 
     def on_scan_page_start(self, scan_id, page_nb, scan_params):
         if self.scan is None:
@@ -269,7 +271,7 @@ class Plugin(openpaperwork_core.PluginBase):
             return
         if scan_id != self.scan.scan_id:
             return
-        self.scan.set_visible(False)
+        self.scan.stop()
 
     def on_scan2doc_end(self, scan_id, doc_id, doc_url):
         if self.scan is None:
