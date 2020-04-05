@@ -113,4 +113,4 @@ class Plugin(openpaperwork_core.PluginBase):
             "fs_join", doc_url, PAGE_FILENAME_FMT.format(page_idx + 1)
         )
         if self.core.call_success("fs_exists", page_url):
-            self.core.call_all("fs_unlink", page_url)
+            self.core.call_all("fs_unlink", page_url, trash=False)
