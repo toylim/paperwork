@@ -21,6 +21,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
         self.widget_tree = None
+        self.busy = False
 
     def get_interfaces(self):
         return [
@@ -133,7 +134,17 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _on_scan(self, doc_id, doc_url, source_id):
         LOGGER.info("Scanning from %s", source_id)
+
+        self.core.call_all("on_busy")
+        self.busy = True
+
         promise = self.core.call_success(
             "scan2doc_promise", doc_id=doc_id, source_id=source_id
         )
         promise.schedule()
+
+    def on_scan_started(self, scan_id):
+        if not self.busy:
+            return
+        self.core.call_all("on_idle")
+        self.busy = False

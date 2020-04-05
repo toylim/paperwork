@@ -187,6 +187,7 @@ class Source(object):
             scan_id, resolution
         )
 
+        has_started = False
         session = None
         try:
             page_nb = 0
@@ -198,7 +199,6 @@ class Source(object):
             self.core.call_all(
                 "on_progress", "scan", 0.0, _("Starting scan ...")
             )
-
             session = self.source.scan_start()
 
             while not session.end_of_feed() and page_nb < max_pages:
@@ -232,6 +232,17 @@ class Source(object):
                 LOGGER.info("Scanning page %d/%d ...", page_nb, max_pages)
                 while not session.end_of_page():
                     new_piece = session.read_bytes(buffer_size).get_data()
+
+                    if not has_started:
+                        # Mark the application as busy until we get the first
+                        # read(). This is the only reliable time to be
+                        # sure scanning is actually started.
+                        self.core.call_all(
+                            "mainloop_schedule", self.core.call_all,
+                            "on_scan_started", scan_id
+                        )
+                        has_started = True
+
                     image.add_piece(new_piece)
 
                     chunk = image.get_last_chunk()
