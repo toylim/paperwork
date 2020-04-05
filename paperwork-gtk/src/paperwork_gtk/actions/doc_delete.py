@@ -133,8 +133,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
         LOGGER.info("Will delete doc %s", doc_id)
 
-        self.core.call_all("storage_delete_doc_id", doc_id)
         self.core.call_all("doc_close")
+        self.core.call_all("storage_delete_doc_id", doc_id)
         self.core.call_all("search_update_document_list")
 
         promise = openpaperwork_core.promise.ThreadedPromise(
