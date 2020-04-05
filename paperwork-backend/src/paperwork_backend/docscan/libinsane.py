@@ -192,17 +192,19 @@ class Source(object):
         try:
             page_nb = 0
 
-            self.core.call_all(
-                "mainloop_schedule", self.core.call_all,
+            self.core.call_success(
+                "mainloop_execute", self.core.call_all,
                 "on_scan_feed_start", scan_id
             )
-            self.core.call_all(
+            self.core.call_success(
+                "mainloop_schedule", self.core.call_all,
                 "on_progress", "scan", 0.0, _("Starting scan ...")
             )
             session = self.source.scan_start()
 
             while not session.end_of_feed() and page_nb < max_pages:
-                self.core.call_all(
+                self.core.call_success(
+                    "mainloop_schedule", self.core.call_all,
                     "on_progress", "scan", 0.0,
                     _("Scanning page %d ...") % (page_nb + 1)
                 )
@@ -214,7 +216,7 @@ class Source(object):
                     scan_params.get_width(), scan_params.get_height(),
                     scan_params.get_image_size()
                 )
-                self.core.call_all(
+                self.core.call_success(
                     "mainloop_schedule", self.core.call_all,
                     "on_scan_page_start", scan_id, page_nb, scan_params
                 )
@@ -237,7 +239,7 @@ class Source(object):
                         # Mark the application as busy until we get the first
                         # read(). This is the only reliable time to be
                         # sure scanning is actually started.
-                        self.core.call_all(
+                        self.core.call_success(
                             "mainloop_schedule", self.core.call_all,
                             "on_scan_started", scan_id
                         )
@@ -253,30 +255,32 @@ class Source(object):
                         progress = nb_lines / total_lines
                         if progress >= 1.0:
                             progress = 0.999
-                        self.core.call_all(
+                        self.core.call_success(
+                            "mainloop_schedule", self.core.call_all,
                             "on_progress", "scan", progress,
                             _("Scanning page %d ...") % (page_nb + 1)
                         )
-                        self.core.call_all(
+                        self.core.call_success(
                             "mainloop_schedule", self.core.call_all,
                             "on_scan_chunk", scan_id, scan_params, pil
                         )
 
                 LOGGER.info("Page %d/%d scanned", page_nb, max_pages)
-                self.core.call_all(
+                self.core.call_success(
+                    "mainloop_schedule", self.core.call_all,
                     "on_progress", "scan", 0.999,
                     _("Scanning page %d ...") % (page_nb + 1)
                 )
                 img = raw_to_img(scan_params, image.get_image())
                 yield img
-                self.core.call_all(
+                self.core.call_success(
                     "mainloop_schedule", self.core.call_all,
                     "on_scan_page_end", scan_id, page_nb, img
                 )
                 page_nb += 1
             LOGGER.info("End of feed")
 
-            self.core.call_all(
+            self.core.call_success(
                 "mainloop_schedule", self.core.call_all,
                 "on_scan_feed_end", scan_id
             )
