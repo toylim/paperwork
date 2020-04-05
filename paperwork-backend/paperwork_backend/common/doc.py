@@ -355,11 +355,19 @@ class BasicDoc(object):
                               'r') as file_desc:
                 for line in file_desc.readlines():
                     line = line.strip()
+                    if line == "":
+                        continue
                     (label_name, label_color) = line.split(",", 1)
                     labels.append(Label(name=label_name,
                                         color=label_color))
         except IOError:
             pass
+        except Exception as exc:
+            logger.error(
+                "Failed to parse labels of %s", self.__docid,
+                exc_info=exc
+            )
+            raise
         return labels
 
     def __set_labels(self, labels):
