@@ -104,9 +104,7 @@ class Plugin(openpaperwork_core.PluginBase):
         labels_url = self.core.call_success(
             "fs_join", doc_url, LABELS_FILENAME
         )
-        if self.core.call_success("fs_exists", labels_url) is None:
-            return True
-        return None
+        return self.core.call_success("fs_exists", labels_url)
 
     def doc_get_labels_by_url(self, out: set, doc_url):
         labels_url = self.core.call_success(

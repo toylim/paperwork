@@ -58,6 +58,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
 
         self.plugin = plugin
         self.guess_labels = guess_labels
+        LOGGER.info("Transaction start: Guessing labels: %s", guess_labels)
 
         # use a dedicated connection to ensure thread-safety regarding
         # SQL transactions
@@ -477,6 +478,7 @@ class Plugin(openpaperwork_core.PluginBase):
         util.rm_rf(baye_dir)
 
     def _score(self, doc_url):
+        LOGGER.info("Guessing labels on %s", doc_url)
         doc_txt = []
         self.core.call_all("doc_get_text_by_url", doc_txt, doc_url)
         doc_txt = "\n\n".join(doc_txt)
@@ -503,11 +505,11 @@ class Plugin(openpaperwork_core.PluginBase):
                 yield label_name
 
     def _set_guessed_labels(self, doc_url):
-        has_labels = (
-            self.core.call_success("doc_has_labels_by_url", doc_url)
-            is not None
-        )
-        if has_labels:
+        has_labels = self.core.call_success("doc_has_labels_by_url", doc_url)
+        if has_labels is not None:
+            LOGGER.info(
+                "Document %s already has labels. Won't guess labels", doc_url
+            )
             return
         labels = self._guess(doc_url)
         labels = list(labels)

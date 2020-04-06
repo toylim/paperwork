@@ -18,6 +18,37 @@ class TestLabels(unittest.TestCase):
 
         self.fs = self.core.get_by_name("openpaperwork_core.fs.fake")
 
+    def test_has_labels(self):
+        self.fs.fs = {
+            "some_work_dir": {
+                "some_doc": {
+                },
+            },
+        }
+
+        self.assertTrue(
+            self.core.call_success(
+                "doc_has_labels_by_url", "file:///some_work_dir/some_doc"
+            ) is None
+        )
+
+        self.fs.fs = {
+            "some_work_dir": {
+                "some_doc": {
+                    "labels": (
+                        "label A,#aaaabbbbcccc\n"
+                        "label B,#ccccbbbbaaaa\n"
+                    )
+                },
+            },
+        }
+
+        self.assertTrue(
+            self.core.call_success(
+                "doc_has_labels_by_url", "file:///some_work_dir/some_doc"
+            ) is not None
+        )
+
     def test_doc_get_labels(self):
         self.fs.fs = {
             "some_work_dir": {
