@@ -16,7 +16,7 @@ import openpaperwork_core.promise
 
 
 LOGGER = logging.getLogger(__name__)
-DELAY = 0.05
+DELAY = 0.1
 
 
 class NBox(object):
@@ -150,9 +150,13 @@ class Plugin(openpaperwork_core.PluginBase):
         # as loaded
         self.cache[ref] = (None, None)
 
-        promise = openpaperwork_core.promise.Promise(
-            self.core, LOGGER.debug,
-            args=("Loading boxes of %s p%d", page.doc_id, page.page_idx)
+        # Gives back a bit of CPU time to GTK so the GUI remains
+        # usable
+        promise = openpaperwork_core.promise.DelayPromise(self.core, DELAY)
+
+        promise = promise.then(
+            LOGGER.debug,
+            "Loading boxes of %s p%d", page.doc_id, page.page_idx
         )
         # drop the returned value
         promise = promise.then(lambda *args, **kwargs: None)
@@ -174,12 +178,6 @@ class Plugin(openpaperwork_core.PluginBase):
                 self.running_promises.pop(ref)
 
         promise = promise.then(stop_promise_tracking)
-
-        # Gives back a bit of CPU time to GTK so the GUI remains
-        # usable
-        promise = promise.then(openpaperwork_core.promise.DelayPromise(
-            self.core, DELAY
-        ))
 
         self.running_promises[ref] = promise
 
