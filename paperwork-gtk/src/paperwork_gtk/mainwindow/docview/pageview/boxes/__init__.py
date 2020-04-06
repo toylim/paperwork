@@ -19,6 +19,16 @@ LOGGER = logging.getLogger(__name__)
 DELAY = 0.05
 
 
+class NBox(object):
+    """
+    Chained boxes. Useful for some plugins like boxes.selection.
+    """
+    def __init__(self, box, index):
+        self.box = box
+        self.next = None
+        self.index = index
+
+
 class Plugin(openpaperwork_core.PluginBase):
     """
     Load the boxes on the pages and notify them to other plugins.
@@ -45,6 +55,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 "defaults": ["paperwork_gtk.mainwindow.docview.pageview"],
             },
             {
+                'interface': 'spatial_index',
+                'defaults': ['openpaperwork_core.spatial.rtree'],
+            },
+            {
                 'interface': 'work_queue',
                 'defaults': ['openpaperwork_core.work_queue.default'],
             },
@@ -60,9 +74,10 @@ class Plugin(openpaperwork_core.PluginBase):
     def doc_open(self, *args, **kwargs):
         self.doc_close()
 
-    def _set_boxes(self, boxes, page):
-        # Tesseract seems to have (seemed ?) a bug: boxes taking the whole
-        # page. --> we remove them
+    def _index_boxes(self, boxes):
+        # Tesseract seems (seemed ?) to have a bug: boxes taking the whole
+        # page. --> we remove them.
+        # Also we strip empty boxes.
         boxes = [
             line_box for line_box in boxes
             if line_box.position[0][0] > 0 or line_box.position[0][1] > 0
@@ -70,17 +85,53 @@ class Plugin(openpaperwork_core.PluginBase):
         for line_box in boxes:
             line_box.word_boxes = [
                 word_box for word_box in line_box.word_boxes
-                if word_box.position[0][0] > 0 or word_box.position[0][1] > 0
+                if ((word_box.position[0][0] > 0 or
+                    word_box.position[0][1] > 0) and
+                    word_box.content.strip() != "")
             ]
+
+        # chain the boxes
+        chained_boxes = []
+        pbox = None
+        index = 0
+        for line in boxes:
+            for word in line.word_boxes:
+                new_box = NBox(word, index)
+                index += 1
+                if pbox is not None:
+                    pbox.next = new_box
+                    chained_boxes.append(pbox)
+                pbox = new_box
+        if pbox is not None:
+            chained_boxes.append(pbox)
+
+        # and then index them
+        spatial_index = self.core.call_success(
+            "spatial_indexer_get", [
+                (b.box.position, b)
+                for b in chained_boxes
+            ]
+        )
+
+        return (boxes, spatial_index)
+
+    def _set_boxes(self, boxes, page):
+        (boxes, spatial_index) = boxes
         ref = (page.doc_id, page.page_idx)
-        self.cache[ref] = boxes
-        return boxes
+        self.cache[ref] = (boxes, spatial_index)
+        return (boxes, spatial_index)
 
     def pageview_get_boxes_by_id(self, doc_id, page_idx):
         ref = (doc_id, page_idx)
         if ref not in self.cache:
             return None
-        return self.cache[ref]
+        return self.cache[ref][0]
+
+    def pageview_get_indexed_boxes_by_id(self, doc_id, page_idx):
+        ref = (doc_id, page_idx)
+        if ref not in self.cache:
+            return None
+        return self.cache[ref][1]
 
     def on_page_visibility_changed(self, page, visible):
         ref = (page.doc_id, page.page_idx)
@@ -97,7 +148,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         # even they are not yet loaded, they will soon be --> we can mark them
         # as loaded
-        self.cache[ref] = None
+        self.cache[ref] = (None, None)
 
         promise = openpaperwork_core.promise.Promise(
             self.core, LOGGER.debug,
@@ -109,9 +160,13 @@ class Plugin(openpaperwork_core.PluginBase):
             self.core, self.core.call_success,
             args=("page_get_boxes_by_url", page.doc_url, page.page_idx,)
         ))
-        promise = promise.then(lambda boxes=[]: self._set_boxes(boxes, page))
-        promise = promise.then(lambda boxes=[]: self.core.call_all(
-            "on_page_boxes_loaded", page, boxes
+        promise = promise.then(openpaperwork_core.promise.ThreadedPromise(
+            self.core, lambda boxes=[]: self._index_boxes(boxes)
+        ))
+        promise = promise.then(lambda boxes: self._set_boxes(boxes, page))
+        promise = promise.then(lambda boxes: self.core.call_all(
+            # boxes => (boxes, spatial_index)
+            "on_page_boxes_loaded", page, boxes[0], boxes[1]
         ))
 
         def stop_promise_tracking(*args, **kwargs):
@@ -133,13 +188,13 @@ class Plugin(openpaperwork_core.PluginBase):
             "work_queue_add_promise", "page_loader", promise, priority=-10
         )
 
-    def on_page_boxes_loaded(self, page, boxes):
+    def on_page_boxes_loaded(self, page, boxes, spatial_index):
         LOGGER.info(
             "Page %s %d: %d line boxes loaded",
             page.doc_id, page.page_idx, len(boxes)
         )
 
-    def paint_txt(self, cairo_ctx, txt, x, y, w, h):
+    def _paint_txt(self, cairo_ctx, txt, x, y, w, h):
         cairo_ctx.set_source_rgb(1.0, 1.0, 1.0)
         cairo_ctx.rectangle(x, y, w, h)
         cairo_ctx.fill()
@@ -181,7 +236,7 @@ class Plugin(openpaperwork_core.PluginBase):
         h = br_y - tl_y
 
         if box_content is not None:
-            self.paint_txt(cairo_ctx, box_content, tl_x, tl_y, w, h)
+            self._paint_txt(cairo_ctx, box_content, tl_x, tl_y, w, h)
 
         cairo_ctx.save()
         try:

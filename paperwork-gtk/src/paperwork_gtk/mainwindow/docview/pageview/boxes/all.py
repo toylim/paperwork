@@ -37,7 +37,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.visible = visible
         self.core.call_all("pageview_refresh_all")
 
-    def on_page_boxes_loaded(self, page, boxes):
+    def on_page_boxes_loaded(self, page, boxes, spatial_index):
         page.refresh()
 
     def on_page_draw(self, cairo_ctx, page):

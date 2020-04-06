@@ -17,13 +17,6 @@ LOGGER = logging.getLogger(__name__)
 IDX_GENERATOR = itertools.count()
 
 
-class NBox(object):
-    def __init__(self, box, index):
-        self.box = box
-        self.next = None
-        self.index = index
-
-
 class PageSelectionHandler(object):
     def __init__(self, core, plugin, page):
         self.core = core
@@ -42,31 +35,8 @@ class PageSelectionHandler(object):
 
         self.signal_handlers = []
 
-    def set_boxes(self, line_boxes):
-        # chain the boxes
-        chained_boxes = []
-        pbox = None
-        index = 0
-        for line in line_boxes:
-            for word in line.word_boxes:
-                if word.content.strip() == "":
-                    continue
-                new_box = NBox(word, index)
-                index += 1
-                if pbox is not None:
-                    pbox.next = new_box
-                    chained_boxes.append(pbox)
-                pbox = new_box
-        if pbox is not None:
-            chained_boxes.append(pbox)
-
-        # and then index them
-        self.boxes = self.core.call_success(
-            "spatial_indexer_get", [
-                (b.box.position, b)
-                for b in chained_boxes
-            ]
-        )
+    def set_boxes(self, line_boxes, spatial_index):
+        self.boxes = spatial_index
 
     def connect(self):
         self.disconnect()
@@ -206,10 +176,6 @@ class Plugin(openpaperwork_core.PluginBase):
                     'paperwork_gtk.mainwindow.docview.pageview.boxes'
                 ],
             },
-            {
-                'interface': 'spatial_index',
-                'defaults': ['openpaperwork_core.spatial.rtree'],
-            },
         ]
 
     def chkdeps(self, out: dict):
@@ -219,13 +185,13 @@ class Plugin(openpaperwork_core.PluginBase):
     def on_docview_closed_page(self, page):
         self.handlers.pop(page.widget).disconnect()
 
-    def on_page_boxes_loaded(self, page, boxes):
+    def on_page_boxes_loaded(self, page, boxes, spatial_index):
         h = PageSelectionHandler(self.core, self, page)
         self.handlers[page.widget] = h
 
         assert(page.widget in self.handlers)
         h = self.handlers[page.widget]
-        h.set_boxes(boxes)
+        h.set_boxes(boxes, spatial_index)
         if page.get_visible():
             h.connect()
 
