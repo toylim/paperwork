@@ -1,3 +1,4 @@
+import gettext
 import logging
 
 try:
@@ -17,6 +18,7 @@ import openpaperwork_core.promise
 
 LOGGER = logging.getLogger(__name__)
 DELAY = 0.1
+_ = gettext.gettext
 
 
 class NBox(object):
@@ -41,6 +43,8 @@ class Plugin(openpaperwork_core.PluginBase):
         super().__init__()
         self.cache = {}
         self.running_promises = {}
+        self.nb_to_load = 0
+        self.nb_loaded = 0
 
     def get_interfaces(self):
         return [
@@ -68,8 +72,22 @@ class Plugin(openpaperwork_core.PluginBase):
         if not PANGO_AVAILABLE:
             out['pango'].update(openpaperwork_core.deps.PANGO)
 
+    def _upd_progress(self):
+        if self.nb_to_load == self.nb_loaded:
+            self.core.call_all("on_progress", "boxes", 1.0)
+            self.nb_to_load = 0
+            self.nb_loaded = 0
+            return
+        self.core.call_all(
+            "on_progress", "boxes",
+            self.nb_loaded / self.nb_to_load, _("Loading text ...")
+        )
+
     def doc_close(self):
         self.cache = {}
+        self.nb_to_load = 0
+        self.nb_loaded = 0
+        self._upd_progress()
 
     def doc_open(self, *args, **kwargs):
         self.doc_close()
@@ -139,6 +157,7 @@ class Plugin(openpaperwork_core.PluginBase):
             if ref in self.running_promises:
                 promise = self.running_promises.pop(ref)
                 self.core.call_all("work_queue_cancel", "page_loader", promise)
+                self.nb_to_load -= 1
             if ref in self.cache:
                 self.cache.pop(ref)
             return
@@ -175,10 +194,14 @@ class Plugin(openpaperwork_core.PluginBase):
 
         def stop_promise_tracking(*args, **kwargs):
             if ref in self.running_promises:
+                self.nb_loaded += 1
+                self._upd_progress()
                 self.running_promises.pop(ref)
 
         promise = promise.then(stop_promise_tracking)
 
+        self.nb_to_load += 1
+        self._upd_progress()
         self.running_promises[ref] = promise
 
         # piggy back page loader work queue, but with a low priority
