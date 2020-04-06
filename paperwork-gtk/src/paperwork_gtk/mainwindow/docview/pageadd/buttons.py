@@ -40,6 +40,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['paperwork_gtk.mainwindow.docview'],
             },
             {
+                'interface': 'new_doc',
+                'defaults': ['paperwork_gtk.new_doc'],
+            },
+            {
                 'interface': 'scan2doc',
                 'defaults': ['paperwork_backend.docscan.scan2doc'],
             },
@@ -76,7 +80,6 @@ class Plugin(openpaperwork_core.PluginBase):
     def _update_sensitivity(self):
         self.widget_tree.get_object("pageadd_button").set_sensitive(
             self.default_action is not None and
-            self.active_doc_id is not None and
             self.write_allowed and
             not self.scanning
         )
@@ -88,6 +91,13 @@ class Plugin(openpaperwork_core.PluginBase):
         self._update_sensitivity()
 
     def _on_clicked(self, widget):
+        if self.active_doc_url is None:
+            (self.active_doc_id, self.active_doc_url) = self.core.call_success(
+                "get_new_doc"
+            )
+            self.core.call_all(
+                "doc_open", self.active_doc_id, self.active_doc_url
+            )
         self.default_action(
             self.active_doc_id, self.active_doc_url,
             *self.default_action_args
