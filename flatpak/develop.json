@@ -2,7 +2,7 @@
     "app-id": "work.openpaper.Paperwork",
     "branch": "develop",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "3.30",
+    "runtime-version": "3.36",
     "sdk": "org.gnome.Sdk",
     "command": "paperwork-gtk",
     "copy-icon": true,
