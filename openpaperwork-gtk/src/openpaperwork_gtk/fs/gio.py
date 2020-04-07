@@ -323,20 +323,36 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
 
             if not trash:
                 deleted = f.delete()
+                if not deleted:
+                    raise IOError("Failed to delete %s" % url)
                 return
 
             deleted = False
             try:
                 deleted = f.trash()
+                if not deleted:
+                    LOGGER.warning(
+                        "Failed to trash %s. Will try to delete it instead",
+                        url
+                    )
             except Exception as exc:
                 LOGGER.warning("Failed to trash %s. Will try to delete it"
-                               " instead", f.get_uri(), exc_info=exc)
+                               " instead", url, exc_info=exc)
+
+            if deleted and self.fs_exists(url) is not None:
+                deleted = False
+                # WORKAROUND(Jflesch): It seems in Flatpak, f.trash()
+                # returns True when it actually does nothing.
+                LOGGER.warning(
+                    "trash(%s) returned True but file wasn't trashed."
+                    " Will try to deleting it instead", f.get_uri()
+                )
+
             if not deleted:
                 try:
                     deleted = f.delete()
                 except Exception as exc:
-                    LOGGER.warning("Failed to deleted %s", f.get_uri(),
-                                   exc_info=exc)
+                    LOGGER.warning("Failed to deleted %s", url, exc_info=exc)
             if not deleted:
                 raise IOError("Failed to delete %s" % url)
         except GLib.GError as exc:
@@ -356,17 +372,28 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             deleted = False
             try:
                 deleted = f.trash()
+                if not deleted:
+                    LOGGER.warning(
+                        "Failed to trash %s. Will try to delete it instead",
+                        url
+                    )
             except Exception as exc:
                 LOGGER.warning(
-                    "Failed to trash %s. Will try to delete it instead",
-                    f.get_uri(), exc_info=exc
+                    "Failed to trash %s (trash()=False)."
+                    " Will try to delete it instead",
+                    url, exc_info=exc
+                )
+
+            if deleted and self.fs_exists(url) is not None:
+                deleted = False
+                # WORKAROUND(Jflesch): It seems in Flatpak, f.trash()
+                # returns True when it actually does nothing.
+                LOGGER.warning(
+                    "trash(%s) returned True but file wasn't trashed."
+                    " Will try to deleting it instead", url
                 )
 
             if not deleted:
-                LOGGER.warning(
-                    "Failed to trash %s. Will try to delete it instead",
-                    f.get_uri()
-                )
                 self._rm_rf(f)
             LOGGER.info("%s deleted", url)
         except GLib.GError as exc:
