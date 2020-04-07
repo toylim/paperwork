@@ -1,8 +1,6 @@
 import os
 import unittest
 
-import PIL.Image
-
 import openpaperwork_core
 
 
@@ -35,4 +33,4 @@ class TestPillowImg(unittest.TestCase):
 
         # no real way to make sure the image was correctly written I guess
 
-        self.core.call_success("fs_unlink", img_url)
+        self.core.call_success("fs_unlink", img_url, trash=False)

@@ -22,7 +22,7 @@ class TestSafe(unittest.TestCase):
             r = file_desc.read()
             self.assertEqual(r, b'abcdefghijf')
 
-        self.core.call_all("fs_unlink", "memory://test_file")
+        self.core.call_all("fs_unlink", "memory://test_file", trash=False)
 
     def test_write_read_string(self):
         with self.core.call_success(
@@ -40,7 +40,7 @@ class TestSafe(unittest.TestCase):
                 'ghijf\n'
             ])
 
-        self.core.call_all("fs_unlink", "memory://test_file")
+        self.core.call_all("fs_unlink", "memory://test_file", trash=False)
 
     def test_write_read_tempfile(self):
         (name, file_desc) = self.core.call_success(
@@ -58,4 +58,4 @@ class TestSafe(unittest.TestCase):
                 'ghijf\n'
             ])
 
-        self.core.call_all("fs_unlink", name)
+        self.core.call_all("fs_unlink", name, trash=False)

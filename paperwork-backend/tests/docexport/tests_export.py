@@ -69,7 +69,7 @@ class TestExport(unittest.TestCase):
         self.core.call_one("mainloop")
 
         self.assertTrue(self.core.call_success("fs_getsize", self.result) > 0)
-        self.core.call_all("fs_unlink", self.result)
+        self.core.call_all("fs_unlink", self.result, trash=False)
 
     def test_img_to_pdf(self):
         pipeline = [
@@ -110,4 +110,4 @@ class TestExport(unittest.TestCase):
         self.core.call_one("mainloop")
 
         self.assertTrue(self.core.call_success("fs_getsize", self.result) > 0)
-        self.core.call_all("fs_unlink", self.result)
+        self.core.call_all("fs_unlink", self.result, trash=False)

@@ -276,7 +276,7 @@ class AbstractTestUnlink(unittest.TestCase):
             safe_file_name = self.core.call_one('fs_safe', file_name)
             self.assertTrue(os.path.exists(file_name))
 
-            self.core.call_one('fs_unlink', safe_file_name)
+            self.core.call_one('fs_unlink', safe_file_name, trash=False)
             self.assertFalse(os.path.exists(file_name))
         finally:
             if os.path.exists(file_name):
