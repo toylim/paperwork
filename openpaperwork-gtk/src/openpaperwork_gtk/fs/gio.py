@@ -357,9 +357,16 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             try:
                 deleted = f.trash()
             except Exception as exc:
-                LOGGER.warning("Failed to trash %s. Will try to delete it"
-                               " instead", f.get_uri(), exc_info=exc)
+                LOGGER.warning(
+                    "Failed to trash %s. Will try to delete it instead",
+                    f.get_uri(), exc_info=exc
+                )
+
             if not deleted:
+                LOGGER.warning(
+                    "Failed to trash %s. Will try to delete it instead",
+                    f.get_uri()
+                )
                 self._rm_rf(f)
             LOGGER.info("%s deleted", url)
         except GLib.GError as exc:
