@@ -54,7 +54,7 @@ class Plugin(openpaperwork_core.PluginBase):
         if self.halt_cause is not None:
             halt_cause = self.halt_cause
             self.halt_cause = None
-            LOGGER.error("Main loop stopped because %s", str(self.halt_cause))
+            LOGGER.error("Main loop stopped because %s", str(halt_cause))
             raise halt_cause
 
     def mainloop_get_thread_id(self):
