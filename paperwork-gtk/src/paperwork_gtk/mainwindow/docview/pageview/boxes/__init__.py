@@ -73,7 +73,7 @@ class Plugin(openpaperwork_core.PluginBase):
             out['pango'].update(openpaperwork_core.deps.PANGO)
 
     def _upd_progress(self):
-        if self.nb_to_load == self.nb_loaded:
+        if self.nb_to_load <= self.nb_loaded or self.nb_to_load == 0:
             self.core.call_all("on_progress", "boxes", 1.0)
             self.nb_to_load = 0
             self.nb_loaded = 0
