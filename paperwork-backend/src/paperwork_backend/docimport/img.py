@@ -59,6 +59,8 @@ class SingleImgImporter(object):
 
         self.file_import.active_doc_id = self.doc_id
 
+        return True
+
     def get_promise(self):
         return openpaperwork_core.promise.Promise(
             self.core, self._basic_import, args=(self.src_file_uri,)

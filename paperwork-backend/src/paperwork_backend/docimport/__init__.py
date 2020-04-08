@@ -34,11 +34,15 @@ class BaseFileImporter(object):
         return len(list(self._get_importables())) > 0
 
     @staticmethod
-    def _remove_from_list(s, k):
+    def _upd_file_import(imported, file_import, orig_uri, file_uri):
         try:
-            s.remove(k)
+            file_import.ignored_files.remove(orig_uri)
         except ValueError:
             pass
+        if imported:
+            file_import.imported_files.add(file_uri)
+        else:
+            file_import.ignored_files.append(file_uri)
 
     def _make_transactions(self, file_import):
         transactions = []
@@ -71,18 +75,13 @@ class BaseFileImporter(object):
         to_import = list(self._get_importables())
 
         for (orig_uri, file_uri) in to_import:
-            new_promise = self.single_file_importer_factory.make_importer(
+            promise = promise.then(
+                self.single_file_importer_factory.make_importer(
                     self.file_import, file_uri
                 ).get_promise()
-            promise = promise.then(new_promise)
-
-        for (orig_uri, file_uri) in to_import:
-            promise = promise.then(
-                self._remove_from_list,
-                self.file_import.ignored_files, orig_uri
             )
             promise = promise.then(
-                self.file_import.imported_files.add, file_uri
+                self._upd_file_import, self.file_import, orig_uri, file_uri
             )
 
         promise = promise.then(self._make_transactions, self.file_import)

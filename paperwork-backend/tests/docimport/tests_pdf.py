@@ -17,6 +17,7 @@ class TestPdfImport(unittest.TestCase):
         self.copies = []
         self.add_docs = []
         self.nb_commits = 0
+        self.hash_to_docid = {}
 
         class FakeTransaction(object):
             priority = 0
@@ -55,6 +56,16 @@ class TestPdfImport(unittest.TestCase):
                 def doc_transaction_start(s, transactions, expected=-1):
                     transactions.append(FakeTransaction())
 
+                def fs_hash(s, file_url):
+                    if file_url == self.test_doc_url:
+                        return "DEADBEEF"
+                    return "ABCDEF"
+
+                def index_get_doc_id_by_hash(s, h):
+                    if h in self.hash_to_docid:
+                        return self.hash_to_docid[h]
+                    return None
+
         self.core._load_module("fake_module", FakeModule())
         self.core.load("paperwork_backend.model.fake")
         self.core.load("paperwork_backend.docimport.pdf")
@@ -66,6 +77,7 @@ class TestPdfImport(unittest.TestCase):
         self.core.init()
 
     def test_import_pdf(self):
+        self.hash_to_docid = {}
         self.fake_storage.docs = [
             {
                 'id': 'test_doc',
@@ -84,7 +96,7 @@ class TestPdfImport(unittest.TestCase):
         ]
 
         file_import = paperwork_backend.docimport.FileImport(
-            file_uris_to_import=[self.test_doc_url,]
+            file_uris_to_import=[self.test_doc_url]
         )
 
         importers = []
@@ -110,6 +122,49 @@ class TestPdfImport(unittest.TestCase):
         self.assertEqual(file_import.stats['PDF'], 1)
         self.assertEqual(file_import.stats['Documents'], 1)
 
+    def test_duplicated_pdf(self):
+        self.hash_to_docid = {"DEADBEEF": "some_doc_id"}
+        self.fake_storage.docs = [
+            {
+                'id': 'test_doc',
+                'url': 'file:///somewhere/test_doc',
+                'mtime': 123,
+                'text': 'Simplebayes and Flesch are\nthe best',
+                'labels': {("some_label", "#123412341234")},
+            },
+            {
+                'id': 'test_doc_2',
+                'url': 'file:///somewhere/test_doc_2',
+                'mtime': 123,
+                'text': 'Flesch Simplebayes\nbest',
+                'labels': {("some_label", "#123412341234")},
+            },
+        ]
+
+        file_import = paperwork_backend.docimport.FileImport(
+            file_uris_to_import=[self.test_doc_url]
+        )
+
+        importers = []
+        self.core.call_all("get_importer", importers, file_import)
+        self.assertEqual(len(importers), 1)
+
+        promise = importers[0].get_import_promise()
+        promise.schedule()
+
+        self.core.call_all("mainloop")
+
+        self.assertEqual(self.copies, [])
+        self.assertEqual(self.add_docs, [])
+        self.assertEqual(self.nb_commits, 1)
+
+        self.assertEqual(file_import.ignored_files, [self.test_doc_url])
+        self.assertEqual(file_import.imported_files, set())
+        self.assertEqual(file_import.new_doc_ids, set())
+        self.assertEqual(file_import.upd_doc_ids, set())
+        self.assertNotIn('PDF', file_import.stats)
+        self.assertEqual(file_import.stats['Already imported'], 1)
+
 
 class TestRecursivePdfImport(unittest.TestCase):
     def setUp(self):
@@ -128,6 +183,7 @@ class TestRecursivePdfImport(unittest.TestCase):
         self.copies = []
         self.add_docs = []
         self.nb_commits = 0
+        self.hash_to_docid = {}
 
         class FakeTransaction(object):
             priority = 0
@@ -166,6 +222,16 @@ class TestRecursivePdfImport(unittest.TestCase):
                 def doc_transaction_start(s, transactions, expected=-1):
                     transactions.append(FakeTransaction())
 
+                def fs_hash(s, file_url):
+                    if file_url == self.test_doc_url:
+                        return "DEADBEEF"
+                    return "ABCDEF"
+
+                def index_get_doc_id_by_hash(s, h):
+                    if h in self.hash_to_docid:
+                        return self.hash_to_docid[h]
+                    return None
+
         self.core._load_module("fake_module", FakeModule())
         self.core.load("paperwork_backend.model.fake")
         self.core.load("paperwork_backend.docimport.pdf")
@@ -177,6 +243,7 @@ class TestRecursivePdfImport(unittest.TestCase):
         self.core.init()
 
     def test_import_pdf(self):
+        self.hash_to_docid = {}
         self.fake_storage.docs = [
             {
                 'id': 'test_doc',
@@ -195,7 +262,7 @@ class TestRecursivePdfImport(unittest.TestCase):
         ]
 
         file_import = paperwork_backend.docimport.FileImport(
-            file_uris_to_import=[self.test_dir_url,]
+            file_uris_to_import=[self.test_dir_url]
         )
 
         importers = []
@@ -220,3 +287,45 @@ class TestRecursivePdfImport(unittest.TestCase):
         self.assertEqual(file_import.upd_doc_ids, set())
         self.assertEqual(file_import.stats['PDF'], 1)
         self.assertEqual(file_import.stats['Documents'], 1)
+
+    def test_duplicated_pdf(self):
+        self.hash_to_docid = {"DEADBEEF": "some_doc_id"}
+        self.fake_storage.docs = [
+            {
+                'id': 'test_doc',
+                'url': 'file:///somewhere/test_doc',
+                'mtime': 123,
+                'text': 'Simplebayes and Flesch are\nthe best',
+                'labels': {("some_label", "#123412341234")},
+            },
+            {
+                'id': 'test_doc_2',
+                'url': 'file:///somewhere/test_doc_2',
+                'mtime': 123,
+                'text': 'Flesch Simplebayes\nbest',
+                'labels': {("some_label", "#123412341234")},
+            },
+        ]
+
+        file_import = paperwork_backend.docimport.FileImport(
+            file_uris_to_import=[self.test_dir_url]
+        )
+
+        importers = []
+        self.core.call_all("get_importer", importers, file_import)
+        self.assertEqual(len(importers), 1)
+
+        promise = importers[0].get_import_promise()
+        promise.schedule()
+
+        self.core.call_all("mainloop")
+
+        self.assertEqual(self.copies, [])
+        self.assertEqual(self.add_docs, [])
+        self.assertEqual(self.nb_commits, 1)
+
+        self.assertEqual(file_import.ignored_files, [self.test_doc_url])
+        self.assertEqual(file_import.imported_files, set())
+        self.assertEqual(file_import.new_doc_ids, set())
+        self.assertEqual(file_import.upd_doc_ids, set())
+        self.assertNotIn('PDF', file_import.stats)

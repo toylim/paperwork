@@ -24,12 +24,23 @@ class SinglePdfImporter(object):
         self.doc_url = None
 
     def _basic_import(self, file_uri):
+        file_hash = self.core.call_success("fs_hash", file_uri)
+        other_doc_id = self.core.call_success(
+            "index_get_doc_id_by_hash", file_hash
+        )
+        if other_doc_id is not None:
+            LOGGER.info("%s was already imported", file_uri)
+            self.file_import.stats[_("Already imported")] += 1
+            return False
+
+        LOGGER.info("Importing %s", file_uri)
         (self.doc_id, self.doc_url) = self.core.call_success(
             "doc_pdf_import", file_uri
         )
         self.file_import.new_doc_ids.add(self.doc_id)
         self.file_import.stats[_("PDF")] += 1
         self.file_import.stats[_("Documents")] += 1
+        return True
 
     def get_promise(self):
         return openpaperwork_core.promise.Promise(
