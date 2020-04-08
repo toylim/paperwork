@@ -10,7 +10,8 @@ LOGGER = logging.getLogger(__name__)
 
 
 class Task(object):
-    def __init__(self, priority, insert_number, promise):
+    def __init__(self, work_queue, priority, insert_number, promise):
+        self.work_queue = work_queue
         self.priority = priority
         self.insert_number = insert_number
         self.promise = promise
@@ -24,6 +25,7 @@ class Task(object):
                 "%2d: %20s: L%5d: %s",
                 idx, stack_el[0], stack_el[1], stack_el[2]
             )
+        self.work_queue._run_next_promise_locked()
         raise exc
 
     def __lt__(self, o):
@@ -52,7 +54,7 @@ class WorkQueue(object):
     def add_promise(self, promise, priority=0):
         self.insert_number += 1
 
-        task = Task(-1 * priority, self.insert_number, promise)
+        task = Task(self, -1 * priority, self.insert_number, promise)
 
         with self.lock:
             heapq.heappush(self.queue, task)

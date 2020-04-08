@@ -56,6 +56,37 @@ class TestQueue(unittest.TestCase):
         self.assertTrue(self.task_a_done)
         self.assertTrue(self.task_b_done)
 
+    def test_uncatched(self):
+        self.task_a_done = False
+        self.task_b_done = False
+
+        def do_task_a():
+            self.assertFalse(self.task_a_done)
+            self.assertFalse(self.task_b_done)
+            self.task_a_done = True
+            raise Exception("Test exception. May be normal. Do not panic :-)")
+
+        def do_task_b():
+            self.assertTrue(self.task_a_done)
+            self.assertFalse(self.task_b_done)
+            self.task_b_done = True
+
+        self.core.call_all("work_queue_create", "some_work_queue")
+        self.core.call_one(
+            "work_queue_add_promise", "some_work_queue",
+            openpaperwork_core.promise.Promise(self.core, do_task_a)
+        )
+        self.core.call_one(
+            "work_queue_add_promise", "some_work_queue",
+            openpaperwork_core.promise.Promise(self.core, do_task_b)
+        )
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop", halt_on_uncatched_exception=False)
+
+        self.assertTrue(self.task_a_done)
+        self.assertTrue(self.task_b_done)
+
     def test_cancel_all(self):
         self.task_a_done = False
         self.task_b_done = False
