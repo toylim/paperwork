@@ -12,7 +12,6 @@ import paperwork_backend
 _ = gettext.gettext
 
 DEFAULT_SHELL_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
-    'openpaperwork_core.mainloop.asyncio',
     'paperwork_backend.guesswork.cropping.libpillowfight',
     'paperwork_shell.cmd.delete',
     'paperwork_shell.cmd.edit',
@@ -49,6 +48,8 @@ def main_main(in_args, application_name, default_plugins, interactive):
     # enable and configure the plugin logs.print first.
 
     core = openpaperwork_core.Core()
+    # plugin 'uncaught_exceptions' requires a mainloop plugin
+    core.load('openpaperwork_core.mainloop.asyncio')
     for module_name in paperwork_backend.DEFAULT_CONFIG_PLUGINS:
         core.load(module_name)
     core.init()
