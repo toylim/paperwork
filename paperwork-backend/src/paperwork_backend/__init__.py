@@ -2,6 +2,7 @@ DEFAULT_CONFIG_PLUGINS = [
     'openpaperwork_core.cmd.config',
     'openpaperwork_core.config',
     'openpaperwork_core.config.backend.configparser',
+    'openpaperwork_core.logs.archives',
     'openpaperwork_core.logs.print',
     'openpaperwork_core.uncaught_exception',
 ]
