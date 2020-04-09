@@ -21,6 +21,7 @@ DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'paperwork_backend.guesswork.cropping.calibration',
     'paperwork_gtk.actions.doc_delete',
     'paperwork_gtk.actions.doc_export',
+    'paperwork_gtk.actions.doc_open_external',
     'paperwork_gtk.actions.doc_print',
     'paperwork_gtk.actions.doc_properties',
     'paperwork_gtk.actions.doc_redo_ocr',
