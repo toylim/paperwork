@@ -56,7 +56,7 @@ class TestQueue(unittest.TestCase):
         self.assertTrue(self.task_a_done)
         self.assertTrue(self.task_b_done)
 
-    def test_uncatched(self):
+    def test_uncaught(self):
         self.task_a_done = False
         self.task_b_done = False
 
@@ -82,7 +82,7 @@ class TestQueue(unittest.TestCase):
         )
 
         self.core.call_all("mainloop_quit_graceful")
-        self.core.call_one("mainloop", halt_on_uncatched_exception=False)
+        self.core.call_one("mainloop", halt_on_uncaught_exception=False)
 
         self.assertTrue(self.task_a_done)
         self.assertTrue(self.task_b_done)

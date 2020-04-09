@@ -4,7 +4,7 @@ import logging
 import sys
 import tempfile
 
-from . import PluginBase
+from .. import PluginBase
 
 
 LOGGER = logging.getLogger(__name__)
@@ -36,31 +36,24 @@ def _get_tmp_file():
 class _LogHandler(logging.Handler):
     def __init__(self):
         super().__init__()
-        logging.getLogger().setLevel(logging.DEBUG)
+        self.log_level = logging.DEBUG
         self.formatter = logging.Formatter(Plugin.DEFAULT_LOG_FORMAT)
-        self.out_fds = {sys.stdout}
-        sys.excepthook = self.on_uncatched_exception_cb
+        self.out_fds = {sys.stderr}
 
     def emit(self, record):
+        if record.levelno < self.log_level:
+            return
         if self.formatter is None:
             return
         line = self.formatter.format(record)
         for fd in self.out_fds:
             fd.write(line + "\n")
 
-    def on_uncatched_exception_cb(self, exc_type, exc_value, exc_tb):
-        LOGGER.error(
-            "=== UNCATCHED EXCEPTION ===",
-            exc_info=(exc_type, exc_value, exc_tb)
-        )
-        LOGGER.error("===========================")
-
 
 class Plugin(PluginBase):
     CONFIG_FILE_SEPARATOR = ","
 
-    DEFAULT_LOG_LEVEL = 'info'
-    DEFAULT_LOG_FILES = 'temp' + CONFIG_FILE_SEPARATOR + 'stdout'
+    DEFAULT_LOG_FILES = 'stderr'
     DEFAULT_LOG_FORMAT = '[%(levelname)-6s] [%(name)-30s] %(message)s'
 
     LOG_LEVELS = {
@@ -79,47 +72,57 @@ class Plugin(PluginBase):
     }
 
     def __init__(self):
-        self.core = None
+        super().__init__()
         self.log_file_paths = set()
         self.log_handler = None
 
     def get_interfaces(self):
-        return []
+        return ['logs']
 
     def get_deps(self):
         return [
+            {
+                'interface': 'uncaught_exception',
+                'defaults': ['openpaperwork_core.uncaught_exception'],
+            },
             {
                 'interface': 'config',
                 'defaults': ['openpaperwork_core.config'],
             },
         ]
 
-    def init(self, core):
-        self.core = core
+    def init_logs(self, app_name, default_log_level):
+        section_name = "logging:" + app_name
+
+        s = self.core.call_success(
+            "config_build_simple", section_name, "level",
+            lambda: default_log_level
+        )
+        self.core.call_all("config_register", "log_level", s)
+        self.core.call_all(
+            'config_add_observer', "log_level", self._reload_config
+        )
+
+        s = self.core.call_success(
+            "config_build_simple", section_name, "files",
+            lambda: self.DEFAULT_LOG_FILES
+        )
+        self.core.call_all("config_register", "log_files", s)
+        self.core.call_all(
+            'config_add_observer', "log_files", self._reload_config
+        )
+
+        s = self.core.call_success(
+            "config_build_simple", section_name, "format",
+            lambda: self.DEFAULT_LOG_FORMAT
+        )
+        self.core.call_all("config_register", "log_format", s)
+        self.core.call_all(
+            'config_add_observer', "log_format", self._reload_config
+        )
 
         self.log_handler = _LogHandler()
         logging.getLogger().addHandler(self.log_handler)
-
-        s = core.call_success(
-            "config_build_simple", "logging", "level",
-            lambda: self.DEFAULT_LOG_LEVEL
-        )
-        core.call_all("config_register", "log_level", s)
-        core.call_all('config_add_observer', "log_level", self._reload_config)
-
-        s = core.call_success(
-            "config_build_simple", "logging", "files",
-            lambda: self.DEFAULT_LOG_FILES
-        )
-        core.call_all("config_register", "log_files", s)
-        core.call_all('config_add_observer', "log_files", self._reload_config)
-
-        s = core.call_success(
-            "config_build_simple", "logging", "format",
-            lambda: self.DEFAULT_LOG_FORMAT
-        )
-        core.call_all("config_register", "log_format", s)
-        core.call_all('config_add_observer', "log_format", self._reload_config)
 
         self._reload_config()
 
@@ -127,14 +130,12 @@ class Plugin(PluginBase):
         for fd in self.log_handler.out_fds:
             if fd != sys.stdout and fd != sys.stderr and fd != g_tmp_file:
                 fd.close()
-        self.log_handler.out_fds = {sys.stdout}
+        self.log_handler.out_fds = {}
 
     def _enable_logging(self):
         self.log_handler.out_fds = set()
         first = None
         for file_path in self.log_file_paths:
-            if sys.stderr is not None:  # if app is not frozen
-                sys.stderr.write("Writing logs to {}\n".format(file_path))
             if file_path.lower() not in self.SPECIAL_FILES:
                 fd = open(file_path, 'a')
                 self.log_handler.out_fds.add(fd)
@@ -146,13 +147,11 @@ class Plugin(PluginBase):
         faulthandler.enable(file=first)
 
     def _reload_config(self, *args, **kwargs):
-        LOGGER.info("Reloading logging configuration")
         self._disable_logging()
+        LOGGER.info("Reloading logging configuration")
         try:
             log_level = self.core.call_success('config_get', "log_level")
-            if sys.stderr is not None:  # if app is not frozen
-                sys.stderr.write("Log level: {}\n".format(log_level))
-            logging.getLogger().setLevel(self.LOG_LEVELS[log_level])
+            self.set_log_level(log_level)
             self.log_file_paths = self.core.call_success(
                 'config_get', "log_files",
             ).split(self.CONFIG_FILE_SEPARATOR)
@@ -161,3 +160,15 @@ class Plugin(PluginBase):
             )
         finally:
             self._enable_logging()
+
+    def set_log_level(self, log_level):
+        lvl = self.LOG_LEVELS[log_level]
+        self.log_handler.log_level = lvl
+        if lvl > logging.INFO:
+            # Never disable info level ; it may be used by other plugins
+            lvl = logging.INFO
+        logging.getLogger().setLevel(lvl)
+
+    def on_uncaught_exception(self, exc_info):
+        LOGGER.error("=== UNCAUGHT EXCEPTION ===", exc_info=exc_info)
+        LOGGER.error("==========================")

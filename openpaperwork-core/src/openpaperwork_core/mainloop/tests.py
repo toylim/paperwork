@@ -115,7 +115,7 @@ class AbstractTestPromise(unittest.TestCase):
         p = p.then(beta)
         p = p.then(stop)
         p = p.catch(on_exc)
-        p.hide_catched_exceptions = True
+        p.hide_caught_exceptions = True
         p.schedule()
         self.core.call_all("mainloop_quit_graceful")
 

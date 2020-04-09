@@ -96,15 +96,16 @@ def main_main(in_args):
     # To load the plugins, we need first to load the configuration plugin
     # to get the list of plugins to load.
     # The configuration plugin may write traces using logging, so we better
-    # enable and configure the plugin log_print first.
+    # enable and configure the plugin logs.print first.
 
     core = openpaperwork_core.Core()
     for module_name in paperwork_backend.DEFAULT_CONFIG_PLUGINS:
         core.load(module_name)
     core.init()
-
-    core.load('openpaperwork_core.log_collector')
-    core.init()
+    core.call_all(
+        "init_logs", "paperwork-gtk",
+        "info" if len(in_args) <= 0 else "warning"
+    )
 
     core.call_all(
         "config_load", "paperwork2", "paperwork-gtk", DEFAULT_GUI_PLUGINS
@@ -123,7 +124,7 @@ def main_main(in_args):
         core.call_one("mainloop_schedule", promise.schedule)
 
         LOGGER.info("Ready")
-        core.call_one("mainloop", halt_on_uncatched_exception=False)
+        core.call_one("mainloop", halt_on_uncaught_exception=False)
         LOGGER.info("Quitting")
         core.call_all("on_quit")
 

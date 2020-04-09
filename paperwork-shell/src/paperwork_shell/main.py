@@ -12,7 +12,6 @@ import paperwork_backend
 _ = gettext.gettext
 
 DEFAULT_SHELL_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
-    'openpaperwork_core.log_print',
     'openpaperwork_core.mainloop.asyncio',
     'paperwork_backend.guesswork.cropping.libpillowfight',
     'paperwork_shell.cmd.delete',
@@ -47,17 +46,13 @@ def main_main(in_args, application_name, default_plugins, interactive):
     # To load the plugins, we need first to load the configuration plugin
     # to get the list of plugins to load.
     # The configuration plugin may write traces using logging, so we better
-    # enable and configure the plugin log_print first.
+    # enable and configure the plugin logs.print first.
 
     core = openpaperwork_core.Core()
     for module_name in paperwork_backend.DEFAULT_CONFIG_PLUGINS:
         core.load(module_name)
     core.init()
-
-    core.load('openpaperwork_core.log_print')
-    core.init()
-    core.call_all("set_log_output", sys.stderr)
-    core.call_all("set_log_level", 'warning')
+    core.call_all("init_logs", application_name, "warning")
 
     core.call_all(
         "config_load", "paperwork2", application_name, default_plugins

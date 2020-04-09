@@ -4,23 +4,15 @@ Log management plugins
 Log management plugins catch Python logs (see `logging`), format them and
 send them somewhere.
 
+`uncaught_exception`
+---------------------
 
-`log_print`
------------
-
-Send the logs to a file descriptor. The default file descriptor is
-`sys.stderr`. Logging is configured through plugin callbacks.
-
-
-----
-
-.. automodule:: openpaperwork_core.log_print
-   :members:
-   :undoc-members:
+Broadcast uncaught exceptions (see `sys.excepthook`) by calling
+`self.core.call_all("on_uncaught_exception", exc_info)`.
 
 
-`log_collector`
----------------
+`logs.print`
+------------
 
 Send the logs to stderr, stdout or a file. It can send to many outputs at the
 same time.

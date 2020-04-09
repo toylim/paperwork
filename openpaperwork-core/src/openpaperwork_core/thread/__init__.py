@@ -27,7 +27,7 @@ class Task(object):
             self.func(*self.args, **self.kwargs)
         except Exception as exc:
             LOGGER.error(
-                "==== UNCATCHED EXCEPTION IN THREAD ===", exc_info=exc
+                "==== UNCAUGHT EXCEPTION IN THREAD ===", exc_info=exc
             )
         finally:
             self.core.call_all("mainloop_unref", self)

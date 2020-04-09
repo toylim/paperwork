@@ -4,17 +4,17 @@ import sys
 
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
+from gi.repository import Gtk  # noqa: E402
 
-import openpaperwork_core
-import paperwork_backend
-import paperwork_backend.docimport
-import paperwork_backend.model.workdir
-import paperwork_shell.main
+import openpaperwork_core  # noqa: E402
+import paperwork_backend  # noqa: E402
+import paperwork_backend.docimport  # noqa: E402
+import paperwork_backend.model.workdir  # noqa: E402
+import paperwork_shell.main  # noqa: E402
 
-from . import img
-from . import pdf
-from . import pdf_img
+from . import img  # noqa: E402
+from . import pdf  # noqa: E402
+from . import pdf_img  # noqa: E402
 
 
 DOC_GENERATORS = {
@@ -29,11 +29,7 @@ def get_core():
     for module_name in paperwork_backend.DEFAULT_CONFIG_PLUGINS:
         core.load(module_name)
     core.init()
-
-    core.load('openpaperwork_core.log_print')
-    core.call_all("set_log_output", sys.stderr)
-    core.call_all("set_log_level", 'debug')
-    core.init()
+    core.call_all("init_logs", "docgenerator", 'debug')
 
     core.call_all(
         "config_load", "paperwork2", "docgenerator",

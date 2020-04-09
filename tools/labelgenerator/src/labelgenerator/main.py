@@ -1,4 +1,3 @@
-import datetime
 import random
 import sys
 
@@ -15,11 +14,7 @@ def get_core():
     for module_name in paperwork_backend.DEFAULT_CONFIG_PLUGINS:
         core.load(module_name)
     core.init()
-
-    core.load('openpaperwork_core.log_print')
-    core.call_all("set_log_output", sys.stderr)
-    core.call_all("set_log_level", 'debug')
-    core.init()
+    core.call_all("init_logs", "docgenerator", 'debug')
 
     core.call_all(
         "config_load", "paperwork2", "labelgenerator",

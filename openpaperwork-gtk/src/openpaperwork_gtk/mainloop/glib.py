@@ -24,7 +24,7 @@ class Plugin(openpaperwork_core.PluginBase):
     """
     def __init__(self):
         super().__init__()
-        self.halt_on_uncatched_exception = True
+        self.halt_on_uncaught_exception = True
         self.loop = None
         self.loop_ident = None
         self.halt_cause = None
@@ -47,9 +47,9 @@ class Plugin(openpaperwork_core.PluginBase):
         if self.loop is None:
             self.loop = GLib.MainLoop.new(None, False)  # !running
 
-    def mainloop(self, halt_on_uncatched_exception=True):
+    def mainloop(self, halt_on_uncaught_exception=True):
         self._check_mainloop_instantiated()
-        self.halt_on_uncatched_exception = halt_on_uncatched_exception
+        self.halt_on_uncaught_exception = halt_on_uncaught_exception
 
         self.loop_ident = threading.current_thread().ident
 
@@ -142,16 +142,16 @@ class Plugin(openpaperwork_core.PluginBase):
             try:
                 func(*args, **kwargs)
             except Exception as exc:
-                if self.halt_on_uncatched_exception:
+                if self.halt_on_uncaught_exception:
                     LOGGER.error(
-                        "Main loop: Uncatched exception (%s) ! Quitting",
+                        "Main loop: uncaught exception (%s) ! Quitting",
                         func, exc_info=exc
                     )
                     self.halt_cause = exc
                     self.mainloop_quit_now()
                 else:
                     LOGGER.error(
-                        "Main loop: Uncatched exception (%s) !",
+                        "Main loop: uncaught exception (%s) !",
                         func, exc_info=exc
                     )
             finally:

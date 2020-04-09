@@ -131,7 +131,7 @@
 2016/12/04 - 1.0.6:
 - Diagnostic: Limit the number of lines kept in memory (avoid running out of
   memory in case of endless loop)
-- Diagnostic: Log all the uncatched exceptions
+- Diagnostic: Log all the uncaught exceptions
 - PDF import: When importing a big PDF, clearly show the progression of the
   import
 - Multiple document selection: Fix the way Ctrl/Shift keys are handled (bug

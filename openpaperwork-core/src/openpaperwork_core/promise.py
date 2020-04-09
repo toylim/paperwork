@@ -9,13 +9,13 @@ LOGGER = logging.getLogger(__name__)
 class BasePromise(object):
     def __init__(
                 self, core, func=None, args=None, kwargs=None, parent=None,
-                hide_catched_exceptions=False
+                hide_caught_exceptions=False
             ):
         # we allow dummy Promise with not function provided. It allows to
         # write cleaner code in some cases.
         self.core = core
         self.func = func
-        self.hide_catched_exceptions = hide_catched_exceptions
+        self.hide_caught_exceptions = hide_caught_exceptions
         if args is None:
             self.args = ()
         else:
@@ -61,20 +61,20 @@ class BasePromise(object):
 
     def on_error(self, exc):
         if len(self._catch) > 0:
-            if self.hide_catched_exceptions:
+            if self.hide_caught_exceptions:
                 trace = lambda *args, **kwargs: None  # NOQA: E731
             else:
                 trace = LOGGER.warning
-            catched = "catched"
+            caught = "caught"
         elif len(self._then) > 0:
             for t in self._then:
                 t.on_error(exc)
             return
         else:
             trace = LOGGER.error
-            catched = "uncatched"
+            caught = "uncaught"
 
-        trace("=== %s exception in promise ===", catched, exc_info=exc)
+        trace("=== %s exception in promise ===", caught, exc_info=exc)
         trace("promise.func=%s", self.func)
         trace("promise.args=%s", self.args)
         trace("promise.kwargs=%s", self.kwargs)

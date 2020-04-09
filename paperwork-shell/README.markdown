@@ -99,7 +99,7 @@ $ paperwork-cli config put workdir str file:///home/jflesch/tmp/papers
 workdir = file:///home/jflesch/tmp/papers
 
 $ paperwork-cli config list_plugins
-openpaperwork_core.log_print
+openpaperwork_core.logs.print
 openpaperwork_gtk.mainloop.glib
 openpaperwork_core.config
 paperwork_backend.beacon.stats

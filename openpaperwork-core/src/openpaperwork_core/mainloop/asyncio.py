@@ -15,7 +15,7 @@ class Plugin(openpaperwork_core.PluginBase):
     """
     def __init__(self):
         super().__init__()
-        self.halt_on_uncatched_exception = True
+        self.halt_on_uncaught_exception = True
         self.loop = None
         self.loop_ident = None
         self.halt_cause = None
@@ -31,7 +31,7 @@ class Plugin(openpaperwork_core.PluginBase):
             "mainloop",
         ]
 
-    def mainloop(self, halt_on_uncatched_exception=True):
+    def mainloop(self, halt_on_uncaught_exception=True):
         """
         Wait for callbacks to be scheduled and execute them.
 
@@ -39,7 +39,7 @@ class Plugin(openpaperwork_core.PluginBase):
         called.
         """
         self._check_mainloop_instantiated()
-        self.halt_on_uncatched_exception = halt_on_uncatched_exception
+        self.halt_on_uncaught_exception = halt_on_uncaught_exception
 
         self.mainloop_schedule(self.core.call_all, "on_mainloop_start")
 
@@ -124,16 +124,16 @@ class Plugin(openpaperwork_core.PluginBase):
             try:
                 func(*args, **kwargs)
             except Exception as exc:
-                if self.halt_on_uncatched_exception:
+                if self.halt_on_uncaught_exception:
                     LOGGER.error(
-                        "Main loop: Uncatched exception (%s) ! Quitting",
+                        "Main loop: Uncaught exception (%s) ! Quitting",
                         func, exc_info=exc
                     )
                     self.halt_cause = exc
                     self.mainloop_quit_now()
                 else:
                     LOGGER.error(
-                        "Main loop: Uncatched exception (%s) !",
+                        "Main loop: Uncaught exception (%s) !",
                         func, exc_info=exc
                     )
             finally:
