@@ -34,9 +34,9 @@ class LogHandler(logging.Handler):
 
         out_file_name = datetime.datetime.now().strftime(LOG_DATE_FORMAT)
         out_file_name += "_logs.txt"
-        out_file_path = os.path.join(self.logs_dir, out_file_name)
+        self.out_file_path = os.path.join(self.logs_dir, out_file_name)
         self.formatter = logging.Formatter(self.LOG_FORMAT)
-        self.out_fd = open(out_file_path, 'w')
+        self.out_fd = open(self.out_file_path, 'w')
 
     def emit(self, record):
         line = self.formatter.format(record) + "\n"
@@ -104,6 +104,8 @@ class Plugin(PluginBase):
 
         self.log_handler = LogHandler(logs_dir)
         logging.getLogger().addHandler(self.log_handler)
+
+        LOGGER.info("Archiving logs to %s", self.log_handler.out_file_path)
 
         self._delete_obsolete_logs(logs_dir)
 
