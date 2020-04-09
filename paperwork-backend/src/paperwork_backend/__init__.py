@@ -10,6 +10,9 @@ DEFAULT_CONFIG_PLUGINS = [
 DEFAULT_PLUGINS = [
     'openpaperwork_core.cmd.chkdeps',
     'openpaperwork_core.display.print',
+    'openpaperwork_core.external_apps.dbus',
+    'openpaperwork_core.external_apps.windows',
+    'openpaperwork_core.external_apps.xdg',
     'openpaperwork_core.fs.memory',
     'openpaperwork_core.i18n.python',
     'openpaperwork_core.perfcheck.log',
