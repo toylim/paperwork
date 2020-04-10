@@ -185,10 +185,6 @@ class Plugin(openpaperwork_core.PluginBase):
     def mainwindow_show_default(self, side: str):
         self.core.call_all("mainwindow_show", side, self.default[side][1])
 
-    def mainwindow_set_transient_for(self, dialog):
-        dialog.set_transient_for(self.mainwindow)
-        return True
-
     def app_actions_add(self, action):
         if self.mainwindow is not None:
             self.mainwindow.add_action(action)
