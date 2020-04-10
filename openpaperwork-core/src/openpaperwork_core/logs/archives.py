@@ -1,4 +1,5 @@
 import datetime
+import gettext
 import logging
 import os
 import os.path
@@ -9,6 +10,7 @@ from .. import PluginBase
 LOGGER = logging.getLogger(__name__)
 LOG_DATE_FORMAT = "%Y%m%d_%H%M_%S"
 MAX_DAYS = 31
+_ = gettext.gettext
 
 
 class LogLine(object):
@@ -70,7 +72,8 @@ class LogHandler(logging.Handler):
         with open(out_file_path, 'w') as fd:
             line = self.first_line
             while line is not None:
-                fd.write(line)
+                fd.write(line.line)
+                line = line.next
 
 
 class Plugin(PluginBase):
@@ -81,7 +84,10 @@ class Plugin(PluginBase):
         logging.getLogger().setLevel(logging.INFO)
 
     def get_interfaces(self):
-        return ['log_archiver']
+        return [
+            'bug_report_attachments',
+            'log_archiver',
+        ]
 
     def get_deps(self):
         return [
@@ -97,33 +103,55 @@ class Plugin(PluginBase):
         data_dir = os.getenv(
             "XDG_DATA_HOME", os.path.join(local_dir, "share")
         )
-        logs_dir = os.path.join(
+        self.logs_dir = os.path.join(
             data_dir, "openpaperwork", "logs"
         )
-        os.makedirs(logs_dir, exist_ok=True)
+        os.makedirs(self.logs_dir, exist_ok=True)
 
-        self.log_handler = LogHandler(logs_dir)
+        self.log_handler = LogHandler(self.logs_dir)
         logging.getLogger().addHandler(self.log_handler)
 
         LOGGER.info("Archiving logs to %s", self.log_handler.out_file_path)
 
-        self._delete_obsolete_logs(logs_dir)
+        self._delete_obsolete_logs()
 
-    def _delete_obsolete_logs(self, logs_dir):
-        now = datetime.datetime.now()
-
-        for f in os.listdir(logs_dir):
+    def _get_log_files(self):
+        for f in os.listdir(self.logs_dir):
             if not f.lower().endswith(".txt"):
                 continue
-            f = "_".join(f.split("_", 2)[:3])
-            date = datetime.datetime.strptime(f, LOG_DATE_FORMAT)
+            short_f = "_".join(f.split("_", 3)[:3])
+            try:
+                date = datetime.datetime.strptime(short_f, LOG_DATE_FORMAT)
+            except ValueError as exc:
+                LOGGER.warning("Unexpected filename: %s", f, exc_info=exc)
+                continue
+            yield (date, os.path.join(self.logs_dir, f))
 
+    def _delete_obsolete_logs(self):
+        now = datetime.datetime.now()
+        for (date, file_path) in self._get_log_files():
             if (now - date).days <= MAX_DAYS:
                 continue
-
-            filepath = os.path.join(logs_dir, f)
-            LOGGER.info("Deleting obsolete log file: %s", filepath)
-            os.unlink(filepath)
+            LOGGER.info("Deleting obsolete log file: %s", file_path)
+            os.unlink(file_path)
 
     def on_uncaught_exception(self, exc_info):
         self.log_handler.log_uncaught_exception()
+
+    def bug_report_get_attachments(self, inputs: dict):
+        for (date, file_path) in self._get_log_files():
+            file_url = "file://" + file_path
+            inputs[file_url] = {
+                'date': date,
+                'file_type': _("Log file"),
+                'file_url': file_url,
+                'file_size': os.stat(file_path).st_size
+            }
+
+        file_url = "file://" + self.log_handler.out_file_path
+        inputs[file_url] = {
+            'date': None,  # now
+            'file_type': _("Log file"),
+            'file_url': file_url,
+            'file_size': os.stat(file_path).st_size
+        }
