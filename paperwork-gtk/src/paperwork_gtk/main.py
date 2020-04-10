@@ -15,9 +15,12 @@ LOGGER = logging.getLogger(__name__)
 DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'openpaperwork_core.resources.setuptools',
     'openpaperwork_core.spatial.rtree',
+    'openpaperwork_gtk.bug_report',
+    'openpaperwork_gtk.bug_report.zip',
     'openpaperwork_gtk.pixbuf.pillow',
     'openpaperwork_gtk.resources',
     'paperwork_backend.guesswork.cropping.calibration',
+    'paperwork_gtk.actions.app_open_bug_report',
     'paperwork_gtk.actions.doc_delete',
     'paperwork_gtk.actions.doc_export',
     'paperwork_gtk.actions.doc_open_external',

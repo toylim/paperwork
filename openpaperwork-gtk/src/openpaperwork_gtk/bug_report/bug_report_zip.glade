@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.22.1 -->
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+  <object class="GtkFileFilter" id="filefilterZip">
+    <mime-types>
+      <mime-type>application/zip</mime-type>
+    </mime-types>
+  </object>
+  <object class="GtkFrame" id="bug_report_zip_page">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="label_xalign">0</property>
+    <property name="shadow_type">none</property>
+    <child>
+      <object class="GtkAlignment">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="left_padding">12</property>
+        <child>
+          <object class="GtkFileChooserWidget" id="bug_report_zip_filechooser">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="action">save</property>
+            <property name="filter">filefilterZip</property>
+            <property name="preview_widget_active">False</property>
+            <property name="use_preview_label">False</property>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child type="label">
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="margin_bottom">10</property>
+        <property name="label" translatable="yes">Please select where to save the ZIP file</property>
+        <attributes>
+          <attribute name="weight" value="bold"/>
+          <attribute name="size" value="12000"/>
+        </attributes>
+      </object>
+    </child>
+  </object>
+</interface>
