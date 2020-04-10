@@ -51,6 +51,7 @@ A bunch of plugins for Paperwork related to GLib and GTK.
     author_email="jflesch@openpaper.work",
     packages=find_packages('src'),
     package_dir={'': 'src'},
+    include_package_data=True,
     zip_safe=True,
     install_requires=[]
 )
