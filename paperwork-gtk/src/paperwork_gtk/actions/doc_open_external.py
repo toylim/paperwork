@@ -45,7 +45,11 @@ class Plugin(openpaperwork_core.PluginBase):
             },
             {
                 'interface': 'external_apps',
-                'defaults': ['openpaperwork_core.external_apps'],
+                'defaults': [
+                    'openpaperwork_core.external_apps.dbus',
+                    'openpaperwork_core.external_apps.windows',
+                    'openpaperwork_core.external_apps.xdg',
+                ],
             },
             {
                 'interface': 'gtk_doclist',
