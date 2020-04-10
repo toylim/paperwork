@@ -43,8 +43,6 @@ class _LogHandler(logging.Handler):
     def emit(self, record):
         if record.levelno < self.log_level:
             return
-        if self.formatter is None:
-            return
         line = self.formatter.format(record)
         for fd in self.out_fds:
             fd.write(line + "\n")
@@ -130,7 +128,7 @@ class Plugin(PluginBase):
         for fd in self.log_handler.out_fds:
             if fd != sys.stdout and fd != sys.stderr and fd != g_tmp_file:
                 fd.close()
-        self.log_handler.out_fds = {}
+        self.log_handler.out_fds = set()
 
     def _enable_logging(self):
         self.log_handler.out_fds = set()
