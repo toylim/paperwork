@@ -33,6 +33,9 @@ class Plugin(PluginBase):
         # make sure we don't loop
         sys.excepthook = self.original_hook
         try:
-            self.core.call_all("on_uncaught_exception", exc_info)
+            nb = self.core.call_all("on_uncaught_exception", exc_info)
+            if nb <= 0:
+                # no log handler yet --> switch back to default
+                self.original_hook(*exc_info)
         finally:
             sys.excepthook = self._on_uncaught_exception
