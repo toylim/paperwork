@@ -152,6 +152,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def _cmd_show(self):
         opts = self.core.call_success("config_list_options")
         out = {}
+        opts.sort()
         for opt in opts:
             out[opt] = self.core.call_success("config_get", opt)
             if self.interactive:
