@@ -26,7 +26,7 @@ class Plugin(PluginBase):
     def _on_uncaught_exception(self, exc_type, exc_value, exc_tb):
         exc_info = (exc_type, exc_value, exc_tb)
         self.core.call_success(
-            "mainloop_schedule", self._broadcast_exception, exc_info
+            "mainloop_execute", self._broadcast_exception, exc_info
         )
 
     def _broadcast_exception(self, exc_info):
