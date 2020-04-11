@@ -5,18 +5,21 @@ https://openpaper.work/
 import http
 import http.client
 import json
+import logging
 import urllib
 
 from . import PluginBase
 from . import promise
 
 
+LOGGER = logging.getLogger(__name__)
 DEFAULT_SERVER = "openpaper.work"
 DEFAULT_PROTOCOL = "https"
 
 
 class JsonHttp(object):
     def __init__(self, core, module_name):
+        self.core = core
         self.user_agent = "{} {}".format(
             core.call_success("app_get_name"),
             core.call_success("app_get_version")
@@ -38,19 +41,28 @@ class JsonHttp(object):
         for (k, setting) in settings.items():
             core.call_all("config_register", k, setting)
 
+    def _convert(self, data):
+        if isinstance(data, bytes):
+            return data
+        if isinstance(data, str):
+            return data
+        return json.dumps(data)
+
     def _request(self, data, protocol, server, path):
         if protocol == "http":
             h = http.client.HTTPConnection(host=server)
         else:
             h = http.client.HTTPSConnection(host=server)
 
-        if data is None or data == "":
+        if data is None or (isinstance(data, str) and data == ""):
+            LOGGER.info("Sending GET %s/%s", server, path)
             h.request('GET', url=path, headers={'User-Agent': self.user_agent})
         else:
             body = urllib.parse.urlencode({
-                k: json.dumps(v)
+                k: self._convert(v)
                 for (k, v) in data.items()
             })
+            LOGGER.info("Sending POST %s/%s (%s)", server, path, body)
             h.request(
                 'POST', url=path, headers={
                     "Content-type": "application/x-www-form-urlencoded",
@@ -61,6 +73,7 @@ class JsonHttp(object):
             )
         r = h.getresponse()
         reply = r.read().decode('utf-8')
+        LOGGER.info("Got HTTP %s: %s - %s", r.status, r, reply)
         if r.status != http.client.OK:
             raise ConnectionError("HTTP {}: {} - {}".format(
                 r.status, r, reply
@@ -69,16 +82,16 @@ class JsonHttp(object):
             return reply
         return json.loads(reply)
 
-    def get_request_promise(self, core, path):
-        protocol = core.call_success(
+    def get_request_promise(self, path):
+        protocol = self.core.call_success(
             "config_get", self.config_section_name + "_protocol"
         )
-        server = core.call_success(
+        server = self.core.call_success(
             "config_get", self.config_section_name + "_server"
         )
 
         return promise.ThreadedPromise(
-            core, self._request, args=(protocol, server, path)
+            self.core, self._request, args=(protocol, server, path)
         )
 
 

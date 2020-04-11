@@ -97,9 +97,7 @@ class Plugin(openpaperwork_core.PluginBase):
         promise = openpaperwork_core.promise.ThreadedPromise(
             self.core, self._collect_stats, args=(node_uuid,)
         )
-        promise = promise.then(
-            self.http.get_request_promise(self.core, POST_STATS_PATH)
-        )
+        promise = promise.then(self.http.get_request_promise(POST_STATS_PATH))
 
         def on_request_done():
             LOGGER.info("Statistics posted")

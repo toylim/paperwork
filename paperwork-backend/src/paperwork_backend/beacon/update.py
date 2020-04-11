@@ -78,9 +78,7 @@ class Plugin(openpaperwork_core.PluginBase):
             self.update_compare()
 
         promise = openpaperwork_core.promise.Promise(self.core, lambda: "")
-        promise = promise.then(self.http.get_request_promise(
-            self.core, UPDATE_PATH
-        ))
+        promise = promise.then(self.http.get_request_promise(UPDATE_PATH))
         promise = promise.then(on_success, self.core)
         promise.schedule()
 
