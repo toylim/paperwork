@@ -18,13 +18,14 @@ class Task(object):
         self.active = True
         self.created_by = traceback.extract_stack()
 
-    def _on_error(self, exc):
-        LOGGER.error("=== Promise was queued by ===")
-        for (idx, stack_el) in enumerate(self.created_by):
-            LOGGER.error(
-                "%2d: %20s: L%5d: %s",
-                idx, stack_el[0], stack_el[1], stack_el[2]
-            )
+    def _on_error(self, exc, hide_error):
+        if not hide_error:
+            LOGGER.error("=== Promise was queued by ===")
+            for (idx, stack_el) in enumerate(self.created_by):
+                LOGGER.error(
+                    "%2d: %20s: L%5d: %s",
+                    idx, stack_el[0], stack_el[1], stack_el[2]
+                )
         self.work_queue._run_next_promise_locked()
         raise exc
 
@@ -41,7 +42,7 @@ class Task(object):
 
 
 class WorkQueue(object):
-    def __init__(self, name, stop_on_quit):
+    def __init__(self, name, stop_on_quit, hide_uncatched):
         self.insert_number = 0
 
         self.name = name
@@ -50,6 +51,7 @@ class WorkQueue(object):
         self.all_tasks = {}
         self.running = False
         self.stop_on_quit = stop_on_quit
+        self.hide_uncatched = hide_uncatched
 
     def add_promise(self, promise, priority=0):
         self.insert_number += 1
@@ -81,7 +83,7 @@ class WorkQueue(object):
             return
 
         promise = task.promise.then(self._run_next_promise_locked)
-        promise.catch(task._on_error)
+        promise.catch(task._on_error, self.hide_uncatched)
         promise.schedule()
 
     def _run_next_promise_locked(self, *args, **kwargs):
@@ -120,12 +122,15 @@ class Plugin(PluginBase):
             },
         ]
 
-    def work_queue_create(self, queue_name, stop_on_quit=False):
+    def work_queue_create(
+            self, queue_name, stop_on_quit=False, hide_uncatched=False):
         LOGGER.debug(
             "Creating work queue [%s] (stop_on_quit=%s)",
             queue_name, stop_on_quit
         )
-        self.queues[queue_name] = WorkQueue(queue_name, stop_on_quit)
+        self.queues[queue_name] = WorkQueue(
+            queue_name, stop_on_quit, hide_uncatched
+        )
         return True
 
     def work_queue_add_promise(self, queue_name, promise, priority=0):

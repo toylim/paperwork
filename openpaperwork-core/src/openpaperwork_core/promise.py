@@ -59,16 +59,19 @@ class BasePromise(object):
         self._catch.append((callback, args, kwargs))
         return self
 
-    def on_error(self, exc):
+    def on_error(self, exc, hide_caught_exceptions=False):
+        hide_caught_exceptions = (
+            hide_caught_exceptions or self.hide_caught_exceptions
+        )
         if len(self._catch) > 0:
-            if self.hide_caught_exceptions:
+            if hide_caught_exceptions:
                 trace = lambda *args, **kwargs: None  # NOQA: E731
             else:
                 trace = LOGGER.warning
             caught = "caught"
         elif len(self._then) > 0:
             for t in self._then:
-                t.on_error(exc)
+                t.on_error(exc, hide_caught_exceptions)
             return
         else:
             trace = LOGGER.error

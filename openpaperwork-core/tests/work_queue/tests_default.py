@@ -57,6 +57,8 @@ class TestQueue(unittest.TestCase):
         self.assertTrue(self.task_b_done)
 
     def test_uncaught(self):
+        # make sure the work queue doesn't stop if an exception is raised
+        # by one of the task/promise.
         self.task_a_done = False
         self.task_b_done = False
 
@@ -71,10 +73,15 @@ class TestQueue(unittest.TestCase):
             self.assertFalse(self.task_b_done)
             self.task_b_done = True
 
-        self.core.call_all("work_queue_create", "some_work_queue")
+        self.core.call_all(
+            "work_queue_create", "some_work_queue", hide_uncatched=True
+        )
         self.core.call_one(
             "work_queue_add_promise", "some_work_queue",
-            openpaperwork_core.promise.Promise(self.core, do_task_a)
+            openpaperwork_core.promise.Promise(
+                self.core, do_task_a,
+                hide_caught_exceptions=True
+            )
         )
         self.core.call_one(
             "work_queue_add_promise", "some_work_queue",
@@ -82,7 +89,9 @@ class TestQueue(unittest.TestCase):
         )
 
         self.core.call_all("mainloop_quit_graceful")
-        self.core.call_one("mainloop", halt_on_uncaught_exception=False)
+        self.core.call_one(
+            "mainloop", halt_on_uncaught_exception=False, log_uncaught=False
+        )
 
         self.assertTrue(self.task_a_done)
         self.assertTrue(self.task_b_done)
