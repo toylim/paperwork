@@ -10,6 +10,7 @@ try:
     GTK_AVAILABLE = True
 except (ImportError, ValueError):
     GTK_AVAILABLE = False
+
 import openpaperwork_core
 
 from .. import deps
@@ -25,6 +26,8 @@ class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
         self.widget_tree = None
+        self.file_urls = []
+        self.apply_handler_id = None
 
     def get_interfaces(self):
         return [
@@ -64,7 +67,7 @@ class Plugin(openpaperwork_core.PluginBase):
                     ) % url
                 ).strip()
             ),
-            self._enable_zip, self._disable_zip, self._make_zip,
+            self._enable_zip, self._disable_zip,
             *args
         )
 
@@ -76,10 +79,11 @@ class Plugin(openpaperwork_core.PluginBase):
 
         assistant = bug_report_widget_tree.get_object("bug_report_dialog")
         page = self.widget_tree.get_object("bug_report_zip_page")
-        self.page_idx = assistant.append_page(page)
+        assistant.append_page(page)
         assistant.set_page_complete(page, False)
         assistant.set_page_title(page, _("Saving"))
         assistant.set_page_type(page, Gtk.AssistantPageType.CONFIRM)
+        self.apply_handler_id = assistant.connect("apply", self._make_zip)
 
         filechooser = self.widget_tree.get_object("bug_report_zip_filechooser")
         filechooser.connect(
@@ -92,12 +96,17 @@ class Plugin(openpaperwork_core.PluginBase):
     def _disable_zip(self, bug_report_widget_tree):
         if self.widget_tree is None:
             return
-        self.widget_tree = None
         assistant = bug_report_widget_tree.get_object("bug_report_dialog")
         page = self.widget_tree.get_object("bug_report_zip_page")
         assistant.remove(page)
+        assistant.disconnect(self.apply_handler_id)
+        self.widget_tree = None
 
-    def _make_zip(self, in_file_urls):
+    def bug_report_set_file_urls_to_send(self, file_urls):
+        self.file_urls = file_urls
+
+    def _make_zip(self, assistant):
+        in_file_urls = self.file_urls
         out_file_url = self.widget_tree.get_object(
             "bug_report_zip_filechooser"
         ).get_uri()

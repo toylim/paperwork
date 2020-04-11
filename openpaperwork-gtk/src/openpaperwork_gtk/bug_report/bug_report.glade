@@ -87,7 +87,6 @@
                             <child>
                               <object class="GtkCellRendererToggle" id="bug_report_toggle_renderer"/>
                               <attributes>
-                                <attribute name="yalign">2</attribute>
                                 <attribute name="active">0</attribute>
                               </attributes>
                             </child>

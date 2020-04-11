@@ -17,7 +17,7 @@ class Plugin(openpaperwork_core.PluginBase):
         super().__init__()
         self.url_selected = None
         self.method_radio = None
-        self.method_apply_callbacks = {}
+        self.method_set_file_urls_callbacks = {}
 
     def get_interfaces(self):
         return ['gtk_bug_report_dialog']
@@ -62,15 +62,29 @@ class Plugin(openpaperwork_core.PluginBase):
             date = datetime.datetime.now()
         return int(date.timestamp())
 
+    def _refresh_attachment_page_complete(self, widget_tree):
+        # check we have at least one entry toggled
+        model = widget_tree.get_object("bug_report_model")
+        assistant = widget_tree.get_object("bug_report_dialog")
+        page = widget_tree.get_object("bug_report_attachment_selector")
+        for row in model:
+            if row[0]:
+                break
+        else:
+            assistant.set_page_complete(page, False)
+            return
+        assistant.set_page_complete(page, True)
+
     def open_bug_report(self, parent_window):
         self.method_radio = None
-        self.method_apply_callbacks = {}
         self.url_selected = None
 
         widget_tree = self.core.call_success(
             "gtk_load_widget_tree",
             "openpaperwork_gtk.bug_report", "bug_report.glade"
         )
+        dialog = widget_tree.get_object("bug_report_dialog")
+
         self.core.call_all("bug_report_complete", widget_tree)
 
         widget_tree.get_object("bug_report_toggle_renderer").connect(
@@ -100,7 +114,7 @@ class Plugin(openpaperwork_core.PluginBase):
         for i in inputs:
             model.append(
                 [
-                    False,  # not selected
+                    i['include_by_default'],
                     self._format_timestamp(i['date']),
                     self._format_date(i['date']),
                     i['file_type'],
@@ -112,14 +126,14 @@ class Plugin(openpaperwork_core.PluginBase):
                 ]
             )
 
-        dialog = widget_tree.get_object("bug_report_dialog")
         dialog.set_transient_for(parent_window)
         dialog.connect("close", self._on_close)
         dialog.connect("cancel", self._on_close)
-        dialog.connect("apply", self._on_apply, widget_tree)
+        dialog.connect("prepare", self._on_prepare, widget_tree)
 
         dialog.set_visible(True)
         self.core.call_all("on_gtk_window_opened", dialog)
+        self._refresh_attachment_page_complete(widget_tree)
 
     def _on_attachment_toggle(self, cell_renderer, row_path, widget_tree):
         model = widget_tree.get_object("bug_report_model")
@@ -136,21 +150,12 @@ class Plugin(openpaperwork_core.PluginBase):
                 model[row_path][-1], widget_tree
             )
 
-        # check we have at least one entry toggled
-        assistant = widget_tree.get_object("bug_report_dialog")
-        page = widget_tree.get_object("bug_report_attachment_selector")
-        for row in model:
-            if row[0]:
-                break
-        else:
-            assistant.set_page_complete(page, False)
-            return
-        assistant.set_page_complete(page, True)
+        self._refresh_attachment_page_complete(widget_tree)
 
     def _on_row_selected(self, treeview, row_path, column, widget_tree):
         model = widget_tree.get_object("bug_report_model")
         button = widget_tree.get_object("bug_report_open_file")
-        self.url_selected = model[row_path][3]
+        self.url_selected = model[row_path][4]
         button.set_sensitive("://" in self.url_selected)
 
     def _open_selected(self, button):
@@ -182,7 +187,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def bug_report_add_method(
             self, title, description,
-            enable_callback, disable_callback, apply_callback,
+            enable_callback, disable_callback,
             widget_tree):
         widget_tree_method = self.core.call_success(
             "gtk_load_widget_tree",
@@ -202,15 +207,15 @@ class Plugin(openpaperwork_core.PluginBase):
 
         radio = widget_tree_method.get_object("bug_report_method_radio")
         radio.connect(
-            "toggled", self._on_method_toggled, widget_tree,
-            enable_callback, disable_callback
+            "toggled", self._on_method_toggled,
+            widget_tree, enable_callback, disable_callback
         )
         if self.method_radio is None:
             self.method_radio = radio
+            enable_callback(widget_tree)
         else:
             radio.join_group(self.method_radio)
         self.method_radio.set_active(True)
-        self.method_apply_callbacks[radio] = apply_callback
 
     def _on_method_toggled(
             self, radio, widget_tree, enable_callback, disable_callback):
@@ -219,20 +224,10 @@ class Plugin(openpaperwork_core.PluginBase):
         else:
             disable_callback(widget_tree)
 
-    def bug_report_add_page(self, widget_tree, title, widget):
-        return widget_tree.get_object("bug_report_dialog").append_page(widget)
+    def _on_prepare(self, assistant, page, widget_tree):
+        self._set_file_urls(widget_tree)
 
-    def bug_report_remove_page(self, widget_tree, page_idx):
-        widget_tree.get_object("bug_report_dialog").remove_page(page_idx)
-
-    def _on_apply(self, assistant, widget_tree):
-        apply_cb = None
-        for radio in self.method_radio.get_group():
-            if radio.get_active():
-                apply_cb = self.method_apply_callbacks[radio]
-                break
-
+    def _set_file_urls(self, widget_tree):
         model = widget_tree.get_object("bug_report_model")
         file_urls = [row[4] for row in model if row[0]]
-        LOGGER.info("Applying: %s", apply_cb)
-        apply_cb(file_urls)
+        self.core.call_all("bug_report_set_file_urls_to_send", file_urls)

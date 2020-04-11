@@ -16,6 +16,7 @@ DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'openpaperwork_core.resources.setuptools',
     'openpaperwork_core.spatial.rtree',
     'openpaperwork_gtk.bug_report',
+    'openpaperwork_gtk.bug_report.http',
     'openpaperwork_gtk.bug_report.zip',
     'openpaperwork_gtk.pixbuf.pillow',
     'openpaperwork_gtk.resources',

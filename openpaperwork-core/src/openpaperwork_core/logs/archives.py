@@ -143,6 +143,7 @@ class Plugin(PluginBase):
             file_url = "file://" + file_path
             inputs[file_url] = {
                 'date': date,
+                'include_by_default': False,
                 'file_type': _("Log file"),
                 'file_url': file_url,
                 'file_size': os.stat(file_path).st_size
@@ -151,6 +152,7 @@ class Plugin(PluginBase):
         file_url = "file://" + self.log_handler.out_file_path
         inputs[file_url] = {
             'date': None,  # now
+            'include_by_default': True,
             'file_type': _("Log file"),
             'file_url': file_url,
             'file_size': os.stat(file_path).st_size
