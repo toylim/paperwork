@@ -5,10 +5,7 @@ import os
 import openpaperwork_core
 import openpaperwork_core.promise
 
-from . import (
-    OpenpaperHttp,
-    PeriodicTask
-)
+from . import PeriodicTask
 from .. import _version
 
 
@@ -21,15 +18,9 @@ UPDATE_PATH = "/beacon/latest"
 
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
-        self.periodic = PeriodicTask(
-            "update",
-            datetime.timedelta(days=7),
-            self.update_check,
-            self.update_compare
-        )
-        self.http = OpenpaperHttp(
-            "update", "https", "openpaper.work", "/beacon/latest"
-        )
+        super().__init__()
+        self.periodic = None
+        self.http = None
 
     def get_interfaces(self):
         return ["update_detection"]
@@ -39,6 +30,10 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'config',
                 'defaults': ['openpaperwork_core.config'],
+            },
+            {
+                'interface': 'http_json',
+                'defaults': ['openpaperwork_core.http'],
             },
             {
                 'interface': 'mainloop',
@@ -83,7 +78,9 @@ class Plugin(openpaperwork_core.PluginBase):
             self.update_compare()
 
         promise = openpaperwork_core.promise.Promise(self.core, lambda: "")
-        promise = promise.then(self.http.get_request_promise(self.core))
+        promise = promise.then(self.http.get_request_promise(
+            self.core, UPDATE_PATH
+        ))
         promise = promise.then(on_success, self.core)
         promise.schedule()
 
@@ -102,9 +99,15 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def init(self, core):
         super().init(core)
+        self.periodic = PeriodicTask(
+            "update",
+            datetime.timedelta(days=7),
+            self.update_check,
+            self.update_compare
+        )
+        self.http = self.core.call_success("http_json_get_client", "update")
         self._register_config(core)
         self.periodic.register_config(core)
-        self.http.register_config(core)
 
         if self.core.call_success("config_get", "check_for_update"):
             self.periodic.do(core)
