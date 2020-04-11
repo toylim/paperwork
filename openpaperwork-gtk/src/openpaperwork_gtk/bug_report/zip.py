@@ -1,5 +1,6 @@
 import gettext
 import logging
+import re
 import zipfile
 
 try:
@@ -48,10 +49,21 @@ class Plugin(openpaperwork_core.PluginBase):
             out['gtk'].update(deps.GTK)
 
     def bug_report_complete(self, *args):
+        url = "https://gitlab.gnome.org/World/OpenPaperwork/paperwork/issues"
         self.core.call_all(
             "bug_report_add_method",
             _("ZIP file"),
-            _("Build a ZIP file containing all the attachments"),
+            re.sub(
+                '[ \t]+', ' ',
+                (
+                    _(
+                        "Build a ZIP file containing all the attachments.\n"
+                        " If you want, you can then submit a bug report"
+                        ' manually on <a href="%s">Paperwork\'s bug'
+                        " tracker</a> and attach this ZIP file to the ticket."
+                    ) % url
+                ).strip()
+            ),
             self._enable_zip, self._disable_zip, self._make_zip,
             *args
         )

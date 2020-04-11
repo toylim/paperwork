@@ -93,7 +93,10 @@ class Plugin(openpaperwork_core.PluginBase):
             v['id'] = k
             v['sort_date'] = v['date'] if v['date'] is not None else now
         inputs = list(inputs.values())
-        inputs.sort(key=lambda i: i['sort_date'], reverse=True)
+        inputs.sort(
+            key=lambda i: (i['sort_date'], i['file_type'], i['file_url']),
+            reverse=True
+        )
         for i in inputs:
             model.append(
                 [
@@ -190,14 +193,14 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         widget_tree_method.get_object(
             "bug_report_method_description"
-        ).set_text(description)
+        ).set_markup(description)
 
         widget_tree.get_object("bug_report_methods").pack_start(
             widget_tree_method.get_object("bug_report_method"),
             expand=False, fill=False, padding=20
         )
 
-        radio = widget_tree_method.get_object("bug_report_method")
+        radio = widget_tree_method.get_object("bug_report_method_radio")
         radio.connect(
             "toggled", self._on_method_toggled, widget_tree,
             enable_callback, disable_callback

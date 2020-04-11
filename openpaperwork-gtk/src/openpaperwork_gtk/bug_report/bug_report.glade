@@ -41,7 +41,7 @@
   <object class="GtkAssistant" id="bug_report_dialog">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes" context="Title of the bug report dialog." comments="Feel free to put the translation for &quot;Bug report&quot; instead.">Bug Spray</property>
-    <property name="default_width">950</property>
+    <property name="default_width">850</property>
     <property name="default_height">520</property>
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">dialog</property>
