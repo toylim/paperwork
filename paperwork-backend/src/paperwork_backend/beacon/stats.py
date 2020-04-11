@@ -99,8 +99,8 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         promise = promise.then(self.http.get_request_promise(POST_STATS_PATH))
 
-        def on_request_done():
-            LOGGER.info("Statistics posted")
+        def on_request_done(reply):
+            LOGGER.info("Statistics posted. Reply: {}".format(reply))
             self.core.call_all('on_stats_sent')
 
         promise = promise.then(on_request_done)
