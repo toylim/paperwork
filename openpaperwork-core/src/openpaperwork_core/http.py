@@ -62,7 +62,7 @@ class JsonHttp(object):
                 k: self._convert(v)
                 for (k, v) in data.items()
             })
-            LOGGER.info("Sending POST %s/%s (%s)", server, path, body)
+            LOGGER.info("Sending POST %s/%s", server, path)
             h.request(
                 'POST', url=path, headers={
                     "Content-type": "application/x-www-form-urlencoded",
