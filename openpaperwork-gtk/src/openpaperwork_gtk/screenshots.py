@@ -150,17 +150,17 @@ class Plugin(openpaperwork_core.PluginBase):
             'file_size': 0,
         }
 
+    def _update_attachment(self, file_url, *args):
+        self.core.call_all(
+            "bug_report_update_attachment", "screenshot_now", {
+                "file_url": file_url,
+                "file_size": self.core.call_success("fs_getsize", file_url),
+            }, *args
+        )
+
     def on_bug_report_attachment_selected(self, attachment_id, *args):
         if attachment_id != 'screenshot_now':
             return
         (file_url, promise) = self.screenshot_snap_all_promise(temporary=True)
-        promise = promise.then(
-            self.core.call_all,
-            "bug_report_update_attachment", attachment_id, {
-                "file_url": file_url,
-                "file_size": self.core.call_success(
-                    "fs_getsize", file_url
-                ),
-            }, *args
-        )
+        promise = promise.then(self._update_attachment, file_url, *args)
         promise.schedule()
