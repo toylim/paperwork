@@ -41,7 +41,7 @@ class Sender(object):
         if self.current_step == 0:
             txt = _("Creating bug report ...")
         else:
-            txt = _("Sending attachment ...")
+            txt = _("Sending bug report attachment ...")
         self.core.call_all(
             "on_progress", "bug_report_http",
             self.current_step / self.nb_steps, txt
