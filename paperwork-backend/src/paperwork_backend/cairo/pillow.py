@@ -9,9 +9,6 @@ import openpaperwork_core.promise
 CAIRO_AVAILABLE = False
 GDK_AVAILABLE = False
 
-DELAY_SHORT = 0.01
-DELAY_LONG = 0.3
-
 try:
     import gi
     GI_AVAILABLE = True
@@ -45,8 +42,10 @@ if GI_AVAILABLE:
                 pass
 
 
+DELAY_SHORT = 0.01
+DELAY_LONG = 0.3
 LOGGER = logging.getLogger(__name__)
-BLUR_FACTOR = 6
+BLUR_FACTOR = 8
 
 
 class ImgSurface(object):

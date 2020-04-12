@@ -47,7 +47,7 @@ if GI_AVAILABLE:
 LOGGER = logging.getLogger(__name__)
 DELAY = 0.01
 POPPLER_DOCS = {}
-BLUR_FACTOR = 6
+BLUR_FACTOR = 8
 
 
 class ImgSurface(object):
