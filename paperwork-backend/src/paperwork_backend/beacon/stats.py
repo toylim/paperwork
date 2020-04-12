@@ -121,7 +121,7 @@ class Plugin(openpaperwork_core.PluginBase):
         out['stats'] = {
             'include_by_default': True,
             'date': None,
-            'file_type': _("App & system info."),
+            'file_type': _("App. & system info."),
             'file_url': _("Select to generate"),
             'file_size': 0,
         }
@@ -131,7 +131,8 @@ class Plugin(openpaperwork_core.PluginBase):
             stats, indent=4, separators=(",", ": "), sort_keys=True
         )
         (file_url, fd) = self.core.call_success(
-            "fs_mktemp", prefix="statistics_", suffix=".txt", mode="w"
+            "fs_mktemp", prefix="statistics_", suffix=".txt", mode="w",
+            on_disk=True
         )
         with fd:
             fd.write(stats)
