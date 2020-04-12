@@ -109,17 +109,20 @@ class Plugin(openpaperwork_core.PluginBase):
         now = datetime.datetime.now()
         for (k, v) in inputs.items():
             v['id'] = k
-            v['sort_date'] = v['date'] if v['date'] is not None else now
+            v['sort_date'] = (
+                v['date'].timestamp()
+                if v['date'] is not None
+                else now.timestamp()
+            )
         inputs = list(inputs.values())
         inputs.sort(
-            key=lambda i: (i['sort_date'], i['file_type'], i['file_url']),
-            reverse=True
+            key=lambda i: (-i['sort_date'], i['file_type'], i['file_url']),
         )
         for i in inputs:
             model.append(
                 [
                     i['include_by_default'],
-                    self._format_timestamp(i['date']),
+                    i['sort_date'],
                     self._format_date(i['date']),
                     i['file_type'],
                     i['file_url'],
