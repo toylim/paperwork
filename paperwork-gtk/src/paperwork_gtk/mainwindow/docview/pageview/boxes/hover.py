@@ -67,8 +67,8 @@ class PageHoverHandler(object):
         if len(actives) > 1:
             # will sort smaller areas last
             actives = [
-                (abs((a[0][1][0] - a[0][0][0]) * (a[0][1][1] - a[0][0][1])), a)
-                for a in actives
+                (abs((p[1][0] - p[0][0]) * (p[1][1] - p[0][1])), b)
+                for (p, b) in actives
             ]
             actives.sort(reverse=True)
 
