@@ -47,6 +47,7 @@ if GI_AVAILABLE:
 LOGGER = logging.getLogger(__name__)
 DELAY = 0.01
 POPPLER_DOCS = {}
+BLUR_FACTOR = 6
 
 
 class ImgSurface(object):
@@ -71,6 +72,7 @@ class CairoRenderer(GObject.GObject):
         self.file_url = file_url
         self.page_idx = page_idx
         self.visible = False
+        self.blurry = False
         self.size = (0, 0)
         self.zoom = 1.0
 
@@ -150,22 +152,11 @@ class CairoRenderer(GObject.GObject):
         LOGGER.info("Closing PDF file {}".format(self.file_url))
         POPPLER_DOCS.pop(self.file_url)
 
-    def draw(self, cairo_ctx):
-        if not self.visible or self.page is None or self.size[0] == 0:
-            return
-
-        task = "pdf_to_cairo_draw({}, p{})".format(
-            self.file_url, self.page_idx
-        )
-        self.core.call_all("on_perfcheck_start", task)
-
+    def _draw(self, cairo_ctx, zoom):
         cairo_ctx.save()
         try:
             cairo_ctx.set_source_rgb(1.0, 1.0, 1.0)
-            cairo_ctx.scale(
-                self.zoom,
-                self.zoom,
-            )
+            cairo_ctx.scale(zoom, zoom)
             cairo_ctx.rectangle(0, 0, self.size[0], self.size[1])
             cairo_ctx.scale(
                 paperwork_backend.model.pdf.PDF_RENDER_FACTOR,
@@ -178,7 +169,41 @@ class CairoRenderer(GObject.GObject):
         finally:
             cairo_ctx.restore()
 
+    def draw(self, cairo_ctx):
+        if not self.visible or self.page is None or self.size[0] == 0:
+            return
+
+        task = "pdf_to_cairo_draw({}, p{})".format(
+            self.file_url, self.page_idx
+        )
+        self.core.call_all("on_perfcheck_start", task)
+        if not self.blurry:
+            self._draw(cairo_ctx, self.zoom)
+        else:
+            zoom = self.zoom / BLUR_FACTOR
+            reduced_surface = ImgSurface(cairo.ImageSurface(
+                cairo.FORMAT_ARGB32,
+                int(self.size[0] * zoom),
+                int(self.size[1] * zoom)
+            ))
+            ctx = cairo.Context(reduced_surface.surface)
+            self._draw(ctx, zoom)
+
+            cairo_ctx.save()
+            try:
+                cairo_ctx.scale(BLUR_FACTOR, BLUR_FACTOR)
+                cairo_ctx.set_source_surface(reduced_surface.surface)
+                cairo_ctx.paint()
+            finally:
+                cairo_ctx.save()
+
         self.core.call_all("on_perfcheck_stop", task, size=self.size)
+
+    def blur(self):
+        self.blurry = True
+
+    def unblur(self):
+        self.blurry = False
 
 
 if GLIB_AVAILABLE:

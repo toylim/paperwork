@@ -165,6 +165,14 @@ class Page(GObject.GObject):
         self.renderer.draw(cairo_ctx)
         self.core.call_all("on_page_draw", cairo_ctx, self)
 
+    def blur(self):
+        self.renderer.blur()
+        self.widget.queue_draw()
+
+    def unblur(self):
+        self.renderer.unblur()
+        self.widget.queue_draw()
+
 
 if GLIB_AVAILABLE:
     GObject.type_register(Page)
@@ -284,3 +292,13 @@ class Plugin(openpaperwork_core.PluginBase):
     def pageview_refresh_all(self):
         for page in self.pages:
             page.refresh()
+
+    def on_screenshot_before(self):
+        LOGGER.info("Blurring pages")
+        for page in self.pages:
+            page.blur()
+
+    def on_screenshot_after(self):
+        LOGGER.info("Unblurring pages")
+        for page in self.pages:
+            page.unblur()

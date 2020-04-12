@@ -20,6 +20,7 @@ DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'openpaperwork_gtk.bug_report.zip',
     'openpaperwork_gtk.pixbuf.pillow',
     'openpaperwork_gtk.resources',
+    'openpaperwork_gtk.screenshots',
     'paperwork_backend.guesswork.cropping.calibration',
     'paperwork_gtk.actions.app_open_bug_report',
     'paperwork_gtk.actions.doc_delete',

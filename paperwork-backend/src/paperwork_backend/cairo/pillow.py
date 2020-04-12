@@ -46,6 +46,7 @@ if GI_AVAILABLE:
 
 
 LOGGER = logging.getLogger(__name__)
+BLUR_FACTOR = 6
 
 
 class ImgSurface(object):
@@ -149,6 +150,7 @@ class CairoRenderer(GObject.GObject):
         self.file_url = file_url
         self.size = (0, 0)
         self.zoom = 1.0
+        self.blurry = False
         self.cairo_surface = None
         self.background = self.DEFAULT_BACKGROUND
         self.visible = False
@@ -290,6 +292,14 @@ class CairoRenderer(GObject.GObject):
 
         self.cache = (self.zoom, img)
 
+    def _draw(self, cairo_ctx):
+        cairo_ctx.save()
+        try:
+            cairo_ctx.set_source_surface(self.cache[1].surface)
+            cairo_ctx.paint()
+        finally:
+            cairo_ctx.restore()
+
     def draw(self, cairo_ctx):
         if self.cairo_surface is None:
             cairo_ctx.save()
@@ -302,14 +312,33 @@ class CairoRenderer(GObject.GObject):
                 cairo_ctx.paint()
             finally:
                 cairo_ctx.restore()
-        else:
-            self._upd_cache()
+        elif self.blurry:
+            zoom = self.zoom / BLUR_FACTOR
+            reduced_surface = ImgSurface(cairo.ImageSurface(
+                cairo.FORMAT_ARGB32,
+                int(self.size[0] * zoom),
+                int(self.size[1] * zoom)
+            ))
+            ctx = cairo.Context(reduced_surface.surface)
+            ctx.scale(1 / BLUR_FACTOR, 1 / BLUR_FACTOR)
+            self._draw(ctx)
+
             cairo_ctx.save()
             try:
-                cairo_ctx.set_source_surface(self.cache[1].surface)
+                cairo_ctx.scale(BLUR_FACTOR, BLUR_FACTOR)
+                cairo_ctx.set_source_surface(reduced_surface.surface)
                 cairo_ctx.paint()
             finally:
-                cairo_ctx.restore()
+                cairo_ctx.save()
+        else:
+            self._upd_cache()
+            self._draw(cairo_ctx)
+
+    def blur(self):
+        self.blurry = True
+
+    def unblur(self):
+        self.blurry = False
 
 
 if GLIB_AVAILABLE:
