@@ -29,6 +29,8 @@ class BasePromise(object):
         self._then = []
         self._catch = []
 
+        self.scheduled = False
+
         self.parent_promise_return = None
         self.created_by = traceback.extract_stack()
 
@@ -60,6 +62,7 @@ class BasePromise(object):
         return self
 
     def on_error(self, exc, hide_caught_exceptions=False):
+        self.scheduled = False
         hide_caught_exceptions = (
             hide_caught_exceptions or self.hide_caught_exceptions
         )
@@ -71,6 +74,7 @@ class BasePromise(object):
             caught = "caught"
         elif len(self._then) > 0:
             for t in self._then:
+                t.scheduled = False
                 t.on_error(exc, hide_caught_exceptions)
             return
         else:
@@ -101,13 +105,31 @@ class BasePromise(object):
 
         raise exc
 
+    def _do(self, args):
+        try:
+            self.do(args)
+        finally:
+            self.scheduled = False
+
     def schedule(self, *args):
+        scheduled = self.scheduled
+
         s = self
         while s.parent is not None:
+            scheduled = scheduled or s.scheduled
+            s.scheduled = True
             s = s.parent
+        s.scheduled = True
+
+        if scheduled:
+            # a parent promise already scheduled --> we made sure to mark
+            # all the children promises as scheduled, but there is no
+            # need to actually schedule the parent.
+            return
+
         if args == ():
             args = None
-        self.core.call_one("mainloop_schedule", s.do, args)
+        self.core.call_one("mainloop_schedule", s._do, args)
 
     def wait(self):
         assert(
@@ -153,7 +175,7 @@ class Promise(BasePromise):
                 )
 
             for t in self._then:
-                self.core.call_one("mainloop_schedule", t.do, our_r)
+                self.core.call_one("mainloop_schedule", t._do, our_r)
         except Exception as exc:
             self.on_error(exc)
 
@@ -172,7 +194,7 @@ class DelayPromise(BasePromise):
 
     def _call_then(self, parent_r):
         for t in self._then:
-            self.core.call_one("mainloop_schedule", t.do, parent_r)
+            self.core.call_one("mainloop_schedule", t._do, parent_r)
 
     def do(self, parent_r=None):
         LOGGER.debug("Promise: delay: %fs", self.delay_s)
@@ -215,9 +237,9 @@ class ThreadedPromise(BasePromise):
             )
 
             for t in self._then:
-                self.core.call_one("mainloop_schedule", t.do, our_r)
+                self.core.call_one("mainloop_schedule", t._do, our_r)
         except Exception as exc:
-            self.on_error(exc)
+            self.core.call_one("mainloop_schedule", self.on_error, exc)
 
     def do(self, parent_r=None):
         self.parent_promise_return = parent_r
@@ -225,7 +247,7 @@ class ThreadedPromise(BasePromise):
             if self.func is None:
                 # no thread, we immediately schedule the next promises
                 for t in self._then:
-                    self.core.call_one("mainloop_schedule", t.do, None)
+                    self.core.call_one("mainloop_schedule", t._do, None)
                 return
 
             self.core.call_one("thread_start", self._threaded_do, parent_r)
