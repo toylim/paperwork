@@ -47,9 +47,13 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def _shorten_url(self, url):
-        file_name = self.core.call_success("fs_basename", url)
+        if "://" not in url:
+            return url
         dir_path = self.core.call_success("fs_dirname", url)
         dir_name = self.core.call_success("fs_basename", dir_path)
+        if dir_name is None or dir_name == "":
+            return url
+        file_name = self.core.call_success("fs_basename", url)
         return dir_name + "/" + file_name
 
     def _format_date(self, date):
@@ -126,6 +130,13 @@ class Plugin(openpaperwork_core.PluginBase):
                 ]
             )
 
+        for i in inputs:
+            if not i['include_by_default']:
+                continue
+            self.core.call_all(
+                "on_bug_report_attachment_selected", i['id'], widget_tree
+            )
+
         dialog.set_transient_for(parent_window)
         dialog.connect("close", self._on_close)
         dialog.connect("cancel", self._on_close)
@@ -161,22 +172,23 @@ class Plugin(openpaperwork_core.PluginBase):
     def _open_selected(self, button):
         self.core.call_success("external_app_open_file", self.url_selected)
 
-    def bug_report_update_attachment(self, info_id, infos: dict, widget_tree):
-        model = self.widget_tree.get_object("bug_report_model")
+    def bug_report_update_attachment(
+            self, attachment_id, infos: dict, widget_tree):
+        model = widget_tree.get_object("bug_report_model")
         for row in model:
-            if model[-1] != info_id:
+            if row[-1] != attachment_id:
                 continue
             if 'date' in infos:
-                model[1] = self._format_timestamp(infos['date'])
-                model[2] = self._format_date(infos['date'])
+                row[1] = self._format_timestamp(infos['date'])
+                row[2] = self._format_date(infos['date'])
             if 'file_type' in infos:
-                model[3] = infos['file_type']
+                row[3] = infos['file_type']
             if 'file_url' in infos:
-                model[4] = infos['file_url']
-                model[5] = self._shorten_url(infos['file_url'])
+                row[4] = infos['file_url']
+                row[5] = self._shorten_url(infos['file_url'])
             if 'file_size' in infos:
-                model[6] = infos['file_size']
-                model[7] = self.core.call_success(
+                row[6] = infos['file_size']
+                row[7] = self.core.call_success(
                     "i18n_file_size", infos['file_size']
                 )
             break
