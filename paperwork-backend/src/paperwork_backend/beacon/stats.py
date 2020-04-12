@@ -1,4 +1,6 @@
 import datetime
+import gettext
+import json
 import logging
 import uuid
 
@@ -10,6 +12,7 @@ from .. import _version
 
 
 LOGGER = logging.getLogger(__name__)
+_ = gettext.gettext
 
 POST_STATS_INTERVAL = datetime.timedelta(days=7)
 POST_STATS_PATH = "/beacon/post_statistics"
@@ -23,6 +26,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_interfaces(self):
         return [
+            "bug_report_attachments",
             "stats_post",
         ]
 
@@ -31,6 +35,13 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'config',
                 'defaults': ['openpaperwork_core.config'],
+            },
+            {
+                'interface': 'fs',
+                'defaults': [
+                    'openpaperwork_core.fs.memory',
+                    'openpaperwork_core.fs.python',
+                ],
             },
             {
                 'interface': 'http_json',
@@ -104,4 +115,51 @@ class Plugin(openpaperwork_core.PluginBase):
             self.core.call_all('on_stats_sent')
 
         promise = promise.then(on_request_done)
+        promise.schedule()
+
+    def bug_report_get_attachments(self, out: dict):
+        out['stats'] = {
+            'include_by_default': True,
+            'date': None,
+            'file_type': _("App & system info."),
+            'file_url': _("Select to generate"),
+            'file_size': 0,
+        }
+
+    def _write_stats_to_tmp_file(self, stats):
+        stats = json.dumps(
+            stats, indent=4, separators=(",", ": "), sort_keys=True
+        )
+        (file_url, fd) = self.core.call_success(
+            "fs_mktemp", prefix="statistics_", suffix=".txt", mode="w"
+        )
+        with fd:
+            fd.write(stats)
+        return file_url
+
+    def on_bug_report_attachment_selected(self, attachment_id, *args):
+        if attachment_id != 'stats':
+            return
+
+        self.core.call_all(
+            "bug_report_update_attachment", attachment_id,
+            {"file_url": _("Collecting statistics ...")},
+            *args
+        )
+
+        node_uuid = self.core.call_success("config_get", "uuid")
+        promise = openpaperwork_core.promise.ThreadedPromise(
+            self.core, self._collect_stats, args=(node_uuid,)
+        )
+        promise = promise.then(self._write_stats_to_tmp_file)
+        promise = promise.then(
+            lambda file_url: self.core.call_all(
+                "bug_report_update_attachment", attachment_id, {
+                    'file_url': file_url,
+                    'file_size': self.core.call_success(
+                        'fs_getsize', file_url
+                    ),
+                }, *args
+            )
+        )
         promise.schedule()
