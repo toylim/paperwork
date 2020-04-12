@@ -85,6 +85,7 @@ class Plugin(PluginBase):
         return [
             'bug_report_attachments',
             'log_archiver',
+            'uncaught_exception_listener',
         ]
 
     def get_deps(self):

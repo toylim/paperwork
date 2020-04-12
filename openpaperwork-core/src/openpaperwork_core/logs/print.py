@@ -75,7 +75,10 @@ class Plugin(PluginBase):
         self.log_handler = None
 
     def get_interfaces(self):
-        return ['logs']
+        return [
+            'logs',
+            'uncaught_exception_listener',
+        ]
 
     def get_deps(self):
         return [
