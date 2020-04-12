@@ -447,3 +447,24 @@ class AbstractTestMkdirP(unittest.TestCase):
             # check fs_rm_rf at the same time
             self.core.call_one("fs_rm_rf", uri_dirname)
             self.assertFalse(os.path.exists(dirname))
+
+
+class AbstractTestBasename(unittest.TestCase):
+    def get_plugin_name(self):
+        """
+        must be subclassed
+        """
+        assert()
+
+    def setUp(self):
+        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core.load(self.get_plugin_name())
+        self.core.init()
+
+    def test_basename(self):
+        out = self.core.call_success("fs_basename", "file:///a/b/c.txt")
+        self.assertEqual(out, "c.txt")
+        out = self.core.call_success("fs_basename", "file:///c.txt")
+        self.assertEqual(out, "c.txt")
+        out = self.core.call_success("fs_basename", "memory://camion.txt")
+        self.assertEqual(out, "camion.txt")

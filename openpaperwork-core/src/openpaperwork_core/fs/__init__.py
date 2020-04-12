@@ -72,8 +72,13 @@ class CommonFsPluginBase(openpaperwork_core.PluginBase):
         return urllib.parse.urljoin(base, url)
 
     def fs_basename(self, url):
-        url = urllib.parse.urlparse(url)
-        basename = os.path.basename(url.path)
+        parsed_url = urllib.parse.urlparse(url)
+        path = parsed_url.path
+        if path == "":
+            path = parsed_url.hostname
+        if path is None:
+            return None
+        basename = os.path.basename(path)
         # Base name can be safely unquoted
         return urllib.parse.unquote(basename)
 

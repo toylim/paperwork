@@ -62,3 +62,8 @@ class TestCopy(openpaperwork_core.tests.local_file.AbstractTestCopy):
 class TestMkdirP(openpaperwork_core.tests.local_file.AbstractTestMkdirP):
     def get_plugin_name(self):
         return PLUGIN_NAME
+
+
+class TestBasename(openpaperwork_core.tests.local_file.AbstractTestBasename):
+    def get_plugin_name(self):
+        return PLUGIN_NAME
