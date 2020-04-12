@@ -1,5 +1,6 @@
 import gettext
 import itertools
+import json
 import logging
 import threading
 
@@ -368,9 +369,128 @@ class Scanner(object):
 
     def set_as_default(self):
         self.core.call_all(
-            "config_put", "scanner_dev_id",
-            'libinsane:' + self.dev_id
+            "config_put", "scanner_dev_id", 'libinsane:' + self.dev_id
         )
+
+
+class BugReportCollector(object):
+    def __init__(self, plugin, update_args):
+        self.core = plugin.core
+        self.plugin = plugin
+        self.update_args = update_args
+
+    def _notify(self, msg):
+        self.core.call_success(
+            "mainloop_schedule", self.core.call_all,
+            "bug_report_update_attachment", "scanner",
+            {"file_url": msg},
+            *self.update_args
+        )
+
+    @staticmethod
+    def _get_error_proof(func):
+        try:
+            return str(func())
+        except Exception as exc:
+            return str(exc)
+
+    def _collect_opt_info(self, opt, out: dict):
+        out['name'] = self._get_error_proof(opt.get_name)
+        out['title'] = self._get_error_proof(opt.get_title)
+        out['description'] = self._get_error_proof(opt.get_desc)
+        out['capabilities'] = self._get_error_proof(opt.get_capabilities)
+        out['unit'] = self._get_error_proof(opt.get_value_unit)
+        out['constraint_type'] = self._get_error_proof(opt.get_constraint_type)
+        out['constraint'] = self._get_error_proof(opt.get_constraint)
+        out['is_readable'] = self._get_error_proof(opt.is_readable)
+        out['is_writable'] = self._get_error_proof(opt.is_writable)
+        out['value'] = self._get_error_proof(opt.get_value)
+
+    def _collect_item_info(self, item, base_name, out: dict):
+        try:
+            name = item.get_name()
+            if base_name is not None and base_name != "":
+                name = base_name + "/" + name
+            self._notify(_("Examining %s") % name)
+            out['name'] = item.get_name()
+            out['options'] = {}
+            out['children'] = {}
+
+            options = item.get_options()
+            for opt in options:
+                out['options'][opt.get_name()] = {}
+                self._collect_opt_info(opt, out['options'][opt.get_name()])
+
+            children = item.get_children()
+            for child in children:
+                out['children'][child.get_name()] = {}
+                self._collect_item_info(
+                    child, name, out['children'][child.get_name()]
+                )
+        finally:
+            item.close()
+
+    def _write_scanners_info_to_tmp_file(self, infos):
+        infos = json.dumps(
+            infos, indent=4, separators=(",", ": "), sort_keys=True
+        )
+        (file_url, fd) = self.core.call_success(
+            "fs_mktemp", prefix="statistics_", suffix=".json", mode="w",
+            on_disk=True
+        )
+        with fd:
+            fd.write(infos)
+        return file_url
+
+    def _collect_all_info(self, scanners):
+        out = {}
+        promise = openpaperwork_core.promise.Promise(self.core)
+        for (dev_id, dev_name) in scanners:
+            out[dev_id] = {
+                'listing_name': dev_name
+            }
+            promise = promise.then(
+                openpaperwork_core.promise.ThreadedPromise(
+                    self.core, self.plugin.libinsane.get_device,
+                    args=(dev_id[len("libinsane:"):],)
+                )
+            )
+            promise = promise.then(openpaperwork_core.promise.ThreadedPromise(
+                self.core, self._collect_item_info, args=("", out[dev_id],)
+            ))
+            promise = promise.then(lambda *args, **kwargs: None)
+
+        promise = promise.then(
+            openpaperwork_core.promise.ThreadedPromise(
+                self.core, self._write_scanners_info_to_tmp_file, args=(out,)
+            )
+        )
+        promise = promise.then(
+            lambda file_url: self.core.call_all(
+                "bug_report_update_attachment", "scanner", {
+                    'file_url': file_url,
+                    'file_size': self.core.call_success(
+                        'fs_getsize', file_url
+                    ),
+                }, *self.update_args
+            )
+        )
+        promise.schedule()
+
+    def run(self):
+        promise = openpaperwork_core.promise.Promise(
+            self.core, self.core.call_all,
+            args=(
+                "bug_report_update_attachment", "scanner",
+                {"file_url": _("Getting scanner list ...")},
+                *self.update_args
+            )
+        )
+        promise = promise.then(self.plugin.scan_list_scanners_promise())
+        promise = promise.then(openpaperwork_core.promise.ThreadedPromise(
+            self.core, self._collect_all_info
+        ))
+        promise.schedule()
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -390,6 +510,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_interfaces(self):
         return [
+            "bug_report_attachments",
             "chkdeps",
             "scan"
         ]
@@ -540,3 +661,18 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
         return (scan_id, promise)
+
+    def bug_report_get_attachments(self, out: dict):
+        out['scanner'] = {
+            'include_by_default': False,
+            'date': None,
+            'file_type': _("Scanner info."),
+            'file_url': _("Select to generate"),
+            'file_size': 0,
+        }
+
+    def on_bug_report_attachment_selected(self, attachment_id, *args):
+        if attachment_id != 'scanner':
+            return
+        collector = BugReportCollector(self, args)
+        collector.run()
