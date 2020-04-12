@@ -2,6 +2,7 @@
 module 'http' contains all the code to communicate with
 https://openpaper.work/
 """
+import base64
 import http
 import http.client
 import json
@@ -42,10 +43,10 @@ class JsonHttp(object):
             core.call_all("config_register", k, setting)
 
     def _convert(self, data):
-        if isinstance(data, bytes):
-            return data
         if isinstance(data, str):
             return data
+        if isinstance(data, bytes):
+            return base64.encodebytes(data).decode("utf-8").strip()
         return json.dumps(data)
 
     def _request(self, data, protocol, server, path):
