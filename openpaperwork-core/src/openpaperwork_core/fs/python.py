@@ -16,6 +16,10 @@ LOGGER = logging.getLogger(__name__)
 
 
 class Plugin(CommonFsPluginBase):
+    def __init__(self):
+        super().__init__()
+        self.tmp_files = set()
+
     def _uri_to_path(self, uri):
         if not uri.lower().startswith("file://"):
             return None
@@ -38,7 +42,10 @@ class Plugin(CommonFsPluginBase):
         if path is None:
             return None
 
-        return os.path.exists(path)
+        r = os.path.exists(path)
+        if not r:
+            return None
+        return r
 
     def fs_listdir(self, uri):
         path = self._uri_to_path(uri)
@@ -166,4 +173,12 @@ class Plugin(CommonFsPluginBase):
         tmp = tempfile.NamedTemporaryFile(
             prefix=prefix, suffix=suffix, delete=False, mode=mode
         )
+        self.tmp_files.add(tmp.name)
         return (self.fs_safe(tmp.name), tmp)
+
+    def on_quit(self):
+        for tmp_file in self.tmp_files:
+            try:
+                os.unlink(tmp_file)
+            except FileNotFoundError:
+                pass

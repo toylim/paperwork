@@ -234,6 +234,7 @@ class _GioUTF8FileAdapter(io.RawIOBase):
 class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
     def __init__(self):
         super().__init__()
+        self.tmp_files = set()
 
     def get_interfaces(self):
         return super().get_interfaces() + ['chkdeps']
@@ -551,6 +552,7 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
         tmp = tempfile.NamedTemporaryFile(
             prefix=prefix, suffix=suffix, delete=False, mode=mode
         )
+        self.tmp_files.add(tmp.name)
         return (self.fs_safe(tmp.name), tmp)
 
     def fs_iswritable(self, url):
@@ -569,3 +571,10 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
         except GLib.GError as exc:
             LOGGER.warning("Gio.Gerror", exc_info=exc)
             raise IOError(str(exc))
+
+    def on_quit(self):
+        for tmp_file in self.tmp_files:
+            try:
+                os.unlink(tmp_file)
+            except FileNotFoundError:
+                pass

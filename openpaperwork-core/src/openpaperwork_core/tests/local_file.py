@@ -151,7 +151,7 @@ class AbstractTestExists(unittest.TestCase):
         self.core.init()
 
     def test_not_exist(self):
-        self.assertFalse(self.core.call_one('fs_exists', "/whatever"))
+        self.assertEqual(self.core.call_one('fs_exists', "/whatever"), None)
 
     def test_exists(self):
         file_name = None
@@ -468,3 +468,33 @@ class AbstractTestBasename(unittest.TestCase):
         self.assertEqual(out, "c.txt")
         out = self.core.call_success("fs_basename", "memory://camion.txt")
         self.assertEqual(out, "camion.txt")
+
+
+class AbstractTestTemp(unittest.TestCase):
+    def get_plugin_name(self):
+        """
+        must be subclassed
+        """
+        assert()
+
+    def setUp(self):
+        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core.load(self.get_plugin_name())
+        self.core.init()
+
+    def test_mktemp(self):
+        (tmp_url, tmp_fd) = self.core.call_success(
+            "fs_mktemp", prefix="test", suffix=".txt", mode="w"
+        )
+        with tmp_fd:
+            tmp_fd.write("TEST\n")
+
+        self.assertNotEqual(
+            self.core.call_success("fs_exists", tmp_url), None
+        )
+
+        self.core.call_all("on_quit")
+
+        self.assertEqual(
+            self.core.call_success("fs_exists", tmp_url), None
+        )
