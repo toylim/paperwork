@@ -164,9 +164,19 @@ class Plugin(openpaperwork_core.PluginBase):
         self._refresh_attachment_page_complete(widget_tree)
 
     def _on_row_selected(self, treeview, row_path, column, widget_tree):
-        model = widget_tree.get_object("bug_report_model")
+        self._on_url_selected(widget_tree)
+
+    def _on_url_selected(self, widget_tree):
         button = widget_tree.get_object("bug_report_open_file")
-        self.url_selected = model[row_path][4]
+        treeview = widget_tree.get_object("bug_report_treeview")
+        model = widget_tree.get_object("bug_report_model")
+        (has_selected, model_iter) = (
+            treeview.get_selection().get_selected()
+        )
+        if not has_selected or model_iter is None:
+            button.set_sensitive(False)
+            return
+        self.url_selected = model[model_iter][4]
         button.set_sensitive("://" in self.url_selected)
 
     def _open_selected(self, button):
@@ -192,6 +202,7 @@ class Plugin(openpaperwork_core.PluginBase):
                     "i18n_file_size", infos['file_size']
                 )
             break
+        self._on_url_selected(widget_tree)
 
     def _on_close(self, dialog):
         dialog.set_visible(False)
