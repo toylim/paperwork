@@ -71,13 +71,16 @@ class Plugin(openpaperwork_core.PluginBase):
         model = widget_tree.get_object("bug_report_model")
         assistant = widget_tree.get_object("bug_report_dialog")
         page = widget_tree.get_object("bug_report_attachment_selector")
+
+        enabled = False
         for row in model:
             if row[0]:
+                enabled = True
+            if row[0] and "://" not in row[4]:
+                enabled = False
                 break
-        else:
-            assistant.set_page_complete(page, False)
-            return
-        assistant.set_page_complete(page, True)
+        assistant.set_page_complete(page, enabled)
+
     def _i18n_file_size(self, file_size):
         if file_size <= 0:
             return ""
@@ -208,6 +211,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 row[7] = self._i18n_file_size(infos['file_size'])
             break
         self._on_url_selected(widget_tree)
+        self._refresh_attachment_page_complete(widget_tree)
 
     def _on_close(self, dialog):
         dialog.set_visible(False)
