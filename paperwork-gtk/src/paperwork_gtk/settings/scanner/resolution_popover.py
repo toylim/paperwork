@@ -76,7 +76,7 @@ class Plugin(openpaperwork_core.PluginBase):
         ))
         promise = promise.then(self._display_resolutions, widget_tree)
         promise = promise.catch(self._on_error, widget_tree)
-        promise.schedule()
+        self.core.call_success("scan_schedule", promise)
 
     def _collect_resolutions(self, dev):
         resolutions = set()

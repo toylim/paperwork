@@ -176,7 +176,7 @@ class Plugin(openpaperwork_core.PluginBase):
         promise = promise.then(openpaperwork_core.promise.Promise(
             self.core, self.core.call_all, args=("on_idle",)
         ))
-        promise.schedule()
+        self.core.call_success("scan_schedule", promise)
 
     def _show_sources(self, dev):
         sources = [
@@ -239,7 +239,7 @@ class Plugin(openpaperwork_core.PluginBase):
         promise = promise.then(openpaperwork_core.promise.Promise(
             self.core, self.core.call_all, args=("on_idle",)
         ))
-        promise.schedule()
+        self.core.call_success("scan_schedule", promise)
         self.widget_tree.get_object("calibration_scan").set_sensitive(False)
 
     def _scan(self, args):

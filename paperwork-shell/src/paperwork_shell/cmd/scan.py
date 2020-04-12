@@ -69,7 +69,7 @@ class Plugin(openpaperwork_core.PluginBase):
             doc_id=args.doc_id,
             source_id=args.source_id
         )
-        promise.schedule()
+        self.core.call_success("scan_schedule", promise)
 
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")

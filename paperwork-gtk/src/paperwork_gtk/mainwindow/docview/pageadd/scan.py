@@ -102,7 +102,7 @@ class Plugin(openpaperwork_core.PluginBase):
         ))
         promise = promise.then(store_sources)
         promise = promise.then(self.core.call_all, "pageadd_sources_refresh")
-        promise.schedule()
+        self.core.call_success("scan_schedule", promise)
 
     def pageadd_get_sources(self, out: list):
         sources = self.core.call_success("config_get", "pageadd_sources")
@@ -141,7 +141,7 @@ class Plugin(openpaperwork_core.PluginBase):
         promise = self.core.call_success(
             "scan2doc_promise", doc_id=doc_id, source_id=source_id
         )
-        promise.schedule()
+        self.core.call_success("scan_schedule", promise)
 
     def on_scan_started(self, scan_id):
         if not self.busy:

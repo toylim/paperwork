@@ -49,6 +49,8 @@ class TestLibinsane(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
         self.core.load("openpaperwork_core.config.fake")
+        self.core.load("openpaperwork_core.thread.simple")
+        self.core.load("openpaperwork_core.work_queue.default")
         self.core.load("paperwork_backend.docscan.libinsane")
 
         self.called = False
@@ -109,13 +111,13 @@ class TestLibinsane(unittest.TestCase):
                 lambda args: list(args[2])
             )
             promise = promise.then(source.close)
-            promise.schedule()
+            self.core.call_success("scan_schedule", promise)
             self.called = True
 
         def get_sources_and_scan(scanner):
             promise = scanner.get_sources_promise()
             promise = promise.then(scan)
-            promise.schedule()
+            self.core.call_success("scan_schedule", promise)
 
         promise = self.core.call_success(
             "scan_get_scanner_promise", TEST_DEV_ID
@@ -170,7 +172,7 @@ class TestLibinsane(unittest.TestCase):
         promise = promise.then(  # roll out the image generator
             lambda args: list(args[2])
         )
-        promise.schedule()
+        self.core.call_success("scan_schedule", promise)
         self.core.call_all("mainloop_quit_graceful")
 
         self.core.call_all("mainloop")

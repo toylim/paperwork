@@ -475,7 +475,7 @@ class BugReportCollector(object):
                 }, *self.update_args
             )
         )
-        promise.schedule()
+        self.core.call_success("scan_schedule", promise)
 
     def run(self):
         promise = openpaperwork_core.promise.Promise(
@@ -490,7 +490,7 @@ class BugReportCollector(object):
         promise = promise.then(openpaperwork_core.promise.ThreadedPromise(
             self.core, self._collect_all_info
         ))
-        promise.schedule()
+        self.core.call_success("scan_schedule", promise)
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -526,13 +526,15 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_gtk.mainloop.glib'],
             },
             {
-                'interface': 'thread',
-                'defaults': ['openpaperwork_core.thread.simple'],
+                'interface': 'work_queue',
+                'defaults': ['openpaperwork_core.work_queue.default'],
             },
         ]
 
     def init(self, core):
         super().init(core)
+
+        self.core.call_all("work_queue_create", "scanner")
 
         settings = {
             'scanner_dev_id': self.core.call_success(
@@ -568,14 +570,23 @@ class Plugin(openpaperwork_core.PluginBase):
                 'ubuntu': 'gir1.2-libinsane-1.0',
             }
 
-    def scan_list_scanners_promise(self):
-        if len(self.devices_cache) > 0:
-            return openpaperwork_core.promise.Promise(
-                self.core, lambda *args, **kwargs: self.devices_cache
-            )
+    def scan_schedule(self, promise):
+        """
+        Any promise or chain of promises related to scanners must *always*
+        be run sequentially to avoid crashes. Otherwise, 2 threaded promises
+        could run in parrallel. So other plugins using those promises should
+        use scan_schedule() instead of mainloop_schedule()
+        or promise.schedule().
+        """
+        self.core.call_success("work_queue_add_promise", "scanner", promise)
+        return True
 
+    def scan_list_scanners_promise(self):
         def list_scanners(*args, **kwargs):
             with LOCK:
+                if len(self.devices_cache) > 0:
+                    return self.devices_cache
+
                 LOGGER.info("Looking for scan devices ...")
                 devs = self.libinsane.list_devices(
                     Libinsane.DeviceLocations.ANY

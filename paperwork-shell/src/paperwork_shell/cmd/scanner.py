@@ -115,14 +115,14 @@ class Plugin(openpaperwork_core.PluginBase):
             ))
             promise = promise.then(self._get_scanner_info, dev_id, dev_name)
             promise = promise.then(lambda scanner: scanner.close())
-        promise.schedule()
+        self.core.call_success("scan_schedule", promise)
 
     def _list_scanners(self):
         self.out = []
 
         promise = self.core.call_success("scan_list_scanners_promise")
         promise = promise.then(self._get_scanners_info)
-        promise.schedule()
+        self.core.call_success("scan_schedule", promise)
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
 
@@ -226,7 +226,7 @@ class Plugin(openpaperwork_core.PluginBase):
         promise = promise.then(check_resolution)
 
         promise = promise.then(lambda source: source.close())
-        promise.schedule()
+        self.core.call_success("scan_schedule", promise)
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
 

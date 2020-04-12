@@ -74,7 +74,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         def refresh(*args, **kwargs):
             p = self._refresh_settings(widget_tree)
-            p.schedule()
+            self.core.call_success("scan_schedule", p)
 
         def disable_refresh(*args, **kwargs):
             for c in self.config:
@@ -93,7 +93,7 @@ class Plugin(openpaperwork_core.PluginBase):
             global_widget_tree, widget_tree,
             list_settings_promise
         )
-        list_settings_promise.schedule()
+        self.core.call_success("scan_schedule", list_settings_promise)
 
     def _translate_mode(self, mode):
         if mode in self.MODES:
