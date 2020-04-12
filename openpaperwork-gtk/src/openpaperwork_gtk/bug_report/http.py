@@ -235,19 +235,23 @@ class Plugin(openpaperwork_core.PluginBase):
         return self.description.get_text(start, end, False)
 
     def _send(self):
+        promise = openpaperwork_core.promise.Promise(
+            self.core, self.core.call_all, args=("on_busy",)
+        )
         sender = Sender(
             self.core, self.http, self.progress,
             self._get_description(), self.file_urls
         )
-        promise = sender.get_promise()
+        promise = promise.then(sender.get_promise())
         promise = promise.then(self._show_result, sender)
         promise = promise.catch(self._on_error)
         promise.schedule()
 
     def _show_result(self, sender):
+        self.core.call_all("on_idle")
+
         if self.widget_tree is None:
             return
-
         LOGGER.info("Transfer successful")
         url = self.widget_tree.get_object("bug_report_http_url")
         url.set_markup('<a href="{url}">{url}</a>'.format(
@@ -258,6 +262,8 @@ class Plugin(openpaperwork_core.PluginBase):
         self.progress.set_text(_("Success"))
 
     def _on_error(self, exc):
+        self.core.call_all("on_idle")
+
         if self.widget_tree is None:
             return
 
