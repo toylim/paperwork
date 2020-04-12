@@ -29,7 +29,15 @@ class _MemoryFileAdapter(io.RawIOBase):
         if 'r' in mode or 'a' in mode:
             if key not in self.plugin.fs:
                 raise FileNotFoundError(key)
-            self.io = self.io_cls(self.plugin.fs[key][1])
+
+            data = self.plugin.fs[key][1]
+
+            if 'b' in mode and isinstance(data, str):
+                data = data.encode("utf-8")
+            elif 'b' not in mode and isinstance(data, bytes):
+                data = data.decode("utf-8")
+
+            self.io = self.io_cls(data)
         elif 'w' in mode:
             self.io = self.io_cls()
 
