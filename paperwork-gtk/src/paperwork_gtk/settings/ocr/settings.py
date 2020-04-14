@@ -74,6 +74,6 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
         langs = ", ".join(langs)
         if langs == "":
-            langs = _("None")
+            langs = _("OCR disabled")
         LOGGER.info("OCR languages: %s", langs)
         label.set_text(langs)
