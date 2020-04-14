@@ -7,5 +7,16 @@
 }
 
 #page_info > box > label {
+	color: #919693;
+}
+
+#page_info {
+	color: gray;
+}
+
+#page_info button {
 	color: white;
+	background-image: none;
+	background-color: #373737;
+	border: 1px solid #202121;
 }

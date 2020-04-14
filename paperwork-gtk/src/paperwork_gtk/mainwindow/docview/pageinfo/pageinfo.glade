@@ -17,6 +17,7 @@
             <property name="can_focus">False</property>
             <property name="receives_default">False</property>
             <property name="use_underline">True</property>
+            <property name="relief">none</property>
             <child>
               <object class="GtkImage">
                 <property name="visible">True</property>
@@ -42,6 +43,7 @@
             <property name="can_focus">False</property>
             <property name="receives_default">False</property>
             <property name="use_underline">True</property>
+            <property name="relief">none</property>
             <child>
               <object class="GtkImage">
                 <property name="visible">True</property>
