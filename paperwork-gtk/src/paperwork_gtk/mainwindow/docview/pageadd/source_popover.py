@@ -54,11 +54,6 @@ class Plugin(openpaperwork_core.PluginBase):
             LOGGER.error("Failed to load widget tree")
             return
 
-        self.core.call_all(
-            "pageadd_buttons_set_source_popover",
-            self.widget_tree.get_object("page_sources_popover")
-        )
-
     def pageadd_sources_refresh(self):
         active = self.core.call_success("config_get", "pageadd_active_source")
 
@@ -75,18 +70,26 @@ class Plugin(openpaperwork_core.PluginBase):
                 "toggled", self._on_toggle, source_name, source_id, callback
             )
             parent.pack_start(selector, expand=False, fill=True, padding=0)
+
         if active is None:
-            if len(selectors) <= 0:
-                return
-            (selector, source_name, source_id, callback) = selectors[0]
-            selector.set_active(True)
-            self._on_toggle(selector, source_name, source_id, callback)
+            if len(selectors) > 0:
+                (selector, source_name, source_id, callback) = selectors[0]
+                selector.set_active(True)
+                self._on_toggle(selector, source_name, source_id, callback)
         else:
             for (selector, source_name, source_id, callback) in selectors:
                 if active == source_id:
                     selector.set_active(True)
                     self._on_toggle(selector, source_name, source_id, callback)
                     break
+
+        # if there is a single choice, there is no point in letting
+        # the user choose. This is just confusing.
+        self.core.call_all(
+            "pageadd_buttons_set_source_popover",
+            self.widget_tree.get_object("page_sources_popover")
+            if len(selectors) > 1 else None
+        )
 
     def _on_toggle(self, widget, source_name, source_id, callback):
         if not widget.get_active():
