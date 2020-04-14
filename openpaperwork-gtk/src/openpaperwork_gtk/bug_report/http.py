@@ -179,7 +179,6 @@ class Plugin(openpaperwork_core.PluginBase):
         description_page = page
         assistant.append_page(page)
         assistant.set_page_complete(page, False)
-        assistant.set_page_title(page, _("Description"))
         self.description = self.widget_tree.get_object(
             "bug_report_http_description_buffer"
         )
@@ -193,12 +192,10 @@ class Plugin(openpaperwork_core.PluginBase):
         self.progress = page
         assistant.append_page(page)
         assistant.set_page_complete(page, False)
-        assistant.set_page_title(page, _("Sending"))
 
         page = self.widget_tree.get_object("bug_report_http_result")
         self.page_idx = assistant.append_page(page)
         assistant.set_page_complete(page, True)
-        assistant.set_page_title(page, _("Result"))
         assistant.set_page_type(page, Gtk.AssistantPageType.CONFIRM)
 
         self.prepare_handler_id = assistant.connect(

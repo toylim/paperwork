@@ -81,7 +81,6 @@ class Plugin(openpaperwork_core.PluginBase):
         page = self.widget_tree.get_object("bug_report_zip_page")
         assistant.append_page(page)
         assistant.set_page_complete(page, False)
-        assistant.set_page_title(page, _("Saving"))
         assistant.set_page_type(page, Gtk.AssistantPageType.CONFIRM)
         self.apply_handler_id = assistant.connect("apply", self._make_zip)
 
