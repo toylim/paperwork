@@ -5,6 +5,7 @@
   <object class="GtkMenuButton" id="ocr_langs">
     <property name="visible">True</property>
     <property name="name">settings_ocr_langs_button</property>
+    <property name="relief">none</property>
     <child>
       <object class="GtkBox">
         <property name="visible">True</property>

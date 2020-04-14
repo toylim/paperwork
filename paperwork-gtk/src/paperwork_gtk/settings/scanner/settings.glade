@@ -5,7 +5,7 @@
 
   <object class="GtkMenuButton" id="scanner_device">
     <property name="visible">True</property>
-        <property name="can_focus">False</property>
+    <property name="relief">none</property>
     <child>
       <object class="GtkBox">
         <property name="visible">True</property>
@@ -49,6 +49,7 @@
 
   <object class="GtkMenuButton" id="scanner_resolution">
     <property name="visible">True</property>
+    <property name="relief">none</property>
     <child>
       <object class="GtkBox">
         <property name="visible">True</property>
@@ -92,6 +93,7 @@
 
   <object class="GtkMenuButton" id="scanner_mode">
     <property name="visible">True</property>
+    <property name="relief">none</property>
     <child>
       <object class="GtkBox">
         <property name="visible">True</property>
@@ -135,6 +137,7 @@
 
   <object class="GtkButton" id="scanner_calibration">
     <property name="visible">True</property>
+    <property name="relief">none</property>
     <child>
       <object class="GtkBox">
         <property name="visible">True</property>

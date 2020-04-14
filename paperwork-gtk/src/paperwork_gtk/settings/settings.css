@@ -1,16 +1,19 @@
 .section_box > * {
-	border: 1px solid #aaaaaa;
+	border: 1px solid @borders;
 	padding: 16px;
 	border-radius: 0px;
-	border-bottom: 0px solid #aaaaaa;
+	border-bottom: 0px solid @borders;
+	border-top: 1px solid @unfocused_borders;
+	background-color: @theme_base_color;
 }
 
 .section_box > :first-child {
 	border-radius: 5px 5px 0px 0px;
+	border-top: 1px solid @borders;
 }
 
 .section_box > :last-child {
-	border-bottom: 1px solid #aaaaaa;
+	border-bottom: 1px solid @borders;
 	border-radius: 0px 0px 5px 5px;
 }
 
