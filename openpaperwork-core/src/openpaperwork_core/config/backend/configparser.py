@@ -5,6 +5,7 @@ Manages a configuration file using configparser.
 import collections
 import configparser
 import datetime
+import gettext
 import logging
 import os
 import os.path
@@ -13,6 +14,7 @@ from ... import PluginBase
 
 
 LOGGER = logging.getLogger(__name__)
+_ = gettext.gettext
 
 
 class ConfigBool(object):
@@ -183,6 +185,7 @@ class Plugin(PluginBase):
             "{directory}", "{app_name}.conf"
         )
         self.application_name = None
+        self.config_path = None
         self.observers = collections.defaultdict(set)
         self.core = None
         self.default_plugins = []
@@ -195,19 +198,19 @@ class Plugin(PluginBase):
 
     def config_backend_load(self, application_name):
         self.application_name = application_name
-        config_path = self.config_file_path_fmt.format(
+        self.config_path = self.config_file_path_fmt.format(
             directory=self.base_path,
             app_name=application_name,
         )
         self.config = configparser.RawConfigParser()
-        LOGGER.info("Loading configuration '%s' ...", config_path)
-        if os.path.exists(config_path):
-            with open(config_path, 'r') as fd:
+        LOGGER.info("Loading configuration '%s' ...", self.config_path)
+        if os.path.exists(self.config_path):
+            with open(self.config_path, 'r') as fd:
                 self.config.read_file(fd)
         else:
             LOGGER.warning(
                 "Cannot load configuration '%s'. File does not exist",
-                config_path
+                self.config_path
             )
         for observers in self.observers.values():
             for observer in observers:
@@ -312,3 +315,14 @@ class Plugin(PluginBase):
 
     def config_backend_remove_observer(self, section, callback):
         self.observers[section].remove(callback)
+
+    def bug_report_get_attachments(self, out: dict):
+        if self.config_path is None and not os.path.exists(self.config_path):
+            return
+        out['config'] = {
+            'include_by_default': True,
+            'date': None,
+            'file_type': _("App. config."),
+            'file_url': "file://" + self.config_path,
+            'file_size': os.stat(self.config_path).st_size,
+        }
