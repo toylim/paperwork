@@ -258,6 +258,11 @@ class Plugin(openpaperwork_core.PluginBase):
         self.progress.set_fraction(1.0)
         self.progress.set_text(_("Success"))
 
+        self.assistant.set_current_page(
+            # no point in staying on the progress bar page
+            self.assistant.get_current_page() + 1
+        )
+
     def _on_error(self, exc):
         self.core.call_all("on_idle")
 
