@@ -124,7 +124,7 @@ class Plugin(openpaperwork_core.PluginBase):
         active = self.core.call_success("config_get", "scanner_dev_id")
         active = active is not None and active != ""
         for button in buttons:
-            # XXX(Jflesch): set_sensitive() doesn't appear to work on
+            # WORKAROUND(Jflesch): set_sensitive() doesn't appear to work on
             # GtkMenuButton
             widget_tree.get_object(button).set_sensitive(active)
 

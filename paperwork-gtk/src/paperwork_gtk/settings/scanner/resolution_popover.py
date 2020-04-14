@@ -48,8 +48,18 @@ class Plugin(openpaperwork_core.PluginBase):
 
         selector = widget_tree.get_object("selector")
 
-        parent_widget_tree.get_object("scanner_resolution").set_popover(
-            selector
+        # WORKAROUND(Jflesch): set_sensitive() doesn't appear to work on
+        # GtkMenuButton --> we have to play with set_popover()
+
+        def reset_popover():
+            dev_id = self.core.call_success("config_get", "scanner_dev_id")
+            parent_widget_tree.get_object("scanner_resolution").set_popover(
+                selector if dev_id is not None and dev_id != "" else None
+            )
+
+        reset_popover()
+        self.core.call_all(
+            "config_add_observer", "scanner_dev_id", reset_popover
         )
 
         selector.connect("show", self._on_show, widget_tree)
