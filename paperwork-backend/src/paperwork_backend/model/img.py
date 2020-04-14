@@ -83,6 +83,8 @@ class Plugin(openpaperwork_core.PluginBase):
         return nb_pages
 
     def page_get_img_url(self, doc_url, page_idx, write=False):
+        if write:
+            self.core.call_success("fs_mkdir_p", doc_url)
         page_url = self.core.call_success(
             "fs_join", doc_url, PAGE_FILENAME_FMT.format(page_idx + 1)
         )

@@ -31,6 +31,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['paperwork_backend.model.workdir'],
             },
             {
+                'interface': 'fs',
+                'defaults': ['openpaperwork_gtk.fs.gio'],
+            },
+            {
                 'interface': 'gtk_resources',
                 'defaults': ['openpaperwork_gtk.resources'],
             },
@@ -46,7 +50,9 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
         workdir_chooser = widget_tree.get_object("work_dir_chooser")
-        workdir_chooser.set_uri(self.workdir)
+        if (self.core.call_success("fs_exists", self.workdir) is not None and
+                self.core.call_success("fs_isdir", self.workdir) is not None):
+            workdir_chooser.set_uri(self.workdir)
         workdir_chooser.connect("file-set", self._on_file_set)
 
         self.core.call_success(
