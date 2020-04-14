@@ -113,6 +113,10 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doclist.connect("drag-motion", self._on_drag_motion)
         self.doclist.connect("drag-leave", self._on_drag_leave)
 
+        self.widget_tree.get_object("doclist_new_doc").connect(
+            "clicked", self._on_new_doc
+        )
+
         self.menu_model = self.widget_tree.get_object("doclist_menu_model")
 
         self.core.call_all("drag_and_drop_page_enable", self.doclist)
@@ -129,6 +133,11 @@ class Plugin(openpaperwork_core.PluginBase):
         body = self.widget_tree.get_object("doclist_body")
         body.add(widget)
         body.reorder_child(widget, vposition)
+
+    def _on_new_doc(self, button):
+        new_doc = self.core.call_success("get_new_doc")
+        self.core.call_all("doc_open", *new_doc)
+        self.doclist_show(self.doc_ids, show_new=True)
 
     def _doclist_clear(self):
         start = time.time()
@@ -244,6 +253,7 @@ class Plugin(openpaperwork_core.PluginBase):
             self._add_doc_box(new_doc[0], new=True)
 
         self.doclist_extend(NB_DOCS_PER_PAGE)
+        self._reselect_current_doc()
 
     def on_search_start(self, query):
         spinner = self.widget_tree.get_object("doclist_spinner")
@@ -255,7 +265,6 @@ class Plugin(openpaperwork_core.PluginBase):
         spinner = self.widget_tree.get_object("doclist_spinner")
         spinner.set_visible(False)
         spinner.stop()
-        self._reselect_current_doc()
 
     def doc_close(self):
         self.active_docid = None
@@ -264,7 +273,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.active_docid = doc_id
 
     def _reselect_current_doc(self):
-        if self.active_docid not in self.doc_ids:
+        if self.active_docid not in self.docid_to_row:
             LOGGER.info(
                 "Document %s not found in the document list",
                 self.active_docid
