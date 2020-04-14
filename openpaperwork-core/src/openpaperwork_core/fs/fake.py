@@ -229,8 +229,8 @@ class Plugin(CommonFsPluginBase):
                 f[p] = {}
             f = f[p]
         name = url.split("/")[-1]
-        assert(name not in f)
-        f[name] = {}
+        if name not in f:
+            f[name] = {}
         return True
 
     def fs_recurse(self, parent_uri, dir_included=False):
