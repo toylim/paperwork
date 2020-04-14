@@ -12,7 +12,7 @@ class Plugin(openpaperwork_core.PluginBase):
         super().__init__()
         self.widget_tree = None
         self.page_info = None
-        self.active_doc = ()
+        self.active_doc = (None, None)
         self.nb_pages = None
         self.current_page = None
         self.nb_pages = None

@@ -91,13 +91,6 @@ class Plugin(openpaperwork_core.PluginBase):
         self._update_sensitivity()
 
     def _on_clicked(self, widget):
-        if self.active_doc_url is None:
-            (self.active_doc_id, self.active_doc_url) = self.core.call_success(
-                "get_new_doc"
-            )
-            self.core.call_all(
-                "doc_open", self.active_doc_id, self.active_doc_url
-            )
         self.default_action(
             self.active_doc_id, self.active_doc_url,
             *self.default_action_args

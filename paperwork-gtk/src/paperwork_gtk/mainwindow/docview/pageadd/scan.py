@@ -135,6 +135,10 @@ class Plugin(openpaperwork_core.PluginBase):
     def _on_scan(self, doc_id, doc_url, source_id):
         LOGGER.info("Scanning from %s", source_id)
 
+        if doc_id is None or doc_url is None:
+            (doc_id, doc_url) = self.core.call_success("get_new_doc")
+            self.core.call_all("doc_open", doc_id, doc_url)
+
         self.core.call_all("on_busy")
         self.busy = True
 
