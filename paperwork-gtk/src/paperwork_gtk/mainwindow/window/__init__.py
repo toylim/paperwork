@@ -145,12 +145,13 @@ class Plugin(openpaperwork_core.PluginBase):
         # TODO(JFlesch): not really config --> should not be stored in config ?
         if self.mainwindow is not None:
             self.core.call_all("config_save")
+            self.mainwindow.set_visible(False)
 
     def _on_mainwindow_destroy(self, main_window):
         LOGGER.info("Main window destroy. Quitting")
+        self.core.call_all("on_gtk_window_closed", self.mainwindow)
         self.core.call_all("on_quit")
         self.core.call_all("mainloop_quit_graceful")
-        self.core.call_all("on_gtk_window_closed", self.mainwindow)
 
     def _on_mainwindow_size_allocate(self, main_win, rectangle):
         (w, h) = main_win.get_size()
