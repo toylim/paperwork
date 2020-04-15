@@ -140,7 +140,8 @@ class CairoRenderer(GObject.GObject):
         'img_obtained': (GObject.SignalFlags.RUN_LAST, None, ()),
     }
 
-    DEFAULT_BACKGROUND = (0.5, 0.5, 0.5)
+    BACKGROUND = (0.5, 0.5, 0.5)
+    OUTLINE = (0.5, 0.5, 0.5)
 
     def __init__(self, core, work_queue_name, file_url):
         super().__init__()
@@ -151,7 +152,6 @@ class CairoRenderer(GObject.GObject):
         self.zoom = 1.0
         self.blurry = False
         self.cairo_surface = None
-        self.background = self.DEFAULT_BACKGROUND
         self.visible = False
 
         # very often, the image is much bigger than what we actually display
@@ -296,6 +296,16 @@ class CairoRenderer(GObject.GObject):
         try:
             cairo_ctx.set_source_surface(self.cache[1].surface)
             cairo_ctx.paint()
+
+            size = self.size
+            cairo_ctx.set_source_rgb(*self.OUTLINE)
+            cairo_ctx.set_line_width(1)
+            cairo_ctx.rectangle(
+                0, 0,
+                (size[0] * self.zoom) - 1,
+                (size[1] * self.zoom) - 1
+            )
+            cairo_ctx.stroke()
         finally:
             cairo_ctx.restore()
 
@@ -304,8 +314,7 @@ class CairoRenderer(GObject.GObject):
             cairo_ctx.save()
             try:
                 size = self.size
-                (r, g, b) = self.background
-                cairo_ctx.set_source_rgb(r, g, b)
+                cairo_ctx.set_source_rgb(*self.BACKGROUND)
                 cairo_ctx.rectangle(0, 0, size[0], size[1])
                 cairo_ctx.clip()
                 cairo_ctx.paint()

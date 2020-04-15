@@ -62,6 +62,7 @@ class CairoRenderer(GObject.GObject):
         'size_obtained': (GObject.SignalFlags.RUN_LAST, None, ()),
         'img_obtained': (GObject.SignalFlags.RUN_LAST, None, ()),
     }
+    OUTLINE = (0.5, 0.5, 0.5)
 
     def __init__(self, core, work_queue_name, file_url, page_idx):
         global POPPLER_DOCS
@@ -164,8 +165,21 @@ class CairoRenderer(GObject.GObject):
             )
             cairo_ctx.clip()
             cairo_ctx.paint()
-
             self.page.render(cairo_ctx)
+
+            cairo_ctx.scale(
+                1 / paperwork_backend.model.pdf.PDF_RENDER_FACTOR,
+                1 / paperwork_backend.model.pdf.PDF_RENDER_FACTOR,
+            )
+
+            cairo_ctx.set_source_rgb(*self.OUTLINE)
+            outline_width = 1 / zoom
+            cairo_ctx.set_line_width(outline_width)
+            cairo_ctx.rectangle(
+                0, 0,
+                self.size[0] - outline_width, self.size[1] - outline_width
+            )
+            cairo_ctx.stroke()
         finally:
             cairo_ctx.restore()
 
