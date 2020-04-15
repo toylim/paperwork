@@ -1,8 +1,10 @@
 *~
+*.aux
 *.pyc
 build
 paperwork.conf
 dist/
+out/
 paperwork.egg-info/
 .idea
 *.traineddata
