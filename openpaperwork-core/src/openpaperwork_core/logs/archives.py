@@ -123,6 +123,8 @@ class Plugin(PluginBase):
                 'file_size': os.stat(file_path).st_size
             }
 
+        LOGGER.info("Flushing logs to disk")
+        self.log_handler.out_fd.flush()
         file_url = "file://" + self.log_handler.out_file_path
         inputs[file_url] = {
             'date': None,  # now
