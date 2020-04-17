@@ -74,6 +74,11 @@ class Plugin(openpaperwork_core.PluginBase):
     def init(self, core):
         super().init(core)
 
+        self.core.call_success(
+            "gtk_load_css",
+            "paperwork_gtk.mainwindow.docview", "docview.css"
+        )
+
         self.widget_tree = self.core.call_success(
             "gtk_load_widget_tree",
             "paperwork_gtk.mainwindow.docview", "docview.glade"
