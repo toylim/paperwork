@@ -7,6 +7,10 @@
 	background-color: @theme_base_color;
 }
 
+.section_box > *:disabled {
+	background-color: @insensitive_bg_color;
+}
+
 .section_box > :first-child {
 	border-radius: 5px 5px 0px 0px;
 	border-top: 1px solid @borders;
