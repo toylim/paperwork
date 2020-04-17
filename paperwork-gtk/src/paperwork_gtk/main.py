@@ -77,6 +77,7 @@ DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'paperwork_gtk.mainwindow.exporter',
     'paperwork_gtk.mainwindow.pageeditor',
     'paperwork_gtk.mainwindow.progress',
+    'paperwork_gtk.mainwindow.search.advanced',
     'paperwork_gtk.mainwindow.search.field',
     'paperwork_gtk.mainwindow.window',
     'paperwork_gtk.new_doc',

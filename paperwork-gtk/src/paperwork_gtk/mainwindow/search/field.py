@@ -4,6 +4,7 @@ import openpaperwork_core
 import openpaperwork_core.promise
 import paperwork_backend.sync
 
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -74,6 +75,12 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         self.search_entry.connect("stop-search", lambda w: self.search_stop())
 
+        self.widget_tree.get_object("search_dialog_button").connect(
+            "clicked", lambda button: self.core.call_all(
+                "gtk_open_advanced_search_dialog"
+            )
+        )
+
         self.core.call_all("work_queue_create", "doc_search")
         self.core.call_one(
             "mainloop_schedule", self.search_update_document_list
@@ -85,6 +92,12 @@ class Plugin(openpaperwork_core.PluginBase):
         query = self.search_entry.get_text()
         LOGGER.info("Looking for [%s]", query)
         self.core.call_all("search_by_keywords", query)
+
+    def search_get(self):
+        return self.search_entry.get_text()
+
+    def search_set(self, text):
+        self.search_entry.set_text(text)
 
     def search_by_keywords(self, query):
         self.core.call_all("on_search_start", query)
