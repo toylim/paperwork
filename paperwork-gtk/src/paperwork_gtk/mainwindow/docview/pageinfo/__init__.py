@@ -93,11 +93,12 @@ class Plugin(openpaperwork_core.PluginBase):
 
         nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)
         if nb_pages is None:
-            LOGGER.warning("Failed to get the number of pages in %s", doc_id)
             nb_pages = 0
 
+        self.current_page.set_text("")
         self.nb_pages.set_text(f"/ {nb_pages}")
         self.page_info.set_visible(True)
+        self.page_info.set_sensitive(nb_pages > 0)
 
     def doc_reload_page(self, doc_id, doc_url, page_idx):
         if doc_id != self.active_doc[0]:

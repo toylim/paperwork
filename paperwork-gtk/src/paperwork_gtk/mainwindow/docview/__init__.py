@@ -233,6 +233,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def doc_goto_page(self, page_idx):
         LOGGER.info("Going to page %d", page_idx)
+        if page_idx < 0:
+            page_idx = 0
         self.requested_page_idx = page_idx
         for controller in self.controllers.values():
             controller.doc_goto_page(page_idx)
