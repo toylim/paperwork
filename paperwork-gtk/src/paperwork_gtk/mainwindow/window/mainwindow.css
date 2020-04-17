@@ -9,3 +9,11 @@
   border-top-left-radius: 0px;
   border-bottom-left-radius: 0px;
 }
+
+#mainwindow_stack_body_left {
+  border-right: 1px solid @borders;
+}
+
+#mainwindow_stack_bodyr_right {
+  border-left-width: 0px;
+}

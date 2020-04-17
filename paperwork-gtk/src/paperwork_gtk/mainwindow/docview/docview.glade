@@ -12,6 +12,9 @@
         <property name="shadow_type">in</property>
         <property name="overlay_scrolling">False</property>
         <property name="propagate_natural_width">True</property>
+        <style>
+          <class name="borderless"/>
+        </style>
         <child>
 
           <object class="GtkBox" id="doclist_body">
