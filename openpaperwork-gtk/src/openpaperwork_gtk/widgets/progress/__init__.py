@@ -14,7 +14,7 @@ try:
 except (ImportError, ValueError):
     GDK_AVAILABLE = False
 
-
+NEEDS_ATTENTION_TIMEOUT = 2.1
 LOGGER = logging.getLogger(__name__)
 TIME_BETWEEN_UPDATES = 0.3
 
@@ -71,6 +71,16 @@ class ProgressWidget(object):
 
         self.widget = self.button_widget_tree.get_object("progress_revealer")
 
+    def needs_attention(self):
+        button = self.button_widget_tree.get_object("progress_button")
+        button.get_style_context().add_class("progress_button_needs_attention")
+        self.core.call_success(
+            "mainloop_schedule",
+            button.get_style_context().remove_class,
+            "progress_button_needs_attention",
+            delay_s=NEEDS_ATTENTION_TIMEOUT
+        )
+
     def _thread(self):
         self.stay_alives = STAY_ALIVES
         while self.thread is not None:
@@ -116,6 +126,7 @@ class ProgressWidget(object):
             box.remove(details)
             details.unparent()
             self.button_widget_tree.get_object("progress_button").queue_draw()
+            self.needs_attention()
 
             LOGGER.info(
                 "Task '%s' has ended (%d remaining)",
@@ -138,6 +149,7 @@ class ProgressWidget(object):
             )
             box.add(widget_tree.get_object("progress_bar"))
             self.progress_widget_trees[upd_type] = widget_tree
+            self.needs_attention()
         else:
             widget_tree = self.progress_widget_trees[upd_type]
 
@@ -218,7 +230,18 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'gtk_resources',
                 'defaults': ['openpaperwork_gtk.resources'],
             },
+            {
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_gtk.mainloop.glib'],
+            },
         ]
+
+    def init(self, core):
+        super().init(core)
+        self.core.call_success(
+            "gtk_load_css",
+            "openpaperwork_gtk.widgets.progress", "progress.css"
+        )
 
     def chkdeps(self, out: dict):
         if not GDK_AVAILABLE:

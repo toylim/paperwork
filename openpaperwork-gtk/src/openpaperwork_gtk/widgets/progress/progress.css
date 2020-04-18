@@ -1,0 +1,32 @@
+/* copied from Nautilus and modified slightly */
+
+@keyframes progress_needs_attention_keyframes {
+	0% {
+		background-image: linear-gradient(
+			to bottom, #fafafa, #ededed 40%,  #e0e0e0
+		);
+		border-color: @borders;
+	}
+	30% {
+		background-image: linear-gradient(
+			to bottom, @theme_base_color, @theme_base_color, @theme_base_color
+		);
+		border-color: @theme_fg_color;
+	}
+	90% {
+		background-image: linear-gradient(
+			to bottom, @theme_base_color, @theme_base_color, @theme_base_color
+		);
+		border-color: @theme_fg_color;
+	}
+	100% {
+		background-image: linear-gradient(
+			to bottom, #fafafa, #ededed 40%,  #e0e0e0
+		);
+		border-color: @borders;
+	}
+}
+
+.progress_button_needs_attention {
+	animation: progress_needs_attention_keyframes 2s ease-in-out;
+}
