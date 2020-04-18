@@ -116,6 +116,11 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def init(self, core):
         super().init(core)
+
+        if not CAIRO_AVAILABLE:
+            # chkdeps() must still be callable
+            return
+
         file_path = self.core.call_success(
             "resources_get_file",
             "paperwork_gtk.mainwindow.docview.controllers.empty_doc",
@@ -125,6 +130,8 @@ class Plugin(openpaperwork_core.PluginBase):
         self.img = cairo.ImageSurface.create_from_png(file_path)
 
     def chkdeps(self, out: dict):
+        if not CAIRO_AVAILABLE:
+            out['cairo'].update(openpaperwork_core.deps.CAIRO)
         if not GTK_AVAILABLE:
             out['gtk'].update(openpaperwork_gtk.deps.GTK)
         if not PANGO_AVAILABLE:
