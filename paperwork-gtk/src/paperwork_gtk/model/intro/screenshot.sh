@@ -12,7 +12,7 @@ TEST_DOCS="${DATA_DIR}/paperwork_test-documents.tar.gz"
 
 if ! [ -f ${TEST_DOCS} ] ; then
 	echo "Downloading test documents ..."
-	wget https://download.openpaper.work/paperwork_test_documents.tar.gz \
+	wget -q https://download.openpaper.work/paperwork_test_documents.tar.gz \
 		-O "${TEST_DOCS}"
 fi
 
