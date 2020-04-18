@@ -59,7 +59,8 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def chkdeps(self, out: dict):
-        out['cairo'] = openpaperwork_core.deps.CAIRO
+        if not CAIRO_AVAILABLE:
+            out['cairo'] = openpaperwork_core.deps.CAIRO
 
     def on_gtk_window_opened(self, window):
         self.windows.append(window)
@@ -123,6 +124,72 @@ class Plugin(openpaperwork_core.PluginBase):
         promise = promise.then(lambda *args, **kwargs: None)
 
         return (file_url, promise)
+
+    def screenshot_snap_widget(
+                self, gtk_widget, out_file_url, margins=(20, 20, 20, 20)
+            ):
+        assert(out_file_url.endswith(".png"))
+
+        if not gtk_widget.is_drawable() or not gtk_widget.get_visible():
+            LOGGER.warning(
+                "%s is not visible. Cannot screenshot", gtk_widget
+            )
+            return None
+
+        # find the GTK window of the widget
+        window = gtk_widget.get_toplevel()
+        if not window.is_drawable() or not window.get_visible():
+            LOGGER.warning(
+                "%s's window is not visible. Cannot screenshot",
+                gtk_widget
+            )
+            return None
+
+        # take a screenshot of the whole window
+        win_alloc = window.get_allocation()
+        win_surface = cairo.ImageSurface(
+            cairo.FORMAT_RGB24, win_alloc.width, win_alloc.height
+        )
+        cairo_ctx = cairo.Context(win_surface)
+        window.draw(cairo_ctx)
+
+        # then cut it
+        widget_position = gtk_widget.translate_coordinates(window, 0, 0)
+        widget_alloc = gtk_widget.get_allocation()
+        start = (
+            max(0, widget_position[0] - margins[0]),
+            max(0, widget_position[1] - margins[1])
+        )
+        size = (
+            min(
+                win_alloc.width - start[0],
+                widget_alloc.width + margins[0] + margins[2]
+            ),
+            min(
+                win_alloc.height - start[1],
+                widget_alloc.height + margins[1] + margins[3],
+            )
+        )
+
+        if size[0] <= 0 or size[1] <= 0:
+            LOGGER.warning(
+                "%s is folded/hidden. Cannot screenshot", gtk_widget
+            )
+            return None
+
+        LOGGER.info(
+            "Making screenshot of %s: %s (%s, %s)",
+            gtk_widget, out_file_url, start, size
+        )
+        surface = cairo.ImageSurface(cairo.FORMAT_RGB24, *size)
+        cairo_ctx = cairo.Context(surface)
+        cairo_ctx.translate(-start[0], -start[1])
+        cairo_ctx.set_source_surface(win_surface)
+        cairo_ctx.paint()
+
+        with self.core.call_success("fs_open", out_file_url, "wb") as fd:
+            surface.write_to_png(fd)
+        return True
 
     def on_uncaught_exception(self, exc_info):
         LOGGER.info("Uncaught exception. Taking screenshots")
