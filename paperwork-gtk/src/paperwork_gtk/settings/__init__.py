@@ -19,6 +19,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
         self.active_windows = []
+        self.settings_dialog = None
 
     def get_interfaces(self):
         return [
@@ -73,16 +74,26 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         self.core.call_all('complete_settings', global_widget_tree)
         settings = global_widget_tree.get_object("settings_window")
+        self.settings_dialog = settings
         settings.set_transient_for(self.active_windows[-1])
         settings.connect("destroy", self._save_settings, global_widget_tree)
         settings.set_visible(True)
         self.core.call_all("on_gtk_window_opened", settings)
+
+    def close_settings(self):
+        if self.settings_dialog is not None:
+            self.settings_dialog.set_visible(False)
+            self.settings_dialog = None
+
+    def on_quit(self):
+        self.close_settings()
 
     def _save_settings(self, window, global_widget_tree):
         LOGGER.info("Settings closed. Saving configuration")
         self.core.call_all("config_save")
         self.core.call_all("on_gtk_window_closed", window)
         self.core.call_all("on_settings_closed", global_widget_tree)
+        self.settings_dialog = None
 
     def add_setting_to_dialog(self, global_widget_tree, title, widgets):
         """
