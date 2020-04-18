@@ -5,7 +5,7 @@ OUT_PDF=out/intro.pdf
 all: $(OUT_PDF)
 
 out/paperwork_going_up.png: data/paperwork_going_up.svg
-	inkscape -z $< -e $@
+	convert $< $@
 
 screenshots:
 	LANG=C WAYLAND_DISPLAY= xvfb-run sh ./screenshot.sh
