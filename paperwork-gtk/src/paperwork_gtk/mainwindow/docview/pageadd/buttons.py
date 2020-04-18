@@ -78,11 +78,14 @@ class Plugin(openpaperwork_core.PluginBase):
         self.widget_tree.get_object("pageadd_switch").set_popover(selector)
 
     def _update_sensitivity(self):
-        self.widget_tree.get_object("pageadd_button").set_sensitive(
+        sensitive = (
             self.default_action is not None and
             self.write_allowed and
             not self.scanning
         )
+        button = self.widget_tree.get_object("pageadd_button")
+        button.set_sensitive(sensitive)
+        self.core.call_all("on_widget_busyness_changed", button, sensitive)
 
     def pageadd_set_default_action(self, txt, callback, *args):
         self.default_action = callback

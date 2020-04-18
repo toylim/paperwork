@@ -71,11 +71,17 @@ class Plugin(openpaperwork_core.PluginBase):
     def doc_open(self, doc_id, doc_url):
         self.active_doc = (doc_id, doc_url)
 
+    def _set_sensitivity(self, sensitive):
+        self.button_edit.set_sensitive(sensitive)
+        self.core.call_all(
+            "on_widget_busyness_changed", self.button_edit, sensitive
+        )
+
     def on_backend_readonly(self):
-        self.button_edit.set_sensitive(False)
+        self._set_sensitivity(False)
 
     def on_backend_readwrite(self):
-        self.button_edit.set_sensitive(True)
+        self._set_sensitivity(True)
 
     def on_page_shown(self, page_idx):
         self.active_page = page_idx

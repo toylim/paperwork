@@ -30,6 +30,7 @@ class Plugin(openpaperwork_core.PluginBase):
         super().__init__()
         self.refcount = 0
         self.windows = []
+        self.realize_handler_id = None
 
     def get_interfaces(self):
         return [
@@ -80,3 +81,24 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def on_idle(self):
         self._set_mouse_cursor(-1)
+
+    def on_widget_busyness_changed(self, widget, busy):
+        if busy:
+            cursor = None
+        else:
+            display = widget.get_display()
+            cursor = Gdk.Cursor.new_for_display(display, Gdk.CursorType.WATCH)
+        window = widget.get_window()
+
+        def _set_cursor(*args, **kwargs):
+            window = widget.get_window()
+            window.set_cursor(cursor)
+            if self.realize_handler_id is not None:
+                widget.disconnect(self.realize_handler_id)
+                self.realize_handler_id = None
+
+        if window is not None:
+            _set_cursor()
+        else:
+            # assuming the widget will be realized soon
+            widget.connect("realize", _set_cursor)
