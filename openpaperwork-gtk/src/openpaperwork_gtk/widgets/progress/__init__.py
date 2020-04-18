@@ -25,9 +25,9 @@ TIME_BETWEEN_UPDATES = 0.3
 STAY_ALIVES = int(2.0 / TIME_BETWEEN_UPDATES)
 
 
-class Plugin(openpaperwork_core.PluginBase):
-    def __init__(self):
-        super().__init__()
+class ProgressWidget(object):
+    def __init__(self, core):
+        self.core = core
         # A thread updates the widgets every 300ms. We don't update them
         # each time on_progress() is called to not degrade performanes
         self.thread = None
@@ -41,30 +41,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
         self.stay_alives = STAY_ALIVES
 
-    def get_interfaces(self):
-        return [
-            'chkdeps',
-            'progress_listener',
-        ]
-
-    def get_deps(self):
-        return [
-            {
-                'interface': 'gtk_resources',
-                'defaults': ['openpaperwork_gtk.resources'],
-            },
-            {
-                'interface': 'gtk_docview',
-                'defaults': ['paperwork_gtk.mainwindow.docview'],
-            },
-        ]
-
-    def init(self, core):
-        super().init(core)
-
         self.button_widget_tree = self.core.call_success(
             "gtk_load_widget_tree",
-            "paperwork_gtk.mainwindow.progress",
+            "openpaperwork_gtk.widgets.progress",
             "progress_button.glade"
         )
         if self.button_widget_tree is None:
@@ -73,7 +52,7 @@ class Plugin(openpaperwork_core.PluginBase):
             return
         self.details_widget_tree = self.core.call_success(
             "gtk_load_widget_tree",
-            "paperwork_gtk.mainwindow.progress",
+            "openpaperwork_gtk.widgets.progress",
             "progress_popover.glade"
         )
         if self.details_widget_tree is None:
@@ -90,13 +69,7 @@ class Plugin(openpaperwork_core.PluginBase):
             "draw", self._on_icon_draw
         )
 
-        headerbar = self.core.call_success("docview_get_headerbar")
-        button = self.button_widget_tree.get_object("progress_revealer")
-        headerbar.pack_end(button)
-
-    def chkdeps(self, out: dict):
-        if not GDK_AVAILABLE:
-            out['gdk'].update(openpaperwork_core.deps.GDK)
+        self.widget = self.button_widget_tree.get_object("progress_revealer")
 
     def _thread(self):
         self.stay_alives = STAY_ALIVES
@@ -157,7 +130,7 @@ class Plugin(openpaperwork_core.PluginBase):
             )
             widget_tree = self.core.call_success(
                 "gtk_load_widget_tree",
-                "paperwork_gtk.mainwindow.progress",
+                "openpaperwork_gtk.widgets.progress",
                 "progress_details.glade"
             )
             box = self.details_widget_tree.get_object(
@@ -178,7 +151,6 @@ class Plugin(openpaperwork_core.PluginBase):
         self.button_widget_tree.get_object(
             "progress_revealer"
         ).set_reveal_child(True)
-        return
 
     def on_progress(self, upd_type, progress, description=None):
         with self.lock:
@@ -226,3 +198,37 @@ class Plugin(openpaperwork_core.PluginBase):
             (ratio * 2 * math.pi) - (math.pi / 2.0)
         )
         cairo_ctx.fill()
+
+
+class Plugin(openpaperwork_core.PluginBase):
+    def __init__(self):
+        super().__init__()
+        self.widgets = []
+
+    def get_interfaces(self):
+        return [
+            'chkdeps',
+            'gtk_progress_widget',
+            'progress_listener',
+        ]
+
+    def get_deps(self):
+        return [
+            {
+                'interface': 'gtk_resources',
+                'defaults': ['openpaperwork_gtk.resources'],
+            },
+        ]
+
+    def chkdeps(self, out: dict):
+        if not GDK_AVAILABLE:
+            out['gdk'].update(openpaperwork_core.deps.GDK)
+
+    def gtk_progress_make_widget(self):
+        widget = ProgressWidget(self.core)
+        self.widgets.append(widget)
+        return widget.widget
+
+    def on_progress(self, upd_type, progress, description=None):
+        for widget in self.widgets:
+            widget.on_progress(upd_type, progress, description)
