@@ -53,6 +53,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return [
             'chkdeps',
             'gtk_doc_property',
+            'screenshot_provider',
             'syncable',
         ]
 
@@ -73,6 +74,10 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'gtk_resources',
                 'defaults': ['openpaperwork_gtk.resources'],
+            },
+            {
+                'interface': 'screenshot',
+                'defaults': ['openpaperwork_gtk.screenshots'],
             },
         ]
 
@@ -347,3 +352,15 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def on_all_labels_loaded(self):
         self._refresh_list()
+
+    def screenshot_snap_all_doc_widgets(self, out_dir):
+        if self.widget_tree is None:
+            return
+        self.core.call_success(
+            "screenshot_snap_widget",
+            self.widget_tree.get_object("listbox_global"),
+            self.core.call_success(
+                "fs_join", out_dir, "doc_labels.png"
+            ),
+            margins=(10, 10, -100, -400)
+        )

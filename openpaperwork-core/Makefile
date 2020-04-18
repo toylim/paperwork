@@ -27,6 +27,10 @@ doc/_build/html/index.html: doc
 upload_doc: doc/_build/html/index.html
 	cd .. && ./ci/deliver_doc.sh ${CURDIR}/doc/_build/html openpaperwork_core
 
+data:
+
+upload_data:
+
 check:
 	flake8 src/openpaperwork_core
 

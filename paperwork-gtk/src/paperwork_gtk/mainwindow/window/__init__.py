@@ -17,6 +17,10 @@ try:
 except (ImportError, ValueError):
     GTK_AVAILABLE = False
 
+import PIL
+import PIL.Image
+import PIL.ImageDraw
+
 import openpaperwork_core
 import openpaperwork_gtk.deps
 
@@ -42,6 +46,7 @@ class Plugin(openpaperwork_core.PluginBase):
             'app_actions',
             'chkdeps',
             'gtk_mainwindow',
+            'screenshot_provider',
         ]
 
     def get_deps(self):
@@ -51,8 +56,16 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_core.config'],
             },
             {
+                'interface': 'fs',
+                'defaults': ['openpaperwork_gtk.fs.gio']
+            },
+            {
                 'interface': 'gtk_resources',
                 'defaults': ['openpaperwork_gtk.resources'],
+            },
+            {
+                'interface': 'screenshot',
+                'defaults': ['openpaperwork_gtk.screenshots'],
             },
         ]
 
@@ -189,3 +202,50 @@ class Plugin(openpaperwork_core.PluginBase):
     def app_actions_add(self, action):
         if self.mainwindow is not None:
             self.mainwindow.add_action(action)
+
+    def mainwindow_focus(self):
+        self.mainwindow.grab_focus()
+
+    def _draw_overlay(self, img, area, color):
+        overlay = PIL.Image.new('RGBA', img.size, color + (0,))
+        draw = PIL.ImageDraw.Draw(overlay)
+        draw.rectangle(area, fill=color + (0x5F,))
+        return PIL.Image.alpha_composite(img, overlay)
+
+    def screenshot_snap_all_doc_widgets(self, out_dir):
+        out = self.core.call_success("fs_join", out_dir, "main_window.png")
+        self.core.call_success(
+            "screenshot_snap_widget", self.mainwindow, out
+        )
+
+        left = self.stacks['left']['body']
+        left_alloc = left.get_allocation()
+        left_width = left_alloc.width
+        (left_x, _) = left.translate_coordinates(self.mainwindow, 0, 0)
+        left = left_x + left_width
+
+        with self.core.call_success("fs_open", out, 'rb') as fd:
+            img = PIL.Image.open(fd)
+            img.load()
+            img = img.convert("RGBA")
+
+        img = self._draw_overlay(
+            img, (0, 0, left, img.size[1]), (0, 0xFF, 0)
+        )
+        img = self._draw_overlay(
+            img, (left, 0, img.size[0], img.size[1]), (0, 0, 0xFF)
+        )
+
+        # drop some black border in the scn
+        img = img.crop(
+            (left_x, left_x, img.size[0] - left_x, img.size[1] - left_x)
+        )
+
+        # keep only the top 150px
+        img = img.crop((0, 0, img.size[0], min(300, img.size[1])))
+
+        out = self.core.call_success(
+            "fs_join", out_dir, "main_window_split.png"
+        )
+        with self.core.call_success("fs_open", out, 'wb') as fd:
+            img.save(fd, format="PNG")

@@ -37,6 +37,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'gtk_resources',
                 'defaults': ['openpaperwork_gtk.resources'],
             },
+            {
+                'interface': 'screenshot',
+                'defaults': ['openpaperwork_gtk.screenshots'],
+            },
         ]
 
     def init(self, core):
@@ -93,3 +97,11 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def page_menu_append_item(self, item):
         self.menu_model.append_item(item)
+
+    def screenshot_snap_all_doc_widgets(self, out_dir):
+        self.core.call_success(
+            "screenshot_snap_widget",
+            self.widget_tree.get_object("page_actions"),
+            self.core.call_success("fs_join", out_dir, "page_actions.png"),
+            margins=(50, 50, 50, 50)
+        )

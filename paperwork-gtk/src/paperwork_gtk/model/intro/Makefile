@@ -7,7 +7,10 @@ all: $(OUT_PDF)
 out/paperwork_going_up.png: data/paperwork_going_up.svg
 	inkscape -z $< -e $@
 
-$(OUT_PDF): $(TEX) out/paperwork_going_up.png
+screenshots:
+	LANG=C WAYLAND_DISPLAY= xvfb-run sh ./screenshot.sh
+
+$(OUT_PDF): $(TEX) screenshots out/paperwork_going_up.png
 	pdflatex --output-directory=out ../$<
 
 clean:
@@ -15,4 +18,8 @@ clean:
 	rm -f $(OUT_PDF)
 	rm -f $(OUT_LATEX)
 
-.PHONY: clean
+data: $(OUT_PDF)
+
+upload_data:
+
+.PHONY: clean screenshots data upload_data

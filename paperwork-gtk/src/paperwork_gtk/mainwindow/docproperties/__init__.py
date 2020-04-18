@@ -121,9 +121,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def _cancel(self, *args, **kwargs):
         LOGGER.info("Changes cancelled by the user")
         self.core.call_all("doc_properties_components_cancel_changes")
-        self.core.call_all(
-            "mainwindow_show", side="left", name="doclist"
-        )
+        self.core.call_all("mainwindow_show_default", side="left")
 
     def _reload_doc(self, upd):
         if upd.doc_id == self.active_doc[0]:
@@ -160,3 +158,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
         for transaction in transactions:
             transaction.commit()
+
+    def docproperties_scroll_to_last(self):
+        scroll = self.widget_tree.get_object("docproperties_body")
+        vadj = scroll.get_vadjustment()
+        vadj.set_value(vadj.get_upper())

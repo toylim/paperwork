@@ -41,6 +41,10 @@ check: $(ALL_COMPONENTS:%=%_check)
 
 test: $(ALL_COMPONENTS:%=%_test)
 
+data: $(ALL_COMPONENTS:%=%_data)
+
+upload_data: $(ALL_COMPONENTS:%=%_upload_data)
+
 doc: $(ALL_COMPONENTS:%=%_doc)
 
 upload_doc: $(ALL_COMPONENTS:%=%_upload_doc)
@@ -105,6 +109,14 @@ help:
 	echo "Generating doc of $(@:%_doc=%)"
 	$(MAKE) -C $(@:%_doc=%) doc
 
+%_upload_data:
+	echo "Uploading data files of $(@:%_upload_data=%)"
+	$(MAKE) -C $(@:%_upload_data=%) upload_data
+
+%_data:
+	echo "Generating data files of $(@:%_data=%)"
+	$(MAKE) -C $(@:%_data=%) data
+
 %_clean:
 	echo "Cleaning $(@:%_clean=%)"
 	$(MAKE) -C $(@:%_clean=%) clean
@@ -144,4 +156,4 @@ venv:
 
 .PHONY: help build clean test check install install_py install_c uninstall \
 	uninstall_c uninstall_py release libinsane_win32 pyocr_win32 \
-	libpillowfight_win32 doc upload_doc
+	libpillowfight_win32 doc upload_doc data upload_data

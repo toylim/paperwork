@@ -32,6 +32,12 @@ doc:
 
 upload_doc:
 
+data:
+	make -C src/paperwork_gtk/model/intro data
+
+upload_data:
+	make -C src/paperwork_gtk/model/intro upload_data
+
 check:
 	flake8 --exclude=_version.py src/paperwork_gtk
 

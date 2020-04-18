@@ -1,5 +1,10 @@
 image: debian:stable-slim
 
+stages:
+  - test
+  - data
+  - deploy
+
 check:
   stage: test
   only:
@@ -46,6 +51,24 @@ test:
     - source ./activate_test_env.sh && make test
 
 
+generate_data:
+  stage: data
+  only:
+    - branches@World/OpenPaperwork/paperwork
+    - tags@World/OpenPaperwork/paperwork
+  image: debian:stable
+  tags:
+    - linux
+    - volatile
+  <<: *apt
+  script:
+    - apt-get install -y -qq texlive-full xvfb
+    - apt-get install -y -qq rclone
+    - source ./activate_test_env.sh && make install
+    - source ./activate_test_env.sh && paperwork-gtk chkdeps -y && paperwork-cli chkdeps -y
+    - source ./activate_test_env.sh && make data && make upload_data
+
+
 linux_flatpak:
   stage: deploy
   only:
@@ -60,7 +83,7 @@ linux_flatpak:
     - ./ci/update_flatpak_repo.sh
 
 
-doc:
+doc_devel:
   stage: deploy
   only:
     - branches@World/OpenPaperwork/paperwork

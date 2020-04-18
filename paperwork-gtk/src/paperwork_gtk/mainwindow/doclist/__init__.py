@@ -32,6 +32,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.last_date = datetime.datetime(year=1, month=1, day=1)
         self.row_to_docid = {}
         self.docid_to_row = {}
+        self.docid_to_widget_tree = {}
         self.active_docid = None
         self.actions = None
 
@@ -43,6 +44,7 @@ class Plugin(openpaperwork_core.PluginBase):
             'drag_and_drop_destination',
             'gtk_app_menu',
             'gtk_doclist',
+            'screenshot_provider',
             'search_listener',
         ]
 
@@ -75,6 +77,10 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'mainloop',
                 'defaults': ['openpaperwork_gtk.mainloop.glib'],
+            },
+            {
+                'interface': 'screenshot',
+                'defaults': ['openpaperwork_gtk.screenshots'],
             },
         ]
 
@@ -158,6 +164,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doc_visibles = 0
         self.row_to_docid = {}
         self.docid_to_row = {}
+        self.docid_to_widget_tree = {}
 
     def _add_date_box(self, name, txt):
         widget_tree = self.core.call_success(
@@ -197,6 +204,7 @@ class Plugin(openpaperwork_core.PluginBase):
         row = widget_tree.get_object("doc_listbox")
         self.row_to_docid[row] = doc_id
         self.docid_to_row[doc_id] = row
+        self.docid_to_widget_tree[doc_id] = widget_tree
         self.doclist.insert(row, -1)
 
     def doclist_extend(self, nb_docs):
@@ -375,3 +383,25 @@ class Plugin(openpaperwork_core.PluginBase):
         if nb_pages is None:
             nb_pages = 0
         return (doc_id, nb_pages)
+
+    def screenshot_snap_all_doc_widgets(self, out_dir):
+        self.widget_tree.get_object("doclist_new_doc")
+        self.core.call_success(
+            "screenshot_snap_widget",
+            self.widget_tree.get_object("doclist_new_doc"),
+            self.core.call_success(
+                "fs_join", out_dir, "doc_new_button.png"
+            ),
+            margins=(30, 30, 30, 30)
+        )
+
+        if self.active_docid is None:
+            return
+        widget_tree = self.docid_to_widget_tree[self.active_docid]
+        self.core.call_success(
+            "screenshot_snap_widget", widget_tree.get_object("doc_actions"),
+            self.core.call_success(
+                "fs_join", out_dir, "doc_properties_button.png"
+            ),
+            margins=(50, 50, 50, 50)
+        )

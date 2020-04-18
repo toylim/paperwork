@@ -49,6 +49,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_core.work_queue.default'],
             },
             {
+                'interface': 'screenshot',
+                'defaults': ['openpaperwork_gtk.screenshots'],
+            },
+            {
                 'interface': 'thread',
                 'defaults': ['openpaperwork_core.thread.simple'],
             },
@@ -154,3 +158,10 @@ class Plugin(openpaperwork_core.PluginBase):
         promises.append(openpaperwork_core.promise.Promise(
             self.core, self.search_update_document_list
         ))
+
+    def screenshot_snap_all_doc_widgets(self, out_dir):
+        self.core.call_success(
+            "screenshot_snap_widget", self.search_entry,
+            self.core.call_success("fs_join", out_dir, "search.png"),
+            margins=(50, 50, 50, 140)
+        )

@@ -17,6 +17,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_interfaces(self):
         return [
             'gtk_doc_property',
+            'screenshot_provider',
         ]
 
     def get_deps(self):
@@ -32,6 +33,10 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'gtk_resources',
                 'defaults': ['openpaperwork_gtk.resources'],
+            },
+            {
+                'interface': 'screenshot',
+                'defaults': ['openpaperwork_gtk.screenshots'],
             },
         ]
 
@@ -83,3 +88,15 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def doc_properties_components_cancel_changes(self):
         self.doc_properties_components_set_active_doc(*self.active_doc)
+
+    def screenshot_snap_all_doc_widgets(self, out_dir):
+        if self.widget_tree is None:
+            return
+        self.core.call_success(
+            "screenshot_snap_widget",
+            self.widget_tree.get_object("doctext_text"),
+            self.core.call_success(
+                "fs_join", out_dir, "doc_extra_text.png"
+            ),
+            margins=(50, 50, 50, 50)
+        )

@@ -47,6 +47,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'scan2doc',
                 'defaults': ['paperwork_backend.docscan.scan2doc'],
             },
+            {
+                'interface': 'screenshot',
+                'defaults': ['openpaperwork_gtk.screenshots'],
+            },
         ]
 
     def init(self, core):
@@ -124,3 +128,10 @@ class Plugin(openpaperwork_core.PluginBase):
     def on_scan_feed_end(self, scan_id):
         self.scanning = False
         self._update_sensitivity()
+
+    def screenshot_snap_all_doc_widgets(self, out_dir):
+        self.core.call_success(
+            "screenshot_snap_widget",
+            self.widget_tree.get_object("pageadd_buttons"),
+            self.core.call_success("fs_join", out_dir, "page_add.png")
+        )
