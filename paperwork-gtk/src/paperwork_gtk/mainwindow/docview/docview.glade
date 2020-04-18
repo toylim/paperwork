@@ -6,54 +6,68 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <child>
-      <object class="GtkScrolledWindow" id="docview_scroll">
-        <property name="name">docview_scroll</property>
+      <object class="GtkOverlay" id="docview_overlay">
         <property name="visible">True</property>
-        <property name="can_focus">True</property>
-        <property name="shadow_type">in</property>
-        <property name="overlay_scrolling">False</property>
-        <property name="propagate_natural_width">True</property>
-        <style>
-          <class name="borderless"/>
-        </style>
-        <child>
-
-          <object class="GtkBox" id="doclist_body">
-            <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <child type="overlay">
+          <object class="GtkDrawingArea" id="docview_drawingarea">
+            <property name="visible">False</property>
             <property name="can_focus">False</property>
-            <property name="orientation">vertical</property>
-            <property name="name">doclist_body</property>
+          </object>
+          <packing>
+            <property name="pass_through">True</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow" id="docview_scroll">
+            <property name="name">docview_scroll</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="shadow_type">in</property>
+            <property name="overlay_scrolling">False</property>
+            <property name="propagate_natural_width">True</property>
+            <style>
+              <class name="borderless"/>
+            </style>
             <child>
-              <object class="GtkFlowBox" id="docview_page_layout">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <!-- <property name="halign">center</property> -->
-                <property name="row_spacing">10</property>
-                <property name="column_spacing">10</property>
-                <property name="min_children_per_line">1</property>
-                <property name="max_children_per_line">5</property>
-                <property name="orientation">horizontal</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
 
-            <child>
-              <object class="GtkLabel" id="docview_padding">
+              <object class="GtkBox" id="doclist_body">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label"></property>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
+                <property name="orientation">vertical</property>
+                <property name="name">doclist_body</property>
+                <child>
+                  <object class="GtkFlowBox" id="docview_page_layout">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="row_spacing">10</property>
+                    <property name="column_spacing">10</property>
+                    <property name="min_children_per_line">1</property>
+                    <property name="max_children_per_line">5</property>
+                    <property name="orientation">horizontal</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
 
+                <child>
+                  <object class="GtkLabel" id="docview_padding">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label"></property>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+
+              </object>
+            </child>
           </object>
         </child>
       </object>
@@ -62,6 +76,7 @@
       </packing>
     </child>
   </object>
+
   <object class="GtkHeaderBar" id="docview_header">
     <property name="visible">True</property>
     <property name="can_focus">False</property>

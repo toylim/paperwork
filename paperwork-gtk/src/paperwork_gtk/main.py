@@ -56,6 +56,7 @@ DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'paperwork_gtk.mainwindow.docview',
     'paperwork_gtk.mainwindow.docview.controllers.click',
     'paperwork_gtk.mainwindow.docview.controllers.drop',
+    'paperwork_gtk.mainwindow.docview.controllers.empty_doc',
     'paperwork_gtk.mainwindow.docview.controllers.layout',
     'paperwork_gtk.mainwindow.docview.controllers.page_number',
     'paperwork_gtk.mainwindow.docview.controllers.scroll',

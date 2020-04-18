@@ -64,3 +64,7 @@ class BaseDocViewController(object):
     def on_draw(self, cairo_context):
         # no LOGGER.debug() here for performance reasons
         pass
+
+    def on_overlay_draw(self, overlay_drawing_area, cairo_context):
+        # no LOGGER.debug() here for performance reasons
+        pass

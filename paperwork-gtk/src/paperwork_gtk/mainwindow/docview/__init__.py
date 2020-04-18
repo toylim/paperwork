@@ -96,6 +96,9 @@ class Plugin(openpaperwork_core.PluginBase):
             "changed", self._on_vscroll_changed
         )
 
+        self.overlay = self.widget_tree.get_object("docview_drawingarea")
+        self.overlay.connect("draw", self._on_overlay_draw)
+
         self.page_layout = self.widget_tree.get_object("docview_page_layout")
         self.page_layout.connect(
             "size-allocate", self._on_layout_size_allocate
@@ -182,6 +185,10 @@ class Plugin(openpaperwork_core.PluginBase):
     def _on_draw(self, layout, cairo_context):
         for controller in self.controllers.values():
             controller.on_draw(cairo_context)
+
+    def _on_overlay_draw(self, widget, cairo_context):
+        for controller in self.controllers.values():
+            controller.on_overlay_draw(widget, cairo_context)
 
     def doc_close(self):
         for controller in self.controllers.values():
