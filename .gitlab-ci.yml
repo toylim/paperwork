@@ -62,7 +62,8 @@ generate_data:
     - volatile
   <<: *apt
   script:
-    - apt-get install -y -qq texlive-full xvfb
+    - apt-get install -y -qq xvfb texlive
+    - apt-get install -y -qq  texlive-lang-english texlive-lang-french texlive-lang-german
     - apt-get install -y -qq rclone
     - source ./activate_test_env.sh && make install
     - source ./activate_test_env.sh && paperwork-gtk chkdeps -y && paperwork-cli chkdeps -y
