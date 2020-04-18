@@ -1,0 +1,16 @@
+#layout_settings {
+	background-color: rgba(16, 16, 16, 0.90);
+	color: white;
+}
+
+#layout_settings button {
+	color: white;
+	background-image: none;
+	background-color: #373737;
+	border: 1px solid #202121;
+	box-shadow: none;
+}
+
+#layout_settings button:disabled {
+	color: gray;
+}

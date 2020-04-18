@@ -6,6 +6,10 @@
 	padding-right: 10px;
 }
 
+#page_info .button-left {
+	border-right-width: 0px;
+}
+
 #page_info > box > label {
 	color: #919693;
 }

@@ -28,6 +28,7 @@
   </object>
 
   <object class="GtkPopover" id="layout_settings">
+    <property name="name">layout_settings</property>
     <child>
       <object class="GtkBox">
         <property name="margin">10</property>
