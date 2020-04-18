@@ -172,7 +172,13 @@ class Source(object):
             if 'resolution' in opts:
                 opts['resolution'].set_value(resolution)
             if 'mode' in opts:
-                opts['mode'].set_value(mode)
+                try:
+                    opts['mode'].set_value(mode)
+                except Exception as exc:
+                    LOGGER.warning(
+                        "Failed to set scan mode", exc_info=exc
+                    )
+                    # will try to scan anyway
 
             imgs = self._scan(scan_id, resolution, max_pages, close_on_end)
             return (self, scan_id, imgs)
