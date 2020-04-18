@@ -126,7 +126,9 @@ def pillow_to_surface(core, img, intermediate="pixbuf", quality=90):
 
     if img_surface is None:
         raise Exception(
-            "image2surface(): unknown intermediate: {}".format(intermediate)
+            "pillow_to_surface(): unknown intermediate: {}".format(
+                intermediate
+            )
         )
 
     core.call_all("on_objref_track", img_surface)
