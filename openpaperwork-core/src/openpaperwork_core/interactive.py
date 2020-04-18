@@ -31,6 +31,26 @@ class HistoryConsole(code.InteractiveConsole):
         readline.write_history_file(histfile)
 
 
+class ProxyCore(object):
+    def __init__(self, core):
+        self.core = core
+
+    def call_all(self, *args, **kwargs):
+        return self.core.call_success(
+            "mainloop_execute", self.core.call_all, *args, **kwargs
+        )
+
+    def call_success(self, *args, **kwargs):
+        return self.core.call_success(
+            "mainloop_execute", self.core.call_success, *args, **kwargs
+        )
+
+    def call_one(self, *args, **kwargs):
+        return self.core.call_success(
+            "mainloop_execute", self.core.call_one, *args, **kwargs
+        )
+
+
 class Plugin(PluginBase):
     def __init__(self):
         super().__init__()
@@ -40,6 +60,21 @@ class Plugin(PluginBase):
         self.progress_condition = threading.Condition()
         self.progresses = {}
         self._previous_progresses = {}
+
+        self.nb_windows_to_realize = 0
+
+    def get_interfaces(self):
+        return [
+            'gtk_window_listener'
+        ]
+
+    def get_deps(self):
+        return [
+            {
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_core.mainloop.asyncio'],
+            },
+        ]
 
     def init(self, core):
         super().init(core)
@@ -61,11 +96,29 @@ class Plugin(PluginBase):
         print("  Ctrl-D / EOF: stops this shell and the application")
 
         console = HistoryConsole({
-            "core": core,
+            "core": ProxyCore(core),
             "stop": self._stop,
             "wait": self._wait,
         }, histfile=histfile)
         threading.Thread(target=self._interact, args=(console,)).start()
+
+    def on_gtk_window_opened(self, window):
+        with self.progress_condition:
+            if window.get_window() is not None:
+                return
+
+            self.nb_windows_to_realize += 1
+            realize_handler_id = None
+
+            def on_realize():
+                self.nb_windows_to_realize -= 1
+                window.disconnect(realize_handler_id)
+                self.progress_condition.notify_all()
+
+            realize_handler_id = window.connect("realize", on_realize)
+
+    def on_gtk_window_closed(self, window):
+        pass
 
     def _interact(self, console):
         console.interact()
@@ -77,8 +130,13 @@ class Plugin(PluginBase):
     def _stop(self):
         if self.has_quit:
             return
-        self.core.call_all("on_quit")
-        self.core.call_all("mainloop_quit_graceful")
+        print("Quitting")
+        self.core.call_success(
+            "mainloop_execute", self.core.call_all, "on_quit"
+        )
+        self.core.call_all(
+            "mainloop_execute", self.core.call_all, "mainloop_quit_graceful"
+        )
 
     def on_progress(self, upd_type, progress, description=None):
         progress = int(progress * 100)
@@ -95,10 +153,12 @@ class Plugin(PluginBase):
     def _wait(self):
         # wait a little, in case the call to _wait() came slightly before
         # the background task creation.
+        print("Waiting for all background tasks to end")
         time.sleep(3.0)
         with self.progress_condition:
-            while len(self.progresses) > 0:
-                while len(self.progresses) > 0:
+            while len(self.progresses) > 0 or self.nb_windows_to_realize > 0:
+                while (len(self.progresses) > 0 or
+                        self.nb_windows_to_realize > 0):
                     print("Waiting for all background tasks to end")
                     print("Remaining background tasks:")
                     for (upd_type, progress) in self.progresses.items():
@@ -106,5 +166,9 @@ class Plugin(PluginBase):
                     self.progress_condition.wait(1.0)
                 # wait again a little ; sometime background tasks are
                 # sequentially removed and added
-                self.progress_condition.wait(3.0)
+                self.progress_condition.release()
+                try:
+                    time.sleep(3)
+                finally:
+                    self.progress_condition.acquire()
         print("All background tasks have ended")
