@@ -31,7 +31,7 @@ class ThumbnailTask(object):
                 "Failed to get thumbnail for document %s", self.doc_id
             )
             return
-        pixbuf = self.core.call_success("pillow2pixbuf", img)
+        pixbuf = self.core.call_success("pillow_to_pixbuf", img)
         self.gtk_image.set_from_pixbuf(pixbuf)
 
     def get_promise(self):
@@ -103,7 +103,9 @@ class Plugin(openpaperwork_core.PluginBase):
             color="#EEEEEE"
         )
         img = self.core.call_success("pillow_add_border", img)
-        self.default_thumbnail = self.core.call_success("pillow2pixbuf", img)
+        self.default_thumbnail = self.core.call_success(
+            "pillow_to_pixbuf", img
+        )
         self.core.call_all(
             "work_queue_create", "thumbnailer", stop_on_quit=True
         )

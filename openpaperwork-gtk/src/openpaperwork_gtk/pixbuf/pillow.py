@@ -1,7 +1,8 @@
 import io
 import logging
 
-import openpaperwork_core
+import PIL
+import PIL.Image
 
 try:
     from gi.repository import GLib
@@ -17,6 +18,8 @@ try:
 except (ValueError, ImportError):
     GDK_PIXBUF_AVAILABLE = False
 
+
+import openpaperwork_core
 
 from .. import deps
 
@@ -37,7 +40,20 @@ class Plugin(openpaperwork_core.PluginBase):
         if not GDK_PIXBUF_AVAILABLE:
             out['gdk_pixbuf'].update(deps.GDK_PIXBUF)
 
-    def pillow2pixbuf(self, img):
+    @staticmethod
+    def pixbuf_to_pillow(pixbuf):
+        (width, height) = (pixbuf.get_width(), pixbuf.get_height())
+        pixels = pixbuf.get_pixels()
+        colors = "RGB"
+        if (width * height * 4 == len(pixels)):
+            colors = "RGBA"
+        return PIL.Image.frombytes(
+            colors,
+            (width, height),
+            pixbuf.get_pixels()
+        )
+
+    def pillow_to_pixbuf(self, img):
         """
         Convert an image object to a GDK pixbuf
         """
