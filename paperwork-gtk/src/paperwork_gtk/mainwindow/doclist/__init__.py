@@ -271,8 +271,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def doc_open(self, doc_id, doc_url):
         self.active_docid = doc_id
+        self._reselect_current_doc(scroll=False)
 
-    def _reselect_current_doc(self):
+    def _reselect_current_doc(self, scroll=True):
         if self.active_docid not in self.docid_to_row:
             LOGGER.info(
                 "Document %s not found in the document list",
@@ -289,6 +290,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
         assert(row is not None)
         self.doclist.select_row(row)
+
+        if not scroll:
+            return
 
         handler_id = None
 
