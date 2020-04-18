@@ -19,9 +19,10 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def __init__(self):
         super().__init__()
+        self.widget_tree = None
         self.config = [
             (
-                'scanner_dev_id', 'scanner_device_value',
+                'settings_scanner_name', 'scanner_device_value',
                 _("No scanner selected"), "{}".format
             ),
             (
@@ -55,6 +56,33 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
+    def init(self, core):
+        super().init(core)
+
+        opt = self.core.call_success(
+            "config_build_simple", "settings_scanner", "name",
+            lambda: self.core.call_success("config_get", "scanner_dev_id")
+        )
+        self.core.call_all("config_register", "settings_scanner_name", opt)
+        self.core.call_all(
+            "config_add_observer", "scanner_dev_id", self._update_scanner_name
+        )
+
+    def _update_scanner_name(self):
+        def set_scanner_name(devs):
+            active = self.core.call_success("config_get", "scanner_dev_id")
+            for (dev_id, dev_name) in devs:
+                if dev_id == active:
+                    self.core.call_success(
+                        "config_put", "settings_scanner_name", dev_name
+                    )
+                    break
+            return devs
+
+        promise = self.core.call_success("scan_list_scanners_promise")
+        promise = promise.then(set_scanner_name)
+        self.core.call_success("scan_schedule", promise)
+
     def complete_settings(self, global_widget_tree):
         widget_tree = self.core.call_success(
             "gtk_load_widget_tree", "paperwork_gtk.settings.scanner",
@@ -73,8 +101,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
         def refresh(*args, **kwargs):
-            p = self._refresh_settings(widget_tree)
-            self.core.call_success("scan_schedule", p)
+            self._refresh_settings(widget_tree)
 
         def disable_refresh(*args, **kwargs):
             for c in self.config:
@@ -87,13 +114,17 @@ class Plugin(openpaperwork_core.PluginBase):
             "destroy", disable_refresh
         )
 
-        list_settings_promise = self._refresh_settings(widget_tree)
+        self._refresh_settings(widget_tree)
+
+        list_scanners_promise = self.core.call_success(
+            "scan_list_scanners_promise"
+        )
         self.core.call_all(
             "complete_scanner_settings",
             global_widget_tree, widget_tree,
-            list_settings_promise
+            list_scanners_promise
         )
-        self.core.call_success("scan_schedule", list_settings_promise)
+        self.core.call_success("scan_schedule", list_scanners_promise)
 
     def _translate_mode(self, mode):
         if mode in self.MODES:
@@ -107,15 +138,6 @@ class Plugin(openpaperwork_core.PluginBase):
                 value = default_value
             widget_tree.get_object(widget_name).set_text(fmt(value))
 
-        def set_scanner_name(devs):
-            active = self.core.call_success("config_get", "scanner_dev_id")
-            for (dev_id, dev_name) in devs:
-                if dev_id == active:
-                    w = widget_tree.get_object('scanner_device_value')
-                    w.set_text(dev_name)
-                    break
-            return devs
-
         buttons = [
             'scanner_resolution',
             'scanner_mode',
@@ -127,7 +149,3 @@ class Plugin(openpaperwork_core.PluginBase):
             # WORKAROUND(Jflesch): set_sensitive() doesn't appear to work on
             # GtkMenuButton
             widget_tree.get_object(button).set_sensitive(active)
-
-        promise = self.core.call_success("scan_list_scanners_promise")
-        promise = promise.then(set_scanner_name)
-        return promise
