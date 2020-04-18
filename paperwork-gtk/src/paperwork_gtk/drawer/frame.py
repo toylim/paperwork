@@ -80,10 +80,18 @@ class Drawer(object):
         )
 
     def stop(self):
-        self.drawing_area.disconnect(self.draw_connect_id)
-        self.drawing_area.disconnect(self.motion_connect_id)
-        self.drawing_area.disconnect(self.press_connect_id)
-        self.drawing_area.disconnect(self.release_connect_id)
+        if self.draw_connect_id is not None:
+            self.drawing_area.disconnect(self.draw_connect_id)
+        if self.motion_connect_id is not None:
+            self.drawing_area.disconnect(self.motion_connect_id)
+        if self.press_connect_id is not None:
+            self.drawing_area.disconnect(self.press_connect_id)
+        if self.release_connect_id is not None:
+            self.drawing_area.disconnect(self.release_connect_id)
+        self.draw_connect_id = None
+        self.motion_connect_id = None
+        self.press_connect_id = None
+        self.release_connect_id = None
 
     def request_redraw(self):
         self.drawing_area.queue_draw()

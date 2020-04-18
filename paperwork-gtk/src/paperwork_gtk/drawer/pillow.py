@@ -20,7 +20,9 @@ class Drawer(object):
         self.draw_connect_id = drawing_area.connect("draw", self.on_draw)
 
     def stop(self):
-        self.drawing_area.disconnect(self.draw_connect_id)
+        if self.draw_connect_id is not None:
+            self.drawing_area.disconnect(self.draw_connect_id)
+        self.draw_connect_id = None
         self.img = None  # free the memory
 
     def on_draw(self, drawing_area, cairo_ctx):

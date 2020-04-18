@@ -129,10 +129,14 @@ class Plugin(openpaperwork_core.PluginBase):
     def on_settings_closed(self, global_widget_tree):
         drawing_area = self.widget_tree.get_object("calibration_area")
         self.core.call_all("draw_scan_stop", drawing_area)
-        drawing_area.disconnect(self.value_changed_connect_id)
-        self.widget_tree.get_object("calibration_scroll").disconnect(
-            self.size_allocate_connect_id
-        )
+        if self.value_changed_connect_id is not None:
+            drawing_area.disconnect(self.value_changed_connect_id)
+            self.value_changed_connect_id = None
+        if self.size_allocate_connect_id is not None:
+            self.widget_tree.get_object("calibration_scroll").disconnect(
+                self.size_allocate_connect_id
+            )
+            self.size_allocate_connect_id = None
 
     def _display_calibration_screen(self, button, global_widget_tree):
         LOGGER.info("Switching to calibration screen")
