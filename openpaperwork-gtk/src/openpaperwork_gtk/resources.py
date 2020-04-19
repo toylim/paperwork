@@ -1,4 +1,5 @@
 import logging
+import re
 
 
 try:
@@ -141,3 +142,21 @@ class Plugin(openpaperwork_core.PluginBase):
             raise
 
         return True
+
+    def gtk_fix_headerbar_buttons(self, headerbar):
+        settings = Gtk.Settings.get_default()
+        default_layout = settings.get_property("gtk-decoration-layout")
+        default_layout = re.split("[:,]", default_layout)
+
+        # disable the elements that are not enabled globally
+        layout = headerbar.get_decoration_layout().split(":", 1)
+        layout = [side.split(",") for side in layout]
+        layout = ":".join([
+            ",".join([
+                element for element in side
+                if element in default_layout
+            ])
+            for side in layout
+        ])
+
+        headerbar.set_decoration_layout(layout)

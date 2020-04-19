@@ -110,6 +110,11 @@ class Plugin(openpaperwork_core.PluginBase):
         self.page_layout.connect("draw", self._on_draw)
 
         self.core.call_all(
+            "gtk_fix_headerbar_buttons",
+            self.widget_tree.get_object("docview_header")
+        )
+
+        self.core.call_all(
             "mainwindow_add", side="right", name="docview", prio=10000,
             header=self.widget_tree.get_object("docview_header"),
             body=self.widget_tree.get_object("docview_body"),
