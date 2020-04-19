@@ -64,6 +64,7 @@ generate_data:
   script:
     - apt-get install -y -qq xvfb wget texlive imagemagick
     - apt-get install -y -qq texlive-lang-english texlive-lang-french texlive-lang-german
+    - apt-get install -y -qq texlive-latex-recommended texlive-latex-extra
     - apt-get install -y -qq rclone
     - source ./activate_test_env.sh && make install
     - source ./activate_test_env.sh && paperwork-gtk chkdeps -y && paperwork-cli chkdeps -y
