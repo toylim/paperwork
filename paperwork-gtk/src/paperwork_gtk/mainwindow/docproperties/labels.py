@@ -96,6 +96,10 @@ class Plugin(openpaperwork_core.PluginBase):
         color_widget.set_rgba(color)
         out.append(self.widget_tree.get_object("listbox_global"))
 
+        self.widget_tree.get_object("new_label_button").connect(
+            "clicked", self._on_new_label
+        )
+
     def _update_toggle_img(self, toggle):
         if toggle.get_active():
             image = Gtk.Image.new_from_icon_name(
@@ -186,9 +190,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
             listbox.add(widget_tree_label.get_object("label_row"))
 
-        self.widget_tree.get_object("new_label_button").connect(
-            "clicked", self._on_new_label
-        )
         listbox.add(self.widget_tree.get_object("row_add_label"))
 
     def _on_toggle(self, button):
