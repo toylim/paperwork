@@ -190,13 +190,11 @@ class Plugin(openpaperwork_core.PluginBase):
     def _on_toggle(self, button):
         self._update_toggle_img(button)
         label = self.widget_to_label[button]
-        print("#### TOGGLE: {} --> {}".format(label, button.get_active()))
         self.toggled_labels[label] = button.get_active()
 
     def _on_color_changed(self, button):
         color = button.get_rgba()
         color = (color.red, color.green, color.blue)
-        print("##### COLOR: {}".format(color))
         color = self.core.call_success("label_color_from_rgb", color)
 
         old_label = self.widget_to_label[button]
@@ -227,7 +225,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
         color = self.widget_tree.get_object("new_label_color").get_rgba()
         color = (color.red, color.green, color.blue)
-        print("##### COLOR: {}".format(color))
         color = self.core.call_success("label_color_from_rgb", color)
 
         self.new_labels.add((text, color))
