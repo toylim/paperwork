@@ -90,6 +90,10 @@ class Plugin(openpaperwork_core.PluginBase):
             "gtk_load_widget_tree",
             "paperwork_gtk.mainwindow.docproperties", "labels.glade"
         )
+        color_widget = self.widget_tree.get_object("new_label_color")
+        style = Gtk.StyleContext()
+        color = style.get_color(Gtk.StateFlags.ACTIVE)
+        color_widget.set_rgba(color)
         out.append(self.widget_tree.get_object("listbox_global"))
 
     def _update_toggle_img(self, toggle):
@@ -223,12 +227,21 @@ class Plugin(openpaperwork_core.PluginBase):
         # text.
         # TODO(Jflesch): Check that the label text doesn't already exists.
 
-        color = self.widget_tree.get_object("new_label_color").get_rgba()
+        color_widget = self.widget_tree.get_object("new_label_color")
+
+        color = color_widget.get_rgba()
         color = (color.red, color.green, color.blue)
         color = self.core.call_success("label_color_from_rgb", color)
 
         self.new_labels.add((text, color))
         self._refresh_list()
+
+        # reset fields
+        self.widget_tree.get_object("new_label_entry").set_text("")
+
+        style = Gtk.StyleContext()
+        color = style.get_color(Gtk.StateFlags.ACTIVE)
+        color_widget.set_rgba(color)
 
     def doc_properties_components_apply_changes(self, out):
         LOGGER.info("Selected/Unselected labels: %s", self.toggled_labels)
