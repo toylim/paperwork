@@ -69,6 +69,7 @@
 
         <child>
           <object class="GtkEntry" id="new_label_entry">
+            <property name="name">docproperties_new_label_entry</property>
             <property name="visible">True</property>
             <property name="sensitive">True</property>
             <property name="can_focus">True</property>

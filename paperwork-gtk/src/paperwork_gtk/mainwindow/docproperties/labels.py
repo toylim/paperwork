@@ -1,5 +1,6 @@
 import gettext
 import logging
+import re
 
 try:
     import gi
@@ -18,6 +19,11 @@ import paperwork_backend.sync
 
 _ = gettext.gettext
 LOGGER = logging.getLogger(__name__)
+
+# forbid:
+# - empty strings
+# - strings that contain a comma
+RE_FORBIDDEN_LABELS = re.compile("(^$|.*,.*)")
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -48,6 +54,8 @@ class Plugin(openpaperwork_core.PluginBase):
         # self.deleted_labels contains the labels that the user wants to
         # remove from *all* the documents.
         self.deleted_labels = set()
+
+        self.bg_color = None
 
     def get_interfaces(self):
         return [
@@ -81,6 +89,14 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
+    def init(self, core):
+        super().init(core)
+        if not GTK_AVAILABLE:
+            # chkdeps() must still be callable
+            return
+        style = Gtk.StyleContext()
+        self.bg_color = style.lookup_color("theme_bg_color")[1]
+
     def chkdeps(self, out: dict):
         if not GTK_AVAILABLE:
             out['gtk'].update(openpaperwork_gtk.deps.GTK)
@@ -91,13 +107,17 @@ class Plugin(openpaperwork_core.PluginBase):
             "paperwork_gtk.mainwindow.docproperties", "labels.glade"
         )
         color_widget = self.widget_tree.get_object("new_label_color")
-        style = Gtk.StyleContext()
-        color = style.get_color(Gtk.StateFlags.ACTIVE)
-        color_widget.set_rgba(color)
+        color_widget.set_rgba(self.bg_color)
         out.append(self.widget_tree.get_object("listbox_global"))
 
         self.widget_tree.get_object("new_label_button").connect(
             "clicked", self._on_new_label
+        )
+        self.widget_tree.get_object("new_label_entry").connect(
+            "activate", self._on_new_label
+        )
+        self.widget_tree.get_object("new_label_entry").connect(
+            "changed", self._on_label_txt_changed
         )
 
     def _update_toggle_img(self, toggle):
@@ -217,7 +237,28 @@ class Plugin(openpaperwork_core.PluginBase):
         self.deleted_labels.add(label)
         self._refresh_list()
 
-    def _on_new_label(self, button):
+    def _on_label_txt_changed(self, *args, **kwargs):
+        entry = self.widget_tree.get_object("new_label_entry")
+        button = self.widget_tree.get_object("new_label_button")
+        txt = entry.get_text()
+
+        button.set_sensitive(True)
+        css = "{ color: @theme_text_color; background: @theme_bg_color; }"
+
+        if RE_FORBIDDEN_LABELS.match(txt) is not None:
+            button.set_sensitive(False)
+            if txt != "":
+                css = "{ color: black; background: #CC3030; }"
+
+        css = "#docproperties_new_label_entry " + css
+        css_provider = Gtk.CssProvider()
+        css_provider.load_from_data(css.encode())
+        css_context = entry.get_style_context()
+        css_context.add_provider(
+            css_provider, Gtk.STYLE_PROVIDER_PRIORITY_USER
+        )
+
+    def _on_new_label(self, *args, **kwargs):
         text = self.widget_tree.get_object("new_label_entry").get_text()
         text = text.strip()
         if text == "":
@@ -239,10 +280,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         # reset fields
         self.widget_tree.get_object("new_label_entry").set_text("")
-
-        style = Gtk.StyleContext()
-        color = style.get_color(Gtk.StateFlags.ACTIVE)
-        color_widget.set_rgba(color)
+        color_widget.set_rgba(self.bg_color)
 
     def doc_properties_components_apply_changes(self, out):
         LOGGER.info("Selected/Unselected labels: %s", self.toggled_labels)
