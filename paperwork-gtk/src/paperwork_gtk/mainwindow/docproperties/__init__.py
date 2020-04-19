@@ -86,10 +86,8 @@ class Plugin(openpaperwork_core.PluginBase):
     def doc_open(self, doc_id, doc_url):
         self.active_doc = (doc_id, doc_url)
 
-        doc_date = self.core.call_success("doc_get_date_by_id", doc_id)
-        doc_txt = self.core.call_success("i18n_date_short", doc_date)
         self.widget_tree.get_object("docproperties_header").set_title(
-            _("Properties of %s") % doc_txt
+            _("Properties")
         )
         self.core.call_all(
             "doc_properties_components_set_active_doc", doc_id, doc_url
