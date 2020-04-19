@@ -56,6 +56,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.deleted_labels = set()
 
         self.bg_color = None
+        self.all_labels = set()
 
     def get_interfaces(self):
         return [
@@ -216,6 +217,10 @@ class Plugin(openpaperwork_core.PluginBase):
 
         listbox.add(self.widget_tree.get_object("row_add_label"))
 
+        self.all_labels = set()
+        self.core.call_all("labels_get_all", self.all_labels)
+        self.all_labels = {label[0] for label in self.all_labels}
+
     def _on_toggle(self, button):
         self._update_toggle_img(button)
         label = self.widget_to_label[button]
@@ -244,14 +249,19 @@ class Plugin(openpaperwork_core.PluginBase):
     def _on_label_txt_changed(self, *args, **kwargs):
         entry = self.widget_tree.get_object("new_label_entry")
         button = self.widget_tree.get_object("new_label_button")
-        txt = entry.get_text()
+        txt = entry.get_text().strip()
 
         button.set_sensitive(True)
         valid = True
-        if RE_FORBIDDEN_LABELS.match(txt) is not None:
+
+        if txt in self.all_labels:
+            valid = False
+            button.set_sensitive(False)
+        elif RE_FORBIDDEN_LABELS.match(txt) is not None:
             button.set_sensitive(False)
             if txt != "":
                 valid = False
+
         if valid:
             self.core.call_all("gtk_entry_reset_colors", entry)
         else:
@@ -263,10 +273,6 @@ class Plugin(openpaperwork_core.PluginBase):
         if text == "":
             LOGGER.info("New label requested, but no text provided")
             return
-
-        # TODO(Jflesch): Check that there are no forbidden character in the
-        # text.
-        # TODO(Jflesch): Check that the label text doesn't already exists.
 
         color_widget = self.widget_tree.get_object("new_label_color")
 
