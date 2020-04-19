@@ -55,7 +55,6 @@ class Plugin(openpaperwork_core.PluginBase):
         # remove from *all* the documents.
         self.deleted_labels = set()
 
-        self.bg_color = None
         self.all_labels = set()
 
     def get_interfaces(self):
@@ -99,8 +98,16 @@ class Plugin(openpaperwork_core.PluginBase):
         if not GTK_AVAILABLE:
             # chkdeps() must still be callable
             return
-        style = Gtk.StyleContext()
-        self.bg_color = style.lookup_color("theme_bg_color")[1]
+
+        screen = Gdk.Screen.get_default()
+        if screen is None:
+            # Gtk.StyleContext() will fail, but chkdeps() must still be
+            # callable
+            LOGGER.warning(
+                "Cannot get style: Gdk.Screen.get_default()"
+                " returned None"
+            )
+            return None
 
     def chkdeps(self, out: dict):
         if not GTK_AVAILABLE:
@@ -112,7 +119,9 @@ class Plugin(openpaperwork_core.PluginBase):
             "paperwork_gtk.mainwindow.docproperties", "labels.glade"
         )
         color_widget = self.widget_tree.get_object("new_label_color")
-        color_widget.set_rgba(self.bg_color)
+        color_widget.set_rgba(self.core.call_success(
+            "gtk_theme_get_color", "theme_bg_color"
+        ))
         out.append(self.widget_tree.get_object("listbox_global"))
 
         self.widget_tree.get_object("new_label_button").connect(
@@ -285,7 +294,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
         # reset fields
         self.widget_tree.get_object("new_label_entry").set_text("")
-        color_widget.set_rgba(self.bg_color)
+        color_widget.set_rgba(self.core.call_success(
+            "gtk_theme_get_color", "theme_bg_color"
+        ))
 
     def doc_properties_components_apply_changes(self, out):
         LOGGER.info("Selected/Unselected labels: %s", self.toggled_labels)

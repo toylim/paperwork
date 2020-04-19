@@ -35,3 +35,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.gtk_entry_set_colors(
             gtk_entry, fg="@theme_text_color", bg="@theme_bg_color"
         )
+
+    def gtk_theme_get_color(self, color_name):
+        style = Gtk.StyleContext()
+        return style.lookup_color("theme_bg_color")[1]
