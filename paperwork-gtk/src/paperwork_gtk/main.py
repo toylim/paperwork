@@ -18,6 +18,7 @@ DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'openpaperwork_gtk.bug_report',
     'openpaperwork_gtk.bug_report.http',
     'openpaperwork_gtk.bug_report.zip',
+    'openpaperwork_gtk.colors',
     'openpaperwork_gtk.pixbuf.pillow',
     'openpaperwork_gtk.resources',
     'openpaperwork_gtk.screenshots',

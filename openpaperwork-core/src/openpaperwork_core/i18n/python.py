@@ -41,7 +41,10 @@ class Plugin(PluginBase):
         elif txt == YESTERDAY:
             return self.yesterday
         else:
-            return datetime.datetime.strptime(txt, "%x").date()
+            try:
+                return datetime.datetime.strptime(txt, "%x").date()
+            except ValueError:
+                return None
 
     def i18n_date_long_year(self, date):
         if hasattr(date, 'date'):

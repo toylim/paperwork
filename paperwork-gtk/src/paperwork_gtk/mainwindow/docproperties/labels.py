@@ -76,6 +76,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['paperwork_backend.model.workdir'],
             },
             {
+                'interface': 'gtk_colors',
+                'defaults': ['openpaperwork_gtk.colors'],
+            },
+            {
                 'interface': 'gtk_doc_properties',
                 'defaults': ['paperwork_gtk.docproperties'],
             },
@@ -243,20 +247,15 @@ class Plugin(openpaperwork_core.PluginBase):
         txt = entry.get_text()
 
         button.set_sensitive(True)
-        css = "{ color: @theme_text_color; background: @theme_bg_color; }"
-
+        valid = True
         if RE_FORBIDDEN_LABELS.match(txt) is not None:
             button.set_sensitive(False)
             if txt != "":
-                css = "{ color: black; background: #CC3030; }"
-
-        css = "#docproperties_new_label_entry " + css
-        css_provider = Gtk.CssProvider()
-        css_provider.load_from_data(css.encode())
-        css_context = entry.get_style_context()
-        css_context.add_provider(
-            css_provider, Gtk.STYLE_PROVIDER_PRIORITY_USER
-        )
+                valid = False
+        if valid:
+            self.core.call_all("gtk_entry_reset_colors", entry)
+        else:
+            self.core.call_all("gtk_entry_set_colors", entry)
 
     def _on_new_label(self, *args, **kwargs):
         text = self.widget_tree.get_object("new_label_entry").get_text()

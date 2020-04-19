@@ -31,6 +31,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['paperwork_gtk.docproperties'],
             },
             {
+                'interface': 'gtk_colors',
+                'defaults': ['openpaperwork_gtk.colors'],
+            },
+            {
                 'interface': 'gtk_resources',
                 'defaults': ['openpaperwork_gtk.resources'],
             },
@@ -51,6 +55,9 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         self.widget_tree.get_object("docname_entry").connect(
             "icon-release", self._open_calendar
+        )
+        self.widget_tree.get_object("docname_entry").connect(
+            "changed", self._on_doc_date_changed
         )
         self.widget_tree.get_object("calendar_calendar").connect(
             "day-selected-double-click", self._update_date
@@ -79,6 +86,14 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _open_calendar(self, gtk_entry, icon_pos, event):
         self.widget_tree.get_object("calendar_popover").set_visible(True)
+
+    def _on_doc_date_changed(self, gtk_entry):
+        txt = gtk_entry.get_text()
+        r = self.core.call_success("i18n_parse_date_short", txt)
+        if r is not None:
+            self.core.call_all("gtk_entry_reset_colors", gtk_entry)
+        else:
+            self.core.call_all("gtk_entry_set_colors", gtk_entry, bg="#ee9000")
 
     def _update_date(self, gtk_calendar):
         date = self.widget_tree.get_object("calendar_calendar").get_date()
