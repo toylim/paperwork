@@ -263,6 +263,9 @@ class Core(object):
         """
         Returns a Plugin instance based on the corresponding module name
         (assuming it has been loaded).
+
+        This method is here for unit testing only. You shouldn't use it in
+        production code.
         """
         return self.plugins[module_name]
 
@@ -289,6 +292,9 @@ class Core(object):
         Call all the methods of all the plugins that have `callback_name`
         as name. Arguments are passed as is. Returned values are dropped
         (use callbacks for return values if required)
+
+        Method call order is defined by the plugin priorities: Plugins with
+        a higher priority get their methods called first.
 
         When we need a return value from callbacks called with `call_all()`,
         we need a way to get the results from all of them. The usual way to do
@@ -349,6 +355,9 @@ class Core(object):
         raises a warning and call one at random.
         Returns the value return by the callback.
 
+        Method call order is defined by the plugin priorities: Plugins with
+        a higher priority get their methods called first.
+
         .. uml::
 
            Caller -> Core: call "func"
@@ -356,7 +365,7 @@ class Core(object):
            Core <- "Plugin A": returns X
            Caller <- Core: returns X
 
-        You're advised to use `call_all()` or `call_success` instead
+        You're advised to use `call_all()` or `call_success()` instead
         whenever possible. This method is only provided as convenience for
         when you're fairly sure there should be only one plugin with such
         callback (example: mainloop plugins).
@@ -400,6 +409,9 @@ class Core(object):
         from None is returned. If none of the callbacks returned
         a value different from None or if no callback has the
         specified name, this method will return None.
+
+        Method call order is defined by the plugin priorities: Plugins with
+        a higher priority get their methods called first.
 
         Callbacks should never raise any exception.
 
