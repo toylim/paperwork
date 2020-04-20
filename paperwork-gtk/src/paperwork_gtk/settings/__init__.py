@@ -76,6 +76,7 @@ class Plugin(openpaperwork_core.PluginBase):
         settings = global_widget_tree.get_object("settings_window")
         self.settings_dialog = settings
         settings.set_transient_for(self.active_windows[-1])
+        settings.set_modal(True)
         settings.connect("destroy", self._save_settings, global_widget_tree)
         settings.set_visible(True)
         self.core.call_all("on_gtk_window_opened", settings)

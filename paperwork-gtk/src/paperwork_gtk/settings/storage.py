@@ -91,6 +91,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 Gtk.STOCK_OPEN, Gtk.ResponseType.ACCEPT
             )
         )
+        dialog.set_modal(True)
         dialog.set_local_only(False)
         dialog.connect("response", self._on_dialog_response, widget_tree)
         dialog.show_all()
