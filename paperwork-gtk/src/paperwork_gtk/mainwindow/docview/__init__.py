@@ -143,7 +143,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return self.widget_tree.get_object("docview_header")
 
     def docview_get_body(self):
-        return self.widget_tree.get_object("docview_body")
+        return self.widget_tree.get_object("docview_overlay")
 
     def docview_get_scrollwindow(self):
         return self.widget_tree.get_object("docview_scroll")

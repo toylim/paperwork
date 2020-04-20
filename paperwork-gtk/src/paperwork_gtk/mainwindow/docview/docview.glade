@@ -5,19 +5,19 @@
   <object class="GtkOverlay" id="docview_body">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
+    <child type="overlay">
+      <object class="GtkDrawingArea" id="docview_drawingarea">
+        <property name="visible">False</property>
+        <property name="can_focus">False</property>
+      </object>
+      <packing>
+        <property name="pass_through">True</property>
+      </packing>
+    </child>
     <child>
       <object class="GtkOverlay" id="docview_overlay">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <child type="overlay">
-          <object class="GtkDrawingArea" id="docview_drawingarea">
-            <property name="visible">False</property>
-            <property name="can_focus">False</property>
-          </object>
-          <packing>
-            <property name="pass_through">True</property>
-          </packing>
-        </child>
         <child>
           <object class="GtkScrolledWindow" id="docview_scroll">
             <property name="name">docview_scroll</property>
