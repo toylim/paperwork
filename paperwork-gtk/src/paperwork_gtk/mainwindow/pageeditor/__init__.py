@@ -62,8 +62,9 @@ class GtkPageEditorUI(paperwork_backend.pageedit.AbstractPageEditorUI):
         assert(self.editor is not None)
 
         toolbox = self.plugin.widget_tree.get_object("pageeditor_tools")
+        zoom_box = self.plugin.widget_tree.get_object("pageeditor_zoom_box")
         for widget in list(toolbox.get_children()):
-            if hasattr(widget, 'get_adjustment'):
+            if widget == zoom_box:
                 continue
             toolbox.remove(widget)
 
