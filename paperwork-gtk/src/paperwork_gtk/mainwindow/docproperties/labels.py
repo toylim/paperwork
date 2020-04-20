@@ -55,8 +55,6 @@ class Plugin(openpaperwork_core.PluginBase):
         # remove from *all* the documents.
         self.deleted_labels = set()
 
-        self.all_labels = set()
-
     def get_interfaces(self):
         return [
             'chkdeps',
@@ -226,10 +224,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
         listbox.add(self.widget_tree.get_object("row_add_label"))
 
-        self.all_labels = set()
-        self.core.call_all("labels_get_all", self.all_labels)
-        self.all_labels = {label[0] for label in self.all_labels}
-
     def _on_toggle(self, button):
         self._update_toggle_img(button)
         label = self.widget_to_label[button]
@@ -263,7 +257,15 @@ class Plugin(openpaperwork_core.PluginBase):
         button.set_sensitive(True)
         valid = True
 
-        if txt in self.all_labels:
+        all_labels = set()
+        self.core.call_all("labels_get_all", all_labels)
+        for label in all_labels:
+            if label in self.changed_labels:
+                all_labels.add(self.changed_labels[label])
+        all_labels.update(self.new_labels)
+        all_labels = {label[0] for label in all_labels}
+
+        if txt in all_labels:
             valid = False
             button.set_sensitive(False)
         elif RE_FORBIDDEN_LABELS.match(txt) is not None:
