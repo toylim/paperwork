@@ -16,7 +16,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 class Zoomer(object):
-    ZOOM_INCREMENT = 0.005
+    ZOOM_INCREMENT = 0.02
 
     def __init__(self, zoomable, adjustment):
         self.adjustment = adjustment
