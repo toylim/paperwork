@@ -18,6 +18,15 @@ class TestLabels(unittest.TestCase):
 
         self.fs = self.core.get_by_name("openpaperwork_core.fs.fake")
 
+    def test_label_color_from_rgb(self):
+        self.assertEqual(
+            self.core.call_success(
+                "label_color_from_rgb",
+                (0.9607843137254902, 0.4745098039215686, 0.0)
+            ),
+            "#f50079000000"
+        )
+
     def test_has_labels(self):
         self.fs.fs = {
             "some_work_dir": {

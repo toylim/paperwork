@@ -236,9 +236,9 @@ class Plugin(openpaperwork_core.PluginBase):
     def label_color_from_rgb(self, color):
         return (
             "#"
-            + format(int(color[0] * 0xFF), 'x') + "00"
-            + format(int(color[1] * 0xFF), 'x') + "00"
-            + format(int(color[2] * 0xFF), 'x') + "00"
+            + format(int(color[0] * 0xFF), '02x') + "00"
+            + format(int(color[1] * 0xFF), '02x') + "00"
+            + format(int(color[2] * 0xFF), '02x') + "00"
         )
 
     def label_load_all(self, promises: list):
