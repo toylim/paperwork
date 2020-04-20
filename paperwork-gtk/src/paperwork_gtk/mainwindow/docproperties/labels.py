@@ -33,10 +33,7 @@ class Plugin(openpaperwork_core.PluginBase):
         super().__init__()
         self.widget_tree = None
         self.active_doc = None
-
-        # self.widget_to_label is used to find the label corresponding to
-        # the widget on which the user did click
-        self.widget_to_label = {}
+        self.windows = []
 
         # self.changed_labels contains the label that have been modified
         # (color or text)
@@ -59,6 +56,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return [
             'chkdeps',
             'gtk_doc_property',
+            'gtk_window_listener',
             'screenshot_provider',
             'syncable',
         ]
@@ -90,6 +88,12 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_gtk.screenshots'],
             },
         ]
+
+    def on_gtk_window_opened(self, window):
+        self.windows.append(window)
+
+    def on_gtk_window_closed(self, window):
+        self.windows.remove(window)
 
     def init(self, core):
         super().init(core)
@@ -125,12 +129,9 @@ class Plugin(openpaperwork_core.PluginBase):
         self.widget_tree.get_object("new_label_button").connect(
             "clicked", self._on_new_label
         )
-        self.widget_tree.get_object("new_label_entry").connect(
-            "activate", self._on_new_label
-        )
-        self.widget_tree.get_object("new_label_entry").connect(
-            "changed", self._on_label_txt_changed
-        )
+        new_label_entry = self.widget_tree.get_object("new_label_entry")
+        new_label_entry.connect("activate", self._on_new_label)
+        new_label_entry.connect("changed", self._on_label_txt_changed)
 
     def _update_toggle_img(self, toggle):
         if toggle.get_active():
@@ -149,6 +150,8 @@ class Plugin(openpaperwork_core.PluginBase):
         self.toggled_labels = {}
         self.new_labels = set()
         self.deleted_labels = set()
+        new_label_entry = self.widget_tree.get_object("new_label_entry")
+        new_label_entry.set_text("")
 
         self._refresh_list()
 
@@ -172,14 +175,7 @@ class Plugin(openpaperwork_core.PluginBase):
         labels = list(labels)
         labels.sort()
 
-        new_labels = list(self.new_labels)
-        new_labels.sort()
-        labels += new_labels
-
         doc_labels = {doc_label[0] for doc_label in doc_labels}
-
-        self.widget_to_label = {}
-
         for old_label in labels:
             if old_label in self.changed_labels:
                 new_label = self.changed_labels[old_label]
@@ -192,88 +188,162 @@ class Plugin(openpaperwork_core.PluginBase):
             active = old_label[0] in doc_labels
             if old_label in self.toggled_labels:
                 active = self.toggled_labels[old_label]
-            if old_label in self.new_labels:
-                # if the label was just created, it must always be active
-                active = True
 
             widget_tree_label = self.core.call_success(
                 "gtk_load_widget_tree",
                 "paperwork_gtk.mainwindow.docproperties", "label.glade"
             )
-            widget_tree_label.get_object("label_label").set_text(new_label[0])
+            button = widget_tree_label.get_object("label_label")
+            button.set_label(new_label[0])
+            button.connect("clicked", self._on_label_button_clicked, old_label)
 
             toggle = widget_tree_label.get_object("toggle_button")
             toggle.set_active(active)
-            toggle.set_sensitive(old_label not in self.new_labels)
-            self.widget_to_label[toggle] = old_label
+            toggle.set_sensitive(True)
             self._update_toggle_img(toggle)
-            toggle.connect("toggled", self._on_toggle)
+            toggle.connect("toggled", self._on_toggle, old_label)
 
             color = self.core.call_success("label_color_to_rgb", new_label[1])
             color_button = widget_tree_label.get_object("color_button")
             color_button.set_sensitive(old_label not in self.new_labels)
-            self.widget_to_label[color_button] = old_label
-            color_button.set_rgba(Gdk.RGBA(color[0], color[1], color[2]))
-            color_button.connect("color-set", self._on_color_changed)
+            color_button.set_rgba(Gdk.RGBA(color[0], color[1], color[2], 1.0))
+            color_button.connect(
+                "color-set", self._on_color_changed, old_label
+            )
 
             delete = widget_tree_label.get_object("delete_button")
-            self.widget_to_label[delete] = old_label
-            delete.connect("clicked", self._on_delete)
+            delete.connect("clicked", self._on_delete, old_label)
+
+            listbox.add(widget_tree_label.get_object("label_row"))
+
+        new_labels = list(self.new_labels)
+        new_labels.sort()
+        for label in new_labels:
+            widget_tree_label = self.core.call_success(
+                "gtk_load_widget_tree",
+                "paperwork_gtk.mainwindow.docproperties", "label.glade"
+            )
+            button = widget_tree_label.get_object("label_label")
+            button.set_label(label[0])
+            button.set_sensitive(False)
+
+            toggle = widget_tree_label.get_object("toggle_button")
+            toggle.set_active(True)
+            toggle.set_sensitive(False)
+            self._update_toggle_img(toggle)
+
+            color = self.core.call_success("label_color_to_rgb", label[1])
+            color_button = widget_tree_label.get_object("color_button")
+            color_button.set_sensitive(True)
+            color_button.set_rgba(Gdk.RGBA(color[0], color[1], color[2], 1.0))
+            color_button.connect(
+                "color-set", self._on_new_color_changed, label
+            )
+
+            delete = widget_tree_label.get_object("delete_button")
+            delete.connect("clicked", self._on_new_delete, label)
 
             listbox.add(widget_tree_label.get_object("label_row"))
 
         listbox.add(self.widget_tree.get_object("row_add_label"))
 
-    def _on_toggle(self, button):
+    def _on_label_button_clicked(self, label_button, label):
+        widget_tree = self.core.call_success(
+            "gtk_load_widget_tree",
+            "paperwork_gtk.mainwindow.docproperties", "label_name_dialog.glade"
+        )
+        original_label = label
+        if label in self.changed_labels:
+            label = self.changed_labels[label]
+
+        widget_tree.get_object("label_name").set_text(label[0])
+
+        def on_response(dialog, response_id):
+            if (response_id != 0 and
+                    response_id != Gtk.ResponseType.ACCEPT and
+                    response_id != Gtk.ResponseType.OK and
+                    response_id != Gtk.ResponseType.YES and
+                    response_id != Gtk.ResponseType.APPLY):
+                dialog.destroy()
+                return
+
+            new_label_txt = widget_tree.get_object("label_name").get_text()
+            dialog.destroy()
+
+            if not self._check_label_name(new_label_txt):
+                return
+
+            new_label_txt = new_label_txt.strip()
+            LOGGER.info("Renaming label %s --> %s", label, new_label_txt)
+            self.changed_labels[original_label] = (new_label_txt, label[1])
+
+            label_button.set_label(new_label_txt)
+
+        dialog = widget_tree.get_object("label_name_dialog")
+        dialog.set_transient_for(self.windows[-1])
+        dialog.set_modal(True)
+        dialog.connect("response", on_response)
+        dialog.set_visible(True)
+
+    def _on_toggle(self, button, label):
         self._update_toggle_img(button)
-        label = self.widget_to_label[button]
         self.toggled_labels[label] = button.get_active()
 
-    def _on_color_changed(self, button):
+    def _on_color_changed(self, button, original_label):
         color = button.get_rgba()
         color = (color.red, color.green, color.blue)
         color = self.core.call_success("label_color_from_rgb", color)
 
-        old_label = self.widget_to_label[button]
-        new_label = (old_label[0], color)
+        label = original_label
+        if original_label in self.changed_labels:
+            label = self.changed_labels[original_label]
+        new_label = (label[0], color)
 
-        self.changed_labels[old_label] = new_label
+        self.changed_labels[original_label] = new_label
 
-    def _on_delete(self, button):
-        label = self.widget_to_label[button]
-
-        if label in self.new_labels:
-            self.new_labels.remove(label)
-            return
-
-        self.deleted_labels.add(label)
+    def _on_new_color_changed(self, button, original_label):
+        self.new_labels.remove(original_label)
+        color = button.get_rgba()
+        color = (color.red, color.green, color.blue)
+        color = self.core.call_success("label_color_from_rgb", color)
+        new_label = (original_label[0], color)
+        self.new_labels.add(new_label)
         self._refresh_list()
+
+    def _on_delete(self, button, original_label):
+        self.deleted_labels.add(original_label)
+        self._refresh_list()
+
+    def _on_new_delete(self, button, label):
+        self.new_labels.remove(label)
+        self._refresh_list()
+
+    def _check_label_name(self, label_name):
+        all_labels = set()
+        self.core.call_all("labels_get_all", all_labels)
+        for label in set(all_labels):
+            if label in self.changed_labels:
+                all_labels.add(self.changed_labels[label])
+        all_labels.update(self.new_labels)
+        all_labels = {label[0] for label in all_labels}
+
+        if label_name in all_labels:
+            return False
+
+        if RE_FORBIDDEN_LABELS.match(label_name):
+            return False
+
+        return True
 
     def _on_label_txt_changed(self, *args, **kwargs):
         entry = self.widget_tree.get_object("new_label_entry")
         button = self.widget_tree.get_object("new_label_button")
         txt = entry.get_text().strip()
 
-        button.set_sensitive(True)
-        valid = True
+        valid = self._check_label_name(txt)
 
-        all_labels = set()
-        self.core.call_all("labels_get_all", all_labels)
-        for label in all_labels:
-            if label in self.changed_labels:
-                all_labels.add(self.changed_labels[label])
-        all_labels.update(self.new_labels)
-        all_labels = {label[0] for label in all_labels}
-
-        if txt in all_labels:
-            valid = False
-            button.set_sensitive(False)
-        elif RE_FORBIDDEN_LABELS.match(txt) is not None:
-            button.set_sensitive(False)
-            if txt != "":
-                valid = False
-
-        if valid:
+        button.set_sensitive(valid)
+        if valid or txt == "":
             self.core.call_all("gtk_entry_reset_colors", entry)
         else:
             self.core.call_all("gtk_entry_set_colors", entry)
@@ -300,6 +370,91 @@ class Plugin(openpaperwork_core.PluginBase):
             "gtk_theme_get_color", "theme_bg_color"
         ))
 
+    def _make_new_labels(self, out, doc_id, doc_url):
+        if len(self.new_labels) <= 0:
+            return
+        for label in self.new_labels:
+            self.core.call_all(
+                "doc_add_label_by_url", doc_url, label[0], label[1]
+            )
+        out.upd_docs.add(doc_id)
+
+    def _make_label_updates(self, out, doc_id, doc_url):
+        if len(self.changed_labels) <= 0:
+            return
+
+        all_docs = []
+        self.core.call_all("storage_get_all_docs", all_docs)
+        all_docs = set(all_docs)
+
+        current = 0
+        total = len(self.changed_labels) * len(all_docs)
+
+        for (doc_id, doc_url) in all_docs:
+            for (old_label, new_label) in self.changed_labels.items():
+                LOGGER.info(
+                    "Changing label %s into %s on document %s",
+                    old_label, new_label, doc_id
+                )
+                self.core.call_all(
+                    "on_progress", "label_upd", current / total,
+                    _("Changing label %s into %s on document %s") % (
+                        old_label, new_label, doc_id
+                    )
+                )
+                current += 1
+                doc_labels = set()
+                self.core.call_all(
+                    "doc_get_labels_by_url", doc_labels, doc_url
+                )
+                if old_label not in doc_labels:
+                    continue
+                out.upd_docs.add(doc_id)
+                self.core.call_all(
+                    "doc_remove_label_by_url", doc_url, old_label[0]
+                )
+                self.core.call_all(
+                    "doc_add_label_by_url", doc_url,
+                    new_label[0], new_label[1]
+                )
+        self.core.call_all("on_progress", "label_upd", 1.0)
+
+    def _make_label_deletions(self, out, doc_id, doc_url):
+        if len(self.deleted_labels) <= 0:
+            return
+
+        all_docs = []
+        self.core.call_all("storage_get_all_docs", all_docs)
+        all_docs = set(all_docs)
+
+        current = 0
+        total = len(self.deleted_labels) * len(all_docs)
+
+        for (doc_id, doc_url) in all_docs:
+            for old_label in self.deleted_labels:
+                LOGGER.info(
+                    "Deleting label %s from document %s",
+                    old_label, doc_id
+                )
+                self.core.call_all(
+                    "on_progress", "label_del", current / total,
+                    _("Deleting label %s from document %s") % (
+                        old_label, doc_id
+                    )
+                )
+                current += 1
+                doc_labels = set()
+                self.core.call_all(
+                    "doc_get_labels_by_url", doc_labels, doc_url
+                )
+                if old_label not in doc_labels:
+                    continue
+                out.upd_docs.add(doc_id)
+                self.core.call_all(
+                    "doc_remove_label_by_url", doc_url, old_label[0]
+                )
+        self.core.call_all("on_progress", "label_del", 1.0)
+
     def doc_properties_components_apply_changes(self, out):
         LOGGER.info("Selected/Unselected labels: %s", self.toggled_labels)
         LOGGER.info("Modified labels: %s", self.changed_labels)
@@ -324,81 +479,13 @@ class Plugin(openpaperwork_core.PluginBase):
                     )
             out.upd_docs.add(doc_id)
 
-        if len(self.new_labels) > 0:
-            for label in self.new_labels:
-                self.core.call_all(
-                    "doc_add_label_by_url", doc_url, label[0], label[1]
-                )
-            out.upd_docs.add(doc_id)
-
         if len(self.changed_labels) <= 0 and len(self.deleted_labels) <= 0:
             return
 
-        all_docs = []
-        self.core.call_all("storage_get_all_docs", all_docs)
-        all_docs = set(all_docs)
-
-        if len(self.changed_labels) > 0:
-            current = 0
-            total = len(self.changed_labels) * len(all_docs)
-
-            for (doc_id, doc_url) in all_docs:
-                for (old_label, new_label) in self.changed_labels.items():
-                    LOGGER.info(
-                        "Changing label %s into %s on document %s",
-                        old_label, new_label, doc_id
-                    )
-                    self.core.call_all(
-                        "on_progress", "label_upd", current / total,
-                        _("Changing label %s into %s on document %s") % (
-                            old_label, new_label, doc_id
-                        )
-                    )
-                    current += 1
-                    doc_labels = set()
-                    self.core.call_all(
-                        "doc_get_labels_by_url", doc_labels, doc_url
-                    )
-                    if old_label not in doc_labels:
-                        continue
-                    out.upd_docs.add(doc_id)
-                    self.core.call_all(
-                        "doc_remove_label_by_url", doc_url, old_label[0]
-                    )
-                    self.core.call_all(
-                        "doc_add_label_by_url", doc_url,
-                        new_label[0], new_label[1]
-                    )
-            self.core.call_all("on_progress", "label_upd", 1.0)
-
-        if len(self.deleted_labels) > 0:
-            current = 0
-            total = len(self.deleted_labels) * len(all_docs)
-
-            for (doc_id, doc_url) in all_docs:
-                for old_label in self.deleted_labels:
-                    LOGGER.info(
-                        "Deleting label %s from document %s",
-                        old_label, doc_id
-                    )
-                    self.core.call_all(
-                        "on_progress", "label_del", current / total,
-                        _("Deleting label %s from document %s") % (
-                            old_label, doc_id
-                        )
-                    )
-                    current += 1
-                    doc_labels = set()
-                    self.core.call_all(
-                        "doc_get_labels_by_url", doc_labels, doc_url
-                    )
-                    if old_label not in doc_labels:
-                        continue
-                    out.upd_docs.add(doc_id)
-                    self.core.call_all(
-                        "doc_remove_label_by_url", doc_url, old_label[0]
-                    )
-            self.core.call_all("on_progress", "label_del", 1.0)
+        # operation order matters
+        self._make_label_deletions(out, doc_id, doc_url)
+        self._make_label_updates(out, doc_id, doc_url)
+        self._make_new_labels(out, doc_id, doc_url)
 
     def doc_properties_components_cancel_changes(self):
         self.doc_properties_components_set_active_doc(*self.active_doc)

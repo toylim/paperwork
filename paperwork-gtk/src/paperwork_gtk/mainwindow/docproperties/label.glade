@@ -1,24 +1,25 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.22.1 -->
 <interface>
+  <requires lib="gtk+" version="3.10"/>
   <object class="GtkListBoxRow" id="label_row">
+    <property name="height_request">30</property>
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="height_request">30</property>
-
     <child>
       <object class="GtkBox">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="orientation">horizontal</property>
-
         <child>
           <object class="GtkToggleButton" id="toggle_button">
-            <property name="relief">none</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="always_show-image">True</property>
+            <property name="receives_default">False</property>
+            <property name="relief">none</property>
+            <property name="always_show_image">True</property>
             <child>
               <object class="GtkImage">
+                <property name="can_focus">False</property>
               </object>
             </child>
           </object>
@@ -28,14 +29,14 @@
             <property name="position">0</property>
           </packing>
         </child>
-
         <child>
           <object class="GtkColorButton" id="color_button">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="relief">none</property>
+            <property name="receives_default">False</property>
             <property name="has_tooltip">True</property>
             <property name="tooltip_text" translatable="yes">Change the label color</property>
+            <property name="relief">none</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -43,39 +44,39 @@
             <property name="position">1</property>
           </packing>
         </child>
-
         <child>
-          <object class="GtkLabel" id="label_label">
+          <object class="GtkButton" id="label_label">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="halign">start</property>
+            <property name="receives_default">False</property>
           </object>
           <packing>
-            <property name="expand">True</property>
-            <property name="fill">True</property>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
             <property name="position">2</property>
           </packing>
         </child>
-
         <child>
           <object class="GtkButton" id="delete_button">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="relief">none</property>
+            <property name="receives_default">False</property>
             <property name="has_tooltip">True</property>
             <property name="tooltip_text" translatable="yes">Delete the label from all documents</property>
+            <property name="relief">none</property>
             <child>
               <object class="GtkImage">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="icon_size">1</property>
                 <property name="icon_name">edit-delete-symbolic</property>
+                <property name="icon_size">1</property>
               </object>
             </child>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
+            <property name="pack_type">end</property>
             <property name="position">3</property>
           </packing>
         </child>
