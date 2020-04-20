@@ -31,34 +31,6 @@
         <property name="can_focus">False</property>
 
         <child>
-          <object class="GtkBox" id="pageeditor_tools">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="orientation">vertical</property>
-            <child>
-              <object class="GtkScale" id="pageeditor_zoom">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="orientation">vertical</property>
-                <property name="adjustment">pageeditor_zoom_adjustment</property>
-                <property name="inverted">True</property>
-                <property name="draw_value">False</property>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="pack_type">end</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-
-        <child>
           <object class="GtkScrolledWindow" id="pageeditor_scroll">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
@@ -84,11 +56,40 @@
             </child>
           </object>
           <packing>
+            <property name="pack_type">start</property>
             <property name="expand">True</property>
             <property name="fill">True</property>
-            <property name="position">1</property>
           </packing>
         </child>
+
+        <child>
+          <object class="GtkBox" id="pageeditor_tools">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkScale" id="pageeditor_zoom">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="orientation">vertical</property>
+                <property name="adjustment">pageeditor_zoom_adjustment</property>
+                <property name="inverted">True</property>
+                <property name="draw_value">False</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="pack_type">end</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="pack_type">end</property>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+          </packing>
+        </child>
+
       </object>
       <packing>
         <property name="index">-1</property>
