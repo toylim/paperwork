@@ -36,15 +36,51 @@ _ = gettext.gettext
 LOGGER = logging.getLogger(__name__)
 
 
-class DisplayNewDocController(BaseDocViewController):
-    def __init__(self, docview, plugin):
+class BaseDisplayNewDocController(BaseDocViewController):
+    def __init__(self, docview, empty_doc_plugin):
         super().__init__(docview)
-        self.empty_doc_plugin = plugin
+        self.empty_doc_plugin = empty_doc_plugin
+        self.core = empty_doc_plugin.core
+
+    def _switch_controller(self):
+        nb_pages = self.core.call_success(
+            "doc_get_nb_pages_by_url", self.plugin.active_doc[1]
+        )
+        if nb_pages is None:
+            nb_pages = 0
+
+        if nb_pages > 0 or self.empty_doc_plugin.scanning:
+            self.plugin.docview_switch_controller(
+                "new_doc",
+                lambda docview: NoDisplayController(
+                    docview, self.empty_doc_plugin
+                )
+            )
+        else:
+            self.plugin.docview_switch_controller(
+                "new_doc",
+                lambda docview: DisplayNewDocController(
+                    docview, self.empty_doc_plugin
+                )
+            )
+
+    def doc_reload_page(self, page_idx):
+        self._switch_controller()
+
+
+class DisplayNewDocController(BaseDisplayNewDocController):
+    def __init__(self, docview, plugin):
+        super().__init__(docview, plugin)
+        self.core = docview.core
 
     def enter(self):
         self.plugin.overlay.set_visible(True)
 
     def on_overlay_draw(self, overlay_drawing_area, cairo_ctx):
+        if self.empty_doc_plugin.scanning:
+            self._switch_controller()
+            return
+
         img = self.empty_doc_plugin.img
         alloc = overlay_drawing_area.get_allocation()
         style = overlay_drawing_area.get_style_context()
@@ -86,12 +122,16 @@ class DisplayNewDocController(BaseDocViewController):
             cairo_ctx.restore()
 
 
-class NoDisplayController(BaseDocViewController):
+class NoDisplayController(BaseDisplayNewDocController):
     def enter(self):
         self.plugin.overlay.set_visible(False)
 
 
 class Plugin(openpaperwork_core.PluginBase):
+    def __init__(self):
+        super().__init__()
+        self.scanning = False
+
     def get_interfaces(self):
         return [
             'chkdeps',
@@ -137,6 +177,12 @@ class Plugin(openpaperwork_core.PluginBase):
         if not PANGO_AVAILABLE:
             out['pango'].update(openpaperwork_core.deps.PANGO)
 
+    def on_scan2doc_start(self, *args, **kwargs):
+        self.scanning = True
+
+    def on_scan2doc_end(self, *args, **kwargs):
+        self.scanning = False
+
     def gtk_docview_get_controllers(self, out: dict, docview):
         nb_pages = self.core.call_success(
             "doc_get_nb_pages_by_url", docview.active_doc[1]
@@ -147,5 +193,5 @@ class Plugin(openpaperwork_core.PluginBase):
         out['new_doc'] = (
             DisplayNewDocController(docview, self)
             if nb_pages <= 0 else
-            NoDisplayController(docview)
+            NoDisplayController(docview, self)
         )
