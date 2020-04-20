@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+  <object class="GtkButton" id="doc_main_action">
+    <property name="use_action_appearance">False</property>
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="use_underline">False</property>
+    <property name="relief">none</property>
+    <property name="has_tooltip">True</property>
+    <property name="tooltip_text"></property>
+    <child>
+      <object class="GtkImage" id="doc_main_action_image">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+      </object>
+    </child>
+  </object>
+</interface>

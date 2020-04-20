@@ -59,6 +59,12 @@ class Plugin(openpaperwork_core.PluginBase):
             return
         self.action = Gio.SimpleAction.new(ACTION_NAME, None)
         self.action.connect("activate", self._open_properties)
+        self.core.call_all(
+            "add_doc_main_action",
+            "document-properties-symbolic",
+            _("Document properties"),
+            self._open_properties
+        )
 
     def chkdeps(self, out: dict):
         if not GLIB_AVAILABLE:
@@ -66,9 +72,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def on_doclist_initialized(self):
         self.core.call_all("app_actions_add", self.action)
-        self.core.call_all(
-            "add_doc_action", _("Document properties"), "win." + ACTION_NAME
-        )
 
     def on_backend_readonly(self):
         self.action.set_enabled(False)
@@ -82,7 +85,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def doc_close(self):
         self.active_doc = None
 
-    def _open_properties(self, action, parameter):
+    def _open_properties(self, *args, **kwargs):
         assert(self.active_doc is not None)
         active = self.active_doc
 

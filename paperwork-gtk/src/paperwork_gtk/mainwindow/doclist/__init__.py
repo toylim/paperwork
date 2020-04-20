@@ -8,6 +8,14 @@ try:
 except (ImportError, ValueError):
     GLIB_AVAILABLE = False
 
+try:
+    import gi
+    gi.require_version('Gtk', '3.0')
+    from gi.repository import Gtk
+    GTK_AVAILABLE = True
+except (ImportError, ValueError):
+    GTK_AVAILABLE = False
+
 import openpaperwork_core
 import openpaperwork_gtk.deps
 
@@ -33,7 +41,9 @@ class Plugin(openpaperwork_core.PluginBase):
         self.row_to_docid = {}
         self.docid_to_row = {}
         self.docid_to_widget_tree = {}
-        self.active_docid = None
+        self.active_doc = (None, None)
+        self.previous_doc = (None, None)
+        self.main_actions = []
         self.actions = None
 
     def get_interfaces(self):
@@ -134,6 +144,8 @@ class Plugin(openpaperwork_core.PluginBase):
     def chkdeps(self, out: dict):
         if not GLIB_AVAILABLE:
             out['glib'].update(openpaperwork_gtk.deps.GLIB)
+        if not GTK_AVAILABLE:
+            out['gtk'].update(openpaperwork_gtk.deps.GTK)
 
     def doclist_add(self, widget, vposition):
         body = self.widget_tree.get_object("doclist_body")
@@ -198,8 +210,28 @@ class Plugin(openpaperwork_core.PluginBase):
         if new:
             doc_actions.set_visible(False)
         else:
-            doc_actions.set_menu_model(self.actions)
-            doc_actions.connect("toggled", self._on_doc_actions_menu, doc_id)
+            widget_tree.get_object("doc_actions_menu").set_menu_model(
+                self.actions
+            )
+
+        for action in self.main_actions:
+            button = self.core.call_success(
+                "gtk_load_widget_tree",
+                "paperwork_gtk.mainwindow.doclist", "main_action.glade"
+            )
+            button.get_object("doc_main_action_image").set_from_icon_name(
+                action['icon_name'], Gtk.IconSize.MENU
+            )
+            button.get_object("doc_main_action").set_tooltip_text(
+                action['txt']
+            )
+            button.get_object("doc_main_action").connect(
+                "clicked", lambda _: action['callback']()
+            )
+            widget_tree.get_object("doc_actions").pack_start(
+                button.get_object("doc_main_action"),
+                expand=True, fill=True, padding=0
+            )
 
         row = widget_tree.get_object("doc_listbox")
         self.row_to_docid[row] = doc_id
@@ -275,29 +307,42 @@ class Plugin(openpaperwork_core.PluginBase):
         spinner.stop()
 
     def doc_close(self):
-        self.active_docid = None
+        self.active_doc = None
 
     def doc_open(self, doc_id, doc_url):
-        self.active_docid = doc_id
+        self.active_doc = (doc_id, doc_url)
         self._reselect_current_doc(scroll=False)
 
     def _reselect_current_doc(self, scroll=True):
-        if self.active_docid not in self.docid_to_row:
+        (doc_id, doc_url) = self.active_doc
+
+        if doc_id not in self.docid_to_row:
             LOGGER.info(
-                "Document %s not found in the document list",
-                self.active_docid
+                "Document %s not found in the document list", doc_id
             )
             self.vadj.set_value(self.vadj.get_lower())
             return
 
-        row = self.docid_to_row.get(self.active_docid)
+        row = self.docid_to_row.get(doc_id)
         while row is None:
             if self.doclist_extend(NB_DOCS_PER_PAGE) <= 0:
                 break
-            row = self.docid_to_row.get(self.active_docid)
+            row = self.docid_to_row.get(doc_id)
 
         assert(row is not None)
         self.doclist.select_row(row)
+
+        if (self.previous_doc[0] is not None and
+                self.previous_doc[0] in self.docid_to_widget_tree):
+            widget_tree = self.docid_to_widget_tree[self.previous_doc[0]]
+            widget_tree.get_object("doc_actions").set_visible(False)
+
+        if (self.core.call_success("is_doc", doc_url) is not None and
+                doc_id in self.docid_to_widget_tree):
+            widget_tree = self.docid_to_widget_tree[doc_id]
+            widget_tree.get_object("doc_actions").set_visible(True)
+
+        self.previous_doc = self.active_doc
 
         if not scroll:
             return
@@ -336,7 +381,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self._scrollbar_last_value = vadj.get_value()
 
     def _doc_open(self, doc_id):
-        if self.active_docid == doc_id:
+        if self.active_doc[0] == doc_id:
             return
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
         LOGGER.info("Opening document %s (%s)", doc_id, doc_url)
@@ -344,11 +389,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _on_row_activated(self, list_box, row):
         doc_id = self.row_to_docid[row]
-        self._doc_open(doc_id)
-
-    def _on_doc_actions_menu(self, menu_button, doc_id):
-        if not menu_button.get_active():
-            return
         self._doc_open(doc_id)
 
     def menu_app_append_item(self, item):
@@ -360,6 +400,13 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def add_doc_action(self, action_label, action_name):
         self.actions.append(action_label, action_name)
+
+    def add_doc_main_action(self, icon_name, txt, callback):
+        self.main_actions.append({
+            "icon_name": icon_name,
+            "txt": txt,
+            "callback": callback,
+        })
 
     def _on_drag_motion(self, widget, drag_context, x, y, time):
         widget.drag_unhighlight_row()
@@ -395,9 +442,9 @@ class Plugin(openpaperwork_core.PluginBase):
             margins=(30, 30, 30, 30)
         )
 
-        if self.active_docid is None:
+        if self.active_doc[0] is None:
             return
-        widget_tree = self.docid_to_widget_tree[self.active_docid]
+        widget_tree = self.docid_to_widget_tree[self.active_doc[0]]
         self.core.call_success(
             "screenshot_snap_widget", widget_tree.get_object("doc_actions"),
             self.core.call_success(
