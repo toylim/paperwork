@@ -307,7 +307,7 @@ class Plugin(openpaperwork_core.PluginBase):
         spinner.stop()
 
     def doc_close(self):
-        self.active_doc = None
+        self.active_doc = (None, None)
 
     def doc_open(self, doc_id, doc_url):
         self.active_doc = (doc_id, doc_url)
