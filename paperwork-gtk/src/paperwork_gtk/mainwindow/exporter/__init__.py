@@ -522,15 +522,13 @@ class Plugin(openpaperwork_core.PluginBase):
     def _on_apply(self, button):
         LOGGER.info("Export settings defined. Opening file chooser dialog")
 
-        dialog = Gtk.FileChooserDialog(
+        dialog = Gtk.FileChooserNative.new(
             _("Select a file or a directory to import"),
             self.windows[-1],
             Gtk.FileChooserAction.SAVE,
-            (
-                Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                Gtk.STOCK_SAVE, Gtk.ResponseType.ACCEPT
-            )
+            None, None
         )
+        dialog.set_modal(True)
         dialog.set_local_only(False)
 
         file_filter = Gtk.FileFilter()
@@ -546,7 +544,7 @@ class Plugin(openpaperwork_core.PluginBase):
         dialog.set_filter(file_filter)
 
         dialog.connect("response", self._on_dialog_response)
-        dialog.show_all()
+        dialog.run()
 
     def _on_dialog_response(self, dialog, response_id):
         if (response_id != Gtk.ResponseType.ACCEPT and
