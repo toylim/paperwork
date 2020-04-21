@@ -175,6 +175,8 @@ class Plugin(openpaperwork_core.PluginBase):
             self.core.call_all(
                 "page_set_boxes_by_url", doc_url, page_idx, boxes
             )
+        except Exception as exc:
+            LOGGER.error("OCR FAILED", exc_inf=exc)
         finally:
             if doc_id is not None:
                 self.core.call_one(
