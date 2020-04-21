@@ -40,10 +40,6 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['paperwork_gtk.mainwindow.window'],
             },
             {
-                'interface': 'backend_readonly',
-                'defaults': ['paperwork_gtk.readonly'],
-            },
-            {
                 'interface': 'doc_actions',
                 'defaults': ['paperwork_gtk.mainwindow.doclist'],
             },
@@ -72,12 +68,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def on_doclist_initialized(self):
         self.core.call_all("app_actions_add", self.action)
-
-    def on_backend_readonly(self):
-        self.action.set_enabled(False)
-
-    def on_backend_readwrite(self):
-        self.action.set_enabled(True)
 
     def doc_open(self, doc_id, doc_url):
         self.active_doc = (doc_id, doc_url)

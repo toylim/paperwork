@@ -233,19 +233,11 @@ class GtkPageEditorUI(paperwork_backend.pageedit.AbstractPageEditorUI):
         promise = promise.then(self.editor.on_save())
         promise = promise.then(self.core.call_all, "on_idle")
         promise = promise.then(lambda *args, **kwargs: None)
-        promise = promise.then(openpaperwork_core.promise.ThreadedPromise(
-            self.core, self._do_transaction
+        promise = promise.then(self.core.call_success(
+            "transaction_simple_promise",
+            ("upd", self.plugin.active_doc[0])
         ))
-        promise.schedule()
-
-    def _do_transaction(self):
-        transactions = []
-        self.core.call_all("doc_transaction_start", transactions, 1)
-        transactions.sort(key=lambda transaction: -transaction.priority)
-        for transaction in transactions:
-            transaction.upd_obj(self.plugin.active_doc[0])
-        for transaction in transactions:
-            transaction.commit()
+        self.core.call_success("transaction_schedule", promise)
 
     def draw(self, widget, cairo_ctx):
         if self.surface_img is None:
@@ -301,6 +293,10 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'resources',
                 'defaults': ['openpaperwork_core.resources.setuptools'],
+            },
+            {
+                'interface': 'transaction_manager',
+                'defaults': ['paperwork_backend.sync'],
             },
         ]
 

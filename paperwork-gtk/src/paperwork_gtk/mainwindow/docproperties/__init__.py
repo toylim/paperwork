@@ -45,6 +45,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'mainloop',
                 'defaults': ['openpaperwork_gtk.mainloop.glib'],
             },
+            {
+                'interface': 'transaction_manager',
+                'defaults': ['paperwork_backend.sync'],
+            },
         ]
 
     def init(self, core):
@@ -109,9 +113,7 @@ class Plugin(openpaperwork_core.PluginBase):
         # drop call_all return value
         promise = promise.then(lambda *args, **kwargs: None)
         promise = promise.then(self._reload_doc, upd)
-        promise = promise.then(openpaperwork_core.promise.ThreadedPromise(
-            self.core, self._upd_index, args=(upd,),
-        ))
+        promise = promise.then(self._upd_index, upd)
         promise.schedule()
 
         self.core.call_all("mainwindow_show_default", side="left")
@@ -140,22 +142,14 @@ class Plugin(openpaperwork_core.PluginBase):
             "Document %s modified. %d documents impacted", upd.doc_id, total
         )
 
-        transactions = []
-        self.core.call_all("doc_transaction_start", transactions, total)
-        transactions.sort(key=lambda transaction: -transaction.priority)
-
+        changes = []
         for doc_id in upd.new_docs:
-            for transaction in transactions:
-                transaction.add_obj(doc_id)
+            changes.append(('add', doc_id))
         for doc_id in upd.upd_docs:
-            for transaction in transactions:
-                transaction.upd_obj(doc_id)
+            changes.append(('upd', doc_id))
         for doc_id in upd.del_docs:
-            for transaction in transactions:
-                transaction.del_obj(doc_id)
-
-        for transaction in transactions:
-            transaction.commit()
+            changes.append(('del', doc_id))
+        self.core.call_success("transaction_simple", changes)
 
     def docproperties_scroll_to_last(self):
         scroll = self.widget_tree.get_object("docproperties_body")

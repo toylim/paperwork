@@ -39,10 +39,6 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['paperwork_gtk.mainwindow.window'],
             },
             {
-                'interface': 'backend_readonly',
-                'defaults': ['paperwork_gtk.readonly'],
-            },
-            {
                 'interface': 'doc_actions',
                 'defaults': ['paperwork_gtk.mainwindow.doclist'],
             },
@@ -53,6 +49,10 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'ocr',
                 'defaults': ['paperwork_backend.guesswork.ocr.pyocr'],
+            },
+            {
+                'interface': 'transaction_manager',
+                'defaults': ['paperwork_backend.sync'],
             },
         ]
 
@@ -72,12 +72,6 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all(
             "add_doc_action", _("Redo OCR on document"), "win." + ACTION_NAME
         )
-
-    def on_backend_readonly(self):
-        self.action.set_enabled(False)
-
-    def on_backend_readwrite(self):
-        self.action.set_enabled(True)
 
     def doc_open(self, doc_id, doc_url):
         self.active_doc = (doc_id, doc_url)
@@ -122,18 +116,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         promise = promise.then(lambda *args, **kwargs: None)
 
-        promise = promise.then(openpaperwork_core.promise.ThreadedPromise(
-            self.core, self._upd_index, args=(doc_id, doc_url,)
+        promise = promise.then(self.core.call_success(
+            "transaction_simple_promise", (('upd', doc_id),)
         ))
-        promise.schedule()
-
-    def _upd_index(self, doc_id, doc_url):
-        transactions = []
-        self.core.call_all("doc_transaction_start", transactions, 1)
-        transactions.sort(key=lambda transaction: -transaction.priority)
-
-        for transaction in transactions:
-            transaction.del_obj(doc_id)
-
-        for transaction in transactions:
-            transaction.commit()
+        self.core.call_success("transaction_schedule", promise)

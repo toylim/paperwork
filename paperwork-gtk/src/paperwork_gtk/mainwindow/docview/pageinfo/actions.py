@@ -22,10 +22,6 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return [
             {
-                'interface': 'backend_readonly',
-                'defaults': ['paperwork_gtk.readonly'],
-            },
-            {
                 'interface': 'gtk_docview_pageinfo',
                 'defaults': ['paperwork_gtk.mainwindow.docview.pageinfo'],
             },
@@ -74,18 +70,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def doc_open(self, doc_id, doc_url):
         self.active_doc = (doc_id, doc_url)
-
-    def _set_sensitivity(self, sensitive):
-        self.button_edit.set_sensitive(sensitive)
-        self.core.call_all(
-            "on_widget_busyness_changed", self.button_edit, sensitive
-        )
-
-    def on_backend_readonly(self):
-        self._set_sensitivity(False)
-
-    def on_backend_readwrite(self):
-        self._set_sensitivity(True)
 
     def on_page_shown(self, page_idx):
         self.active_page = page_idx

@@ -35,6 +35,14 @@ class Plugin(openpaperwork_core.PluginBase):
                 "interface": "document_storage",
                 "defaults": ['paperwork_backend.model.workdir'],
             },
+            {
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_core.mainloop.asyncio'],
+            },
+            {
+                'interface': 'transaction_manager',
+                'defaults': ['paperwork_backend.sync'],
+            },
         ]
 
     def cmd_set_interactive(self, interactive):
@@ -67,16 +75,15 @@ class Plugin(openpaperwork_core.PluginBase):
             print("Renaming: {} --> {}".format(source_doc_url, dest_doc_url))
 
         self.core.call_all("doc_rename_by_url", source_doc_url, dest_doc_url)
-
-        transactions = []
-        self.core.call_all("doc_transaction_start", transactions, 2)
-        transactions.sort(key=lambda transaction: -transaction.priority)
-        for transaction in transactions:
-            transaction.del_obj(source_doc_id)
-        for transaction in transactions:
-            transaction.add_obj(dest_doc_id)
-        for transaction in transactions:
-            transaction.commit()
+        self.core.call_success(
+            "transaction_simple",
+            (
+                ('del', source_doc_id),
+                ('add', dest_doc_id),
+            )
+        )
+        self.core.call_success("mainloop_quit_graceful")
+        self.core.call_success("mainloop")
 
         if self.interactive:
             print("{} renamed into {}".format(source_doc_id, dest_doc_id))

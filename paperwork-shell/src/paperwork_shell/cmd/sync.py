@@ -44,6 +44,10 @@ class Plugin(openpaperwork_core.PluginBase):
                     "paperwork_backend.model.labels",
                 ],
             },
+            {
+                'interface': 'transaction_manager',
+                'defaults': ['paperwork_backend.sync'],
+            },
         ]
 
     def cmd_set_interactive(self, interactive):
@@ -68,13 +72,8 @@ class Plugin(openpaperwork_core.PluginBase):
             # we cannot use sets here because sets are not JSON-serializable
             lambda: collections.defaultdict(list)
         )
-        promises = []
-        self.core.call_all("sync", promises)
-        promise = promises[0]
-        for p in promises[1:]:
-            promise = promise.then(p)
 
-        self.core.call_one("mainloop_schedule", promise.schedule)
+        self.core.call_success("transaction_sync_all")
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
         if self.interactive:

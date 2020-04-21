@@ -42,6 +42,14 @@ class Plugin(openpaperwork_core.PluginBase):
                 "interface": "document_storage",
                 "defaults": ["paperwork_backend.model.workdir"],
             },
+            {
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_core.mainloop.asyncio'],
+            },
+            {
+                'interface': 'transaction_manager',
+                'defaults': ['paperwork_backend.sync'],
+            },
         ]
 
     def cmd_set_interactive(self, interactive):
@@ -95,13 +103,9 @@ class Plugin(openpaperwork_core.PluginBase):
             sys.stdout.write(_("Done") + "\n")
 
     def _upd_doc(self, doc_id):
-        transactions = []
-        self.core.call_all("doc_transaction_start", transactions, 1)
-        transactions.sort(key=lambda transaction: -transaction.priority)
-        for transaction in transactions:
-            transaction.upd_obj(doc_id)
-        for transaction in transactions:
-            transaction.commit()
+        self.core.call_success("transaction_simple", (("upd", doc_id),))
+        self.core.call_success("mainloop_quit_graceful")
+        self.core.call_success("mainloop")
 
     def _show(self, doc_ids):
         out = {}
@@ -186,11 +190,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
             updated_docs = []
 
-            transactions = []
-            self.core.call_all(
-                "doc_transaction_start", transactions
-            )
-
             for (doc_id, doc_url) in all_docs:
                 labels = set()
                 self.core.call_all("doc_get_labels_by_url", labels, doc_url)
@@ -204,14 +203,17 @@ class Plugin(openpaperwork_core.PluginBase):
                     ))
                 updated_docs.append(doc_id)
                 self.core.call_all("doc_remove_label_by_url", doc_url, label)
-                for transaction in transactions:
-                    transaction.upd_obj(doc_id)
 
             if self.interactive:
                 sys.stdout.write("Committing changes in index ... ")
                 sys.stdout.flush()
-            for transaction in transactions:
-                transaction.commit()
+
+            self.core.call_success("transaction_simple", [
+                ("upd", doc_id) for doc_id in updated_docs
+            ])
+            self.core.call_success("mainloop_quit_graceful")
+            self.core.call_success("mainloop")
+
             if self.interactive:
                 sys.stdout.write("Done\n")
             return updated_docs

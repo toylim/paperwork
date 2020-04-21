@@ -37,6 +37,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'document_storage',
                 'defaults': ['paperwork_backend.model.workdir'],
             },
+            {
+                'interface': 'transaction_manager',
+                'defaults': ['paperwork_backend.sync'],
+            },
         ]
 
     def init(self, core):
@@ -154,32 +158,11 @@ class Plugin(openpaperwork_core.PluginBase):
             LOGGER.info("Nothing to do")
             return
 
-        transactions = []
-        self.core.call_all(
-            "doc_transaction_start", transactions, len(self.updated)
-        )
-        transactions.sort(key=lambda transaction: -transaction.priority)
-        self.promise = self.promise.then(
-            openpaperwork_core.promise.ThreadedPromise(
-                self.core, self._run_transactions,
-                args=(transactions, self.updated)
-            )
-        )
-        self.promise.schedule()
+        self.promise = self.promise.then(self.core.call_success(
+            "transaction_simple_promise",
+            [('upd', doc_id) for doc_id in self.updated]
+        ))
+        self.core.call_success("transaction_schedule", self.promise)
 
         self.updated = set()
         self.promise = openpaperwork_core.promise.Promise(self.core)
-
-    def _run_transactions(self, transactions, updated_doc_ids):
-        for doc_id in updated_doc_ids:
-            doc_url = self.core.call_success("doc_id_to_url", doc_id)
-            upd = (self.core.call_success("is_doc", doc_url) is not None)
-            for transaction in transactions:
-                if upd:
-                    transaction.upd_obj(doc_id)
-                else:
-                    # drag'n'dropping deletes a document when there are no
-                    # pages left in it.
-                    transaction.del_obj(doc_id)
-        for transaction in transactions:
-            transaction.commit()

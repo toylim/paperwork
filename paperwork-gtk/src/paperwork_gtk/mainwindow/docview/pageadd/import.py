@@ -77,6 +77,10 @@ class Plugin(openpaperwork_core.PluginBase):
                     'paperwork_backend.docimport.pdf',
                 ],
             },
+            {
+                'interface': 'transaction_manager',
+                'defaults': ['paperwork_backend.sync'],
+            },
         ]
 
     def init(self, core):
@@ -313,7 +317,7 @@ class Plugin(openpaperwork_core.PluginBase):
         promise = promise.then(lambda *args, **kwargs: None)
         promise = promise.then(self._log_result, file_import)
         promise = promise.then(self._show_result, file_import)
-        promise.schedule()
+        self.core.call_success("transaction_schedule", promise)
 
     def _delete_files(self, notification, action, file_uris):
         LOGGER.info("Moving imported file(s) to trash ...")

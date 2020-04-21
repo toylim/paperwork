@@ -70,6 +70,8 @@ class BaseFileImporter(object):
         """
         Return a promise with all the steps required to import files
         specified in `file_import` (see constructor), transactions included.
+
+        Must be scheduled with 'transaction_manager.transaction_schedule()'.
         """
         promise = openpaperwork_core.promise.Promise(self.core)
         to_import = list(self._get_importables())

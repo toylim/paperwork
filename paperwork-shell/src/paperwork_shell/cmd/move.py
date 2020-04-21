@@ -36,12 +36,20 @@ class Plugin(openpaperwork_core.PluginBase):
                 "defaults": ['paperwork_backend.model.workdir'],
             },
             {
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_core.mainloop.asyncio'],
+            },
+            {
                 "interface": "pages",
                 "defaults": [
                     'paperwork_backend.model.hocr',
                     'paperwork_backend.model.img',
                     'paperwork_backend.model.thumbnail',
                 ],
+            },
+            {
+                'interface': 'transaction_manager',
+                'defaults': ['paperwork_backend.sync'],
             },
         ]
 
@@ -87,20 +95,11 @@ class Plugin(openpaperwork_core.PluginBase):
             dest_doc_url, dest_page_idx
         )
 
-        transactions = []
-        self.core.call_all("doc_transaction_start", transactions, 2)
-        transactions.sort(key=lambda transaction: -transaction.priority)
-        for transaction in transactions:
-            nb_pages = self.core.call_success(
-                "doc_get_nb_pages_by_url", source_doc_url
-            )
-            if nb_pages is None or nb_pages <= 0:
-                transaction.del_obj(source_doc_id)
-            else:
-                transaction.upd_obj(source_doc_id)
-        for transaction in transactions:
-            transaction.upd_obj(dest_doc_id)
-        for transaction in transactions:
-            transaction.commit()
+        self.core.call_success("transaction_simple", (
+            ("upd", source_doc_id),
+            ("upd", dest_doc_id),
+        ))
+        self.core.call_success("mainloop_quit_graceful")
+        self.core.call_success("mainloop")
 
         return True

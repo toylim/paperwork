@@ -40,12 +40,20 @@ class Plugin(openpaperwork_core.PluginBase):
                 "defaults": ['paperwork_backend.model.workdir'],
             },
             {
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_core.mainloop.asyncio'],
+            },
+            {
                 "interface": "pages",
                 "defaults": [
                     'paperwork_backend.model.hocr',
                     'paperwork_backend.model.img',
                     'paperwork_backend.model.thumbnail',
                 ],
+            },
+            {
+                'interface': 'transaction_manager',
+                'defaults': ['paperwork_backend.sync'],
             },
         ]
 
@@ -114,22 +122,12 @@ class Plugin(openpaperwork_core.PluginBase):
                         print(del_page_msg % (page + 1, doc_id))
                     self.core.call_all("page_delete_by_url", doc_url, page)
 
-        transactions = []
-        self.core.call_all("doc_transaction_start", transactions, len(doc_ids))
-        transactions.sort(key=lambda transaction: -transaction.priority)
-
-        for transaction in transactions:
-            for doc_id in doc_ids:
-                doc_url = self.core.call_success("doc_id_to_url", doc_id)
-                nb_pages = self.core.call_success(
-                    "doc_get_nb_pages_by_url", doc_url
-                )
-                if nb_pages is None or nb_pages <= 0:
-                    transaction.del_obj(doc_id)
-                else:
-                    transaction.upd_obj(doc_id)
-
-        for transaction in transactions:
-            transaction.commit()
+        self.core.call_success("transaction_simple", [
+            # transaction_simple() will automatically replace the change 'upd'
+            # by 'del' for the documents that don't exist anymore
+            ("upd", doc_id) for doc_id in doc_ids
+        ])
+        self.core.call_success("mainloop_quit_graceful")
+        self.core.call_success("mainloop")
 
         return True

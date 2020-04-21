@@ -48,7 +48,7 @@ class Plugin(PluginBase):
         super().init(core)
         self.pool = [
             Thread(self, x)
-            for x in range(0, multiprocessing.cpu_count())
+            for x in range(0, max(4, multiprocessing.cpu_count()))
         ]
 
     def on_mainloop_start(self):

@@ -41,6 +41,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'thread',
                 'defaults': ['openpaperwork_core.thread.simple'],
             },
+            {
+                'interface': 'transaction_manager',
+                'defaults': ['paperwork_backend.sync'],
+            },
         ]
 
     def scan2doc_scan_id_to_doc_id(self, scan_id):
@@ -83,10 +87,6 @@ class Plugin(openpaperwork_core.PluginBase):
         self.scan_id_to_doc_id[scan_id] = doc_id
         self.doc_id_to_scan_id[doc_id] = scan_id
 
-        transactions = []
-        self.core.call_all("doc_transaction_start", transactions, 1)
-        transactions.sort(key=lambda transaction: -transaction.priority)
-
         def add_scans_to_doc(args):
             (source, scan_id, imgs) = args
             nb = 0
@@ -108,19 +108,6 @@ class Plugin(openpaperwork_core.PluginBase):
                 )
             return nb
 
-        def run_transactions(nb_imgs):
-            if nb_imgs <= 0:
-                for transaction in transactions:
-                    transaction.cancel()
-                return
-            for transaction in transactions:
-                if new:
-                    transaction.add_obj(doc_id)
-                else:
-                    transaction.upd_obj(doc_id)
-            for transaction in transactions:
-                transaction.commit()
-
         def drop_scan_id(*args, **kwargs):
             self.scan_id_to_doc_id.pop(scan_id)
             self.doc_id_to_scan_id.pop(doc_id)
@@ -131,12 +118,23 @@ class Plugin(openpaperwork_core.PluginBase):
             return (doc_id, doc_url)
 
         def cancel(exc):
-            for transaction in transactions:
-                transaction.cancel()
             drop_scan_id()
             if new:
                 self.core.call_all("storage_delete_doc_id", doc_id)
             raise exc
+
+        def run_transactions(nb_imgs):
+            # start a second promise chain, but scheduled with
+            # "transaction_schedule()"
+            promise = self.core.call_success(
+                "transaction_simple_promise",
+                (("add" if new else "upd", doc_id),)
+            )
+            promise = promise.then(drop_scan_id)
+            promise = promise.then(notify_end)
+            promise = promise.catch(cancel)
+            self.core.call_success("transaction_schedule", promise)
+            return (doc_id, doc_url)
 
         promise = promise.then(
             openpaperwork_core.promise.ThreadedPromise(
@@ -148,8 +146,5 @@ class Plugin(openpaperwork_core.PluginBase):
                 self.core, run_transactions
             )
         )
-        promise = promise.then(drop_scan_id)
-        promise = promise.then(notify_end)
-
         promise = promise.catch(cancel)
         return promise

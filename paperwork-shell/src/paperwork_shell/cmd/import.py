@@ -47,6 +47,10 @@ class Plugin(openpaperwork_core.PluginBase):
                     'paperwork_backend.docimport.pdf',
                 ],
             },
+            {
+                'interface': 'transaction_manager',
+                'defaults': ['paperwork_backend.sync'],
+            },
         ]
 
     def cmd_set_interactive(self, interactive):
@@ -119,9 +123,12 @@ class Plugin(openpaperwork_core.PluginBase):
 
         if self.interactive:
             print(_("Importing %s ...") % args.files)
-        self.core.call_one("mainloop_schedule", promise.schedule)
+        self.core.call_success(
+            "mainloop_schedule", self.core.call_success,
+            "transaction_schedule", promise
+        )
         self.core.call_all("mainloop_quit_graceful")
-        self.core.call_one("mainloop")
+        self.core.call_success("mainloop")
         if self.interactive:
             print(_("Done"))
             print(_("Import result:"))

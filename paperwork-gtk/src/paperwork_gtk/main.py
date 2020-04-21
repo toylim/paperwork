@@ -86,7 +86,6 @@ DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'paperwork_gtk.mainwindow.window',
     'paperwork_gtk.new_doc',
     'paperwork_gtk.print',
-    'paperwork_gtk.readonly',
     'paperwork_gtk.settings',
     'paperwork_gtk.settings.ocr.settings',
     'paperwork_gtk.settings.ocr.selector_popover',
@@ -128,12 +127,7 @@ def main_main(in_args):
         core.call_all("on_initialized")
 
         LOGGER.info("Starting synchronization ...")
-        promises = []
-        core.call_all("sync", promises)
-        promise = promises[0]
-        for p in promises[1:]:
-            promise = promise.then(p)
-        core.call_one("mainloop_schedule", promise.schedule)
+        core.call_success("transaction_sync_all")
 
         LOGGER.info("Ready")
         core.call_one("mainloop", halt_on_uncaught_exception=False)

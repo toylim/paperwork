@@ -43,6 +43,10 @@ class Plugin(openpaperwork_core.PluginBase):
             #     "defaults": ["paperwork_shell.display.docrendering.img"],
             # },
             {
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_core.mainloop.asyncio'],
+            },
+            {
                 "interface": "page_reset",
                 "defaults": ["paperwork_backend.model.img_overlay"],
             },
@@ -52,6 +56,10 @@ class Plugin(openpaperwork_core.PluginBase):
                     'paperwork_backend.pillow.img',
                     'paperwork_backend.pillow.pdf',
                 ],
+            },
+            {
+                'interface': 'transaction_manager',
+                'defaults': ['paperwork_backend.sync'],
             },
         ]
 
@@ -116,13 +124,9 @@ class Plugin(openpaperwork_core.PluginBase):
             sys.stdout.write(_("Committing ...") + " ")
             sys.stdout.flush()
 
-        transactions = []
-        self.core.call_all("doc_transaction_start", transactions, 1)
-        transactions.sort(key=lambda transaction: -transaction.priority)
-        for transaction in transactions:
-            transaction.upd_obj(doc_id)
-        for transaction in transactions:
-            transaction.commit()
+        self.core.call_success("transaction_simple", (("upd", doc_id),))
+        self.core.call_success("mainloop_quit_graceful")
+        self.core.call_success("mainloop")
 
         if self.interactive:
             print(_("Done"))
