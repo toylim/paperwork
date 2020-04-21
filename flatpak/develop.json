@@ -23,7 +23,7 @@
         "--device=all"
     ],
     "modules": [
-        "shared-modules/tesseract-4.0.0.json",
+        "shared-modules/tesseract-4.1.1.json",
         "shared-modules/sane-backends-1.0.27.json",
         {
             "name": "python-setuptools",
