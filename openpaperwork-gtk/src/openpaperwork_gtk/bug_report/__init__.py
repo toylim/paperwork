@@ -213,6 +213,16 @@ class Plugin(openpaperwork_core.PluginBase):
         self._on_url_selected(widget_tree)
         self._refresh_attachment_page_complete(widget_tree)
 
+    def bug_report_get_attachment_file_url(self, attachment_id, widget_tree):
+        model = widget_tree.get_object("bug_report_model")
+        for row in model:
+            if row[-1] != attachment_id:
+                continue
+            if "://" not in row[4]:
+                return None
+            return row[4]
+        return None
+
     def _on_close(self, dialog):
         dialog.set_visible(False)
         self.core.call_all("on_gtk_window_closed", dialog)

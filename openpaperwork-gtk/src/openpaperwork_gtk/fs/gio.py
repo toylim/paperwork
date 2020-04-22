@@ -152,6 +152,7 @@ class _GioUTF8FileAdapter(io.RawIOBase):
     def __init__(self, raw):
         super().__init__()
         self.raw = raw
+        self.line_iterator = None
 
     def readable(self):
         return self.raw.readable()
@@ -181,7 +182,12 @@ class _GioUTF8FileAdapter(io.RawIOBase):
         return lines
 
     def readline(self, hint=-1):
-        raise OSError("readline() not supported on Gio.File objects")
+        if self.line_iterator is None:
+            self.line_iterator = (line for line in self.readlines(hint))
+        try:
+            return next(self.line_iterator)
+        except StopIteration:
+            return ''
 
     def seek(self, *args, **kwargs):
         return self.raw.seek(*args, **kwargs)

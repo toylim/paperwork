@@ -9,6 +9,8 @@ DEFAULT_CONFIG_PLUGINS = [
 ]
 
 DEFAULT_PLUGINS = [
+    'openpaperwork_core.bug_report.censor',
+    'openpaperwork_core.censor',
     'openpaperwork_core.cmd.chkdeps',
     'openpaperwork_core.display.print',
     'openpaperwork_core.external_apps.dbus',
