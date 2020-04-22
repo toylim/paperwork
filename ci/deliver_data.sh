@@ -25,14 +25,14 @@ latest_name="${CI_COMMIT_REF_NAME}-latest"
 
 if ! rclone --config ./ci/rclone.conf copy \
     "${input_file}" \
-    "ovhswift:download_openpaperwork/data/paperwork/${out_name}/${destination}/$(basename ${input_file})" ; then
+    "ovhswift:download_openpaperwork/data/paperwork/${out_name}/${destination}/" ; then
   echo "rclone failed"
   exit 1
 fi
 
 if ! rclone --config ./ci/rclone.conf sync \
     "${input_file}" \
-    "ovhswift:download_openpaperwork/data/paperwork/${latest_name}/${destination}/$(basename ${input_file})" ; then
+    "ovhswift:download_openpaperwork/data/paperwork/${latest_name}/${destination}/" ; then
   echo "rclone failed"
   exit 1
 fi
