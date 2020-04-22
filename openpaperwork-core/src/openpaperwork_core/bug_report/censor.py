@@ -1,6 +1,6 @@
 import logging
 
-from  .. import PluginBase
+from .. import PluginBase
 
 
 LOGGER = logging.getLogger(__name__)

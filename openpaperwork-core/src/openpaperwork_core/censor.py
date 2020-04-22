@@ -3,7 +3,7 @@ import logging
 import os
 import socket
 
-from  . import PluginBase
+from . import PluginBase
 
 
 LOGGER = logging.getLogger(__name__)
