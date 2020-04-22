@@ -28,6 +28,8 @@ STAY_ALIVES = int(2.0 / TIME_BETWEEN_UPDATES)
 class ProgressWidget(object):
     def __init__(self, core):
         self.core = core
+        self.widget = None
+
         # A thread updates the widgets every 300ms. We don't update them
         # each time on_progress() is called to not degrade performanes
         self.thread = None
@@ -249,7 +251,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def gtk_progress_make_widget(self):
         widget = ProgressWidget(self.core)
-        self.widgets.append(widget)
+        if widget.widget is not None:
+            # gtk may not be available
+            self.widgets.append(widget)
         return widget.widget
 
     def on_progress(self, upd_type, progress, description=None):

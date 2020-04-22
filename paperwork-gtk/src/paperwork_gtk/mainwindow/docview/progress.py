@@ -20,5 +20,8 @@ class Plugin(openpaperwork_core.PluginBase):
     def init(self, core):
         super().init(core)
         widget = self.core.call_success("gtk_progress_make_widget")
+        if widget is None:
+            # GTK is not available
+            return
         header_bar = self.core.call_success("docview_get_headerbar")
         header_bar.pack_end(widget)
