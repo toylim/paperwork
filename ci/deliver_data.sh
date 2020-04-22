@@ -21,18 +21,18 @@ fi
 echo "Delivering: ${input_file} (${CI_COMMIT_REF_NAME} - ${CI_COMMIT_SHORT_SHA})"
 
 out_name="${CI_COMMIT_REF_NAME}_$(date "+%Y%m%d_%H%M%S")_${CI_COMMIT_SHORT_SHA}"
-latest_name="latest"
+latest_name="${CI_COMMIT_REF_NAME}-latest"
 
 if ! rclone --config ./ci/rclone.conf copy \
     "${input_file}" \
-    "ovhswift:data/${out_name}/${destination}/${input_file}" ; then
+    "ovhswift:download_openpaperwork/data/paperwork/${out_name}/${destination}/${input_file}" ; then
   echo "rclone failed"
   exit 1
 fi
 
 if ! rclone --config ./ci/rclone.conf sync \
     "${input_file}" \
-    "ovhswift:data/latest/${destination}/${input_file}" ; then
+    "ovhswift:download_openpaperwork/data/paperwork/${latest_name}/${destination}/${input_file}" ; then
   echo "rclone failed"
   exit 1
 fi
