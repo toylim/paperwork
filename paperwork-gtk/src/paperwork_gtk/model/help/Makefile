@@ -8,7 +8,7 @@ out/paperwork_going_up.png: data/paperwork_going_up.svg
 	convert $< $@
 
 screenshots:
-	LANG=C WAYLAND_DISPLAY= xvfb-run sh ./screenshot.sh
+	[ -n "out/*.png" ] || LANG=C WAYLAND_DISPLAY= xvfb-run sh ./screenshot.sh
 
 $(OUT_PDF): $(TEX) screenshots out/paperwork_going_up.png
 	pdflatex --output-directory=out ../$<
@@ -20,6 +20,7 @@ clean:
 
 data: $(OUT_PDF)
 
-upload_data:
+upload_data: $(OUT_PDF)
+	cd $(CURDIR)/../../../../.. && ci/deliver_data.sh $(CURDIR)/$< help
 
 .PHONY: clean screenshots data upload_data
