@@ -202,6 +202,14 @@ class Plugin(openpaperwork_core.PluginBase):
     def ocr_set_active_langs(self, langs):
         return self.core.call_success("config_put", "ocr_langs", langs)
 
+    def ocr_is_enabled(self):
+        if len(self.ocr_get_active_langs()) > 0:
+            return True
+        return None
+
+    def ocr_add_observer_on_enabled(self, callback):
+        self.core.call_all("config_add_observer", "ocr_langs", callback)
+
     def ocr_get_available_langs(self):
         ocr_tools = pyocr.get_available_tools()
         if len(ocr_tools) <= 0:

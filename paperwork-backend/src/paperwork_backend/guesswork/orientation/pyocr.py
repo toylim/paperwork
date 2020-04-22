@@ -127,6 +127,10 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def guess_page_orientation_by_url(self, doc_url, page_idx):
+        if self.core.call_success("ocr_is_enabled") is None:
+            LOGGER.info("OCR is disabled")
+            return
+
         LOGGER.info(
             "Using OCR to guess orientation of page %d of %s",
             page_idx, doc_url

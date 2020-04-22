@@ -38,6 +38,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 "interface": "ocr",
                 "defaults": ['paperwork_backend.guesswork.ocr.pyocr'],
             },
+            {
+                "interface": "ocr_settings",
+                "defaults": ['paperwork_backend.pyocr'],
+            },
         ]
 
     def cmd_set_interactive(self, interactive):
@@ -65,6 +69,11 @@ class Plugin(openpaperwork_core.PluginBase):
     def cmd_run(self, args):
         if args.command != 'ocr':
             return None
+
+        if self.core.call_success("ocr_is_enabled") is None:
+            if self.interactive:
+                print("OCR is disabled")
+            return []
 
         doc_id = args.doc_id
         doc_url = self.core.call_success("doc_id_to_url", doc_id)

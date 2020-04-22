@@ -148,10 +148,13 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def ocr_page_by_url(self, doc_url, page_idx):
+        if self.core.call_success("ocr_is_enabled") is None:
+            LOGGER.info("OCR is disabled")
+            return
+
         LOGGER.info("Running OCR on page %d of %s", page_idx, doc_url)
 
         doc_id = self.core.call_success("doc_url_to_id", doc_url)
-
         if doc_id is not None:
             self.core.call_one(
                 "mainloop_schedule", self.core.call_all,

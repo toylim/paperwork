@@ -22,7 +22,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def __init__(self):
         super().__init__()
-        self.active_doc = None
+        self.active_doc = (None, None)
         self.active_page_idx = -1
         self.action = None
         self.item = None
@@ -43,6 +43,10 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'ocr',
                 'defaults': ['paperwork_backend.guesswork.ocr.pyocr'],
+            },
+            {
+                'interface': 'ocr_settings',
+                'defaults': ['paperwork_backend.pyocr'],
             },
             {
                 'interface': 'page_actions',
@@ -70,6 +74,12 @@ class Plugin(openpaperwork_core.PluginBase):
 
         self.core.call_all("app_actions_add", self.action)
 
+        self._update_sensitivity()
+        self.core.call_all(
+            "ocr_add_observer_on_enabled",
+            self._update_sensitivity
+        )
+
     def on_page_menu_ready(self):
         self.core.call_all("page_menu_append_item", self.item)
 
@@ -81,7 +91,11 @@ class Plugin(openpaperwork_core.PluginBase):
         self.active_doc = (doc_id, doc_url)
 
     def doc_close(self):
-        self.active_doc = None
+        self.active_doc = (None, None)
+
+    def _update_sensitivity(self):
+        enabled = self.core.call_success("ocr_is_enabled")
+        self.action.set_enabled(enabled is not None)
 
     def on_page_shown(self, page_idx):
         self.active_page_idx = page_idx

@@ -22,7 +22,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def __init__(self):
         super().__init__()
-        self.active_doc = None
+        self.active_doc = (None, None)
         self.action = None
 
     def get_interfaces(self):
@@ -51,6 +51,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['paperwork_backend.guesswork.ocr.pyocr'],
             },
             {
+                'interface': 'ocr_settings',
+                'defaults': ['paperwork_backend.pyocr'],
+            },
+            {
                 'interface': 'transaction_manager',
                 'defaults': ['paperwork_backend.sync'],
             },
@@ -62,6 +66,11 @@ class Plugin(openpaperwork_core.PluginBase):
             return
         self.action = Gio.SimpleAction.new(ACTION_NAME, None)
         self.action.connect("activate", self._redo_ocr)
+        self._update_sensitivity()
+        self.core.call_all(
+            "ocr_add_observer_on_enabled",
+            self._update_sensitivity
+        )
 
     def chkdeps(self, out: dict):
         if not GLIB_AVAILABLE:
@@ -77,7 +86,11 @@ class Plugin(openpaperwork_core.PluginBase):
         self.active_doc = (doc_id, doc_url)
 
     def doc_close(self):
-        self.active_doc = None
+        self.active_doc = (None, None)
+
+    def _update_sensitivity(self):
+        enabled = self.core.call_success("ocr_is_enabled")
+        self.action.set_enabled(enabled is not None)
 
     def _redo_ocr(self, action, parameter):
         assert(self.active_doc is not None)
