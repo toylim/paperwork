@@ -150,7 +150,7 @@
 
 Here are the data we gather:
 - Hardware: CPU, RAM, screen resolution.
-- Software: Version of Paperwork, Operating system, desktop environment.
+- Software: Version of Paperwork, Operating system, desktop environment, system language.
 - Data metrics: number of documents, maximum and average number of pages, number of labels.
 - Number of times you used each feature.
 
