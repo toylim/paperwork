@@ -8,15 +8,15 @@ out/paperwork_going_up.png: data/paperwork_going_up.svg
 	convert $< $@
 
 screenshots:
-	[ -n "out/*.png" ] || LANG=C WAYLAND_DISPLAY= xvfb-run sh ./screenshot.sh
+	[ -f $(CURDIR)/${OUT_PDF} ] || LANG=C WAYLAND_DISPLAY= xvfb-run sh ./screenshot.sh
 
 $(OUT_PDF): $(TEX) screenshots out/paperwork_going_up.png
 	pdflatex --output-directory=out ../$<
 
 clean:
-	rm -f $(OUT_PNG)
-	rm -f $(OUT_PDF)
-	rm -f $(OUT_LATEX)
+	rm -f $(CURDIR)/out/*.png
+	rm -f $(CURDIR)/$(OUT_PDF)
+	rm -f $(CURDIR)/$(OUT_LATEX)
 
 data: $(OUT_PDF)
 
