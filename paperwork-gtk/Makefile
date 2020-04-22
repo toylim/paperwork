@@ -33,10 +33,10 @@ doc:
 upload_doc:
 
 data:
-	make -C src/paperwork_gtk/model/intro data
+	make -C src/paperwork_gtk/model/help data
 
 upload_data:
-	make -C src/paperwork_gtk/model/intro upload_data
+	make -C src/paperwork_gtk/model/help upload_data
 
 check:
 	flake8 --exclude=_version.py src/paperwork_gtk
@@ -99,7 +99,7 @@ help:
 	@echo "make help: display this message"
 	@echo "make install || make install_py"
 	@echo "make uninstall || make uninstall_py"
-	@echo "make release"
+	@echo "make release || make release_pypi"
 
 .PHONY: \
 	build \
@@ -113,6 +113,7 @@ help:
 	install_c \
 	install_py \
 	release \
+	release_pypi \
 	test \
 	uninstall \
 	uninstall_c \
