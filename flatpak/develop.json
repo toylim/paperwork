@@ -369,8 +369,8 @@
                     "disable-shallow-clone": true
                 },
                 {
-                    "type": "dir",
-                    "path": "data"
+                    "type": "file",
+                    "path": "data.tar.gz"
                 }
             ]
         }

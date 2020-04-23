@@ -44,15 +44,15 @@ test: $(ALL_COMPONENTS:%=%_test)
 
 data: $(ALL_COMPONENTS:%=%_data)
 
-data.tar.gz: data
+upload_data: data
 	tar -cvzf data.tar.gz \
 		paperwork-gtk/src/paperwork_gtk/model/help/out/intro.pdf
-
-upload_data: data.tar.gz
 	ci/deliver_data.sh data.tar.gz
 
-download_data:
+data.tar.gz:
 	ci/download_data.sh data.tar.gz
+
+download_data: data.tar.gz
 	tar -xvzf data.tar.gz
 
 doc: $(ALL_COMPONENTS:%=%_doc)

@@ -24,7 +24,7 @@ download()
 	out="$2"
 
 	echo "${url} --> ${out} ..."
-	if ! wget ${WGET_OPTS} "${url}" -O "${out}" ; then
+	if ! wget -q "${url}" -O "${out}" ; then
 		echo "FAILED"
 		rm -f "${out}"
 		exit 1
@@ -76,17 +76,9 @@ mkdir -p ~/flatpak  # directory that contains the repository directory
 
 cd flatpak/
 
-rm -rf data
 rm -f data.tar.gz
-mkdir data
-touch data/.notempty
 
 download "https://download.openpaper.work/data/paperwork/${branch}_latest/data.tar.gz" data.tar.gz
-
-if ! (cd data && tar -xvzf ../data.tar.gz) ; then
-	echo "failed to extract data.tar.gz"
-	exit 1
-fi
 
 export EXPORT_ARGS="--gpg-sign=E5ACE6FEA7A6DD48"
 export REPO=/home/gitlab-runner/flatpak/paperwork_repo
