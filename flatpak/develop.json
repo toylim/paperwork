@@ -369,8 +369,8 @@
                     "disable-shallow-clone": true
                 },
                 {
-                    "type": "archive",
-                    "url": "https://download.openpaper.work/data/paperwork/develop_latest/data.tar.gz"
+                    "type": "dir",
+                    "path": "data"
                 }
             ]
         }
