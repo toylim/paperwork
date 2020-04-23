@@ -21,11 +21,12 @@ openpaperwork-core_install_py:
 clean: $(ALL_COMPONENTS:%=%_clean)
 	rm -rf build dist
 	rm -rf venv
+	rm -f data.tar.gz
 	make -C sub/libinsane clean || true
 	make -C sub/libpillowfight clean || true
 	make -C sub/pyocr clean || true
 
-install_py: $(ALL_COMPONENTS:%=%_install_py)
+install_py: download_data $(ALL_COMPONENTS:%=%_install_py)
 
 install: install_py
 
@@ -43,13 +44,22 @@ test: $(ALL_COMPONENTS:%=%_test)
 
 data: $(ALL_COMPONENTS:%=%_data)
 
-upload_data: $(ALL_COMPONENTS:%=%_upload_data)
+data.tar.gz: data
+	tar -cvzf data.tar.gz \
+		paperwork-gtk/src/paperwork_gtk/model/help/out/intro.pdf
+
+upload_data: data.tar.gz
+	ci/deliver_data.sh data.tar.gz
+
+download_data:
+	ci/download_data.sh data.tar.gz
+	tar -xvzf data.tar.gz
 
 doc: $(ALL_COMPONENTS:%=%_doc)
 
 upload_doc: $(ALL_COMPONENTS:%=%_upload_doc)
 
-release_pypi: $(ALL_COMPONENTS:%=%_release_pypi)
+release_pypi: download_data $(ALL_COMPONENTS:%=%_release_pypi)
 
 release: $(ALL_COMPONENTS:%=%_release)
 ifeq (${RELEASE}, )
@@ -109,10 +119,6 @@ help:
 	echo "Generating doc of $(@:%_doc=%)"
 	$(MAKE) -C $(@:%_doc=%) doc
 
-%_upload_data:
-	echo "Uploading data files of $(@:%_upload_data=%)"
-	$(MAKE) -C $(@:%_upload_data=%) upload_data
-
 %_data:
 	echo "Generating data files of $(@:%_data=%)"
 	$(MAKE) -C $(@:%_data=%) data
@@ -155,5 +161,6 @@ venv:
 	virtualenv -p python3 --system-site-packages venv
 
 .PHONY: help build clean test check install install_py install_c uninstall \
-	uninstall_c uninstall_py release libinsane_win32 pyocr_win32 \
-	libpillowfight_win32 doc upload_doc data upload_data
+	uninstall_c uninstall_py release release_pypi libinsane_win32 \
+	pyocr_win32 libpillowfight_win32 doc upload_doc data upload_data \
+	download_data

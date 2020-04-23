@@ -35,9 +35,6 @@ upload_doc:
 data:
 	$(MAKE) -C src/paperwork_gtk/model/help data
 
-upload_data:
-	$(MAKE) -C src/paperwork_gtk/model/help upload_data
-
 check:
 	flake8 --exclude=_version.py src/paperwork_gtk
 
@@ -72,7 +69,7 @@ else
 	grep ${RELEASE} data/work.openpaper.Paperwork.appdata.xml
 endif
 
-release_pypi:
+release_pypi: data
 	@echo "Releasing paperwork-gtk (paperwork) ..."
 	${PYTHON} ./setup.py sdist
 	twine upload dist/paperwork-${RELEASE}.tar.gz

@@ -1,10 +1,9 @@
 #!/bin/sh
 
 input_file="$1"
-destination="$2"
 
-if ! [ -f "${input_file}" ] || [ -z "${destination}" ] ; then
-  echo "You must specify an input file to upload and a destination directory"
+if ! [ -f "${input_file}" ] ; then
+  echo "You must specify an input file to upload"
   exit 1
 fi
 
@@ -20,19 +19,19 @@ fi
 
 echo "Delivering: ${input_file} (${CI_COMMIT_REF_NAME} - ${CI_COMMIT_SHORT_SHA})"
 
-out_name="${CI_COMMIT_REF_NAME}_$(date "+%Y%m%d_%H%M%S")_${CI_COMMIT_SHORT_SHA}"
-latest_name="${CI_COMMIT_REF_NAME}-latest"
+out_name="${CI_COMMIT_REF_NAME}_${CI_COMMIT_SHORT_SHA}"
+latest_name="${CI_COMMIT_REF_NAME}_latest"
 
 if ! rclone --config ./ci/rclone.conf copy \
     "${input_file}" \
-    "ovhswift:download_openpaperwork/data/paperwork/${out_name}/${destination}/" ; then
+    "ovhswift:download_openpaperwork/data/paperwork/${out_name}/" ; then
   echo "rclone failed"
   exit 1
 fi
 
 if ! rclone --config ./ci/rclone.conf sync \
     "${input_file}" \
-    "ovhswift:download_openpaperwork/data/paperwork/${latest_name}/${destination}/" ; then
+    "ovhswift:download_openpaperwork/data/paperwork/${latest_name}/" ; then
   echo "rclone failed"
   exit 1
 fi

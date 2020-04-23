@@ -33,7 +33,7 @@ check:
     - apt-get install -y -qq pycodestyle flake8 python3-flake8 tox
     - apt-get install -y -qq python3-dev git
     - apt-get install -y -qq zlib1g-dev libjpeg-dev
-    - apt-get install -y -qq python3-gi
+    - apt-get install -y -qq python3-gi wget
 
 
 test:
@@ -62,7 +62,7 @@ generate_data:
     - volatile
   <<: *apt
   script:
-    - apt-get install -y -qq xvfb wget texlive imagemagick
+    - apt-get install -y -qq xvfb texlive imagemagick
     - apt-get install -y -qq texlive-lang-english texlive-lang-french texlive-lang-german
     - apt-get install -y -qq texlive-latex-recommended texlive-latex-extra
     - apt-get install -y -qq rclone

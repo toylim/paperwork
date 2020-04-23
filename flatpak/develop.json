@@ -367,6 +367,10 @@
                     "url": "https://gitlab.gnome.org/World/OpenPaperwork/paperwork.git",
                     "branch": "develop",
                     "disable-shallow-clone": true
+                },
+                {
+                    "type": "archive",
+                    "url": "https://download.openpaper.work/data/paperwork/develop_latest/data.tar.gz"
                 }
             ]
         }

@@ -26,8 +26,6 @@ doc/_build/html/index.html: doc
 
 data:
 
-upload_data:
-
 upload_doc: doc/_build/html/index.html
 	cd .. && ./ci/deliver_doc.sh ${CURDIR}/doc/_build/html openpaperwork_gtk
 

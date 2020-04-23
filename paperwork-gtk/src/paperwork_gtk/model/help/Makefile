@@ -18,9 +18,8 @@ clean:
 	rm -f $(CURDIR)/$(OUT_PDF)
 	rm -f $(CURDIR)/$(OUT_LATEX)
 
-data: $(OUT_PDF)
+data:
+	rm -f $(OUT_PDF)
+	$(MAKE) $(OUT_PDF)
 
-upload_data: $(OUT_PDF)
-	cd $(CURDIR)/../../../../.. && ci/deliver_data.sh $(CURDIR)/$< help
-
-.PHONY: clean screenshots data upload_data
+.PHONY: clean screenshots data

@@ -29,8 +29,6 @@ upload_doc: doc/_build/html/index.html
 
 data:
 
-upload_data:
-
 check:
 	flake8 src/paperwork_backend
 

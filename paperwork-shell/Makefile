@@ -25,8 +25,6 @@ upload_doc:
 
 data:
 
-upload_data:
-
 check:
 	flake8 src/paperwork_shell
 
