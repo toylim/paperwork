@@ -73,6 +73,18 @@ Paperwork maintainer (Jerome Flesch).
 
 # Tips
 
+## Virtual env
+
+You can easily get a Python virtual environment that includes OpenPaperwork
+dependencies (Libinsane, ...) by using the script `activate_test_env.sh`:
+
+```sh
+make clean  # delete any previously existing virtual env
+source ./activate_test_env.sh  # build and load a virtual env
+make install # install Paperwork and its Python dependencies in the virtual env
+paperwork-gtk
+```
+
 
 ## Debug
 
