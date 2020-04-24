@@ -100,7 +100,9 @@ class Plugin(CommonFsPluginBase):
         if path is None:
             return
 
-        return os.path.isdir(path)
+        if os.path.isdir(path):
+            return True
+        return None
 
     def fs_copy(self, old_uri, new_uri):
         old_path = self._uri_to_path(old_uri)

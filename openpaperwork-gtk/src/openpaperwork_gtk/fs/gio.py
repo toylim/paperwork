@@ -455,7 +455,9 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             fi = f.query_info(
                 Gio.FILE_ATTRIBUTE_STANDARD_TYPE, Gio.FileQueryInfoFlags.NONE
             )
-            return fi.get_file_type() == Gio.FileType.DIRECTORY
+            if fi.get_file_type() == Gio.FileType.DIRECTORY:
+                return True
+            return None
         except GLib.GError as exc:
             LOGGER.warning("Gio.Gerror", exc_info=exc)
             raise IOError(str(exc))
