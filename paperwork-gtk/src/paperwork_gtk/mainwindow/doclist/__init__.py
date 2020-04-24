@@ -445,7 +445,9 @@ class Plugin(openpaperwork_core.PluginBase):
         widget = self.widget_tree.get_object("doclist_menu")
 
         if widget.get_popover() is not None:
-            widget = widget.get_popover()
+            popover = widget.get_popover()
+            if popover.get_visible() and popover.is_drawable():
+                widget = popover
 
         self.core.call_success(
             "screenshot_snap_widget",
