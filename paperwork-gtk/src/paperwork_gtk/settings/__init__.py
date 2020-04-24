@@ -31,6 +31,10 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return [
             {
+                'interface': 'app_actions',
+                'defaults': ['paperwork_gtk.mainwindow.window'],
+            },
+            {
                 'interface': 'config',
                 'defaults': ['openpaperwork_core.config'],
             },
