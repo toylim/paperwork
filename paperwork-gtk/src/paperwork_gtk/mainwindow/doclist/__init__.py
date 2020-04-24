@@ -395,8 +395,15 @@ class Plugin(openpaperwork_core.PluginBase):
         # they are actually the same menu
         self.doclist_menu_append_item(item)
 
+    def menu_app_append_submenu(self, label, menu):
+        # they are actually the same menu
+        self.doclist_menu_append_submenu(label, menu)
+
     def doclist_menu_append_item(self, item):
         self.menu_model.append_item(item)
+
+    def doclist_menu_append_submenu(self, label, menu):
+        self.menu_model.append_submenu(label, menu)
 
     def add_doc_action(self, action_label, action_name):
         self.actions.append(action_label, action_name)
@@ -431,15 +438,31 @@ class Plugin(openpaperwork_core.PluginBase):
             nb_pages = 0
         return (doc_id, nb_pages)
 
+    def gtk_open_app_menu(self):
+        self.widget_tree.get_object("doclist_menu").clicked()
+
+    def screenshot_snap_app_menu(self, out_file):
+        widget = self.widget_tree.get_object("doclist_menu")
+
+        if widget.get_popover() is not None:
+            widget = widget.get_popover()
+
+        self.core.call_success(
+            "screenshot_snap_widget",
+            widget, out_file,
+            margins=(50, 30, 50, 30)
+        )
+
     def screenshot_snap_all_doc_widgets(self, out_dir):
-        self.widget_tree.get_object("doclist_new_doc")
         self.core.call_success(
             "screenshot_snap_widget",
             self.widget_tree.get_object("doclist_new_doc"),
-            self.core.call_success(
-                "fs_join", out_dir, "doc_new_button.png"
-            ),
+            self.core.call_success("fs_join", out_dir, "doc_new_button.png"),
             margins=(30, 30, 30, 30)
+        )
+
+        self.screenshot_snap_app_menu(
+            self.core.call_success("fs_join", out_dir, "app_menu.png")
         )
 
         if self.active_doc[0] is None:
