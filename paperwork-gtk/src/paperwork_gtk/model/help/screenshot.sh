@@ -37,8 +37,6 @@ echo "Making screenshots ..."
 paperwork-gtk config add_plugin openpaperwork_core.interactive
 
 paperwork-gtk << EOF
-import time
-
 wait()
 core.call_all("doc_open", "20990307_0000_00", "file://${WORKDIR}/20990307_0000_00")
 core.call_all("search_set", "label:contrat conditions generales")
@@ -60,6 +58,9 @@ core.call_all("mainwindow_show_default", side="left")
 wait()
 core.call_all("screenshot_snap_all_doc_widgets", "file://${OUT_DIR}")
 
+core.call_all("gtk_open_app_menu")
+wait()
+core.call_all("screenshot_snap_app_menu", "file://${OUT_DIR}/app_menu_opened.png")
 EOF
 
 echo "Cleaning up the mess ..."
