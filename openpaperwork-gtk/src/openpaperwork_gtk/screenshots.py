@@ -1,4 +1,5 @@
 import logging
+import math
 import gettext
 
 try:
@@ -126,7 +127,8 @@ class Plugin(openpaperwork_core.PluginBase):
         return (file_url, promise)
 
     def screenshot_snap_widget(
-                self, gtk_widget, out_file_url, margins=(20, 20, 20, 20)
+                self, gtk_widget, out_file_url, margins=(20, 20, 20, 20),
+                highlight=(0.67, 0.80, 0.93)
             ):
         assert(out_file_url.endswith(".png"))
 
@@ -153,9 +155,43 @@ class Plugin(openpaperwork_core.PluginBase):
         cairo_ctx = cairo.Context(win_surface)
         window.draw(cairo_ctx)
 
-        # then cut it
         widget_position = gtk_widget.translate_coordinates(window, 0, 0)
         widget_alloc = gtk_widget.get_allocation()
+
+        # highlight
+        if highlight is not None:
+            cairo_ctx.save()
+            try:
+                cairo_ctx.new_path()
+                border_width = 5
+                margin = 5
+
+                cairo_ctx.set_source_rgba(*highlight, 0.85)
+                cairo_ctx.set_line_width(border_width)
+
+                center = (
+                    widget_position[0] + (widget_alloc.width / 2),
+                    widget_position[1] + (widget_alloc.height / 2),
+                )
+                cairo_ctx.translate(*center)
+
+                radius = (
+                    (widget_alloc.width / 2) + (widget_alloc.height / 2)
+                    + margin
+                )
+                if widget_alloc.width > widget_alloc.height:
+                    scale = (1.0, widget_alloc.height / widget_alloc.width)
+                else:
+                    scale = (widget_alloc.width / widget_alloc.height, 1.0)
+
+                cairo_ctx.scale(*scale)
+                cairo_ctx.arc(0, 0, radius, 0, 2 * math.pi)
+                cairo_ctx.scale(1.0 / scale[0], 1.0 / scale[1])
+                cairo_ctx.stroke()
+            finally:
+                cairo_ctx.restore()
+
+        # then cut it
         start = (
             max(0, widget_position[0] - margins[0]),
             max(0, widget_position[1] - margins[1])
