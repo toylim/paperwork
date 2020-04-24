@@ -68,6 +68,10 @@ class Plugin(openpaperwork_core.PluginBase):
         out.append(self.core.call_success("fs_hash", page_url))
 
     def doc_get_nb_pages_by_url(self, doc_url):
+        if self.core.call_success("fs_exists", doc_url) is None:
+            return None
+        if self.core.call_success("fs_isdir", doc_url) is None:
+            return None
         files = self.core.call_success("fs_listdir", doc_url)
         if files is None:
             return None

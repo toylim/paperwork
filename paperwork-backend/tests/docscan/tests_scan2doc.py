@@ -56,6 +56,11 @@ class TestScan2Doc(unittest.TestCase):
                         return True
                     return None
 
+                def fs_isdir(self, file_url):
+                    if "." in file_url:
+                        return None
+                    return True
+
                 def fs_listdir(self, file_url):
                     if "exist" not in file_url:
                         return None

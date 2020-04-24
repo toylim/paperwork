@@ -215,8 +215,12 @@ class Plugin(CommonFsPluginBase):
         path = self._get_path(url)
         f = self.fs
         for p in path:
+            if p not in f:
+                return None
             f = f[p]
-        return isinstance(f, dict)
+        if isinstance(f, dict):
+            return True
+        return None
 
     def fs_copy(self, old_url, new_url):
         raise NotImplementedError()
