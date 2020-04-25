@@ -1,5 +1,6 @@
 import collections
 import importlib
+import itertools
 import logging
 import os
 import time
@@ -212,11 +213,22 @@ class Core(object):
             ))
             self.callbacks[attr_name].sort(reverse=True)
 
-    def _init(self, plugin):
+    def _init(self, plugin, stack=list()):
         nb = 0
-
         if plugin in self._initialized:
             return nb
+
+        if plugin in stack:
+            LOGGER.error("Dependency loop:")
+            for p in itertools.chain(stack, [plugin]):
+                LOGGER.error(
+                    "- %s %s depends on %s",
+                    p, p.get_interfaces(),
+                    [d['interface'] for d in p.get_deps()]
+                )
+            raise DependencyException("Dependency loop: %s" % str(stack))
+
+        stack.append(plugin)
 
         self.initialized = True
 
@@ -224,9 +236,10 @@ class Core(object):
         for dep in deps:
             dep_plugins = self.interfaces[dep['interface']]
             for dep_plugin in dep_plugins:
-                nb += self._init(dep_plugin)
+                nb += self._init(dep_plugin, stack)
 
         LOGGER.info("Initializing plugin '%s' ...", type(plugin))
+        stack.remove(plugin)
         try:
             plugin.init(self)
         except Exception as exc:
