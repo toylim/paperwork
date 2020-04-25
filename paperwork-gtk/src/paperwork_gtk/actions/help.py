@@ -30,7 +30,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['paperwork_gtk.mainwindow.window'],
             },
             {
-                'interface': 'help_files',
+                'interface': 'help_documents',
                 'defaults': ['paperwork_gtk.model.help'],
             },
             {
