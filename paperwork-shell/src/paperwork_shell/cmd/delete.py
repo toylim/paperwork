@@ -122,11 +122,13 @@ class Plugin(openpaperwork_core.PluginBase):
                         print(del_page_msg % (page + 1, doc_id))
                     self.core.call_all("page_delete_by_url", doc_url, page)
 
-        self.core.call_success("transaction_simple", [
-            # transaction_simple() will automatically replace the change 'upd'
-            # by 'del' for the documents that don't exist anymore
-            ("upd", doc_id) for doc_id in doc_ids
-        ])
+        self.core.call_success(
+            "transaction_simple", [
+                # transaction_simple() will automatically replace the change
+                # 'upd' by 'del' for the documents that don't exist anymore
+                ("upd", doc_id) for doc_id in doc_ids
+            ]
+        )
         self.core.call_success("mainloop_quit_graceful")
         self.core.call_success("mainloop")
 
