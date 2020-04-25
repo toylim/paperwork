@@ -12,13 +12,14 @@ LOGGER = logging.getLogger(__name__)
 
 
 class Drawer(object):
-    def __init__(self, core, drawing_area):
+    def __init__(self, core, drawing_area, read_only=False):
         self.core = core
         self.drawing_area = drawing_area
         self.content_full_size = None
         self.scan_id = None
         self.active = False
         self.drawer = None
+        self.read_only = read_only
 
     def _get_frame(self):
         return self.core.call_success("config_get", "scanner_calibration")
@@ -37,7 +38,8 @@ class Drawer(object):
         )
         self.drawer = self.core.call_success(
             "draw_frame_start", self.drawing_area, self.content_full_size,
-            self._get_frame, self._set_frame
+            self._get_frame,
+            self._set_frame if not self.read_only else None
         )
         self.active = True
 
@@ -90,8 +92,9 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def draw_calibration_start(self, drawing_area, content_full_size):
-        drawer = Drawer(self.core, drawing_area)
+    def draw_calibration_start(
+            self, drawing_area, content_full_size, read_only=False):
+        drawer = Drawer(self.core, drawing_area, read_only)
         drawer.set_content_full_size(content_full_size)
         self.drawers[drawing_area] = drawer
 
@@ -104,7 +107,7 @@ class Plugin(openpaperwork_core.PluginBase):
         if drawing_area in self.drawers:
             drawer = self.drawers[drawing_area]
         else:
-            drawer = Drawer(self.core, drawing_area)
+            drawer = Drawer(self.core, drawing_area, read_only=True)
         drawer.scan_id = scan_id
         self.drawers[drawing_area] = drawer
 

@@ -69,15 +69,20 @@ class Drawer(object):
         self.selected_handle = None
 
         self.draw_connect_id = drawing_area.connect("draw", self.on_draw)
-        self.motion_connect_id = drawing_area.connect(
-            "motion-notify-event", self.on_motion
-        )
-        self.press_connect_id = drawing_area.connect(
-            "button-press-event", self.on_pressed
-        )
-        self.release_connect_id = drawing_area.connect(
-            "button-release-event", self.on_released
-        )
+
+        self.motion_connect_id = None
+        self.press_connect_id = None
+        self.release_connect_id = None
+        if self.set_frame_cb:
+            self.motion_connect_id = drawing_area.connect(
+                "motion-notify-event", self.on_motion
+            )
+            self.press_connect_id = drawing_area.connect(
+                "button-press-event", self.on_pressed
+            )
+            self.release_connect_id = drawing_area.connect(
+                "button-release-event", self.on_released
+            )
 
     def stop(self):
         if self.draw_connect_id is not None:
@@ -172,14 +177,10 @@ class Drawer(object):
             self.request_redraw()
 
     def on_pressed(self, drawing_area, event):
-        if self.set_frame_cb is None:
-            return
         self.selected_handle = self._get_closest_handle(event.x, event.y)
         self.request_redraw()
 
     def on_released(self, drawing_area, event):
-        if self.set_frame_cb is None:
-            return
         self.selected_handle = None
         self.request_redraw()
 
