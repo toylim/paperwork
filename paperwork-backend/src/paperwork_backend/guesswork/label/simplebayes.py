@@ -136,7 +136,8 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             doc_text = None
 
         doc_labels = set()
-        self.core.call_all("doc_get_labels_by_url", doc_labels, doc_url)
+        if doc_url is not None:
+            self.core.call_all("doc_get_labels_by_url", doc_labels, doc_url)
         doc_labels = {label[0] for label in doc_labels}
 
         return {
