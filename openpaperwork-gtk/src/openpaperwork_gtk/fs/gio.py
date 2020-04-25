@@ -452,6 +452,8 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
 
         try:
             f = Gio.File.new_for_uri(url)
+            if not f.query_exists():
+                return None
             fi = f.query_info(
                 Gio.FILE_ATTRIBUTE_STANDARD_TYPE, Gio.FileQueryInfoFlags.NONE
             )
