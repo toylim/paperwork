@@ -225,6 +225,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _show_result_doc(self, doc_id):
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
+        assert(doc_url is not None)
 
         if self.active_doc_id != doc_id:
             self.core.call_all("doc_open", doc_id, doc_url)

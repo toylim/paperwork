@@ -36,6 +36,8 @@ class ThumbnailTask(object):
 
     def get_promise(self):
         doc_url = self.core.call_success("doc_id_to_url", self.doc_id)
+        if doc_url is None:
+            return openpaperwork_core.promise.Promise(self.core)
 
         promise = openpaperwork_core.promise.Promise(
             self.core,

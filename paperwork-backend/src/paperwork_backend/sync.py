@@ -240,7 +240,9 @@ class Plugin(openpaperwork_core.PluginBase):
         try:
             for (change, doc_id) in changes:
                 doc_url = self.core.call_success("doc_id_to_url", doc_id)
-                if self.core.call_success("is_doc", doc_url) is None:
+                if doc_url is None:
+                    change = 'del'
+                elif self.core.call_success("is_doc", doc_url) is None:
                     change = 'del'
                 for transaction in transactions:
                     if change == 'add':

@@ -62,7 +62,10 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def doc_id_to_url(self, doc_id):
         workdir = self.core.call_success('config_get', 'workdir')
-        return self.core.call_success("fs_join", workdir, doc_id)
+        url = self.core.call_success("fs_join", workdir, doc_id)
+        if self.core.call_success("fs_isdir", url) is None:
+            return None
+        return url
 
     def doc_url_to_id(self, doc_url):
         workdir = self.core.call_success('config_get', 'workdir')
@@ -115,6 +118,9 @@ class Plugin(openpaperwork_core.PluginBase):
         stats['nb_documents'] += len(all_docs)
 
     def page_delete_by_url(self, doc_url, page_idx):
+        workdir = self.core.call_success('config_get', 'workdir')
+        if not doc_url.startswith(workdir):
+            return None
         nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)
         if nb_pages is not None and nb_pages > 0:
             return
@@ -129,6 +135,13 @@ class Plugin(openpaperwork_core.PluginBase):
                 source_doc_url, source_page_idx,
                 dest_doc_url, dest_page_idx
             ):
+        workdir = self.core.call_success('config_get', 'workdir')
+        if not source_doc_url.startswith(workdir):
+            return None
+        workdir = self.core.call_success('config_get', 'workdir')
+        if not dest_doc_url.startswith(workdir):
+            return None
+
         nb_pages = self.core.call_success(
             "doc_get_nb_pages_by_url", source_doc_url
         )
