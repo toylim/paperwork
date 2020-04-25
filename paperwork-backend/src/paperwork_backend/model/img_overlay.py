@@ -39,6 +39,8 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def doc_get_mtime_by_url(self, out: list, doc_url):
+        if self.core.call_success("fs_isdir", doc_url) is None:
+            return
         for file_uri in self.core.call_success("fs_listdir", doc_url):
             name = self.core.call_success("fs_basename", file_uri)
             if (not name.startswith(PAGE_PREFIX)
