@@ -25,7 +25,8 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_interfaces(self):
         return [
             'pages',
-            'thumbnail',
+            'thumbnail',  # thumbnail_get_path()
+            'thumbnailer',  # thumbnail_from_img()
         ]
 
     def get_deps(self):
@@ -57,6 +58,16 @@ class Plugin(openpaperwork_core.PluginBase):
         return openpaperwork_core.promise.ThreadedPromise(
             self.core, self.thumbnail_get_doc, args=(doc_url,)
         )
+
+    def thumbnail_from_img(self, img):
+        (width, height) = img.size
+        scale = max(
+            float(width) / THUMBNAIL_WIDTH,
+            float(height) / THUMBNAIL_HEIGHT
+        )
+        width /= scale
+        height /= scale
+        return img.resize((int(width), int(height)), PIL.Image.ANTIALIAS)
 
     def thumbnail_get_page(self, doc_url, page_idx):
         thumbnail_url = self.core.call_success(
@@ -97,14 +108,7 @@ class Plugin(openpaperwork_core.PluginBase):
         start = time.time()
         page = self.core.call_success("url_to_pillow", page_url)
 
-        (width, height) = page.size
-        scale = max(
-            float(width) / THUMBNAIL_WIDTH,
-            float(height) / THUMBNAIL_HEIGHT
-        )
-        width /= scale
-        height /= scale
-        thumbnail = page.resize((int(width), int(height)), PIL.Image.ANTIALIAS)
+        thumbnail = self.thumbnail_from_img(page)
 
         self.core.call_success(
             "pillow_to_url", thumbnail, thumbnail_url,
