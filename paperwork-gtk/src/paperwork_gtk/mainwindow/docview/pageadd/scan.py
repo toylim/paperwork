@@ -143,7 +143,8 @@ class Plugin(openpaperwork_core.PluginBase):
         self.busy = True
 
         promise = self.core.call_success(
-            "scan2doc_promise", doc_id=doc_id, source_id=source_id
+            "scan2doc_promise", doc_id=doc_id, doc_url=doc_url,
+            source_id=source_id
         )
         self.core.call_success("scan_schedule", promise)
 

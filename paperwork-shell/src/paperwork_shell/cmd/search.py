@@ -77,8 +77,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
         keywords = " ".join(args.keywords)
 
-        doc_ids = []
-        self.core.call_all("index_search", doc_ids, keywords, args.limit)
+        docs = []
+        self.core.call_all("index_search", docs, keywords, args.limit)
 
         if self.interactive:
             renderers = []
@@ -88,7 +88,7 @@ class Plugin(openpaperwork_core.PluginBase):
             renderer = None
 
         if self.interactive:
-            for doc_id in doc_ids:
+            for (doc_id, doc_url) in docs:
                 header = _("Document id: %s") % doc_id
                 self.core.call_all("print", header + "\n")
 
@@ -99,7 +99,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
                 if renderer is None:
                     continue
-                doc_url = self.core.call_success("doc_id_to_url", doc_id)
                 if doc_url is None:
                     LOGGER.warning("Failed to get URL of document %s", doc_id)
                     continue
@@ -111,4 +110,4 @@ class Plugin(openpaperwork_core.PluginBase):
                 self.core.call_all("print", "\n")
             self.core.call_all("print_flush")
 
-        return doc_ids
+        return [doc[0] for doc in docs]

@@ -112,9 +112,6 @@ class Plugin(openpaperwork_core.PluginBase):
                     "storage_get_all_docs", out
                 )
             )
-            promise = promise.then(
-                lambda *args, **kwargs: [doc_id for (doc_id, doc_url) in out]
-            )
         else:
             out = []
             promise = openpaperwork_core.promise.ThreadedPromise(
@@ -122,15 +119,15 @@ class Plugin(openpaperwork_core.PluginBase):
                     "index_search", out, query
                 )
             )
-            promise = promise.then(lambda *args, **kwargs: out)
-        promise = promise.then(lambda doc_ids: sorted(doc_ids, reverse=True))
+        promise = promise.then(lambda *args, **kwargs: out)
+        promise = promise.then(lambda docs: sorted(docs, reverse=True))
 
-        def show_if_query_still_valid(doc_ids):
+        def show_if_query_still_valid(docs):
             # While we were looking for the documents, the query may have
             # changed (user tying). No point in displaying obsolete results.
             if query != self.search_entry.get_text():
                 return
-            self.core.call_all("on_search_results", query, doc_ids)
+            self.core.call_all("on_search_results", query, docs)
 
         promise = promise.then(show_if_query_still_valid)
 

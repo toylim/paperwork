@@ -95,18 +95,20 @@ class Plugin(openpaperwork_core.PluginBase):
             LOGGER.error("Nobody accepted a drop on %s (%d, %d)", widget, x, y)
             return
 
-        (dst_doc_id, dst_page_idx) = dst
+        (dst_doc_id, dst_doc_url, dst_page_idx) = dst
 
         for uri in reversed(uris):
             LOGGER.info("Drop: URI: %s", uri)
 
             self.core.call_all(
-                "drag_and_drop_page_add", uri, dst_doc_id, dst_page_idx
+                "drag_and_drop_page_add",
+                uri, dst_doc_id, dst_doc_url, dst_page_idx
             )
 
         self.core.call_all("drag_and_drop_apply")
 
-    def drag_and_drop_page_add(self, src_uri, dst_doc_id, dst_page_idx):
+    def drag_and_drop_page_add(
+            self, src_uri, dst_doc_id, dst_doc_url, dst_page_idx):
         LOGGER.info("Drop: %s --> %s p%d", src_uri, dst_doc_id, dst_page_idx)
 
         if "doc_id=" not in src_uri or "page=" not in src_uri:
@@ -118,10 +120,10 @@ class Plugin(openpaperwork_core.PluginBase):
             (src_doc_id, src_page_idx) = self._parse_paperwork_uri(src_uri)
 
         src_doc_url = self.core.call_success("doc_id_to_url", src_doc_id)
+        assert(src_doc_url is not None)
 
         if src_doc_id == dst_doc_id and src_page_idx < dst_page_idx:
             dst_page_idx -= 1
-        dst_doc_url = self.core.call_success("doc_id_to_url", dst_doc_id)
         dst_page_idx = max(dst_page_idx, 0)
 
         LOGGER.info(

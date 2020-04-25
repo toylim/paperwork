@@ -111,7 +111,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         self._progress_str = _("Loading document thumbnails")
 
-    def doclist_show(self, docids):
+    def doclist_show(self, docs):
         self.core.call_all("work_queue_cancel_all", "thumbnailer")
 
     def on_doc_box_creation(self, doc_id, gtk_row, gtk_custom_flowlayout):

@@ -104,7 +104,11 @@ class TestScan2Doc(unittest.TestCase):
             (doc_id, doc_url) = args
             self.results.append(doc_id)
 
-        promise = self.core.call_success("scan2doc_promise", doc_id="existing")
+        promise = self.core.call_success(
+            "scan2doc_promise",
+            doc_id="existing",
+            doc_url="file:///some_existing_doc"
+        )
         promise.then(at_the_end)
         promise.schedule()
 

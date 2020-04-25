@@ -1,4 +1,3 @@
-import os
 import shutil
 import tempfile
 import unittest
@@ -51,7 +50,11 @@ class TestIndex(unittest.TestCase):
 
         results = []
         self.core.call_all("index_search", results, "flesch")
-        self.assertEqual(results, ['test_doc'])
+        self.assertEqual(
+            results, [
+                ('test_doc', 'file:///somewhere/test_doc')
+            ]
+        )
 
     def test_sync(self):
         results = []
@@ -91,4 +94,8 @@ class TestIndex(unittest.TestCase):
 
         results = []
         self.core.call_all("index_search", results, "flesch")
-        self.assertEqual(results, ['test_doc'])
+        self.assertEqual(
+            results, [
+                ('test_doc', 'file:///somewhere/test_doc')
+            ]
+        )

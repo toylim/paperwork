@@ -110,12 +110,15 @@ class Plugin(openpaperwork_core.PluginBase):
         if not GTK_AVAILABLE:
             out['gtk'].update(openpaperwork_gtk.deps.GTK)
 
-    def doclist_show(self, docids):
+    def doclist_show(self, docs):
         self.core.call_all("work_queue_cancel_all", "labeler")
         self.task = {}
 
     def on_doc_box_creation(self, doc_id, gtk_row, gtk_custom_flowlayout):
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
+        if doc_url is None:
+            return
+
         task = LabelingTask(self, doc_id, doc_url, gtk_custom_flowlayout)
         self.tasks[doc_url] = task
         self.core.call_success(

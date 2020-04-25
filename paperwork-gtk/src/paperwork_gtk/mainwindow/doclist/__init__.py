@@ -35,10 +35,10 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doclist = None
         self.scrollbar = None
         self._scrollbar_last_value = -1
-        self.doc_ids = []
+        self.docs = []
         self.doc_visibles = 0
         self.last_date = datetime.datetime(year=1, month=1, day=1)
-        self.row_to_docid = {}
+        self.row_to_doc = {}
         self.docid_to_row = {}
         self.docid_to_widget_tree = {}
         self.active_doc = (None, None)
@@ -155,7 +155,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def _on_new_doc(self, button):
         new_doc = self.core.call_success("get_new_doc")
         self.core.call_all("doc_open", *new_doc)
-        self.doclist_show(self.doc_ids, show_new=True)
+        self.doclist_show(self.docs, show_new=True)
 
     def _doclist_clear(self):
         start = time.time()
@@ -174,7 +174,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self._doclist_clear()
         self.last_date = datetime.datetime(year=1, month=1, day=1)
         self.doc_visibles = 0
-        self.row_to_docid = {}
+        self.row_to_doc = {}
         self.docid_to_row = {}
         self.docid_to_widget_tree = {}
 
@@ -187,7 +187,7 @@ class Plugin(openpaperwork_core.PluginBase):
         row = widget_tree.get_object("date_box")
         self.doclist.insert(row, -1)
 
-    def _add_doc_box(self, doc_id, box="doc_box.glade", new=False):
+    def _add_doc_box(self, doc_id, doc_url, box="doc_box.glade", new=False):
         widget_tree = self.core.call_success(
             "gtk_load_widget_tree",
             "paperwork_gtk.mainwindow.doclist", box
@@ -234,7 +234,7 @@ class Plugin(openpaperwork_core.PluginBase):
             )
 
         row = widget_tree.get_object("doc_listbox")
-        self.row_to_docid[row] = doc_id
+        self.row_to_doc[row] = (doc_id, doc_url)
         self.docid_to_row[doc_id] = row
         self.docid_to_widget_tree[doc_id] = widget_tree
         self.doclist.insert(row, -1)
@@ -242,15 +242,15 @@ class Plugin(openpaperwork_core.PluginBase):
     def doclist_extend(self, nb_docs):
         start = time.time()
 
-        doc_ids = self.doc_ids[
+        docs = self.docs[
             self.doc_visibles:self.doc_visibles + nb_docs
         ]
         LOGGER.info(
             "Adding %d documents to the document list (%d-%d)",
-            len(doc_ids), self.doc_visibles, self.doc_visibles + nb_docs
+            len(docs), self.doc_visibles, self.doc_visibles + nb_docs
         )
 
-        for doc_id in doc_ids:
+        for (doc_id, doc_url) in docs:
             doc_date = self.core.call_success("doc_get_date_by_id", doc_id)
 
             if doc_date.year != self.last_date.year:
@@ -268,29 +268,26 @@ class Plugin(openpaperwork_core.PluginBase):
 
             self.last_date = doc_date
 
-            self._add_doc_box(doc_id)
+            self._add_doc_box(doc_id, doc_url)
 
-        self.doc_visibles = min(
-            len(self.doc_ids),
-            self.doc_visibles + nb_docs
-        )
+        self.doc_visibles = min(len(self.docs), self.doc_visibles + nb_docs)
 
         stop = time.time()
 
         LOGGER.info(
             "%d documents shown in %dms (%d displayable)",
-            len(doc_ids), (stop - start) * 1000, len(self.doc_ids)
+            len(docs), (stop - start) * 1000, len(self.docs)
         )
 
-        return len(doc_ids)
+        return len(docs)
 
     def doclist_show(self, docs, show_new=True):
         self.doclist_clear()
-        self.doc_ids = docs
+        self.docs = docs
 
         if show_new:
             new_doc = self.core.call_success("get_new_doc")
-            self._add_doc_box(new_doc[0], new=True)
+            self._add_doc_box(*new_doc, new=True)
 
         self.doclist_extend(NB_DOCS_PER_PAGE)
         self._reselect_current_doc()
@@ -380,16 +377,15 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doclist_extend(NB_DOCS_PER_PAGE)
         self._scrollbar_last_value = vadj.get_value()
 
-    def _doc_open(self, doc_id):
+    def _doc_open(self, doc_id, doc_url):
         if self.active_doc[0] == doc_id:
             return
-        doc_url = self.core.call_success("doc_id_to_url", doc_id)
         LOGGER.info("Opening document %s (%s)", doc_id, doc_url)
         self.core.call_all("doc_open", doc_id, doc_url)
 
     def _on_row_activated(self, list_box, row):
-        doc_id = self.row_to_docid[row]
-        self._doc_open(doc_id)
+        (doc_id, doc_url) = self.row_to_doc[row]
+        self._doc_open(doc_id, doc_url)
 
     def menu_app_append_item(self, item):
         # they are actually the same menu
@@ -431,12 +427,11 @@ class Plugin(openpaperwork_core.PluginBase):
         if row is None:
             LOGGER.warning("No row at %d. Can't get drop destination", y)
             return None
-        doc_id = self.row_to_docid[row]
-        doc_url = self.core.call_success("doc_id_to_url", doc_id)
+        (doc_id, doc_url) = self.row_to_doc[row]
         nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)
         if nb_pages is None:
             nb_pages = 0
-        return (doc_id, nb_pages)
+        return (doc_id, doc_url, nb_pages)
 
     def gtk_open_app_menu(self):
         self.widget_tree.get_object("doclist_menu").clicked()

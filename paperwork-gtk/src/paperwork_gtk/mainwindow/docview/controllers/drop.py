@@ -126,7 +126,7 @@ class DropController(BaseDocViewController):
                 closest.get_allocation(), x, y
             )
             dst_page_idx = page.page_idx + beforeafter
-        return (self.plugin.active_doc[0], dst_page_idx)
+        return (*self.plugin.active_doc, dst_page_idx)
 
 
 class Plugin(openpaperwork_core.PluginBase):

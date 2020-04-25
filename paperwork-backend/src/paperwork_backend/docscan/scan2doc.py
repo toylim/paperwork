@@ -59,14 +59,13 @@ class Plugin(openpaperwork_core.PluginBase):
         except KeyError:
             return None
 
-    def scan2doc_promise(self, *args, doc_id=None, **kwargs):
+    def scan2doc_promise(self, *args, doc_id=None, doc_url=None, **kwargs):
         """
         The promise returned by this method should be scheduled with
         scan_schedule() to avoid any possible conflict with another
         scan (or scanner lookup).
         """
-        if doc_id is not None:
-            doc_url = self.core.call_success("doc_id_to_url", doc_id)
+        if doc_id is not None and doc_url is not None:
             nb_pages = self.core.call_success(
                 "doc_get_nb_pages_by_url", doc_url
             )

@@ -352,7 +352,11 @@ class Plugin(openpaperwork_core.PluginBase):
                 has_results = False
                 for result in results:
                     has_results = True
-                    out.append(result['docid'])
+                    doc_id = result['docid']
+                    doc_url = self.core.call_success("doc_id_to_url", doc_id)
+                    if doc_url is None:
+                        continue
+                    out.append((doc_id, doc_url))
                     if limit is not None and len(out) >= limit:
                         break
                 if has_results:

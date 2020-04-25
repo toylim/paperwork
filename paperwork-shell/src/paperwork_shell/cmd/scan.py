@@ -64,9 +64,13 @@ class Plugin(openpaperwork_core.PluginBase):
         if args.command != 'scan':
             return None
 
+        doc_url = None
+        if args.doc_id is not None:
+            doc_url = self.core.call_success("doc_id_to_url", args.doc_id)
+
         promise = self.core.call_success(
             "scan2doc_promise",
-            doc_id=args.doc_id,
+            doc_id=args.doc_id, doc_url=doc_url,
             source_id=args.source_id
         )
         self.core.call_success("scan_schedule", promise)

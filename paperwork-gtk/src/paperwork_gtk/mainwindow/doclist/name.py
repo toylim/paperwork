@@ -52,7 +52,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def on_doc_box_creation(self, doc_id, gtk_row, custom_flowlayout):
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
-        is_new = self.core.call_success("is_doc", doc_url) is None
+        is_new = doc_url is None or self.core.call_success(
+            "is_doc", doc_url
+        ) is None
         if is_new:
             doc_txt = _("New document")
         else:
