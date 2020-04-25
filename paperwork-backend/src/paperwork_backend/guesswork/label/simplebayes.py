@@ -515,4 +515,4 @@ class Plugin(openpaperwork_core.PluginBase):
         labels = self._guess(doc_url)
         labels = list(labels)
         for label in labels:
-            self.core.call_all("doc_add_label_by_url", doc_url, label)
+            self.core.call_success("doc_add_label_by_url", doc_url, label)

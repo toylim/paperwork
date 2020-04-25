@@ -138,6 +138,8 @@ class Plugin(openpaperwork_core.PluginBase):
             if doc['url'] == doc_url:
                 doc['labels'].add((label, color))
 
+        return True
+
     def page_has_text_by_url(self, doc_url, page_idx):
         for doc in self.docs:
             if doc['url'] == doc_url:

@@ -374,7 +374,7 @@ class Plugin(openpaperwork_core.PluginBase):
         if len(self.new_labels) <= 0:
             return
         for label in self.new_labels:
-            self.core.call_all(
+            self.core.call_success(
                 "doc_add_label_by_url", doc_url, label[0], label[1]
             )
         out.upd_docs.add(doc_id)
@@ -413,7 +413,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 self.core.call_all(
                     "doc_remove_label_by_url", doc_url, old_label[0]
                 )
-                self.core.call_all(
+                self.core.call_success(
                     "doc_add_label_by_url", doc_url,
                     new_label[0], new_label[1]
                 )
@@ -470,7 +470,7 @@ class Plugin(openpaperwork_core.PluginBase):
         if len(self.toggled_labels) > 0:
             for (label, selected) in self.toggled_labels.items():
                 if selected:
-                    self.core.call_all(
+                    self.core.call_success(
                         "doc_add_label_by_url", doc_url, label[0], label[1]
                     )
                 else:

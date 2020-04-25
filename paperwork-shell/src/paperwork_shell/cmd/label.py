@@ -153,7 +153,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
             self._load_all_labels()
             doc_url = self.core.call_success("doc_id_to_url", args.doc_id)
-            self.core.call_all(
+            self.core.call_success(
                 "doc_add_label_by_url", doc_url, args.label_name, color
             )
 

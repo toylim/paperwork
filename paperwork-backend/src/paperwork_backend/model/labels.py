@@ -181,12 +181,16 @@ class Plugin(openpaperwork_core.PluginBase):
         if label not in self.all_labels:
             self.all_labels[label] = color
 
+        return True
+
     def doc_remove_label_by_url(self, doc_url, label):
         LOGGER.info("Removing label '%s' from document '%s'", label, doc_url)
 
         labels_url = self.core.call_success(
             "fs_join", doc_url, LABELS_FILENAME
         )
+        if self.core.call_success("fs_exists", labels_url) is None:
+            return
 
         with self.core.call_success("fs_open", labels_url, 'r') as file_desc:
             labels = file_desc.readlines()
@@ -204,6 +208,7 @@ class Plugin(openpaperwork_core.PluginBase):
         with self.core.call_success("fs_open", labels_url, "w") as file_desc:
             for (label, color) in labels.items():
                 file_desc.write("{},{}\n".format(label, color))
+        return True
 
     def labels_get_all(self, out: set):
         for (label, color) in self.all_labels.items():
