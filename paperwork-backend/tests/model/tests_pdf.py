@@ -10,28 +10,52 @@ class TestHocr(unittest.TestCase):
         self.core.load("paperwork_backend.model.pdf")
         self.core.init()
 
-        self.doc_url = "file://" + os.path.dirname(os.path.abspath(__file__))
+        self.simple_doc_url = (
+            "file://" + os.path.dirname(os.path.abspath(__file__)) +
+            "/simple_doc.pdf"
+        )
+        self.full_doc_url = (
+            "file://" + os.path.dirname(os.path.abspath(__file__))
+        )
 
     def test_is_doc(self):
-        self.assertTrue(self.core.call_success("is_doc", self.doc_url))
+        self.assertTrue(self.core.call_success("is_doc", self.simple_doc_url))
+        self.assertTrue(self.core.call_success("is_doc", self.full_doc_url))
 
     def test_hash(self):
-        h = []
-        self.core.call_all("doc_get_hash_by_url", h, self.doc_url)
-        expected = [
+        out = []
+        self.core.call_all("doc_get_hash_by_url", out, self.simple_doc_url)
+        h = 0
+        for k in out:
+            h ^= k
+        expected = (
             0x7d2ffb0e8ddce8f7dfbb4a8dfc14d563b272bd47b1bafb9617fbfd228bf2eecd
-        ]
+        )
         self.assertEqual(h, expected)
 
     def test_get_nb_pages(self):
-        nb_pages = self.core.call_success(
-            "doc_get_nb_pages_by_url", self.doc_url
+        self.assertEqual(
+            self.core.call_success(
+                "doc_get_nb_pages_by_url", self.simple_doc_url
+            ), 1
         )
-        self.assertEqual(nb_pages, 1)
+
+        self.assertEqual(
+            self.core.call_success(
+                "doc_get_nb_pages_by_url", self.full_doc_url
+            ), 4
+        )
+
+        self.core.call_all("page_delete_by_url", self.full_doc_url, 2)
+        self.assertEqual(
+            self.core.call_success(
+                "doc_get_nb_pages_by_url", self.full_doc_url
+            ), 3
+        )
 
     def test_get_text(self):
         text = []
-        self.core.call_all("doc_get_text_by_url", text, self.doc_url)
+        self.core.call_all("doc_get_text_by_url", text, self.simple_doc_url)
         self.assertEqual(text, [
             'This is a test PDF file.\n'
             'Written by Jflesch.'
@@ -39,7 +63,7 @@ class TestHocr(unittest.TestCase):
 
     def test_get_boxes(self):
         lines = list(self.core.call_success(
-            "page_get_boxes_by_url", self.doc_url, 0
+            "page_get_boxes_by_url", self.simple_doc_url, 0
         ))
 
         self.assertEqual(len(lines), 2)

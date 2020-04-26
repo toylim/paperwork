@@ -1,5 +1,6 @@
 import itertools
 import logging
+import math
 
 import openpaperwork_core
 import openpaperwork_core.deps
@@ -38,7 +39,7 @@ PDF_RENDER_FACTOR = 4
 
 
 def minmax_rects(rects):
-    (mx1, my1, mx2, my2) = (6553600000, 6553600000, 0, 0)
+    (mx1, my1, mx2, my2) = (math.inf, math.inf, 0, 0)
     for rectangle in rects:
         ((x1, y1), (x2, y2)) = (
             (int(rectangle.x1 * PDF_RENDER_FACTOR),
