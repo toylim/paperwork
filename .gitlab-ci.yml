@@ -1,4 +1,4 @@
-image: debian:stable-slim
+image: registry.gitlab.gnome.org/world/openpaperwork/paperwork/build
 
 stages:
   - test
@@ -15,25 +15,12 @@ check:
     - volatile
   script:
     - sh ./ci/set_apt_proxy.sh
-    - apt-get install -y -q make
-    - apt-get install -y -q pycodestyle flake8 python3-flake8
     - make check
 
 
 .apt: &apt
   before_script:
     - sh ./ci/set_apt_proxy.sh
-    # Only the build dependencies for Libinsane. Everything else should be
-    # installed by paperwork-cli chkdeps
-    - apt-get install -y -qq make meson build-essential gcc
-    - apt-get install -y -qq libsane-dev
-    - apt-get install -y -qq libgirepository1.0-dev gobject-introspection
-    - apt-get install -y -qq libcunit1-ncurses-dev
-    - apt-get install -y -qq valgrind valac
-    - apt-get install -y -qq pycodestyle flake8 python3-flake8 tox
-    - apt-get install -y -qq python3-dev git
-    - apt-get install -y -qq zlib1g-dev libjpeg-dev
-    - apt-get install -y -qq python3-gi wget
 
 
 test:
@@ -56,16 +43,11 @@ generate_data:
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
-  image: debian:stable
   tags:
     - linux
     - volatile
   <<: *apt
   script:
-    - apt-get install -y -qq xvfb texlive imagemagick
-    - apt-get install -y -qq texlive-lang-english texlive-lang-french texlive-lang-german
-    - apt-get install -y -qq texlive-latex-recommended texlive-latex-extra
-    - apt-get install -y -qq rclone
     - source ./activate_test_env.sh && make install
     - source ./activate_test_env.sh && paperwork-gtk chkdeps -y && paperwork-cli chkdeps -y
     - source ./activate_test_env.sh && make data && make upload_data
@@ -86,20 +68,16 @@ linux_flatpak:
 
 
 doc_devel:
+  image: registry.gitlab.gnome.org/world/openpaperwork/paperwork/build_doc
   stage: deploy
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
-  image: debian:stable
   tags:
     - linux
     - volatile
   <<: *apt
   script:
-    - apt-get install -y -qq openjdk-11-jre
-    - apt-get install -y -qq python3-sphinx python3-recommonmark
-    - apt-get install -y -qq plantuml python3-sphinxcontrib.plantuml
-    - apt-get install -y -qq rclone
     - source ./activate_test_env.sh && make doc && make upload_doc
 
 

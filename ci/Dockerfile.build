@@ -1,0 +1,44 @@
+FROM debian:stable-slim
+
+# Libinsane and Paperwork build dependencies.
+# Everything else will be installed by `paperwork-shell chkdeps`
+
+RUN apt-get update -y
+
+# Libinsane build dependencies
+RUN apt-get install -y -q \
+	build-essential \
+	gcc \
+	git \
+	gobject-introspection \
+	libcunit1-ncurses-dev \
+	libgirepository1.0-dev \
+	libsane-dev \
+	make \
+	meson \
+	valac \
+	valgrind
+
+# Paperwork build & test dependencies
+RUN apt-get install -y -q \
+	flake8 \
+	libjpeg-dev \
+	pycodestyle \
+	python3-dev \
+	python3-flake8 \
+	python3-gi \
+	tox \
+	wget \
+	zlib1g-dev
+
+# Paperwork data generation dependencies
+RUN apt-get install -y -q \
+	imagemagick \
+	rclone \
+	texlive \
+	texlive-lang-english \
+	texlive-lang-french \
+	texlive-lang-german \
+	texlive-latex-extra \
+	texlive-latex-recommended \
+	xvfb
