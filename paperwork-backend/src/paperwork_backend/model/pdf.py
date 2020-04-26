@@ -180,9 +180,6 @@ class Plugin(openpaperwork_core.PluginBase):
             return None
         out.append(mtime)
 
-    def page_get_mtime_by_url(self, out: list, doc_url, page_idx):
-        return self.doc_get_mtime_by_url(out, doc_url)
-
     def _doc_get_nb_pages_by_url(self, doc_url):
         (pdf_url, pdf) = self._open_pdf(doc_url)
         if pdf is None:
