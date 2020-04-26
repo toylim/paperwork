@@ -29,13 +29,13 @@ class TestAll(unittest.TestCase):
         self.work_dir_url = "file://" + self.work_dir
         self.core.call_all("config_put", "workdir", self.work_dir_url)
 
-        self.doc_a = self.core.call_success(
+        self.doc_pdf = self.core.call_success(
             "fs_join", self.work_dir_url, "20200525_1241_05"
         )
-        self._copy_pdf(self.doc_a + "/doc.pdf")
-        self._make_file(self.doc_a + "/paper.2.edited.jpg")
-        self._make_file(self.doc_a + "/paper.2.words")
-        self._make_file(self.doc_a + "/extra.txt")
+        self._copy_pdf(self.doc_pdf + "/doc.pdf")
+        self._make_file(self.doc_pdf + "/paper.2.edited.jpg")
+        self._make_file(self.doc_pdf + "/paper.2.words")
+        self._make_file(self.doc_pdf + "/extra.txt")
 
         self.doc_b = self.core.call_success(
             "fs_join", self.work_dir_url, "19851212_1233_00"
@@ -76,7 +76,7 @@ class TestAll(unittest.TestCase):
             fd.write("Generated content {}\n".format(next(self.int_generator)))
 
     def test_basic_nb_pages(self):
-        nb = self.core.call_success("doc_get_nb_pages_by_url", self.doc_a)
+        nb = self.core.call_success("doc_get_nb_pages_by_url", self.doc_pdf)
         self.assertEqual(nb, 4)
         nb = self.core.call_success("doc_get_nb_pages_by_url", self.doc_b)
         self.assertEqual(nb, 4)
@@ -211,3 +211,36 @@ class TestAll(unittest.TestCase):
         self.assertEqual(doc_c_hashes[0], new_doc_c_hashes[0])
         self.assertEqual(doc_c_hashes[1], new_doc_b_hashes[2])
         self.assertEqual(doc_c_hashes[2], new_doc_c_hashes[1])
+
+    def test_pdf_hashes(self):
+        nb = self.core.call_success("doc_get_nb_pages_by_url", self.doc_pdf)
+        self.assertEqual(nb, 4)
+        hashes = [
+            self._get_page_hash(self.doc_pdf, page_idx)
+            for page_idx in range(0, 4)
+        ]
+
+        # just make sure all the hashes are different from one another
+        for (e, h) in enumerate(hashes):
+            for i in hashes[e + 1:]:
+                self.assertNotEqual(h, i)
+
+    def test_pdf_page_delete(self):
+        nb = self.core.call_success("doc_get_nb_pages_by_url", self.doc_pdf)
+        self.assertEqual(nb, 4)
+        hashes = [
+            self._get_page_hash(self.doc_pdf, page_idx)
+            for page_idx in range(0, 4)
+        ]
+
+        self.core.call_all("page_delete_by_url", self.doc_pdf, 2)
+
+        nb = self.core.call_success("doc_get_nb_pages_by_url", self.doc_pdf)
+        self.assertEqual(nb, 3)
+        new_hashes = [
+            self._get_page_hash(self.doc_pdf, page_idx)
+            for page_idx in range(0, 3)
+        ]
+        self.assertEqual(hashes[0], new_hashes[0])
+        self.assertEqual(hashes[1], new_hashes[1])
+        self.assertEqual(hashes[3], new_hashes[2])
