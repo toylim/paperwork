@@ -29,7 +29,12 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'fs',
                 'defaults': ['openpaperwork_gtk.fs.gio'],
-            }
+            },
+            {
+                # to provide doc_get_nb_pages_by_url()
+                'interface': 'nb_pages',
+                'defaults': ['paperwork_backend.model'],
+            },
         ]
 
     def is_doc(self, doc_url):
@@ -59,14 +64,14 @@ class Plugin(openpaperwork_core.PluginBase):
             return
         out.append(self.core.call_success("fs_hash", page_url))
 
-    def doc_get_nb_pages_by_url(self, doc_url):
+    def doc_internal_get_nb_pages_by_url(self, out: list, doc_url):
         if self.core.call_success("fs_exists", doc_url) is None:
-            return None
+            return
         if self.core.call_success("fs_isdir", doc_url) is None:
-            return None
+            return
         files = self.core.call_success("fs_listdir", doc_url)
         if files is None:
-            return None
+            return
         nb_pages = -1
         for f in files:
             f = self.core.call_success("fs_basename", f)
@@ -75,8 +80,8 @@ class Plugin(openpaperwork_core.PluginBase):
                 continue
             nb_pages = max(nb_pages, int(match.group(1)))
         if nb_pages < 0:
-            return None
-        return nb_pages
+            return
+        out.append(nb_pages)
 
     def page_get_img_url(self, doc_url, page_idx, write=False):
         if write:

@@ -59,6 +59,15 @@ class Plugin(openpaperwork_core.PluginBase):
             "pillow",
         ]
 
+    def get_deps(self):
+        return [
+            {
+                # to provide doc_get_nb_pages_by_url()
+                'interface': 'nb_pages',
+                'defaults': ['paperwork_backend.model'],
+            },
+        ]
+
     def storage_get_all_docs(self, out: list):
         out += [
             (doc['id'], doc['url'])
@@ -91,7 +100,7 @@ class Plugin(openpaperwork_core.PluginBase):
             if doc['url'] == doc_url:
                 out.append(doc['mtime'])
 
-    def doc_get_nb_pages_by_url(self, doc_url):
+    def doc_internal_get_nb_pages_by_url(self, out: list, doc_url):
         for doc in self.docs:
             if doc['url'] == doc_url:
                 l_boxes = len(doc['page_boxes']) if 'page_boxes' in doc else 0
@@ -106,8 +115,10 @@ class Plugin(openpaperwork_core.PluginBase):
                     len(doc['page_paper_sizes'])
                     if 'page_paper_sizes' in doc else 0
                 )
-                return max(l_boxes, l_imgs, l_mtimes, l_hashes, l_paper_sizes)
-        return None
+                r = max(l_boxes, l_imgs, l_mtimes, l_hashes, l_paper_sizes)
+                out.append(r)
+                return
+        return
 
     def doc_get_text_by_url(self, out: list, doc_url):
         for doc in self.docs:

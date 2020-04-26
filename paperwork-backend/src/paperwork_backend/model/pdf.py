@@ -104,15 +104,43 @@ class PdfPageMapping(object):
             "fs_join", self.doc_url, self.MAPPING_FILE
         )
         self.last_change = None
-        self.nb_pages_offset = 0
+        self.nb_pages = 0
+        self.real_nb_pages = 0
+
+    def set_mapping(self, original_page_idx, target_page_idx):
+        """
+        Indicates that the page 'original_page_idx' in the actual PDF file
+        is displayed as being the page 'target_page_idx'.
+        If 'target_page_idx' < 0, it means the page is not displayed anymore
+        (--> act if it is deleted)
+        """
+        if original_page_idx >= self.real_nb_pages:
+            # comes from another set of plugins, no point in tracking it
+            return
+        self.mapping[original_page_idx] = target_page_idx
+        if target_page_idx >= 0:
+            self.reverse_mapping[target_page_idx] = original_page_idx
+            if target_page_idx >= self.nb_pages:
+                LOGGER.info(
+                    "Fixing number of pages of %s based on mapping: %d --> %d",
+                    self.doc_url, self.nb_pages, target_page_idx + 1
+                )
+                self.nb_pages = target_page_idx + 1
+        else:
+            self.nb_pages -= 1
 
     def load(self):
+        self.real_nb_pages = self.plugin._doc_internal_get_nb_pages_by_url(
+            self.doc_url, mapping=False
+        )
+        self.nb_pages = self.real_nb_pages
+
         self.mapping = {}
         self.reverse_mapping = {}
 
         if self.core.call_success("fs_exists", self.map_url) is None:
             return
-        self.last_change = self.core.call_success("fs_getmtime", self.map_url)
+        self.last_change = self.core.call_success("fs_get_mtime", self.map_url)
         with self.core.call_success("fs_open", self.map_url, "r") as fd:
             # drop the first line
             lines = fd.readlines()[1:]
@@ -120,22 +148,34 @@ class PdfPageMapping(object):
                 (orig_page_idx, target_page_idx) = line.split(",", 1)
                 orig_page_idx = int(orig_page_idx)
                 target_page_idx = int(target_page_idx)
-                self.mapping[orig_page_idx] = target_page_idx
-                if target_page_idx > 0:
-                    self.mapping[target_page_idx] = orig_page_idx
-                else:
-                    self.nb_pages_offset -= 1
+                self.set_mapping(orig_page_idx, target_page_idx)
+            # mapping may not be in order --> rechech nb_pages
+            for t in self.mapping.values():
+                if t >= self.nb_pages:
+                    self.nb_pages = t + 1
 
     def save(self):
         if self.core.call_success("fs_isdir", self.doc_url) is None:
             return
+
+        nb_maps = 0
+        for (orig_page_idx, target_page_idx) in self.mapping.items():
+            if orig_page_idx == target_page_idx:
+                continue
+            nb_maps += 1
+
+        if nb_maps <= 0:
+            if self.core.call_success("fs_exists", self.map_url) is not None:
+                self.core.call_success("fs_unlink", self.map_url)
+            return
+
         with self.core.call_success("fs_open", self.map_url, "w") as fd:
             fd.write("original_page_index,target_page_index\n")
             for (orig_page_idx, target_page_idx) in self.mapping.items():
                 if orig_page_idx == target_page_idx:
                     continue
                 fd.write("{},{}\n".format(orig_page_idx, target_page_idx))
-        self.last_change = self.core.call_success("fs_getmtime", self.map_url)
+        self.last_change = self.core.call_success("fs_get_mtime", self.map_url)
 
     def has_original_page_idx(self, original_page_idx):
         if original_page_idx not in self.mapping:
@@ -144,51 +184,104 @@ class PdfPageMapping(object):
 
     def get_original_page_idx(self, target_page_idx):
         if target_page_idx not in self.reverse_mapping:
-            return target_page_idx
+            if target_page_idx not in self.mapping:
+                if target_page_idx >= self.real_nb_pages:
+                    # out of the PDF --> handled by other plugins
+                    return None
+                # not mapped --> default map
+                return target_page_idx
+            # handled by other plugins
+            return None
         original_page_idx = self.reverse_mapping[target_page_idx]
-        LOGGER.info("Applying pdf pagw mapping: {} --> {}".format(
+        LOGGER.info("Applying pdf page mapping: {} --> {}".format(
             original_page_idx, target_page_idx
         ))
         return original_page_idx
 
     def get_target_page_hash(self, target_page_idx):
         if target_page_idx not in self.reverse_mapping:
-            return target_page_idx
+            if (target_page_idx not in self.mapping
+                    or self.mapping[target_page_idx] == target_page_idx):
+                # this page is not mapped at all (default mapping)
+                return hash(target_page_idx)
+            else:
+                # provided by another plugin
+                return None
         original_page_idx = self.reverse_mapping[target_page_idx]
         return hash(original_page_idx)
+
+    def _move_pages(self, original_page_idx, target_page_idx, offset):
+        nb_pages = self.plugin._doc_internal_get_nb_pages_by_url(
+            self.doc_url, mapping=False
+        )
+
+        for page_idx in range(original_page_idx, nb_pages):
+            # anything >= target_page_idx will move --> we create the
+            # mapping if they don't already exist
+            if page_idx in self.mapping:
+                continue
+            self.set_mapping(page_idx, page_idx)
+
+        self.nb_pages += offset
+
+        # and then we update the mappings based on the target page numbers
+        mapping = list(self.mapping.items())
+        mapping.sort(key=lambda x: x[1], reverse=offset > 0)
+        for (original, target) in mapping:
+            if target >= target_page_idx:
+                LOGGER.info(
+                    "Page %d (original) ; target: %d --> %d",
+                    original, target, target + offset
+                )
+                self.reverse_mapping.pop(target)
+                self.set_mapping(original, target + offset)
+                assert(self.mapping[original] == target + offset)
+                assert(self.reverse_mapping[target + offset] == original)
 
     def delete_target_page(self, target_page_idx):
         LOGGER.info(
             "Deleting page %d from PDF %s",
             target_page_idx, self.doc_url
         )
-
         original_page_idx = self.get_original_page_idx(target_page_idx)
-        self.mapping[original_page_idx] = -1
+        if original_page_idx is not None:
+            self.mapping[original_page_idx] = -1
+        else:
+            original_page_idx = target_page_idx
         if target_page_idx in self.reverse_mapping:
             self.reverse_mapping.pop(target_page_idx)
-        self.nb_pages_offset -= 1
+        self._move_pages(original_page_idx, target_page_idx, offset=-1)
 
-        nb_pages = self.plugin.doc_get_nb_pages_by_url(
+    def make_room_for_target_page(self, target_page_idx):
+        original_page_idx = self.get_original_page_idx(target_page_idx)
+        if original_page_idx is None:
+            original_page_idx = target_page_idx
+        self._move_pages(original_page_idx, target_page_idx, offset=1)
+
+    def print_mapping(self):
+        nb_pages = self.plugin._doc_internal_get_nb_pages_by_url(
             self.doc_url, mapping=False
         )
-        for page_idx in range(original_page_idx + 1, nb_pages):
-            # anything beyong target_page_idx will move --> we create the
-            # mapping if they don't already exist
-            if page_idx in self.mapping:
-                continue
-            self.mapping[page_idx] = page_idx
-            self.reverse_mapping[page_idx] = page_idx
 
-        for (original, target) in list(self.mapping.items()):
-            if target >= target_page_idx:
-                LOGGER.info(
-                    "Page %d (original) ; target: %d --> %d",
-                    original, target, target - 1
-                )
-                self.reverse_mapping.pop(target)
-                self.mapping[original] = target - 1
-                self.reverse_mapping[target - 1] = original
+        print("==== MAPPING OF {} (nb_pages={}|{}) ====".format(
+            self.doc_url, nb_pages, self.nb_pages
+        ))
+        for original_page_idx in range(0, nb_pages):
+            if original_page_idx not in self.mapping:
+                print("{} --> {}".format(original_page_idx, original_page_idx))
+                continue
+            target_page_idx = self.mapping[original_page_idx]
+            print("{} --> {}".format(original_page_idx, target_page_idx))
+            if target_page_idx < 0:
+                continue
+            if target_page_idx not in self.reverse_mapping:
+                print("WARNING: NO REVERSE")
+            else:
+                if original_page_idx != self.reverse_mapping[target_page_idx]:
+                    print("WARNING: REVERSE DOESN'T MATCH: {} <-- {}".format(
+                        target_page_idx, original_page_idx
+                    ))
+        print("=======================")
 
     def __hash__(self):
         h = 0
@@ -202,8 +295,12 @@ class PdfPageMapping(object):
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
+        # we cache the hash of PDF files since they never change
         self.cache_hash = {}
+        # we cache the number of pages in PDF files since they never change
+        # (real number before mapping)
         self.cache_nb_pages = {}
+
         self.cache_mappings = {}
 
     def get_interfaces(self):
@@ -229,6 +326,19 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'mainloop',
                 'defaults': ['openpaperwork_gtk.mainloop.glib'],
+            },
+            {
+                # to provide doc_get_nb_pages_by_url()
+                'interface': 'nb_pages',
+                'defaults': ['paperwork_backend.model'],
+            },
+            # for page_move_by_url():
+            {
+                'interface': 'pillow',
+                'defaults': [
+                    'paperwork_backend.pillow.img',
+                    'paperwork_backend.pillow.pdf',
+                ],
             },
         ]
 
@@ -293,7 +403,11 @@ class Plugin(openpaperwork_core.PluginBase):
         if pdf_url is None:
             return
         mapping = self._get_page_mapping(doc_url)
-        out.append(mapping.get_target_page_hash(page_idx))
+        page_hash = mapping.get_target_page_hash(page_idx)
+        if page_hash is None:
+            # deleted page
+            return
+        out.append(page_hash)
 
         # cache the hash of doc.pdf to speed up imports
         cache_key = "hash_{}".format(doc_url)
@@ -315,36 +429,52 @@ class Plugin(openpaperwork_core.PluginBase):
             return None
         out.append(mtime)
 
-    def _doc_get_nb_pages_by_url(self, doc_url):
+    def _doc_get_real_nb_pages_by_url(self, doc_url):
         (pdf_url, pdf) = self._open_pdf(doc_url)
         if pdf is None:
             return None
         nb_pages = pdf.get_n_pages()
         return nb_pages
 
-    def doc_get_nb_pages_by_url(self, doc_url, mapping=True):
+    def _doc_internal_get_nb_pages_by_url(
+            self, doc_url, mapping=True):
+        if mapping:
+            pdf_url = self._get_pdf_url(doc_url)
+            if pdf_url is None:
+                return 0
+            mapping = self._get_page_mapping(doc_url)
+            return mapping.nb_pages
+
         if doc_url in self.cache_nb_pages:
             r = self.cache_nb_pages[doc_url]
         else:
             # Poppler is not thread-safe
             r = self.core.call_success(
-                "mainloop_execute", self._doc_get_nb_pages_by_url, doc_url
+                "mainloop_execute", self._doc_get_real_nb_pages_by_url, doc_url
             )
             if r is not None:
                 self.cache_nb_pages[doc_url] = r
-        if r is not None and mapping:
-            mapping = self._get_page_mapping(doc_url)
-            r += mapping.nb_pages_offset
-        return r
+        return r if r is not None else 0
+
+    def doc_internal_get_nb_pages_by_url(self, out: list, doc_url):
+        r = self._doc_internal_get_nb_pages_by_url(doc_url)
+        if r == 0:
+            return
+        out.append(r)
 
     def page_get_img_url(self, doc_url, page_idx, write=False):
         if write:
             return None
-        nb_pages = self.doc_get_nb_pages_by_url(doc_url)
-        if nb_pages is None or page_idx >= nb_pages:
+        nb_pages = self._doc_internal_get_nb_pages_by_url(
+            doc_url, mapping=False
+        )
+        if nb_pages is None:
             return None
+
         mapping = self._get_page_mapping(doc_url)
         page_idx = mapping.get_original_page_idx(page_idx)
+        if page_idx is None or page_idx >= nb_pages:
+            return None
         # same URL used in browsers
         pdf_url = self._get_pdf_url(doc_url)
         return "{}#page={}".format(pdf_url, str(page_idx + 1))
@@ -367,7 +497,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 rects.append(rect)
             yield(letters, rects)
 
-    def _doc_get_text_by_url(self, out: list, doc_url, mapping):
+    def _doc_get_text_by_url(self, out: list, doc_url):
         task = "pdf_get_text_by_url({})".format(doc_url)
         self.core.call_all("on_perfcheck_start", task)
 
@@ -375,6 +505,7 @@ class Plugin(openpaperwork_core.PluginBase):
         if pdf is None:
             self.core.call_all("on_perfcheck_stop", task)
             return
+        mapping = self._get_page_mapping(doc_url)
 
         for page_idx in range(0, pdf.get_n_pages()):
             if not mapping.has_original_page_idx(page_idx):
@@ -391,11 +522,10 @@ class Plugin(openpaperwork_core.PluginBase):
         return True
 
     def doc_get_text_by_url(self, out: list, doc_url):
-        mapping = self._get_page_mapping(doc_url)
         # Poppler is not thread-safe
         return self.core.call_success(
             "mainloop_execute",
-            self._doc_get_text_by_url, out, doc_url, mapping
+            self._doc_get_text_by_url, out, doc_url
         )
 
     def _page_has_text_by_url(self, doc_url, page_idx):
@@ -405,17 +535,22 @@ class Plugin(openpaperwork_core.PluginBase):
 
         (pdf_url, pdf) = self._open_pdf(doc_url)
         if pdf is None:
-            return
+            return None
 
         page = pdf.get_page(page_idx)
         if page is None:
-            return
+            return None
 
         return len(page.get_text().strip()) > 0
 
     def page_has_text_by_url(self, doc_url, page_idx):
+        pdf_url = self._get_pdf_url(doc_url)
+        if pdf_url is None:
+            return None
         mapping = self._get_page_mapping(doc_url)
         page_idx = mapping.get_original_page_idx(page_idx)
+        if page_idx is None:
+            return None
         # Poppler is not thread-safe
         return self.core.call_success(
             "mainloop_execute", self._page_has_text_by_url, doc_url, page_idx
@@ -457,8 +592,13 @@ class Plugin(openpaperwork_core.PluginBase):
         return line_boxes
 
     def page_get_boxes_by_url(self, doc_url, page_idx):
+        pdf_url = self._get_pdf_url(doc_url)
+        if pdf_url is None:
+            return None
         mapping = self._get_page_mapping(doc_url)
         page_idx = mapping.get_original_page_idx(page_idx)
+        if page_idx is None:
+            return None
         # Poppler is not thread-safe
         return self.core.call_success(
             "mainloop_execute", self._page_get_boxes_by_url, doc_url, page_idx
@@ -480,7 +620,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def page_delete_by_url(self, doc_url, page_idx):
         pdf_url = self._get_pdf_url(doc_url)
         if pdf_url is None:
-            return (None, None)
+            return
         mapping = self._get_page_mapping(doc_url)
         mapping.delete_target_page(page_idx)
         mapping.save()
@@ -508,8 +648,13 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def page_get_paper_size_by_url(self, doc_url, page_idx):
+        pdf_url = self._get_pdf_url(doc_url)
+        if pdf_url is None:
+            return None
         mapping = self._get_page_mapping(doc_url)
         page_idx = mapping.get_original_page_idx(page_idx)
+        if page_idx is None:
+            return None
         # Poppler is not thread-safe
         return self.core.call_success(
             "mainloop_execute",
@@ -518,10 +663,88 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def page_move_by_url(
                 self,
-                source_doc_url, source_page_idx,
-                dest_doc_url, dest_page_idx
+                source_doc_url, target_source_page_idx,
+                dest_doc_url, target_dest_page_idx
             ):
-        if self.is_doc(source_doc_url):
-            LOGGER.warning(
-                "Cannot move page from PDF file (doc=%s)", source_doc_url
+        # 'source' is about the source document.
+        # 'dest' is about the destination document.
+        # 'original' is about the original position of a page in a PDF file.
+        # 'target' is about the position of a page as shown to the end-user.
+
+        source_pdf_url = self._get_pdf_url(source_doc_url)
+        source_is_pdf = source_pdf_url is not None
+        dest_is_pdf = self._get_pdf_url(dest_doc_url) is not None
+        if not source_is_pdf and not dest_is_pdf:
+            return
+
+        if source_is_pdf:
+            source_mapping = self._get_page_mapping(source_doc_url)
+        if dest_is_pdf:
+            dest_mapping = self._get_page_mapping(dest_doc_url)
+
+        LOGGER.info(
+            "%s (%s) p%d --> %s (%s) p%d",
+            source_doc_url, "PDF" if source_is_pdf else "non-PDF",
+            target_source_page_idx,
+            dest_doc_url, "PDF" if dest_is_pdf else "non-PDF",
+            target_dest_page_idx,
+        )
+
+        if source_is_pdf:
+            original_source_page_idx = source_mapping.get_original_page_idx(
+                target_source_page_idx
             )
+            if original_source_page_idx is None:
+                original_source_page_idx = target_source_page_idx
+            LOGGER.info(
+                "- Removing page (original=%d, target=%d) from %s",
+                original_source_page_idx, target_source_page_idx,
+                source_doc_url
+            )
+            source_mapping.delete_target_page(target_source_page_idx)
+
+        if dest_is_pdf:
+            LOGGER.info(
+                "- Making room for a new page (target=%d) in %s",
+                target_dest_page_idx, dest_doc_url
+            )
+            dest_mapping.make_room_for_target_page(target_dest_page_idx)
+
+        if source_doc_url == dest_doc_url:
+            assert(source_mapping == dest_mapping)
+            LOGGER.info(
+                "New mapping: %s: original=p%d --> target=p%d",
+                source_doc_url, original_source_page_idx, target_dest_page_idx
+            )
+            source_mapping.set_mapping(
+                original_source_page_idx, target_dest_page_idx
+            )
+        elif source_is_pdf:
+            # export the PDF page as an image file
+            # it relies on other model plugins (interface 'page_img'), but they
+            # can't be declared as dependencies, as we do provide 'page_img'
+            # too. It would make a dependency loop.
+
+            # we are a low priority plugin: other plugins should
+            # already have made room for our page if required
+
+            source_img = "{}#page={}".format(
+                source_pdf_url, str(original_source_page_idx + 1)
+            )
+            LOGGER.info("Generating image from %s", source_img)
+            source_img = self.core.call_success("url_to_pillow", source_img)
+
+            # since PDF are not writable by themselves, we can call
+            # page_get_img_url(write=True). We are sure that our
+            # implementation of this method won't reply
+            dest_img = self.core.call_success(
+                "page_get_img_url", dest_doc_url, target_dest_page_idx,
+                write=True
+            )
+            LOGGER.info("Writting page image back as %s", dest_img)
+            self.core.call_success("pillow_to_url", source_img, dest_img)
+
+        if source_is_pdf:
+            source_mapping.save()
+        if dest_is_pdf:
+            dest_mapping.save()

@@ -49,6 +49,7 @@ DEFAULT_PLUGINS = [
     'paperwork_backend.imgedit.crop',
     'paperwork_backend.imgedit.rotate',
     'paperwork_backend.index.whoosh',
+    'paperwork_backend.model',
     'paperwork_backend.model.extra_text',
     'paperwork_backend.model.hocr',
     'paperwork_backend.model.img',
