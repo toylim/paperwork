@@ -138,9 +138,13 @@ echo "Syncing ..."
 # we must sync first the objects and the deltas before the references
 # otherwise users might get temporarily an inconsistent content.
 for dir in \
+		paperwork_repo/config \
 		paperwork_repo/objects \
 		paperwork_repo/deltas \
-		paperwork_repo ; do
+		paperwork_repo/refs \
+		paperwork_repo/summary \
+		paperwork_repo/summary.sig \
+	; do
 
 	local_path="/home/gitlab-runner/flatpak/${dir}"
 
