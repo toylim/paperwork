@@ -51,7 +51,7 @@ generate_data:
   script:
     - source ./activate_test_env.sh && make install
     - source ./activate_test_env.sh && paperwork-gtk chkdeps -y && paperwork-cli chkdeps -y
-    - source ./activate_test_env.sh && make data && make upload_data
+    - source ./activate_test_env.sh && make data upload_data
 
 
 linux_flatpak:
