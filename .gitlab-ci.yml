@@ -3,7 +3,8 @@ image: registry.gitlab.gnome.org/world/openpaperwork/paperwork/build
 stages:
   - test
   - data
-  - deploy
+  - deploy_linux
+  - deploy_windows
 
 check:
   stage: test
@@ -54,7 +55,7 @@ generate_data:
 
 
 linux_flatpak:
-  stage: deploy
+  stage: deploy_linux
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
@@ -69,7 +70,7 @@ linux_flatpak:
 
 doc_devel:
   image: registry.gitlab.gnome.org/world/openpaperwork/paperwork/build_doc
-  stage: deploy
+  stage: deploy_linux
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
@@ -82,7 +83,7 @@ doc_devel:
 
 
 windows_exe:
-  stage: deploy
+  stage: deploy_windows
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
