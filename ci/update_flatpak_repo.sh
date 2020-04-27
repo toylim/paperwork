@@ -146,7 +146,7 @@ for dir in \
 
 	echo "${local_path} --> ${dir} ..."
 
-	if ! rclone --config ./ci/rclone.conf sync ${local_path} "ovhswift:paperwork_flatpak/${dir}" ; then
+	if ! rclone --fast-list --config ./ci/rclone.conf sync ${local_path} "ovhswift:paperwork_flatpak/${dir}" ; then
 		echo "rclone failed"
 		exit 1
 	fi
