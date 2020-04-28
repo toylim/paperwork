@@ -137,7 +137,7 @@ echo "Syncing ..."
 
 # we must sync first the objects and the deltas before the references
 # otherwise users might get temporarily an inconsistent content.
-for dir in \
+for dest in \
 		paperwork_repo/config \
 		paperwork_repo/objects \
 		paperwork_repo/deltas \
@@ -146,11 +146,16 @@ for dir in \
 		paperwork_repo/summary.sig \
 	; do
 
-	local_path="/home/gitlab-runner/flatpak/${dir}"
+	local_path="/home/gitlab-runner/flatpak/${dest}"
 
-	echo "${local_path} --> ${dir} ..."
+	echo "${local_path} --> ${dest} ..."
 
-	if ! rclone --fast-list --config ./ci/rclone.conf sync ${local_path} "ovhswift:paperwork_flatpak/${dir}" ; then
+	action="copy"
+	if [ -d "${local_path}" ] ; then
+		action="sync"
+	fi
+
+	if ! rclone --fast-list --config ./ci/rclone.conf ${action} "${local_path}" "ovhswift:paperwork_flatpak/${dest}" ; then
 		echo "rclone failed"
 		exit 1
 	fi
