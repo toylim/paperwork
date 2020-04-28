@@ -187,12 +187,15 @@ class PdfPageMapping(object):
         self.last_change = self.core.call_success("fs_get_mtime", self.map_url)
 
     def has_original_page_idx(self, original_page_idx):
-        if original_page_idx not in self.mapping:
+        target_page_idx = self.mapping.get(original_page_idx, None)
+        if target_page_idx is None:
+            # no mapping --> default mapping --> has mapping
             return True
-        return self.mapping[original_page_idx] >= 0
+        return target_page_idx >= 0
 
     def get_original_page_idx(self, target_page_idx):
-        if target_page_idx not in self.reverse_mapping:
+        original_page_idx = self.reverse_mapping.get(target_page_idx, None)
+        if original_page_idx is None:
             if target_page_idx not in self.mapping:
                 if target_page_idx >= self.real_nb_pages:
                     # out of the PDF --> handled by other plugins
@@ -201,7 +204,6 @@ class PdfPageMapping(object):
                 return target_page_idx
             # handled by other plugins
             return None
-        original_page_idx = self.reverse_mapping[target_page_idx]
         LOGGER.info("Applying pdf page mapping: {} --> {}".format(
             original_page_idx, target_page_idx
         ))
@@ -211,15 +213,15 @@ class PdfPageMapping(object):
         return self.page_mtimes.get(target_page_idx,  None)
 
     def get_target_page_hash(self, target_page_idx):
-        if target_page_idx not in self.reverse_mapping:
-            if (target_page_idx not in self.mapping
-                    or self.mapping[target_page_idx] == target_page_idx):
+        original_page_idx = self.reverse_mapping.get(target_page_idx, None)
+        if original_page_idx is None:
+            v = self.mapping.get(target_page_idx, None)
+            if (v is None or v == target_page_idx):
                 # this page is not mapped at all (default mapping)
                 return hash(target_page_idx)
             else:
                 # provided by another plugin
                 return None
-        original_page_idx = self.reverse_mapping[target_page_idx]
         return hash(original_page_idx)
 
     def _move_pages(self, original_page_idx, target_page_idx, offset):
@@ -251,15 +253,23 @@ class PdfPageMapping(object):
                 assert(self.reverse_mapping[target + offset] == original)
 
     def delete_target_page(self, target_page_idx):
-        LOGGER.info(
-            "Deleting page %d from PDF %s",
-            target_page_idx, self.doc_url
-        )
         original_page_idx = self.get_original_page_idx(target_page_idx)
         if original_page_idx is not None:
             self.mapping[original_page_idx] = -1
         else:
             original_page_idx = target_page_idx
+
+        nb_pages = self.plugin._doc_internal_get_nb_pages_by_url(
+            self.doc_url, mapping=False
+        )
+        if original_page_idx >= nb_pages:
+            # outside the PDF --> ignored
+            return
+
+        LOGGER.info(
+            "Deleting page %d from PDF %s",
+            target_page_idx, self.doc_url
+        )
         if target_page_idx in self.reverse_mapping:
             self.reverse_mapping.pop(target_page_idx)
         self._move_pages(original_page_idx, target_page_idx, offset=-1)
