@@ -150,9 +150,10 @@ for dest in \
 
 	echo "${local_path} --> ${dest} ..."
 
-	action="copy"
-	if [ -d "${local_path}" ] ; then
-		action="sync"
+	action="sync"
+	if [ -f "${local_path}" ] ; then
+		action="copy"
+		dest="$(dirname ${dest})"
 	fi
 
 	if ! rclone --fast-list --config ./ci/rclone.conf ${action} "${local_path}" "ovhswift:paperwork_flatpak/${dest}" ; then
