@@ -64,7 +64,7 @@ class BaseDisplayNewDocController(BaseDocViewController):
                 )
             )
 
-    def doc_reload_page(self, page_idx):
+    def doc_reload(self):
         self._switch_controller()
 
 

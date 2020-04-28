@@ -46,8 +46,8 @@ class BaseDocViewController(object):
     def docview_set_zoom(self, zoom):
         LOGGER.debug("%s(%f)", self.docview_set_zoom, zoom)
 
-    def doc_reload_page(self, page_idx):
-        LOGGER.debug("%s()", self.doc_reload_page)
+    def doc_reload(self):
+        LOGGER.debug("%s()", self.doc_reload)
 
     def on_page_activated(self, page):
         LOGGER.debug("%s(%d)", self.on_page_activated, page.page_idx)
@@ -68,3 +68,6 @@ class BaseDocViewController(object):
     def on_overlay_draw(self, overlay_drawing_area, cairo_context):
         # no LOGGER.debug() here for performance reasons
         pass
+
+    def on_close(self):
+        LOGGER.debug("%s()", self.on_close)

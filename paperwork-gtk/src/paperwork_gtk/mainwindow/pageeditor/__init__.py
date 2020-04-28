@@ -378,7 +378,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _on_edit_end(self, doc_url, page_idx):
         self.core.call_all("mainwindow_show_default", side="right")
-        self.core.call_all("doc_reload_page", *self.active_doc, page_idx)
+        self.core.call_all("doc_reload", *self.active_doc)
         self.core.call_success(
             "mainloop_schedule", self.core.call_all, "doc_goto_page", page_idx
         )

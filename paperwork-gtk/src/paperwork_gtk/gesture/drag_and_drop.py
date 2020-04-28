@@ -135,13 +135,6 @@ class Plugin(openpaperwork_core.PluginBase):
         if src_doc_id == dst_doc_id and src_page_idx == dst_page_idx:
             return
 
-        src_nb_pages = self.core.call_success(
-            "doc_get_nb_pages_by_url", src_doc_url
-        )
-        dst_nb_pages = self.core.call_success(
-            "doc_get_nb_pages_by_url", dst_doc_url
-        )
-
         self.promise = self.promise.then(
             self.core.call_all, "page_move_by_url",
             src_doc_url, src_page_idx,
@@ -149,22 +142,11 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         self.promise = self.promise.then(lambda *args, **kwargs: None)
 
-        for (doc_id, doc_url, start_page_idx, previous_nb_pages) in (
-                (src_doc_id, src_doc_url, src_page_idx, src_nb_pages),
-                (dst_doc_id, dst_doc_url, dst_page_idx, dst_nb_pages)):
-            if doc_id != self.active_doc[0]:
-                continue
-            nb_pages = max(self.core.call_success(
-                "doc_get_nb_pages_by_url", doc_url
-            ), previous_nb_pages)
-            # all the pages that followed may have changed --> refresh
-            # them all
-            for page_idx in range(start_page_idx, nb_pages):
-                self.promise = self.promise.then(
-                    self.core.call_all, "doc_reload_page",
-                    *self.active_doc, page_idx
-                )
-                self.promise = self.promise.then(lambda *args, **kwargs: None)
+        for doc in ((src_doc_id, src_doc_url), (dst_doc_id, dst_doc_url)):
+            self.promise = self.promise.then(
+                self.core.call_all, "doc_reload", *doc
+            )
+            self.promise = self.promise.then(lambda *args, **kwargs: None)
 
         self.updated.add(src_doc_id)
         self.updated.add(dst_doc_id)

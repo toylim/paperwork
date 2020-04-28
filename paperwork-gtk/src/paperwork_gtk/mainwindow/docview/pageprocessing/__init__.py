@@ -124,6 +124,7 @@ class Plugin(openpaperwork_core.PluginBase):
         super().__init__()
         self.wrappers = []
         self.active_doc_id = None
+        self.active_pages = set()
 
     def get_interfaces(self):
         return [
@@ -146,23 +147,11 @@ class Plugin(openpaperwork_core.PluginBase):
     def doc_close(self):
         self.wrappers = []
 
-    def doc_reload_page_component(self, out: list, doc_id, doc_url, page_idx):
-        if len(out) <= 0:
-            return
-        assert(len(out) == 1)
-
-        wrapper = PageWrapper(self, out[0])
-        out[0] = wrapper
-
-        if page_idx < len(self.wrappers):
-            self.wrappers[page_idx] = wrapper
-        elif page_idx == len(self.wrappers):
-            self.wrappers.append(wrapper)
-        else:
-            assert()
-
     def doc_open_components(self, out: list, doc_id, doc_url):
-        self.active_doc_id = doc_id
+        if doc_id != self.active_doc_id:
+            self.active_doc_id = doc_id
+            self.active_pages = set()
+
         self.doc_close()
 
         # instantiate PageWrapper objects, and replace the pages in the
@@ -170,13 +159,22 @@ class Plugin(openpaperwork_core.PluginBase):
         self.wrappers = [PageWrapper(self, page) for page in out]
         for page_idx in range(0, len(out)):
             out[page_idx] = self.wrappers[page_idx]
+            if page_idx in self.active_pages:
+                out[page_idx].on_page_modification_start()
 
     def on_page_modification_start(self, doc_id, page_idx):
         if doc_id != self.active_doc_id:
+            return
+        self.active_pages.add(page_idx)
+        if page_idx >= len(self.wrappers):
             return
         self.wrappers[page_idx].on_page_modification_start()
 
     def on_page_modification_end(self, doc_id, page_idx):
         if doc_id != self.active_doc_id:
+            return
+        if page_idx in self.active_pages:
+            self.active_pages.remove(page_idx)
+        if page_idx >= len(self.wrappers):
             return
         self.wrappers[page_idx].on_page_modification_end()

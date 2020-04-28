@@ -148,6 +148,12 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         self.core.call_success("scan_schedule", promise)
 
+    def on_scan2doc_page_scanned(self, scan_id, doc_id, doc_url, nb_pages):
+        LOGGER.info(
+            "Page scanned: %s p%d (scan id = %d)", doc_id, nb_pages, scan_id
+        )
+        self.core.call_all("doc_reload", doc_id, doc_url)
+
     def on_scan_started(self, scan_id):
         if not self.busy:
             return

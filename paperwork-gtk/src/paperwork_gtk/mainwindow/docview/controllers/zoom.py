@@ -62,6 +62,9 @@ class ZoomLayoutController(BaseDocViewController):
     def on_layout_size_allocate(self, layout):
         self._recompute_zoom()
 
+    def doc_reload(self):
+        self._recompute_zoom()
+
 
 class ZoomCustomController(BaseDocViewController):
     def _reapply_zoom(self):

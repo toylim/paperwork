@@ -97,7 +97,7 @@ class Plugin(openpaperwork_core.PluginBase):
         LOGGER.info("Will reset page %s p%d", doc_id, page_idx)
 
         self.core.call_all("page_reset_by_url", doc_url, page_idx)
-        self.core.call_all("doc_reload_page", doc_id, doc_url, page_idx)
+        self.core.call_all("doc_reload", doc_id, doc_url)
         self.core.call_success(
             "mainloop_schedule", self.core.call_all, "doc_goto_page", page_idx
         )

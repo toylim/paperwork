@@ -100,10 +100,10 @@ class Plugin(openpaperwork_core.PluginBase):
         self.page_info.set_visible(True)
         self.page_info.set_sensitive(nb_pages > 0)
 
-    def doc_reload_page(self, doc_id, doc_url, page_idx):
-        if doc_id != self.active_doc[0]:
+    def doc_reload(self, doc_id, doc_url):
+        if (doc_id, doc_url) != self.active_doc:
             return
-        self.doc_open(doc_id, doc_url)
+        self.doc_open(*self.active_doc)
 
     def on_page_shown(self, page_idx):
         txt = str(page_idx + 1)
@@ -128,31 +128,33 @@ class Plugin(openpaperwork_core.PluginBase):
 
             def __init__(s, core, total_expected=-1):
                 super().__init__(core, total_expected)
-                s.refresh = False
+                s.active_doc = False
+
+            def _refresh(s):
+                self.core.call_success(
+                    "mainloop_schedule", self.doc_open, *self.active_doc
+                )
+                s.active_doc = True
 
             def add_obj(s, doc_id):
                 if self.active_doc[0] == doc_id:
-                    s.refresh = True
+                    s._refresh()
 
             def upd_obj(s, doc_id):
                 if self.active_doc[0] == doc_id:
-                    s.refresh = True
+                    s._refresh()
 
             def del_obj(s, doc_id):
                 if self.active_doc[0] == doc_id:
-                    s.refresh = True
+                    s._refresh()
 
             def cancel(s):
-                if s.refresh:
-                    self.core.call_one(
-                        "mainloop_schedule", self.doc_open, *self.active_doc
-                    )
+                if s.active_doc:
+                    s._refresh()
 
             def commit(s):
-                if s.refresh:
-                    self.core.call_one(
-                        "mainloop_schedule", self.doc_open, *self.active_doc
-                    )
+                if s.active_doc:
+                    s._refresh()
 
         out.append(RefreshTransaction(self.core, total_expected))
 

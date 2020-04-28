@@ -140,6 +140,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
         self.core.call_all("page_delete_by_url", doc_url, page_idx)
         self.core.call_all("search_update_document_list")
-        self.core.call_all("doc_reload_page", doc_id, doc_url, page_idx)
+        self.core.call_all("doc_reload", doc_id, doc_url)
 
         self.core.call_success("transaction_simple", (('upd', doc_id),))

@@ -11,6 +11,8 @@ except (ImportError, ValueError):
 import openpaperwork_core
 import openpaperwork_gtk.deps
 
+import paperwork_backend.sync
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -39,6 +41,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         self.active_page_idx = 0
         self.active_doc = (None, None)
+        self.active_doc_mtime = None
 
     def get_interfaces(self):
         return [
@@ -196,14 +199,10 @@ class Plugin(openpaperwork_core.PluginBase):
             controller.on_overlay_draw(widget, cairo_context)
 
     def doc_close(self):
-        for controller in self.controllers.values():
-            controller.exit()
-        for page in self.page_layout.get_children():
-            self.page_layout.remove(page)
         for page in self.pages:
             page.set_visible(False)
-        self.pages = []
-        self.widget_to_page = {}
+        for controller in self.controllers.values():
+            controller.on_close()
 
     def _build_flow_box_child(self, child):
         widget = Gtk.FlowBoxChild.new()
@@ -211,6 +210,13 @@ class Plugin(openpaperwork_core.PluginBase):
         widget.set_property('halign', Gtk.Align.CENTER)
         widget.add(child)
         return widget
+
+    def _get_doc_mtime(self, doc_url):
+        mtimes = []
+        self.core.call_all("doc_get_mtime_by_url", mtimes, doc_url)
+        if len(mtimes) <= 0:
+            return 0
+        return max(mtimes)
 
     def doc_open(self, doc_id, doc_url):
         self.doc_close()
@@ -220,6 +226,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.zoom = 0.0
         self.layout_name = 'grid'
         self.active_doc = (doc_id, doc_url)
+        self.active_doc_mtime = self._get_doc_mtime(doc_url)
         self.active_page_idx = 0
 
         self.pages = []
@@ -229,9 +236,19 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all(
             "gtk_docview_get_controllers", self.controllers, self
         )
-
         for controller in self.controllers.values():
             controller.enter()
+
+    def doc_reload(self, doc_id, doc_url):
+        if self.active_doc != (doc_id, doc_url):
+            return
+        mtime = self._get_doc_mtime(doc_url)
+        if mtime == self.active_doc_mtime:
+            return
+        self.active_doc_mtime = mtime
+        LOGGER.info("Reloading document %s", self.active_doc)
+        for controller in self.controllers.values():
+            controller.doc_reload()
 
     def on_page_size_obtained(self, page):
         # page may been wrapped
@@ -265,10 +282,3 @@ class Plugin(openpaperwork_core.PluginBase):
         self.zoom = zoom
         for controller in self.controllers.values():
             controller.docview_set_zoom(zoom)
-
-    def doc_reload_page(self, doc_id, doc_url, page_idx):
-        if self.active_doc[0] != doc_id:
-            return
-        LOGGER.info("Reloading page %d of document %s", page_idx, doc_id)
-        for controller in self.controllers.values():
-            controller.doc_reload_page(page_idx)

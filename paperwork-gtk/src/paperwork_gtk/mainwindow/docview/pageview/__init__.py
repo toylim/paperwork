@@ -42,18 +42,16 @@ class Page(GObject.GObject):
         self.nb_pages = nb_pages
         self.visible = False
 
+        self.mtime = 0
+
         self.zoom = 1.0
 
-        self.widget_tree = self.core.call_success(
-            "gtk_load_widget_tree",
-            "paperwork_gtk.mainwindow.docview.pageview", "pageview.glade"
-        )
-        self.widget = self.widget_tree.get_object("pageview_area")
-        self.widget.set_visible(False)  # visible in the GTK sense
-        self.widget.connect("draw", self._on_draw)
-
+        self.widget_tree = None
+        self.widget = None
         self.renderer = None
+
         self._load_renderer()
+        self.rebuild_widget()
 
     def _load_renderer(self):
         page_img_url = self.core.call_success(
@@ -67,6 +65,16 @@ class Page(GObject.GObject):
         self.renderer.connect("getting_size", self._on_renderer_getting_size)
         self.renderer.connect("size_obtained", self._on_renderer_size)
         self.renderer.connect("img_obtained", self._on_renderer_img)
+
+    def rebuild_widget(self):
+        self.widget_tree = self.core.call_success(
+            "gtk_load_widget_tree",
+            "paperwork_gtk.mainwindow.docview.pageview", "pageview.glade"
+        )
+        self.widget = self.widget_tree.get_object("pageview_area")
+        self.widget.set_visible(False)  # visible in the GTK sense
+        self.widget.connect("draw", self._on_draw)
+        self.resize()
 
     def __str__(self):
         return "{} p{}".format(self.doc_id, self.page_idx)
@@ -96,7 +104,12 @@ class Page(GObject.GObject):
         self.emit('img_obtained')
 
     def load(self):
-        self.renderer.start()
+        if not self.refresh(reload=True):
+            # renderer has already loaded the page --> reemit the page size
+            if self.renderer.size[0] != 0:
+                self.core.call_success(
+                    "mainloop_schedule", self._on_renderer_size, self.renderer
+                )
 
     def close(self):
         self.renderer.close()
@@ -126,24 +139,38 @@ class Page(GObject.GObject):
 
     def refresh(self, reload=False):
         if reload:
-            visible = self.visible
-            self.hide()
+            # only if the mtime has changed. Otherwise there is no point.
+            mtime = []
+            self.core.call_all(
+                "page_get_mtime_by_url", mtime, self.doc_url, self.page_idx
+            )
+            mtime = max(mtime)
+            if self.mtime == mtime:
+                reload = False
+            else:
+                self.mtime = mtime
+
+        if reload:
+            self.set_visible(False)
             self.close()
             self._load_renderer()
-            self.load()
-            if visible:
-                self.show()
-
+            self.renderer.start()
+            return True
         elif self.widget is not None:
             self.widget.queue_draw()
+            return False
 
     def hide(self):
         self.visible = False
         self.renderer.hide()
+        self.core.call_all("on_page_visibility_changed", self, False)
+        self.emit('visibility_changed', False)
 
     def show(self):
         self.visible = True
         self.renderer.render()
+        self.core.call_all("on_page_visibility_changed", self, True)
+        self.emit('visibility_changed', True)
 
     def set_visible(self, visible):
         if self.visible == visible:
@@ -151,11 +178,7 @@ class Page(GObject.GObject):
 
         if visible:
             self.show()
-
-        self.core.call_all("on_page_visibility_changed", self, visible)
-        self.emit('visibility_changed', visible)
-
-        if not visible:
+        else:
             self.hide()
 
     def get_visible(self):
@@ -173,6 +196,12 @@ class Page(GObject.GObject):
         self.renderer.unblur()
         self.widget.queue_draw()
 
+    def detach_from_parent(self):
+        parent = self.widget.get_parent()
+        if parent is None:
+            return
+        parent.remove(self.widget)
+
 
 if GLIB_AVAILABLE:
     GObject.type_register(Page)
@@ -185,6 +214,7 @@ class Plugin(openpaperwork_core.PluginBase):
         super().__init__()
         self.pages = []
         self.nb_to_load = 0
+        self.active_doc = (None, None)
 
     def get_interfaces(self):
         return [
@@ -230,28 +260,15 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def doc_close(self):
         self.core.call_success("work_queue_cancel_all", "page_loader")
-
         for page in self.pages:
             page.close()
         self.pages = []
 
-    def doc_reload_page_component(self, out: list, doc_id, doc_url, page_idx):
-        nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)
-        if page_idx >= nb_pages:
-            return
-        self.nb_to_load += 1
-        page = Page(self.core, doc_id, doc_url, page_idx, nb_pages)
-        page.connect("size_obtained", self._on_page_img_size_obtained)
-        if page_idx < len(self.pages):
-            self.pages[page_idx] = page
-        elif page_idx == len(self.pages):
-            self.pages.append(page)
-        else:
-            assert()
-        out.append(page)
-
     def doc_open_components(self, out: list, doc_id, doc_url):
-        self.doc_close()
+        active_doc = (doc_id, doc_url)
+        if self.active_doc != active_doc:
+            self.doc_close()
+            self.active_doc = active_doc
 
         nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)
         LOGGER.info("Number of pages displayed: %s", nb_pages)
@@ -266,11 +283,21 @@ class Plugin(openpaperwork_core.PluginBase):
             "pageview->doc_open_components({})".format(doc_id)
         )
 
-        self.pages = [
-            Page(
+        # drop the extra pages we have if any
+        for page in self.pages[nb_pages:]:
+            page.close()
+        self.pages = self.pages[:nb_pages]
+
+        # reuse the pages we already have to avoid useless refreshes
+        for page in self.pages:
+            page.detach_from_parent()
+
+        # add any new page
+        for page_idx in range(len(self.pages), nb_pages):
+            self.pages.append(Page(
                 self.core, doc_id, doc_url, page_idx, nb_pages
-            ) for page_idx in range(0, nb_pages)
-        ]
+            ))
+
         self.nb_to_load = len(self.pages)
         for page in self.pages:
             page.connect("size_obtained", self._on_page_img_size_obtained)

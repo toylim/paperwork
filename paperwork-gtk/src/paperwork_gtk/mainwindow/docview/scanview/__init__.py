@@ -179,36 +179,18 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def doc_reload_page_component(
-            self, out: list, doc_id, doc_url, page_idx, force=False):
-
-        if not force:
-            nb_pages = self.core.call_success(
-                "doc_get_nb_pages_by_url", self.doc_url
-            )
-            if nb_pages is None:
-                nb_pages = 0
-            if page_idx < nb_pages:
-                return
-
+    def doc_open_components(self, out: list, doc_id, doc_url):
         self.doc_id = doc_id
         self.doc_url = doc_url
-        scan_id = self.core.call_success("scan2doc_doc_id_to_scan_id", doc_id)
 
-        self.scan = Scan(self.core, doc_id, page_idx, scan_id)
-        out.append(self.scan)
-
-    def doc_open_components(self, out: list, doc_id, doc_url):
         nb_pages = self.core.call_success(
             "doc_get_nb_pages_by_url", doc_url
         )
         if nb_pages is None:
             nb_pages = 0
-        components = []
-        self.doc_reload_page_component(
-            components, doc_id, doc_url, nb_pages, force=True
-        )
-        out.append(components[0])
+        scan_id = self.core.call_success("scan2doc_doc_id_to_scan_id", doc_id)
+        self.scan = Scan(self.core, doc_id, nb_pages, scan_id)
+        out.append(self.scan)
 
     def on_scan2doc_start(self, scan_id, doc_id, doc_url):
         if self.scan is None:
@@ -261,9 +243,6 @@ class Plugin(openpaperwork_core.PluginBase):
         assert(nb_pages is not None)
 
         LOGGER.info("Displaying new page %d", nb_pages - 1)
-        self.core.call_all("doc_reload_page", doc_id, doc_url, nb_pages - 1)
-        # and add back the scan drawer
-        self.core.call_all("doc_reload_page", doc_id, doc_url, nb_pages)
         self.core.call_all("doc_goto_page", nb_pages - 1)
 
     def on_scan_feed_end(self, scan_id):
