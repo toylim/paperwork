@@ -11,8 +11,6 @@ except (ImportError, ValueError):
 import openpaperwork_core
 import openpaperwork_gtk.deps
 
-import paperwork_backend.sync
-
 
 LOGGER = logging.getLogger(__name__)
 

@@ -15,6 +15,7 @@ LOGGER = logging.getLogger(__name__)
 PAGE_FILENAME_FMT = "paper.{}.words"
 PAGE_FILENAME_REGEX = re.compile(r"paper\.(\d+)\.words")
 
+
 class Plugin(openpaperwork_core.PluginBase):
     PRIORITY = 100
 
