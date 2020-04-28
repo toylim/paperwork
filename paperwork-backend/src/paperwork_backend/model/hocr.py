@@ -1,4 +1,5 @@
 import logging
+import re
 import xml.etree.cElementTree as etree
 
 import pyocr
@@ -12,7 +13,7 @@ from . import util
 LOGGER = logging.getLogger(__name__)
 
 PAGE_FILENAME_FMT = "paper.{}.words"
-
+PAGE_FILENAME_REGEX = re.compile(r"paper\.(\d+)\.words")
 
 class Plugin(openpaperwork_core.PluginBase):
     PRIORITY = 100
@@ -33,34 +34,24 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def doc_get_mtime_by_url(self, out: list, doc_url):
-        doc_nb_pages = self.core.call_success(
-            "doc_get_nb_pages_by_url", doc_url
-        )
-
-        page_idx = 0
-        for page_idx in range(0, doc_nb_pages):
-            page_url = self.core.call_success(
-                "fs_join", doc_url, PAGE_FILENAME_FMT.format(page_idx + 1)
-            )
-            if self.core.call_success("fs_exists", page_url) is None:
-                continue
-            out.append(self.core.call_success("fs_get_mtime", page_url))
+        mtime = util.get_doc_mtime(self.core, doc_url, PAGE_FILENAME_REGEX)
+        if mtime is None:
+            return
+        out.append(mtime)
 
     def page_get_mtime_by_url(self, out: list, doc_url, page_idx):
-        page_url = self.core.call_success(
-            "fs_join", doc_url, PAGE_FILENAME_FMT.format(page_idx + 1)
+        mtime = util.get_page_mtime(
+            self.core, doc_url, page_idx, PAGE_FILENAME_FMT
         )
-        if self.core.call_success("fs_exists", page_url) is None:
+        if mtime is None:
             return
-        out.append(self.core.call_success("fs_get_mtime", page_url))
+        out.append(mtime)
 
     def page_get_hash_by_url(self, out: list, doc_url, page_idx):
-        page_url = self.core.call_success(
-            "fs_join", doc_url, PAGE_FILENAME_FMT.format(page_idx + 1)
-        )
-        if self.core.call_success("fs_exists", page_url) is None:
+        h = util.get_page_hash(self.core, doc_url, page_idx, PAGE_FILENAME_FMT)
+        if h is None:
             return
-        out.append(self.core.call_success("fs_hash", page_url))
+        out.append(h)
 
     def doc_get_text_by_url(self, out: list, doc_url):
         doc_nb_pages = self.core.call_success(

@@ -5,6 +5,7 @@ to the original only.
 """
 
 import logging
+import re
 
 import openpaperwork_core
 
@@ -13,9 +14,8 @@ from . import util
 
 LOGGER = logging.getLogger(__name__)
 
-PAGE_PREFIX = "paper."
-PAGE_SUFFIX = ".edited.jpg"
-PAGE_FILENAME_FMT = PAGE_PREFIX + "{}" + PAGE_SUFFIX
+PAGE_FILENAME_FMT = "paper.{}.edited.jpg"
+PAGE_FILENAME_REGEX = re.compile(r"paper\.(\d+)\.edited.jpg")
 PAGE_FILE_FORMAT = 'JPEG'
 PAGE_QUALITY = 90
 
@@ -39,32 +39,24 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def doc_get_mtime_by_url(self, out: list, doc_url):
-        if self.core.call_success("fs_isdir", doc_url) is None:
+        mtime = util.get_doc_mtime(self.core, doc_url, PAGE_FILENAME_REGEX)
+        if mtime is None:
             return
-        for file_uri in self.core.call_success("fs_listdir", doc_url):
-            name = self.core.call_success("fs_basename", file_uri)
-            if (not name.startswith(PAGE_PREFIX)
-                    or not name.endswith(PAGE_SUFFIX)):
-                continue
-            if self.core.call_success("fs_exists", file_uri) is None:
-                return
-            out.append(self.core.call_success("fs_get_mtime", file_uri))
+        out.append(mtime)
 
     def page_get_mtime_by_url(self, out: list, doc_url, page_idx):
-        page_url = self.core.call_success(
-            "fs_join", doc_url, PAGE_FILENAME_FMT.format(page_idx + 1)
+        mtime = util.get_page_mtime(
+            self.core, doc_url, page_idx, PAGE_FILENAME_FMT
         )
-        if self.core.call_success("fs_exists", page_url) is None:
+        if mtime is None:
             return
-        out.append(self.core.call_success("fs_get_mtime", page_url))
+        out.append(mtime)
 
     def page_get_hash_by_url(self, out: list, doc_url, page_idx):
-        page_url = self.core.call_success(
-            "fs_join", doc_url, PAGE_FILENAME_FMT.format(page_idx + 1)
-        )
-        if self.core.call_success("fs_exists", page_url) is None:
+        h = util.get_page_hash(self.core, doc_url, page_idx, PAGE_FILENAME_FMT)
+        if h is None:
             return
-        out.append(self.core.call_success("fs_hash", page_url))
+        out.append(h)
 
     def page_get_img_url(self, doc_url, page_idx, write=False):
         page_url = self.core.call_success(

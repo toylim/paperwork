@@ -46,48 +46,28 @@ class Plugin(openpaperwork_core.PluginBase):
         return True
 
     def doc_get_mtime_by_url(self, out: list, doc_url):
-        page_idx = 0
-        while self.page_get_img_url(doc_url, page_idx) is not None:
-            page_url = self.core.call_success(
-                "fs_join", doc_url, PAGE_FILENAME_FMT.format(page_idx + 1)
-            )
-            if self.core.call_success("fs_exists", page_url) is None:
-                return
-            out.append(self.core.call_success("fs_get_mtime", page_url))
-            page_idx += 1
+        mtime = util.get_doc_mtime(self.core, doc_url, PAGE_FILENAME_REGEX)
+        if mtime is None:
+            return
+        out.append(mtime)
 
     def page_get_mtime_by_url(self, out: list, doc_url, page_idx):
-        page_url = self.core.call_success(
-            "fs_join", doc_url, PAGE_FILENAME_FMT.format(page_idx + 1)
+        mtime = util.get_page_mtime(
+            self.core, doc_url, page_idx, PAGE_FILENAME_FMT
         )
-        if self.core.call_success("fs_exists", page_url) is None:
+        if mtime is None:
             return
-        out.append(self.core.call_success("fs_get_mtime", page_url))
+        out.append(mtime)
 
     def page_get_hash_by_url(self, out: list, doc_url, page_idx):
-        page_url = self.core.call_success(
-            "fs_join", doc_url, PAGE_FILENAME_FMT.format(page_idx + 1)
-        )
-        if self.core.call_success("fs_exists", page_url) is None:
+        h = util.get_page_hash(self.core, doc_url, page_idx, PAGE_FILENAME_FMT)
+        if h is None:
             return
-        out.append(self.core.call_success("fs_hash", page_url))
+        out.append(h)
 
     def doc_internal_get_nb_pages_by_url(self, out: list, doc_url):
-        if self.core.call_success("fs_exists", doc_url) is None:
-            return
-        if self.core.call_success("fs_isdir", doc_url) is None:
-            return
-        files = self.core.call_success("fs_listdir", doc_url)
-        if files is None:
-            return
-        nb_pages = -1
-        for f in files:
-            f = self.core.call_success("fs_basename", f)
-            match = PAGE_FILENAME_REGEX.match(f)
-            if match is None:
-                continue
-            nb_pages = max(nb_pages, int(match.group(1)))
-        if nb_pages < 0:
+        nb_pages = util.get_nb_pages(self.core, doc_url, PAGE_FILENAME_REGEX)
+        if nb_pages is None:
             return
         out.append(nb_pages)
 

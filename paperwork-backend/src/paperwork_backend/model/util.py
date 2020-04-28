@@ -91,3 +91,62 @@ def move_page_file(
         LOGGER.info("  - %s --> %s", src, dst)
         core.call_all("fs_rename", src, dst)
     return True
+
+
+def get_nb_pages(core, doc_url, filename_regex):
+    if core.call_success("fs_exists", doc_url) is None:
+        return None
+    if core.call_success("fs_isdir", doc_url) is None:
+        return None
+    files = core.call_success("fs_listdir", doc_url)
+    if files is None:
+        return None
+    nb_pages = -1
+    for f in files:
+        f = core.call_success("fs_basename", f)
+        match = filename_regex.match(f)
+        if match is None:
+            continue
+        nb_pages = max(nb_pages, int(match.group(1)))
+    if nb_pages <= 0:
+        return None
+    return nb_pages
+
+
+def get_page_hash(core, doc_url, page_idx, filename_fmt):
+    page_url = core.call_success(
+        "fs_join", doc_url, filename_fmt.format(page_idx + 1)
+    )
+    if core.call_success("fs_exists", page_url) is None:
+        return None
+    return core.call_success("fs_hash", page_url)
+
+
+def get_page_mtime(core, doc_url, page_idx, filename_fmt):
+    page_url = core.call_success(
+        "fs_join", doc_url, filename_fmt.format(page_idx + 1)
+    )
+    if core.call_success("fs_exists", page_url) is None:
+        return
+    return core.call_success("fs_get_mtime", page_url)
+
+
+def get_doc_mtime(core, doc_url, filename_regex):
+    r = -1
+    if core.call_success("fs_exists", doc_url) is None:
+        return
+    if core.call_success("fs_isdir", doc_url) is None:
+        return
+    files = core.call_success("fs_listdir", doc_url)
+    if files is None:
+        return None
+    for f in files:
+        f = core.call_success("fs_basename", f)
+        match = filename_regex.match(f)
+        if match is None:
+            continue
+        page_url = core.call_success("fs_join", doc_url, f)
+        r = max(r, core.call_success("fs_get_mtime", page_url))
+    if r < 0:
+        return None
+    return r
