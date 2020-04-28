@@ -1,3 +1,4 @@
+import datetime
 import itertools
 import logging
 import math
@@ -98,11 +99,15 @@ class PdfPageMapping(object):
         self.plugin = plugin
         self.core = plugin.core
         self.doc_url = doc_url
-        self.mapping = {}
-        self.reverse_mapping = {}
+
         self.map_url = self.core.call_success(
             "fs_join", self.doc_url, self.MAPPING_FILE
         )
+
+        self.mapping = {}
+        self.reverse_mapping = {}
+        self.page_mtimes = {}
+
         self.last_change = None
         self.nb_pages = 0
         self.real_nb_pages = 0
@@ -117,9 +122,13 @@ class PdfPageMapping(object):
         if original_page_idx >= self.real_nb_pages:
             # comes from another set of plugins, no point in tracking it
             return
+
         self.mapping[original_page_idx] = target_page_idx
         if target_page_idx >= 0:
             self.reverse_mapping[target_page_idx] = original_page_idx
+            self.page_mtimes[target_page_idx] = (
+                datetime.datetime.now().timestamp()
+            )
             if target_page_idx >= self.nb_pages:
                 LOGGER.info(
                     "Fixing number of pages of %s based on mapping: %d --> %d",
@@ -198,6 +207,9 @@ class PdfPageMapping(object):
         ))
         return original_page_idx
 
+    def get_target_page_mtime(self, target_page_idx):
+        return self.page_mtimes.get(target_page_idx,  None)
+
     def get_target_page_hash(self, target_page_idx):
         if target_page_idx not in self.reverse_mapping:
             if (target_page_idx not in self.mapping
@@ -267,10 +279,10 @@ class PdfPageMapping(object):
             self.doc_url, nb_pages, self.nb_pages
         ))
         for original_page_idx in range(0, nb_pages):
-            if original_page_idx not in self.mapping:
+            target_page_idx = self.mapping.get(original_page_idx, None)
+            if target_page_idx is None:
                 print("{} --> {}".format(original_page_idx, original_page_idx))
                 continue
-            target_page_idx = self.mapping[original_page_idx]
             print("{} --> {}".format(original_page_idx, target_page_idx))
             if target_page_idx < 0:
                 continue
@@ -428,6 +440,21 @@ class Plugin(openpaperwork_core.PluginBase):
         if mtime is None:
             return None
         out.append(mtime)
+
+    def page_get_mtime_by_url(self, out: list, doc_url, page_idx):
+        pdf_url = self._get_pdf_url(doc_url)
+        if pdf_url is None:
+            return
+
+        mapping = self._get_page_mapping(doc_url)
+        mtime = mapping.get_target_page_mtime(page_idx)
+        if mtime is not None:
+            out.append(mtime)
+
+        mtime = self.core.call_success("fs_get_mtime", pdf_url)
+        if mtime is not None:
+            out.append(mtime)
+        return
 
     def _doc_get_real_nb_pages_by_url(self, doc_url):
         (pdf_url, pdf) = self._open_pdf(doc_url)
