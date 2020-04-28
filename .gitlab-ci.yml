@@ -1,13 +1,14 @@
 image: registry.gitlab.gnome.org/world/openpaperwork/paperwork/build
 
 stages:
-  - test
-  - data
+  # no point in waiting for the tests to end before generating the data files
+  # or the development documentation
+  - tests_data_doc
   - deploy_linux
   - deploy_windows
 
 check:
-  stage: test
+  stage: tests_data_doc
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
@@ -25,7 +26,7 @@ check:
 
 
 test:
-  stage: test
+  stage: tests_data_doc
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
@@ -40,7 +41,7 @@ test:
 
 
 generate_data:
-  stage: data
+  stage: tests_data_doc
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
@@ -52,6 +53,20 @@ generate_data:
     - source ./activate_test_env.sh && make install
     - source ./activate_test_env.sh && paperwork-gtk chkdeps -y && paperwork-cli chkdeps -y
     - source ./activate_test_env.sh && make data upload_data
+
+
+doc_devel:
+  image: registry.gitlab.gnome.org/world/openpaperwork/paperwork/build_doc
+  stage: tests_data_doc
+  only:
+    - branches@World/OpenPaperwork/paperwork
+    - tags@World/OpenPaperwork/paperwork
+  tags:
+    - linux
+    - volatile
+  <<: *apt
+  script:
+    - source ./activate_test_env.sh && make doc && make upload_doc
 
 
 linux_flatpak:
@@ -66,20 +81,6 @@ linux_flatpak:
     # - apt-get update
     # - apt-get install -y -q rclone flatpak-builder
     - ./ci/update_flatpak_repo.sh
-
-
-doc_devel:
-  image: registry.gitlab.gnome.org/world/openpaperwork/paperwork/build_doc
-  stage: deploy_linux
-  only:
-    - branches@World/OpenPaperwork/paperwork
-    - tags@World/OpenPaperwork/paperwork
-  tags:
-    - linux
-    - volatile
-  <<: *apt
-  script:
-    - source ./activate_test_env.sh && make doc && make upload_doc
 
 
 windows_exe:
