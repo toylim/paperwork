@@ -108,11 +108,10 @@ class StorageDoc(object):
         self.doc_url = doc_url
 
     def get_mtime(self):
-        mtime = []
-        self.core.call_all(
-            'doc_get_mtime_by_url', mtime, self.doc_url
-        )
-        return datetime.datetime.fromtimestamp(max(mtime, default=0))
+        mtime = self.core.call_success("doc_get_mtime_by_url", self.doc_url)
+        if mtime is None:
+            mtime = 0
+        return datetime.datetime.fromtimestamp(mtime)
 
     extra = property(get_mtime)
 

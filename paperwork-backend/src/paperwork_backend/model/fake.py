@@ -60,13 +60,7 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def get_deps(self):
-        return [
-            {
-                # to provide doc_get_nb_pages_by_url()
-                'interface': 'nb_pages',
-                'defaults': ['paperwork_backend.model'],
-            },
-        ]
+        return []
 
     def storage_get_all_docs(self, out: list):
         out += [
@@ -89,18 +83,18 @@ class Plugin(openpaperwork_core.PluginBase):
     def is_doc(self, doc_url):
         return True
 
-    def doc_get_hash_by_url(self, out: list, doc_url):
+    def doc_get_hash_by_url(self, doc_url):
         for doc in self.docs:
             if doc['url'] == doc_url:
                 if 'hash' in doc:
-                    out.append(doc['hash'])
+                    return doc['hash']
 
-    def doc_get_mtime_by_url(self, out: list, doc_url):
+    def doc_get_mtime_by_url(self, doc_url):
         for doc in self.docs:
             if doc['url'] == doc_url:
-                out.append(doc['mtime'])
+                return doc['mtime']
 
-    def doc_internal_get_nb_pages_by_url(self, out: list, doc_url):
+    def doc_get_nb_pages_by_url(self, doc_url):
         for doc in self.docs:
             if doc['url'] == doc_url:
                 l_boxes = len(doc['page_boxes']) if 'page_boxes' in doc else 0
@@ -115,10 +109,8 @@ class Plugin(openpaperwork_core.PluginBase):
                     len(doc['page_paper_sizes'])
                     if 'page_paper_sizes' in doc else 0
                 )
-                r = max(l_boxes, l_imgs, l_mtimes, l_hashes, l_paper_sizes)
-                out.append(r)
-                return
-        return
+                return max(l_boxes, l_imgs, l_mtimes, l_hashes, l_paper_sizes)
+        return None
 
     def doc_get_text_by_url(self, out: list, doc_url):
         for doc in self.docs:
@@ -256,13 +248,13 @@ class Plugin(openpaperwork_core.PluginBase):
                 continue
             out.append(doc['page_mtimes'][page_idx][1])
 
-    def page_get_hash_by_url(self, out: list, doc_url, page_idx):
+    def page_get_hash_by_url(self, doc_url, page_idx):
         for doc in self.docs:
             if doc['url'] != doc_url:
                 continue
             if 'page_hashes' not in doc:
                 continue
-            out.append(doc['page_hashes'][page_idx][1])
+            return doc['page_hashes'][page_idx][1]
 
     def page_get_paper_size_by_url(self, doc_url, page_idx):
         for doc in self.docs:

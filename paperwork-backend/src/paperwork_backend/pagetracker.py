@@ -6,7 +6,6 @@ For instance, when a document is notified as updated (see transactions), the
 OCR plugin needs to know which pages of this document have already been
 OCR-ed and which haven't.
 """
-import functools
 import logging
 import os
 import sqlite3
@@ -85,11 +84,9 @@ class PageTracker(object):
         )
         fs_pages = {}
         for page_idx in range(0, fs_nb_pages):
-            h = []
-            self.core.call_success(
-                "page_get_hash_by_url", h, doc_url, page_idx
+            fs_pages[page_idx] = self.core.call_success(
+                "page_get_hash_by_url", doc_url, page_idx
             )
-            fs_pages[page_idx] = functools.reduce(lambda x, y: x ^ y, h)
 
         for (page_idx, fs_page_hash) in fs_pages.items():
             if page_idx not in db_pages:
@@ -117,11 +114,9 @@ class PageTracker(object):
         """
         Mark the page update has handled.
         """
-        page_hash = []
-        self.core.call_success(
-            "page_get_hash_by_url", page_hash, doc_url, page_idx
+        page_hash = self.core.call_success(
+            "page_get_hash_by_url", doc_url, page_idx
         )
-        page_hash = functools.reduce(lambda x, y: x ^ y, page_hash)
         self.core.call_success(
             "mainloop_execute", self.sql.execute,
             "INSERT OR REPLACE"

@@ -1,5 +1,4 @@
 import datetime
-import functools
 import gettext
 import logging
 import os
@@ -75,17 +74,16 @@ class WhooshTransaction(sync.BaseTransaction):
         """
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
 
-        doc_mtime = []
-        self.core.call_all("doc_get_mtime_by_url", doc_mtime, doc_url)
-        doc_mtime = datetime.datetime.fromtimestamp(max(doc_mtime, default=0))
+        doc_mtime = self.core.call_success("doc_get_mtime_by_url", doc_url)
+        if doc_mtime is None:
+            doc_mtime = 0
+        doc_mtime = datetime.datetime.fromtimestamp(doc_mtime)
 
-        doc_hash = []
-        self.core.call_all("doc_get_hash_by_url", doc_hash, doc_url)
-        if len(doc_hash) <= 0:
+        doc_hash = self.core.call_success("doc_get_hash_by_url", doc_url)
+        if doc_hash is None:
             # we get a hash only for PDF documents, not image documents.
             doc_hash = "undefined"
         else:
-            doc_hash = functools.reduce(lambda x, y: x ^ y, doc_hash)
             doc_hash = ("%X" % doc_hash)
 
         doc_text = []

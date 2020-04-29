@@ -45,13 +45,13 @@ class Plugin(openpaperwork_core.PluginBase):
             return None
         return True
 
-    def doc_get_mtime_by_url(self, out: list, doc_url):
+    def doc_internal_get_mtime_by_url(self, out: list, doc_url):
         mtime = util.get_doc_mtime(self.core, doc_url, PAGE_FILENAME_REGEX)
         if mtime is None:
             return
         out.append(mtime)
 
-    def page_get_mtime_by_url(self, out: list, doc_url, page_idx):
+    def page_internal_get_mtime_by_url(self, out: list, doc_url, page_idx):
         mtime = util.get_page_mtime(
             self.core, doc_url, page_idx, PAGE_FILENAME_FMT
         )
@@ -59,7 +59,7 @@ class Plugin(openpaperwork_core.PluginBase):
             return
         out.append(mtime)
 
-    def page_get_hash_by_url(self, out: list, doc_url, page_idx):
+    def page_internal_get_hash_by_url(self, out: list, doc_url, page_idx):
         h = util.get_page_hash(self.core, doc_url, page_idx, PAGE_FILENAME_FMT)
         if h is None:
             return

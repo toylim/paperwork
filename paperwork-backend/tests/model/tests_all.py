@@ -84,12 +84,9 @@ class TestAll(unittest.TestCase):
         self.assertEqual(nb, 3)
 
     def _get_page_hash(self, doc_url, page_idx):
-        out = []
-        self.core.call_all("page_get_hash_by_url", out, doc_url, page_idx)
-        h = 0
-        for o in out:
-            h ^= o
-        return h
+        return self.core.call_success(
+            "page_get_hash_by_url", doc_url, page_idx
+        )
 
     def test_img_page_delete(self):
         nb = self.core.call_success("doc_get_nb_pages_by_url", self.doc_b)

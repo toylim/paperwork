@@ -13,7 +13,6 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with Paperwork.  If not, see <http://www.gnu.org/licenses/>.
-import functools
 import gettext
 import shutil
 
@@ -146,11 +145,9 @@ class Plugin(openpaperwork_core.PluginBase):
         self.page_hashes = {}
 
     def _compute_page_hash(self, doc_url, page_idx):
-        page_hash = []
-        self.core.call_all(
-            "page_get_hash_by_url", page_hash, doc_url, page_idx
+        return self.core.call_success(
+            "page_get_hash_by_url", doc_url, page_idx
         )
-        return functools.reduce(lambda x, y: x ^ y, page_hash)
 
     def on_scan2doc_page_scanned(self, scan_id, doc_id, doc_url, page_idx):
         print(_("Page {} in document {} created").format(

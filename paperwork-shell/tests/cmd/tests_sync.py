@@ -73,16 +73,16 @@ class TestSync(unittest.TestCase):
         r = core.call_success("cmd_run", args)
         self.assertEqual(r, {
             'whoosh': {
-                'added': ['20190801_1733_23', '20190830_1916_32',],
+                'added': ['20190801_1733_23', '20190830_1916_32'],
             },
             'ocr': {
-                'added': ['20190801_1733_23', '20190830_1916_32',],
+                'added': ['20190801_1733_23', '20190830_1916_32'],
             },
             'label_guesser': {
-                'added': ['20190801_1733_23', '20190830_1916_32',],
+                'added': ['20190801_1733_23', '20190830_1916_32'],
             },
             'doc_tracker': {
-                'added': ['20190801_1733_23', '20190830_1916_32',],
+                'added': ['20190801_1733_23', '20190830_1916_32'],
             },
         })
 
@@ -91,6 +91,7 @@ class TestSync(unittest.TestCase):
         class FakeModule(object):
             class Plugin(openpaperwork_core.PluginBase):
                 PRIORITY = 9999999999
+
                 def fs_get_mtime(s, file_url):
                     if file_url.endswith(".words"):
                         dt = datetime.datetime(year=2222, month=1, day=1)
@@ -103,16 +104,16 @@ class TestSync(unittest.TestCase):
         r = core.call_success("cmd_run", args)
         self.assertEqual(r, {
             'whoosh': {
-                'updated': ['20190830_1916_32',],
+                'updated': ['20190830_1916_32'],
             },
             'ocr': {
-                'updated': ['20190830_1916_32',],
+                'updated': ['20190830_1916_32'],
             },
             'label_guesser': {
-                'updated': ['20190830_1916_32',],
+                'updated': ['20190830_1916_32'],
             },
             'doc_tracker': {
-                'updated': ['20190830_1916_32',],
+                'updated': ['20190830_1916_32'],
             },
         })
 
@@ -123,15 +124,15 @@ class TestSync(unittest.TestCase):
         r = core.call_success("cmd_run", args)
         self.assertEqual(r, {
             'whoosh': {
-                'deleted': ['20190801_1733_23',],
+                'deleted': ['20190801_1733_23'],
             },
             'ocr': {
-                'deleted': ['20190801_1733_23',],
+                'deleted': ['20190801_1733_23'],
             },
             'label_guesser': {
-                'deleted': ['20190801_1733_23',],
+                'deleted': ['20190801_1733_23'],
             },
             'doc_tracker': {
-                'deleted': ['20190801_1733_23',],
+                'deleted': ['20190801_1733_23'],
             },
         })

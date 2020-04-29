@@ -32,11 +32,7 @@ class TestHocr(unittest.TestCase):
         self.assertTrue(self.core.call_success("is_doc", self.full_doc_url))
 
     def test_hash(self):
-        out = []
-        self.core.call_all("doc_get_hash_by_url", out, self.simple_doc_url)
-        h = 0
-        for k in out:
-            h ^= k
+        h = self.core.call_success("doc_get_hash_by_url", self.simple_doc_url)
         expected = (
             0x7d2ffb0e8ddce8f7dfbb4a8dfc14d563b272bd47b1bafb9617fbfd228bf2eecd
         )

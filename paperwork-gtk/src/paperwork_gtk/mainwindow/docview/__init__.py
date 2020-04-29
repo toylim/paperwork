@@ -209,13 +209,6 @@ class Plugin(openpaperwork_core.PluginBase):
         widget.add(child)
         return widget
 
-    def _get_doc_mtime(self, doc_url):
-        mtimes = []
-        self.core.call_all("doc_get_mtime_by_url", mtimes, doc_url)
-        if len(mtimes) <= 0:
-            return 0
-        return max(mtimes)
-
     def doc_open(self, doc_id, doc_url):
         self.doc_close()
 
@@ -224,7 +217,9 @@ class Plugin(openpaperwork_core.PluginBase):
         self.zoom = 0.0
         self.layout_name = 'grid'
         self.active_doc = (doc_id, doc_url)
-        self.active_doc_mtime = self._get_doc_mtime(doc_url)
+        self.active_doc_mtime = self.core.call_success(
+            "doc_get_mtime_by_url", doc_url
+        )
         self.active_page_idx = 0
 
         self.pages = []
@@ -240,7 +235,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def doc_reload(self, doc_id, doc_url):
         if self.active_doc != (doc_id, doc_url):
             return
-        mtime = self._get_doc_mtime(doc_url)
+        mtime = self.core.call_success("doc_get_mtime_by_url", doc_url)
         if mtime == self.active_doc_mtime:
             return
         self.active_doc_mtime = mtime

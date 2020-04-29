@@ -52,9 +52,9 @@ class DocTrackerTransaction(sync.BaseTransaction):
                     and self.core.call_success("fs_exists", doc_url)
                     is not None
                 ):
-            mtime = []
-            self.core.call_all("doc_get_mtime_by_url", mtime, doc_url)
-            mtime = max(mtime, default=0)
+            mtime = self.core.call_success("doc_get_mtime_by_url", doc_url)
+            if mtime is None:
+                mtime = 0
 
             doc_text = []
             self.core.call_all("doc_get_text_by_url", doc_text, doc_url)

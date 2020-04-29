@@ -398,7 +398,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def doc_get_pdf_url_by_url(self, doc_url):
         return self._get_pdf_url(doc_url)
 
-    def doc_get_hash_by_url(self, out: list, doc_url):
+    def doc_internal_get_hash_by_url(self, out: list, doc_url):
         pdf_url = self._get_pdf_url(doc_url)
         if pdf_url is None:
             return
@@ -414,7 +414,7 @@ class Plugin(openpaperwork_core.PluginBase):
             self.cache_hash[cache_key] = h
         out.append(self.cache_hash[cache_key])
 
-    def page_get_hash_by_url(self, out: list, doc_url, page_idx):
+    def page_internal_get_hash_by_url(self, out: list, doc_url, page_idx):
         pdf_url = self._get_pdf_url(doc_url)
         if pdf_url is None:
             return
@@ -432,7 +432,7 @@ class Plugin(openpaperwork_core.PluginBase):
             self.cache_hash[cache_key] = h
         out.append(self.cache_hash[cache_key])
 
-    def doc_get_mtime_by_url(self, out: list, doc_url):
+    def doc_internal_get_mtime_by_url(self, out: list, doc_url):
         pdf_url = self._get_pdf_url(doc_url)
         if pdf_url is None:
             return None
@@ -446,7 +446,7 @@ class Plugin(openpaperwork_core.PluginBase):
             return None
         out.append(mtime)
 
-    def page_get_mtime_by_url(self, out: list, doc_url, page_idx):
+    def page_internal_get_mtime_by_url(self, out: list, doc_url, page_idx):
         pdf_url = self._get_pdf_url(doc_url)
         if pdf_url is None:
             return

@@ -118,10 +118,10 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         return img
 
-    def doc_get_mtime_by_url(self, out: list, doc_url):
+    def doc_get_mtime_by_url(self, doc_url):
         if doc_url not in self.doc_urls_to_names:
             return
-        out.append(datetime.datetime(year=1970, month=1, day=1).timestamp())
+        return datetime.datetime(year=1970, month=1, day=1).timestamp()
 
     def doc_has_labels_by_url(self, doc_url):
         if doc_url not in self.doc_urls_to_names:

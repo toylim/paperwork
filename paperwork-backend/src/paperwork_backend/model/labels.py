@@ -92,7 +92,7 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def doc_get_mtime_by_url(self, out: list, doc_url):
+    def doc_internal_get_mtime_by_url(self, out: list, doc_url):
         labels_url = self.core.call_success(
             "fs_join", doc_url, LABELS_FILENAME
         )
