@@ -140,11 +140,9 @@ class Page(GObject.GObject):
     def refresh(self, reload=False):
         if reload:
             # only if the mtime has changed. Otherwise there is no point.
-            mtime = []
-            self.core.call_all(
-                "page_get_mtime_by_url", mtime, self.doc_url, self.page_idx
+            mtime = self.core.call_success(
+                "page_get_mtime_by_url", self.doc_url, self.page_idx
             )
-            mtime = max(mtime)
             if self.mtime == mtime:
                 reload = False
             else:

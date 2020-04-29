@@ -240,13 +240,13 @@ class Plugin(openpaperwork_core.PluginBase):
     def page_delete(self, doc_url, page_idx):
         raise NotImplementedError()
 
-    def page_get_mtime_by_url(self, out: list, doc_url, page_idx):
+    def page_get_mtime_by_url(self, doc_url, page_idx):
         for doc in self.docs:
             if doc['url'] != doc_url:
                 continue
             if 'page_mtimes' not in doc:
                 continue
-            out.append(doc['page_mtimes'][page_idx][1])
+            return doc['page_mtimes'][page_idx][1]
 
     def page_get_hash_by_url(self, doc_url, page_idx):
         for doc in self.docs:
