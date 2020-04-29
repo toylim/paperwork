@@ -232,6 +232,18 @@ class TestAll(unittest.TestCase):
             self._get_page_hash(self.doc_pdf, page_idx)
             for page_idx in range(0, 4)
         ]
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 0
+        ).endswith("20200525_1241_05/doc.pdf#page=1"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 1
+        ).endswith("20200525_1241_05/paper.2.edited.jpg"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 2
+        ).endswith("20200525_1241_05/doc.pdf#page=3"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 3
+        ).endswith("20200525_1241_05/doc.pdf#page=4"))
 
         self.core.call_all("page_delete_by_url", self.doc_pdf, 2)
 
@@ -241,6 +253,16 @@ class TestAll(unittest.TestCase):
             self._get_page_hash(self.doc_pdf, page_idx)
             for page_idx in range(0, 3)
         ]
+
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 0
+        ).endswith("20200525_1241_05/doc.pdf#page=1"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 1
+        ).endswith("20200525_1241_05/paper.2.edited.jpg"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 2
+        ).endswith("20200525_1241_05/doc.pdf#page=4"))
         self.assertEqual(hashes[0], new_hashes[0])
         self.assertEqual(hashes[1], new_hashes[1])
         self.assertEqual(hashes[3], new_hashes[2])
@@ -315,6 +337,28 @@ class TestAll(unittest.TestCase):
             for page_idx in range(0, 3)
         ]
 
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 0
+        ).endswith("20200525_1241_05/doc.pdf#page=1"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 1
+        ).endswith("20200525_1241_05/paper.2.edited.jpg"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 2
+        ).endswith("20200525_1241_05/doc.pdf#page=3"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 3
+        ).endswith("20200525_1241_05/doc.pdf#page=4"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_c, 0
+        ).endswith("19851224_1233_00/paper.1.jpg"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_c, 1
+        ).endswith("19851224_1233_00/paper.2.jpg"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_c, 2
+        ).endswith("19851224_1233_00/paper.3.jpg"))
+
         # doc_c p1 becomes doc_pdf p2
         # --> doc_c p2 becomes doc_c p1
         # --> doc_pdf p2 becomes doc_pdf p3
@@ -324,7 +368,6 @@ class TestAll(unittest.TestCase):
             self.doc_c, 1,
             self.doc_pdf, 2
         )
-
         nb = self.core.call_success("doc_get_nb_pages_by_url", self.doc_pdf)
         self.assertEqual(nb, 5)
         nb = self.core.call_success("doc_get_nb_pages_by_url", self.doc_c)
@@ -345,6 +388,28 @@ class TestAll(unittest.TestCase):
         self.assertEqual(doc_c_hashes[0], new_doc_c_hashes[0])
         self.assertEqual(doc_c_hashes[1], new_doc_pdf_hashes[2])
         self.assertEqual(doc_c_hashes[2], new_doc_c_hashes[1])
+
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 0
+        ).endswith("20200525_1241_05/doc.pdf#page=1"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 1
+        ).endswith("20200525_1241_05/paper.2.edited.jpg"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 2
+        ).endswith("20200525_1241_05/paper.3.jpg"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 3
+        ).endswith("20200525_1241_05/doc.pdf#page=3"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 4
+        ).endswith("20200525_1241_05/doc.pdf#page=4"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_c, 0
+        ).endswith("19851224_1233_00/paper.1.jpg"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_c, 1
+        ).endswith("19851224_1233_00/paper.2.jpg"))
 
         # we delete the added img page
         self.core.call_all("page_delete_by_url", self.doc_pdf, 2)
@@ -368,6 +433,25 @@ class TestAll(unittest.TestCase):
 
         self.assertEqual(doc_c_hashes[0], new_doc_c_hashes[0])
         self.assertEqual(doc_c_hashes[2], new_doc_c_hashes[1])
+
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 0
+        ).endswith("20200525_1241_05/doc.pdf#page=1"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 1
+        ).endswith("20200525_1241_05/paper.2.edited.jpg"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 2
+        ).endswith("20200525_1241_05/doc.pdf#page=3"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 3
+        ).endswith("20200525_1241_05/doc.pdf#page=4"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_c, 0
+        ).endswith("19851224_1233_00/paper.1.jpg"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_c, 1
+        ).endswith("19851224_1233_00/paper.2.jpg"))
 
     def test_pdf_to_img_page_move(self):
         nb = self.core.call_success("doc_get_nb_pages_by_url", self.doc_pdf)
@@ -418,3 +502,210 @@ class TestAll(unittest.TestCase):
         self.assertNotEqual(doc_c_hashes[1], new_doc_c_hashes[1])
         self.assertEqual(doc_c_hashes[1], new_doc_c_hashes[2])
         self.assertEqual(doc_c_hashes[2], new_doc_c_hashes[3])
+
+    def test_img_to_pdf_complex(self):
+        nb = self.core.call_success("doc_get_nb_pages_by_url", self.doc_pdf)
+        self.assertEqual(nb, 4)
+        nb = self.core.call_success("doc_get_nb_pages_by_url", self.doc_c)
+        self.assertEqual(nb, 3)
+        doc_pdf_hashes = [
+            self._get_page_hash(self.doc_pdf, page_idx)
+            for page_idx in range(0, 4)
+        ]
+        doc_c_hashes = [
+            self._get_page_hash(self.doc_c, page_idx)
+            for page_idx in range(0, 3)
+        ]
+
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 0
+        ).endswith("20200525_1241_05/doc.pdf#page=1"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 1
+        ).endswith("20200525_1241_05/paper.2.edited.jpg"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 2
+        ).endswith("20200525_1241_05/doc.pdf#page=3"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 3
+        ).endswith("20200525_1241_05/doc.pdf#page=4"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_c, 0
+        ).endswith("19851224_1233_00/paper.1.jpg"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_c, 1
+        ).endswith("19851224_1233_00/paper.2.jpg"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_c, 2
+        ).endswith("19851224_1233_00/paper.3.jpg"))
+
+        # doc_c p1 becomes doc_pdf p5
+        # --> doc_c p2 becomes doc_c p1
+        self.core.call_all(
+            "page_move_by_url",
+            self.doc_c, 1,
+            self.doc_pdf, 4
+        )
+
+        nb = self.core.call_success("doc_get_nb_pages_by_url", self.doc_pdf)
+        self.assertEqual(nb, 5)
+        nb = self.core.call_success("doc_get_nb_pages_by_url", self.doc_c)
+        self.assertEqual(nb, 2)
+        new_doc_pdf_hashes = [
+            self._get_page_hash(self.doc_pdf, page_idx)
+            for page_idx in range(0, 5)
+        ]
+        new_doc_c_hashes = [
+            self._get_page_hash(self.doc_c, page_idx)
+            for page_idx in range(0, 2)
+        ]
+
+        self.assertEqual(doc_pdf_hashes[0], new_doc_pdf_hashes[0])
+        self.assertEqual(doc_pdf_hashes[1], new_doc_pdf_hashes[1])
+        self.assertEqual(doc_pdf_hashes[2], new_doc_pdf_hashes[2])
+        self.assertEqual(doc_pdf_hashes[3], new_doc_pdf_hashes[3])
+
+        self.assertEqual(doc_c_hashes[0], new_doc_c_hashes[0])
+        self.assertEqual(doc_c_hashes[1], new_doc_pdf_hashes[4])
+        self.assertEqual(doc_c_hashes[2], new_doc_c_hashes[1])
+
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 0
+        ).endswith("20200525_1241_05/doc.pdf#page=1"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 1
+        ).endswith("20200525_1241_05/paper.2.edited.jpg"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 2
+        ).endswith("20200525_1241_05/doc.pdf#page=3"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 3
+        ).endswith("20200525_1241_05/doc.pdf#page=4"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 4
+        ).endswith("20200525_1241_05/paper.5.jpg"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_c, 0
+        ).endswith("19851224_1233_00/paper.1.jpg"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_c, 1
+        ).endswith("19851224_1233_00/paper.2.jpg"))
+
+        # doc_pdf p5 (previously doc_c p2) becomes doc_pdf p2
+        # --> pdf_pdf pages shift
+        self.core.call_all(
+            "page_move_by_url",
+            self.doc_pdf, 4,
+            self.doc_pdf, 1
+        )
+
+        nb = self.core.call_success("doc_get_nb_pages_by_url", self.doc_pdf)
+        self.assertEqual(nb, 5)
+        nb = self.core.call_success("doc_get_nb_pages_by_url", self.doc_c)
+        self.assertEqual(nb, 2)
+        new_doc_pdf_hashes = [
+            self._get_page_hash(self.doc_pdf, page_idx)
+            for page_idx in range(0, 5)
+        ]
+        new_doc_c_hashes = [
+            self._get_page_hash(self.doc_c, page_idx)
+            for page_idx in range(0, 2)
+        ]
+
+        self.assertEqual(doc_pdf_hashes[0], new_doc_pdf_hashes[0])
+        self.assertEqual(doc_c_hashes[1], new_doc_pdf_hashes[1])
+        self.assertEqual(doc_pdf_hashes[1], new_doc_pdf_hashes[2])
+        self.assertEqual(doc_pdf_hashes[2], new_doc_pdf_hashes[3])
+        self.assertEqual(doc_pdf_hashes[3], new_doc_pdf_hashes[4])
+
+        self.assertEqual(doc_c_hashes[0], new_doc_c_hashes[0])
+        self.assertEqual(doc_c_hashes[2], new_doc_c_hashes[1])
+
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 0
+        ).endswith("20200525_1241_05/doc.pdf#page=1"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 1
+        ).endswith("20200525_1241_05/paper.2.jpg"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 2
+        ).endswith("20200525_1241_05/paper.3.edited.jpg"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 3
+        ).endswith("20200525_1241_05/doc.pdf#page=3"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 4
+        ).endswith("20200525_1241_05/doc.pdf#page=4"))
+
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_c, 0
+        ).endswith("19851224_1233_00/paper.1.jpg"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_c, 1
+        ).endswith("19851224_1233_00/paper.2.jpg"))
+
+        # kill doc_c by remove its last 2 pages
+        self.core.call_all(
+            "page_move_by_url",
+            self.doc_c, 0,
+            self.doc_pdf, 5
+        )
+        self.core.call_all(
+            "page_move_by_url",
+            self.doc_c, 0,
+            self.doc_pdf, 6
+        )
+
+        nb = self.core.call_success("doc_get_nb_pages_by_url", self.doc_pdf)
+        self.assertEqual(nb, 7)
+        nb = self.core.call_success("doc_get_nb_pages_by_url", self.doc_c)
+        self.assertIsNone(nb)
+        new_doc_pdf_hashes = [
+            self._get_page_hash(self.doc_pdf, page_idx)
+            for page_idx in range(0, 7)
+        ]
+
+        self.assertEqual(doc_pdf_hashes[0], new_doc_pdf_hashes[0])
+        self.assertEqual(doc_c_hashes[1], new_doc_pdf_hashes[1])
+        self.assertEqual(doc_pdf_hashes[1], new_doc_pdf_hashes[2])
+        self.assertEqual(doc_pdf_hashes[2], new_doc_pdf_hashes[3])
+        self.assertEqual(doc_pdf_hashes[3], new_doc_pdf_hashes[4])
+        self.assertEqual(doc_c_hashes[0], new_doc_pdf_hashes[5])
+        self.assertEqual(doc_c_hashes[2], new_doc_pdf_hashes[6])
+
+        # remove a page in the PDF, just for fun
+        self.core.call_all("page_delete_by_url", self.doc_pdf, 2)
+
+        nb = self.core.call_success("doc_get_nb_pages_by_url", self.doc_pdf)
+        self.assertEqual(nb, 6)
+        nb = self.core.call_success("doc_get_nb_pages_by_url", self.doc_c)
+        self.assertIsNone(nb)
+        new_doc_pdf_hashes = [
+            self._get_page_hash(self.doc_pdf, page_idx)
+            for page_idx in range(0, 6)
+        ]
+
+        self.assertEqual(doc_pdf_hashes[0], new_doc_pdf_hashes[0])
+        self.assertEqual(doc_c_hashes[1], new_doc_pdf_hashes[1])
+        self.assertEqual(doc_pdf_hashes[2], new_doc_pdf_hashes[2])
+        self.assertEqual(doc_pdf_hashes[3], new_doc_pdf_hashes[3])
+        self.assertEqual(doc_c_hashes[0], new_doc_pdf_hashes[4])
+        self.assertEqual(doc_c_hashes[2], new_doc_pdf_hashes[5])
+
+        # remove another page in the PDF, just for fun
+        self.core.call_all("page_delete_by_url", self.doc_pdf, 1)
+
+        nb = self.core.call_success("doc_get_nb_pages_by_url", self.doc_pdf)
+        self.assertEqual(nb, 5)
+        nb = self.core.call_success("doc_get_nb_pages_by_url", self.doc_c)
+        self.assertIsNone(nb)
+        new_doc_pdf_hashes = [
+            self._get_page_hash(self.doc_pdf, page_idx)
+            for page_idx in range(0, 5)
+        ]
+
+        self.assertEqual(doc_pdf_hashes[0], new_doc_pdf_hashes[0])
+        self.assertEqual(doc_pdf_hashes[2], new_doc_pdf_hashes[1])
+        self.assertEqual(doc_pdf_hashes[3], new_doc_pdf_hashes[2])
+        self.assertEqual(doc_c_hashes[0], new_doc_pdf_hashes[3])
+        self.assertEqual(doc_c_hashes[2], new_doc_pdf_hashes[4])

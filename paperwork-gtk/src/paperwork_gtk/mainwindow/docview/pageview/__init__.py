@@ -298,6 +298,11 @@ class Plugin(openpaperwork_core.PluginBase):
                 self.core, doc_id, doc_url, page_idx, nb_pages
             ))
 
+        LOGGER.info(
+            "%d pages in the documents (%d components)",
+            nb_pages, len(self.pages)
+        )
+
         self.nb_to_load = len(self.pages)
         for page in self.pages:
             page.connect("size_obtained", self._on_page_img_size_obtained)

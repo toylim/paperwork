@@ -104,13 +104,12 @@ class PdfPageMapping(object):
             "fs_join", self.doc_url, self.MAPPING_FILE
         )
 
-        self.mapping = {}
-        self.reverse_mapping = {}
-        self.page_mtimes = {}
+        self.mapping = None
+        self.reverse_mapping = None
+        self.page_mtimes = None
 
-        self.last_change = None
-        self.nb_pages = 0
-        self.real_nb_pages = 0
+        self.nb_pages = -1
+        self.real_nb_pages = -1
 
     def set_mapping(self, original_page_idx, target_page_idx):
         """
@@ -123,33 +122,44 @@ class PdfPageMapping(object):
             # comes from another set of plugins, no point in tracking it
             return
 
-        self.mapping[original_page_idx] = target_page_idx
-        if target_page_idx >= 0:
-            self.reverse_mapping[target_page_idx] = original_page_idx
-            self.page_mtimes[target_page_idx] = (
-                datetime.datetime.now().timestamp()
-            )
-            if target_page_idx >= self.nb_pages:
-                LOGGER.info(
-                    "Fixing number of pages of %s based on mapping: %d --> %d",
-                    self.doc_url, self.nb_pages, target_page_idx + 1
-                )
-                self.nb_pages = target_page_idx + 1
+        now = datetime.datetime.now().timestamp()
+
+        old_target = self.mapping.get(original_page_idx, None)
+        if old_target is not None:
+            self.reverse_mapping.pop(old_target)
+            self.page_mtimes[old_target] = now
+
+        if target_page_idx is None:
+            self.mapping.pop(original_page_idx)
         else:
-            self.nb_pages -= 1
+            self.mapping[original_page_idx] = target_page_idx
+
+        if target_page_idx is not None:
+            self.reverse_mapping[target_page_idx] = original_page_idx
+            self.page_mtimes[target_page_idx] = now
+
+    def update_nb_pages(self):
+        self.nb_pages = 0
+        if len(self.mapping) <= 0:
+            return
+        for v in self.mapping.values():
+            if v >= self.nb_pages:
+                self.nb_pages = v + 1
 
     def load(self):
         self.real_nb_pages = self.plugin._doc_internal_get_nb_pages_by_url(
             self.doc_url, mapping=False
         )
-        self.nb_pages = self.real_nb_pages
 
-        self.mapping = {}
-        self.reverse_mapping = {}
+        self.mapping = {p: p for p in range(0, self.real_nb_pages)}
+        self.reverse_mapping = {p: p for p in range(0, self.real_nb_pages)}
+        now = datetime.datetime.now().timestamp()
+        self.page_mtimes = {p: now for p in range(0, self.real_nb_pages)}
 
         if self.core.call_success("fs_exists", self.map_url) is None:
+            self.update_nb_pages()
             return
-        self.last_change = self.core.call_success("fs_get_mtime", self.map_url)
+
         with self.core.call_success("fs_open", self.map_url, "r") as fd:
             # drop the first line
             lines = fd.readlines()[1:]
@@ -157,11 +167,11 @@ class PdfPageMapping(object):
                 (orig_page_idx, target_page_idx) = line.split(",", 1)
                 orig_page_idx = int(orig_page_idx)
                 target_page_idx = int(target_page_idx)
+                if target_page_idx < 0:
+                    target_page_idx = None
                 self.set_mapping(orig_page_idx, target_page_idx)
-            # mapping may not be in order --> rechech nb_pages
-            for t in self.mapping.values():
-                if t >= self.nb_pages:
-                    self.nb_pages = t + 1
+
+        self.update_nb_pages()
 
     def save(self):
         if self.core.call_success("fs_isdir", self.doc_url) is None:
@@ -180,65 +190,46 @@ class PdfPageMapping(object):
 
         with self.core.call_success("fs_open", self.map_url, "w") as fd:
             fd.write("original_page_index,target_page_index\n")
-            for (orig_page_idx, target_page_idx) in self.mapping.items():
+            mapping = list(self.mapping.items())
+            mapping.sort()
+            for (orig_page_idx, target_page_idx) in mapping:
                 if orig_page_idx == target_page_idx:
                     continue
                 fd.write("{},{}\n".format(orig_page_idx, target_page_idx))
-        self.last_change = self.core.call_success("fs_get_mtime", self.map_url)
+
+            for page_idx in range(0, self.real_nb_pages):
+                if page_idx not in self.mapping:
+                    fd.write("{},-1\n".format(page_idx))
 
     def has_original_page_idx(self, original_page_idx):
-        target_page_idx = self.mapping.get(original_page_idx, None)
-        if target_page_idx is None:
-            # no mapping --> default mapping --> has mapping
-            return True
-        return target_page_idx >= 0
+        if self.mapping is None:
+            self.load()
+        return original_page_idx in self.mapping
 
     def get_original_page_idx(self, target_page_idx):
-        original_page_idx = self.reverse_mapping.get(target_page_idx, None)
-        if original_page_idx is None:
-            if target_page_idx not in self.mapping:
-                if target_page_idx >= self.real_nb_pages:
-                    # out of the PDF --> handled by other plugins
-                    return None
-                # not mapped --> default map
-                return target_page_idx
-            # handled by other plugins
-            return None
-        LOGGER.info("Applying pdf page mapping: {} --> {}".format(
-            original_page_idx, target_page_idx
-        ))
+        if self.mapping is None:
+            self.load()
+        original_page_idx = self.reverse_mapping.get(
+            target_page_idx, None
+        )
         return original_page_idx
 
     def get_target_page_mtime(self, target_page_idx):
-        return self.page_mtimes.get(target_page_idx,  None)
+        if self.mapping is None:
+            self.load()
+        return self.page_mtimes.get(target_page_idx, None)
 
     def get_target_page_hash(self, target_page_idx):
-        original_page_idx = self.reverse_mapping.get(target_page_idx, None)
+        if self.mapping is None:
+            self.load()
+        original_page_idx = self.reverse_mapping.get(
+            target_page_idx, None
+        )
         if original_page_idx is None:
-            v = self.mapping.get(target_page_idx, None)
-            if (v is None or v == target_page_idx):
-                # this page is not mapped at all (default mapping)
-                return hash(target_page_idx)
-            else:
-                # provided by another plugin
-                return None
+            return None
         return hash(original_page_idx)
 
     def _move_pages(self, original_page_idx, target_page_idx, offset):
-        nb_pages = self.plugin._doc_internal_get_nb_pages_by_url(
-            self.doc_url, mapping=False
-        )
-
-        for page_idx in range(original_page_idx, nb_pages):
-            # anything >= target_page_idx will move --> we create the
-            # mapping if they don't already exist
-            if page_idx in self.mapping:
-                continue
-            self.set_mapping(page_idx, page_idx)
-
-        self.nb_pages += offset
-
-        # and then we update the mappings based on the target page numbers
         mapping = list(self.mapping.items())
         mapping.sort(key=lambda x: x[1], reverse=offset > 0)
         for (original, target) in mapping:
@@ -247,40 +238,40 @@ class PdfPageMapping(object):
                     "Page %d (original) ; target: %d --> %d",
                     original, target, target + offset
                 )
-                self.reverse_mapping.pop(target)
                 self.set_mapping(original, target + offset)
-                assert(self.mapping[original] == target + offset)
-                assert(self.reverse_mapping[target + offset] == original)
+
+        self.update_nb_pages()
 
     def delete_target_page(self, target_page_idx):
-        original_page_idx = self.get_original_page_idx(target_page_idx)
-        if original_page_idx is not None:
-            self.mapping[original_page_idx] = -1
-        else:
-            original_page_idx = target_page_idx
-
-        nb_pages = self.plugin._doc_internal_get_nb_pages_by_url(
-            self.doc_url, mapping=False
-        )
-        if original_page_idx >= nb_pages:
-            # outside the PDF --> ignored
-            return
+        if self.mapping is None:
+            self.load()
 
         LOGGER.info(
             "Deleting page %d from PDF %s",
             target_page_idx, self.doc_url
         )
-        if target_page_idx in self.reverse_mapping:
-            self.reverse_mapping.pop(target_page_idx)
+        original_page_idx = self.reverse_mapping.pop(
+            target_page_idx, None
+        )
+        if original_page_idx is not None:
+            self.mapping.pop(original_page_idx, None)
+        else:
+            original_page_idx = target_page_idx
+
         self._move_pages(original_page_idx, target_page_idx, offset=-1)
 
     def make_room_for_target_page(self, target_page_idx):
-        original_page_idx = self.get_original_page_idx(target_page_idx)
-        if original_page_idx is None:
-            original_page_idx = target_page_idx
+        if self.mapping is None:
+            self.load()
+        original_page_idx = self.reverse_mapping.get(
+            target_page_idx, target_page_idx
+        )
         self._move_pages(original_page_idx, target_page_idx, offset=1)
 
     def print_mapping(self):
+        if self.mapping is None:
+            self.load()
+
         nb_pages = self.plugin._doc_internal_get_nb_pages_by_url(
             self.doc_url, mapping=False
         )
@@ -305,13 +296,15 @@ class PdfPageMapping(object):
                     ))
         print("=======================")
 
-    def __hash__(self):
-        h = 0
-        for (k, v) in self.mapping.items():
-            if k == v:
-                continue
-            h ^= (k << 10) ^ v
-        return h
+    def get_map_hash(self):
+        if self.core.call_success("fs_exists", self.map_url) is None:
+            return None
+        return self.core.call_success("fs_hash", self.map_url)
+
+    def get_map_mtime(self):
+        if self.core.call_success("fs_exists", self.map_url) is None:
+            return None
+        return self.core.call_success("fs_get_mtime", self.map_url)
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -384,7 +377,6 @@ class Plugin(openpaperwork_core.PluginBase):
         if doc_url in self.cache_mappings:
             return self.cache_mappings[doc_url]
         mapping = PdfPageMapping(self, doc_url)
-        mapping.load()
         self.cache_mappings[doc_url] = mapping
         return mapping
 
@@ -411,7 +403,9 @@ class Plugin(openpaperwork_core.PluginBase):
         if pdf_url is None:
             return
         mapping = self._get_page_mapping(doc_url)
-        out.append(hash(mapping))
+        h = mapping.get_map_hash()
+        if h is not None:
+            out.append(h)
 
         # cache the hash of doc.pdf to speed up imports
         cache_key = "hash_{}".format(doc_url)
@@ -427,7 +421,7 @@ class Plugin(openpaperwork_core.PluginBase):
         mapping = self._get_page_mapping(doc_url)
         page_hash = mapping.get_target_page_hash(page_idx)
         if page_hash is None:
-            # deleted page
+            # deleted page or handled by another plugin
             return
         out.append(page_hash)
 
@@ -443,8 +437,9 @@ class Plugin(openpaperwork_core.PluginBase):
         if pdf_url is None:
             return None
         mapping = self._get_page_mapping(doc_url)
-        if mapping.last_change is not None:
-            out.append(mapping.last_change)
+        mtime = mapping.get_map_mtime()
+        if mtime is not None:
+            out.append(mtime)
 
         mtime = self.core.call_success("fs_get_mtime", pdf_url)
         if mtime is None:
@@ -480,6 +475,8 @@ class Plugin(openpaperwork_core.PluginBase):
             if pdf_url is None:
                 return 0
             mapping = self._get_page_mapping(doc_url)
+            if mapping.nb_pages < 0:
+                mapping.load()
             return mapping.nb_pages
 
         if doc_url in self.cache_nb_pages:
@@ -502,15 +499,9 @@ class Plugin(openpaperwork_core.PluginBase):
     def page_get_img_url(self, doc_url, page_idx, write=False):
         if write:
             return None
-        nb_pages = self._doc_internal_get_nb_pages_by_url(
-            doc_url, mapping=False
-        )
-        if nb_pages is None:
-            return None
-
         mapping = self._get_page_mapping(doc_url)
         page_idx = mapping.get_original_page_idx(page_idx)
-        if page_idx is None or page_idx >= nb_pages:
+        if page_idx is None:
             return None
         # same URL used in browsers
         pdf_url = self._get_pdf_url(doc_url)
@@ -732,6 +723,8 @@ class Plugin(openpaperwork_core.PluginBase):
                 target_source_page_idx
             )
             if original_source_page_idx is None:
+                # this page is not handled by us ; still, we must shift
+                # all our pages
                 original_source_page_idx = target_source_page_idx
             LOGGER.info(
                 "- Removing page (original=%d, target=%d) from %s",
@@ -756,6 +749,7 @@ class Plugin(openpaperwork_core.PluginBase):
             source_mapping.set_mapping(
                 original_source_page_idx, target_dest_page_idx
             )
+            source_mapping.update_nb_pages()
         elif source_is_pdf:
             # export the PDF page as an image file
             # it relies on other model plugins (interface 'page_img'), but they
