@@ -173,6 +173,28 @@ class PdfPageMapping(object):
 
         self.update_nb_pages()
 
+    def load_reverse_only(self):
+        """
+        Load the mapping, but doesn't look at the total number of pages
+        in the document. Avoid opening the PDF file.
+        """
+        self.mapping = None
+        self.reverse_mapping = {}
+
+        if self.core.call_success("fs_exists", self.map_url) is None:
+            return
+
+        with self.core.call_success("fs_open", self.map_url, "r") as fd:
+            # drop the first line
+            lines = fd.readlines()[1:]
+            for line in lines:
+                (orig_page_idx, target_page_idx) = line.split(",", 1)
+                orig_page_idx = int(orig_page_idx)
+                target_page_idx = int(target_page_idx)
+                if target_page_idx < 0:
+                    continue
+                self.reverse_mapping[target_page_idx] = orig_page_idx
+
     def save(self):
         if self.core.call_success("fs_isdir", self.doc_url) is None:
             return
@@ -207,10 +229,10 @@ class PdfPageMapping(object):
         return original_page_idx in self.mapping
 
     def get_original_page_idx(self, target_page_idx):
-        if self.mapping is None:
-            self.load()
+        if self.reverse_mapping is None:
+            self.load_reverse_only()
         original_page_idx = self.reverse_mapping.get(
-            target_page_idx, None
+            target_page_idx, target_page_idx
         )
         return original_page_idx
 
