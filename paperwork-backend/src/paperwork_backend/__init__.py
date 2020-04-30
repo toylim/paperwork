@@ -19,6 +19,7 @@ DEFAULT_PLUGINS = [
     'openpaperwork_core.external_apps.dbus',
     'openpaperwork_core.external_apps.windows',
     'openpaperwork_core.external_apps.xdg',
+    'openpaperwork_core.flatpak',
     'openpaperwork_core.fs.memory',
     'openpaperwork_core.http',
     'openpaperwork_core.i18n.python',
