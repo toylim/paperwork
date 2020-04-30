@@ -163,7 +163,6 @@ class Plugin(openpaperwork_core.PluginBase):
     def _on_mainwindow_destroy(self, main_window):
         LOGGER.info("Main window destroy. Quitting")
         self.core.call_all("on_gtk_window_closed", self.mainwindow)
-        self.core.call_all("on_quit")
         self.core.call_all("mainloop_quit_graceful")
 
     def _on_mainwindow_size_allocate(self, main_win, rectangle):
