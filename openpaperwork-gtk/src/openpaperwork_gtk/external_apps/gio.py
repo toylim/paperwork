@@ -6,13 +6,14 @@ try:
 except ImportError:
     GLIB_AVAILABLE = False
 
-from .. import deps
-from .. import PluginBase
+import openpaperwork_core
+import openpaperwork_core.deps
+
 
 LOGGER = logging.getLogger(__name__)
 
 
-class Plugin(PluginBase):
+class Plugin(openpaperwork_core.PluginBase):
     PRIORITY = 75
 
     def get_interfaces(self):
@@ -26,7 +27,7 @@ class Plugin(PluginBase):
 
     def chkdeps(self, out: dict):
         if not GLIB_AVAILABLE:
-            out['glib'] = deps.GLIB
+            out['glib'] = openpaperwork_core.deps.GLIB
 
     def external_app_open_file(self, file_url):
         LOGGER.info("Opening file '%s' using Gio", file_url)
