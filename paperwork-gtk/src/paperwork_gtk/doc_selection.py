@@ -30,10 +30,10 @@ class Plugin(openpaperwork_core.PluginBase):
         out.update(self.selection)
 
     def doc_selection_len(self):
-        l = len(self.selection)
-        if l == 0:
+        nb_docs = len(self.selection)
+        if nb_docs <= 0:
             return None
-        return l
+        return nb_docs
 
     def doc_selection_in(self, doc_id, doc_url):
         if (doc_id, doc_url) in self.selection:
