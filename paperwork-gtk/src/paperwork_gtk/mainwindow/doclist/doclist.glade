@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
 
@@ -7,18 +8,65 @@
     </section>
   </menu>
 
-  <object class="GtkHeaderBar" id="doclist_header">
-    <property name="visible">True</property>
-    <property name="title" translatable="yes">Documents</property>
-    <property name="subtitle"></property>
-    <property name="show_close_button">False</property>
-    <property name="decoration_layout"></property>
+  <menu id="doclist_selection_multiple_menu_model">
+    <section>
+    </section>
+  </menu>
 
+  <object class="GtkBox" id="doclist_body">
+    <property name="name">doclist_body</property>
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="orientation">vertical</property>
     <child>
-      <object class="GtkButton" id="doclist_new_doc">
+      <object class="GtkOverlay">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
+        <child>
+          <object class="GtkScrolledWindow" id="doclist_scroll">
+            <property name="name">doclist_scroll</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="shadow_type">in</property>
+            <property name="kinetic_scrolling">False</property>
+            <property name="overlay_scrolling">False</property>
+
+            <child>
+              <object class="GtkListBox" id="doclist_listbox">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+              </object>
+            </child>
+
+          </object>
+          <packing>
+            <property name="index">-1</property>
+          </packing>
+        </child>
+        <child type="overlay">
+          <object class="GtkSpinner" id="doclist_spinner">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+          </object>
+        </child>
+      </object>
+      <packing>
+        <property name="expand">True</property>
+        <property name="fill">True</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+  </object>
+  <object class="GtkHeaderBar" id="doclist_header">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Documents</property>
+    <child>
+      <object class="GtkButton" id="doclist_new_doc">
         <property name="use_action_appearance">False</property>
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="receives_default">False</property>
         <property name="use_underline">True</property>
         <child>
           <object class="GtkImage">
@@ -29,11 +77,7 @@
           </object>
         </child>
       </object>
-      <packing>
-        <property name="pack_type">start</property>
-      </packing>
     </child>
-
     <child>
       <object class="GtkMenuButton" id="doclist_menu">
         <property name="visible">True</property>
@@ -43,65 +87,114 @@
         <child>
           <object class="GtkImage" id="menu_image">
             <property name="visible">True</property>
+            <property name="can_focus">False</property>
             <property name="icon_name">open-menu-symbolic</property>
           </object>
         </child>
       </object>
       <packing>
         <property name="pack_type">end</property>
+        <property name="position">1</property>
       </packing>
     </child>
-
   </object>
-
-  <object class="GtkBox" id="doclist_body">
+  <object class="GtkHeaderBar" id="doclist_header_selection_multiple">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="orientation">vertical</property>
-    <property name="name">doclist_body</property>
-
     <child>
-      <object class="GtkOverlay">
+      <object class="GtkButton" id="doclist_back_to_selection_single">
+        <property name="use_action_appearance">False</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-
-        <child type="overlay">
-          <object class="GtkSpinner" id="doclist_spinner">
+        <property name="receives_default">False</property>
+        <property name="use_underline">True</property>
+        <property name="relief">none</property>
+        <child>
+          <object class="GtkImage">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="icon_name">go-previous-symbolic</property>
+            <property name="icon_size">1</property>
           </object>
         </child>
-
+      </object>
+    </child>
+    <child type="title">
+      <object class="GtkMenuButton">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="receives_default">True</property>
+        <property name="relief">none</property>
+        <property name="menu_model">doclist_selection_multiple_menu_model</property>
         <child>
-          <object class="GtkScrolledWindow" id="doclist_scroll">
+          <object class="GtkBox">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="shadow_type">in</property>
-            <property name="kinetic_scrolling">False</property>
-            <property name="name">doclist_scroll</property>
-            <property name="overlay_scrolling">False</property>
+            <property name="can_focus">False</property>
             <child>
               <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkListBox" id="doclist_listbox">
+                  <object class="GtkLabel">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Selection</property>
+                    <attributes>
+                      <attribute name="weight" value="bold"/>
+                      <attribute name="size" value="10000"/>
+                    </attributes>
                   </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="doclist_selection_multiple_nb_docs">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label">3 documents</property>
+                    <attributes>
+                      <attribute name="weight" value="bold"/>
+                      <attribute name="size" value="8000"/>
+                    </attributes>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
                 </child>
               </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="icon_name">go-down-symbolic</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
             </child>
           </object>
         </child>
-
+        <style>
+          <class name="button-tight"/>
+        </style>
       </object>
-      <packing>
-        <property name="expand">True</property>
-        <property name="fill">True</property>
-        <property name="position">0</property>
-      </packing>
     </child>
+    <style>
+      <class name="headerbar-selection-multiple"/>
+    </style>
   </object>
 </interface>

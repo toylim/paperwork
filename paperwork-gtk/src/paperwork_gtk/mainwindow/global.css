@@ -25,3 +25,12 @@
 .txt-hint {
   color: mix (@theme_fg_color, @theme_bg_color, 0.3);
 }
+
+.headerbar-selection-multiple, .headerbar-selextion-multiple > * {
+  background-color: #38a1d6;
+  background-image: none;
+}
+
+.button-tight {
+  padding: 0px;
+}

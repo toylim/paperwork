@@ -1,4 +1,5 @@
 import datetime
+import gettext
 import logging
 import time
 
@@ -21,6 +22,7 @@ import openpaperwork_gtk.deps
 
 
 LOGGER = logging.getLogger(__name__)
+_ = gettext.gettext
 
 # GtkListBox doesn't scale well with too many elements
 # --> by default we only display 50 documents, and only extend the list
@@ -33,24 +35,38 @@ class Plugin(openpaperwork_core.PluginBase):
         super().__init__()
         self.widget_tree = None
         self.doclist = None
+
         self.scrollbar = None
         self._scrollbar_last_value = -1
+
         self.docs = []
         self.doc_visibles = 0
-        self.last_date = datetime.datetime(year=1, month=1, day=1)
         self.row_to_doc = {}
         self.docid_to_row = {}
         self.docid_to_widget_tree = {}
+
+        self.last_date = datetime.datetime(year=1, month=1, day=1)
+
         self.active_doc = (None, None)
         self.previous_doc = (None, None)
+
         self.main_actions = []
-        self.actions = None
+        self.doc_actions = None
+
+        self.selection_multiple = False
+
+        # the following boolean is a dirty hack to ignore the signal 'toggle'
+        # when we toggle the checkbox ourselves (if another plugin
+        # calls doc_selection_add() for instance)
+        self._toggling = False
 
     def get_interfaces(self):
         return [
             'chkdeps',
             'doc_actions',
             'doc_open',
+            'doc_selection',
+            'docs_actions',
             'drag_and_drop_destination',
             'gtk_app_menu',
             'gtk_doclist',
@@ -111,13 +127,21 @@ class Plugin(openpaperwork_core.PluginBase):
             LOGGER.error("Failed to load widget tree")
             return
 
-        self.actions = Gio.Menu.new()
+        self.doc_actions = Gio.Menu.new()
 
         self.doclist = self.widget_tree.get_object("doclist_listbox")
         self.core.call_all(
             "mainwindow_add", side="left", name="doclist", prio=10000,
             header=self.widget_tree.get_object("doclist_header"),
             body=self.widget_tree.get_object("doclist_body"),
+        )
+        self.core.call_all(
+            "mainwindow_add", side="left", name="doclist_selection_multiple",
+            prio=-100000,
+            header=self.widget_tree.get_object(
+                "doclist_header_selection_multiple"
+            ),
+            body=None
         )
 
         self.vadj = self.widget_tree.get_object(
@@ -133,7 +157,16 @@ class Plugin(openpaperwork_core.PluginBase):
             "clicked", self._on_new_doc
         )
 
+        self.widget_tree.get_object(
+            "doclist_back_to_selection_single"
+        ).connect("clicked", lambda button: self.core.call_all(
+            "gtk_switch_to_doc_selection_single"
+        ))
+
         self.menu_model = self.widget_tree.get_object("doclist_menu_model")
+        self.selection_multiple_menu_model = self.widget_tree.get_object(
+            "doclist_selection_multiple_menu_model"
+        )
 
         self.core.call_all("drag_and_drop_page_enable", self.doclist)
 
@@ -187,6 +220,12 @@ class Plugin(openpaperwork_core.PluginBase):
         row = widget_tree.get_object("date_box")
         self.doclist.insert(row, -1)
 
+    def _toggle_doc(self, button, doc_id, doc_url):
+        if button.get_active():
+            self.core.call_all("doc_selection_add", doc_id, doc_url)
+        else:
+            self.core.call_all("doc_selection_remove", doc_id, doc_url)
+
     def _add_doc_box(self, doc_id, doc_url, box="doc_box.glade", new=False):
         widget_tree = self.core.call_success(
             "gtk_load_widget_tree",
@@ -211,7 +250,7 @@ class Plugin(openpaperwork_core.PluginBase):
             doc_actions.set_visible(False)
         else:
             widget_tree.get_object("doc_actions_menu").set_menu_model(
-                self.actions
+                self.doc_actions
             )
 
         for action in self.main_actions:
@@ -232,6 +271,17 @@ class Plugin(openpaperwork_core.PluginBase):
                 button.get_object("doc_main_action"),
                 expand=True, fill=True, padding=0
             )
+
+        widget_tree.get_object("doc_box_selector").set_visible(
+            self.selection_multiple
+        )
+        widget_tree.get_object("doc_box_selector").set_active(
+            self.core.call_success("doc_selection_in", doc_id, doc_url)
+            is not None
+        )
+        widget_tree.get_object("doc_box_selector").connect(
+            "toggled", self._toggle_doc, doc_id, doc_url
+        )
 
         row = widget_tree.get_object("doc_listbox")
         self.row_to_doc[row] = (doc_id, doc_url)
@@ -310,6 +360,14 @@ class Plugin(openpaperwork_core.PluginBase):
         self.active_doc = (doc_id, doc_url)
         self._reselect_current_doc(scroll=False)
 
+    def _show_doc_id(self, doc_id):
+        row = self.docid_to_row.get(doc_id)
+        while row is None:
+            if self.doclist_extend(NB_DOCS_PER_PAGE) <= 0:
+                break
+            row = self.docid_to_row.get(doc_id)
+        return row
+
     def _reselect_current_doc(self, scroll=True):
         (doc_id, doc_url) = self.active_doc
 
@@ -320,12 +378,7 @@ class Plugin(openpaperwork_core.PluginBase):
             self.vadj.set_value(self.vadj.get_lower())
             return
 
-        row = self.docid_to_row.get(doc_id)
-        while row is None:
-            if self.doclist_extend(NB_DOCS_PER_PAGE) <= 0:
-                break
-            row = self.docid_to_row.get(doc_id)
-
+        row = self._show_doc_id(doc_id)
         assert(row is not None)
         self.doclist.select_row(row)
 
@@ -401,8 +454,14 @@ class Plugin(openpaperwork_core.PluginBase):
     def doclist_menu_append_submenu(self, label, menu):
         self.menu_model.append_submenu(label, menu)
 
+    def docs_menu_append_item(self, item):
+        self.selection_multiple_menu_model.append_item(item)
+
+    def docs_menu_append_submenu(self, label, menu):
+        self.selection_multiple_menu_model.append_submenu(label, menu)
+
     def add_doc_action(self, action_label, action_name):
-        self.actions.append(action_label, action_name)
+        self.doc_actions.append(action_label, action_name)
 
     def add_doc_main_action(self, icon_name, txt, callback):
         self.main_actions.append({
@@ -472,3 +531,74 @@ class Plugin(openpaperwork_core.PluginBase):
             ),
             margins=(50, 50, 50, 50)
         )
+
+    def _set_all_selector_visibility(self, visible):
+        for widget_tree in self.docid_to_widget_tree.values():
+            checkbox = widget_tree.get_object("doc_box_selector")
+            checkbox.set_visible(visible)
+
+    def gtk_switch_to_doc_selection_single(self):
+        self.core.call_all(
+            "mainwindow_show", side="left", name="doclist"
+        )
+        self._set_all_selector_visibility(False)
+        self.selection_multiple = False
+
+    def gtk_switch_to_doc_selection_multiple(self):
+        self.core.call_all(
+            "mainwindow_show", side="left", name="doclist_selection_multiple"
+        )
+        if not self.selection_multiple:
+            self.core.call_all("doc_selection_reset")
+        self.selection_multiple = True
+        self._set_all_selector_visibility(True)
+
+    def doc_selection_reset(self):
+        self._update_count()
+
+        self._toggling = True
+        try:
+            for widget_tree in self.docid_to_widget_tree.values():
+                checkbox = widget_tree.get_object("doc_box_selector")
+                checkbox.set_active(False)
+        finally:
+            self._toggling = False
+
+    def doc_selection_add(self, doc_id, doc_url):
+        self._update_count()
+
+        if self._toggling:
+            return
+        self._toggling = True
+        try:
+            self._show_doc_id(doc_id)
+            widget_tree = self.docid_to_widget_tree[doc_id]
+            checkbox = widget_tree.get_object("doc_box_selector")
+            if not checkbox.get_active():
+                checkbox.set_active(True)
+        finally:
+            self._toggling = False
+
+    def doc_selection_remove(self, doc_id, doc_url):
+        self._update_count()
+
+        if self._toggling:
+            return
+        self._toggling = True
+        try:
+            widget_tree = self.docid_to_widget_tree.get(doc_id, None)
+            if widget_tree is None:
+                return
+            checkbox = widget_tree.get_object("doc_box_selector")
+            if checkbox.get_active():
+                checkbox.set_active(False)
+        finally:
+            self._toggling = False
+
+    def _update_count(self):
+        count = self.core.call_success("doc_selection_len")
+        if count is None:
+            count = 0
+        self.widget_tree.get_object(
+            "doclist_selection_multiple_nb_docs"
+        ).set_text(_("%d documents") % count)

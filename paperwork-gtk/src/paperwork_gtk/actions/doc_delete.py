@@ -30,7 +30,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def __init__(self):
         super().__init__()
-        self.active_doc = None
+        self.active_doc = (None, None)
         self.active_windows = []
         self.action = None
 
@@ -89,7 +89,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.active_doc = (doc_id, doc_url)
 
     def doc_close(self):
-        self.active_doc = None
+        self.active_doc = (None, None)
 
     def on_gtk_window_opened(self, window):
         self.active_windows.append(window)

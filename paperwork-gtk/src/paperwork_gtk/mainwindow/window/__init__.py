@@ -184,6 +184,8 @@ class Plugin(openpaperwork_core.PluginBase):
         components = self.components[side][name]
         stacks = self.stacks[side]
         for (position, widget) in components.items():
+            if widget is None:
+                continue
             stacks[position].add_named(widget, name)
         if prio > self.default[side][0]:
             self.default[side] = (prio, name)
@@ -192,7 +194,10 @@ class Plugin(openpaperwork_core.PluginBase):
     def mainwindow_show(self, side: str, name: str):
         LOGGER.info("Showing %s on %s", name, side)
         stacks = self.stacks[side]
-        for stack in stacks.values():
+        components = self.components[side][name]
+        for (h, stack) in stacks.items():
+            if h not in components or components[h] is None:
+                continue
             stack.set_visible_child_name(name)
         return True
 

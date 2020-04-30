@@ -11,8 +11,29 @@
         <property name="orientation">horizontal</property>
 
         <child>
-          <object class="GtkImage" id="doc_thumbnail">
-            <property name="visible">False</property>
+          <object class="GtkOverlay">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child type="overlay">
+              <object class="GtkCheckButton" id="doc_box_selector">
+                <property name="visible">False</property>
+                <property name="can_focus">False</property>
+                <property name="relief">none</property>
+                <property name="valign">end</property>
+                <property name="margin_left">2</property>
+                <property name="margin_right">2</property>
+                <property name="margin_top">2</property>
+                <property name="margin_bottom">2</property>
+              </object>
+              <packing>
+                <property name="pass_through">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkImage" id="doc_thumbnail">
+                <property name="visible">False</property>
+              </object>
+            </child>
           </object>
           <packing>
             <property name="pack_type">start</property>
