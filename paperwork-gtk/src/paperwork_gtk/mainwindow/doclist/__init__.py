@@ -333,6 +333,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def doclist_show(self, docs, show_new=True):
         self.doclist_clear()
+
+        scroll = (self.docs != docs)
         self.docs = docs
 
         if show_new:
@@ -340,7 +342,7 @@ class Plugin(openpaperwork_core.PluginBase):
             self._add_doc_box(*new_doc, new=True)
 
         self.doclist_extend(NB_DOCS_PER_PAGE)
-        self._reselect_current_doc()
+        self._reselect_current_doc(scroll=scroll)
 
     def on_search_start(self, query):
         spinner = self.widget_tree.get_object("doclist_spinner")
