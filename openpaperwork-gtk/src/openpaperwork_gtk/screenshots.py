@@ -235,8 +235,7 @@ class Plugin(openpaperwork_core.PluginBase):
         promise.schedule()
 
     def bug_report_get_attachments(self, out: dict):
-        for (date, file_path) in self.archiver.get_archived():
-            file_url = "file://" + file_path
+        for (date, file_url) in self.archiver.get_archived():
             out[file_url] = {
                 'date': date,
                 'include_by_default': False,

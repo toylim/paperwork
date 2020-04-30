@@ -104,7 +104,7 @@ class Plugin(PluginBase):
         return [
             {
                 'interface': 'app',
-                'defaults': [],  # Paperwork: paperwork_backend.app
+                'defaults': ['openpaperwork_core.app'],
             },
             {
                 'interface': 'config',

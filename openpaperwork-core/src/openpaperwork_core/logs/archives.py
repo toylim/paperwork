@@ -1,7 +1,5 @@
 import gettext
 import logging
-import os
-import os.path
 
 from .. import PluginBase
 
@@ -23,8 +21,9 @@ class LogHandler(logging.Handler):
     MAX_LINES = 5000
     MAX_UNCAUGHT_LOGGUED = 20
 
-    def __init__(self, archiver):
+    def __init__(self, core, archiver):
         super().__init__()
+        self.core = core
         self.archiver = archiver
 
         self.first_line = None
@@ -33,9 +32,11 @@ class LogHandler(logging.Handler):
 
         self.nb_uncaught_loggued = 0
 
-        self.out_file_path = self.archiver.get_new()
+        self.out_file_url = self.archiver.get_new()
         self.formatter = logging.Formatter(self.LOG_FORMAT)
-        self.out_fd = open(self.out_file_path, 'w')
+        self.out_fd = self.core.call_success(
+            "fs_open", self.out_file_url, 'w'
+        )
 
     def emit(self, record):
         line = self.formatter.format(record) + "\n"
@@ -61,12 +62,12 @@ class LogHandler(logging.Handler):
 
         self.nb_uncaught_loggued += 1
 
-        out_file_path = self.archiver.get_new(
+        out_file_url = self.archiver.get_new(
             name="uncaught_exception_logs"
         )
         self.formatter = logging.Formatter(self.LOG_FORMAT)
 
-        with open(out_file_path, 'w') as fd:
+        with self.core.call_success("fs_open", out_file_url, 'w') as fd:
             line = self.first_line
             while line is not None:
                 fd.write(line.line)
@@ -95,6 +96,10 @@ class Plugin(PluginBase):
                 'defaults': ['openpaperwork_core.archives'],
             },
             {
+                'interface': 'fs',
+                'defaults': ['openpaperwork_core.fs.python'],
+            },
+            {
                 'interface': 'uncaught_exception',
                 'defaults': ['openpaperwork_core.uncaught_exception'],
             },
@@ -106,30 +111,29 @@ class Plugin(PluginBase):
         self.archiver = self.core.call_success(
             "file_archive_get", storage_name="logs", file_extension="txt"
         )
-        self.log_handler = LogHandler(self.archiver)
+        self.log_handler = LogHandler(core, self.archiver)
         logging.getLogger().addHandler(self.log_handler)
 
     def on_uncaught_exception(self, exc_info):
         self.log_handler.log_uncaught_exception()
 
     def bug_report_get_attachments(self, inputs: dict):
-        for (date, file_path) in self.archiver.get_archived():
-            file_url = "file://" + file_path
+        for (date, file_url) in self.archiver.get_archived():
             inputs[file_url] = {
                 'date': date,
                 'include_by_default': False,
                 'file_type': _("Log file"),
                 'file_url': file_url,
-                'file_size': os.stat(file_path).st_size
+                'file_size': self.core.call_success("fs_getsize", file_url),
             }
 
         LOGGER.info("Flushing logs to disk")
         self.log_handler.out_fd.flush()
-        file_url = "file://" + self.log_handler.out_file_path
+        file_url = self.log_handler.out_file_url
         inputs[file_url] = {
             'date': None,  # now
             'include_by_default': True,
             'file_type': _("Log file"),
             'file_url': file_url,
-            'file_size': os.stat(file_path).st_size
+            'file_size': self.core.call_success("fs_getsize", file_url),
         }

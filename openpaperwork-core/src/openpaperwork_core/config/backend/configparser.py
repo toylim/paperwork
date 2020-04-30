@@ -7,8 +7,6 @@ import configparser
 import datetime
 import gettext
 import logging
-import os
-import os.path
 
 from ... import PluginBase
 
@@ -177,35 +175,45 @@ _TYPE_SEPARATOR = ":"
 class Plugin(PluginBase):
     def __init__(self):
         self.config = configparser.RawConfigParser()
-        self.base_path = os.getenv(
-            "XDG_CONFIG_HOME",
-            os.path.expanduser("~/.config")
-        )
-        self.config_file_path_fmt = os.path.join(
-            "{directory}", "{app_name}.conf"
-        )
+        self.base_path = None
         self.application_name = None
         self.config_path = None
         self.observers = collections.defaultdict(set)
         self.core = None
         self.default_plugins = []
 
-    def init(self, core):
-        self.core = core
-
     def get_interfaces(self):
         return ['config_backend']
 
+    def get_deps(self):
+        return [
+            {
+                'interface': 'fs',
+                'defaults': ['openpaperwork_core.fs.python'],
+            },
+            {
+                'interface': 'paths',
+                'defaults': ['openpaperwork_core.paths.xdg'],
+            },
+        ]
+
+    def init(self, core):
+        self.core = core
+        self.base_path = self.core.call_success("paths_get_config_dir")
+
+    def _get_filepath(self):
+        return self.core.call_success(
+            "fs_join", self.base_path, self.application_name + ".conf"
+        )
+
     def config_backend_load(self, application_name):
         self.application_name = application_name
-        self.config_path = self.config_file_path_fmt.format(
-            directory=self.base_path,
-            app_name=application_name,
-        )
+        self.config_path = self._get_filepath()
         self.config = configparser.RawConfigParser()
         LOGGER.info("Loading configuration '%s' ...", self.config_path)
-        if os.path.exists(self.config_path):
-            with open(self.config_path, 'r') as fd:
+        if self.core.call_success("fs_exists", self.config_path) is not None:
+            fd = self.core.call_success("fs_open", self.config_path, 'r')
+            with fd:
                 self.config.read_file(fd)
         else:
             LOGGER.warning(
@@ -219,13 +227,9 @@ class Plugin(PluginBase):
     def config_backend_save(self, application_name=None):
         if application_name is not None:
             self.application_name = application_name
-        config_path = self.config_file_path_fmt.format(
-            directory=self.base_path,
-            app_name=self.application_name,
-        )
+        config_path = self._get_filepath()
         LOGGER.info("Writing configuration '%s' ...", config_path)
-        os.makedirs(os.path.dirname(config_path), mode=0o700, exist_ok=True)
-        with open(config_path, 'w') as fd:
+        with self.core.call_success("fs_open", config_path, 'w') as fd:
             self.config.write(fd)
 
     def config_backend_load_plugins(self, opt_name, default=[]):
@@ -317,12 +321,14 @@ class Plugin(PluginBase):
         self.observers[section].remove(callback)
 
     def bug_report_get_attachments(self, out: dict):
-        if self.config_path is None and not os.path.exists(self.config_path):
+        if self.config_path is None:
+            return
+        if self.core.call_success("fs_exists", self.config_path) is None:
             return
         out['config'] = {
             'include_by_default': True,
             'date': None,
             'file_type': _("App. config."),
-            'file_url': "file://" + self.config_path,
-            'file_size': os.stat(self.config_path).st_size,
+            'file_url': self.config_path,
+            'file_size': self.core.call_success("fs_getsize", self.config_path)
         }

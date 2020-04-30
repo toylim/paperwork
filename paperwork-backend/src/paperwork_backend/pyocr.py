@@ -19,7 +19,7 @@ _ = gettext.gettext
 DEFAULT_OCR_LANG = "eng"  # if really we can't guess anything
 
 
-def init_flatpak():
+def init_flatpak(core):
     """
     If we are in Flatpak, we must build a tessdata/ directory using the
     .traineddata files from each locale directory
@@ -28,12 +28,9 @@ def init_flatpak():
     if len(tessdata_files) <= 0:
         return
 
-    localdir = os.path.expanduser("~/.local")
-    base_data_dir = os.getenv(
-        "XDG_DATA_HOME",
-        os.path.join(localdir, "share")
-    )
-    tessdatadir = os.path.join(base_data_dir, "paperwork", "tessdata")
+    paperwork_dir = core.call_success("paths_get_data_dir")
+    tessdatadir = core.call_success("fs_join", paperwork_dir, "tessdata")
+    tessdatadir = core.call_success("fs_unsafe", tessdatadir)
 
     LOGGER.info("Assuming we are running in Flatpak."
                 " Building tessdata directory %s ...", tessdatadir)
@@ -50,8 +47,9 @@ def init_flatpak():
                os.path.join(tessdatadir, "tessconfigs"))
     for tessdata in tessdata_files:
         LOGGER.info("%s found", tessdata)
-        os.symlink(tessdata, os.path.join(tessdatadir,
-                                          os.path.basename(tessdata)))
+        os.symlink(
+            tessdata, os.path.join(tessdatadir, os.path.basename(tessdata))
+        )
     os.environ['TESSDATA_PREFIX'] = tessdatadir
     LOGGER.info("Tessdata directory ready")
 
@@ -146,7 +144,6 @@ def get_default_ocr_langs(allow_none=False):
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
-        init_flatpak()
 
     def get_interfaces(self):
         return [
@@ -160,10 +157,15 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'config',
                 'defaults': ['openpaperwork_core.config'],
             },
+            {
+                'interface': 'paths',
+                'defaults': ['openpaperwork_core.paths.xdg'],
+            },
         ]
 
     def init(self, core):
         super().init(core)
+        init_flatpak(self.core)
 
         ocr_langs = self.core.call_success(
             "config_build_simple",

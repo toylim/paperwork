@@ -69,6 +69,9 @@ class Plugin(PluginBase):
         self.core = None
         self.settings = {}
         self.values = {}
+        # applicatiom here is a bit more specific: paperwork-gtk,
+        # paperwork-shell, etc.
+        # It is used to known which plugin list must be loaded
         self.application = None
         self.plugin_list_name = None
         self.observers = collections.defaultdict(set)

@@ -374,7 +374,6 @@ class Plugin(openpaperwork_core.PluginBase):
         self.bayes_dir = None
         self.bayes = None
         self.sql = None
-        self.sql_file = None
 
     def get_interfaces(self):
         return [
@@ -403,6 +402,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'mainloop',
                 'defaults': ['openpaperwork_gtk.mainloop.glib'],
             },
+            {
+                'interface': 'paths',
+                'defaults': ['openpaperwork_core.paths.xdg'],
+            },
         ]
 
     def _get_baye_dir(self, label_name):
@@ -421,18 +424,19 @@ class Plugin(openpaperwork_core.PluginBase):
         super().init(core)
 
         if self.bayes_dir is None:
-            data_dir = os.getenv(
-                "XDG_DATA_HOME", os.path.join(self.local_dir, "share")
+            data_dir = self.core.call_success("paths_get_data_dir")
+            self.bayes_dir = self.core.call_success(
+                "fs_join", data_dir, "bayes"
             )
-            self.bayes_dir = os.path.join(data_dir, "paperwork2", "bayes")
 
-        os.makedirs(self.bayes_dir, mode=0o700, exist_ok=True)
-        if os.name == 'nt':  # hide ~/.local on Windows
-            local_dir_url = self.core.call_success("fs_safe", self.local_dir)
-            self.core.call_all("fs_hide", local_dir_url)
+        self.core.call_all("fs_mkdir_p", self.bayes_dir)
 
-        self.sql_file = os.path.join(self.bayes_dir, 'labels.db')
-        self.sql = sqlite3.connect(self.sql_file)
+        sql_file = self.core.call_success(
+            "fs_join", self.bayes_dir, 'labels.db'
+        )
+        self.sql = sqlite3.connect(
+            self.core.call_success("fs_unsafe", sql_file)
+        )
         for query in CREATE_TABLES:
             self.sql.execute(query)
 

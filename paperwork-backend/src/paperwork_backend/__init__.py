@@ -5,7 +5,10 @@ DEFAULT_CONFIG_PLUGINS = [
     'openpaperwork_core.config.backend.configparser',
     'openpaperwork_core.logs.archives',
     'openpaperwork_core.logs.print',
+    'openpaperwork_core.paths.xdg',
     'openpaperwork_core.uncaught_exception',
+    'openpaperwork_gtk.fs.gio',
+    'paperwork_backend.app',
 ]
 
 DEFAULT_PLUGINS = [
@@ -24,8 +27,6 @@ DEFAULT_PLUGINS = [
     'openpaperwork_core.thread.pool',
     'openpaperwork_core.work_queue.default',
     'openpaperwork_gtk.fs.gio',
-    'openpaperwork_gtk.fs.gio',
-    'paperwork_backend.app',
     'paperwork_backend.beacon.stats',
     'paperwork_backend.beacon.sysinfo',
     'paperwork_backend.beacon.update',

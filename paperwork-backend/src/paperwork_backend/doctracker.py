@@ -6,7 +6,6 @@ directory.
 
 import datetime
 import gettext
-import os
 import sqlite3
 
 import openpaperwork_core
@@ -123,7 +122,6 @@ class Plugin(openpaperwork_core.PluginBase):
     PRIORITY = 10000
 
     def __init__(self):
-        self.local_dir = os.path.expanduser("~/.local")
         self.paperwork_dir = None
         self.sql = None
         self.transaction_factories = []
@@ -149,6 +147,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_gtk.mainloop.glib'],
             },
             {
+                'interface': 'paths',
+                'defaults': ['openpaperwork_core.paths.xdg'],
+            },
+            {
                 'interface': 'thread',
                 'defaults': ['openpaperwork_core.thread.simple'],
             },
@@ -156,19 +158,13 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def init(self, core):
         super().init(core)
-        self.local_dir = os.path.expanduser("~/.local")
         if self.paperwork_dir is None:
-            data_dir = os.getenv(
-                "XDG_DATA_HOME", os.path.join(self.local_dir, "share")
-            )
-            self.paperwork_dir = os.path.join(data_dir, "paperwork2")
+            self.paperwork_dir = self.core.call_success("paths_get_data_dir")
 
-        os.makedirs(self.paperwork_dir, mode=0o700, exist_ok=True)
-        if os.name == 'nt':  # hide ~/.local on Windows
-            local_dir_url = self.core.call_success("fs_safe", self.local_dir)
-            self.core.call_all("fs_hide", local_dir_url)
-
-        sql_file = os.path.join(self.paperwork_dir, 'doc_tracking.db')
+        sql_file = self.core.call_success(
+            "fs_join", self.paperwork_dir, 'doc_tracking.db'
+        )
+        sql_file = self.core.call_success("fs_unsafe", sql_file)
         self.sql = self.core.call_success(
             "mainloop_execute", sqlite3.connect, sql_file
         )

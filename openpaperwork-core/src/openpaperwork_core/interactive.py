@@ -71,22 +71,29 @@ class Plugin(PluginBase):
     def get_deps(self):
         return [
             {
+                'interface': 'fs',
+                'defaults': ['openpaperwork_core.fs.python'],
+            },
+            {
                 'interface': 'mainloop',
                 'defaults': ['openpaperwork_core.mainloop.asyncio'],
+            },
+            {
+                'interface': 'paths',
+                'defaults': ['openpaperwork_core.paths.xdg'],
             },
         ]
 
     def init(self, core):
         super().init(core)
-        local_dir = os.path.expanduser("~/.local")
-        data_dir = os.getenv(
-            "XDG_DATA_HOME", os.path.join(local_dir, "share")
+        data_dir = self.core.call_success("paths_get_data_dir")
+        base_hist_dir = self.core.call_success(
+            "fs_join", data_dir, "openpaperwork"
         )
-        base_hist_dir = os.path.join(
-            data_dir, "openpaperwork"
+        self.core.call_all("fs_mkdir_p", base_hist_dir)
+        histfile = self.core.call_success(
+            "fs_join", base_hist_dir, "interactive_history"
         )
-        os.makedirs(base_hist_dir, exist_ok=True)
-        histfile = os.path.join(base_hist_dir, "interactive_history")
 
         print("Objects provided:")
         print("  core : reference to OpenPaperwork's core")
@@ -99,7 +106,7 @@ class Plugin(PluginBase):
             "core": ProxyCore(core),
             "stop": self._stop,
             "wait": self._wait,
-        }, histfile=histfile)
+        }, histfile=self.core.call_success("fs_unsafe", histfile))
         threading.Thread(target=self._interact, args=(console,)).start()
 
     def on_gtk_window_opened(self, window):

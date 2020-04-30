@@ -35,6 +35,7 @@ CREATE_TABLES = [
 class PageTracker(object):
     def __init__(self, core, sql_file):
         self.core = core
+        sql_file = self.core.call_success("fs_unsafe", sql_file)
         self.sql = self.core.call_success(
             "mainloop_execute", sqlite3.connect, sql_file
         )
@@ -163,23 +164,21 @@ class Plugin(openpaperwork_core.PluginBase):
                     'paperwork_backend.model.pdf',
                 ],
             },
+            {
+                'interface': 'paths',
+                'defaults': ['openpaperwork_core.paths.xdg'],
+            },
         ]
 
     def init(self, core):
         super().init(core)
 
         if self.paperwork_dir is None:
-            data_dir = os.getenv(
-                "XDG_DATA_HOME", os.path.join(self.local_dir, "share")
-            )
-            self.paperwork_dir = os.path.join(data_dir, "paperwork2")
+            self.paperwork_dir = self.core.call_success("paths_get_data_dir")
 
-        os.makedirs(self.paperwork_dir, mode=0o700, exist_ok=True)
-        if os.name == 'nt':  # hide ~/.local on Windows
-            local_dir_url = self.core.call_success("fs_safe", self.local_dir)
-            self.core.call_all("fs_hide", local_dir_url)
-
-        self.sql_file = os.path.join(self.paperwork_dir, 'page_tracking_{}.db')
+        self.sql_file = self.core.call_success(
+            "fs_join", self.paperwork_dir, 'page_tracking_{}.db'
+        )
 
     def page_tracker_get(self, tracking_id):
         sql_file = self.sql_file.format(tracking_id)

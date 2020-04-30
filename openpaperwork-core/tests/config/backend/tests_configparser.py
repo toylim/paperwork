@@ -49,9 +49,9 @@ class TestReadWrite(unittest.TestCase):
             # must not throw an exception
             core.call_all('config_backend_load', 'openpaperwork_test')
         finally:
-            shutil.rmtree(core.get_by_name(
+            shutil.rmtree(core.call_success("fs_unsafe", core.get_by_name(
                 'openpaperwork_core.config.backend.configparser'
-            ).base_path)
+            ).base_path))
 
     def test_simple_readwrite(self):
         core = openpaperwork_core.Core(allow_unsatisfied=True)
@@ -87,46 +87,9 @@ class TestReadWrite(unittest.TestCase):
                 )
             )
         finally:
-            shutil.rmtree(core.get_by_name(
+            shutil.rmtree(core.call_success("fs_unsafe", core.get_by_name(
                 'openpaperwork_core.config.backend.configparser'
-            ).base_path)
-
-    @unittest.mock.patch("importlib.import_module")
-    def test_simple_load_module(self, import_module):
-        import openpaperwork_core.config.backend.configparser
-
-        core = openpaperwork_core.Core(allow_unsatisfied=True)
-
-        import_module.return_value = openpaperwork_core.config.backend.configparser
-        core.load('openpaperwork_core.config.backend.configparser')
-        import_module.assert_called_once_with(
-            'openpaperwork_core.config.backend.configparser'
-        )
-
-        core.init()
-
-        class TestModule(object):
-            class Plugin(openpaperwork_core.PluginBase):
-                def __init__(self):
-                    self.initialized = False
-
-                def init(self, core):
-                    self.initialized = True
-
-        core.call_all(
-            'config_backend_add_plugin', 'some_opt', 'some_test_module'
-        )
-        core.call_all(
-            'config_backend_add_plugin', 'some_opt', 'some_test_module_2'
-        )
-
-        import_module.reset_mock()
-        import_module.side_effect = [TestModule(), TestModule()]
-        core.call_all('config_backend_load_plugins', 'some_opt')
-        import_module.assert_called_with('some_test_module_2')
-
-        self.assertTrue(core.get_by_name('some_test_module').initialized)
-        self.assertTrue(core.get_by_name('some_test_module_2').initialized)
+            ).base_path))
 
     def test_observers(self):
         core = openpaperwork_core.Core(allow_unsatisfied=True)
@@ -174,9 +137,9 @@ class TestReadWrite(unittest.TestCase):
             core.call_all('config_backend_load', 'openpaperwork_test')
             self.assertEqual(obs.count, 2)
         finally:
-            shutil.rmtree(core.get_by_name(
+            shutil.rmtree(core.call_success("fs_unsafe", core.get_by_name(
                 'openpaperwork_core.config.backend.configparser'
-            ).base_path)
+            ).base_path))
 
     def test_simple_readwrite_list(self):
         core = openpaperwork_core.Core(allow_unsatisfied=True)
@@ -218,9 +181,9 @@ class TestReadWrite(unittest.TestCase):
             self.assertEqual(len(v), 2)
             self.assertEqual(v[1], "test_value_c")
         finally:
-            shutil.rmtree(core.get_by_name(
+            shutil.rmtree(core.call_success("fs_unsafe", core.get_by_name(
                 'openpaperwork_core.config.backend.configparser'
-            ).base_path)
+            ).base_path))
 
     def test_simple_readwrite_dict(self):
         core = openpaperwork_core.Core(allow_unsatisfied=True)
@@ -271,9 +234,9 @@ class TestReadWrite(unittest.TestCase):
             self.assertEqual(len(v), 2)
             self.assertEqual(v['test_key_b'], "test_value_c")
         finally:
-            shutil.rmtree(core.get_by_name(
+            shutil.rmtree(core.call_success("fs_unsafe", core.get_by_name(
                 'openpaperwork_core.config.backend.configparser'
-            ).base_path)
+            ).base_path))
 
     def test_getset_date(self):
         core = openpaperwork_core.Core(allow_unsatisfied=True)
@@ -298,6 +261,6 @@ class TestReadWrite(unittest.TestCase):
             v = core.call_one('config_backend_get', 'test_section', 'test_key')
             self.assertEqual(v, datetime.date(year=1985, month=1, day=1))
         finally:
-            shutil.rmtree(core.get_by_name(
+            shutil.rmtree(core.call_success("fs_unsafe", core.get_by_name(
                 'openpaperwork_core.config.backend.configparser'
-            ).base_path)
+            ).base_path))

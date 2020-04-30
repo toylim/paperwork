@@ -1,8 +1,6 @@
 import datetime
 import gettext
 import logging
-import os
-import shutil
 import time
 
 import whoosh.fields
@@ -201,10 +199,7 @@ class Plugin(openpaperwork_core.PluginBase):
         }
         self.index = None
 
-        # Whoosh index *must* be on local disk --> we use Unix path here, not
-        # URLs
-
-        self.local_dir = os.path.expanduser("~/.local")
+        self.local_dir = None
         self.index_dir = None
 
     def get_interfaces(self):
@@ -226,6 +221,10 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'mainloop',
                 'defaults': ['openpaperwork_gtk.mainloop.glib'],
+            },
+            {
+                'interface': 'paths',
+                'defaults': ['openpaperwork_core.paths.xdg'],
             },
             {
                 'interface': 'thread',
@@ -253,10 +252,10 @@ class Plugin(openpaperwork_core.PluginBase):
         super().init(core)
 
         if self.index_dir is None:
-            data_dir = os.getenv(
-                "XDG_DATA_HOME", os.path.join(self.local_dir, "share")
+            data_dir = self.core.call_success("paths_get_data_dir")
+            self.index_dir = self.core.call_success(
+                "fs_join", data_dir, "index"
             )
-            self.index_dir = os.path.join(data_dir, "paperwork2", "index")
 
         need_index_rewrite = True
         while need_index_rewrite:
@@ -264,7 +263,9 @@ class Plugin(openpaperwork_core.PluginBase):
                 LOGGER.info(
                     "Opening Whoosh index '%s' ...", self.index_dir
                 )
-                self.index = whoosh.index.open_dir(self.index_dir)
+                self.index = whoosh.index.open_dir(
+                    self.core.call_success("fs_unsafe", self.index_dir)
+                )
                 # check that the schema is up-to-date
                 # We use the string representation of the schemas, because
                 # previous versions of whoosh don't always implement __eq__
@@ -283,18 +284,14 @@ class Plugin(openpaperwork_core.PluginBase):
 
                 LOGGER.info("Creating a new index")
 
-                os.makedirs(self.index_dir, mode=0o700)
-                if os.name == 'nt':  # hide ~/.local on Windows
-                    local_dir_url = self.core.call_success(
-                        "fs_safe", self.local_dir
-                    )
-                    self.core.call_all("fs_hide", local_dir_url)
+                self.core.call_success("fs_mkdir_p", self.index_dir)
 
                 new_index = whoosh.index.create_in(
-                    self.index_dir, WHOOSH_SCHEMA
+                    self.core.call_success("fs_unsafe", self.index_dir),
+                    WHOOSH_SCHEMA
                 )
                 new_index.close()
-                LOGGER.info("Index '%s' created" % self.index_dir)
+                LOGGER.info("Index '%s' created", self.index_dir)
 
         self.query_parsers = {
             'fuzzy': [
@@ -323,9 +320,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _destroy(self):
         self._close()
-        if os.path.exists(self.index_dir):
+        if self.core.call_success("fs_exists", self.index_dir) is not None:
             LOGGER.warning("Destroying the index ...")
-            shutil.rmtree(self.index_dir)
+            self.core.call_success("fs_rm_rf", self.index_dir)
             LOGGER.warning("Index destroyed")
 
     def doc_transaction_start(self, out: list, total_expected=-1):
