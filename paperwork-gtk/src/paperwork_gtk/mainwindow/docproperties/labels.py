@@ -68,7 +68,6 @@ class LabelAction(object):
                 else:
                     self.change = LabelChange.UNCHANGED
 
-
     def get_image(self):
         if self.change == LabelChange.ADDED:
             return "list-add-symbolic"
@@ -163,7 +162,6 @@ class LabelEditor(object):
 
             if old_label in self.deleted_labels:
                 continue
-
 
             if old_label in self.toggled_labels:
                 label_action = self.toggled_labels[old_label]
