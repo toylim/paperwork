@@ -418,7 +418,7 @@ class Plugin(openpaperwork_core.PluginBase):
         label_hash = hashlib.sha1(label_bytes).digest()
         label_hash = base64.encodebytes(label_hash).decode('utf-8').strip()
         label_hash = label_hash.replace('/', '_')
-        return os.path.join(self.bayes_dir, label_hash)
+        return self.core.call_success("fs_join", self.bayes_dir, label_hash)
 
     def init(self, core):
         super().init(core)
@@ -471,8 +471,10 @@ class Plugin(openpaperwork_core.PluginBase):
 
         LOGGER.info("Loading training for label '%s'", label)
         baye_dir = self._get_baye_dir(label)
-        os.makedirs(baye_dir, mode=0o700, exist_ok=True)
-        self.bayes[label] = simplebayes.SimpleBayes(cache_path=baye_dir)
+        self.core.call_all("fs_mkdir_p", baye_dir)
+        self.bayes[label] = simplebayes.SimpleBayes(
+            cache_path=self.core.call_success("fs_unsafe", baye_dir)
+        )
         self.bayes[label].cache_train()
         return self.bayes[label]
 
