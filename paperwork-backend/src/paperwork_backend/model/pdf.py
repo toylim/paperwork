@@ -92,7 +92,7 @@ class PdfLineBox(object):
 
 
 class PdfPageMapping(object):
-    MAPPING_FILE = "pdf_map.csv"
+    MAPPING_FILE = "page_map.csv"
     SEPARATOR = ","
 
     def __init__(self, plugin, doc_url):
