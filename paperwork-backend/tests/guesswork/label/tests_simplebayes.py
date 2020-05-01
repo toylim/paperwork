@@ -44,7 +44,7 @@ class TestLabelGuesser(unittest.TestCase):
         shutil.rmtree(self.tmp_bayes_dir)
 
     def test_training(self):
-        ### First training
+        # ## First training
 
         self.fake_storage.docs = [
             {
@@ -85,7 +85,7 @@ class TestLabelGuesser(unittest.TestCase):
         for transaction in transactions:
             transaction.commit()
 
-        ### New docs
+        # ## New docs
 
         self.fake_storage.docs = [
             {  # old doc
@@ -145,7 +145,7 @@ class TestLabelGuesser(unittest.TestCase):
             ("some_label", "#123412341234")
         )
 
-        ### Upd docs
+        # ## Upd docs
 
         self.fake_storage.docs = [
             {  # old doc
@@ -200,7 +200,7 @@ class TestLabelGuesser(unittest.TestCase):
             ("some_label", "#123412341234")
         )
 
-        #### del docs
+        # ### del docs
 
         self.fake_storage.docs = [
             {  # old doc
