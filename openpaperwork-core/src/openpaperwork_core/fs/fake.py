@@ -187,7 +187,7 @@ class Plugin(CommonFsPluginBase):
     def fs_unlink(self, url, **kwargs):
         self.fs_rm_rf(url)
 
-    def fs_rm_rf(self, url):
+    def fs_rm_rf(self, url, **kwargs):
         path = self._get_path(url)
         f = self.fs
         for p in path[:-1]:

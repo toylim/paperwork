@@ -73,7 +73,7 @@ class Plugin(CommonFsPluginBase):
         os.unlink(path)
         return True
 
-    def fs_rm_rf(self, uri):
+    def fs_rm_rf(self, uri, **kwargs):
         path = self._uri_to_path(uri)
         if path is None:
             return

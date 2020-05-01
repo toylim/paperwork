@@ -366,7 +366,7 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             LOGGER.warning("Gio.Gerror", exc_info=exc)
             raise IOError(str(exc))
 
-    def fs_rm_rf(self, url):
+    def fs_rm_rf(self, url, trash=True, **kwargs):
         if not self._is_file_uri(url):
             return None
 
@@ -377,19 +377,21 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             LOGGER.info("Deleting %s ...", url)
             f = Gio.File.new_for_uri(url)
             deleted = False
-            try:
-                deleted = f.trash()
-                if not deleted:
+            if trash:
+                try:
+                    deleted = f.trash()
+                    if not deleted:
+                        LOGGER.warning(
+                            "Failed to trash %s."
+                            " Will try to delete it instead",
+                            url
+                        )
+                except Exception as exc:
                     LOGGER.warning(
-                        "Failed to trash %s. Will try to delete it instead",
-                        url
+                        "Failed to trash %s (trash()=False)."
+                        " Will try to delete it instead",
+                        url, exc_info=exc
                     )
-            except Exception as exc:
-                LOGGER.warning(
-                    "Failed to trash %s (trash()=False)."
-                    " Will try to delete it instead",
-                    url, exc_info=exc
-                )
 
             if deleted and self.fs_exists(url) is not None:
                 deleted = False

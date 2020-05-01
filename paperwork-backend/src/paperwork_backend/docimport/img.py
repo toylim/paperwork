@@ -36,6 +36,7 @@ class SingleImgImporter(object):
         if nb_pages is None:
             nb_pages = 0
 
+        # Makes sure it's actually an image
         img = self.core.call_success("url_to_pillow", file_url)
         page_url = self.core.call_success(
             "page_get_img_url", doc_url, nb_pages, write=True
@@ -62,7 +63,7 @@ class SingleImgImporter(object):
         return True
 
     def get_promise(self):
-        return openpaperwork_core.promise.Promise(
+        return openpaperwork_core.promise.ThreadedPromise(
             self.core, self._basic_import, args=(self.src_file_uri,)
         )
 

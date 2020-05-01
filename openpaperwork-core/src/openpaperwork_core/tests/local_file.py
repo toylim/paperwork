@@ -189,7 +189,7 @@ class AbstractTestListDir(unittest.TestCase):
 
     def tearDown(self):
         # check fs_rm_rf at the same time
-        self.core.call_one("fs_rm_rf", self.uri_dirname)
+        self.core.call_one("fs_rm_rf", self.uri_dirname, trash=False)
         self.assertFalse(os.path.exists(self.dirname))
 
     def test_listdir(self):
@@ -360,7 +360,7 @@ class AbstractTestIsdir(unittest.TestCase):
             self.assertTrue(self.core.call_one("fs_isdir", uri_dirname))
         finally:
             # check fs_rm_rf at the same time
-            self.core.call_one("fs_rm_rf", uri_dirname)
+            self.core.call_one("fs_rm_rf", uri_dirname, trash=False)
             self.assertFalse(os.path.exists(dirname))
 
     def test_isdir_false(self):
@@ -445,7 +445,7 @@ class AbstractTestMkdirP(unittest.TestCase):
             )))
         finally:
             # check fs_rm_rf at the same time
-            self.core.call_one("fs_rm_rf", uri_dirname)
+            self.core.call_one("fs_rm_rf", uri_dirname, trash=False)
             self.assertFalse(os.path.exists(dirname))
 
 

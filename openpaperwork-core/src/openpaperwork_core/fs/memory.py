@@ -156,7 +156,7 @@ class Plugin(CommonFsPluginBase):
         self.fs.pop(mem_id)
         return True
 
-    def fs_rm_rf(self, url):
+    def fs_rm_rf(self, url, **kwargs):
         mem_id = self._get_memory_id(url)
         if mem_id is None:
             return

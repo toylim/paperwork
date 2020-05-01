@@ -43,7 +43,7 @@ class SinglePdfImporter(object):
         return True
 
     def get_promise(self):
-        return openpaperwork_core.promise.Promise(
+        return openpaperwork_core.promise.ThreadedPromise(
             self.core, self._basic_import, args=(self.src_file_uri,)
         )
 

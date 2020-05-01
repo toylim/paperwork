@@ -105,11 +105,11 @@ class Plugin(openpaperwork_core.PluginBase):
 
         return (doc_id, doc_url)
 
-    def storage_delete_doc_id(self, doc_id):
+    def storage_delete_doc_id(self, doc_id, trash=True):
         doc_url = self.doc_id_to_url(doc_id)
         if doc_url is None:
             return
-        self.core.call_all("fs_rm_rf", doc_url)
+        self.core.call_all("fs_rm_rf", doc_url, trash=trash)
 
     def stats_get(self, stats):
         LOGGER.info("Counting documents for statistics...")

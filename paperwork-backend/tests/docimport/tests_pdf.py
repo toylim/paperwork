@@ -1,5 +1,6 @@
 import os
 import unittest
+import unittest.mock
 
 import openpaperwork_core
 import paperwork_backend.docimport
@@ -76,7 +77,8 @@ class TestPdfImport(unittest.TestCase):
 
         self.core.init()
 
-    def test_import_pdf(self):
+    @unittest.mock.patch("gi.repository.Poppler.Document.new_from_gfile")
+    def test_import_pdf(self, poppler_new_from_gfile):
         self.hash_to_docid = {}
         self.fake_storage.docs = [
             {
@@ -242,7 +244,8 @@ class TestRecursivePdfImport(unittest.TestCase):
 
         self.core.init()
 
-    def test_import_pdf(self):
+    @unittest.mock.patch("gi.repository.Poppler.Document.new_from_gfile")
+    def test_import_pdf(self, poppler_new_from_gfile):
         self.hash_to_docid = {}
         self.fake_storage.docs = [
             {

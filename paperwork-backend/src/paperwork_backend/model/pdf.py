@@ -655,16 +655,21 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def doc_pdf_import(self, src_file_uri):
-        # check the PDF is readable before messing the content of the
-        # work directory
-        gio_file = Gio.File.new_for_uri(src_file_uri)
-        Poppler.Document.new_from_gfile(gio_file, password=None)
-
         (doc_id, doc_url) = self.core.call_success("storage_get_new_doc")
         pdf_url = self.core.call_success("fs_join", doc_url, PDF_FILENAME)
 
         self.core.call_success("fs_mkdir_p", doc_url)
         self.core.call_success("fs_copy", src_file_uri, pdf_url)
+
+        try:
+            # check the PDF is readable
+            gio_file = Gio.File.new_for_uri(pdf_url)
+            Poppler.Document.new_from_gfile(gio_file, password=None)
+        except Exception:
+            LOGGER.error("Failed to read %s", pdf_url)
+            self.core.call_success("fs_rm_rf", doc_url, trash=False)
+            raise
+
         return (doc_id, doc_url)
 
     def page_delete_by_url(self, doc_url, page_idx):
