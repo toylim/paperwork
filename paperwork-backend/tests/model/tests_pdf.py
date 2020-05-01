@@ -18,12 +18,12 @@ class TestHocr(unittest.TestCase):
             "file://" + os.path.dirname(os.path.abspath(__file__))
         )
 
-        mapping = self.full_doc_url + "/pdf_map.csv"
+        mapping = self.full_doc_url + "/page_map.csv"
         if self.core.call_success("fs_exists", mapping):
             self.core.call_all("fs_unlink", mapping)
 
     def tearDown(self):
-        mapping = self.full_doc_url + "/pdf_map.csv"
+        mapping = self.full_doc_url + "/page_map.csv"
         if self.core.call_success("fs_exists", mapping):
             self.core.call_all("fs_unlink", mapping)
 
