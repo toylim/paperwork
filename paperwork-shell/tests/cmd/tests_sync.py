@@ -94,7 +94,7 @@ class TestSync(unittest.TestCase):
 
                 def fs_get_mtime(s, file_url):
                     if file_url.endswith(".words"):
-                        dt = datetime.datetime(year=2222, month=1, day=1)
+                        dt = datetime.datetime(year=2038, month=1, day=1)
                         return dt.timestamp()
                     return None
 
