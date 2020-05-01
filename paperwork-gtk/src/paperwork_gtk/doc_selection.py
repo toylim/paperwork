@@ -24,7 +24,10 @@ class Plugin(openpaperwork_core.PluginBase):
         self.selection.add((doc_id, doc_url))
 
     def doc_selection_remove(self, doc_id, doc_url):
-        self.selection.remove((doc_id, doc_url))
+        try:
+            self.selection.remove((doc_id, doc_url))
+        except KeyError:
+            pass
 
     def doc_selection_get(self, out: set):
         out.update(self.selection)
