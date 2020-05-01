@@ -44,6 +44,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['paperwork_gtk.mainwindow.doclist'],
             },
             {
+                'interface': 'gtk_doc_properties',
+                'defaults': ['paperwork_gtk.mainwindow.docproperties'],
+            },
+            {
                 'interface': 'gtk_doclist',
                 'defaults': ['paperwork_gtk.mainwindow.doclist'],
             },
