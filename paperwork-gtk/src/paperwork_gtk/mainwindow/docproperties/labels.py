@@ -1,3 +1,4 @@
+import enum
 import gettext
 import logging
 import re
@@ -26,21 +27,76 @@ LOGGER = logging.getLogger(__name__)
 RE_FORBIDDEN_LABELS = re.compile("(^$|.*,.*)")
 
 
-class Plugin(openpaperwork_core.PluginBase):
-    PRIORITY = 1000
+class LabelChange(enum.Enum):
+    UNCHANGED = 0
+    ADDED = 1
+    REMOVED = 2
 
-    def __init__(self):
+
+class LabelAction(object):
+    def __init__(self, current_state):
+        # current_state == None for multiple document selection
+        self.current_state = current_state
+        self.change = LabelChange.UNCHANGED
+
+    def on_change(self):
+        if self.current_state is None:
+
+            # multi-docs mode : rotate over the 3 possible change values
+            if self.change == LabelChange.UNCHANGED:
+                self.change = LabelChange.ADDED
+            elif self.change == LabelChange.ADDED:
+                self.change = LabelChange.REMOVED
+            elif self.change == LabelChange.REMOVED:
+                self.change = LabelChange.UNCHANGED
+
+        else:
+
+            # single-doc mode
+
+            if not self.current_state:
+
+                if self.change == LabelChange.UNCHANGED:
+                    self.change = LabelChange.ADDED
+                else:
+                    self.change = LabelChange.UNCHANGED
+
+            else:
+
+                if self.change == LabelChange.UNCHANGED:
+                    self.change = LabelChange.REMOVED
+                else:
+                    self.change = LabelChange.UNCHANGED
+
+
+    def get_image(self):
+        if self.change == LabelChange.ADDED:
+            return "list-add-symbolic"
+        elif self.change == LabelChange.REMOVED:
+            return "list-remove-symbolic"
+        else:
+            if self.current_state:
+                return "object-select-symbolic"
+            return None
+
+    def __str__(self):
+        return str((self.change, self.current_state))
+
+
+class LabelEditor(object):
+    def __init__(self, plugin):
         super().__init__()
-        self.widget_tree = None
-        self.active_doc = None
-        self.windows = []
+        self.core = plugin.core
+        self.plugin = plugin
+
+        self.active_docs = []
 
         # self.changed_labels contains the label that have been modified
         # (color or text)
         self.changed_labels = {}
 
         # self.toggled_labels indicates the labels that have been selected or
-        # unselected (value = True or False, depending on whether they are
+        # unselected (value = LabelAction, depending on whether they are
         # now selected or not)
         self.toggled_labels = {}
 
@@ -52,70 +108,6 @@ class Plugin(openpaperwork_core.PluginBase):
         # remove from *all* the documents.
         self.deleted_labels = set()
 
-    def get_interfaces(self):
-        return [
-            'chkdeps',
-            'gtk_doc_property',
-            'gtk_window_listener',
-            'screenshot_provider',
-            'syncable',
-        ]
-
-    def get_deps(self):
-        return [
-            {
-                'interface': 'doc_labels',
-                'defaults': ['paperwork_backend.model.labels'],
-            },
-            {
-                'interface': 'document_storage',
-                'defaults': ['paperwork_backend.model.workdir'],
-            },
-            {
-                'interface': 'gtk_colors',
-                'defaults': ['openpaperwork_gtk.colors'],
-            },
-            {
-                'interface': 'gtk_doc_properties',
-                'defaults': ['paperwork_gtk.docproperties'],
-            },
-            {
-                'interface': 'gtk_resources',
-                'defaults': ['openpaperwork_gtk.resources'],
-            },
-            {
-                'interface': 'screenshot',
-                'defaults': ['openpaperwork_gtk.screenshots'],
-            },
-        ]
-
-    def on_gtk_window_opened(self, window):
-        self.windows.append(window)
-
-    def on_gtk_window_closed(self, window):
-        self.windows.remove(window)
-
-    def init(self, core):
-        super().init(core)
-        if not GTK_AVAILABLE:
-            # chkdeps() must still be callable
-            return
-
-        screen = Gdk.Screen.get_default()
-        if screen is None:
-            # Gtk.StyleContext() will fail, but chkdeps() must still be
-            # callable
-            LOGGER.warning(
-                "Cannot get style: Gdk.Screen.get_default()"
-                " returned None"
-            )
-            return None
-
-    def chkdeps(self, out: dict):
-        if not GTK_AVAILABLE:
-            out['gtk'].update(openpaperwork_gtk.deps.GTK)
-
-    def doc_properties_components_get(self, out: list):
         self.widget_tree = self.core.call_success(
             "gtk_load_widget_tree",
             "paperwork_gtk.mainwindow.docproperties", "labels.glade"
@@ -124,7 +116,6 @@ class Plugin(openpaperwork_core.PluginBase):
         color_widget.set_rgba(self.core.call_success(
             "gtk_theme_get_color", "theme_bg_color"
         ))
-        out.append(self.widget_tree.get_object("listbox_global"))
 
         self.widget_tree.get_object("new_label_button").connect(
             "clicked", self._on_new_label
@@ -133,49 +124,37 @@ class Plugin(openpaperwork_core.PluginBase):
         new_label_entry.connect("activate", self._on_new_label)
         new_label_entry.connect("changed", self._on_label_txt_changed)
 
-    def _update_toggle_img(self, toggle):
-        if toggle.get_active():
-            image = Gtk.Image.new_from_icon_name(
-                "object-select-symbolic",
-                Gtk.IconSize.MENU
-            )
+    def _update_button_img(self, toggle, label_action):
+        img = label_action.get_image()
+        if img is not None:
+            image = Gtk.Image.new_from_icon_name(img, Gtk.IconSize.MENU)
         else:
             image = Gtk.Image()
         toggle.set_image(image)
 
-    def doc_properties_components_set_active_doc(self, doc_id, doc_url):
-        self.active_doc = (doc_id, doc_url)
-
-        self.changed_labels = {}
-        self.toggled_labels = {}
-        self.new_labels = set()
-        self.deleted_labels = set()
-        new_label_entry = self.widget_tree.get_object("new_label_entry")
-        new_label_entry.set_text("")
-
-        self._refresh_list()
-
     def _refresh_list(self):
-        if self.active_doc is None:
-            return
-
         listbox = self.widget_tree.get_object("listbox_labels")
         for widget in list(listbox.get_children()):
             listbox.remove(widget)
 
-        doc_labels = set()
-        self.core.call_all(
-            "doc_get_labels_by_url", doc_labels, self.active_doc[1]
-        )
+        doc_labels = None
+        if len(self.active_docs) == 1:
+            doc_labels = set()
+            active_doc = list(self.active_docs)[0]
+            self.core.call_all(
+                "doc_get_labels_by_url", doc_labels, active_doc[1]
+            )
 
         labels = set()
         self.core.call_all("labels_get_all", labels)
-        labels.update(doc_labels)
+        if doc_labels is not None:
+            labels.update(doc_labels)
 
         labels = list(labels)
         labels.sort()
 
-        doc_labels = {doc_label[0] for doc_label in doc_labels}
+        if doc_labels is not None:
+            doc_labels = {doc_label[0] for doc_label in doc_labels}
         for old_label in labels:
             if old_label in self.changed_labels:
                 new_label = self.changed_labels[old_label]
@@ -185,9 +164,15 @@ class Plugin(openpaperwork_core.PluginBase):
             if old_label in self.deleted_labels:
                 continue
 
-            active = old_label[0] in doc_labels
+
             if old_label in self.toggled_labels:
-                active = self.toggled_labels[old_label]
+                label_action = self.toggled_labels[old_label]
+            else:
+                if doc_labels is None:
+                    active = None
+                else:
+                    active = old_label[0] in doc_labels
+                label_action = LabelAction(active)
 
             widget_tree_label = self.core.call_success(
                 "gtk_load_widget_tree",
@@ -198,10 +183,9 @@ class Plugin(openpaperwork_core.PluginBase):
             button.connect("clicked", self._on_label_button_clicked, old_label)
 
             toggle = widget_tree_label.get_object("toggle_button")
-            toggle.set_active(active)
             toggle.set_sensitive(True)
-            self._update_toggle_img(toggle)
-            toggle.connect("toggled", self._on_toggle, old_label)
+            self._update_button_img(toggle, label_action)
+            toggle.connect("clicked", self._on_toggle, old_label, label_action)
 
             color = self.core.call_success("label_color_to_rgb", new_label[1])
             color_button = widget_tree_label.get_object("color_button")
@@ -227,10 +211,10 @@ class Plugin(openpaperwork_core.PluginBase):
             button.set_label(label[0])
             button.set_sensitive(False)
 
+            label_action = LabelAction(False)
             toggle = widget_tree_label.get_object("toggle_button")
-            toggle.set_active(True)
             toggle.set_sensitive(False)
-            self._update_toggle_img(toggle)
+            self._update_button_img(toggle, label_action)
 
             color = self.core.call_success("label_color_to_rgb", label[1])
             color_button = widget_tree_label.get_object("color_button")
@@ -285,9 +269,10 @@ class Plugin(openpaperwork_core.PluginBase):
         dialog.connect("response", on_response)
         dialog.set_visible(True)
 
-    def _on_toggle(self, button, label):
-        self._update_toggle_img(button)
-        self.toggled_labels[label] = button.get_active()
+    def _on_toggle(self, button, label, label_action):
+        label_action.on_change()
+        self._update_button_img(button, label_action)
+        self.toggled_labels[label] = label_action
 
     def _on_color_changed(self, button, original_label):
         color = button.get_rgba()
@@ -379,7 +364,7 @@ class Plugin(openpaperwork_core.PluginBase):
             )
         out.upd_docs.add(doc_id)
 
-    def _make_label_updates(self, out, doc_id, doc_url):
+    def _make_label_updates(self, out):
         if len(self.changed_labels) <= 0:
             return
 
@@ -419,7 +404,30 @@ class Plugin(openpaperwork_core.PluginBase):
                 )
         self.core.call_all("on_progress", "label_upd", 1.0)
 
-    def _make_label_deletions(self, out, doc_id, doc_url):
+    def _make_label_toggling(self, out, doc_id, doc_url):
+        if len(self.toggled_labels) <= 0:
+            return
+
+        for (label, action) in self.toggled_labels.items():
+            doc_labels = set()
+            self.core.call_all("doc_get_labels_by_url", doc_labels, doc_url)
+
+            if action.change == LabelChange.ADDED:
+                if label in doc_labels:
+                    continue
+                self.core.call_success(
+                    "doc_add_label_by_url", doc_url, label[0], label[1]
+                )
+                out.upd_docs.add(doc_id)
+            elif action.change == LabelChange.REMOVED:
+                if label not in doc_labels:
+                    continue
+                self.core.call_all(
+                    "doc_remove_label_by_url", doc_url, label[0]
+                )
+                out.upd_docs.add(doc_id)
+
+    def _make_label_deletions(self, out):
         if len(self.deleted_labels) <= 0:
             return
 
@@ -455,49 +463,138 @@ class Plugin(openpaperwork_core.PluginBase):
                 )
         self.core.call_all("on_progress", "label_del", 1.0)
 
+    def doc_properties_components_set_active_doc(self, doc_id, doc_url):
+        self.doc_properties_components_set_active_docs({(doc_id, doc_url)})
+
+    def doc_properties_components_set_active_docs(self, docs: set):
+        self.active_docs = docs
+        self.changed_labels = {}
+        self.toggled_labels = {}
+        self.new_labels = set()
+        self.deleted_labels = set()
+        new_label_entry = self.widget_tree.get_object("new_label_entry")
+        new_label_entry.set_text("")
+
+        self._refresh_list()
+
     def doc_properties_components_apply_changes(self, out):
         LOGGER.info("Selected/Unselected labels: %s", self.toggled_labels)
         LOGGER.info("Modified labels: %s", self.changed_labels)
         LOGGER.info("New labels: %s", self.new_labels)
         LOGGER.info("Deleted labels: %s", self.deleted_labels)
 
-        # The document may have been renamed: use out.doc_id instead of
-        # self.active_doc
-        doc_id = out.doc_id
-        doc_url = self.core.call_success("doc_id_to_url", doc_id)
-        self.active_doc = (doc_id, doc_url)
+        if len(self.active_docs) == 1:
+            # The document may have been renamed: use out.doc_id instead of
+            # self.active_docs
+            doc_id = out.doc_id
+            doc_url = self.core.call_success("doc_id_to_url", doc_id)
+            self.active_docs = {(doc_id, doc_url)}
 
-        if len(self.toggled_labels) > 0:
-            for (label, selected) in self.toggled_labels.items():
-                if selected:
-                    self.core.call_success(
-                        "doc_add_label_by_url", doc_url, label[0], label[1]
-                    )
-                else:
-                    self.core.call_all(
-                        "doc_remove_label_by_url", doc_url, label[0]
-                    )
-            out.upd_docs.add(doc_id)
+        for (doc_id, doc_url) in self.active_docs:
+            LOGGER.info("Updating document %s", doc_id)
+            self._make_label_toggling(out, doc_id, doc_url)
+            self._make_new_labels(out, doc_id, doc_url)
 
         if len(self.changed_labels) <= 0 and len(self.deleted_labels) <= 0:
             return
-
-        # operation order matters
-        self._make_label_deletions(out, doc_id, doc_url)
-        self._make_label_updates(out, doc_id, doc_url)
-        self._make_new_labels(out, doc_id, doc_url)
+        self._make_label_deletions(out)
+        self._make_label_updates(out)
 
     def doc_properties_components_cancel_changes(self):
-        self.doc_properties_components_set_active_doc(*self.active_doc)
+        self.doc_properties_components_set_active_docs(self.active_docs)
+
+
+class Plugin(openpaperwork_core.PluginBase):
+    PRIORITY = 1000
+
+    def __init__(self):
+        super().__init__()
+        self.windows = []
+        self.editors = []
+
+    def get_interfaces(self):
+        return [
+            'chkdeps',
+            'gtk_doc_property',
+            'gtk_window_listener',
+            'screenshot_provider',
+            'syncable',
+        ]
+
+    def get_deps(self):
+        return [
+            {
+                'interface': 'doc_labels',
+                'defaults': ['paperwork_backend.model.labels'],
+            },
+            {
+                'interface': 'document_storage',
+                'defaults': ['paperwork_backend.model.workdir'],
+            },
+            {
+                'interface': 'gtk_colors',
+                'defaults': ['openpaperwork_gtk.colors'],
+            },
+            {
+                'interface': 'gtk_doc_properties',
+                'defaults': ['paperwork_gtk.docproperties'],
+            },
+            {
+                'interface': 'gtk_resources',
+                'defaults': ['openpaperwork_gtk.resources'],
+            },
+            {
+                'interface': 'screenshot',
+                'defaults': ['openpaperwork_gtk.screenshots'],
+            },
+        ]
+
+    def on_gtk_window_opened(self, window):
+        self.windows.append(window)
+
+    def on_gtk_window_closed(self, window):
+        self.windows.remove(window)
+
+    def init(self, core):
+        super().init(core)
+        if not GTK_AVAILABLE:
+            # chkdeps() must still be callable
+            return
+
+    def chkdeps(self, out: dict):
+        if not GTK_AVAILABLE:
+            out['gtk'].update(openpaperwork_gtk.deps.GTK)
+
+    def doc_properties_components_get(self, out: list, multiple_docs=False):
+        editor = LabelEditor(self)
+        self.editors.append(editor)
+        out.append(editor.widget_tree.get_object("listbox_global"))
+
+    def doc_properties_components_set_active_doc(self, doc_id, doc_url):
+        for editor in self.editors:
+            editor.doc_properties_components_set_active_doc(doc_id, doc_url)
+
+    def doc_properties_components_set_active_docs(self, docs: set):
+        for editor in self.editors:
+            editor.doc_properties_components_set_active_docs(docs)
+
+    def doc_properties_components_apply_changes(self, out):
+        for editor in self.editors:
+            editor.doc_properties_components_apply_changes(out)
+
+    def doc_properties_components_cancel_changes(self):
+        for editor in self.editors:
+            editor.doc_properties_components_cancel_changes()
 
     def doc_transaction_start(self, out: list, total_expected=-1):
         class RefreshTransaction(paperwork_backend.sync.BaseTransaction):
             priority = -100000
 
             def commit(s):
-                if self.active_doc is None:
-                    return
-                self.core.call_one("mainloop_schedule", self._refresh_list)
+                for editor in self.editors:
+                    self.core.call_one(
+                        "mainloop_schedule", editor._refresh_list
+                    )
 
         out.append(RefreshTransaction(self.core, total_expected))
 
@@ -505,16 +602,16 @@ class Plugin(openpaperwork_core.PluginBase):
         pass
 
     def on_all_labels_loaded(self):
-        self._refresh_list()
+        for editor in self.editors:
+            editor._refresh_list()
 
     def screenshot_snap_all_doc_widgets(self, out_dir):
-        if self.widget_tree is None:
-            return
-        self.core.call_success(
-            "screenshot_snap_widget",
-            self.widget_tree.get_object("listbox_global"),
+        for editor in self.editors:
             self.core.call_success(
-                "fs_join", out_dir, "doc_labels.png"
-            ),
-            margins=(10, 10, -100, -400)
-        )
+                "screenshot_snap_widget",
+                editor.widget_tree.get_object("listbox_global"),
+                self.core.call_success(
+                    "fs_join", out_dir, "doc_labels.png"
+                ),
+                margins=(10, 10, -100, -400)
+            )

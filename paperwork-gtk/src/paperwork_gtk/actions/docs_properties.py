@@ -1,4 +1,5 @@
 import gettext
+import itertools
 import logging
 
 try:
@@ -12,21 +13,20 @@ import openpaperwork_core
 
 LOGGER = logging.getLogger(__name__)
 _ = gettext.gettext
-ACTION_NAME = "doc_select_all"
+ACTION_NAME = "doc_change_labels"
 
 
 class Plugin(openpaperwork_core.PluginBase):
-    PRIORITY = 1000
-
     def __init__(self):
         super().__init__()
-        self.visible_docs = []
+        self.menu_add = None
+        self.menu_remove = None
+        self.idx_generator = itertools.count()
 
     def get_interfaces(self):
         return [
             'chkdeps',
             'docs_action',
-            'search_listener',
         ]
 
     def get_deps(self):
@@ -36,12 +36,20 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['paperwork_gtk.mainwindow.window'],
             },
             {
+                'interface': 'docs_actions',
+                'defaults': ['paperwork_gtk.mainwindow.doclist'],
+            },
+            {
+                'interface': 'doc_labels',
+                'defaults': ['paperwork_backend.model.labels'],
+            },
+            {
                 'interface': 'doc_selection',
                 'defaults': ['paperwork_gtk.doc_selection'],
             },
             {
-                'interface': 'docs_actions',
-                'defaults': ['paperwork_gtk.mainwindow.doclist'],
+                'interface': 'gtk_doc_properties',
+                'defaults': ['paperwork_gtk.mainwindow.docproperties'],
             },
             {
                 'interface': 'gtk_doclist',
@@ -53,20 +61,24 @@ class Plugin(openpaperwork_core.PluginBase):
         super().init(core)
 
         action = Gio.SimpleAction.new(ACTION_NAME, None)
-        action.connect("activate", self._select_all)
+        action.connect("activate", self._open_editor)
         self.core.call_all("app_actions_add", action)
 
     def on_doclist_initialized(self):
-        item = Gio.MenuItem.new(_("Select all"), "win." + ACTION_NAME)
+        item = Gio.MenuItem.new(_("Change labels"), "win." + ACTION_NAME)
         self.core.call_all("docs_menu_append_item", item)
 
     def chkdeps(self, out: dict):
         if not GLIB_AVAILABLE:
             out['glib'].update(openpaperwork_gtk.deps.GLIB)
 
-    def on_search_results(self, query, docs):
-        self.visible_docs = docs
+    def _open_editor(self, action, parameter):
+        selection = set()
+        self.core.call_all("doc_selection_get", selection)
 
-    def _select_all(self, action, parameter):
-        for doc in self.visible_docs:
-            self.core.call_all("doc_selection_add", *doc)
+        if len(selection) <= 0:
+            LOGGER.info("No document selected")
+            return
+
+        LOGGER.info("Opening properties for %d documents", len(selection))
+        self.core.call_all("open_docs_properties", selection)

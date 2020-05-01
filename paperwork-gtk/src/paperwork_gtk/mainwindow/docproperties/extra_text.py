@@ -46,7 +46,9 @@ class Plugin(openpaperwork_core.PluginBase):
         end = text_buffer.get_iter_at_offset(-1)
         return text_buffer.get_text(start, end, False)
 
-    def doc_properties_components_get(self, out: list):
+    def doc_properties_components_get(self, out: list, multiple_docs=False):
+        if multiple_docs:
+            return
         self.widget_tree = self.core.call_success(
             "gtk_load_widget_tree",
             "paperwork_gtk.mainwindow.docproperties", "extra_text.glade"
@@ -62,6 +64,9 @@ class Plugin(openpaperwork_core.PluginBase):
         self.widget_tree.get_object("doctext_text").get_buffer().set_text(txt)
 
     def doc_properties_components_apply_changes(self, out):
+        if out.multiple_docs:
+            return
+
         # The document may have been renamed: use out.doc_id instead of
         # self.active_doc
         doc_id = out.doc_id

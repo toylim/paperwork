@@ -33,6 +33,7 @@ DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'paperwork_gtk.actions.doc_print',
     'paperwork_gtk.actions.doc_properties',
     'paperwork_gtk.actions.doc_redo_ocr',
+    'paperwork_gtk.actions.docs_properties',
     'paperwork_gtk.actions.docs_select_all',
     'paperwork_gtk.actions.help',
     'paperwork_gtk.actions.page_delete',

@@ -44,7 +44,9 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def doc_properties_components_get(self, out: list):
+    def doc_properties_components_get(self, out: list, multiple_docs=False):
+        if multiple_docs:
+            return
         self.widget_tree = self.core.call_success(
             "gtk_load_widget_tree",
             "paperwork_gtk.mainwindow.docproperties", "name.glade"
@@ -103,6 +105,9 @@ class Plugin(openpaperwork_core.PluginBase):
         self.widget_tree.get_object("calendar_popover").set_visible(False)
 
     def doc_properties_components_apply_changes(self, out):
+        if out.multiple_docs:
+            return
+
         doc_id = self.widget_tree.get_object("docname_entry").get_text()
         try:
             doc_id = self.core.call_success("i18n_parse_date_short", doc_id)
