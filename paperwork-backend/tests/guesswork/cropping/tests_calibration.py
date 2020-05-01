@@ -198,7 +198,7 @@ class TestCropping(unittest.TestCase):
         # automatically
         self.assertEqual(self.pillowed, [])
 
-    def test_transaction_with_paper_sizes(self):
+    def test_transaction_with_paper_sizes_2(self):
         self.core.call_all(
             "config_put", "scanner_calibration",
             None
