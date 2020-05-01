@@ -50,6 +50,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'gtk_resources',
                 'defaults': ['openpaperwork_gtk.resources'],
             },
+            {
+                'interface': 'work_queue',
+                'defaults': ['paperwork_backend.sync'],
+            },
         ]
 
     def init(self, core):
@@ -119,11 +123,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
         if workdir != self.workdir:
             LOGGER.info("Work directory has been changed --> Synchronizing")
-            promises = []
-            self.core.call_all("sync", promises)
-            promise = promises[0]
-            for p in promises[1:]:
-                promise = promise.then(p)
-            promise.schedule()
+            self.core.call_all("transaction_sync_all")
 
         self.workdir = workdir
