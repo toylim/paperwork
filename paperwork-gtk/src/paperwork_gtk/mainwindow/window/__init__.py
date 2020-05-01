@@ -33,8 +33,10 @@ class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
         self.widget_tree = None
-        self.stacks = {}
+        self.stacks = None
         self.components = collections.defaultdict(dict)
+        self.navigation_stacks = {'left': [], 'right': []}
+
         self.default = collections.defaultdict(
             lambda: (-1, "missing-component")
         )
@@ -191,17 +193,38 @@ class Plugin(openpaperwork_core.PluginBase):
         return True
 
     def mainwindow_show(self, side: str, name: str):
-        LOGGER.info("Showing %s on %s", name, side)
+        self.navigation_stacks[side].append(name)
+        self._mainwindow_show(side)
+
+    def _mainwindow_show(self, side: str):
         stacks = self.stacks[side]
-        components = self.components[side][name]
+
+        # some plugin give us None as component, which means to use
+        # the previous component in the navigation stack (see doclist
+        # in multiple selection mode)
+        component_names = {h: None for h in stacks.keys()}
+        for name in reversed(self.navigation_stacks[side]):
+            LOGGER.info("Showing %s on %s", name, side)
+            for (k, v) in self.components[side][name].items():
+                if component_names[k] is None and v is not None:
+                    component_names[k] = name
+            if None not in component_names.values():
+                break
+
         for (h, stack) in stacks.items():
-            if h not in components or components[h] is None:
+            if h not in component_names or component_names[h] is None:
                 continue
-            stack.set_visible_child_name(name)
+            stack.set_visible_child_name(component_names[h])
         return True
 
     def mainwindow_show_default(self, side: str):
+        self.navigation_stacks = {'left': [], 'right': []}
         self.core.call_all("mainwindow_show", side, self.default[side][1])
+
+    def mainwindow_back(self, side: str):
+        navigation_stack = self.navigation_stacks[side][:-1]
+        self.navigation_stacks[side] = navigation_stack
+        self._mainwindow_show(side)
 
     def app_actions_add(self, action):
         if self.mainwindow is not None:

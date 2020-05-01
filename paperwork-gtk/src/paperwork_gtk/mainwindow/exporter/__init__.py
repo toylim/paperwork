@@ -517,7 +517,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _on_cancel(self, button):
         LOGGER.info("Export canceled")
-        self.core.call_all("mainwindow_show_default", side="right")
+        self.core.call_all("mainwindow_back", side="right")
 
     def _on_apply(self, button):
         LOGGER.info("Export settings defined. Opening file chooser dialog")
@@ -557,7 +557,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         selected = dialog.get_uris()[0]
         dialog.destroy()
-        self.core.call_all("mainwindow_show_default", side="right")
+        self.core.call_all("mainwindow_back", side="right")
 
         # make sure the file extension is set
         (mime, file_extensions) = self.pipeline[-1].get_output_mime()
