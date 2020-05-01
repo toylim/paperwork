@@ -412,6 +412,8 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
     def _rm_rf(self, gfile):
         try:
             to_delete = [f for f in self._recurse(gfile, dir_included=True)]
+            # make sure to delete the parent directory last:
+            to_delete.sort(reverse=True, key=lambda f: f.get_uri())
             for f in to_delete:
                 if not f.delete():
                     raise IOError("Failed to delete %s" % f.get_uri())
@@ -519,7 +521,7 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             name = child.get_name()
             child = parent.get_child(name)
             try:
-                for sub in self._recurse(child):
+                for sub in self._recurse(child, dir_included=dir_included):
                     yield sub
             except GLib.GError:
                 yield child
