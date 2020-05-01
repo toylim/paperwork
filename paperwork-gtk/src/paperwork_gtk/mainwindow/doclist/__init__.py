@@ -573,8 +573,9 @@ class Plugin(openpaperwork_core.PluginBase):
             return
         self._toggling = True
         try:
-            self._show_doc_id(doc_id)
-            widget_tree = self.docid_to_widget_tree[doc_id]
+            widget_tree = self.docid_to_widget_tree.get(doc_id, None)
+            if widget_tree is None:
+                return
             checkbox = widget_tree.get_object("doc_box_selector")
             if not checkbox.get_active():
                 checkbox.set_active(True)
