@@ -128,7 +128,9 @@ class Plugin(openpaperwork_core.PluginBase):
         LOGGER.info("New document id: %s (%s)", dest_id, dest_date)
 
         orig_url = self.core.call_success("doc_id_to_url", orig_id)
-        dest_url = self.core.call_success("doc_id_to_url", dest_id)
+        dest_url = self.core.call_success(
+            "doc_id_to_url", dest_id, existing=False
+        )
 
         LOGGER.info("Renaming document %s into %s", orig_id, dest_id)
         self.core.call_all("doc_rename_by_url", orig_url, dest_url)

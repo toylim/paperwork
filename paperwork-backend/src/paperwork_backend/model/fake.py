@@ -68,7 +68,7 @@ class Plugin(openpaperwork_core.PluginBase):
             for doc in self.docs
         ]
 
-    def doc_id_to_url(self, doc_id):
+    def doc_id_to_url(self, doc_id¸ existing=True):
         for doc in self.docs:
             if doc['id'] == doc_id:
                 return doc['url']

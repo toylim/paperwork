@@ -69,7 +69,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doc_urls_to_names[url] = name
         return url
 
-    def doc_id_to_url(self, doc_id):
+    def doc_id_to_url(self, doc_id, existing=True):
         if not doc_id.startswith("help_"):
             return None
         name = doc_id[len("help_"):]

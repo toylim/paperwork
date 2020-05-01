@@ -70,7 +70,7 @@ class TestScan2Doc(unittest.TestCase):
                     ]
                     return r
 
-                def doc_id_to_url(s, doc_id):
+                def doc_id_to_url(s, doc_id, existing=True):
                     return 'file:///some_existing_doc'
 
                 def storage_get_new_doc(s, *args, **kwargs):
