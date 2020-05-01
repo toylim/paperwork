@@ -1,7 +1,11 @@
+import logging
 import shutil
 import tempfile
 
 from . import PluginBase
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 class Plugin(PluginBase):
@@ -28,7 +32,10 @@ class Plugin(PluginBase):
 
     def init(self, core):
         super().init(core)
-        self.flatpak = self.core.call_success("fs_isdir", "/app")
+        self.flatpak = self.core.call_success(
+            "fs_isdir", "file:///app"
+        ) is not None
+        LOGGER.info("Flatpak environment: %s", self.flatpak)
         if self.flatpak:
             self.tmp_dir = self.core.call_success(
                 "fs_join",
