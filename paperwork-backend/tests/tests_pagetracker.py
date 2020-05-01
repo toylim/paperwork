@@ -16,7 +16,7 @@ class TestPageTracker(unittest.TestCase):
         self.core.load("paperwork_backend.pagetracker")
         self.core.get_by_name(
             "paperwork_backend.pagetracker"
-        ).paperwork_dir = self.tmp_paperwork_dir
+        ).paperwork_dir = "file://" + self.tmp_paperwork_dir
 
         self.fake_storage = self.core.get_by_name(
             "paperwork_backend.model.fake"
@@ -53,7 +53,9 @@ class TestPageTracker(unittest.TestCase):
         self.assertEqual(out, [('new', 0), ('new', 1)])
         tracker.ack_page('test_doc', 'file:///somewhere/test_doc', 0)
         tracker.ack_page('test_doc', 'file:///somewhere/test_doc', 1)
-        out = tracker.find_changes('test_doc_2', 'file:///somewhere/test_doc_2')
+        out = tracker.find_changes(
+            'test_doc_2', 'file:///somewhere/test_doc_2'
+        )
         self.assertEqual(out, [('new', 0), ('new', 1), ('new', 2)])
         tracker.ack_page('test_doc_2', 'file:///somewhere/test_doc_2', 0)
         tracker.ack_page('test_doc_2', 'file:///somewhere/test_doc_2', 1)

@@ -1,4 +1,3 @@
-import os
 import shutil
 import tempfile
 import unittest
@@ -18,10 +17,10 @@ class TestLabelGuesser(unittest.TestCase):
         self.core.load("paperwork_backend.guesswork.label.simplebayes")
         self.core.get_by_name(
             "paperwork_backend.doctracker"
-        ).paperwork_dir = self.tmp_bayes_dir
+        ).paperwork_dir = "file://" + self.tmp_bayes_dir
         self.core.get_by_name(
             "paperwork_backend.guesswork.label.simplebayes"
-        ).bayes_dir = self.tmp_bayes_dir
+        ).bayes_dir = "file://" + self.tmp_bayes_dir
 
         self.fake_storage = self.core.get_by_name(
             "paperwork_backend.model.fake"

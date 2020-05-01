@@ -30,10 +30,10 @@ class TestPyocr(unittest.TestCase):
 
         self.core.get_by_name(
             "paperwork_backend.pagetracker"
-        ).paperwork_dir = self.tmp_paperwork_dir
+        ).paperwork_dir = "file://" + self.tmp_paperwork_dir
         self.core.get_by_name(
             "paperwork_backend.doctracker"
-        ).paperwork_dir = self.tmp_paperwork_dir
+        ).paperwork_dir = "file://" + self.tmp_paperwork_dir
 
         self.core.init()
 

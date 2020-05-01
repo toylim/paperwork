@@ -18,7 +18,6 @@ import base64
 import gettext
 import hashlib
 import logging
-import os
 import sqlite3
 
 import simplebayes
@@ -370,7 +369,6 @@ class Plugin(openpaperwork_core.PluginBase):
     THRESHOLD_YES_NO_RATIO = 0.195
 
     def __init__(self):
-        self.local_dir = os.path.expanduser("~/.local")
         self.bayes_dir = None
         self.bayes = None
         self.sql = None
