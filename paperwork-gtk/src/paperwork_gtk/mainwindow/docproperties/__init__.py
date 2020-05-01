@@ -99,6 +99,10 @@ class DocPropertiesEditor(object):
         )
         # drop call_all return value
         promise = promise.then(lambda *args, **kwargs: None)
+        promise = promise.then(
+            self.core.call_all, "search_update_document_list"
+        )
+        promise = promise.then(lambda *args, **kwargs: None)
         promise = promise.then(self._upd_index, upd)
         promise.schedule()
 
