@@ -199,7 +199,8 @@ class Plugin(PluginBase):
 
     def init(self, core):
         self.core = core
-        self.base_path = self.core.call_success("paths_get_config_dir")
+        if self.base_path is None:
+            self.base_path = self.core.call_success("paths_get_config_dir")
 
     def _get_filepath(self):
         return self.core.call_success(
@@ -229,6 +230,7 @@ class Plugin(PluginBase):
             self.application_name = application_name
         config_path = self._get_filepath()
         LOGGER.info("Writing configuration '%s' ...", config_path)
+        print("Writing configuration '%s' ...", config_path)
         with self.core.call_success("fs_open", config_path, 'w') as fd:
             self.config.write(fd)
 
