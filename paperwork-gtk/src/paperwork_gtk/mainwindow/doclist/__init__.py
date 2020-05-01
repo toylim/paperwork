@@ -389,7 +389,8 @@ class Plugin(openpaperwork_core.PluginBase):
             widget_tree = self.docid_to_widget_tree[self.previous_doc[0]]
             widget_tree.get_object("doc_actions").set_visible(False)
 
-        if (self.core.call_success("is_doc", doc_url) is not None and
+        if ((not self.selection_multiple) and
+                self.core.call_success("is_doc", doc_url) is not None and
                 doc_id in self.docid_to_widget_tree):
             widget_tree = self.docid_to_widget_tree[doc_id]
             widget_tree.get_object("doc_actions").set_visible(True)
@@ -545,6 +546,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         self._set_all_selector_visibility(False)
         self.selection_multiple = False
+        self._reselect_current_doc(scroll=False)
 
     def gtk_switch_to_doc_selection_multiple(self):
         self.core.call_all(
@@ -554,6 +556,7 @@ class Plugin(openpaperwork_core.PluginBase):
             self.core.call_all("doc_selection_reset")
         self.selection_multiple = True
         self._set_all_selector_visibility(True)
+        self._reselect_current_doc(scroll=False)
 
     def doc_selection_reset(self):
         self._update_count()
