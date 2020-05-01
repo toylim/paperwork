@@ -202,7 +202,7 @@ class Plugin(openpaperwork_core.PluginBase):
         except KeyError:
             LOGGER.warning(
                 "Tried to remove label '%s' from document '%s', but label"
-                " was not found on the document"
+                " was not found on the document", label, doc_url
             )
 
         with self.core.call_success("fs_open", labels_url, "w") as file_desc:
