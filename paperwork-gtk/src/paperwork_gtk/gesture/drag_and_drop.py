@@ -114,6 +114,7 @@ class Plugin(openpaperwork_core.PluginBase):
         if "doc_id=" not in src_uri or "page=" not in src_uri:
             # treat it as an import
             # TODO(Jflesch)
+            LOGGER.info("TODO: Import of %s", src_uri)
             return
         else:
             # moving page inside the current document
