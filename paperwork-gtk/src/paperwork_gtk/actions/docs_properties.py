@@ -70,7 +70,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def chkdeps(self, out: dict):
         if not GLIB_AVAILABLE:
-            out['glib'].update(openpaperwork_gtk.deps.GLIB)
+            out['glib'].update(openpaperwork_core.deps.GLIB)
 
     def _open_editor(self, action, parameter):
         selection = set()
