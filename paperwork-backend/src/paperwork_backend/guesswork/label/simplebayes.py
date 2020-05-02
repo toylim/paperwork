@@ -101,7 +101,8 @@ class LabelGuesserTransaction(sync.BaseTransaction):
 
     def del_obj(self, doc_id):
         self.notify_progress(
-            ID, _("Untraining label guesser due to deleted document %s") % doc_id
+            ID,
+            _("Untraining label guesser due to deleted document %s") % doc_id
         )
         self._upd_doc(doc_id)
         super().del_obj(doc_id)
