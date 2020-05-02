@@ -94,21 +94,21 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             self.plugin._set_guessed_labels(doc_url)
 
         self.notify_progress(
-            ID, _("Updating label guesser with added document %s") % doc_id
+            ID, _("Training label guesser with added document %s") % doc_id
         )
         self._upd_doc(doc_id)
         super().add_obj(doc_id)
 
     def del_obj(self, doc_id):
         self.notify_progress(
-            ID, _("Updating label guesser due to deleted document %s") % doc_id
+            ID, _("Untraining label guesser due to deleted document %s") % doc_id
         )
         self._upd_doc(doc_id)
         super().del_obj(doc_id)
 
     def upd_obj(self, doc_id):
         self.notify_progress(
-            ID, _("Updating label guesser with updated document %s") % doc_id
+            ID, _("Training label guesser with updated document %s") % doc_id
         )
         self._upd_doc(doc_id)
         super().upd_obj(doc_id)
@@ -241,7 +241,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             )
             self.notify_progress(
                 ID, _(
-                    "Updating label guessing training for label '{}'"
+                    "Training label guessing training for label '{}'"
                     " with all known documents ..."
                 ).format(todo['label'])
             )
@@ -334,7 +334,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             return
 
         self.notify_progress(
-            ID, _("Updating label guessing training ...")
+            ID, _("Training label guessing ...")
         )
 
         for label in self.all_labels:
