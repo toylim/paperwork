@@ -231,6 +231,8 @@ class PdfPageMapping(object):
     def get_original_page_idx(self, target_page_idx):
         if self.reverse_mapping is None:
             self.load_reverse_only()
+        # Keep in mind we may have loaded only the mapping --> we don't know
+        # how many pages there are in the PDF, so the mapping may be incomplete
         original_page_idx = self.reverse_mapping.get(
             target_page_idx, target_page_idx
         )
@@ -521,6 +523,9 @@ class Plugin(openpaperwork_core.PluginBase):
     def page_get_img_url(self, doc_url, page_idx, write=False):
         if write:
             return None
+        pdf_url = self._get_pdf_url(doc_url)
+        if pdf_url is None:
+            return
         mapping = self._get_page_mapping(doc_url)
         page_idx = mapping.get_original_page_idx(page_idx)
         if page_idx is None:
@@ -656,6 +661,10 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def doc_pdf_import(self, src_file_uri):
         (doc_id, doc_url) = self.core.call_success("storage_get_new_doc")
+
+        # just to be safe
+        self.cache_mappings.pop(doc_url, None)
+
         pdf_url = self.core.call_success("fs_join", doc_url, PDF_FILENAME)
 
         self.core.call_success("fs_mkdir_p", doc_url)
