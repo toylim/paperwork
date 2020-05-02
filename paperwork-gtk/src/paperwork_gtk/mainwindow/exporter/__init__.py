@@ -47,7 +47,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.ref_input_doc = None
         self.export_input_type = None
         self.export_input = None
-        self.export_input_doc_url = None
+        self.export_input_doc_urls = None
         self.need_zoom_auto = True
 
         self.pipeline = []
@@ -194,7 +194,8 @@ class Plugin(openpaperwork_core.PluginBase):
         pipes = []
         if input_type == paperwork_backend.docexport.ExportDataType.DOCUMENT:
             self.core.call_all(
-                "export_get_pipes_by_doc_url", pipes, self.export_input_doc_url
+                "export_get_pipes_by_doc_urls",
+                pipes, self.export_input_doc_urls
             )
         else:
             self.core.call_all("export_get_pipes_by_input", pipes, input_type)
@@ -429,6 +430,10 @@ class Plugin(openpaperwork_core.PluginBase):
             )
             return
 
+        # some pipeline only accepts ExportDataType.DOCUMENT as input,
+        # other accept ExportDataType.PAGE, but not immediately.
+        # For the preview, we prefer ExportDataType.PAGE,
+        # if not available we fall back to ExportDataType.DOCUMENT
         for (idx, pipe) in enumerate(self.pipeline):
             if (pipe.input_type ==
                     paperwork_backend.docexport.ExportDataType.PAGE):
@@ -436,8 +441,19 @@ class Plugin(openpaperwork_core.PluginBase):
                 ref_input = self.ref_input_page
                 break
         else:
-            ref_input = self.ref_input_doc
-            pipeline = self.pipeline
+            for (idx, pipe) in enumerate(self.pipeline):
+                if (pipe.input_type ==
+                        paperwork_backend.docexport.ExportDataType.DOCUMENT):
+                    pipeline = self.pipeline[idx:]
+                    ref_input = self.ref_input_doc
+                    break
+            else:
+                LOGGER.warning(
+                    "Can't display export preview:"
+                    " No matching input pipe found in %s",
+                    [str(p) for p in self.pipeline]
+                )
+                return
 
         ref_input = ref_input.clone()
 
@@ -474,10 +490,18 @@ class Plugin(openpaperwork_core.PluginBase):
         promise = promise.then(self.core.call_all, "on_idle")
         self.core.call_success("work_queue_add_promise", "exporter", promise)
 
-    def gtk_open_exporter(self, doc_id, doc_url, page_idx=None):
+    def _gtk_open_exporter(self):
         self.pipeline = []
         self.need_zoom_auto = True
 
+        self._expand_pipeline()
+        self._refresh_pipeline_ui()
+        self._set_quality()
+        self._set_page_format()
+        self._reload_preview()
+        self.core.call_all("mainwindow_show", "right", "exporter")
+
+    def gtk_open_exporter(self, doc_id, doc_url, page_idx=None):
         ref_page_idx = 0
         if page_idx is not None:
             ref_page_idx = page_idx
@@ -505,14 +529,30 @@ class Plugin(openpaperwork_core.PluginBase):
                 doc_id, doc_url, page_idx
             )
         )
-        self.export_input_doc_url = doc_url
+        self.export_input_doc_urls = [doc_url]
+        self._gtk_open_exporter()
 
-        self._expand_pipeline()
-        self._refresh_pipeline_ui()
-        self._set_quality()
-        self._set_page_format()
-        self._reload_preview()
-        self.core.call_all("mainwindow_show", "right", "exporter")
+    def gtk_open_exporter_multiple_docs(
+            self, docs, ref_doc_id, ref_doc_url, ref_page_idx):
+        self.ref_input_page = (
+            paperwork_backend.docexport.ExportData.build_page(
+                ref_doc_id, ref_doc_url, ref_page_idx
+            )
+        )
+        self.ref_input_doc = (
+            paperwork_backend.docexport.ExportData.build_doc(
+                ref_doc_id, ref_doc_url
+            )
+        )
+
+        self.export_input_type = (
+            paperwork_backend.docexport.ExportDataType.DOCUMENT_SET
+        )
+        self.export_input = (
+            paperwork_backend.docexport.ExportData.build_doc_set(docs)
+        )
+        self.export_input_doc_urls = [doc[1] for doc in docs]
+        self._gtk_open_exporter()
 
     def _on_draw(self, drawing_area, cairo_context):
         if self.renderer is None:

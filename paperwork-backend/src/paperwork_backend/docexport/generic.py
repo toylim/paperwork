@@ -35,7 +35,7 @@ class DocSetToDoc(AbstractExportPipe):
             if result == 'preview':
                 docs = docs[:1]
             children = [
-                ExportData(ExportData.DOCUMENT, doc)
+                ExportData(ExportDataType.DOCUMENT, doc)
                 for doc in docs
             ]
             input_data.set_children(children)
