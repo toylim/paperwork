@@ -31,7 +31,6 @@ class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
         self.active_windows = []
-        self.action = None
 
     def get_interfaces(self):
         return [
@@ -79,7 +78,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def chkdeps(self, out: dict):
         if not GLIB_AVAILABLE:
-            out['glib'].update(openpaperwork_gtk.deps.GLIB)
+            out['glib'].update(openpaperwork_core.deps.GLIB)
         if not GTK_AVAILABLE:
             out['gtk'].update(openpaperwork_gtk.deps.GTK)
 
