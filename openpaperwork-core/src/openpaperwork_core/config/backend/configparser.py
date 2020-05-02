@@ -230,7 +230,6 @@ class Plugin(PluginBase):
             self.application_name = application_name
         config_path = self._get_filepath()
         LOGGER.info("Writing configuration '%s' ...", config_path)
-        print("Writing configuration '%s' ...", config_path)
         with self.core.call_success("fs_open", config_path, 'w') as fd:
             self.config.write(fd)
 
