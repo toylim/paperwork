@@ -42,6 +42,9 @@ sudo systemctl enable saned.socket
 sudo systemctl start saned.socket
 
 # Install Paperwork (for the current user only)
+# Stable branch is 'master'.
+# If you want, in the following command you can replace 'master' by 'testing'
+# (stabilisation branch) or 'develop' (development branch)
 flatpak --user install https://builder.openpaper.work/paperwork_master.flatpakref
 
 # Start Paperwork
