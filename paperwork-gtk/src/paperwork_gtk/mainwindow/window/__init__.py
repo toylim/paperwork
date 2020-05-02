@@ -193,7 +193,8 @@ class Plugin(openpaperwork_core.PluginBase):
         return True
 
     def mainwindow_show(self, side: str, name: str):
-        self.navigation_stacks[side].append(name)
+        if name not in self.navigation_stacks[side]:
+            self.navigation_stacks[side].append(name)
         self._mainwindow_show(side)
 
     def _mainwindow_show(self, side: str):
