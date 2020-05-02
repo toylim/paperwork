@@ -19,6 +19,8 @@ import sys
 import openpaperwork_core
 import openpaperwork_core.promise
 
+import paperwork_backend.docexport
+
 from . import util
 
 
@@ -100,22 +102,24 @@ class Plugin(openpaperwork_core.PluginBase):
         out = args.out
 
         if pages is None or len(pages) <= 0:
-            input_value = doc_url
-        elif len(pages) == 1:
-            input_value = (doc_url, pages)
+            input_value = paperwork_backend.docexport.ExportData.build_doc(
+                doc_id, doc_url
+            )
         else:
-            input_value = (doc_url, pages)
+            input_value = paperwork_backend.docexport.ExportData.build_pages(
+                doc_id, doc_url, pages
+            )
 
         if len(filters) <= 0:
             output_type = None
         else:
-            filters = [x[0] for x in filters]
+            filters_str = [x[0] for x in filters]
             filters = [
                 self.core.call_success('export_get_pipe_by_name', f)
-                for f in filters
+                for f in filters_str
             ]
             if None in filters:
-                print(_("Unknown filters: %s") % filters)
+                print(_("Unknown filters: %s") % filters_str)
                 sys.exit(1)
             output_type = filters[-1].output_type
 

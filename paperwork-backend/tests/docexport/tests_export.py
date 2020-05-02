@@ -4,6 +4,8 @@ import unittest
 import openpaperwork_core
 import openpaperwork_core.promise
 
+import paperwork_backend.docexport
+
 
 class TestExport(unittest.TestCase):
     def setUp(self):
@@ -29,7 +31,7 @@ class TestExport(unittest.TestCase):
         self.result = None
 
     def set_result(self, result):
-        self.result = result
+        self.result = list(result)
 
     def test_pdf_to_img(self):
         pipeline = [
@@ -40,7 +42,10 @@ class TestExport(unittest.TestCase):
         ]
 
         def origin():
-            return (self.test_doc_pdf_url, 0)  # 1st page of the PDF
+            return paperwork_backend.docexport.ExportData.build_page(
+                # 1st page of the PDF
+                "some_doc_id", self.test_doc_pdf_url, 0
+            )
 
         promise = openpaperwork_core.promise.Promise(self.core, origin)
         for pipe in pipeline:
@@ -50,8 +55,9 @@ class TestExport(unittest.TestCase):
         promise = promise.schedule()
         self.core.call_one("mainloop")
 
-        self.assertTrue(self.result.startswith("memory://"))
-        self.core.call_all("fs_unlink", self.result, trash=False)
+        self.assertEqual(len(self.result), 1)
+        self.assertTrue(self.result[0].startswith("memory://"))
+        self.core.call_all("fs_unlink", self.result[0], trash=False)
 
         (tmp_file, fd) = self.core.call_success(
             "fs_mktemp", prefix="paperwork-test-", suffix=".png"
@@ -68,8 +74,11 @@ class TestExport(unittest.TestCase):
         promise.schedule()
         self.core.call_one("mainloop")
 
-        self.assertTrue(self.core.call_success("fs_getsize", self.result) > 0)
-        self.core.call_all("fs_unlink", self.result, trash=False)
+        self.assertEqual(len(self.result), 1)
+        self.assertTrue(
+            self.core.call_success("fs_getsize", self.result[0]) > 0
+        )
+        self.core.call_all("fs_unlink", self.result[0], trash=False)
 
     def test_img_to_pdf(self):
         pipeline = [
@@ -80,7 +89,10 @@ class TestExport(unittest.TestCase):
         ]
 
         def origin():
-            return (self.test_doc_img_url, 0)  # 1st page of the image doc
+            return paperwork_backend.docexport.ExportData.build_page(
+                # 1st page of the image doc
+                "some_doc_id", self.test_doc_img_url, 0
+            )
 
         promise = openpaperwork_core.promise.Promise(self.core, origin)
         for pipe in pipeline:
@@ -91,8 +103,9 @@ class TestExport(unittest.TestCase):
         self.core.call_one("mainloop")
 
         # required by Poppler
-        self.assertTrue(self.result.startswith("file://"))
-        self.core.call_all("fs_unlink", self.result, trash=False)
+        self.assertEqual(len(self.result), 1)
+        self.assertTrue(self.result[0].startswith("file://"))
+        self.core.call_all("fs_unlink", self.result[0], trash=False)
 
         (tmp_file, fd) = self.core.call_success(
             "fs_mktemp", prefix="paperwork-test-", suffix=".png"
@@ -109,5 +122,8 @@ class TestExport(unittest.TestCase):
         promise.schedule()
         self.core.call_one("mainloop")
 
-        self.assertTrue(self.core.call_success("fs_getsize", self.result) > 0)
-        self.core.call_all("fs_unlink", self.result, trash=False)
+        self.assertEqual(len(self.result), 1)
+        self.assertTrue(self.core.call_success(
+            "fs_getsize", self.result[0]
+        ) > 0)
+        self.core.call_all("fs_unlink", self.result[0], trash=False)

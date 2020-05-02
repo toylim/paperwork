@@ -11,7 +11,8 @@ import openpaperwork_core.promise
 
 from . import (
     AbstractExportPipe,
-    AbstractExportPipePlugin
+    AbstractExportPipePlugin,
+    ExportDataType
 )
 
 
@@ -54,8 +55,8 @@ class PdfDocUrlToPdfUrlExportPipe(AbstractExportPipe):
     def __init__(self, core):
         super().__init__(
             name="unmodified_pdf",
-            input_types=['doc_url'],
-            output_type='file_url'
+            input_type=ExportDataType.DOCUMENT,
+            output_type=ExportDataType.OUTPUT_URL_FILE
         )
         self.core = core
 
@@ -64,26 +65,40 @@ class PdfDocUrlToPdfUrlExportPipe(AbstractExportPipe):
         return pdf_url is not None
 
     def get_promise(self, result='final', target_file_url=None):
-        def do(doc_url):
-            target = target_file_url
-            if target is None:
-                (target, file_desc) = self.core.call_success(
+        def do(input_data, target_file_url):
+            if target_file_url is None:
+                (target_file_url, file_desc) = self.core.call_success(
                     "fs_mktemp", prefix="paperwork-export-", suffix=".pdf",
                     mode="wb", on_disk=True
                 )
                 file_desc.close()
 
-            pdf_url = self.core.call_success("doc_get_pdf_url_by_url", doc_url)
-            self.core.call_success("fs_copy", pdf_url, target)
-            return target
+            list_docs = input_data.iter(ExportDataType.DOCUMENT)
+            out_files = []
+            for (idx, (doc_set, doc)) in enumerate(list_docs):
+                out = target_file_url
+                if idx != 0:
+                    out = target_file_url.rsplit(".", 1)
+                    out = "{}_{}.{}".format(out[0], idx, out[1])
 
-        return openpaperwork_core.promise.Promise(self.core, do)
+                assert(not doc.expanded)
+                pdf_url = self.core.call_success(
+                    "doc_get_pdf_url_by_url", doc.data[1]
+                )
+                assert(pdf_url is not None)
+                self.core.call_success("fs_copy", pdf_url, out)
+                out_files.append(out)
+            return out_files
+
+        return openpaperwork_core.promise.Promise(
+            self.core, do, kwargs={'target_file_url': target_file_url}
+        )
 
     def get_output_mime(self):
         return ("application/pdf", ("pdf",))
 
     def __str__(self):
-        return _("Original PDF")
+        return _("Original PDF(s)")
 
 
 class PdfCreator(object):
@@ -196,8 +211,8 @@ class PagesToPdfUrlExportPipe(AbstractExportPipe):
     def __init__(self, core):
         super().__init__(
             name="generated_pdf",
-            input_types=['pages'],
-            output_type='file_url'
+            input_type=ExportDataType.IMG_BOXES,
+            output_type=ExportDataType.OUTPUT_URL_FILE
         )
         self.core = core
         self.can_change_quality = True
@@ -207,7 +222,7 @@ class PagesToPdfUrlExportPipe(AbstractExportPipe):
         self.page_format = page_format
 
     def get_promise(self, result='final', target_file_url=None):
-        def do(pages, target_file_url):
+        def do(input_data, target_file_url):
             if target_file_url is None:
                 (target_file_url, file_desc) = self.core.call_success(
                     "fs_mktemp", prefix="paperwork-export-", suffix=".pdf",
@@ -216,15 +231,40 @@ class PagesToPdfUrlExportPipe(AbstractExportPipe):
                 # we need the file name, not the file descriptor
                 file_desc.close()
 
+            last_doc = None
+            doc_idx = 0
+            out = target_file_url
+            list_img_boxes = input_data.iter(ExportDataType.IMG_BOXES)
+
             creator = self.core.call_success(
                 "mainloop_execute", PdfCreator,
                 self.core, target_file_url, self.page_format, self.quality
             )
-            for (img, boxes) in pages:
-                # PDFCreator is not thread-safe. Still we can not keep
+
+            out_files = []
+
+            for (doc_set, (doc, (page, img_boxes))) in list_img_boxes:
+
+                if doc.data[1] != last_doc and last_doc is not None:
+                    # another doc, another output file, another PDFCreator
+                    self.core.call_success(
+                        "mainloop_execute", creator.finish
+                    )
+                    out_files.append(out)
+                    doc_idx += 1
+                    out = target_file_url.rsplit(".", 1)
+                    out = "{}_{}.{}".format(out[0], doc_idx, out[1])
+                    creator = self.core.call_success(
+                        "mainloop_execute", PdfCreator,
+                        self.core, out, self.page_format, self.quality
+                    )
+                last_doc = doc.data[1]
+
+                # PDFCreator is not thread-safe. We can not keep
                 # the UI blocked for so long --> give some CPU time back to
                 # the UI
                 time.sleep(0.1)
+                (img, boxes) = img_boxes.data
                 self.core.call_success(
                     "mainloop_execute", creator.set_page_size, img.size
                 )
@@ -242,9 +282,10 @@ class PagesToPdfUrlExportPipe(AbstractExportPipe):
                     "mainloop_execute", creator.paint_img, img
                 )
                 self.core.call_success("mainloop_execute", creator.next_page)
-            self.core.call_success("mainloop_execute", creator.finish)
 
-            return target_file_url
+            self.core.call_success("mainloop_execute", creator.finish)
+            out_files.append(out)
+            return out_files
 
         return openpaperwork_core.promise.ThreadedPromise(
             self.core, do, kwargs={'target_file_url': target_file_url}
@@ -254,7 +295,7 @@ class PagesToPdfUrlExportPipe(AbstractExportPipe):
         return ("application/pdf", ("pdf",))
 
     def __str__(self):
-        return _("Generated PDF")
+        return _("Generated PDF(s)")
 
 
 class Plugin(AbstractExportPipePlugin):

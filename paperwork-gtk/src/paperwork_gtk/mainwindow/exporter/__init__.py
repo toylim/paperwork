@@ -13,6 +13,8 @@ import openpaperwork_core
 import openpaperwork_core.promise
 import openpaperwork_gtk.deps
 
+import paperwork_backend.docexport
+
 
 LOGGER = logging.getLogger(__name__)
 _ = gettext.gettext
@@ -41,9 +43,11 @@ class Plugin(openpaperwork_core.PluginBase):
         # Inputs (export_input_*) refer to export pipe inputs
         # (see paperwork_backend.docexport)
 
-        self.ref_input = None
+        self.ref_input_page = None
+        self.ref_input_doc = None
         self.export_input_type = None
         self.export_input = None
+        self.export_input_doc_url = None
         self.need_zoom_auto = True
 
         self.pipeline = []
@@ -188,9 +192,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _get_possible_pipes(self, input_type, active_pipe=""):
         pipes = []
-        if input_type == 'doc_url':
+        if input_type == paperwork_backend.docexport.ExportDataType.DOCUMENT:
             self.core.call_all(
-                "export_get_pipes_by_doc_url", pipes, self.export_input
+                "export_get_pipes_by_doc_url", pipes, self.export_input_doc_url
             )
         else:
             self.core.call_all("export_get_pipes_by_input", pipes, input_type)
@@ -280,7 +284,8 @@ class Plugin(openpaperwork_core.PluginBase):
             last_output_type = self.export_input_type
             LOGGER.info("Input type: %s", last_output_type)
 
-        if last_output_type == 'file_url':
+        t = paperwork_backend.docexport.ExportDataType.OUTPUT_URL_FILE
+        if last_output_type == t:
             self.button_validate.set_sensitive(True)
         else:
             self._add_combobox(steps, last_output_type, "")
@@ -335,7 +340,8 @@ class Plugin(openpaperwork_core.PluginBase):
     def _redraw_preview(self, renderer):
         self.preview.queue_draw()
 
-    def _show_preview(self, tmp_file_url):
+    def _show_preview(self, tmp_file_urls):
+        tmp_file_url = list(tmp_file_urls)[0]
         LOGGER.info("Preview: %s", tmp_file_url)
         self.tmp_file_url = tmp_file_url
         self.renderer = self.core.call_success(
@@ -423,11 +429,17 @@ class Plugin(openpaperwork_core.PluginBase):
             )
             return
 
-        ref_input = self.ref_input
-        if (isinstance(ref_input, tuple) and
-                'page_url' not in self.pipeline[-1].input_types):
-            # this pipeline needs a document as input
-            ref_input = self.ref_input[0]
+        for (idx, pipe) in enumerate(self.pipeline):
+            if (pipe.input_type ==
+                    paperwork_backend.docexport.ExportDataType.PAGE):
+                pipeline = self.pipeline[idx:]
+                ref_input = self.ref_input_page
+                break
+        else:
+            ref_input = self.ref_input_doc
+            pipeline = self.pipeline
+
+        ref_input = ref_input.clone()
 
         pipe_plug = self._get_pipe_plug()
         if pipe_plug is not None:
@@ -438,10 +450,11 @@ class Plugin(openpaperwork_core.PluginBase):
                 page_format = self.model_page_format[page_format]
                 pipe_plug.set_page_format((page_format[1], page_format[2]))
 
-        if pipe_plug is None and self.pipeline[-1].output_type != 'file_url':
+        t = paperwork_backend.docexport.ExportDataType.OUTPUT_URL_FILE
+        if pipe_plug is None and pipeline[-1].output_type != t:
             LOGGER.warning(
-                "Can't display export preciew: unexpected pipe end: %s",
-                self.pipeline[-1].output_type
+                "Can't display export preview: unexpected pipe end: %s",
+                pipeline[-1].output_type
             )
             self.core.call_success(
                 "work_queue_add_promise", "exporter", promise
@@ -450,7 +463,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         promise = promise.then(self.core.call_all, "on_busy")
         promise = promise.then(lambda *args, **kwargs: ref_input)
-        for pipe in self.pipeline:
+        for pipe in pipeline:
             promise = promise.then(pipe.get_promise(result='preview'))
         if pipe_plug is not None:
             promise = promise.then(pipe_plug.get_promise(result='preview'))
@@ -471,14 +484,28 @@ class Plugin(openpaperwork_core.PluginBase):
         elif doc_url == self.active_doc[1]:
             ref_page_idx = self.active_page_idx
 
-        self.ref_input = (doc_url, ref_page_idx)
-
-        self.export_input_type = 'doc_url' if page_idx is None else 'page_url'
-        self.export_input = (
-            doc_url
-            if page_idx is None
-            else (doc_url, page_idx)
+        self.ref_input_page = (
+            paperwork_backend.docexport.ExportData.build_page(
+                doc_id, doc_url, ref_page_idx
+            )
         )
+        self.ref_input_doc = (
+            paperwork_backend.docexport.ExportData.build_doc(doc_id, doc_url)
+        )
+
+        self.export_input_type = (
+            paperwork_backend.docexport.ExportDataType.DOCUMENT
+            if page_idx is None else
+            paperwork_backend.docexport.ExportDataType.PAGE
+        )
+        self.export_input = (
+            paperwork_backend.docexport.ExportData.build_doc(doc_id, doc_url)
+            if page_idx is None else
+            paperwork_backend.docexport.ExportData.build_page(
+                doc_id, doc_url, page_idx
+            )
+        )
+        self.export_input_doc_url = doc_url
 
         self._expand_pipeline()
         self._refresh_pipeline_ui()

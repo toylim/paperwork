@@ -33,6 +33,7 @@ DEFAULT_PLUGINS = [
     'paperwork_backend.beacon.update',
     'paperwork_backend.cairo.pillow',
     'paperwork_backend.cairo.poppler',
+    'paperwork_backend.docexport.generic',
     'paperwork_backend.docexport.img',
     'paperwork_backend.docexport.pdf',
     'paperwork_backend.docexport.pillowfight',
