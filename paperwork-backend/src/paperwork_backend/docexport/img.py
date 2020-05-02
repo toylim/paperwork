@@ -58,12 +58,14 @@ class DocToPillowBoxesExportPipe(AbstractExportPipe):
                             doc_url, page_idx + 1, target_file_url
                         )
                     )
-                    yield (
+                    r = (
                         self.core.call_success(
                             "page_get_img_url", doc_url, page_idx
                         ),
                         (doc_url, page_idx)
                     )
+                    assert(r[0] is not None)
+                    yield r
             finally:
                 self.core.call_success(
                     "mainloop_schedule", self.core.call_all,

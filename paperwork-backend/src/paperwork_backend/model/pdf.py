@@ -228,13 +228,17 @@ class PdfPageMapping(object):
             self.load()
         return original_page_idx in self.mapping
 
-    def get_original_page_idx(self, target_page_idx):
-        if self.reverse_mapping is None:
-            self.load_reverse_only()
+    def get_original_page_idx(self, target_page_idx, reverse_only=False):
+        if reverse_only:
+            if self.reverse_mapping is None:
+                self.load_reverse_only()
+        else:
+            if self.mapping is None:
+                self.load()
         # Keep in mind we may have loaded only the mapping --> we don't know
         # how many pages there are in the PDF, so the mapping may be incomplete
         original_page_idx = self.reverse_mapping.get(
-            target_page_idx, target_page_idx
+            target_page_idx, None
         )
         return original_page_idx
 
@@ -408,6 +412,7 @@ class Plugin(openpaperwork_core.PluginBase):
         pdf_url = self._get_pdf_url(doc_url)
         if pdf_url is None:
             return (None, None)
+        LOGGER.info("Opening %s", pdf_url)
         gio_file = Gio.File.new_for_uri(pdf_url)
         doc = Poppler.Document.new_from_gfile(gio_file, password=None)
         self.core.call_all("on_objref_track", doc)
@@ -525,14 +530,26 @@ class Plugin(openpaperwork_core.PluginBase):
             return None
         pdf_url = self._get_pdf_url(doc_url)
         if pdf_url is None:
-            return
-        mapping = self._get_page_mapping(doc_url)
-        page_idx = mapping.get_original_page_idx(page_idx)
-        if page_idx is None:
             return None
+
+        # The first page is requested much more often than the others, due
+        # to thumbnailing.
+        # ASSUMPTION(Jflesch): If there is a doc.pdf, there is a first page
+        # in it.
+        # We don't want to open the PDF file for each thumbnail (first page)
+        # but at the same time, we still need to check the mapping file.
+
+        mapping = self._get_page_mapping(doc_url)
+        original_page_idx = mapping.get_original_page_idx(
+            page_idx, reverse_only=(page_idx == 0)
+        )
+        if original_page_idx is None:
+            if page_idx != 0:
+                return None
+            else:
+                original_page_idx = page_idx
         # same URL used in browsers
-        pdf_url = self._get_pdf_url(doc_url)
-        return "{}#page={}".format(pdf_url, str(page_idx + 1))
+        return "{}#page={}".format(pdf_url, str(original_page_idx + 1))
 
     @staticmethod
     def _custom_split(input_str, input_rects, splitter):
