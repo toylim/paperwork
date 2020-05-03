@@ -90,9 +90,11 @@ class Plugin(openpaperwork_core.PluginBase):
         for page_idx in pages:
             if self.interactive:
                 sys.stdout.write(
-                    (
-                        _("Running OCR on document %s page %d ...")
-                        % (doc_id, page_idx + 1)
+                    _(
+                        "Running OCR on"
+                        " document {doc_id} page {page_idx} ...".format(
+                            doc_id=doc_id, page_idx=(page_idx + 1)
+                        )
                     ) + " "
                 )
                 sys.stdout.flush()

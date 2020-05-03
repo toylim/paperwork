@@ -76,11 +76,13 @@ class Plugin(openpaperwork_core.PluginBase):
         if self.interactive and len(missing) > 0:
             print(_("Missing dependencies:"))
             for (dep_name, distrib_packages) in missing.items():
-                print(_("- %s (package: %s)") % (
-                    dep_name,
-                    distrib_packages[distribution]
-                    if distribution in distrib_packages
-                    else _("UNKNOWN")
+                print(_("- {dep_name} (package: {pkg_name})").format(
+                    dep_name=dep_name,
+                    pkg_name=(
+                        distrib_packages[distribution]
+                        if distribution in distrib_packages
+                        else _("UNKNOWN")
+                    )
                 ))
 
         if distribution in PACKAGE_TOOLS:

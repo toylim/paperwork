@@ -39,8 +39,9 @@ class SurfacePreloader(object):
                 args=(
                     "on_progress", "print_load",
                     page_nb / len(self.page_indexes),
-                    _("Loading %s p%d for printing") %
-                    (self.doc_id, page_idx + 1)
+                    _("Loading {doc_id} p{page_idx} for printing").format(
+                        doc_id=self.doc_id, page_idx=(page_idx + 1)
+                    )
                 )
             )
             promise = promise.then(lambda *args, **kwargs: None)
@@ -175,7 +176,9 @@ class PrintJob(object):
         )
         self.core.call_all(
             "on_progress", "print", page_nb / self.nb_pages,
-            _("Printing %s (%d/%d)") % (self.doc_id, page_nb, self.nb_pages)
+            _("Printing {doc_id} ({page_idx}/{nb_pages})").format(
+                doc_id=self.doc_id, page_idx=page_nb, nb_pages=self.nb_pages
+            )
         )
 
         surface = self.preloader.get_page_surface(page_nb)

@@ -381,8 +381,11 @@ class LabelEditor(object):
                 )
                 self.core.call_all(
                     "on_progress", "label_upd", current / total,
-                    _("Changing label %s into %s on document %s") % (
-                        old_label, new_label, doc_id
+                    _(
+                        "Changing label {old_label} into {new_label}"
+                        " on document {doc_id}"
+                    ).format(
+                        old_label=old_label, new_label=new_label, doc_id=doc_id
                     )
                 )
                 current += 1
@@ -444,8 +447,8 @@ class LabelEditor(object):
                 )
                 self.core.call_all(
                     "on_progress", "label_del", current / total,
-                    _("Deleting label %s from document %s") % (
-                        old_label, doc_id
+                    _("Deleting label {old_label} from document {doc_id}") % (
+                        old_label=old_label, doc_id=doc_id
                     )
                 )
                 current += 1

@@ -39,8 +39,8 @@ class ExportDataPage(ExportData):
         self.core.call_success(
             "mainloop_schedule", self.core.call_all,
             "on_progress", "export", self.progress,
-            _("Exporting %s p%d ...") % (
-                self.doc_id, self.page_idx + 1
+            _("Exporting {doc_id} p{page_idx} ...").format(
+                doc_id=self.doc_id, page_idx=(self.page_idx + 1)
             )
         )
 

@@ -57,9 +57,10 @@ class PillowfightTransaction(sync.BaseTransaction):
             return
 
         self.notify_progress(
-            ID, _("Guessing page borders of document %s page %d") % (
-                doc_id, page_idx
-            )
+            ID, _(
+                "Guessing page borders of"
+                " document {doc_id} page {page_idx}"
+            ).format(doc_id=doc_id, page_idx=(page_idx + 1))
         )
         self.plugin.crop_page_borders_by_url(doc_url, page_idx)
 

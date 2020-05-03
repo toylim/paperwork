@@ -37,9 +37,11 @@ class OrientationTransaction(sync.BaseTransaction):
 
     def _guess_page_orientation(self, doc_id, doc_url, page_idx):
         self.notify_progress(
-            ID, _("Guessing orientation on document %s page %d") % (
-                doc_id, page_idx
-            )
+            ID,
+            _(
+                "Guessing orientation on"
+                " document {doc_id} page {page_idx}"
+            ).format(doc_id=doc_id, page_idx=(page_idx + 1))
         )
         self.plugin.guess_page_orientation_by_url(doc_url, page_idx)
 

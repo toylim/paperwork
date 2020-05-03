@@ -110,8 +110,13 @@ class Plugin(openpaperwork_core.PluginBase):
             self.active_page_idx, self.active_doc[0]
         )
         msg = (
-            _('Are you sure you want to delete page %d of document %s ?') %
-            (self.active_page_idx + 1, self.active_doc[0])
+            _(
+                "Are you sure you want to delete page"
+                " {page_idx} of document {doc_id} ?"
+            ).format(
+                page_idx=(self.active_page_idx + 1),
+                doc_id=self.active_doc[0]
+            )
         )
 
         confirm = Gtk.MessageDialog(

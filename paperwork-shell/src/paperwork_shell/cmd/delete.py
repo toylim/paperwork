@@ -90,8 +90,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
         pages = parse_page_list(args)
 
-        del_doc_msg = _("Deleting document %s ...")
-        del_page_msg = _("Deleting page %d of document %s ...")
+        del_doc_msg = _("Deleting document {doc_id} ...")
+        del_page_msg = _("Deleting page {page_idx} of document {doc_id} ...")
 
         for doc_id in doc_ids:
             if self.interactive:
@@ -102,8 +102,12 @@ class Plugin(openpaperwork_core.PluginBase):
                     )
                 else:
                     r = ask_confirmation(
-                        _("Delete page(s) %s of document %s ?") % (
-                            str([p + 1 for p in pages]), str(doc_id)
+                        _(
+                            "Delete page(s)"
+                            " {page_indexes} of document {doc_id} ?".format(
+                                page_indexes=str([p + 1 for p in pages]),
+                                doc_id=str(doc_id)
+                            )
                         ), default='n'
                     )
                 if r != 'y':
@@ -111,7 +115,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
             if pages is None:
                 if self.interactive:
-                    print(del_doc_msg % doc_id)
+                    print(del_doc_msg.format(doc_id=doc_id))
                 self.core.call_all("storage_delete_doc_id", doc_id)
             else:
                 for page in pages:
@@ -119,7 +123,9 @@ class Plugin(openpaperwork_core.PluginBase):
                         "doc_id_to_url", doc_id
                     )
                     if self.interactive:
-                        print(del_page_msg % (page + 1, doc_id))
+                        print(del_page_msg.format(
+                            page_idx=(page + 1), doc_id=doc_id)
+                        )
                     self.core.call_all("page_delete_by_url", doc_url, page)
 
         self.core.call_success(

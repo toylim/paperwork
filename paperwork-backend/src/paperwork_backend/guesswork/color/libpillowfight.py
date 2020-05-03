@@ -54,8 +54,9 @@ class PillowfightTransaction(sync.BaseTransaction):
             return
 
         self.notify_progress(
-            ID, _("Adjusting colors of document %s page %d") % (
-                doc_id, page_idx
+            ID,
+            _("Adjusting colors of document {doc_id} page {page_idx}").format(
+                doc_id=doc_id, page_idx=(page_idx + 1)
             )
         )
         self.plugin.adjust_page_colors_by_url(doc_url, page_idx)

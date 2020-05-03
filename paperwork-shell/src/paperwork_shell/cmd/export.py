@@ -149,9 +149,9 @@ class Plugin(openpaperwork_core.PluginBase):
                         print("- " + pipe)
                 elif len(filters) > 0:
                     print(_(
-                        "'%s' is an output filter. Not other filter can be"
-                        " added after '%s'."
-                    ) % (filters[-1].name, filters[-1].name))
+                        "'{filter_name}' is an output filter."
+                        " No other filter can be added after '%s'."
+                    ).format(file_name=filters[-1].name))
                 else:
                     print(_("No possible filters found"))
             return next_pipes

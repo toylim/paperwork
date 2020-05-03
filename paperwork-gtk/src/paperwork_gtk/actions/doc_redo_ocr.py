@@ -115,7 +115,9 @@ class Plugin(openpaperwork_core.PluginBase):
             promise = promise.then(
                 self.core.call_all, "on_progress", "redo_ocr",
                 page_idx / nb_pages,
-                _("OCR on %s p%d") % (doc_id, page_idx + 1)
+                _("OCR on {doc_id} p{page_idx}").format(
+                    doc_id=doc_id, page_idx=(page_idx + 1)
+                )
             )
             promise = promise.then(lambda *args, **kwargs: None)
             promise = promise.then(openpaperwork_core.promise.ThreadedPromise(

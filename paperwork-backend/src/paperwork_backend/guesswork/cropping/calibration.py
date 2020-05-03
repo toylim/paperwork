@@ -52,8 +52,9 @@ class CalibrationTransaction(sync.BaseTransaction):
         self.notify_progress(
             ID,
             _(
-                "Using calibration to crop page borders of document %s page %d"
-            ) % (doc_id, page_idx)
+                "Using calibration to crop page borders of"
+                " document {doc_id} page {page_idx}"
+            ).format(doc_id=doc_id, page_idx=(page_idx + 1))
         )
         self.plugin.crop_page_borders_by_url(doc_url, page_idx)
 
