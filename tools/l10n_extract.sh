@@ -75,5 +75,3 @@ do
 		exit 3
 	fi
 done
-
-rm -f "${dst_dir}/messages.pot"
