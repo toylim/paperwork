@@ -2,6 +2,9 @@ import openpaperwork_core
 
 
 class Plugin(openpaperwork_core.PluginBase):
+    def get_interfaces(self):
+        return ['l10n_init']
+
     def get_deps(self):
         return [
             {

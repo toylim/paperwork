@@ -16,7 +16,10 @@ class Plugin(PluginBase):
     )
 
     def get_interfaces(self):
-        return ['l10n']
+        return [
+            'l10n',
+            'l10n_init',
+        ]
 
     def get_deps(self):
         return [

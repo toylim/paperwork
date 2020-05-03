@@ -66,6 +66,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_gtk.resources'],
             },
             {
+                'interface': 'l10n_init',
+                'defaults': ['paperwork_gtk.l10n'],
+            },
+            {
                 'interface': 'screenshot',
                 'defaults': ['openpaperwork_gtk.screenshots'],
             },
