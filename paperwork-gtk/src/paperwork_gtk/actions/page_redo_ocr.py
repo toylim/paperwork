@@ -108,7 +108,7 @@ class Plugin(openpaperwork_core.PluginBase):
             self.core, self.core.call_all,
             args=(
                 "on_progress", "redo_ocr", 0.0,
-                _("OCR on {doc_id} p{page_idx}") % (
+                _("OCR on {doc_id} p{page_idx}").format(
                     doc_id=doc_id, page_idx=page_idx
                 )
             )

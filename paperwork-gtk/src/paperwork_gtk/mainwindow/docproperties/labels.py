@@ -447,9 +447,9 @@ class LabelEditor(object):
                 )
                 self.core.call_all(
                     "on_progress", "label_del", current / total,
-                    _("Deleting label {old_label} from document {doc_id}") % (
-                        old_label=old_label, doc_id=doc_id
-                    )
+                    _(
+                        "Deleting label {old_label} from document {doc_id}"
+                    ).format(old_label=old_label, doc_id=doc_id)
                 )
                 current += 1
                 doc_labels = set()
