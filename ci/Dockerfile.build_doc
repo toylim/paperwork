@@ -1,4 +1,4 @@
-FROM registry.gitlab.gnome.org/world/openpaperwork/paperwork:build
+FROM registry.gitlab.gnome.org/world/openpaperwork/paperwork/build
 
 # Paperwork dev documentation dependencies
 
