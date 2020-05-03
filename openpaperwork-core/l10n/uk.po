@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-03 15:46+0200\n"
+"POT-Creation-Date: 2020-05-03 16:15+0200\n"
 "PO-Revision-Date: 2020-05-03 15:35+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -18,144 +18,144 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/logs/archives.py:125
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/logs/archives.py:136
+#: openpaperwork-core/src/openpaperwork_core/logs/archives.py:125
+#: openpaperwork-core/src/openpaperwork_core/logs/archives.py:136
 msgid "Log file"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/cmd/util.py:12
+#: openpaperwork-core/src/openpaperwork_core/cmd/util.py:12
 msgid "Y/n"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/cmd/util.py:15
+#: openpaperwork-core/src/openpaperwork_core/cmd/util.py:15
 msgid "y/N"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/cmd/config.py:55
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:55
 msgid "Manage Paperwork configuration"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/cmd/config.py:59
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:59
 msgid "sub-command"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/cmd/config.py:63
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:63
 msgid "Get a value from Paperwork's configuration"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/cmd/config.py:68
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:68
 msgid "Set a value in Paperwork's configuration"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/cmd/config.py:71
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:71
 msgid "See 'config list_type'"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/cmd/config.py:75
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:75
 msgid "Show Paperwork's configuration"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/cmd/config.py:80
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:80
 msgid "Show value types you can use from command line"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/cmd/config.py:86
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:86
 #, python-format
 msgid "Show plugins enabled for %s"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/cmd/config.py:92
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:92
 #, python-format
 msgid "Add plugin in %s"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/cmd/config.py:99
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:99
 #, python-format
 msgid "Remove plugin from %s"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/cmd/config.py:105
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:105
 msgid "Reset plugin list to default"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/cmd/config.py:178
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:178
 msgid "Plugin {} added"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/cmd/config.py:190
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:190
 msgid "Plugin {} removed"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/cmd/config.py:198
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:198
 msgid "Active plugins:"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:56
+#: openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:56
 msgid "Check that all required dependencies are installed"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:77
+#: openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:77
 msgid "Missing dependencies:"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:79
+#: openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:79
 #, python-brace-format
 msgid "- {dep_name} (package: {pkg_name})"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:84
+#: openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:84
 msgid "UNKNOWN"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:104
+#: openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:104
 msgid "Suggested command:"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:109
+#: openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:109
 msgid "Do you want to run this command now ?"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:123
+#: openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:123
 msgid "Don't know how to install missing dependencies. Sorry."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:126
+#: openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:126
 msgid "Nothing to do."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/config/backend/configparser.py:332
+#: openpaperwork-core/src/openpaperwork_core/config/backend/configparser.py:332
 msgid "App. config."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/i18n/python.py:9
+#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:9
 msgid "Today"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/i18n/python.py:10
+#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:10
 msgid "Yesterday"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/i18n/python.py:12
+#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:12
 #, python-format
 msgid "%3.1f bytes"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/i18n/python.py:13
+#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:13
 #, python-format
 msgid "%3.1f KiB"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/i18n/python.py:14
+#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:14
 #, python-format
 msgid "%3.1f MiB"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/i18n/python.py:15
+#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:15
 #, python-format
 msgid "%3.1f GiB"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/openpaperwork-core/src/openpaperwork_core/i18n/python.py:16
+#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:16
 #, python-format
 msgid "%3.1f TiB"
 msgstr ""

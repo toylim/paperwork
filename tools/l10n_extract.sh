@@ -31,12 +31,27 @@ fi
 src_dir="$1"
 dst_dir="$2"
 
+src_dir=$(realpath --relative-to=$(pwd) ${src_dir})
+
+while ! [ -d .git ]; do
+	if [ "$(pwd)" == "/" ]; then
+		echo "Failed to find git repository root"
+		echo "Are you in a Git repository ?"
+		exit 3
+	fi
+	# we must place ourselves at the root of the repository so the file
+	# paths in the .pot and .po are correct for Weblate
+	src_dir="$(basename $(pwd))/${src_dir}"
+	cd ..
+done
+
+src_dir=$(realpath --relative-to=$(pwd) ${src_dir})
+
 mkdir -p "${dst_dir}"
 
 echo "Extracting strings from Glade files ..."
 for glade_file in $(find "${src_dir}" -name \*.glade) ; do
 	# intltool-extract expects a relative path as input
-	glade_file=$(realpath --relative-to=$(pwd) ${glade_file})
 	echo "${glade_file} --> .glade.h ..."
 	if ! intltool-extract --type=gettext/glade "${glade_file}" > /dev/null; then
 		echo "intltool-extract Failed ! Unable to extract strings to translate from .glade files !"

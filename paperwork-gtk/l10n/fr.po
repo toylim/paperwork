@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-03 15:34+0200\n"
+"POT-Creation-Date: 2020-05-03 16:15+0200\n"
 "PO-Revision-Date: 2020-05-03 15:27+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -18,404 +18,404 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/print.py:42
+#: paperwork-gtk/src/paperwork_gtk/print.py:42
 #, python-brace-format
 msgid "Loading {doc_id} p{page_idx} for printing"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/print.py:144
+#: paperwork-gtk/src/paperwork_gtk/print.py:144
 #, python-format
 msgid "Printing %s"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/print.py:179
+#: paperwork-gtk/src/paperwork_gtk/print.py:179
 #, python-brace-format
 msgid "Printing {doc_id} ({page_idx}/{nb_pages})"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/storage.py:84
+#: paperwork-gtk/src/paperwork_gtk/settings/storage.py:84
 msgid "Storage"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/storage.py:90
+#: paperwork-gtk/src/paperwork_gtk/settings/storage.py:90
 msgid "Work Directory"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/__init__.py:58
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/settings.glade.h:1
+#: paperwork-gtk/src/paperwork_gtk/settings/__init__.py:58
+#: paperwork-gtk/src/paperwork_gtk/settings/settings.glade.h:1
 msgid "Settings"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/ocr/settings.py:65
+#: paperwork-gtk/src/paperwork_gtk/settings/ocr/settings.py:65
 msgid "Optical Character Recognition"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/ocr/settings.py:77
+#: paperwork-gtk/src/paperwork_gtk/settings/ocr/settings.py:77
 msgid "OCR disabled"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:15
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/scanner/popover_mode.glade.h:1
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:15
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/popover_mode.glade.h:1
 msgid "Color"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:16
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/scanner/popover_mode.glade.h:2
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:16
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/popover_mode.glade.h:2
 msgid "Grayscale"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:17
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/scanner/popover_mode.glade.h:3
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:17
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/popover_mode.glade.h:3
 msgid "Black & White"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:26
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:26
 msgid "No scanner selected"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:30
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:30
 msgid "No resolution selected"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:30
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/scanner/resolution_popover.py:123
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:30
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/resolution_popover.py:123
 msgid "{} dpi"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:34
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:34
 msgid "No mode selected"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:94
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:94
 msgid "Scanner"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/scanner/dev_id_popover.py:67
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/dev_id_popover.py:67
 msgid "No scanner"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/scanner/calibration.py:149
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/calibration.py:149
 msgid "Loading ..."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/scanner/resolution_popover.py:125
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/resolution_popover.py:125
 msgid "{} dpi (recommended)"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/stats.py:60
+#: paperwork-gtk/src/paperwork_gtk/settings/stats.py:60
 msgid "Help Improve Paperwork"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/cmd/install.py:37
+#: paperwork-gtk/src/paperwork_gtk/cmd/install.py:37
 msgid "Install Paperwork icons and shortcuts"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/cmd/install.py:41
+#: paperwork-gtk/src/paperwork_gtk/cmd/install.py:41
 msgid "Install everything only for the current user"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/__init__.py:372
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/__init__.py:372
 #, python-format
 msgid "Estimated file size: %s"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/__init__.py:593
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:146
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/__init__.py:593
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:146
 msgid "Select a file or a directory to import"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/__init__.py:602
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:166
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/__init__.py:602
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:166
 msgid "Any files"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/doclist/__init__.py:610
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/doclist/__init__.py:610
 #, python-format
 msgid "%d documents"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/doclist/name.py:59
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/doclist/name.py:59
 msgid "New document"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/doclist/thumbnailer.py:114
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/doclist/thumbnailer.py:114
 msgid "Loading document thumbnails"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/window/__init__.py:113
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/window/__init__.py:113
 msgid "Paperwork"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:78
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:78
 msgid "Keyword(s)"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:131
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:131
 msgid "Label"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:143
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:143
 msgid "From:"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:149
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:149
 msgid "to:"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:259
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/name.glade.h:1
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:259
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/name.glade.h:1
 msgid "Date"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:291
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:291
 msgid "and"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:292
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:292
 msgid "or"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:309
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:309
 msgid "not"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:333
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:333
 msgid "Remove"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:385
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:385
 #, python-brace-format
 msgid "Changing label {old_label} into {new_label} on document {doc_id}"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:450
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:450
 #, python-brace-format
 msgid "Deleting label {old_label} from document {doc_id}"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/docview/controllers/empty_doc/__init__.py:90
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/controllers/empty_doc/__init__.py:90
 msgid "Empty"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageview/__init__.py:86
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageview/__init__.py:86
 msgid "Loading page {}/{} ..."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageview/boxes/__init__.py:83
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageview/boxes/__init__.py:83
 msgid "Loading text ..."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/scan.py:117
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/scan.py:117
 #, python-format
 msgid "Scan from %s"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:106
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:106
 msgid "Import image or PDF file(s)"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:107
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:107
 msgid "Import file(s)"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:160
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:160
 msgid "All supported file formats"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:192
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:192
 #, python-format
 msgid "Don't know how to import '%s'. Sorry."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:209
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:209
 msgid "No new document to import found"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:244
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:244
 msgid "Imported:\n"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:251
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:251
 msgid "Import successful"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:254
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:254
 msgid "Delete imported files"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:329
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:329
 msgid "Imported file(s) deleted"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/main.py:150
+#: paperwork-gtk/src/paperwork_gtk/main.py:150
 msgid "command"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/__init__.py:10
+#: paperwork-gtk/src/paperwork_gtk/model/help/__init__.py:10
 msgid "Introduction"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/__init__.py:11
+#: paperwork-gtk/src/paperwork_gtk/model/help/__init__.py:11
 msgid "User manual"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/__init__.py:13
+#: paperwork-gtk/src/paperwork_gtk/model/help/__init__.py:13
 msgid "Documentation"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/actions/docs_select_all.py:60
+#: paperwork-gtk/src/paperwork_gtk/actions/docs_select_all.py:60
 msgid "Select all"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/actions/help.py:54
+#: paperwork-gtk/src/paperwork_gtk/actions/help.py:54
 msgid "Help"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/actions/doc_redo_ocr.py:82
+#: paperwork-gtk/src/paperwork_gtk/actions/doc_redo_ocr.py:82
 msgid "Redo OCR on document"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/actions/doc_redo_ocr.py:110
+#: paperwork-gtk/src/paperwork_gtk/actions/doc_redo_ocr.py:110
 #, python-format
 msgid "OCR on %s"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/actions/doc_redo_ocr.py:118
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/actions/page_redo_ocr.py:111
+#: paperwork-gtk/src/paperwork_gtk/actions/doc_redo_ocr.py:118
+#: paperwork-gtk/src/paperwork_gtk/actions/page_redo_ocr.py:111
 #, python-brace-format
 msgid "OCR on {doc_id} p{page_idx}"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/actions/doc_add_to_selection.py:70
+#: paperwork-gtk/src/paperwork_gtk/actions/doc_add_to_selection.py:70
 msgid "Add to selection"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/actions/doc_export.py:68
+#: paperwork-gtk/src/paperwork_gtk/actions/doc_export.py:68
 msgid "Export document"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/actions/page_print.py:60
+#: paperwork-gtk/src/paperwork_gtk/actions/page_print.py:60
 msgid "Print page"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/actions/page_export.py:60
+#: paperwork-gtk/src/paperwork_gtk/actions/page_export.py:60
 msgid "Export page"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/actions/app_open_bug_report.py:56
+#: paperwork-gtk/src/paperwork_gtk/actions/app_open_bug_report.py:56
 msgid "Report bug"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/actions/doc_properties.py:65
+#: paperwork-gtk/src/paperwork_gtk/actions/doc_properties.py:65
 msgid "Document properties"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/actions/doc_print.py:70
+#: paperwork-gtk/src/paperwork_gtk/actions/doc_print.py:70
 msgid "Print document"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/actions/page_reset.py:68
+#: paperwork-gtk/src/paperwork_gtk/actions/page_reset.py:68
 msgid "Reset page"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/actions/page_redo_ocr.py:69
+#: paperwork-gtk/src/paperwork_gtk/actions/page_redo_ocr.py:69
 msgid "Redo OCR on page"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/actions/page_delete.py:74
+#: paperwork-gtk/src/paperwork_gtk/actions/page_delete.py:74
 msgid "Delete page"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/actions/page_delete.py:114
+#: paperwork-gtk/src/paperwork_gtk/actions/page_delete.py:114
 #, python-brace-format
 msgid "Are you sure you want to delete page {page_idx} of document {doc_id} ?"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/actions/doc_delete.py:85
+#: paperwork-gtk/src/paperwork_gtk/actions/doc_delete.py:85
 msgid "Delete document"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/actions/doc_delete.py:105
+#: paperwork-gtk/src/paperwork_gtk/actions/doc_delete.py:105
 #, python-format
 msgid "Are you sure you want to delete document %s ?"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/actions/doc_open_external.py:74
+#: paperwork-gtk/src/paperwork_gtk/actions/doc_open_external.py:74
 msgid "Open folder"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/actions/docs_delete.py:86
+#: paperwork-gtk/src/paperwork_gtk/actions/docs_delete.py:86
 msgid "Delete"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/actions/docs_delete.py:99
+#: paperwork-gtk/src/paperwork_gtk/actions/docs_delete.py:99
 #, python-format
 msgid "Are you sure you want to delete %d documents ?"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/actions/docs_properties.py:68
+#: paperwork-gtk/src/paperwork_gtk/actions/docs_properties.py:68
 msgid "Change labels"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/actions/docs_export.py:67
+#: paperwork-gtk/src/paperwork_gtk/actions/docs_export.py:67
 msgid "Export"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/storage.glade.h:1
+#: paperwork-gtk/src/paperwork_gtk/settings/storage.glade.h:1
 msgid "Work directory"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/storage.glade.h:2
+#: paperwork-gtk/src/paperwork_gtk/settings/storage.glade.h:2
 msgid "some_work_directory"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/ocr/settings.glade.h:1
+#: paperwork-gtk/src/paperwork_gtk/settings/ocr/settings.glade.h:1
 msgid "Languages"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/scanner/calibration.glade.h:1
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/calibration.glade.h:1
 msgid "Maximize"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/scanner/calibration.glade.h:2
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/calibration.glade.h:2
 msgid "Automatic"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/scanner/calibration.glade.h:3
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/calibration.glade.h:3
 msgid "Scan"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/scanner/calibration.glade.h:4
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/calibration.glade.h:4
 msgid "Scanner Calibration"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.glade.h:1
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.glade.h:1
 msgid "Device"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.glade.h:2
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.glade.h:2
 msgid "Resolution"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.glade.h:3
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.glade.h:3
 msgid "Mode"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.glade.h:4
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.glade.h:4
 msgid "Calibration"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.glade.h:5
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.glade.h:5
 msgid "Re-calibrate"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/stats.glade.h:1
+#: paperwork-gtk/src/paperwork_gtk/settings/stats.glade.h:1
 msgid ""
 "Send metrics\n"
 "<span foreground=\"gray\">Give us clues about how you use Paperwork</span>"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/stats.glade.h:3
+#: paperwork-gtk/src/paperwork_gtk/settings/stats.glade.h:3
 msgid ""
 "<span foreground=\"gray\">Those clues will help us to make Paperwork an even "
 "better piece of software, for you. Statistics also show us that people are "
@@ -437,75 +437,75 @@ msgid ""
 "</span>"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/settings/settings_section.glade.h:1
+#: paperwork-gtk/src/paperwork_gtk/settings/settings_section.glade.h:1
 msgid "Section title"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/exporter.glade.h:1
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/exporter.glade.h:1
 msgid "Export Steps"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/exporter.glade.h:2
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/exporter.glade.h:2
 msgid "Quality"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/exporter.glade.h:3
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/exporter.glade.h:3
 msgid "Page format"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/exporter.glade.h:4
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/exporter.glade.h:4
 msgid "Export Settings"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/exporter.glade.h:5
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/exporter.glade.h:5
 msgid "Preview"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/doclist/doclist.glade.h:1
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/doclist/doclist.glade.h:1
 msgid "Documents"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/doclist/doclist.glade.h:2
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/doclist/doclist.glade.h:2
 msgid "Selection"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/search/field.glade.h:1
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.glade.h:1
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/search/field.glade.h:1
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.glade.h:1
 msgid "Search"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/search/field.glade.h:2
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/search/field.glade.h:2
 msgid "Advanced search"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/docproperties.glade.h:1
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/docproperties.glade.h:1
 msgid "Properties"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/label_name_dialog.glade.h:1
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/label_name_dialog.glade.h:1
 msgid "Renaming label"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/label.glade.h:1
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/label.glade.h:1
 msgid "Change the label color"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/label.glade.h:2
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/label.glade.h:2
 msgid "Delete the label from all documents"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/extra_text.glade.h:1
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/extra_text.glade.h:1
 msgid "Additional keywords"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageinfo/actions.glade.h:1
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageinfo/actions.glade.h:1
 msgid "Edit"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageinfo/layout_settings.glade.h:1
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageinfo/layout_settings.glade.h:1
 msgid "Highlight words"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/buttons.glade.h:1
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/buttons.glade.h:1
 msgid "Add page"
 msgstr ""

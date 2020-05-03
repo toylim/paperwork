@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-03 15:54+0200\n"
+"POT-Creation-Date: 2020-05-03 16:16+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,273 +17,273 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/doctracker.py:71
+#: paperwork-backend/src/paperwork_backend/doctracker.py:71
 #, python-format
 msgid "Document %s added"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/doctracker.py:76
+#: paperwork-backend/src/paperwork_backend/doctracker.py:76
 #, python-format
 msgid "Document %s updated"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/doctracker.py:92
+#: paperwork-backend/src/paperwork_backend/doctracker.py:92
 #, python-format
 msgid "Document %s deleted"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/doctracker.py:102
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/index/whoosh.py:143
+#: paperwork-backend/src/paperwork_backend/doctracker.py:102
+#: paperwork-backend/src/paperwork_backend/index/whoosh.py:143
 #, python-format
 msgid "Examining document %s: unchanged"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/doctracker.py:107
+#: paperwork-backend/src/paperwork_backend/doctracker.py:107
 msgid "Rolling back changes"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/doctracker.py:115
+#: paperwork-backend/src/paperwork_backend/doctracker.py:115
 msgid "Committing changes"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/docimport/pdf.py:33
+#: paperwork-backend/src/paperwork_backend/docimport/pdf.py:33
 msgid "Already imported"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/docimport/pdf.py:41
+#: paperwork-backend/src/paperwork_backend/docimport/pdf.py:41
 msgid "PDF"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/docimport/pdf.py:42
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/docimport/img.py:56
+#: paperwork-backend/src/paperwork_backend/docimport/pdf.py:42
+#: paperwork-backend/src/paperwork_backend/docimport/img.py:56
 msgid "Documents"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/docimport/pdf.py:58
+#: paperwork-backend/src/paperwork_backend/docimport/pdf.py:58
 msgid "Import PDF"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/docimport/pdf.py:106
+#: paperwork-backend/src/paperwork_backend/docimport/pdf.py:106
 msgid "PDF folder"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/docimport/img.py:53
+#: paperwork-backend/src/paperwork_backend/docimport/img.py:53
 msgid "Images"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/docimport/img.py:59
+#: paperwork-backend/src/paperwork_backend/docimport/img.py:59
 msgid "Pages"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/docimport/img.py:78
+#: paperwork-backend/src/paperwork_backend/docimport/img.py:78
 msgid "Append the image to the current document"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/beacon/stats.py:124
+#: paperwork-backend/src/paperwork_backend/beacon/stats.py:124
 msgid "App. & system info."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/beacon/stats.py:125
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/docscan/libinsane.py:690
+#: paperwork-backend/src/paperwork_backend/beacon/stats.py:125
+#: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:690
 msgid "Select to generate"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/beacon/stats.py:147
+#: paperwork-backend/src/paperwork_backend/beacon/stats.py:147
 msgid "Collecting statistics ..."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/model/labels.py:49
+#: paperwork-backend/src/paperwork_backend/model/labels.py:49
 msgid "Loading labels of document {}"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/docexport/pdf.py:101
+#: paperwork-backend/src/paperwork_backend/docexport/pdf.py:101
 msgid "Original PDF(s)"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/docexport/pdf.py:298
+#: paperwork-backend/src/paperwork_backend/docexport/pdf.py:298
 msgid "Generated PDF(s)"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/docexport/img.py:42
+#: paperwork-backend/src/paperwork_backend/docexport/img.py:42
 #, python-brace-format
 msgid "Exporting {doc_id} p{page_idx} ..."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/docexport/img.py:87
+#: paperwork-backend/src/paperwork_backend/docexport/img.py:87
 msgid "Exporting ..."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/docexport/img.py:122
+#: paperwork-backend/src/paperwork_backend/docexport/img.py:122
 msgid "Split page(s) into image(s) and text(s)"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/docexport/img.py:172
+#: paperwork-backend/src/paperwork_backend/docexport/img.py:172
 msgid "Image file ({})"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/docexport/img.py:185
+#: paperwork-backend/src/paperwork_backend/docexport/img.py:185
 msgid "Black & White"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/docexport/img.py:196
+#: paperwork-backend/src/paperwork_backend/docexport/img.py:196
 msgid "Grayscale"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/docexport/generic.py:99
+#: paperwork-backend/src/paperwork_backend/docexport/generic.py:99
 msgid "Page by page processing"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/docexport/pillowfight.py:32
+#: paperwork-backend/src/paperwork_backend/docexport/pillowfight.py:32
 msgid "Soft simplification"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/docexport/pillowfight.py:51
+#: paperwork-backend/src/paperwork_backend/docexport/pillowfight.py:51
 msgid "Hard simplification"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/docexport/pillowfight.py:53
+#: paperwork-backend/src/paperwork_backend/docexport/pillowfight.py:53
 msgid "Extreme simplification"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/docscan/libinsane.py:208
+#: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:208
 msgid "Starting scan ..."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/docscan/libinsane.py:216
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/docscan/libinsane.py:268
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/docscan/libinsane.py:279
+#: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:216
+#: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:268
+#: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:279
 #, python-format
 msgid "Scanning page %d ..."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/docscan/libinsane.py:423
+#: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:423
 #, python-format
 msgid "Examining %s"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/docscan/libinsane.py:494
+#: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:494
 msgid "Getting scanner list ..."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/docscan/libinsane.py:689
+#: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:689
 msgid "Scanner info."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/i18n/pycountry.py:12
+#: paperwork-backend/src/paperwork_backend/i18n/pycountry.py:12
 msgid "English"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/i18n/pycountry.py:13
+#: paperwork-backend/src/paperwork_backend/i18n/pycountry.py:13
 msgid "French"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/i18n/pycountry.py:14
+#: paperwork-backend/src/paperwork_backend/i18n/pycountry.py:14
 msgid "German"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/i18n/scanner.py:14
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/i18n/scanner.py:18
+#: paperwork-backend/src/paperwork_backend/i18n/scanner.py:14
+#: paperwork-backend/src/paperwork_backend/i18n/scanner.py:18
 msgid "centrally aligned"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/i18n/scanner.py:15
+#: paperwork-backend/src/paperwork_backend/i18n/scanner.py:15
 msgid "Feeder"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/i18n/scanner.py:16
+#: paperwork-backend/src/paperwork_backend/i18n/scanner.py:16
 msgid "Flatbed"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/i18n/scanner.py:17
+#: paperwork-backend/src/paperwork_backend/i18n/scanner.py:17
 msgid "left aligned"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/pageedit/pageeditor.py:80
+#: paperwork-backend/src/paperwork_backend/pageedit/pageeditor.py:80
 msgid "Color equalization"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/pageedit/pageeditor.py:92
+#: paperwork-backend/src/paperwork_backend/pageedit/pageeditor.py:92
 msgid "Cropping"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/pageedit/pageeditor.py:103
+#: paperwork-backend/src/paperwork_backend/pageedit/pageeditor.py:103
 msgid "Clockwise Rotation"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/pageedit/pageeditor.py:112
+#: paperwork-backend/src/paperwork_backend/pageedit/pageeditor.py:112
 msgid "Counterclockwise Rotation"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/guesswork/cropping/calibration.py:55
+#: paperwork-backend/src/paperwork_backend/guesswork/cropping/calibration.py:55
 #, python-brace-format
 msgid ""
 "Using calibration to crop page borders of document {doc_id} page {page_idx}"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/guesswork/cropping/libpillowfight.py:61
+#: paperwork-backend/src/paperwork_backend/guesswork/cropping/libpillowfight.py:61
 #, python-brace-format
 msgid "Guessing page borders of document {doc_id} page {page_idx}"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/guesswork/orientation/pyocr.py:42
+#: paperwork-backend/src/paperwork_backend/guesswork/orientation/pyocr.py:42
 #, python-brace-format
 msgid "Guessing orientation on document {doc_id} page {page_idx}"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/guesswork/ocr/pyocr.py:52
+#: paperwork-backend/src/paperwork_backend/guesswork/ocr/pyocr.py:52
 #, python-brace-format
 msgid "Document {doc_id} p{page_idx} has already some text. No OCR run"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/guesswork/ocr/pyocr.py:60
+#: paperwork-backend/src/paperwork_backend/guesswork/ocr/pyocr.py:60
 #, python-brace-format
 msgid "Running OCR on document {doc_id} page {page_idx}"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:97
+#: paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:97
 #, python-format
 msgid "Training label guesser with added document %s"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:105
+#: paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:105
 #, python-format
 msgid "Untraining label guesser due to deleted document %s"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:112
+#: paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:112
 #, python-format
 msgid "Training label guesser with updated document %s"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:245
+#: paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:245
 msgid ""
 "Training label guessing training for label '{}' with all known documents ..."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:338
+#: paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:338
 msgid "Training label guessing ..."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/guesswork/color/libpillowfight.py:58
+#: paperwork-backend/src/paperwork_backend/guesswork/color/libpillowfight.py:58
 #, python-brace-format
 msgid "Adjusting colors of document {doc_id} page {page_idx}"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/index/whoosh.py:116
+#: paperwork-backend/src/paperwork_backend/index/whoosh.py:116
 #, python-format
 msgid "Indexing new document %s"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/index/whoosh.py:125
+#: paperwork-backend/src/paperwork_backend/index/whoosh.py:125
 #, python-format
 msgid "Removing document %s from index"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/index/whoosh.py:135
+#: paperwork-backend/src/paperwork_backend/index/whoosh.py:135
 #, python-format
 msgid "Indexing updated document %s"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-backend/src/paperwork_backend/index/whoosh.py:166
+#: paperwork-backend/src/paperwork_backend/index/whoosh.py:166
 msgid "Committing changes in the index ..."
 msgstr ""

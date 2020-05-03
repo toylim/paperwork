@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-03 15:54+0200\n"
+"POT-Creation-Date: 2020-05-03 16:16+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,449 +17,449 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/rename.py:53
+#: paperwork-shell/src/paperwork_shell/cmd/rename.py:53
 msgid "Change a document identifier"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/rename.py:57
+#: paperwork-shell/src/paperwork_shell/cmd/rename.py:57
 msgid "Document to rename"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/rename.py:61
+#: paperwork-shell/src/paperwork_shell/cmd/rename.py:61
 msgid "New name for the document"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/search.py:63
+#: paperwork-shell/src/paperwork_shell/cmd/search.py:63
 msgid "Search keywords in documents"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/search.py:67
+#: paperwork-shell/src/paperwork_shell/cmd/search.py:67
 msgid "Maximum number of results (default: 50)"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/search.py:71
+#: paperwork-shell/src/paperwork_shell/cmd/search.py:71
 msgid "Search keywords (none means all documents)"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/search.py:92
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/show.py:84
+#: paperwork-shell/src/paperwork_shell/cmd/search.py:92
+#: paperwork-shell/src/paperwork_shell/cmd/show.py:84
 #, python-format
 msgid "Document id: %s"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/search.py:97
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/show.py:90
+#: paperwork-shell/src/paperwork_shell/cmd/search.py:97
+#: paperwork-shell/src/paperwork_shell/cmd/show.py:90
 #, python-format
 msgid "Document date: %s"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/export.py:60
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:60
 msgid ""
 "Export a document, a page, or a set of pages. Example: paperwork-cli export "
 "20150303_2314_39 -p 2 -f img_boxes -f grayscale -f jpeg -o ~/tmp/pouet.jpg"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/export.py:66
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:66
 msgid "Document to export"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/export.py:70
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:70
 msgid ""
 "Pages to export (single integer, range or comma-separated list, default: all "
 "pages)"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/export.py:79
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:79
 msgid ""
 "Export filters. Specify this option once for each filter to apply (ex: '-f "
 "grayscale -f jpeg'."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/export.py:86
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:86
 msgid ""
 "Output file/directory. If not specified, will list the filters that could be "
 "chained after those already specified."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/export.py:122
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:122
 #, python-format
 msgid "Unknown filters: %s"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/export.py:144
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:144
 #, python-format
 msgid "Current filters: %s"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/export.py:147
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:147
 msgid "Next possible filters:"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/export.py:152
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:152
 #, python-format, python-brace-format
 msgid ""
 "'{filter_name}' is an output filter. No other filter can be added after '%s'."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/export.py:156
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:156
 msgid "No possible filters found"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/export.py:173
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:173
 #, python-format
 msgid "Exporting to %s ... "
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/export.py:178
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/label.py:103
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/import.py:133
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/edit.py:184
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/ocr.py:105
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/reset.py:132
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/extra_text.py:92
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/display/progress.py:39
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:178
+#: paperwork-shell/src/paperwork_shell/cmd/label.py:103
+#: paperwork-shell/src/paperwork_shell/cmd/import.py:133
+#: paperwork-shell/src/paperwork_shell/cmd/edit.py:184
+#: paperwork-shell/src/paperwork_shell/cmd/ocr.py:105
+#: paperwork-shell/src/paperwork_shell/cmd/reset.py:132
+#: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:92
+#: paperwork-shell/src/paperwork_shell/display/progress.py:39
 msgid "Done"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/scan.py:54
+#: paperwork-shell/src/paperwork_shell/cmd/scan.py:54
 msgid "Scan pages"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/scan.py:58
+#: paperwork-shell/src/paperwork_shell/cmd/scan.py:58
 msgid "Document to which the scanned pages must be added"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/label.py:60
+#: paperwork-shell/src/paperwork_shell/cmd/label.py:60
 msgid "Commands to manage labels"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/label.py:63
+#: paperwork-shell/src/paperwork_shell/cmd/label.py:63
 msgid "label command"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/label.py:70
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/delete.py:77
+#: paperwork-shell/src/paperwork_shell/cmd/label.py:70
+#: paperwork-shell/src/paperwork_shell/cmd/delete.py:77
 msgid "Target documents"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/label.py:74
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/label.py:82
+#: paperwork-shell/src/paperwork_shell/cmd/label.py:74
+#: paperwork-shell/src/paperwork_shell/cmd/label.py:82
 msgid "Target document"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/label.py:75
+#: paperwork-shell/src/paperwork_shell/cmd/label.py:75
 msgid "Label to add"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/label.py:78
+#: paperwork-shell/src/paperwork_shell/cmd/label.py:78
 msgid "Label color (ex: '#aa22cc')"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/label.py:83
+#: paperwork-shell/src/paperwork_shell/cmd/label.py:83
 msgid "Label to remove"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/label.py:87
+#: paperwork-shell/src/paperwork_shell/cmd/label.py:87
 msgid "Label to remove on *all* documents"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/label.py:92
+#: paperwork-shell/src/paperwork_shell/cmd/label.py:92
 msgid "Loading all labels ... "
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/label.py:180
+#: paperwork-shell/src/paperwork_shell/cmd/label.py:180
 #, python-format
 msgid "Are you sure you want to delete label '%s' from all documents ?"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/delete.py:65
+#: paperwork-shell/src/paperwork_shell/cmd/delete.py:65
 msgid "Delete a document or a page"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/delete.py:70
+#: paperwork-shell/src/paperwork_shell/cmd/delete.py:70
 msgid ""
 "Pages to delete (single integer, range or comma-separated list, default: all "
 "pages)"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/delete.py:93
+#: paperwork-shell/src/paperwork_shell/cmd/delete.py:93
 #, python-brace-format
 msgid "Deleting document {doc_id} ..."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/delete.py:94
+#: paperwork-shell/src/paperwork_shell/cmd/delete.py:94
 #, python-brace-format
 msgid "Deleting page {page_idx} of document {doc_id} ..."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/delete.py:100
+#: paperwork-shell/src/paperwork_shell/cmd/delete.py:100
 #, python-format
 msgid "Delete document %s ?"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/delete.py:106
+#: paperwork-shell/src/paperwork_shell/cmd/delete.py:106
 #, python-brace-format
 msgid "Delete page(s) {page_indexes} of document {doc_id} ?"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/import.py:62
+#: paperwork-shell/src/paperwork_shell/cmd/import.py:62
 msgid "Import file(s)"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/import.py:67
+#: paperwork-shell/src/paperwork_shell/cmd/import.py:67
 msgid "Target document for import"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/import.py:71
+#: paperwork-shell/src/paperwork_shell/cmd/import.py:71
 msgid "Files to import"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/import.py:99
+#: paperwork-shell/src/paperwork_shell/cmd/import.py:99
 #, python-format
 msgid "Don't know how to import file(s) %s"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/import.py:112
+#: paperwork-shell/src/paperwork_shell/cmd/import.py:112
 #, python-format
 msgid "Found many ways to import file(s) %s:"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/import.py:125
+#: paperwork-shell/src/paperwork_shell/cmd/import.py:125
 #, python-format
 msgid "Importing %s ..."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/import.py:134
+#: paperwork-shell/src/paperwork_shell/cmd/import.py:134
 msgid "Import result:"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/import.py:135
+#: paperwork-shell/src/paperwork_shell/cmd/import.py:135
 #, python-format
 msgid "- Imported files: %s"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/import.py:136
+#: paperwork-shell/src/paperwork_shell/cmd/import.py:136
 #, python-format
 msgid "- Non-imported files: %s"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/import.py:137
+#: paperwork-shell/src/paperwork_shell/cmd/import.py:137
 #, python-format
 msgid "- New documents: %s"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/import.py:138
+#: paperwork-shell/src/paperwork_shell/cmd/import.py:138
 #, python-format
 msgid "- Updated documents: %s"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/edit.py:96
+#: paperwork-shell/src/paperwork_shell/cmd/edit.py:96
 msgid "Edit page"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/edit.py:100
+#: paperwork-shell/src/paperwork_shell/cmd/edit.py:100
 msgid "List of image modifiers (comma separated, possible values: {})"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/edit.py:123
+#: paperwork-shell/src/paperwork_shell/cmd/edit.py:123
 msgid "Modifying document {} page {} ..."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/edit.py:127
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/reset.py:113
+#: paperwork-shell/src/paperwork_shell/cmd/edit.py:127
+#: paperwork-shell/src/paperwork_shell/cmd/reset.py:113
 msgid "Original:"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/edit.py:148
+#: paperwork-shell/src/paperwork_shell/cmd/edit.py:148
 msgid "Generating in high quality and saving ..."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/edit.py:176
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/reset.py:124
+#: paperwork-shell/src/paperwork_shell/cmd/edit.py:176
+#: paperwork-shell/src/paperwork_shell/cmd/reset.py:124
 msgid "Committing ..."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/edit.py:185
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/ocr.py:110
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/reset.py:133
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/sync.py:80
+#: paperwork-shell/src/paperwork_shell/cmd/edit.py:185
+#: paperwork-shell/src/paperwork_shell/cmd/ocr.py:110
+#: paperwork-shell/src/paperwork_shell/cmd/reset.py:133
+#: paperwork-shell/src/paperwork_shell/cmd/sync.py:80
 msgid "All done !"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/ocr.py:53
+#: paperwork-shell/src/paperwork_shell/cmd/ocr.py:53
 msgid "OCR document or pages"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/ocr.py:58
+#: paperwork-shell/src/paperwork_shell/cmd/ocr.py:58
 msgid "Document on which OCR must be run"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/ocr.py:63
+#: paperwork-shell/src/paperwork_shell/cmd/ocr.py:63
 msgid ""
 "Pages to OCR (single integer, range or comma-separated list, default: all "
 "pages)"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/ocr.py:94
+#: paperwork-shell/src/paperwork_shell/cmd/ocr.py:94
 #, python-brace-format
 msgid "Running OCR on document {doc_id} page {page_idx} ..."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/reset.py:71
+#: paperwork-shell/src/paperwork_shell/cmd/reset.py:71
 msgid "Reset a page to its original content"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/reset.py:109
+#: paperwork-shell/src/paperwork_shell/cmd/reset.py:109
 msgid "Reseting document {} page {} ..."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/reset.py:119
+#: paperwork-shell/src/paperwork_shell/cmd/reset.py:119
 msgid "Reseted:"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/move.py:61
+#: paperwork-shell/src/paperwork_shell/cmd/move.py:61
 msgid "Move a page"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/move.py:65
+#: paperwork-shell/src/paperwork_shell/cmd/move.py:65
 msgid "Source document"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/move.py:69
+#: paperwork-shell/src/paperwork_shell/cmd/move.py:69
 msgid "Page to move"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/move.py:73
+#: paperwork-shell/src/paperwork_shell/cmd/move.py:73
 msgid "Destination document"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/move.py:77
+#: paperwork-shell/src/paperwork_shell/cmd/move.py:77
 msgid "Target page number"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/scanner.py:58
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:58
 msgid "Manage scanner configuration"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/scanner.py:61
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/extra_text.py:51
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:61
+#: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:51
 msgid "sub-command"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/scanner.py:65
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:65
 msgid "List all scanners and their possible settings"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/scanner.py:70
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:70
 msgid "Show the currently selected scanner and its settings"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/scanner.py:75
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:75
 msgid "Define which scanner and which settings to use"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/scanner.py:78
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:78
 msgid "Scanner to use"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/scanner.py:83
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:83
 msgid ""
 "Default source on the scanner to use (if not specified, one will be selected "
 "randomly"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/scanner.py:89
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:89
 msgid "Default resolution (dpi ; default=300)"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/scanner.py:94
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:94
 msgid "Examining scanner {} ..."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/scanner.py:134
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/scanner.py:156
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:134
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:156
 msgid "ID:"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/scanner.py:136
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/scanner.py:157
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:136
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:157
 msgid "Source:"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/scanner.py:138
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:138
 msgid "Resolutions:"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/scanner.py:158
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:158
 msgid "Resolution:"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/scanner.py:186
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:186
 msgid "Source {} not found on device. Using another source"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/scanner.py:206
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:206
 msgid "Default source:"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/scanner.py:220
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:220
 msgid "Resolution {} not available. Adjusted to {}."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/show.py:54
+#: paperwork-shell/src/paperwork_shell/cmd/show.py:54
 msgid "Show the content of a document"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/show.py:102
+#: paperwork-shell/src/paperwork_shell/cmd/show.py:102
 #, python-format
 msgid "Page %d"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/sync.py:58
+#: paperwork-shell/src/paperwork_shell/cmd/sync.py:58
 msgid "Synchronize the index(es) with the content of the work directory"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/sync.py:69
+#: paperwork-shell/src/paperwork_shell/cmd/sync.py:69
 msgid "Synchronizing with work directory ..."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/extra_text.py:46
+#: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:46
 msgid "Manage additional text attached to documents"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/extra_text.py:55
+#: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:55
 msgid "Get a document additional text"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/extra_text.py:60
+#: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:60
 msgid "Set a document additional text"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/extra_text.py:82
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/display/docrendering/extra_text.py:35
+#: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:82
+#: paperwork-shell/src/paperwork_shell/display/docrendering/extra_text.py:35
 msgid "Additional text:"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/cmd/extra_text.py:85
+#: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:85
 msgid "No additional text"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/main.py:64
+#: paperwork-shell/src/paperwork_shell/main.py:64
 msgid "command"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/display/scan.py:88
+#: paperwork-shell/src/paperwork_shell/display/scan.py:88
 msgid "Scanning page {} (expected size: {}x{}) ..."
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/display/scan.py:129
+#: paperwork-shell/src/paperwork_shell/display/scan.py:129
 msgid "Page {} scanned (actual size: {}x{})"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/display/scan.py:137
+#: paperwork-shell/src/paperwork_shell/display/scan.py:137
 msgid "End of paper feed"
 msgstr ""
 
-#: /media/jflesch/git/git/paperwork/paperwork-shell/src/paperwork_shell/display/scan.py:153
+#: paperwork-shell/src/paperwork_shell/display/scan.py:153
 msgid "Page {} in document {} created"
 msgstr ""
