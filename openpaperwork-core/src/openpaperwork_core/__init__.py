@@ -1,4 +1,5 @@
 import collections
+import gettext
 import importlib
 import itertools
 import logging
@@ -7,6 +8,10 @@ import time
 
 
 LOGGER = logging.getLogger(__name__)
+
+
+def _(s):
+    return gettext.dgettext('openpaperwork_core', s)
 
 
 class DependencyException(Exception):

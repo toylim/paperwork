@@ -5,14 +5,12 @@ Manages a configuration file using configparser.
 import collections
 import configparser
 import datetime
-import gettext
 import logging
 
-from ... import PluginBase
+from ... import (_, PluginBase)
 
 
 LOGGER = logging.getLogger(__name__)
-_ = gettext.gettext
 
 
 class ConfigBool(object):

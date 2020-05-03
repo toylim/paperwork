@@ -1,16 +1,14 @@
-import gettext
 import logging
 import random
 
 import openpaperwork_core
 import openpaperwork_core.promise
 
+from .. import _
 
 LOGGER = logging.getLogger(__name__)
 
 LABELS_FILENAME = "labels"
-
-_ = gettext.gettext
 
 
 class LabelLoader(object):

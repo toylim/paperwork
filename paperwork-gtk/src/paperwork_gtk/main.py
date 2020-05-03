@@ -1,14 +1,13 @@
 import argparse
 import logging
-import gettext
 import sys
 
 import openpaperwork_core
 
 import paperwork_backend
 
+from . import _
 
-_ = gettext.gettext
 
 LOGGER = logging.getLogger(__name__)
 

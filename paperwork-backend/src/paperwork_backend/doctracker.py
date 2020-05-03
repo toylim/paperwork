@@ -5,12 +5,11 @@ directory.
 """
 
 import datetime
-import gettext
 import sqlite3
 
 import openpaperwork_core
 
-from . import sync
+from . import (_, sync)
 
 
 # Beware that we use Sqlite, but sqlite python module is not thread-safe
@@ -28,8 +27,6 @@ CREATE_TABLES = [
 ]
 
 ID = "doctracker"
-
-_ = gettext.gettext
 
 
 class DocTrackerTransaction(sync.BaseTransaction):

@@ -1,4 +1,3 @@
-import gettext
 import logging
 
 try:
@@ -15,10 +14,11 @@ import openpaperwork_core
 import openpaperwork_core.deps
 import openpaperwork_core.promise
 
+from ..... import _
+
 
 LOGGER = logging.getLogger(__name__)
 DELAY = 0.1
-_ = gettext.gettext
 
 
 class NBox(object):

@@ -1,11 +1,10 @@
-import gettext
 import logging
 
 import openpaperwork_core
 import openpaperwork_core.deps
 
+from ... import _
 
-_ = gettext.gettext
 LOGGER = logging.getLogger(__name__)
 
 

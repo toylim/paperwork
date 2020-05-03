@@ -1,4 +1,3 @@
-import gettext
 import logging
 
 try:
@@ -15,9 +14,10 @@ import openpaperwork_gtk.deps
 
 import paperwork_backend.docexport
 
+from ... import _
+
 
 LOGGER = logging.getLogger(__name__)
-_ = gettext.gettext
 
 
 class Plugin(openpaperwork_core.PluginBase):

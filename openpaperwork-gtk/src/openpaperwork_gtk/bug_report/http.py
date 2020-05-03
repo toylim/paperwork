@@ -1,4 +1,3 @@
-import gettext
 import logging
 
 try:
@@ -12,10 +11,9 @@ except (ImportError, ValueError):
 import openpaperwork_core
 import openpaperwork_core.promise
 
-from .. import deps
+from .. import (_, deps)
 
 
-_ = gettext.gettext
 LOGGER = logging.getLogger(__name__)
 
 PATH_MAKE_BUG_REPORT = "/beacon/bug_report/create"

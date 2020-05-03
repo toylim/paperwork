@@ -1,8 +1,5 @@
-import gettext
-
 import openpaperwork_core
 
-_ = gettext.gettext
 
 PREVIEW_MAX_LINES = 25
 

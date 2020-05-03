@@ -1,8 +1,6 @@
-import gettext
 import sys
 
-
-_ = gettext.gettext
+from .. import _
 
 
 def ask_confirmation(question, default='y'):

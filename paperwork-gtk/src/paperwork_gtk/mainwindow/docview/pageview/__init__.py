@@ -1,4 +1,3 @@
-import gettext
 import logging
 
 import openpaperwork_core
@@ -17,10 +16,10 @@ except (ImportError, ValueError):
         class GObject(object):
             pass
 
+from .... import _
+
 
 LOGGER = logging.getLogger(__name__)
-
-_ = gettext.gettext
 
 
 class Page(GObject.GObject):

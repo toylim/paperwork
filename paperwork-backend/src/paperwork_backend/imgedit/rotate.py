@@ -1,5 +1,3 @@
-import gettext
-
 import openpaperwork_core
 
 import PIL
@@ -7,9 +5,6 @@ import PIL.Image
 
 
 from . import AbstractImgEditor
-
-
-_ = gettext.gettext
 
 
 class RotationImgEditor(AbstractImgEditor):

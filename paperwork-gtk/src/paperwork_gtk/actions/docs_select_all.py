@@ -1,4 +1,3 @@
-import gettext
 import logging
 
 try:
@@ -9,9 +8,10 @@ except (ImportError, ValueError):
 
 import openpaperwork_core
 
+from .. import _
+
 
 LOGGER = logging.getLogger(__name__)
-_ = gettext.gettext
 ACTION_NAME = "doc_select_all"
 
 

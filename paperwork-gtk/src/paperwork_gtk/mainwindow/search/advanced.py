@@ -1,5 +1,4 @@
 import datetime
-import gettext
 import logging
 import re
 
@@ -21,8 +20,9 @@ except (ImportError, ValueError):
 import openpaperwork_core
 import openpaperwork_gtk.deps
 
+from ... import _
 
-_ = gettext.gettext
+
 LOGGER = logging.getLogger(__name__)
 
 

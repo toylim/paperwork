@@ -13,16 +13,13 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with Paperwork.  If not, see <http://www.gnu.org/licenses/>.
-import gettext
 import sys
 
 import openpaperwork_core
 from openpaperwork_core.cmd.util import ask_confirmation
 
 from .util import parse_page_list
-
-
-_ = gettext.gettext
+from .. import _
 
 
 class Plugin(openpaperwork_core.PluginBase):

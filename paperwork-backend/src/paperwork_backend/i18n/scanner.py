@@ -1,12 +1,12 @@
-import gettext
 import logging
 import re
 
 import openpaperwork_core
 
+from .. import _
+
 
 LOGGER = logging.getLogger(__name__)
-_ = gettext.gettext
 
 
 class Plugin(openpaperwork_core.PluginBase):

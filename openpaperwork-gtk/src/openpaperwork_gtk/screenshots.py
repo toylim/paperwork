@@ -1,6 +1,5 @@
 import logging
 import math
-import gettext
 
 try:
     import cairo
@@ -11,9 +10,10 @@ except (ImportError, ValueError):
 import openpaperwork_core
 import openpaperwork_core.deps
 
+from . import _
+
 
 LOGGER = logging.getLogger(__name__)
-_ = gettext.gettext
 SCREENSHOT_DATE_FORMAT = "%Y%m%d_%H%M_%S"
 MAX_DAYS = 31
 

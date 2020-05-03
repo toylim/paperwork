@@ -1,4 +1,3 @@
-import gettext
 import logging
 import re
 import zipfile
@@ -13,10 +12,9 @@ except (ImportError, ValueError):
 
 import openpaperwork_core
 
-from .. import deps
+from .. import (_, deps)
 
 
-_ = gettext.gettext
 LOGGER = logging.getLogger(__name__)
 
 

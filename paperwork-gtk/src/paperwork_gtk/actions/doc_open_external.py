@@ -1,4 +1,3 @@
-import gettext
 import logging
 
 try:
@@ -11,9 +10,10 @@ import openpaperwork_core
 import openpaperwork_core.promise
 import openpaperwork_gtk.deps
 
+from .. import _
+
 
 LOGGER = logging.getLogger(__name__)
-_ = gettext.gettext
 ACTION_NAME = "doc_open_external"
 
 

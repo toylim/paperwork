@@ -1,4 +1,3 @@
-import gettext
 import logging
 
 import PIL
@@ -10,10 +9,10 @@ from paperwork_backend.model.thumbnail import (
     THUMBNAIL_WIDTH
 )
 
+from ... import _
 
-_ = gettext.gettext
+
 LOGGER = logging.getLogger(__name__)
-
 DELAY = 0.01
 
 

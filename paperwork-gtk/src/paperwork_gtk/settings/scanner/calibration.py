@@ -1,4 +1,3 @@
-import gettext
 import logging
 
 import PIL
@@ -8,8 +7,9 @@ import pillowfight
 import openpaperwork_core
 import openpaperwork_core.promise
 
+from ... import _
 
-_ = gettext.gettext
+
 LOGGER = logging.getLogger(__name__)
 
 

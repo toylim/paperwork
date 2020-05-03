@@ -1,13 +1,11 @@
-import gettext
 import logging
 
-from .. import PluginBase
+from .. import (_, PluginBase)
 
 
 LOGGER = logging.getLogger(__name__)
 LOG_DATE_FORMAT = "%Y%m%d_%H%M_%S"
 MAX_DAYS = 31
-_ = gettext.gettext
 
 
 class LogLine(object):

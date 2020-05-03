@@ -1,5 +1,4 @@
 import datetime
-import gettext
 import json
 import logging
 import uuid
@@ -8,11 +7,10 @@ import openpaperwork_core
 import openpaperwork_core.promise
 
 from . import PeriodicTask
-from .. import _version
+from .. import _
 
 
 LOGGER = logging.getLogger(__name__)
-_ = gettext.gettext
 
 POST_STATS_INTERVAL = datetime.timedelta(days=7)
 POST_STATS_PATH = "/beacon/post_statistics"
@@ -32,6 +30,10 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_deps(self):
         return [
+            {
+                'interface': 'app',
+                'defaults': ['paperwork_backend.app'],
+            },
             {
                 'interface': 'config',
                 'defaults': ['openpaperwork_core.config'],
@@ -92,7 +94,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def _collect_stats(self, node_uuid):
         stats = {
             'uuid': node_uuid,
-            'paperwork_version': _version.version,
+            'paperwork_version': self.core.call_success("app_get_version"),
             'nb_documents': 0,
             'os_name': '',
             'platform_architecture': '',

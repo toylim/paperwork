@@ -13,15 +13,12 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with Paperwork.  If not, see <http://www.gnu.org/licenses/>.
-import gettext
 import logging
 
-import openpaperwork_core
+from .. import (_, PluginBase)
 
 
 LOGGER = logging.getLogger(__name__)
-
-_ = gettext.gettext
 
 # Only basic types are handled by shell commands
 CMD_VALUE_TYPES = {
@@ -32,7 +29,7 @@ CMD_VALUE_TYPES = {
 }
 
 
-class Plugin(openpaperwork_core.PluginBase):
+class Plugin(PluginBase):
     def __init__(self):
         super().__init__()
         self.interactive = True

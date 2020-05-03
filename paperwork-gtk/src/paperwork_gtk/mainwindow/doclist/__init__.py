@@ -1,5 +1,4 @@
 import datetime
-import gettext
 import logging
 import time
 
@@ -20,9 +19,10 @@ except (ImportError, ValueError):
 import openpaperwork_core
 import openpaperwork_gtk.deps
 
+from ... import _
+
 
 LOGGER = logging.getLogger(__name__)
-_ = gettext.gettext
 
 # GtkListBox doesn't scale well with too many elements
 # --> by default we only display 50 documents, and only extend the list

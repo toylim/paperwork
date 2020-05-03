@@ -4,15 +4,11 @@ import logging
 import os
 import sys
 
-import gettext
-
-import openpaperwork_core
-
 from . import util
+from .. import (_, PluginBase)
 
 
 LOGGER = logging.getLogger(__name__)
-_ = gettext.gettext
 
 
 PACKAGE_TOOLS = {
@@ -26,7 +22,7 @@ PACKAGE_TOOLS = {
 }
 
 
-class Plugin(openpaperwork_core.PluginBase):
+class Plugin(PluginBase):
     def get_interfaces(self):
         return ['shell']
 

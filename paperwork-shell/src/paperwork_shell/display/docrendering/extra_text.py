@@ -1,9 +1,6 @@
-import gettext
-
 import openpaperwork_core
 
-
-_ = gettext.gettext
+from ... import _
 
 
 class ExtraTextRenderer(object):

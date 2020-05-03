@@ -1,5 +1,4 @@
 import enum
-import gettext
 import logging
 import re
 
@@ -17,8 +16,9 @@ import openpaperwork_core
 import openpaperwork_gtk.deps
 import paperwork_backend.sync
 
+from ... import _
 
-_ = gettext.gettext
+
 LOGGER = logging.getLogger(__name__)
 
 # forbid:

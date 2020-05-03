@@ -1,13 +1,8 @@
-import gettext
-
 import pillowfight
 
 import openpaperwork_core
 
 from . import AbstractImgEditor
-
-
-_ = gettext.gettext
 
 
 class ColorImgEditor(AbstractImgEditor):

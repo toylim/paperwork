@@ -1,4 +1,3 @@
-import gettext
 import itertools
 import json
 import logging
@@ -25,9 +24,10 @@ import openpaperwork_core
 import openpaperwork_core.deps
 import openpaperwork_core.promise
 
+from .. import _
+
 
 LOGGER = logging.getLogger(__name__)
-_ = gettext.gettext
 SCAN_ID_GENERATOR = itertools.count()
 
 # Prevent closing or other operations on scanner and source instances when

@@ -13,13 +13,10 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with Paperwork.  If not, see <http://www.gnu.org/licenses/>.
-import gettext
-
 import openpaperwork_core
 import openpaperwork_core.promise
 
-
-_ = gettext.gettext
+from .. import _
 
 
 DEFAULT_RESOLUTION = 300

@@ -1,4 +1,3 @@
-import gettext
 import os
 import pkg_resources
 import shutil
@@ -9,8 +8,8 @@ import xdg.IconTheme
 
 import openpaperwork_core
 
+from .. import _
 
-_ = gettext.gettext
 
 ICON_SIZES = [
     16, 22, 24, 30, 32, 36, 42, 48, 50, 64, 72, 96, 100, 128, 150, 160,

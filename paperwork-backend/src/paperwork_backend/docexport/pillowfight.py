@@ -1,4 +1,3 @@
-import gettext
 import logging
 
 import pillowfight
@@ -8,9 +7,9 @@ from . import (
     AbstractExportPipePlugin,
     AbstractSimpleTransformExportPipe
 )
+from .. import _
 
 
-_ = gettext.gettext
 LOGGER = logging.getLogger(__name__)
 
 

@@ -1,10 +1,7 @@
 import datetime
-import gettext
 
-from .. import PluginBase
+from .. import (_, PluginBase)
 
-
-_ = gettext.gettext
 
 TODAY = _("Today")
 YESTERDAY = _("Yesterday")

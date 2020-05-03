@@ -2,21 +2,17 @@
 Automatic page cropping using libpillowfight.find_scan_borders().
 May or may not work.
 """
-
-
-import gettext
 import logging
 
 import pillowfight
 
 import openpaperwork_core
 
-from ... import sync
 from . import ID
+from ... import (_, sync)
 
 
 LOGGER = logging.getLogger(__name__)
-_ = gettext.gettext
 
 
 class PillowfightTransaction(sync.BaseTransaction):

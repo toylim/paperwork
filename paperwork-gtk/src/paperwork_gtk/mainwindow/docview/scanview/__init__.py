@@ -1,4 +1,3 @@
-import gettext
 import logging
 
 import openpaperwork_core
@@ -17,8 +16,6 @@ except (ImportError, ValueError):
 
 
 LOGGER = logging.getLogger(__name__)
-
-_ = gettext.gettext
 
 
 class Scan(GObject.GObject):

@@ -13,15 +13,15 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with Paperwork.  If not, see <http://www.gnu.org/licenses/>.
-import gettext
 import logging
 import shutil
 
 import openpaperwork_core
 
+from .. import _
+
 
 LOGGER = logging.getLogger(__name__)
-_ = gettext.gettext
 
 
 class Plugin(openpaperwork_core.PluginBase):

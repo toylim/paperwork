@@ -1,4 +1,3 @@
-import gettext
 import logging
 
 try:
@@ -13,8 +12,9 @@ import openpaperwork_core
 import openpaperwork_core.deps
 import openpaperwork_gtk.deps
 
+from .. import _
 
-_ = gettext.gettext
+
 LOGGER = logging.getLogger(__name__)
 
 

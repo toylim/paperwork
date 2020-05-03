@@ -13,7 +13,6 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with Paperwork.  If not, see <http://www.gnu.org/licenses/>.
-import gettext
 import sys
 
 import openpaperwork_core
@@ -22,9 +21,7 @@ import openpaperwork_core.promise
 import paperwork_backend.docexport
 
 from . import util
-
-
-_ = gettext.gettext
+from .. import _
 
 
 class Plugin(openpaperwork_core.PluginBase):

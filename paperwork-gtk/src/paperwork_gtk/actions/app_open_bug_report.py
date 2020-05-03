@@ -1,4 +1,3 @@
-import gettext
 import logging
 
 try:
@@ -10,9 +9,10 @@ except (ImportError, ValueError):
 import openpaperwork_core
 import openpaperwork_core.promise
 
+from .. import _
+
 
 LOGGER = logging.getLogger(__name__)
-_ = gettext.gettext
 
 
 class Plugin(openpaperwork_core.PluginBase):

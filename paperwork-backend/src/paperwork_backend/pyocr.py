@@ -1,4 +1,3 @@
-import gettext
 import glob
 import locale
 import logging
@@ -14,7 +13,6 @@ from . import util
 
 
 LOGGER = logging.getLogger(__name__)
-_ = gettext.gettext
 
 DEFAULT_OCR_LANG = "eng"  # if really we can't guess anything
 

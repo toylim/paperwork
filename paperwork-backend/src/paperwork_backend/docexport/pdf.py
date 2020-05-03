@@ -1,4 +1,3 @@
-import gettext
 import logging
 import time
 
@@ -14,6 +13,7 @@ from . import (
     AbstractExportPipePlugin,
     ExportDataType
 )
+from .. import _
 
 
 CAIRO_AVAILABLE = False
@@ -44,7 +44,6 @@ if GI_AVAILABLE:
         pass
 
 
-_ = gettext.gettext
 LOGGER = logging.getLogger(__name__)
 
 

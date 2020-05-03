@@ -18,15 +18,12 @@ Paperwork configuration management code
 """
 
 import collections
-import gettext
 import logging
 
 from .. import PluginBase
 
 
 LOGGER = logging.getLogger(__name__)
-
-_ = gettext.gettext
 
 # Only basic types are handled by shell commands
 CMD_VALUE_TYPES = {

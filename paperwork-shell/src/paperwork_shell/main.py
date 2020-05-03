@@ -1,5 +1,4 @@
 import argparse
-import gettext
 import json
 import sys
 import traceback
@@ -8,8 +7,8 @@ import openpaperwork_core
 
 import paperwork_backend
 
+from . import _
 
-_ = gettext.gettext
 
 DEFAULT_SHELL_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'paperwork_backend.guesswork.cropping.libpillowfight',

@@ -1,11 +1,11 @@
 import datetime
-import gettext
 
 import openpaperwork_core
 import openpaperwork_core.promise
 
+from ... import _
 
-_ = gettext.gettext
+
 HELP_FILES = (
     (_("Introduction"), "intro"),
     (_("User manual"), "usage"),

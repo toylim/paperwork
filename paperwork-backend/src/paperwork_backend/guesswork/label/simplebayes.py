@@ -15,7 +15,6 @@ used when a document is removed so the bayes filter can be untrained.
 """
 
 import base64
-import gettext
 import hashlib
 import logging
 import sqlite3
@@ -25,8 +24,7 @@ import simplebayes
 import openpaperwork_core
 import openpaperwork_core.promise
 
-from ... import sync
-from ... import util
+from ... import (_, sync, util)
 
 
 # Beware that we use Sqlite, but sqlite python module is not thread-safe
@@ -35,10 +33,7 @@ from ... import util
 
 
 LOGGER = logging.getLogger(__name__)
-_ = gettext.gettext
-
 ID = "label_guesser"
-
 CREATE_TABLES = [
     (
         "CREATE TABLE IF NOT EXISTS labels ("

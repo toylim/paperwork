@@ -1,11 +1,8 @@
-import gettext
-
 import pycountry
 
 import openpaperwork_core
 
-
-_ = gettext.gettext
+from .. import _
 
 
 LANGUAGES = {

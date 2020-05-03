@@ -1,4 +1,3 @@
-import gettext
 import logging
 
 import PIL
@@ -11,7 +10,6 @@ from . import AbstractImgEditor
 
 
 LOGGER = logging.getLogger(__name__)
-_ = gettext.gettext
 
 
 class CropImgEditor(AbstractImgEditor):

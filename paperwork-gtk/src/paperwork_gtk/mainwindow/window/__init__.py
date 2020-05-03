@@ -1,5 +1,4 @@
 import collections
-import gettext
 import logging
 
 try:
@@ -24,9 +23,10 @@ import PIL.ImageDraw
 import openpaperwork_core
 import openpaperwork_gtk.deps
 
+from ... import _
+
 
 LOGGER = logging.getLogger(__name__)
-_ = gettext.gettext
 
 
 class Plugin(openpaperwork_core.PluginBase):

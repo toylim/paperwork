@@ -2,17 +2,15 @@
 Crop scanned images based on a predefined area.
 """
 
-import gettext
 import logging
 
 import openpaperwork_core
 
-from ... import sync
+from ... import (_, sync)
 from . import ID
 
 
 LOGGER = logging.getLogger(__name__)
-_ = gettext.gettext
 
 
 class CalibrationTransaction(sync.BaseTransaction):

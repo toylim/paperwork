@@ -1,4 +1,3 @@
-import gettext
 import logging
 
 import openpaperwork_core
@@ -12,9 +11,9 @@ from . import (
     ExportData,
     ExportDataType
 )
+from .. import _
 
 
-_ = gettext.gettext
 LOGGER = logging.getLogger(__name__)
 
 

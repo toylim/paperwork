@@ -1,5 +1,4 @@
 import datetime
-import gettext
 import logging
 import time
 
@@ -11,11 +10,9 @@ import whoosh.sorting
 
 import openpaperwork_core
 
-from .. import sync
-from .. import util
+from .. import (_, sync, util)
 
 
-_ = gettext.gettext
 LOGGER = logging.getLogger(__name__)
 ID = "index"
 

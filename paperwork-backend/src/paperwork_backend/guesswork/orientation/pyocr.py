@@ -1,4 +1,3 @@
-import gettext
 import logging
 
 import PIL
@@ -8,12 +7,10 @@ import pyocr.builders
 
 import openpaperwork_core
 
-from ... import sync
+from ... import (_, sync)
 
 
 LOGGER = logging.getLogger(__name__)
-_ = gettext.gettext
-
 ID = "orientation_guesser"
 
 
