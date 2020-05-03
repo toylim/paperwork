@@ -70,6 +70,7 @@ There is no GUI here. The GUI is
     author="Jerome Flesch",
     author_email="jflesch@openpaper.work",
     packages=find_packages('src'),
+    include_package_data=True,
     package_dir={'': 'src'},
     zip_safe=True,
     install_requires=[

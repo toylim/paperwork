@@ -58,6 +58,7 @@ setuptools.setup(
     author="Jerome Flesch",
     author_email="jflesch@openpaper.work",
     packages=setuptools.find_packages('src'),
+    include_package_data=True,
     package_dir={'': 'src'},
     entry_points={
         'console_scripts': [

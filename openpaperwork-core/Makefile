@@ -7,7 +7,7 @@ install: install_py install_c
 
 uninstall: uninstall_py
 
-build_py: ${VERSION_FILE}
+build_py: ${VERSION_FILE} l10n_compile
 	${PYTHON} ./setup.py build
 
 build_c:
@@ -60,7 +60,7 @@ clean:
 	rm -rf build dist *.egg-info
 
 # PIP_ARGS is used by Flatpak build
-install_py: ${VERSION_FILE}
+install_py: ${VERSION_FILE} l10n_compile
 	${PYTHON} ./setup.py install ${PIP_ARGS}
 
 install_c:
@@ -72,6 +72,12 @@ uninstall_c:
 
 l10n_extract:
 	$(CURDIR)/../tools/l10n_extract.sh "$(CURDIR)/src" "$(CURDIR)/l10n"
+
+l10n_compile:
+	$(CURDIR)/../tools/l10n_compile.sh \
+		"$(CURDIR)/l10n" \
+		"$(CURDIR)/src/openpaperwork_core/l10n" \
+		"openpaperwork_core"
 
 help:
 	@echo "make build || make build_py"
@@ -93,6 +99,7 @@ help:
 	install_c \
 	install_py \
 	l10n_extract \
+	l10n_compile \
 	release \
 	test \
 	uninstall \

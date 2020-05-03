@@ -7,7 +7,7 @@ install: install_py install_c
 
 uninstall: uninstall_py
 
-build_py: ${VERSION_FILE}
+build_py: ${VERSION_FILE} l10n_compile
 	${PYTHON} ./setup.py build
 
 build_c:
@@ -81,7 +81,7 @@ clean:
 	$(MAKE) -C src/paperwork_gtk/model/help clean
 
 # PIP_ARGS is used by Flatpak build
-install_py: ${VERSION_FILE}
+install_py: ${VERSION_FILE} l10n_compile
 	${PYTHON} ./setup.py install ${PIP_ARGS}
 
 install_c:
@@ -93,6 +93,12 @@ uninstall_c:
 
 l10n_extract:
 	$(CURDIR)/../tools/l10n_extract.sh "$(CURDIR)/src" "$(CURDIR)/l10n"
+
+l10n_compile:
+	$(CURDIR)/../tools/l10n_compile.sh \
+		"$(CURDIR)/l10n" \
+		"$(CURDIR)/src/paperwork_gtk/l10n" \
+		"paperwork_gtk"
 
 help:
 	@echo "make build || make build_py"

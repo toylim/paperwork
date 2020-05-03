@@ -93,6 +93,8 @@ windows_exe: $(ALL_COMPONENTS:%=%_windows_exe)
 
 l10n_extract: $(ALL_COMPONENTS:%=%_l10n_extract)
 
+l10n_compile: $(ALL_COMPONENTS:%=%_l10n_compile)
+
 help:
 	@echo "make build: run 'python3 ./setup.py build' in all components"
 	@echo "make clean"
@@ -101,6 +103,7 @@ help:
 	@echo "make release"
 	@echo "make uninstall : run 'pip3 uninstall -y (component)' on all components"
 	@echo "make l10n_extract"
+	@echo "make l10n_compile"
 	@echo "Components:" ${ALL_COMPONENTS}
 
 %_version:
@@ -163,6 +166,10 @@ help:
 	echo "Extracting translatable strings from $(@:%_l10n_extract=%)"
 	$(MAKE) -C $(@:%_l10n_extract=%) l10n_extract
 
+%_l10n_compile:
+	echo "Compiling translated strings for $(@:%_l10n_compile=%)"
+	$(MAKE) -C $(@:%_l10n_compile=%) l10n_compile
+
 venv:
 	echo "Building virtual env"
 	make -C sub/libinsane build_c
@@ -171,4 +178,4 @@ venv:
 .PHONY: help build clean test check install install_py install_c uninstall \
 	uninstall_c uninstall_py release release_pypi libinsane_win32 \
 	pyocr_win32 libpillowfight_win32 doc upload_doc data upload_data \
-	download_data l10n_extract
+	download_data l10n_extract l10n_compile

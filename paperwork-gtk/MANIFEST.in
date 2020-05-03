@@ -1,4 +1,4 @@
-recursive-include src *.py *.glade *.xml *.css *.svg *.png *.pdf
+recursive-include src *.py *.glade *.xml *.css *.svg *.png *.pdf *.mo
 include AUTHORS
 include *.markdown
 include example-paperwork.conf

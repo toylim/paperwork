@@ -1,2 +1,2 @@
-recursive-include src *.py *.glade *.xml *.css *.svg *.png
+recursive-include src *.py *.glade *.xml *.css *.svg *.png *.po
 include *.md

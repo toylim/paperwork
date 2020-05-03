@@ -1,4 +1,2 @@
 recursive-include src *.py *.mo
-include AUTHORS
 include *.markdown
-include LICENSE

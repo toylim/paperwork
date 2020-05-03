@@ -13,7 +13,6 @@ _ = gettext.gettext
 LOGGER = logging.getLogger(__name__)
 
 DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
-    'openpaperwork_core.resources.setuptools',
     'openpaperwork_core.spatial.rtree',
     'openpaperwork_gtk.bug_report',
     'openpaperwork_gtk.bug_report.http',
@@ -53,6 +52,7 @@ DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'paperwork_gtk.gesture.drag_and_drop',
     'paperwork_gtk.gesture.zoom',
     'paperwork_gtk.keyboard_shortcut.zoom',
+    'paperwork_gtk.l10n',
     'paperwork_gtk.mainwindow.doclist',
     'paperwork_gtk.mainwindow.doclist.labeler',
     'paperwork_gtk.mainwindow.doclist.name',
