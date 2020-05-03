@@ -9,14 +9,16 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-05-03 16:15+0200\n"
-"PO-Revision-Date: 2020-05-03 15:37+0200\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2020-05-03 17:47+0000\n"
+"Last-Translator: Weblate Admin <jflesch@openpaper.work>\n"
+"Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
+"openpaperwork-gtk/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 4.0.1\n"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/zip.py:58
 msgid "ZIP file"
@@ -44,7 +46,7 @@ msgstr ""
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:164
 msgid "Send the bug report automatically to OpenPaper.work"
-msgstr ""
+msgstr "Envoyer le rapport de bug automatiquement à OpenPaper.work"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:259
 msgid "Success"
