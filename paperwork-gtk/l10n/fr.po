@@ -9,14 +9,16 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-05-03 16:15+0200\n"
-"PO-Revision-Date: 2020-05-03 15:27+0200\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2020-05-03 14:21+0000\n"
+"Last-Translator: Weblate Admin <jflesch@openpaper.work>\n"
+"Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
+"paperwork-gtk/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 4.0.1\n"
 
 #: paperwork-gtk/src/paperwork_gtk/print.py:42
 #, python-brace-format
@@ -44,7 +46,7 @@ msgstr ""
 #: paperwork-gtk/src/paperwork_gtk/settings/__init__.py:58
 #: paperwork-gtk/src/paperwork_gtk/settings/settings.glade.h:1
 msgid "Settings"
-msgstr ""
+msgstr "Réglages"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/ocr/settings.py:65
 msgid "Optical Character Recognition"
@@ -455,7 +457,7 @@ msgstr ""
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/exporter.glade.h:4
 msgid "Export Settings"
-msgstr ""
+msgstr "Réglages d'export"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/exporter.glade.h:5
 msgid "Preview"
