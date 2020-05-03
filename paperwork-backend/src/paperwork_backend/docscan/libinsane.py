@@ -487,15 +487,15 @@ class BugReportCollector(object):
         self.core.call_success("scan_schedule", promise)
 
     def run(self):
-        promise = openpaperwork_core.promise.Promise(
-            self.core, self.core.call_all,
-            args=(
-                "bug_report_update_attachment", "scanner",
-                {"file_url": _("Getting scanner list ...")},
-                *self.update_args
-            )
+        self.core.call_all(
+            "bug_report_update_attachment", "scanner",
+            {
+                "file_url": _("Examining scanners ..."),
+                "file_size": _("Examining scanners ..."),
+            },
+            *self.update_args
         )
-        promise = promise.then(self.plugin.scan_list_scanners_promise())
+        promise = self.plugin.scan_list_scanners_promise()
         promise = promise.then(openpaperwork_core.promise.ThreadedPromise(
             self.core, self._collect_all_info
         ))
@@ -688,7 +688,7 @@ class Plugin(openpaperwork_core.PluginBase):
             'date': None,
             'file_type': _("Scanner info."),
             'file_url': _("Select to generate"),
-            'file_size': 0,
+            'file_size': _("Select to generate"),
         }
 
     def on_bug_report_attachment_selected(self, attachment_id, *args):
