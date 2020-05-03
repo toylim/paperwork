@@ -28,10 +28,12 @@ class Drawer(object):
         self.core.call_all("config_put", "scanner_calibration", frame)
 
     def set_content_full_size(self, size):
+        self.content_full_size = size
+
+    def start(self):
         if self.active:
             self.stop()
 
-        self.content_full_size = size
         self.core.call_all(
             "config_add_observer", "scanner_calibration",
             self.request_redraw
@@ -63,6 +65,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
         self.drawers = {}  # drawing_area --> drawer
+        self.scan_id_to_drawers = {}  # int --> drawer
 
     def get_interfaces(self):
         return [
@@ -96,6 +99,7 @@ class Plugin(openpaperwork_core.PluginBase):
             self, drawing_area, content_full_size, read_only=False):
         drawer = Drawer(self.core, drawing_area, read_only)
         drawer.set_content_full_size(content_full_size)
+        drawer.start()
         self.drawers[drawing_area] = drawer
 
     def draw_calibration_stop(self, drawing_area):
@@ -106,15 +110,22 @@ class Plugin(openpaperwork_core.PluginBase):
     def draw_scan_start(self, drawing_area, scan_id=None):
         if drawing_area in self.drawers:
             drawer = self.drawers[drawing_area]
+        elif scan_id is not None and scan_id in self.scan_id_to_drawers:
+            drawer = self.scan_id_to_drawers[scan_id]
+            self.drawers.pop(drawer.drawing_area, None)
+            drawer.stop()
+            drawer.drawing_area = drawing_area
+            drawer.start()
         else:
             drawer = Drawer(self.core, drawing_area, read_only=True)
+
         drawer.scan_id = scan_id
+        self.scan_id_to_drawers[scan_id] = drawer
         self.drawers[drawing_area] = drawer
 
     def draw_scan_stop(self, drawing_area):
-        if drawing_area not in self.drawers:
-            return
-        self.drawers.pop(drawing_area).stop()
+        if drawing_area in self.drawers:
+            self.drawers.pop(drawing_area).stop()
 
     def on_scan_page_start(self, scan_id, page_nb, scan_params):
         for drawer in self.drawers.values():
@@ -122,3 +133,4 @@ class Plugin(openpaperwork_core.PluginBase):
                 drawer.set_content_full_size(
                     (scan_params.get_width(), scan_params.get_height())
                 )
+                drawer.start()

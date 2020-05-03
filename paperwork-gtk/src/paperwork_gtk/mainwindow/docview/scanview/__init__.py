@@ -44,15 +44,15 @@ class Scan(GObject.GObject):
         )),
     }
 
-    def __init__(self, core, doc_id, page_idx, scan_id=None):
+    def __init__(self, core, plugin, doc_id, page_idx, scan_id=None):
         super().__init__()
         self.core = core
+        self.plugin = plugin
         self.doc_id = doc_id
         self.zoom = 1.0
         self.page_idx = page_idx
 
         self.scan_id = scan_id
-        self.size = (1, 1)
 
         if scan_id is not None:
             scan_id = self.core.call_success(
@@ -113,12 +113,7 @@ class Scan(GObject.GObject):
     def get_full_size(self):
         if self.scan_id is None:
             return (0, 0)
-        return self.size
-
-    def set_scan_size(self, w, h):
-        LOGGER.info("Scan size: %dx%d", w, h)
-        self.size = (w, h)
-        self.resize()
+        return self.plugin.scan_sizes.get(self.scan_id, (1, 1))
 
     def get_size(self):
         size = self.get_full_size()
@@ -158,6 +153,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.scan = None
         self.doc_id = None
         self.doc_url = None
+        self.scan_sizes = {}
 
     def get_interfaces(self):
         return [
@@ -189,8 +185,10 @@ class Plugin(openpaperwork_core.PluginBase):
         if nb_pages is None:
             nb_pages = 0
         scan_id = self.core.call_success("scan2doc_doc_id_to_scan_id", doc_id)
-        self.scan = Scan(self.core, doc_id, nb_pages, scan_id)
+        self.scan = Scan(self.core, self, doc_id, nb_pages, scan_id)
         out.append(self.scan)
+        if scan_id is not None:
+            self.scan.start()
 
     def on_scan2doc_start(self, scan_id, doc_id, doc_url):
         if self.scan is None:
@@ -207,14 +205,16 @@ class Plugin(openpaperwork_core.PluginBase):
         self.scan.start()
 
     def on_scan_page_start(self, scan_id, page_nb, scan_params):
+        self.scan_sizes[scan_id] = (
+            scan_params.get_width(), scan_params.get_height()
+        )
         if self.scan is None:
             return
         if scan_id != self.scan.scan_id:
             return
 
-        self.scan.set_scan_size(
-            scan_params.get_width(), scan_params.get_height()
-        )
+        LOGGER.info("Scan size: %dx%d", *(self.scan_sizes[scan_id]))
+        self.scan.resize()
 
         nb_pages = self.core.call_success(
             "doc_get_nb_pages_by_url", self.doc_url
@@ -246,6 +246,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all("doc_goto_page", nb_pages - 1)
 
     def on_scan_feed_end(self, scan_id):
+        self.scan_sizes.pop(scan_id, None)
         if self.scan is None:
             return
         if scan_id != self.scan.scan_id:
