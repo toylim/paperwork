@@ -70,6 +70,11 @@ class Plugin(openpaperwork_core.PluginBase):
                 "toggled", self._on_toggle, source_name, source_id, callback
             )
             parent.pack_start(selector, expand=False, fill=True, padding=0)
+        for (selector, source_name, source_id, callback) in selectors:
+            if active == source_id:
+                break
+        else:
+            active = None
 
         if active is None:
             if len(selectors) > 0:
