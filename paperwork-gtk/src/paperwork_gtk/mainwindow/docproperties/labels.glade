@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<interface>
+<interface domain="paperwork_gtk">
   <object class="GtkBox" id="listbox_global">
     <property name="visible">True</property>
     <property name="can_focus">False</property>

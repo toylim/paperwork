@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<interface>
+<interface domain="paperwork_gtk">
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkListBoxRow" id="doc_listbox">
     <property name="visible">True</property>
