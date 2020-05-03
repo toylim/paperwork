@@ -291,8 +291,11 @@ class Source(object):
                 "mainloop_schedule", self.core.call_all,
                 "on_scan_feed_end", scan_id
             )
-            self.core.call_all("on_progress", "scan", 1.0, _("Scanning done"))
         finally:
+            self.core.call_success(
+                "mainloop_schedule", self.core.call_all,
+                "on_progress", "scan", 1.0
+            )
             if session is not None:
                 session.cancel()
             if close_on_end:
