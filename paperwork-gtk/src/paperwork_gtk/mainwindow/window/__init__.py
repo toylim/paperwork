@@ -193,12 +193,15 @@ class Plugin(openpaperwork_core.PluginBase):
         return True
 
     def mainwindow_show(self, side: str, name: str):
-        if name not in self.navigation_stacks[side]:
-            self.navigation_stacks[side].append(name)
+        if name in self.navigation_stacks[side]:
+            self.navigation_stacks[side].remove(name)
+        self.navigation_stacks[side].append(name)
         self._mainwindow_show(side)
 
     def _mainwindow_show(self, side: str):
         stacks = self.stacks[side]
+
+        LOGGER.info("Navigation: %s", self.navigation_stacks[side])
 
         # some plugin give us None as component, which means to use
         # the previous component in the navigation stack (see doclist
