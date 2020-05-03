@@ -70,6 +70,9 @@ uninstall_py:
 
 uninstall_c:
 
+l10n_extract:
+	$(CURDIR)/../tools/l10n_extract.sh "$(CURDIR)/src" "$(CURDIR)/l10n"
+
 help:
 	@echo "make build || make build_py"
 	@echo "make check"
@@ -89,6 +92,7 @@ help:
 	install \
 	install_c \
 	install_py \
+	l10n_extract \
 	release \
 	test \
 	uninstall \

@@ -91,6 +91,8 @@ windows_exe: $(ALL_COMPONENTS:%=%_windows_exe)
 	mkdir -p dist
 	(cd build/exe ; zip -r ../../dist/paperwork.zip *)
 
+l10n_extract: $(ALL_COMPONENTS:%=%_l10n_extract)
+
 help:
 	@echo "make build: run 'python3 ./setup.py build' in all components"
 	@echo "make clean"
@@ -98,6 +100,7 @@ help:
 	@echo "make install : run 'python3 ./setup.py install' on all components"
 	@echo "make release"
 	@echo "make uninstall : run 'pip3 uninstall -y (component)' on all components"
+	@echo "make l10n_extract"
 	@echo "Components:" ${ALL_COMPONENTS}
 
 %_version:
@@ -156,6 +159,10 @@ help:
 	echo "Building Windows exe for $(@:%_windows_exe=%)"
 	$(MAKE) -C $(@:%_windows_exe=%) windows_exe
 
+%_l10n_extract:
+	echo "Extracting translatable strings from $(@:%_l10n_extract=%)"
+	$(MAKE) -C $(@:%_l10n_extract=%) l10n_extract
+
 venv:
 	echo "Building virtual env"
 	make -C sub/libinsane build_c
@@ -164,4 +171,4 @@ venv:
 .PHONY: help build clean test check install install_py install_c uninstall \
 	uninstall_c uninstall_py release release_pypi libinsane_win32 \
 	pyocr_win32 libpillowfight_win32 doc upload_doc data upload_data \
-	download_data
+	download_data l10n_extract
