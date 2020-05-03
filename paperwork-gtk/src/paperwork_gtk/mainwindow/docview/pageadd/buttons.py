@@ -26,10 +26,6 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return [
             {
-                'interface': 'config',
-                'defaults': ['openpaperwork_core.config'],
-            },
-            {
                 'interface': 'gtk_resources',
                 'defaults': ['openpaperwork_gtk.resources'],
             },
@@ -53,12 +49,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def init(self, core):
         super().init(core)
-
-        opt = self.core.call_success(
-            "config_build_simple",
-            "pageadd", "default_source", lambda: None
-        )
-        self.core.call_all("config_register", "pageadd_default_source", opt)
 
         self.widget_tree = self.core.call_success(
             "gtk_load_widget_tree",
