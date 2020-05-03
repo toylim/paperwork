@@ -41,6 +41,7 @@ sources](https://doc.openpaper.work/libinsane/latest/libinsane/install.html):
 
 ```sh
 sudo apt install \
+        gettext \
         make \
         meson \
         build-essential \
