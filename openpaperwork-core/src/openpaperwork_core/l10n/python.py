@@ -58,7 +58,10 @@ class Plugin(PluginBase):
         mo_file = gettext.find(text_domain, path)
         if mo_file is None:
             # expected if we don't have translation for the user language
-            LOGGER.info("Failed to find valid locale for '%s'", text_domain)
+            LOGGER.info(
+                "Failed to find valid locale for '%s' (path=%s)",
+                text_domain, path
+            )
             return
 
         LOGGER.info("Using locales in '%s'", path)
