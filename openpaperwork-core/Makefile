@@ -66,7 +66,7 @@ install_py: ${VERSION_FILE} l10n_compile
 install_c:
 
 uninstall_py:
-	pip3 uninstall -y paperwork-backend
+	pip3 uninstall -y openpaperwork-core
 
 uninstall_c:
 
