@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-05-04 10:54+0000\n"
-"PO-Revision-Date: 2020-05-04 11:56+0000\n"
+"PO-Revision-Date: 2020-05-05 12:55+0000\n"
 "Last-Translator: Weblate Admin <jflesch@openpaper.work>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-help-documents/de/>\n"
@@ -18,7 +18,7 @@ msgstr ""
 #: data/intro.tex:11 data/usage.tex:19
 msgid "\\date{}"
 msgstr ""
-"\\date{}"
+"\\date{}\n"
 "\\usepackage[german]{babel}"
 
 #. type: title{#1}
