@@ -24,9 +24,8 @@ class Plugin(PluginBase):
         path = pkg_resources.resource_filename(pkg, filename)
 
         if not os.access(path, os.R_OK):
-            raise FileNotFoundError(
-                "Can't find resource file '{}'. Aborting".format(filename)
-            )
+            LOGGER.warning("Failed to find resource file %s/%s", pkg, filename)
+            return None
 
         LOGGER.debug("%s:%s --> %s", pkg, filename, path)
         return self.core.call_success("fs_safe", path)
