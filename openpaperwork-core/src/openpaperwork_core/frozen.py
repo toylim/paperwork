@@ -18,6 +18,9 @@ class Plugin(PluginBase):
         self._set_meipass()
         multiprocessing.freeze_support()
 
+    def get_interfaces(self):
+        return ['frozen']
+
     def _set_meipass(self):
         # If sys.frozen, then Pyocr (and possibly others) needs MEIPASS to be
         # set *before* importing it.

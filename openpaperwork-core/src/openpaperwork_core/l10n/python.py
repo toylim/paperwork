@@ -1,6 +1,9 @@
+import ctypes
 import gettext
 import locale
 import logging
+import os
+import sys
 
 from .. import PluginBase
 
@@ -24,6 +27,11 @@ class Plugin(PluginBase):
     def get_deps(self):
         return [
             {
+                # if frozen, we need sys._MEIPASS to be set correctly
+                'interface': 'frozen',
+                'defaults': ['openpaperwork_core.frozen'],
+            },
+            {
                 'interface': 'fs',
                 'defaults': ['openpaperwork_core.fs.python'],
             },
@@ -38,11 +46,19 @@ class Plugin(PluginBase):
         try:
             locale.setlocale(locale.LC_ALL, '')
         except locale.Error:
-            # happens e.g. when LC_ALL is set to a nonexisting locale
+            # happens, for instance when LC_ALL is set to a nonexisting locale
             LOGGER.warning(
                 "Failed to set localization. Localization will be disabled"
             )
             return
+
+        self.libintl = None
+        if getattr(sys, 'frozen', False):
+            libintl_path = os.path.abspath(os.path.join(
+                sys._MEIPASS, "libintl-8.dll"
+            ))
+            self.libintl = ctypes.cdll.LoadLibrary(libintl_path)
+
         self.l10n_load('openpaperwork_core.l10n', 'openpaperwork_core')
 
     def l10n_load(self, python_package, text_domain, langs=None):
@@ -62,9 +78,14 @@ class Plugin(PluginBase):
                 "Failed to find valid locale for '%s' (path=%s)",
                 text_domain, path
             )
-            return
+            # we still try to keep going
 
-        LOGGER.info("Using locales in '%s'", path)
+        LOGGER.info("Binding text domain %s to '%s'", text_domain, path)
+
+        if self.libintl is not None:
+            self.libintl.bindtextdomain(text_domain, path)
+            self.libintl.bind_textdomain_codeset(text_domain, 'UTF-8')
+
         for module in (gettext, locale):
             if hasattr(module, 'bindtextdomain'):
                 module.bindtextdomain(text_domain, path)
