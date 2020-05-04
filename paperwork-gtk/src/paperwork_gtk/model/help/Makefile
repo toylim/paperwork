@@ -7,7 +7,7 @@ screenshots:
 	[ -f $(CURDIR)/${OUT_INTRO_PDF} ] || LANG=C WAYLAND_DISPLAY= xvfb-run sh ./screenshot.sh
 
 l10n_extract:
-	cd $(CURDIR) && po4a -k 0 po4a.conf
+	cd $(CURDIR) && po4a -M UTF-8 -k 0 po4a.conf
 
 l10n_compile: l10n_extract
 
@@ -23,8 +23,10 @@ out/%.pdf: data/%.tex l10n_compile screenshots out/paperwork_going_up.png
 
 clean:
 	rm -f $(CURDIR)/out/*.png
-	rm -f $(CURDIR)/$(OUT_INTRO_PDF)
-	rm -f $(CURDIR)/data/*.aux $(CURDIR)/data/*.log
+	rm -f $(CURDIR)/out/*.pdf
+	rm -f $(CURDIR)/out/*.toc
+	rm -f $(CURDIR)/data/*.aux
+	rm -f $(CURDIR)/data/*.log
 
 data:
 	rm -f $(CURDIR)/out/*.pdf
