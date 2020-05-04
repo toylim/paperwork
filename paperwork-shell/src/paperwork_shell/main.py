@@ -72,10 +72,13 @@ def main_main(in_args, application_name, default_plugins, interactive):
 
     core.call_all("cmd_set_interactive", interactive)
 
-    r = core.call_all("cmd_run", args)
-    if r <= 0:
-        print("Unknown command or argument(s): {}".format(in_args))
-        sys.exit(1)
+    if interactive:
+        r = core.call_all("cmd_run", args)
+        if r <= 0:
+            print("Unknown command or argument(s): {}".format(in_args))
+            sys.exit(1)
+    else:
+        r = core.call_success("cmd_run", args)
 
     core.call_all("on_quit")
     return r
