@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-05-04 10:54+0000\n"
-"PO-Revision-Date: 2020-05-04 11:22+0000\n"
+"PO-Revision-Date: 2020-05-04 11:56+0000\n"
 "Last-Translator: Weblate Admin <jflesch@openpaper.work>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-help-documents/de/>\n"
@@ -193,7 +193,7 @@ msgid ""
 "help section of Paperwork."
 msgstr ""
 "Wenn du mehr Hilfe benötigst, schau ins ausführliche Handbuch. Du findest es "
-"im Menü „Hilfe“ von Paperwork."
+"im Menü \"Hilfe\" von Paperwork."
 
 #. type: document
 #: data/intro.tex:119
