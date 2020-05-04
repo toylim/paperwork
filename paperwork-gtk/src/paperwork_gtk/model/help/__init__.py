@@ -1,4 +1,6 @@
 import datetime
+import locale
+import logging
 
 import openpaperwork_core
 import openpaperwork_core.promise
@@ -6,6 +8,7 @@ import openpaperwork_core.promise
 from ... import _
 
 
+LOGGER = logging.getLogger(__name__)
 HELP_FILES = (
     (_("Introduction"), "intro"),
     (_("User manual"), "usage"),
@@ -61,13 +64,34 @@ class Plugin(openpaperwork_core.PluginBase):
         return HELP_FILES
 
     def help_get_file(self, name):
-        # TODO(Jflesch): i18n
-        url = self.core.call_success(
-            "resources_get_file", "paperwork_gtk.model.help.out", name + ".pdf"
-        )
-        self.doc_urls_to_names_to_urls[name] = url
-        self.doc_urls_to_names[url] = name
-        return url
+        lang = "en"
+        try:
+            lang = locale.getdefaultlocale()[0][:2]
+            LOGGER.info("User language: %s", lang)
+        except Exception as exc:
+            LOGGER.error(
+                "get_documentation(): Failed to figure out locale."
+                " Will default to English",
+                exc_info=exc
+            )
+        if lang == "en":
+            docs = [name + '.pdf']
+        else:
+            docs = ['translated_{}_{}.pdf'.format(name, lang), name + ".pdf"]
+
+        for doc in docs:
+            url = self.core.call_success(
+                "resources_get_file", "paperwork_gtk.model.help.out", doc
+            )
+            if url is None:
+                LOGGER.warning("No documentation '%s' found", doc)
+            else:
+                LOGGER.info("Documentation '%s': %s", doc, url)
+                self.doc_urls_to_names_to_urls[name] = url
+                self.doc_urls_to_names[url] = name
+                return url
+        LOGGER.error("Failed to find documentation '%s'", name)
+        return None
 
     def doc_id_to_url(self, doc_id, existing=True):
         if not doc_id.startswith("help_"):
