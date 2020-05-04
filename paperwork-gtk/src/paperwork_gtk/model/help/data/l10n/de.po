@@ -18,6 +18,8 @@ msgstr ""
 #: data/intro.tex:11 data/usage.tex:19
 msgid "\\date{}"
 msgstr ""
+"\\date{}"
+"\\usepackage[german]{babel}"
 
 #. type: title{#1}
 #: data/intro.tex:11

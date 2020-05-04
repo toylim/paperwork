@@ -18,6 +18,8 @@ msgstr ""
 #: data/intro.tex:11 data/usage.tex:19
 msgid "\\date{}"
 msgstr ""
+"\\date{}"
+"\\usepackage[french]{babel}"
 
 #. type: title{#1}
 #: data/intro.tex:11
@@ -169,7 +171,7 @@ msgid ""
 "of the main features of Paperwork. You can start using it by adding your "
 "first own paper."
 msgstr ""
-"Cliquez sur le bouton +, cliquez sur le bouton « scanner », et c'est tout ! "
+"Cliquez sur le bouton +, cliquez sur le bouton \frquote{scanner}, et c'est tout ! "
 "Vous connaissez désormais les principales fonctionnalités de Paperwork. Vous "
 "pouvez maintenant commencer à l'utiliser en ajoutant vos premier documents."
 
