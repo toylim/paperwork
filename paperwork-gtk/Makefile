@@ -93,6 +93,7 @@ uninstall_c:
 
 l10n_extract:
 	$(CURDIR)/../tools/l10n_extract.sh "$(CURDIR)/src" "$(CURDIR)/l10n"
+	$(MAKE) -C src/paperwork_gtk/model/help l10n_extract
 
 l10n_compile:
 	$(CURDIR)/../tools/l10n_compile.sh \
