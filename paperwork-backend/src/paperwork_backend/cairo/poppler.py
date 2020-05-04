@@ -291,7 +291,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def pdf_page_to_cairo_surface(self, file_url, page_idx):
-        task = "pdf_page_to_cairo_surface({})".format(file_url, page_idx)
+        task = "pdf_page_to_cairo_surface({} p{})".format(file_url, page_idx)
 
         self.core.call_all("on_perfcheck_start", task)
 

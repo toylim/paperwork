@@ -11,7 +11,6 @@ import sys
 from . import PluginBase
 
 
-
 class Plugin(PluginBase):
     def __init__(self):
         if not getattr(sys, 'frozen', False):

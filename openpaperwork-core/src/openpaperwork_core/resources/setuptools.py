@@ -5,7 +5,6 @@ try:
     PKG_RESOURCES_AVAILABLE = True
 except Exception:
     PKG_RESOURCES_AVAILABLE = False
-import sys
 
 from .. import PluginBase
 

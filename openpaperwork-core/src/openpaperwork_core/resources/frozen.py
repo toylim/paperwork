@@ -47,6 +47,5 @@ class Plugin(PluginBase):
             return None
         return self.core.call_success("fs_safe", path)
 
-
     def resources_get_dir(self, pkg, dirname):
         return self.resources_get_file(pkg, dirname)
