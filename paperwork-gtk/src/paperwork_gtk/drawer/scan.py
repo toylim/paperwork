@@ -144,7 +144,6 @@ class Drawer(object):
                 cairo_ctx.stroke()
             finally:
                 cairo_ctx.restore()
-        cairo_ctx.get_target().write_to_png("/tmp/meh.png")
 
 
 class Plugin(openpaperwork_core.PluginBase):
