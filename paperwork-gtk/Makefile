@@ -44,17 +44,17 @@ test: install
 windows_exe:
 	${PYTHON} /mingw32/bin/pip3-script.py install .
 	${PYTHON} ./setup.py build_exe
-	mkdir -p ../build
-	mv $$(find build -name exe\*) ../build/exe
-	# a bunch of things are missing ...
-	cp -Ra /mingw32/lib/gdk-pixbuf-2.0 ../build/exe/lib
-	mkdir -p ../build/exe/share
-	cp -Ra /mingw32/share/icons ../build/exe/share
-	cp -Ra /mingw32/share/locale ../build/exe/share
-	cp -Ra /mingw32/share/themes ../build/exe/share
-	cp -Ra /mingw32/share/fontconfig ../build/exe/share
-	cp -Ra /mingw32/share/poppler ../build/exe/share
-	cp -Ra /mingw32/share/glib-2.0 ../build/exe/share
+	mkdir -p $(CURDIR)/../build/exe
+	mv $$(find $(CURDIR)/build -type d -name exe\*)/* $(CURDIR)/../build/exe
+	# ugly, but "import pkg_resources" doesn't work in frozen environments
+	# and I don't want to have to patch the build machine to fix it every
+	# time.
+	mkdir -p $(CURDIR)/../build/exe/data
+	(cd $(CURDIR)/src && find . -name '*.css' -exec cp --parents \{\} $(CURDIR)/../build/exe/data \; )
+	(cd $(CURDIR)/src && find . -name '*.glade' -exec cp --parents \{\} $(CURDIR)/../build/exe/data \; )
+	(cd $(CURDIR)/src && find . -name '*.mo' -exec cp --parents \{\} $(CURDIR)/../build/exe/data \; )
+	(cd $(CURDIR)/src && find . -name '*.pdf' -exec cp --parents \{\} $(CURDIR)/../build/exe/data \; )
+	(cd $(CURDIR)/src && find . -name '*.png' -exec cp --parents \{\} $(CURDIR)/../build/exe/data \; )
 
 linux_exe:
 
@@ -69,7 +69,7 @@ else
 	grep ${RELEASE} data/work.openpaper.Paperwork.appdata.xml
 endif
 
-release_pypi: data
+release_pypi: download_data
 	@echo "Releasing paperwork-gtk (paperwork) ..."
 	${PYTHON} ./setup.py sdist
 	twine upload dist/paperwork-${RELEASE}.tar.gz

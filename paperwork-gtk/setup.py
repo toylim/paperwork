@@ -118,6 +118,8 @@ else:
         'libgdk-3-0.dll',
         'libgdk_pixbuf-2.0-0.dll',
         'libgtk-3-0.dll',
+        'libinsane.dll',
+        'libinsane_gobject.dll',
         'libnotify-4.dll',
         'libpango-1.0-0.dll',
         'libpangocairo-1.0-0.dll',
@@ -126,9 +128,8 @@ else:
         'libpoppler-*.dll',
         'libpoppler-glib-8.dll',
         'librsvg-2-2.dll',
+        'libsqlite3-0.dll',
         'libxml2-2.dll',
-        'libinsane.dll',
-        'libinsane_gobject.dll',
     ]
 
     for dll in required_dlls:
@@ -186,20 +187,32 @@ else:
         'appdirs',
         'packaging',
 
-        "six",
         "gi",   # always seems to be needed
         "cairo",   # Only needed (for foreign structs) if no "import cairo"s
 
         # XXX(Jflesch): bug ?
         "pyocr",
         "pyocr.libtesseract",
+
+        "openpaperwork_core",
+        "openpaperwork_gtk",
+        "paperwork_backend",
+        "paperwork_gtk",
+        "paperwork_shell",
     ]
 
     kwargs['executables'] = [
         cx_Freeze.Executable(
             script="src/paperwork_gtk/main.py",
             targetName="paperwork.exe",
-            base=("Console" if os.name != "nt" else "Win32GUI"),
+            # base=("Console" if os.name != "nt" else "Win32GUI"),
+            base="Console",
+        ),
+        cx_Freeze.Executable(
+            # UGLY
+            script="../paperwork-shell/src/paperwork_shell/main.py",
+            targetName="paperwork-json.exe",
+            base="Console",
         ),
     ]
     kwargs['options'] = {

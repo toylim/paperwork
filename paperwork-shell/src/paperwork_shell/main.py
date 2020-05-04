@@ -7,7 +7,10 @@ import openpaperwork_core
 
 import paperwork_backend
 
-from . import _
+
+# this import must be non-relative due to cx_freeze running this .py
+# as an independant Python script
+from paperwork_shell import _
 
 
 DEFAULT_SHELL_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
@@ -111,3 +114,11 @@ def cli_main():
     main_main(
         sys.argv[1:], 'paperwork-cli', DEFAULT_CLI_PLUGINS, interactive=True
     )
+
+
+if __name__ == "__main__":
+    # Do not remove. Cx_freeze goes throught here
+    if "paperwork-json" in sys.argv[0]:
+        json_main()
+    else:
+        cli_main()

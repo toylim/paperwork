@@ -6,7 +6,9 @@ import openpaperwork_core
 
 import paperwork_backend
 
-from . import _
+# this import must be non-relative due to cx_freeze running this .py
+# as an independant Python script
+from paperwork_gtk import _
 
 
 LOGGER = logging.getLogger(__name__)
@@ -164,3 +166,8 @@ def main_main(in_args):
 
 def main():
     main_main(sys.argv[1:])
+
+
+if __name__ == "__main__":
+    # Do not remove. Cx_freeze goes throught here
+    main()

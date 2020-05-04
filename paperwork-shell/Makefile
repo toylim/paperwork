@@ -35,6 +35,11 @@ linux_exe:
 
 windows_exe:
 	${PYTHON} /mingw32/bin/pip3-script.py install .
+	# ugly, but "import pkg_resources" doesn't work in frozen environments
+	# and I don't want to have to patch the build machine to fix it every
+	# time.
+	mkdir -p $(CURDIR)/../build/exe/data
+	(cd $(CURDIR)/src && find . -name '*.mo' -exec cp --parents \{\} $(CURDIR)/../build/exe/data \; )
 
 release:
 ifeq (${RELEASE}, )

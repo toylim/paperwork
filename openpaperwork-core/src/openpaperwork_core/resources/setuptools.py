@@ -1,6 +1,11 @@
 import logging
 import os
-import pkg_resources
+try:
+    import pkg_resources
+    PKG_RESOURCES_AVAILABLE = True
+except Exception:
+    PKG_RESOURCES_AVAILABLE = False
+import sys
 
 from .. import PluginBase
 
@@ -21,6 +26,9 @@ class Plugin(PluginBase):
         ]
 
     def resources_get_file(self, pkg, filename):
+        if not PKG_RESOURCES_AVAILABLE:
+            return
+
         path = pkg_resources.resource_filename(pkg, filename)
 
         if not os.access(path, os.R_OK):

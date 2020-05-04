@@ -86,9 +86,32 @@ pyocr_win32:
 libpillowfight_win32:
 	${MAKE} -C sub/libpillowfight install_py
 
-windows_exe: $(ALL_COMPONENTS:%=%_windows_exe)
+windows_exe:
+	# dirty hack to make cx_freeze happy
+	# Cx_freeze looks for a file sqlite3.dll whereas in MSYS2, it's called
+	# libsqlite3-0.dll
+	mkdir -p /mingw32/DLLs
+	cp /mingw32/bin/libsqlite3-0.dll /mingw32/DLLs/sqlite3.dll
+
+	rm -rf $(CURDIR)/build/exe
+	$(MAKE) $(ALL_COMPONENTS:%=%_windows_exe)
+
+	# a bunch of things are missing
+	mkdir -p $(CURDIR)/build/exe/lib
+	cp -Ra /mingw32/lib/gdk-pixbuf-2.0 $(CURDIR)/build/exe/lib
+	# 2nd part of the dirty hack to make cx_freeze happy
+	rm -f $(CURDIR)/build/exe/lib/sqlite3.dll
+
+	mkdir -p $(CURDIR)/build/exe/share
+	cp -Ra /mingw32/share/icons $(CURDIR)/build/exe/share
+	cp -Ra /mingw32/share/locale $(CURDIR)/build/exe/share
+	cp -Ra /mingw32/share/themes $(CURDIR)/build/exe/share
+	cp -Ra /mingw32/share/fontconfig $(CURDIR)/build/exe/share
+	cp -Ra /mingw32/share/poppler $(CURDIR)/build/exe/share
+	cp -Ra /mingw32/share/glib-2.0 $(CURDIR)/build/exe/share
+
 	mkdir -p dist
-	(cd build/exe ; zip -r ../../dist/paperwork.zip *)
+	(cd $(CURDIR)/build/exe ; zip -r ../../dist/paperwork.zip *)
 
 l10n_extract: $(ALL_COMPONENTS:%=%_l10n_extract)
 
@@ -157,7 +180,7 @@ help:
 	echo "Building Linux exe for $(@:%_linux_exe=%)"
 	$(MAKE) -C $(@:%_linux_exe=%) linux_exe
 
-%_windows_exe: version libinsane_win32 pyocr_win32 libpillowfight_win32
+%_windows_exe: version download_data libinsane_win32 pyocr_win32 libpillowfight_win32
 	echo "Building Windows exe for $(@:%_windows_exe=%)"
 	$(MAKE) -C $(@:%_windows_exe=%) windows_exe
 
