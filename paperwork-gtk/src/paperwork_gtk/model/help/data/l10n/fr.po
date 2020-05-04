@@ -1,3 +1,19 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-05-04 10:54+0000\n"
+"PO-Revision-Date: 2020-05-04 10:54+0000\n"
+"Last-Translator: Weblate Admin <jflesch@openpaper.work>\n"
+"Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
+"paperwork-help-documents/fr/>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 4.0.1\n"
+
 #. type: Plain text
 #: data/intro.tex:11 data/usage.tex:19
 msgid "\\date{}"
@@ -6,7 +22,7 @@ msgstr ""
 #. type: title{#1}
 #: data/intro.tex:11
 msgid "Welcome to Paperwork !"
-msgstr ""
+msgstr "Bienvenue sur Paperwork !"
 
 #. type: document
 #: data/intro.tex:20
@@ -17,6 +33,12 @@ msgid ""
 "read, classify, and memorize just in case you may need them later. Most of "
 "the time you won't, which means you waste your energy for nothing."
 msgstr ""
+"Ils vont vous rendre fou. Votre opérateur téléphonique, votre banque, "
+"l'école de votre fille, votre vétérinaire, votre FAI, etc. Ils semblent tous "
+"essayer de vous noyer sous des tonnes de papiers. Papiers que vous devez "
+"lire, classer et mémoriser, juste au cas où vous en auriez besoin plus tard. "
+"La plupart du temps, ce ne sera pas le cas, ce qui signifie que vous avez "
+"gâché votre énergie pour rien."
 
 #. type: document
 #: data/intro.tex:24
@@ -25,11 +47,15 @@ msgid ""
 "searchable documents.  It's simple: just scan and forget. Looking for a "
 "specific paper? Just type in a few keywords and tada"
 msgstr ""
+"Paperwork va vous aider à vous débarrasser de tout ces papiers en les "
+"transformant en documents cherchables. C'est simple : scannez et oubliez. "
+"Vous cherchez un papier spécifique ? Tapez juste quelques mots-clés, et tada "
+"!"
 
 #. type: section{#2}
 #: data/intro.tex:28
 msgid "Documents and pages"
-msgstr ""
+msgstr "Les documents et les pages"
 
 #. type: document
 #: data/intro.tex:36
@@ -38,6 +64,9 @@ msgid ""
 "list of all your documents sorted by the date they were imported. On the "
 "right (blue) are the pages of the currently selected paper."
 msgstr ""
+"L'interface de Paperwork est composé de 2 panneaux. Sur la gauche (en vert), "
+"la liste de tout vos documents, triés par date d'import. Sur la droite (en "
+"bleu), les pages du document actuellement sélectionné."
 
 #. type: document
 #: data/intro.tex:41
@@ -47,11 +76,16 @@ msgid ""
 "scanner at home? You can still use the scanner you have at work. Paperwork "
 "will easily import PDF and image files."
 msgstr ""
+"Vous pouvez ajouter des papiers depuis plusieurs sources, en fonction des "
+"périphériques connectés à votre ordinateur : scanner simple, scanner à bac "
+"d'alimentation, caméra, ... Vous n'avez pas de scanner à la maison ? Vous "
+"pouvez utiliser celui de votre travail. Paperwork peut importer des PDFs et "
+"des fichiers images sans problème."
 
 #. type: section{#2}
 #: data/intro.tex:44
 msgid "Find"
-msgstr ""
+msgstr "Rechercher"
 
 #. type: wrapfigure
 #: data/intro.tex:50
@@ -67,11 +101,16 @@ msgid ""
 "to convert your papers into simple text files, so it's easy to search for "
 "text."
 msgstr ""
+"Trouvez ce dont vous avez besoin, quand vous en avez besoin. Tapez quelques "
+"mots-clés et la liste des documents se réduira à ce que vous cherchez. C'est "
+"là que la magie s'opère : Paperwork utilise la reconnaissance optique de "
+"caractères (ROC) pour convertir vos papiers en simples fichiers textes pour "
+"qu'il soit facile d'y chercher des mots."
 
 #. type: section{#2}
 #: data/intro.tex:59
 msgid "Export"
-msgstr ""
+msgstr "Exporter"
 
 #. type: document
 #: data/intro.tex:69
@@ -80,11 +119,14 @@ msgid ""
 "Multiple formats are supported: .pdf, .jpg, .txt, etc. And of course, paper "
 "(requires a printer, sold separately)."
 msgstr ""
+"Parfois, vous allez vouloir exporter un document pour l'envoyer à quelqu'un "
+"d'autre. Plusieurs formats sont supportés : .pdf, .jpeg, .txt, ... et bien "
+"entendu, le format papier (nécessite une imprimante, vendue séparément)."
 
 #. type: section{#2}
 #: data/intro.tex:72
 msgid "Labels and additional keywords"
-msgstr ""
+msgstr "Labels et mot-clés additionels"
 
 #. type: document
 #: data/intro.tex:84
@@ -95,6 +137,12 @@ msgid ""
 "the keywords you add will be searchable, as if they were directly written on "
 "the paper you scanned."
 msgstr ""
+"Vous avez répondu à un email important et vous souhaitez en garder une trace "
+"? Le papier que vous avez scanné était si illisible que Paperwork n'a pas pu "
+"le relire ? Ajoutez vous-même des mots-clés à vos papiers pour que vous "
+"puissiez les retrouver ! Tous les mots que vous ajouterez pourrons être "
+"retrouvés, comme si ils avaient été écrits dans les pages que vous avez "
+"scannées."
 
 #. type: document
 #: data/intro.tex:89
@@ -104,11 +152,15 @@ msgid ""
 "will learn which labels go on which documents and will automatically apply "
 "them on new documents."
 msgstr ""
+"Vous souhaitez trier un peu vos documents ? Vous pouvez aussi leur ajouter "
+"des labels. Pour plus de lisibilité, chaque label a sa propre couleur. Avec "
+"le temps, Paperwork va apprendre quels labels vont sur quels documents, et "
+"il les placera automatiquement pour vous sur chaque nouveau document."
 
 #. type: section{#2}
 #: data/intro.tex:92
 msgid "Your first documents"
-msgstr ""
+msgstr "Vos premiers documents"
 
 #. type: document
 #: data/intro.tex:102
@@ -117,6 +169,9 @@ msgid ""
 "of the main features of Paperwork. You can start using it by adding your "
 "first own paper."
 msgstr ""
+"Cliquez sur le bouton +, cliquez sur le bouton « scanner », et c'est tout ! "
+"Vous connaissez désormais les principales fonctionnalités de Paperwork. Vous "
+"pouvez maintenant commencer à l'utiliser en ajoutant vos premier documents."
 
 #. type: document
 #: data/intro.tex:105
@@ -124,11 +179,13 @@ msgid ""
 "This document will automatically disappear from your document list as soon "
 "as you have created or imported your first document."
 msgstr ""
+"Ce document disparaîtra automatiquement de votre liste de documents aussitôt "
+"que vous aurez créé ou importé votre premier document."
 
 #. type: section{#2}
 #: data/intro.tex:108
 msgid "Need more help ?"
-msgstr ""
+msgstr "Besoin d'aide ?"
 
 #. type: document
 #: data/intro.tex:116
@@ -136,6 +193,8 @@ msgid ""
 "If you need more help, there is a comprehensive manual you can find in the "
 "help section of Paperwork."
 msgstr ""
+"Si vous avez besoin de plus d'aide, il y a un manuel plus complet intégré "
+"dans Paperwork."
 
 #. type: document
 #: data/intro.tex:119
@@ -143,6 +202,8 @@ msgid ""
 "We hope that you'll enjoy this piece of software. If you like it please tell "
 "us, and if you don't please tell us why!"
 msgstr ""
+"Nous espérons que vous apprécierez ce logiciel. Si tel est le cas, dites-le "
+"nous, et sinon, dites-nous comment l'améliorer !"
 
 #. type: hypersetup{#1}
 #: data/usage.tex:19
@@ -164,7 +225,7 @@ msgstr ""
 #. type: section{#2}
 #: data/usage.tex:33
 msgid "Settings"
-msgstr ""
+msgstr "Réglages"
 
 #. type: subsection{#2}
 #: data/usage.tex:35
