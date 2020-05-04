@@ -29,7 +29,7 @@ class AbstractTestSafe(unittest.TestCase):
     @unittest.skipUnless(os.name == 'nt', reason="Windows only")
     def test_windows(self):
         v = self.core.call_one('fs_safe', 'c:\\Users\\flesch jerome')
-        self.assertEqual(v, "file://c:\\Users\\flesch%20jerome")
+        self.assertEqual(v, "file:///c:/Users/flesch%20jerome")
 
         v = self.core.call_one('fs_safe', '\\\\someserver\\someshare')
         self.assertEqual(v, "\\\\someserver\\someshare")
@@ -60,7 +60,7 @@ class AbstractTestUnsafe(unittest.TestCase):
 
     @unittest.skipUnless(os.name == 'nt', reason="Windows only")
     def test_windows(self):
-        v = self.core.call_one('fs_safe', 'file://c:\\Users\\flesch%20jerome')
+        v = self.core.call_one('fs_unsafe', 'file://c:\\Users\\flesch%20jerome')
         self.assertEqual(v, "c:\\Users\\flesch jerome")
 
         v = self.core.call_one('fs_safe', '\\\\someserver\\someshare')
@@ -305,10 +305,17 @@ class AbstractTestGetMtime(unittest.TestCase):
 
         try:
             safe_file_name = self.core.call_one('fs_safe', file_name)
-
             mtime = self.core.call_one('fs_get_mtime', safe_file_name)
             self.assertTrue(int(now) <= mtime)
             self.assertTrue(mtime <= now + 2)
+
+            time.sleep(2)  # :-(
+
+            with open(file_name, 'a') as fd:
+                fd.write("content")
+            new_mtime = self.core.call_one('fs_get_mtime', safe_file_name)
+            self.assertTrue(int(now) <= new_mtime)
+            self.assertTrue(mtime < new_mtime)
         finally:
             os.unlink(file_name)
 

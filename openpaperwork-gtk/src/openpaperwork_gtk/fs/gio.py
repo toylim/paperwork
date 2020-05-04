@@ -432,7 +432,14 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             fi = f.query_info(
                 Gio.FILE_ATTRIBUTE_TIME_CHANGED, Gio.FileQueryInfoFlags.NONE
             )
-            return fi.get_attribute_uint64(Gio.FILE_ATTRIBUTE_TIME_CHANGED)
+            r = fi.get_attribute_uint64(Gio.FILE_ATTRIBUTE_TIME_CHANGED)
+            if int(r) != 0:
+                return r
+            # WORKAROUND(Jflesch):
+            # On Windows+MSYS2, it seems Gio.File.query_info()
+            # return always 0 for Gio.FILE_ATTRIBUTE_TIME_CHANGED.
+            path = self.fs_unsafe(url)
+            return os.stat(path).st_mtime
         except GLib.GError as exc:
             LOGGER.warning("Gio.Gerror", exc_info=exc)
 

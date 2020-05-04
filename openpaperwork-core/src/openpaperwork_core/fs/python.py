@@ -24,6 +24,10 @@ class Plugin(CommonFsPluginBase):
         if not uri.lower().startswith("file://"):
             return None
         path = uri[len("file://"):]
+        if os.name == 'nt' and path[0] == '/':
+            # for some reason, some URI on Windows starts with
+            # "file:///C:\..." instead of "file://C:\..."
+            path = path[1:]
         if "#" in path:
             path = path[:path.index("#")]
         return path
