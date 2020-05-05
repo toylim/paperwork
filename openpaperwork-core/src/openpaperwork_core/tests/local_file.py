@@ -60,7 +60,9 @@ class AbstractTestUnsafe(unittest.TestCase):
 
     @unittest.skipUnless(os.name == 'nt', reason="Windows only")
     def test_windows(self):
-        v = self.core.call_one('fs_unsafe', 'file://c:\\Users\\flesch%20jerome')
+        v = self.core.call_success(
+            'fs_unsafe', 'file://c:\\Users\\flesch%20jerome'
+        )
         self.assertEqual(v, "c:\\Users\\flesch jerome")
 
         v = self.core.call_one('fs_safe', '\\\\someserver\\someshare')
