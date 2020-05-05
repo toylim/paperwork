@@ -4,10 +4,9 @@
 # TODO(Jflesch): PEP8 ...
 # flake8: noqa
 
+import pycountry
 import re
 import sys
-
-from paperwork_backend.util import find_language
 
 
 DEFAULT_DOWNLOAD_URI = (
@@ -419,6 +418,33 @@ Section Uninstall
   SetAutoClose true
 SectionEnd
 """
+
+def find_language(lang_str):
+    lang_str = lang_str.lower()
+    if "_" in lang_str:
+        lang_str = lang_str.split("_")[0]
+    print("System language: {}".format(lang_str))
+
+    attrs = (
+        'iso_639_3_code',
+        'iso639_3_code',
+        'iso639_2T_code',
+        'iso639_1_code',
+        'terminology',
+        'bibliographic',
+        'alpha_3',
+        'alpha_2',
+        'alpha2',
+        'name',
+    )
+    for attr in attrs:
+        try:
+            r = pycountry.pycountry.languages.get(**{attr: lang_str})
+            if r is not None:
+                return r
+        except (KeyError, UnicodeDecodeError):
+            pass
+    raise Exception("Unable to find language !")
 
 
 def get_lang_infos(lang_name):
