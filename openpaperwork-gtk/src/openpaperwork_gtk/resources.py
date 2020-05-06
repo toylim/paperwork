@@ -35,6 +35,13 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return [
             {
+                'interface': 'l10n_init',
+                'defaults': [
+                    'openpaperwork_core.l10n.python',
+                    'openpaperwork_gtk.l10n',
+                ],
+            },
+            {
                 'interface': 'resources',
                 'defaults': ['openpaperwork_core.resources.setuptools'],
             },
