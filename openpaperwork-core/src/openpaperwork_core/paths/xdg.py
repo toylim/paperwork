@@ -35,7 +35,6 @@ class Plugin(PluginBase):
         local_dir = os.path.expanduser("~/.local")
         data_dir = os.getenv("XDG_DATA_HOME", os.path.join(local_dir, "share"))
 
-        local_dir = self.core.call_success("fs_safe", local_dir)
         data_dir = self.core.call_success("fs_safe", data_dir)
 
         app_name = self.core.call_success("app_get_fs_name")
@@ -43,6 +42,7 @@ class Plugin(PluginBase):
         self.core.call_all("fs_mkdir_p", app_dir)
 
         if os.name == 'nt':  # hide ~/.local on Windows
+            local_dir = self.core.call_success("fs_safe", local_dir)
             self.core.call_all("fs_hide", local_dir)
 
         return app_dir

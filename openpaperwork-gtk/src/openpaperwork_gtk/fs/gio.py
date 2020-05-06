@@ -46,21 +46,33 @@ class _GioFileAdapter(io.RawIOBase):
         self.gin = None
         self.gout = None
 
-        if 'r' in mode:
-            self.gin = self.gfd = gfile.read()
-        elif 'w' in mode or 'a' in mode:
+        if 'r' in mode and 'w' in mode:
             if gfile.query_exists():
                 self.gfd = gfile.open_readwrite()
             else:
-                self.gfd = gfile.create_readwrite(Gio.FileCreateFlags.NONE)
+                # create_readwrite() doesn't seem to always work on
+                # Windows+MSYS2
+                self.gfd = gfile.create_readwrite(Gio.FileCreateFlags.PRIVATE)
             if 'w' in mode:
                 self.gfd.seek(0, GLib.SeekType.SET)
                 self.gfd.truncate(0)
             self.gin = self.gfd.get_input_stream()
             self.gout = self.gfd.get_output_stream()
-
-        if 'a' in mode:
-            self.seek(0, whence=os.SEEK_END)
+        elif 'r' in mode:
+            self.gfd = gfile.read()
+            self.gin = self.gfd
+        elif 'w' in mode or 'a' in mode:
+            if 'w' in mode:
+                self.gfd = gfile.replace(
+                    None,  # etag
+                    False,  # make_backup
+                    Gio.FileCreateFlags.PRIVATE
+                )
+            elif 'a' in mode:
+                self.gfd = gfile.append_to(
+                    Gio.FileCreateFlags.PRIVATE
+                )
+            self.gout = self.gfd
 
     def readable(self):
         return True
@@ -134,11 +146,11 @@ class _GioFileAdapter(io.RawIOBase):
     def close(self):
         self.flush()
         super().close()
-        if self.gin:
+        if self.gin is not None and self.gin is not self.gfd:
             self.gin.close()
-        if self.gout:
+        if self.gout is not None and self.gout is not self.gfd:
             self.gout.close()
-        if self.gfd is not self.gin:
+        if self.gfd:
             self.gfd.close()
 
     def __enter__(self):
@@ -268,7 +280,9 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             return _GioUTF8FileAdapter(raw)
         except GLib.GError as exc:
             LOGGER.warning("Gio.Gerror", exc_info=exc)
-            raise IOError(str(exc))
+            raise IOError("fs_open({}, mode={}): {}".format(
+                uri, mode, str(exc)
+            ))
 
     def fs_exists(self, url):
         if not self._is_file_uri(url):
@@ -502,10 +516,17 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
         try:
             f = Gio.File.new_for_uri(url)
             if not f.query_exists():
+                if os.name == "nt":
+                    # WORKAROUND(Jflesch): On Windows+MSYS2,
+                    # Gio.File.make_directory_with_parents() raises
+                    # a Gio.GError "Unsupported operation" (bug ?)
+                    path = self.fs_unsafe(url)
+                    os.makedirs(path, mode=0o700, exist_ok=True)
+                    return True
                 f.make_directory_with_parents()
         except GLib.GError as exc:
-            LOGGER.warning("Gio.Gerror", exc_info=exc)
-            raise IOError(str(exc))
+            LOGGER.warning("Gio.GError", exc_info=exc)
+            raise IOError("fs_mkdir_p({}): {}".format(url, str(exc)))
 
         return True
 

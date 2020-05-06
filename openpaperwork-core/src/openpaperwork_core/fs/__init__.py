@@ -1,14 +1,11 @@
 import hashlib
 import logging
 import os
+import pathlib
 import urllib
 import urllib.parse
 
 import openpaperwork_core
-
-if os.name == "nt":
-    # TODO(Jflesch): bad. We shouldn't depend on Gio here. To fix.
-    from gi.repository import Gio
 
 
 LOGGER = logging.getLogger(__name__)
@@ -24,7 +21,8 @@ class CommonFsPluginBase(openpaperwork_core.PluginBase):
     def get_interfaces(self):
         return ['fs']
 
-    def fs_safe(self, uri):
+    @staticmethod
+    def fs_safe(uri):
         """
         Make sure the specified URI is actually an URI and not a Unix path.
         Returns:
@@ -34,18 +32,10 @@ class CommonFsPluginBase(openpaperwork_core.PluginBase):
         if uri[:2] == "\\\\" or "://" in uri:
             LOGGER.debug("safe: --> %s", uri)
             return uri
-        if os.name != "nt":
-            uri = os.path.abspath(uri)
-            uri = "file://" + urllib.parse.quote(uri)
-            LOGGER.debug("safe: --> %s", uri)
-            return uri
-        else:
-            gf = Gio.File.new_for_path(uri)
-            uri = gf.get_uri()
-            LOGGER.debug("safe: --> %s", uri)
-            return uri
+        return pathlib.Path(uri).as_uri()
 
-    def fs_unsafe(self, uri):
+    @staticmethod
+    def fs_unsafe(uri):
         """
         Turn an URI into an Unix path, whenever possible.
         Shouldn't be used at all.
@@ -59,11 +49,10 @@ class CommonFsPluginBase(openpaperwork_core.PluginBase):
             raise Exception("TARGET URI SHOULD BE A LOCAL FILE")
         uri = uri[len("file://"):]
         if os.name == 'nt' and uri[0] == '/':
-            # for some reason, some URI on Windows starts with
+            # for some reason, URIs on Windows start with
             # "file:///C:\..." instead of "file://C:\..."
             uri = uri[1:]
         uri = urllib.parse.unquote(uri)
-        LOGGER.debug("unsafe: --> %s", uri)
         return uri
 
     def fs_join(self, base, url):
