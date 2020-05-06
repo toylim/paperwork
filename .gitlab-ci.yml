@@ -106,6 +106,7 @@ linux_flatpak:
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-libnotify
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-poppler
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S git  # for 'make version'
+    - c:\msys64\usr\bin\pacman --needed --noconfirm -S wget  # for downloading data files
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-python3-cx_Freeze
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S zip unzip
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-nsis
