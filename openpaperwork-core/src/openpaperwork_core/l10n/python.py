@@ -43,6 +43,11 @@ class Plugin(PluginBase):
 
     def init(self, core):
         super().init(core)
+
+        if os.name == "nt" and os.getenv('LANG') is None:
+            (lang, enc) = locale.getdefaultlocale()
+            os.environ['LANG'] = lang
+
         try:
             locale.setlocale(locale.LC_ALL, '')
         except locale.Error:
