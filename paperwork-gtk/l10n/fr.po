@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-05-03 16:15+0200\n"
-"PO-Revision-Date: 2020-05-03 14:21+0000\n"
+"PO-Revision-Date: 2020-05-05 10:55+0000\n"
 "Last-Translator: Weblate Admin <jflesch@openpaper.work>\n"
 "Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-gtk/fr/>\n"
@@ -361,7 +361,7 @@ msgstr ""
 
 #: paperwork-gtk/src/paperwork_gtk/actions/docs_export.py:67
 msgid "Export"
-msgstr ""
+msgstr "Exporter"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/storage.glade.h:1
 msgid "Work directory"
