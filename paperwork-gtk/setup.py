@@ -205,8 +205,7 @@ else:
         cx_Freeze.Executable(
             script="src/paperwork_gtk/main.py",
             targetName="paperwork.exe",
-            # base=("Console" if os.name != "nt" else "Win32GUI"),
-            base="Console",
+            base=("Console" if os.name != "nt" else "Win32GUI"),
         ),
         cx_Freeze.Executable(
             # UGLY
