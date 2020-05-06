@@ -25,9 +25,15 @@ class Plugin(PluginBase):
 
     def _on_uncaught_exception(self, exc_type, exc_value, exc_tb):
         exc_info = (exc_type, exc_value, exc_tb)
-        self.core.call_success(
-            "mainloop_execute", self._broadcast_exception, exc_info
-        )
+        try:
+            self.core.call_success(
+                "mainloop_execute", self._broadcast_exception, exc_info
+            )
+        finally:
+            if getattr(sys, 'frozen', False):
+                # Assumes that cx_freeze has put a specific handler
+                # for uncatched exceptions (popup and stuff)
+                self.original_hook(exc_type, exc_value, exc_tb)
 
     def _broadcast_exception(self, exc_info):
         # make sure we don't loop
