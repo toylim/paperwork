@@ -61,6 +61,7 @@ class Plugin(openpaperwork_core.PluginBase):
         LOGGER.info("%d documents found in %s", nb, workdir)
 
     def doc_id_to_url(self, doc_id, existing=True):
+        assert(doc_id is not None)
         workdir = self.core.call_success('config_get', 'workdir')
         url = self.core.call_success("fs_join", workdir, doc_id)
         if existing and self.core.call_success("fs_isdir", url) is None:

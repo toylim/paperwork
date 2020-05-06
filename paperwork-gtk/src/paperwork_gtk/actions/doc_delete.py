@@ -1,4 +1,6 @@
+import gc
 import logging
+import os
 
 try:
     from gi.repository import Gio
@@ -113,21 +115,38 @@ class Plugin(openpaperwork_core.PluginBase):
             text=msg
         )
 
-        confirm.connect("response", self._really_delete)
+        (doc_id, doc_url) = self.active_doc
+        confirm.connect("response", self._really_delete, doc_id)
         confirm.show_all()
 
-    def _really_delete(self, dialog, response):
+        if os.name == "nt":
+            # On Windows, we have to be absolutely sure the PDF is actually
+            # closed when we try to delete it because Windows s*cks pony d*cks
+            # in h*ll.
+            self.core.call_all("doc_close")
+            # there is no "close()" method in Poppler
+            gc.collect()
+
+    def _really_delete(self, dialog, response, doc_id):
         if response != Gtk.ResponseType.YES:
             LOGGER.info("User cancelled")
             dialog.destroy()
             return
         dialog.destroy()
         assert(self.active_doc is not None)
-        (doc_id, doc_url) = self.active_doc
 
         LOGGER.info("Will delete doc %s", doc_id)
 
         self.core.call_all("doc_close")
+        if os.name == "nt":
+            # there is no "close()" method in Poppler
+            gc.collect()
+
+        self.core.call_success(
+            "mainloop_schedule", self._really_really_delete, doc_id
+        )
+
+    def _really_really_delete(self, doc_id):
         self.core.call_all("storage_delete_doc_id", doc_id)
         self.core.call_all("search_update_document_list")
 

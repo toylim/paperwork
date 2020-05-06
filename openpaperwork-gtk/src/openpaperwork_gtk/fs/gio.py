@@ -402,9 +402,9 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
                         )
                 except Exception as exc:
                     LOGGER.warning(
-                        "Failed to trash %s (trash()=False)."
+                        "Failed to trash %s (trash()=%s)."
                         " Will try to delete it instead",
-                        url, exc_info=exc
+                        url, trash, exc_info=exc
                     )
 
             if deleted and self.fs_exists(url) is not None:
