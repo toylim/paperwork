@@ -134,6 +134,7 @@ windows_tests:
   <<: *windows
   script:
     # Tesseract (required for unit tests)
+    - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-libarchive  # missing tesseract dependency
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-tesseract-ocr
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-tesseract-data-eng
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-tesseract-data-fra
