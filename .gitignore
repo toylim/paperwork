@@ -19,6 +19,7 @@ _version.py
 *.exe
 *.dll
 out.*
+rclone*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
