@@ -16,6 +16,9 @@ repo/
 venv*/
 *.pyo
 _version.py
+*.exe
+*.dll
+out.*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
