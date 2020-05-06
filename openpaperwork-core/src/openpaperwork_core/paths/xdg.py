@@ -43,6 +43,7 @@ class Plugin(PluginBase):
 
         if os.name == 'nt':  # hide ~/.local on Windows
             local_dir = self.core.call_success("fs_safe", local_dir)
-            self.core.call_all("fs_hide", local_dir)
+            if self.core.call_success("fs_isdir", local_dir) is not None:
+                self.core.call_all("fs_hide", local_dir)
 
         return app_dir
