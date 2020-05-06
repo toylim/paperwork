@@ -138,7 +138,7 @@ windows_tests:
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-tesseract-data-eng
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-tesseract-data-fra
     # Build
-    - c:\msys64\usr\bin\bash -lc "export TESSDATA_PREFIX=/mingw32/share/tessdata && make install test"
+    - c:\msys64\usr\bin\bash -lc "export TESSDATA_PREFIX=c:\\msys64\\mingw32\\share\\tessdata && make install test"
     - c:\msys64\usr\bin\bash -lc "make uninstall"
 
 
