@@ -7,6 +7,7 @@ import PIL
 import PIL.Image
 
 import openpaperwork_core
+import openpaperwork_core.fs
 
 
 class TestCropping(unittest.TestCase):
@@ -30,10 +31,14 @@ class TestCropping(unittest.TestCase):
 
         self.core.get_by_name(
             "paperwork_backend.pagetracker"
-        ).paperwork_dir = "file://" + self.tmp_paperwork_dir
+        ).paperwork_dir = openpaperwork_core.fs.CommonFsPluginBase.fs_safe(
+            self.tmp_paperwork_dir
+        )
         self.core.get_by_name(
             "paperwork_backend.doctracker"
-        ).paperwork_dir = "file://" + self.tmp_paperwork_dir
+        ).paperwork_dir = openpaperwork_core.fs.CommonFsPluginBase.fs_safe(
+            self.tmp_paperwork_dir
+        )
 
         self.pillowed = []
 
@@ -52,6 +57,7 @@ class TestCropping(unittest.TestCase):
         self.model = self.core.get_by_name("paperwork_backend.model.fake")
 
     def tearDown(self):
+        self.core.call_all("tests_cleanup")
         shutil.rmtree(self.tmp_paperwork_dir)
 
     def test_transaction(self):

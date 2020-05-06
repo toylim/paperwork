@@ -10,12 +10,16 @@ class TestHocr(unittest.TestCase):
         self.core.load("paperwork_backend.model.pdf")
         self.core.init()
 
-        self.simple_doc_url = (
-            "file://" + os.path.dirname(os.path.abspath(__file__)) +
-            "/simple_doc.pdf"
+        self.simple_doc_url = self.core.call_success(
+            "fs_safe",
+            os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                "simple_doc.pdf"
+            )
         )
-        self.full_doc_url = (
-            "file://" + os.path.dirname(os.path.abspath(__file__))
+        self.full_doc_url = self.core.call_success(
+            "fs_safe",
+            os.path.dirname(os.path.abspath(__file__))
         )
 
         mapping = self.full_doc_url + "/page_map.csv"

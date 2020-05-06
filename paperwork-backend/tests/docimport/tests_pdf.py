@@ -3,14 +3,15 @@ import unittest
 import unittest.mock
 
 import openpaperwork_core
+import openpaperwork_core.fs
 import paperwork_backend.docimport
 
 
 class TestPdfImport(unittest.TestCase):
     def setUp(self):
-        self.test_doc_url = (
-            "file://{}/test_doc.pdf".format(
-                os.path.dirname(os.path.abspath(__file__))
+        self.test_doc_url = openpaperwork_core.fs.CommonFsPluginBase.fs_safe(
+            os.path.join(
+                os.path.dirname(os.path.abspath(__file__)), "test_doc.pdf"
             )
         )
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
@@ -170,15 +171,14 @@ class TestPdfImport(unittest.TestCase):
 
 class TestRecursivePdfImport(unittest.TestCase):
     def setUp(self):
-        self.test_doc_url = (
-            "file://{}/test_doc.pdf".format(
-                os.path.dirname(os.path.abspath(__file__))
+        self.test_doc_url = openpaperwork_core.fs.CommonFsPluginBase.fs_safe(
+            os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                "test_doc.pdf"
             )
         )
-        self.test_dir_url = (
-            "file://{}".format(
-                os.path.dirname(os.path.abspath(__file__))
-            )
+        self.test_dir_url = openpaperwork_core.fs.CommonFsPluginBase.fs_safe(
+            os.path.dirname(os.path.abspath(__file__))
         )
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
 

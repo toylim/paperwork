@@ -5,14 +5,18 @@ import tempfile
 import unittest
 
 import openpaperwork_core
+import openpaperwork_core.fs
 
 
 class TestAll(unittest.TestCase):
     def setUp(self):
         self.int_generator = itertools.count()
 
-        self.pdf = (
-            "file://" + os.path.dirname(os.path.abspath(__file__)) + "/doc.pdf"
+        self.pdf = openpaperwork_core.fs.CommonFsPluginBase.fs_safe(
+            os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                "doc.pdf"
+            )
         )
 
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
@@ -26,7 +30,7 @@ class TestAll(unittest.TestCase):
         self.core.init()
 
         self.work_dir = tempfile.mkdtemp(prefix="paperwork_tests_all_")
-        self.work_dir_url = "file://" + self.work_dir
+        self.work_dir_url = self.core.call_success("fs_safe", self.work_dir)
         self.core.call_all("config_put", "workdir", self.work_dir_url)
 
         self.doc_pdf = self.core.call_success(

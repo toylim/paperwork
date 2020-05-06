@@ -9,17 +9,6 @@ import paperwork_backend.docexport
 
 class TestExport(unittest.TestCase):
     def setUp(self):
-        self.test_doc_pdf_url = (
-            "file://{}/test_pdf_doc".format(
-                os.path.dirname(os.path.abspath(__file__))
-            )
-        )
-        self.test_doc_img_url = (
-            "file://{}/test_img_doc".format(
-                os.path.dirname(os.path.abspath(__file__))
-            )
-        )
-
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
         self.core.load("openpaperwork_gtk.fs.gio")
         self.core.load("openpaperwork_core.fs.memory")
@@ -27,6 +16,17 @@ class TestExport(unittest.TestCase):
         self.core.load("paperwork_backend.docexport.pdf")
         self.core.load("paperwork_backend.docexport.pillowfight")
         self.core.init()
+
+        self.test_doc_pdf_url = self.core.call_success(
+            "fs_safe", "{}/test_pdf_doc".format(
+                os.path.dirname(os.path.abspath(__file__))
+            )
+        )
+        self.test_doc_img_url = self.core.call_success(
+            "fs_safe", "{}/test_img_doc".format(
+                os.path.dirname(os.path.abspath(__file__))
+            )
+        )
 
         self.result = None
 

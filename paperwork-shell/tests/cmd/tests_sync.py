@@ -6,6 +6,7 @@ import tempfile
 import unittest
 
 import openpaperwork_core
+import openpaperwork_core.fs
 
 
 class TestSync(unittest.TestCase):
@@ -24,39 +25,42 @@ class TestSync(unittest.TestCase):
         self.tmp_work_dir = tempfile.mkdtemp()
         os.environ['XDG_DATA_HOME'] = self.tmp_local_dir
 
+        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core.load("openpaperwork_core.config.fake")
+        self.core.init()
+
     def tearDown(self):
+        self.core.call_all("tests_cleanup")
         shutil.rmtree(self.tmp_local_dir)
         shutil.rmtree(self.tmp_work_dir)
-        os.unsetenv('XDG_DATA_HOME')
 
     def test_sync(self):
-        core = openpaperwork_core.Core(allow_unsatisfied=True)
-        core.load("openpaperwork_core.config.fake")
-        core.init()
-        config = core.get_by_name("openpaperwork_core.config.fake")
+        config = self.core.get_by_name("openpaperwork_core.config.fake")
         config.settings = {
-            "workdir": "file://" + self.tmp_work_dir,
+            "workdir": openpaperwork_core.fs.CommonFsPluginBase.fs_safe(
+                self.tmp_work_dir
+            ),
         }
 
-        core.load("paperwork_backend.model.img")
-        core.load("paperwork_backend.model.hocr")
-        core.load("paperwork_backend.model.pdf")
-        core.load("paperwork_shell.cmd.sync")
+        self.core.load("paperwork_backend.model.img")
+        self.core.load("paperwork_backend.model.hocr")
+        self.core.load("paperwork_backend.model.pdf")
+        self.core.load("paperwork_shell.cmd.sync")
 
-        core.init()
+        self.core.init()
 
         parser = argparse.ArgumentParser()
         cmd_parser = parser.add_subparsers(
             help='command', dest='command', required=True
         )
-        core.call_all("cmd_complete_argparse", cmd_parser)
+        self.core.call_all("cmd_complete_argparse", cmd_parser)
 
         args = parser.parse_args(['sync'])
-        core.call_all("cmd_set_interactive", False)
+        self.core.call_all("cmd_set_interactive", False)
 
         # start with an empty work directory
 
-        r = core.call_success("cmd_run", args)
+        r = self.core.call_success("cmd_run", args)
         self.assertEqual(r, {})
 
         # add 2 documents, one PDF and one img+hocr
@@ -70,7 +74,7 @@ class TestSync(unittest.TestCase):
         shutil.copyfile(self.test_img, os.path.join(doc_b, "paper.1.jpg"))
         shutil.copyfile(self.test_hocr, os.path.join(doc_b, "paper.1.words"))
 
-        r = core.call_success("cmd_run", args)
+        r = self.core.call_success("cmd_run", args)
         self.assertEqual(r, {
             'whoosh': {
                 'added': ['20190801_1733_23', '20190830_1916_32'],
@@ -98,10 +102,10 @@ class TestSync(unittest.TestCase):
                         return dt.timestamp()
                     return None
 
-        core._load_module("fake_module", FakeModule())
-        core.init()
+        self.core._load_module("fake_module", FakeModule())
+        self.core.init()
 
-        r = core.call_success("cmd_run", args)
+        r = self.core.call_success("cmd_run", args)
         self.assertEqual(r, {
             'whoosh': {
                 'updated': ['20190830_1916_32'],
@@ -121,7 +125,7 @@ class TestSync(unittest.TestCase):
 
         shutil.rmtree(doc_a)
 
-        r = core.call_success("cmd_run", args)
+        r = self.core.call_success("cmd_run", args)
         self.assertEqual(r, {
             'whoosh': {
                 'deleted': ['20190801_1733_23'],

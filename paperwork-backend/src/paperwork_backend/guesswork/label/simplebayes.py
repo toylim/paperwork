@@ -516,3 +516,6 @@ class Plugin(openpaperwork_core.PluginBase):
         labels = list(labels)
         for label in labels:
             self.core.call_success("doc_add_label_by_url", doc_url, label)
+
+    def tests_cleanup(self):
+        self.sql.close()

@@ -7,6 +7,7 @@ import PIL
 import PIL.Image
 
 import openpaperwork_core
+import openpaperwork_core.fs
 
 
 class TestAce(unittest.TestCase):
@@ -30,10 +31,14 @@ class TestAce(unittest.TestCase):
 
         self.core.get_by_name(
             "paperwork_backend.pagetracker"
-        ).paperwork_dir = "file://" + self.tmp_paperwork_dir
+        ).paperwork_dir = openpaperwork_core.fs.CommonFsPluginBase.fs_safe(
+            self.tmp_paperwork_dir
+        )
         self.core.get_by_name(
             "paperwork_backend.doctracker"
-        ).paperwork_dir = "file://" + self.tmp_paperwork_dir
+        ).paperwork_dir = openpaperwork_core.fs.CommonFsPluginBase.fs_safe(
+            self.tmp_paperwork_dir
+        )
 
         self.pillowed = []
 
@@ -53,6 +58,7 @@ class TestAce(unittest.TestCase):
         self.model = self.core.get_by_name("paperwork_backend.model.fake")
 
     def tearDown(self):
+        self.core.call_all("tests_cleanup")
         shutil.rmtree(self.tmp_paperwork_dir)
 
     def _compute_average_color(self, img):

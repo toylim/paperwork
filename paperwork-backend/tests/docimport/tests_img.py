@@ -2,14 +2,16 @@ import os
 import unittest
 
 import openpaperwork_core
+import openpaperwork_core.fs
 import paperwork_backend.docimport
 
 
 class TestImgImport(unittest.TestCase):
     def setUp(self):
-        self.test_img_url = (
-            "file://{}/test_img.png".format(
-                os.path.dirname(os.path.abspath(__file__))
+        self.test_img_url = openpaperwork_core.fs.CommonFsPluginBase.fs_safe(
+            os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                "test_img.png"
             )
         )
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)

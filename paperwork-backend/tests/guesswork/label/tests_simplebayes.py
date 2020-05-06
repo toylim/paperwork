@@ -3,6 +3,7 @@ import tempfile
 import unittest
 
 import openpaperwork_core
+import openpaperwork_core.fs
 
 
 class TestLabelGuesser(unittest.TestCase):
@@ -17,10 +18,14 @@ class TestLabelGuesser(unittest.TestCase):
         self.core.load("paperwork_backend.guesswork.label.simplebayes")
         self.core.get_by_name(
             "paperwork_backend.doctracker"
-        ).paperwork_dir = "file://" + self.tmp_bayes_dir
+        ).paperwork_dir = openpaperwork_core.fs.CommonFsPluginBase.fs_safe(
+            self.tmp_bayes_dir
+        )
         self.core.get_by_name(
             "paperwork_backend.guesswork.label.simplebayes"
-        ).bayes_dir = "file://" + self.tmp_bayes_dir
+        ).bayes_dir = openpaperwork_core.fs.CommonFsPluginBase.fs_safe(
+            self.tmp_bayes_dir
+        )
 
         self.fake_storage = self.core.get_by_name(
             "paperwork_backend.model.fake"
@@ -41,6 +46,7 @@ class TestLabelGuesser(unittest.TestCase):
         self.core.init()
 
     def tearDown(self):
+        self.core.call_all("tests_cleanup")
         shutil.rmtree(self.tmp_bayes_dir)
 
     def test_training(self):

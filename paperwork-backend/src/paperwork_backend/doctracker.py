@@ -258,3 +258,6 @@ class Plugin(openpaperwork_core.PluginBase):
             self.core, lambda syncer: syncer.run()
         ))
         promises.append(promise)
+
+    def tests_cleanup(self):
+        self.sql.close()

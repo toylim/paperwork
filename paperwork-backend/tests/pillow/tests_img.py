@@ -12,9 +12,12 @@ class TestPillowImg(unittest.TestCase):
         self.core.load("paperwork_backend.pillow.img")
         self.core.init()
 
-        self.img_path = (
-            "file://" + os.path.dirname(os.path.abspath(__file__))
-            + "/test_doc.png"
+        self.img_path = self.core.call_success(
+            "fs_safe",
+            os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                "test_doc.png"
+            )
         )
 
     def test_img_url_to_pillow(self):
