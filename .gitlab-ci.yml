@@ -83,18 +83,8 @@ linux_flatpak:
     - ./ci/update_flatpak_repo.sh
 
 
-windows_exe:
-  stage: deploy_windows
-  only:
-    - branches@World/OpenPaperwork/paperwork
-    - tags@World/OpenPaperwork/paperwork
-  variables:
-    MSYSTEM: "MINGW32"
-    CHERE_INVOKING: "yes"
-  tags:
-    - windows
-    - msys2
-  script:
+.windows: &windows
+  before_script:
     # Libinsane build dependencies
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S make
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-cunit
@@ -120,6 +110,50 @@ windows_exe:
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S zip unzip
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-nsis
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-nsis-nsisunz
+    - git submodule init
+    - git submodule update --recursive --remote
+    - c:\msys64\usr\bin\bash -lc "make clean"
+    - c:\msys64\usr\bin\bash -lc "make uninstall"
+    # a 2nd time just to be really sure
+    # (that's the problem when can't use containers ..)
+    - c:\msys64\usr\bin\bash -lc "make uninstall"
+
+
+windows_tests:
+  stage: tests_data_doc
+  only:
+    - branches@World/OpenPaperwork/paperwork
+    - tags@World/OpenPaperwork/paperwork
+  variables:
+    MSYSTEM: "MINGW32"
+    CHERE_INVOKING: "yes"
+  tags:
+    - windows
+    - msys2
+  <<: *windows
+  script:
+    # Tesseract (required for unit tests)
+    - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-tesseract-ocr
+    - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-tesseract-data-eng
+    - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-tesseract-data-fra
+    # Build
+    - c:\msys64\usr\bin\bash -lc "export TESSDATA_PREFIX=/mingw32/share/tessdata && make install tests"
+    - c:\msys64\usr\bin\bash -lc "make uninstall"
+
+
+windows_exe:
+  stage: deploy_windows
+  only:
+    - branches@World/OpenPaperwork/paperwork
+    - tags@World/OpenPaperwork/paperwork
+  variables:
+    MSYSTEM: "MINGW32"
+    CHERE_INVOKING: "yes"
+  tags:
+    - windows
+    - msys2
+  <<: *windows
+  script:
     # We need rclone to upload the files on OVH object storage
     - c:\msys64\usr\bin\rm -f rclone-v1.50.1-windows-386.zip
     - c:\msys64\usr\bin\rm -rf rclone-v1.50.1-windows-386
@@ -127,8 +161,6 @@ windows_exe:
     - c:\msys64\usr\bin\unzip rclone-v1.50.1-windows-386.zip
     - c:\msys64\usr\bin\cp rclone-v1.50.1-windows-386/rclone.exe /usr/bin
     # Build
-    - git submodule init
-    - git submodule update --recursive --remote
-    - c:\msys64\usr\bin\bash -lc "make clean"
     - c:\msys64\usr\bin\bash -lc "make windows_exe"
     - c:\msys64\usr\bin\bash -lc "./ci/deliver.sh dist/paperwork.zip windows .zip"
+    - c:\msys64\usr\bin\bash -lc "make uninstall"
