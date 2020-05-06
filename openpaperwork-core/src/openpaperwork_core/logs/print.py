@@ -38,7 +38,9 @@ class _LogHandler(logging.Handler):
         super().__init__()
         self.log_level = logging.DEBUG
         self.formatter = logging.Formatter(Plugin.DEFAULT_LOG_FORMAT)
-        self.out_fds = {sys.stderr}
+        self.out_fds = set()
+        if sys.stderr is not None:
+            self.out_fds.add(sys.stderr)
 
     def emit(self, record):
         if record.levelno < self.log_level:
@@ -142,10 +144,12 @@ class Plugin(PluginBase):
                 self.log_handler.out_fds.add(fd)
             else:
                 fd = self.SPECIAL_FILES[file_path.lower()]()
-                self.log_handler.out_fds.add(fd)
-            if first is None:
+                if fd is not None:  # stderr doesn't exist when frozen
+                    self.log_handler.out_fds.add(fd)
+            if first is None and fd is not None:
                 first = fd
-        faulthandler.enable(file=first)
+        if first is not None:
+            faulthandler.enable(file=first)
 
     def _reload_config(self, *args, **kwargs):
         self._disable_logging()
