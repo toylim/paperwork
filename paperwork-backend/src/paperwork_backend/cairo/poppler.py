@@ -9,9 +9,7 @@ import paperwork_backend.model.pdf
 
 
 CAIRO_AVAILABLE = False
-GI_AVAILABLE = False
 GLIB_AVAILABLE = False
-POPPLER_AVAILABLE = False
 
 try:
     import cairo
@@ -20,28 +18,13 @@ except (ImportError, ValueError):
     pass
 
 try:
-    import gi
-    GI_AVAILABLE = True
+    from gi.repository import GObject
+    GLIB_AVAILABLE = True
 except (ImportError, ValueError):
-    pass
-
-if GI_AVAILABLE:
-    try:
-        from gi.repository import Gio
-        from gi.repository import GObject
-        GLIB_AVAILABLE = True
-    except (ImportError, ValueError):
-        # dummy so chkdeps can still be called
+    # dummy so chkdeps can still be called
+    class GObject(object):
         class GObject(object):
-            class GObject(object):
-                pass
-
-    try:
-        gi.require_version('Poppler', '0.18')
-        from gi.repository import Poppler
-        POPPLER_AVAILABLE = True
-    except (ImportError, ValueError):
-        pass
+            pass
 
 
 LOGGER = logging.getLogger(__name__)
@@ -81,9 +64,7 @@ class CairoRenderer(GObject.GObject):
             (doc, refcount) = POPPLER_DOCS[file_url]
         else:
             LOGGER.info("Opening PDF file {}".format(file_url))
-            gio_file = Gio.File.new_for_uri(file_url)
-            doc = Poppler.Document.new_from_gfile(gio_file, password=None)
-            self.core.call_all("on_objref_track", doc)
+            doc = self.core.call_success("poppler_open", file_url)
             refcount = 0
         POPPLER_DOCS[file_url] = (doc, refcount + 1)
 
@@ -237,17 +218,18 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def get_deps(self):
-        return []
+        return [
+            {
+                'interface': 'poppler',
+                'defaults': ['paperwork_backend.poppler.file'],
+            },
+        ]
 
     def chkdeps(self, out: dict):
         if not CAIRO_AVAILABLE:
             out['cairo'].update(openpaperwork_core.deps.CAIRO)
-        if not GI_AVAILABLE:
-            out['gi'] = openpaperwork_core.deps.GI
         if not GLIB_AVAILABLE:
             out['glib'].update(openpaperwork_core.deps.GLIB)
-        if not POPPLER_AVAILABLE:
-            out['poppler'] = openpaperwork_core.deps.POPPLER
 
     def _check_is_pdf(self, file_url):
         if file_url.lower().endswith(".pdf"):
@@ -268,8 +250,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         task = "url_to_img_size({})".format(file_url)
         self.core.call_all("on_perfcheck_start", task)
-        gio_file = Gio.File.new_for_uri(file_url)
-        doc = Poppler.Document.new_from_gfile(gio_file, password=None)
+        doc = self.core.call_success("poppler_open", file_url)
         page = doc.get_page(page_idx)
 
         base_size = page.get_size()
@@ -295,9 +276,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         self.core.call_all("on_perfcheck_start", task)
 
-        gio_file = Gio.File.new_for_uri(file_url)
-        doc = Poppler.Document.new_from_gfile(gio_file, password=None)
-        self.core.call_all("on_objref_track", doc)
+        doc = self.core.call_success("poppler_open", file_url)
         page = doc.get_page(page_idx)
 
         base_size = page.get_size()

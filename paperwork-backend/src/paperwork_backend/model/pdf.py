@@ -7,31 +7,6 @@ import openpaperwork_core
 import openpaperwork_core.deps
 
 
-GI_AVAILABLE = False
-GLIB_AVAILABLE = False
-POPPLER_AVAILABLE = False
-
-try:
-    import gi
-    GI_AVAILABLE = True
-except (ImportError, ValueError):
-    pass
-
-if GI_AVAILABLE:
-    try:
-        from gi.repository import Gio
-        GLIB_AVAILABLE = True
-    except (ImportError, ValueError):
-        pass
-
-    try:
-        gi.require_version('Poppler', '0.18')
-        from gi.repository import Poppler
-        POPPLER_AVAILABLE = True
-    except (ImportError, ValueError):
-        pass
-
-
 LOGGER = logging.getLogger(__name__)
 
 PDF_FILENAME = 'doc.pdf'
@@ -348,7 +323,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_interfaces(self):
         return [
-            "chkdeps",
             "doc_hash",
             "doc_pdf_import",
             "doc_pdf_url",
@@ -383,15 +357,11 @@ class Plugin(openpaperwork_core.PluginBase):
                     'paperwork_backend.pillow.pdf',
                 ],
             },
+            {
+                'interface': 'poppler',
+                'defaults': ['paperwork_backend.poppler.file'],
+            },
         ]
-
-    def chkdeps(self, out: dict):
-        if not GI_AVAILABLE:
-            out['gi'].update(openpaperwork_core.deps.GI)
-        if not GLIB_AVAILABLE:
-            out['glib'].update(openpaperwork_core.deps.GLIB)
-        if not POPPLER_AVAILABLE:
-            out['poppler'].update(openpaperwork_core.deps.POPPLER)
 
     def _get_pdf_url(self, doc_url):
         if doc_url.endswith(".pdf"):
@@ -413,9 +383,7 @@ class Plugin(openpaperwork_core.PluginBase):
         if pdf_url is None:
             return (None, None)
         LOGGER.info("Opening %s", pdf_url)
-        gio_file = Gio.File.new_for_uri(pdf_url)
-        doc = Poppler.Document.new_from_gfile(gio_file, password=None)
-        self.core.call_all("on_objref_track", doc)
+        doc = self.core.call_success("poppler_open", pdf_url)
         return (pdf_url, doc)
 
     def is_doc(self, doc_url):
@@ -689,12 +657,18 @@ class Plugin(openpaperwork_core.PluginBase):
 
         try:
             # check the PDF is readable
-            gio_file = Gio.File.new_for_uri(pdf_url)
-            Poppler.Document.new_from_gfile(gio_file, password=None)
-        except Exception:
-            LOGGER.error("Failed to read %s", pdf_url)
+            doc = self.core.call_success("poppler_open", pdf_url)
+            exc_info = None
+        except Exception as exc:
+            doc = None
+            exc_info = exc
+
+        if doc is None:
+            if exc_info is None:
+                LOGGER.error("Failed to read %s", pdf_url)
+            else:
+                LOGGER.error("Failed to read %s", pdf_url, exc_info=exc_info)
             self.core.call_success("fs_rm_rf", doc_url, trash=False)
-            raise
 
         return (doc_id, doc_url)
 
