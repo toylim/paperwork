@@ -282,8 +282,9 @@ class Core(object):
         Returns a Plugin instance based on the corresponding module name
         (assuming it has been loaded).
 
-        This method is here for unit testing only. You shouldn't use it in
-        production code.
+        You shouldn't use this function, except for:
+        - unit tests
+        - configuration (see cmd.plugins)
         """
         return self.plugins[module_name]
 

@@ -72,6 +72,13 @@ class Plugin(PluginBase):
             'reset', help=(_("Reset plugin list to default"))
         )
 
+        p = subparser.add_parser(
+            'show', help=(
+                _("Show information regarding a plugin (must be enabled)")
+            )
+        )
+        p.add_argument('plugin_name')
+
     def cmd_set_interactive(self, interactive):
         self.interactive = interactive
 
@@ -86,6 +93,8 @@ class Plugin(PluginBase):
             return self._cmd_remove_plugin(args.plugin_name)
         elif args.subcommand == "reset":
             return self._cmd_reset_plugins()
+        elif args.subcommand == "show":
+            return self._cmd_show_plugin(args.plugin_name)
         else:
             return None
 
@@ -128,3 +137,130 @@ class Plugin(PluginBase):
         if self.interactive:
             print("Plugin list reseted")
         return True
+
+    def _print_columns(self, columns):
+        out = ""
+        for (column_size, string) in columns:
+            out += "| "
+            out += ("{:" + str(column_size) + "}").format(string)
+        out = out[1:]
+        self.core.call_all("print", out + "\n")
+
+    def _get_printable_deps(
+            self, plugin_name,
+            parents_requirements=set(), depth=0, already_printed=set()):
+        header = "|   " * (depth - 1)
+
+        try:
+            plugin = self.core.get_by_name(plugin_name)
+        except KeyError:
+            # Plugin not loaded --> can't get the info
+            yield (
+                header + "|-- " + plugin_name,
+                "(not loaded)",
+            )
+            return
+
+        str_plugin_name = plugin_name
+        if plugin_name in already_printed:
+            str_plugin_name = plugin_name + " (dup)"
+
+        interfaces = plugin.get_interfaces()
+        interfaces = [i for i in interfaces if i in parents_requirements]
+        if len(interfaces) <= 0:
+            interfaces = [""]
+
+        for (idx, interface) in enumerate(interfaces):
+            if idx == 0:
+                yield (
+                    header + "|-- " + str_plugin_name
+                    if depth > 0 else
+                    str_plugin_name,
+                    interface,
+                )
+            else:
+                yield (
+                    header + "|   |",
+                    interface,
+                )
+
+        if plugin_name in already_printed:
+            return []
+        already_printed.add(plugin_name)
+
+        deps = plugin.get_deps()
+
+        requirements = {d['interface'] for d in deps}
+        requirements.update(parents_requirements)
+
+        plugin_names = set()
+        for (idx, dep) in enumerate(deps):
+            plugins = self.core.get_by_interface(dep['interface'])
+            plugin_names.update({plugin.__module__ for plugin in plugins})
+            plugin_names.update(dep['defaults'])
+
+        plugin_names = list(plugin_names)
+        plugin_names.sort()
+        for (idx, plugin_name) in enumerate(plugin_names):
+            for line in self._get_printable_deps(
+                    plugin_name, requirements, depth + 1, already_printed):
+                yield line
+
+    def _cmd_show_plugin(self, plugin_name):
+        try:
+            plugin = self.core.get_by_name(plugin_name)
+        except KeyError:
+            if self.interactive:
+                print(_("Plugin '%s' not enabled.") % plugin_name)
+            return {}
+
+        if self.interactive:
+            self.core.call_all(
+                "print", (_("Plugin '%s':") % plugin_name) + "\n"
+            )
+            self.core.call_all("print", "* " + _("Implements:") + "\n")
+            for interf in plugin.get_interfaces():
+                self.core.call_all("print", "  + " + interf + "\n")
+            self.core.call_all("print", "* " + _("Depends on:") + "\n")
+            for dep in plugin.get_deps():
+                self.core.call_all("print", "  + " + dep['interface'] + "\n")
+                for default in dep['defaults']:
+                    self.core.call_all(
+                        "print",
+                        "    - " + (_("suggested: %s") % default) + "\n"
+                    )
+
+            self.core.call_all("print", "\n")
+
+            deps = list(self._get_printable_deps(plugin_name))
+
+            column_headers = (
+                _("Plugin name"),
+                _("Interface"),
+            )
+
+            column_sizes = [len(c) + 1 for c in column_headers]
+            for d in deps:
+                for (idx, column_value) in enumerate(d):
+                    column_sizes[idx] = max(
+                        column_sizes[idx], len(column_value) + 1
+                    )
+            total = sum(column_sizes) + (2 * len(column_sizes))
+
+            self._print_columns((
+                (column_sizes[0], _("Plugin name")),
+                (column_sizes[1], _("Interface")),
+            ))
+            self.core.call_all("print", ("-" * total) + "\n")
+            for d in deps:
+                self._print_columns([
+                    (column_sizes[idx], column_value)
+                    for (idx, column_value) in enumerate(d)
+                ])
+
+            self.core.call_all("print_flush")
+
+        return {
+            'interface': plugin.get_interfaces(),
+            'deps': plugin.get_deps()
+        }
