@@ -72,12 +72,13 @@ class TestFileDescriptorLeak(unittest.TestCase):
         ctx = cairo.Context(surface)
         page.render(ctx)
 
+        new_fds = list(psutil.Process().open_files())
+        self.assertNotEqual(len(current_fds), len(new_fds))
+
+        page = None
         doc = None
         gc.collect()
         gc.collect()
 
         new_fds = list(psutil.Process().open_files())
-
-        # XXX(JFlesch):
-        # And here we got a very nice file description leak
-        # self.assertEqual(len(current_fds), len(new_fds))
+        self.assertEqual(len(current_fds), len(new_fds))

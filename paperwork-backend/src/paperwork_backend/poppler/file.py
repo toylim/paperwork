@@ -50,7 +50,8 @@ class Plugin(openpaperwork_core.PluginBase):
     def poppler_open(self, url):
         if os.name == "nt":
             # WORKAROUND(Jflesch):
-            # Disabled for now on Windows: It leaks a file descriptor.
+            # Disabled for now on Windows: There is a file descriptor leak
+            # somewhere.
             # While it causes little problems on GNU/Linux, on Windows it
             # prevents deleting documents.
             return None

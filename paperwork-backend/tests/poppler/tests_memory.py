@@ -51,9 +51,9 @@ class TestMemoryDescriptorLeak(unittest.TestCase):
 
         self.assertFalse(self.disposed)
 
+        page = None
         doc = None
         gc.collect()
         gc.collect()
 
-        # XXX(Jflesch): And here we have a very nice memory leak
-        # self.assertTrue(self.disposed)
+        self.assertTrue(self.disposed)
