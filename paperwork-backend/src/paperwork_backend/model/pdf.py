@@ -359,7 +359,7 @@ class Plugin(openpaperwork_core.PluginBase):
             },
             {
                 'interface': 'poppler',
-                'defaults': ['paperwork_backend.poppler.file'],
+                'defaults': ['paperwork_backend.poppler.memory'],
             },
         ]
 

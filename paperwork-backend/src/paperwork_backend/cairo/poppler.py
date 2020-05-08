@@ -221,7 +221,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return [
             {
                 'interface': 'poppler',
-                'defaults': ['paperwork_backend.poppler.file'],
+                'defaults': ['paperwork_backend.poppler.memory'],
             },
         ]
 
