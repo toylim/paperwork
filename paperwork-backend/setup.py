@@ -80,6 +80,7 @@ There is no GUI here. The GUI is
         "pycountry",
         "pyocr",
         "pypillowfight>=0.3.0",
+        "psutil",  # for tests
         "simplebayes",
         "Whoosh",
         # paperwork-shell chkdeps take care of all the dependencies that can't

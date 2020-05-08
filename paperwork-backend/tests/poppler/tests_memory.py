@@ -38,15 +38,6 @@ class TestMemoryDescriptorLeak(unittest.TestCase):
         gc.collect()
         gc.collect()
 
-        our_pid = os.getpid()
-        our_fds_dir = self.core.call_success(
-            "fs_safe", "/proc/{}/fd".format(our_pid)
-        )
-
-        current_fds = self.core.call_success("fs_listdir", our_fds_dir)
-        current_fds = list(current_fds)
-        current_fds.sort()
-
         doc = self.core.call_success("poppler_open", self.simple_doc_url)
         self.assertIsNotNone(doc)
 
@@ -63,11 +54,6 @@ class TestMemoryDescriptorLeak(unittest.TestCase):
         doc = None
         gc.collect()
         gc.collect()
-
-        new_fds = self.core.call_success("fs_listdir", our_fds_dir)
-        new_fds = list(new_fds)
-        new_fds.sort()
-        self.assertEqual(len(current_fds), len(new_fds))
 
         # XXX(Jflesch): And here we have a very nice memory leak
         # self.assertTrue(self.disposed)

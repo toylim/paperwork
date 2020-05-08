@@ -1,6 +1,7 @@
 import cairo
 import gc
 import os
+import psutil
 import unittest
 
 import openpaperwork_core
@@ -25,31 +26,20 @@ class TestFileDescriptorLeak(unittest.TestCase):
         gc.collect()
         gc.collect()
 
-        our_pid = os.getpid()
-        our_fds_dir = self.core.call_success(
-            "fs_safe", "/proc/{}/fd".format(our_pid)
-        )
-
-        current_fds = self.core.call_success("fs_listdir", our_fds_dir)
-        current_fds = list(current_fds)
-        current_fds.sort()
+        current_fds = list(psutil.Process().open_files())
 
         doc = self.core.call_success("poppler_open", self.simple_doc_url)
         self.assertIsNotNone(doc)
 
-        new_fds = self.core.call_success("fs_listdir", our_fds_dir)
-        new_fds = list(new_fds)
-        new_fds.sort()
-        self.assertNotEqual(current_fds, new_fds)
+        new_fds = list(psutil.Process().open_files())
+        self.assertNotEqual(len(current_fds), len(new_fds))
 
         doc = None
         gc.collect()
         gc.collect()
 
-        new_fds = self.core.call_success("fs_listdir", our_fds_dir)
-        new_fds = list(new_fds)
-        new_fds.sort()
-        self.assertEqual(current_fds, new_fds)
+        new_fds = list(psutil.Process().open_files())
+        self.assertEqual(len(current_fds), len(new_fds))
 
     @unittest.skipUnless(os.name == 'posix', reason="Linux only")
     def test_fd_leak2(self):
@@ -69,23 +59,14 @@ class TestFileDescriptorLeak(unittest.TestCase):
         gc.collect()
         gc.collect()
 
-        our_pid = os.getpid()
-        our_fds_dir = self.core.call_success(
-            "fs_safe", "/proc/{}/fd".format(our_pid)
-        )
-
-        current_fds = self.core.call_success("fs_listdir", our_fds_dir)
-        current_fds = list(current_fds)
-        current_fds.sort()
+        current_fds = list(psutil.Process().open_files())
 
         doc = self.core.call_success("poppler_open", self.simple_doc_url)
         self.assertIsNotNone(doc)
         page = doc.get_page(0)
 
-        new_fds = self.core.call_success("fs_listdir", our_fds_dir)
-        new_fds = list(new_fds)
-        new_fds.sort()
-        self.assertNotEqual(current_fds, new_fds)
+        new_fds = list(psutil.Process().open_files())
+        self.assertNotEqual(len(current_fds), len(new_fds))
 
         surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, 200, 200)
         ctx = cairo.Context(surface)
@@ -95,9 +76,7 @@ class TestFileDescriptorLeak(unittest.TestCase):
         gc.collect()
         gc.collect()
 
-        new_fds = self.core.call_success("fs_listdir", our_fds_dir)
-        new_fds = list(new_fds)
-        new_fds.sort()
+        new_fds = list(psutil.Process().open_files())
 
         # XXX(JFlesch):
         # And here we got a very nice file description leak
