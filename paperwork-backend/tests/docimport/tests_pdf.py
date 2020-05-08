@@ -68,6 +68,9 @@ class TestPdfImport(unittest.TestCase):
                         return self.hash_to_docid[h]
                     return None
 
+                def poppler_open(self, url):
+                    return "something"
+
         self.core._load_module("fake_module", FakeModule())
         self.core.load("paperwork_backend.model.fake")
         self.core.load("paperwork_backend.docimport.pdf")
@@ -233,6 +236,9 @@ class TestRecursivePdfImport(unittest.TestCase):
                     if h in self.hash_to_docid:
                         return self.hash_to_docid[h]
                     return None
+
+                def poppler_open(self, url):
+                    return "something"
 
         self.core._load_module("fake_module", FakeModule())
         self.core.load("paperwork_backend.model.fake")
