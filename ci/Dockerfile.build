@@ -33,7 +33,10 @@ RUN apt-get install -y -q \
 	wget \
 	zlib1g-dev
 
-# Paperwork data generation dependencies
+# Paperwork test dependencies
+RUN apt-get install python3-psutil
+
+# Paperwork data generation dependencies (internal doc)
 RUN apt-get install -y -q \
 	imagemagick \
 	rclone \
