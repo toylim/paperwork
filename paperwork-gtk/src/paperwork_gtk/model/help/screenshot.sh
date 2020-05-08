@@ -16,7 +16,6 @@ if ! [ -f ${TEST_DOCS} ] ; then
 		-O "${TEST_DOCS}"
 fi
 
-
 mkdir -p "${TMP_DIR}/config"
 mkdir -p "${TMP_DIR}/local"
 mkdir -p "${TMP_DIR}/papers"
@@ -34,7 +33,7 @@ paperwork-cli config put workdir str "file://${WORKDIR}"
 paperwork-cli sync
 
 echo "Making screenshots ..."
-paperwork-gtk config add_plugin openpaperwork_core.interactive
+paperwork-gtk plugins add openpaperwork_core.interactive
 
 paperwork-gtk << EOF
 wait()
