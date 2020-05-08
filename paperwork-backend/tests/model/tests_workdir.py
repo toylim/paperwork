@@ -89,3 +89,77 @@ class TestWorkdir(unittest.TestCase):
         )
         self.assertEqual(doc_id, "20190904_1327_10_2")
         self.assertEqual(doc_url, "file:///some_work_dir/20190904_1327_10_2")
+
+    def test_rename(self):
+        self.fs.fs = {
+            "some_work_dir": {
+                "20190904_1327_10": {
+                    "paper.1.jpg": "put_an_image_here",
+                    "paper.2.jpg": "put_an_image_here",
+                },
+                "20190910_1328_10_1": {
+                    "doc.pdf": "put_a_pdf_here",
+                },
+            },
+        }
+
+        self.core.call_all(
+            "doc_rename_by_url",
+            "file:///some_work_dir/20190910_1328_10_1",
+            "file:///some_work_dir/20200508_2002_25"
+        )
+
+        self.assertEquals(
+            self.fs.fs, {
+                "some_work_dir": {
+                    "20190904_1327_10": {
+                        "paper.1.jpg": "put_an_image_here",
+                        "paper.2.jpg": "put_an_image_here",
+                    },
+                    "20200508_2002_25": {
+                        "doc.pdf": "put_a_pdf_here",
+                    },
+                }
+            }
+        )
+
+    def test_rename(self):
+        self.fs.fs = {
+            "some_work_dir": {
+                "20190904_1327_10": {
+                    "paper.1.jpg": "put_an_image_here",
+                    "paper.2.jpg": "put_an_image_here",
+                },
+                "20190904_1327_10_1": {
+                    "paper.1.jpg": "put_an_image_here",
+                    "paper.2.jpg": "put_an_image_here",
+                },
+                "20190910_1328_10_1": {
+                    "doc.pdf": "put_a_pdf_here",
+                },
+            },
+        }
+
+        self.core.call_all(
+            "doc_rename_by_url",
+            "file:///some_work_dir/20190910_1328_10_1",
+            "file:///some_work_dir/20190904_1327_10"
+        )
+
+        self.assertEquals(
+            self.fs.fs, {
+                "some_work_dir": {
+                    "20190904_1327_10": {
+                        "paper.1.jpg": "put_an_image_here",
+                        "paper.2.jpg": "put_an_image_here",
+                    },
+                    "20190904_1327_10_1": {
+                        "paper.1.jpg": "put_an_image_here",
+                        "paper.2.jpg": "put_an_image_here",
+                    },
+                    "20190904_1327_10_2": {
+                        "doc.pdf": "put_a_pdf_here",
+                    },
+                }
+            }
+        )
