@@ -1,5 +1,3 @@
-import os
-
 import openpaperwork_core
 import openpaperwork_core.deps
 
@@ -25,6 +23,8 @@ if GI_AVAILABLE:
 
 
 class Plugin(openpaperwork_core.PluginBase):
+    PRIORITY = -100
+
     def get_interfaces(self):
         return [
             'chkdeps',
@@ -33,6 +33,10 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_deps(self):
         return [
+            {
+                'interface': 'fs',
+                'defaults': ['openpaperwork_gtk.fs.gio'],
+            },
             {
                 'interface': 'mainloop',
                 'defaults': ['openpaperwork_gtk.mainloop.glib'],
@@ -43,24 +47,20 @@ class Plugin(openpaperwork_core.PluginBase):
         if not GI_AVAILABLE:
             out['gi'] = openpaperwork_core.deps.GI
         if not GLIB_AVAILABLE:
-            out['glib'].update(openpaperwork_core.deps.GLIB)
+            out['glib'] = openpaperwork_core.deps.GLIB
         if not POPPLER_AVAILABLE:
             out['poppler'] = openpaperwork_core.deps.POPPLER
 
     def poppler_open(self, url):
-        if os.name == "nt":
-            # WORKAROUND(Jflesch):
-            # Disabled for now on Windows: It leaks a file descriptor.
-            # While it causes little problems on GNU/Linux, on Windows it
-            # prevents deleting documents.
-            return None
-
-        if not url.startswith("file://"):
-            return None
-        gio_file = Gio.File.new_for_uri(url)
+        # Poppler.Document.new_from_data() expects .. a string
+        # Poppler.Document.new_from_bytes() only exist starting with 0.82
+        with self.core.call_success("fs_open", url, "rb") as fd:
+            data = fd.read()
+        ldata = len(data)
+        data = Gio.MemoryInputStream.new_from_data(data)
+        self.core.call_all("on_objref_track", data)
         doc = self.core.call_success(
-            "mainloop_execute", Poppler.Document.new_from_gfile,
-            gio_file, password=None
+            "mainloop_execute", Poppler.Document.new_from_stream,
+            data, ldata, password=None
         )
-        self.core.call_all("on_objref_track", doc)
         return doc

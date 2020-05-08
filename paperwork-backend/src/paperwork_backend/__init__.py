@@ -82,6 +82,7 @@ DEFAULT_PLUGINS = [
     'paperwork_backend.pillow.pdf',
     'paperwork_backend.pillow.util',
     'paperwork_backend.poppler.file',
+    'paperwork_backend.poppler.memory',
     'paperwork_backend.pyocr',
     'paperwork_backend.sync',
 ]
