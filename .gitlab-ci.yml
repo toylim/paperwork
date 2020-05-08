@@ -56,7 +56,6 @@ generate_data:
 
 
 doc_devel:
-  image: registry.gitlab.gnome.org/world/openpaperwork/paperwork/build_doc
   stage: tests_data_doc
   only:
     - branches@World/OpenPaperwork/paperwork
