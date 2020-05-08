@@ -8,6 +8,7 @@ def _(s):
 DEFAULT_CONFIG_PLUGINS = [
     'openpaperwork_core.archives',
     'openpaperwork_core.cmd.config',
+    'openpaperwork_core.cmd.plugins',
     'openpaperwork_core.config',
     'openpaperwork_core.config.backend.configparser',
     'openpaperwork_core.frozen',

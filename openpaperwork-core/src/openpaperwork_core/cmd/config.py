@@ -46,8 +46,6 @@ class Plugin(PluginBase):
         ]
 
     def cmd_complete_argparse(self, parser):
-        application = self.core.call_success("config_get_plugin_list_name")
-
         config_parser = parser.add_parser(
             'config', help=_("Manage Paperwork configuration")
         )
@@ -78,30 +76,6 @@ class Plugin(PluginBase):
             )
         )
 
-        subparser.add_parser(
-            'list_plugins', help=(
-                _("Show plugins enabled for %s") % application
-            )
-        )
-
-        p = subparser.add_parser(
-            'add_plugin', help=(
-                _("Add plugin in %s") % application
-            )
-        )
-        p.add_argument('plugin_name')
-
-        p = subparser.add_parser(
-            'remove_plugin', help=(
-                _("Remove plugin from %s") % application
-            )
-        )
-        p.add_argument('plugin_name')
-
-        subparser.add_parser(
-            'reset_plugins', help=(_("Reset plugin list to default"))
-        )
-
     def cmd_set_interactive(self, interactive):
         self.interactive = interactive
 
@@ -116,14 +90,6 @@ class Plugin(PluginBase):
             return self._cmd_show()
         elif args.subcommand == "list_types":
             return self._cmd_list_types()
-        elif args.subcommand == "list_plugins":
-            return self._cmd_list_plugins()
-        elif args.subcommand == "add_plugin":
-            return self._cmd_add_plugin(args.plugin_name)
-        elif args.subcommand == "remove_plugin":
-            return self._cmd_remove_plugin(args.plugin_name)
-        elif args.subcommand == "reset_plugins":
-            return self._cmd_reset_plugins()
         else:
             return None
 
@@ -164,43 +130,3 @@ class Plugin(PluginBase):
             self.core.call_all("print", str(r) + "\n")
             self.core.call_all("print_flush")
         return r
-
-    def _cmd_add_plugin(self, plugin_name):
-        self.core.call_all(
-            "config_add_plugin", plugin_name
-        )
-        self.core.call_all("config_save")
-        if self.interactive:
-            self.core.call_all(
-                "print", _("Plugin {} added").format(plugin_name) + "\n"
-            )
-            self.core.call_all("print_flush")
-        return True
-
-    def _cmd_remove_plugin(self, plugin_name):
-        self.core.call_all(
-            "config_remove_plugin", plugin_name
-        )
-        self.core.call_all("config_save")
-        if self.interactive:
-            self.core.call_all(
-                "print", _("Plugin {} removed").format(plugin_name) + "\n"
-            )
-            self.core.call_all("print_flush")
-        return True
-
-    def _cmd_list_plugins(self):
-        plugins = self.core.call_success("config_list_plugins")
-        if self.interactive:
-            self.core.call_all("print", "  " + _("Active plugins:") + "\n")
-            for plugin in plugins:
-                self.core.call_all("print", plugin + "\n")
-            self.core.call_all("print_flush")
-        return list(plugins)
-
-    def _cmd_reset_plugins(self):
-        self.core.call_success("config_reset_plugins")
-        self.core.call_all("config_save")
-        if self.interactive:
-            print("Plugin list reseted")
-        return True
