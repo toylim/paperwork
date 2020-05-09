@@ -291,6 +291,14 @@ class Core(object):
     def get_by_interface(self, interface_name):
         return self.interfaces[interface_name]
 
+    def get_plugins(self):
+        """
+        You shouldn't use this function, except for:
+        - unit tests
+        - configuration (see cmd.plugins)
+        """
+        return dict(self.plugins)
+
     def _check_call_limit(self, callback_name):
         if self.count_limit_per_second <= 0:
             return
@@ -476,3 +484,18 @@ class Core(object):
             if r is not None:
                 return r
         return None
+
+    def get_deps(self, plugin_name):
+        plugin = self.plugins[plugin_name]
+        for dep in plugin.get_deps():
+            yield {
+                'interface': dep['interface'],
+                'actives': {
+                    x.__module__
+                    for x in self.get_by_interface(dep['interface'])
+                },
+                'defaults': set(dep['defaults']),
+            }
+
+    def get_active_plugins(self):
+        return self.plugins.keys()

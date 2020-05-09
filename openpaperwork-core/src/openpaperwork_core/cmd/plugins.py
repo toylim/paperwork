@@ -60,6 +60,10 @@ class Plugin(PluginBase):
             )
         )
         p.add_argument('plugin_name')
+        p.add_argument(
+            '--no_auto', '-n', action="store_true",
+            help=_("Do not correct dependencies automatically")
+        )
 
         p = subparser.add_parser(
             'remove', help=(
@@ -67,6 +71,10 @@ class Plugin(PluginBase):
             )
         )
         p.add_argument('plugin_name')
+        p.add_argument(
+            '--no_auto', '-n', action="store_true",
+            help=_("Do not correct dependencies automatically")
+        )
 
         subparser.add_parser(
             'reset', help=(_("Reset plugin list to default"))
@@ -88,9 +96,9 @@ class Plugin(PluginBase):
         elif args.subcommand == "list":
             return self._cmd_list_plugins()
         elif args.subcommand == "add":
-            return self._cmd_add_plugin(args.plugin_name)
+            return self._cmd_add_plugin(args.plugin_name, not args.no_auto)
         elif args.subcommand == "remove":
-            return self._cmd_remove_plugin(args.plugin_name)
+            return self._cmd_remove_plugin(args.plugin_name, not args.no_auto)
         elif args.subcommand == "reset":
             return self._cmd_reset_plugins()
         elif args.subcommand == "show":
@@ -98,7 +106,7 @@ class Plugin(PluginBase):
         else:
             return None
 
-    def _cmd_add_plugin(self, plugin_name):
+    def _cmd_add_plugin(self, plugin_name, auto=True):
         self.core.call_all(
             "config_add_plugin", plugin_name
         )
@@ -110,16 +118,43 @@ class Plugin(PluginBase):
             self.core.call_all("print_flush")
         return True
 
-    def _cmd_remove_plugin(self, plugin_name):
-        self.core.call_all(
-            "config_remove_plugin", plugin_name
-        )
-        self.core.call_all("config_save")
+    def _cmd_remove_plugin(
+            self, plugin_name, auto=True, removed=set(), save=True):
+        removed.add(plugin_name)
+
+        if auto:
+            # look for plugins depending on this one
+            # if they have no other plugin satisfying their dependency,
+            # remove them too.
+            for other_plugin in self.core.get_active_plugins():
+                if other_plugin in removed:
+                    continue
+                deps = self.core.get_deps(other_plugin)
+                for dep in deps:
+                    actives = dep['actives']
+                    actives = actives.difference(removed)
+                    if len(actives) <= 0:
+                        if self.interactive:
+                            print(
+                                _(
+                                    "Removing plugin '{plugin_name}' due to"
+                                    " missing dependency '{interface}'"
+                                ).format(
+                                    plugin_name=other_plugin,
+                                    interface=dep['interface']
+                                )
+                            )
+                        self._cmd_remove_plugin(
+                            other_plugin, auto=auto, removed=removed,
+                            save=False
+                        )
+                        break
+
+        self.core.call_all("config_remove_plugin", plugin_name)
+        if save:
+            self.core.call_all("config_save")
         if self.interactive:
-            self.core.call_all(
-                "print", _("Plugin {} removed").format(plugin_name) + "\n"
-            )
-            self.core.call_all("print_flush")
+            print(_("Plugin {} removed").format(plugin_name))
         return True
 
     def _cmd_list_plugins(self):
