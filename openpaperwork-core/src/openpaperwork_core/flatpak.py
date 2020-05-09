@@ -22,11 +22,11 @@ class Plugin(PluginBase):
         return [
             {
                 'interface': 'fs',
-                'plugins': ['openpaperwork_core.fs.python'],
+                'defaults': ['openpaperwork_core.fs.python'],
             },
             {
                 'interface': 'paths',
-                'plugins': ['openpaperwork_core.paths.xdg'],
+                'defaults': ['openpaperwork_core.paths.xdg'],
             },
         ]
 
