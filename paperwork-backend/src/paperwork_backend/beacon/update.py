@@ -11,7 +11,6 @@ from .. import _version
 
 LOGGER = logging.getLogger(__name__)
 
-UPDATE_SERVER = ("https", "openpaper.work")
 UPDATE_CHECK_INTERVAL = datetime.timedelta(days=7)
 UPDATE_PATH = "/beacon/latest"
 
@@ -99,7 +98,7 @@ class Plugin(openpaperwork_core.PluginBase):
         super().init(core)
         self.periodic = PeriodicTask(
             "update",
-            datetime.timedelta(days=7),
+            UPDATE_CHECK_INTERVAL,
             self.update_check,
             self.update_compare
         )

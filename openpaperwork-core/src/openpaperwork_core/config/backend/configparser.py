@@ -33,7 +33,7 @@ class ConfigBool(object):
 class ConfigDate(object):
     DATE_FORMAT = "%Y-%m-%d"
 
-    def __init__(self, value=datetime.datetime(year=1970, month=1, day=1)):
+    def __init__(self, value=datetime.datetime(year=1971, month=1, day=1)):
         if isinstance(value, str):
             self.value = (
                 datetime.datetime

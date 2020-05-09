@@ -1,3 +1,8 @@
+"""
+paperwork_backend.beacon contains everything related to the communication
+with the website https://openpaper.work/
+"""
+
 import datetime
 import logging
 
@@ -29,6 +34,10 @@ class PeriodicTask(object):
         last_run = core.call_success(
             "config_get", self.config_section_name + "_last_run"
         )
+        if hasattr(last_run, 'value'):
+            # ConfigDate object from
+            # openpaperwork_core.config.backend.configparser
+            last_run = last_run.value
         LOGGER.info(
             "[%s] Last run: %s ; Now: %s",
             self.config_section_name, last_run, now
@@ -49,3 +58,7 @@ class PeriodicTask(object):
         self.periodic_callback()
 
         LOGGER.info("[%s] Updating last run date", self.config_section_name)
+        core.call_all(
+            "config_put", self.config_section_name + "_last_run", now
+        )
+        core.call_all("config_save")
