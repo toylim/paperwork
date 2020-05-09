@@ -15,15 +15,6 @@ try:
 except (ImportError, ValueError):
     pass
 
-try:
-    NOTIFY_AVAILABLE = False
-    if GI_AVAILABLE:
-        gi.require_version('Notify', '0.7')
-        from gi.repository import Notify
-        NOTIFY_AVAILABLE = True
-except (ImportError, ValueError):
-    pass
-
 import openpaperwork_core
 import openpaperwork_core.promise
 import openpaperwork_gtk.deps
@@ -42,10 +33,6 @@ class Plugin(openpaperwork_core.PluginBase):
         self.widget_tree = None
         self.windows = []
         self.active_doc_id = None
-
-        # WORKAROUND(Jflesch): Keep a reference on the notification.
-        # Otherwise we never get the action from the user.
-        self.notification_ref = None
 
     def get_interfaces(self):
         return [
@@ -78,6 +65,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 ],
             },
             {
+                'interface': 'notifications',
+                'defaults': ['paperwork_gtk.notify'],
+            },
+            {
                 'interface': 'transaction_manager',
                 'defaults': ['paperwork_backend.sync'],
             },
@@ -85,8 +76,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def init(self, core):
         super().init(core)
-        if NOTIFY_AVAILABLE:
-            Notify.init("Paperwork")
         self.core.call_all(
             "mainloop_schedule", self.core.call_all,
             "pageadd_sources_refresh"
@@ -95,8 +84,6 @@ class Plugin(openpaperwork_core.PluginBase):
     def chkdeps(self, out: dict):
         if not GTK_AVAILABLE:
             out['gtk'].update(openpaperwork_gtk.deps.GTK)
-        if not NOTIFY_AVAILABLE:
-            out['notify'].update(openpaperwork_gtk.deps.NOTIFY)
 
     def pageadd_get_sources(self, out: list):
         widget_tree = self.core.call_success(
@@ -246,23 +233,19 @@ class Plugin(openpaperwork_core.PluginBase):
             msg += ("- {}: {}\n".format(k, v))
         msg = msg.strip()
 
-        if "actions" in Notify.get_server_caps():
-            notification = Notify.Notification.new(
-                _("Import successful"), msg, "document-new"
-            )
-            notification.add_action(
+        notification = self.core.call_success(
+            "get_notification_builder", _("Import successful"),
+            need_actions=True
+        )
+        if notification is not None:
+            notification.set_message(
+                msg
+            ).set_icon(
+                "document-new"
+            ).add_action(
                 "delete", _("Delete imported files"),
                 self._delete_files, file_import.imported_files
-            )
-            self.notification_ref = notification
-            notification.show()
-        else:
-            # TODO(Jflesch): fall back on classical ugly popup
-            # msg += "\n"
-            # msg += _(
-            #     "Would you like to move the original file(s) to trash?\n"
-            # )
-            pass
+            ).show()
 
     def _show_result(self, file_import):
         doc_id = None
@@ -320,13 +303,14 @@ class Plugin(openpaperwork_core.PluginBase):
         promise = promise.then(self._show_result, file_import)
         self.core.call_success("transaction_schedule", promise)
 
-    def _delete_files(self, notification, action, file_uris):
+    def _delete_files(self, file_uris):
         LOGGER.info("Moving imported file(s) to trash ...")
         for file_uri in file_uris:
             LOGGER.info("Moving %s to trash ...", file_uri)
             self.core.call_all("fs_unlink", file_uri)
-        notification = Notify.Notification.new(
-            _("Imported file(s) deleted"),
-            None, "edit-delete"
+        notification = self.core.call_success(
+            "get_notification_builder", _("Imported file(s) deleted"),
         )
-        notification.show()
+        if notification is None:
+            return
+        notification.set_icon("edit-delete").show()

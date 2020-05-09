@@ -97,6 +97,7 @@ DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'paperwork_gtk.model.help',
     'paperwork_gtk.model.help.intro',
     'paperwork_gtk.new_doc',
+    'paperwork_gtk.notifications.notify',
     'paperwork_gtk.print',
     'paperwork_gtk.settings',
     'paperwork_gtk.settings.ocr.settings',
