@@ -107,4 +107,4 @@ class Plugin(openpaperwork_core.PluginBase):
         self.periodic.register_config(core)
 
         if self.core.call_success("config_get", "check_for_update"):
-            self.periodic.do(core)
+            self.core.call_all("mainloop_schedule", self.periodic.do, core)

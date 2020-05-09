@@ -1,6 +1,9 @@
 """
-module 'http' contains all the code to communicate with
-https://openpaper.work/
+module 'http' contains all the code to communicate using HTTP+JSON with
+https://openpaper.work/:
+- update notification
+- anonymous statistics
+- etc
 """
 import base64
 import http

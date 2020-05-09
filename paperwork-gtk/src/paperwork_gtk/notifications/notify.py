@@ -20,6 +20,7 @@ class NotifyBuilder(object):
         self.title = title
         self.msg = None
         self.icon = None
+        self.pixbuf = None
         self.actions = []
         self.notification = None
 
@@ -35,6 +36,10 @@ class NotifyBuilder(object):
         self.actions.append((action_id, label, callback, args, kwargs))
         return self
 
+    def set_image_from_pixbuf(self, pixbuf):
+        self.pixbuf = pixbuf
+        return self
+
     @staticmethod
     def _call_callback(notification, action, args):
         (callback, args, kwargs) = args
@@ -44,6 +49,8 @@ class NotifyBuilder(object):
         self.notification = Notify.Notification.new(
             self.title, self.msg, self.icon
         )
+        if self.pixbuf is not None:
+            self.notification.set_image_from_pixbuf(self.pixbuf)
         for (action_id, label, callback, args, kwargs) in self.actions:
             self.notification.add_action(
                 action_id, label,
