@@ -47,7 +47,7 @@ data: $(ALL_COMPONENTS:%=%_data)
 upload_data: data
 	tar -cvzf data.tar.gz \
 		paperwork-gtk/src/paperwork_gtk/model/help/out/*.pdf \
-		paperwork-gtk/src/paperwork_gtk/icon/*.png \
+		paperwork-gtk/src/paperwork_gtk/icon/out/*.png \
 	ci/deliver_data.sh data.tar.gz
 
 data.tar.gz:
