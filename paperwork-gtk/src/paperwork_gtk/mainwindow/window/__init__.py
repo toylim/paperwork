@@ -37,9 +37,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.components = collections.defaultdict(dict)
         self.navigation_stacks = {'left': [], 'right': []}
 
-        self.default = collections.defaultdict(
-            lambda: (-1, "missing-component")
-        )
+        self.defaults = collections.defaultdict(list)  # keep track of the prio
         self.mainwindow = None
         self._mainwindow_size = None
 
@@ -151,10 +149,8 @@ class Plugin(openpaperwork_core.PluginBase):
             out['gtk'].update(openpaperwork_gtk.deps.GTK)
 
     def on_initialized(self):
-        for (side_name, side_default) in self.default.items():
-            if side_default[0] < 0:
-                continue
-            self.mainwindow_show(side_name, side_default[1])
+        for side in self.defaults.keys():
+            self.mainwindow_show_default(side)
 
         self.widget_tree.get_object("mainwindow").set_visible(True)
         self.core.call_all("on_gtk_window_opened", self.mainwindow)
@@ -192,8 +188,8 @@ class Plugin(openpaperwork_core.PluginBase):
             if widget is None:
                 continue
             stacks[position].add_named(widget, name)
-        if prio > self.default[side][0]:
-            self.default[side] = (prio, name)
+        self.defaults[side].append((prio, name))
+        self.defaults[side].sort(reverse=True)
         return True
 
     def mainwindow_show(self, side: str, name: str):
@@ -226,8 +222,20 @@ class Plugin(openpaperwork_core.PluginBase):
         return True
 
     def mainwindow_show_default(self, side: str):
-        self.navigation_stacks = {'left': [], 'right': []}
-        self.core.call_all("mainwindow_show", side, self.default[side][1])
+        # the default component may be incomplete (for instance, it may
+        # provide a header, but not a body). So we update the navigation
+        # stack to make it the behaviour consistent:
+        # We ensure it contains at least one element with all components
+        # We respect priorities
+
+        for (prio, name) in self.defaults[side]:
+            self.navigation_stacks[side].append(name)
+            if None not in self.components[side][name].values():
+                break
+        first = self.navigation_stacks[side].pop(0)
+        self.navigation_stacks[side].reverse()
+
+        self.core.call_all("mainwindow_show", side, first)
 
     def mainwindow_back(self, side: str):
         navigation_stack = self.navigation_stacks[side][:-1]
