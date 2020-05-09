@@ -91,9 +91,8 @@ class GtkPageEditorUI(paperwork_backend.pageedit.AbstractPageEditorUI):
             img = modifier_widget_tree.get_object("pageeditor_modifier_img")
             icon = MODIFIER_ICONS[modifier['id']]
             if isinstance(icon, tuple):
-                icon = self.core.call_success("resources_get_file", *icon)
-                icon = self.core.call_success("fs_unsafe", icon)
-                img.set_from_file(icon)
+                icon = self.core.call_success("gtk_load_pixbuf", *icon)
+                img.set_from_pixbuf(icon)
             else:
                 img.set_from_icon_name(icon, Gtk.IconSize.LARGE_TOOLBAR)
 

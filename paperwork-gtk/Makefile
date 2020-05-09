@@ -34,6 +34,7 @@ upload_doc:
 
 data:
 	$(MAKE) -C src/paperwork_gtk/model/help data
+	$(MAKE) -C src/paperwork_gtk/icon data
 
 check:
 	flake8 --exclude=_version.py src/paperwork_gtk
@@ -79,6 +80,7 @@ clean:
 	rm -f ${VERSION_FILE}
 	rm -rf build dist src/*.egg-info
 	$(MAKE) -C src/paperwork_gtk/model/help clean
+	$(MAKE) -C src/paperwork_gtk/icon clean
 
 # PIP_ARGS is used by Flatpak build
 install_py: ${VERSION_FILE} l10n_compile

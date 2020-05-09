@@ -1,6 +1,13 @@
 import logging
 import re
 
+try:
+    import gi
+    gi.require_version('GdkPixbuf', '2.0')
+    from gi.repository import GdkPixbuf
+    GDK_PIXBUF_AVAILABLE = True
+except (ValueError, ImportError):
+    GDK_PIXBUF_AVAILABLE = False
 
 try:
     import gi
@@ -11,7 +18,6 @@ try:
     GTK_AVAILABLE = True
 except (ImportError, ValueError):
     GTK_AVAILABLE = False
-
 
 import openpaperwork_core
 
@@ -48,6 +54,8 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def chkdeps(self, out: dict):
+        if not GDK_PIXBUF_AVAILABLE:
+            out['gdk_pixbuf'].update(deps.GDK_PIXBUF)
         if not GTK_AVAILABLE:
             out['gtk'].update(deps.GTK)
 
@@ -149,6 +157,13 @@ class Plugin(openpaperwork_core.PluginBase):
             raise
 
         return True
+
+    def gtk_load_pixbuf(self, pkg, filename):
+        filepath = self.core.call_success("resources_get_file", pkg, filename)
+        if filepath is None:
+            return None
+        filepath = self.core.call_success("fs_unsafe", filepath)
+        return GdkPixbuf.Pixbuf.new_from_file(filepath)
 
     def gtk_fix_headerbar_buttons(self, headerbar):
         settings = Gtk.Settings.get_default()
