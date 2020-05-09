@@ -89,5 +89,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def pillow_to_url(self, img, file_url, format='JPEG', quality=0.75):
+        if format != 'PNG':
+            img = img.convert("RGB")
         with self.core.call_success("fs_open", file_url, mode='wb') as fd:
             return img.save(fd, format=format, quality=int(quality * 100))
