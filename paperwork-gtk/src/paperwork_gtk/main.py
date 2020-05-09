@@ -109,6 +109,7 @@ DEFAULT_GUI_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'paperwork_gtk.settings.scanner.settings',
     'paperwork_gtk.settings.stats',
     'paperwork_gtk.settings.storage',
+    'paperwork_gtk.settings.update',
     'paperwork_gtk.widget.flowlayout',
     'paperwork_gtk.widget.label',
 ]
