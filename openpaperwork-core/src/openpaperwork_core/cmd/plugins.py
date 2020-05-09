@@ -13,6 +13,7 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with Paperwork.  If not, see <http://www.gnu.org/licenses/>.
+import importlib
 import logging
 
 from .. import (_, PluginBase)
@@ -77,7 +78,10 @@ class Plugin(PluginBase):
         )
 
         subparser.add_parser(
-            'reset', help=(_("Reset plugin list to default"))
+            'reset', help=(_(
+                "Clean up your mess by reseting the plugin list to its"
+                " default value"
+            ))
         )
 
         p = subparser.add_parser(
@@ -106,16 +110,47 @@ class Plugin(PluginBase):
         else:
             return None
 
-    def _cmd_add_plugin(self, plugin_name, auto=True):
-        self.core.call_all(
-            "config_add_plugin", plugin_name
-        )
-        self.core.call_all("config_save")
+    def _cmd_add_plugin(self, plugin_name, auto=True, added=set(), save=True):
+        added.add(plugin_name)
+
+        if auto:
+            # Load the plugin, and check that all its dependencies are
+            # satisfied.
+            # Do not use the core to load it, otherwise we won't be able
+            # to use 'call_success()' or 'call_all().
+            module = importlib.import_module(plugin_name)
+            plugin = module.Plugin()
+            deps = plugin.get_deps()
+            for dep in deps:
+                try:
+                    actives = self.core.get_by_interface(dep['interface'])
+                    if len(actives) > 0:
+                        continue
+                except KeyError:
+                    pass
+                for default in dep['defaults']:
+                    if default in added:
+                        continue
+                    print(
+                        _(
+                            "Adding plugin '{plugin_name}' to satisfy"
+                            " dependency of '{other_plugin_name}' on interface"
+                            " '{interface}'"
+                        ).format(
+                            plugin_name=default,
+                            other_plugin_name=plugin_name,
+                            interface=dep['interface']
+                        )
+                    )
+                    self._cmd_add_plugin(
+                        default, auto=True, added=added, save=False
+                    )
+
+        self.core.call_all("config_add_plugin", plugin_name)
+        if save:
+            self.core.call_all("config_save")
         if self.interactive:
-            self.core.call_all(
-                "print", _("Plugin {} added").format(plugin_name) + "\n"
-            )
-            self.core.call_all("print_flush")
+            print(_("Plugin {} added").format(plugin_name))
         return True
 
     def _cmd_remove_plugin(
