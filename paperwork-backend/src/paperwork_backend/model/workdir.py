@@ -161,3 +161,4 @@ class Plugin(openpaperwork_core.PluginBase):
             idx += 1
             dst_url = "{}_{}".format(dst_doc_url, idx)
         self.core.call_all("fs_rename", src_doc_url, dst_url)
+        return dst_url
