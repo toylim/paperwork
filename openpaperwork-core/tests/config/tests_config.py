@@ -82,8 +82,9 @@ class TestConfig(unittest.TestCase):
         self.core.call_all("config_register", "workdir", setting)
 
     def test_config_load(self):
+        self.core.call_all('config_load')
         self.core.call_all(
-            'config_load', 'paperwork-gtk', 'some_plugin_list_name',
+            'config_load_plugins', 'some_plugin_list_name',
             default_plugins=['pouet']
         )
         self.assertEqual(
@@ -91,7 +92,7 @@ class TestConfig(unittest.TestCase):
                 'openpaperwork_core.config.backend.configparser'
             ).calls,
             [
-                ('config_backend_load', ('paperwork-gtk',), {}),
+                ('config_backend_load', ('openpaperwork_core',), {}),
                 (
                     'config_backend_load_plugins',
                     ('some_plugin_list_name', ['pouet'],), {}

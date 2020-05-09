@@ -69,7 +69,6 @@ class Plugin(PluginBase):
         # applicatiom here is a bit more specific: paperwork-gtk,
         # paperwork-shell, etc.
         # It is used to known which plugin list must be loaded
-        self.application = None
         self.plugin_list_name = None
         self.observers = collections.defaultdict(set)
 
@@ -78,6 +77,10 @@ class Plugin(PluginBase):
 
     def get_deps(self):
         return [
+            {
+                'interface': 'app',
+                'defaults': ['openpaperwork_core.app'],
+            },
             {
                 'interface': 'config_backend',
                 'defaults': ['openpaperwork_core.config.backend.configparser'],
@@ -88,12 +91,9 @@ class Plugin(PluginBase):
         self.core = core
         self.settings = {}
 
-    def config_load(self, application, plugin_list_name, default_plugins=[]):
-        LOGGER.info(
-            "Loading configuration for %s:%s", application, plugin_list_name
-        )
-        self.application = application
-        self.plugin_list_name = plugin_list_name
+    def config_load(self):
+        application = self.core.call_success("app_get_fs_name")
+        LOGGER.info("Loading configuration for %s", application)
 
         self.values = {}
         self.core.call_all('config_backend_load', application)
@@ -101,12 +101,12 @@ class Plugin(PluginBase):
             for observer in observers:
                 observer()
 
+    def config_load_plugins(self, plugin_list_name, default_plugins=[]):
+        LOGGER.info("Loading plugins for '%s'", plugin_list_name)
+        self.plugin_list_name = plugin_list_name
         self.core.call_all(
             'config_backend_load_plugins', plugin_list_name, default_plugins
         )
-
-    def config_get_application_name(self):
-        return self.application
 
     def config_get_plugin_list_name(self):
         return self.plugin_list_name

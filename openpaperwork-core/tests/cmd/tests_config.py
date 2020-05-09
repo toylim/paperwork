@@ -76,7 +76,8 @@ class TestConfig(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core(allow_unsatisfied=True)
         self.core._load_module(
-            "openpaperwork_core.config.backend.configparser", MockConfigBackendModule()
+            "openpaperwork_core.config.backend.configparser",
+            MockConfigBackendModule()
         )
         self.core.load("openpaperwork_core.cmd.config")
         self.core.init()
@@ -148,7 +149,6 @@ class TestConfig(unittest.TestCase):
             'config_backend_load': [None],
             'config_backend_load_plugins': [None],
             'config_backend_add_plugin': [None],
-            'config_backend_save': [None],
             'config_backend_list_active_plugins': [
                 ['plugin_a', 'plugin_b', 'plugin_c'],
                 ['plugin_a', 'plugin_c']
@@ -157,9 +157,9 @@ class TestConfig(unittest.TestCase):
             'config_backend_save': [None],
         }
 
-        self.core.call_all(  # so it gets the application name
-            'config_load', 'paperwork-gtk', 'paperwork-shell',
-            default_plugins=['pouet']
+        self.core.call_all('config_load')
+        self.core.call_all(
+            'config_load_plugins', 'paperwork-shell', default_plugins=['pouet']
         )
 
         parser = argparse.ArgumentParser()
@@ -223,7 +223,9 @@ class TestConfig(unittest.TestCase):
         r = self.core.call_success("cmd_run", args)
         self.assertTrue(r)
         self.assertEqual(
-            self.core.get_by_name('openpaperwork_core.config.backend.configparser').calls,
+            self.core.get_by_name(
+                'openpaperwork_core.config.backend.configparser'
+            ).calls,
             [
                 ('config_backend_load', ('paperwork-gtk',), {}),
                 (
@@ -251,7 +253,9 @@ class TestConfig(unittest.TestCase):
         r = self.core.call_success("cmd_run", args)
         self.assertEqual(sorted(r), ['plugin_a', 'plugin_c'])
         self.assertEqual(
-            self.core.get_by_name('openpaperwork_core.config.backend.configparser').calls,
+            self.core.get_by_name(
+                'openpaperwork_core.config.backend.configparser'
+            ).calls,
             [
                 ('config_backend_load', ('paperwork-gtk',), {}),
                 (

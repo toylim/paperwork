@@ -31,9 +31,10 @@ def get_core():
     core.init()
     core.call_all("init_logs", "docgenerator", 'debug')
 
+    core.call_all("config_load")
     core.call_all(
-        "config_load", "paperwork2", "docgenerator",
-        paperwork_shell.main.DEFAULT_CLI_PLUGINS
+        "config_load_plugins",
+        "docgenerator", paperwork_shell.main.DEFAULT_CLI_PLUGINS
     )
     return core
 

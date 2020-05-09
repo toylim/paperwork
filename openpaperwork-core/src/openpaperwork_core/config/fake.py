@@ -39,7 +39,10 @@ class Plugin(PluginBase):
     def get_interfaces(self):
         return ['config']
 
-    def config_load(self, application, plugin_list_name, default_plugins=[]):
+    def config_load(self):
+        pass
+
+    def config_load_plugins(self, plugin_list_name, default_plugins=[]):
         pass
 
     def config_save(self):

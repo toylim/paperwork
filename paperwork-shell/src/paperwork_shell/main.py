@@ -58,9 +58,8 @@ def main_main(in_args, application_name, default_plugins, interactive):
     core.init()
     core.call_all("init_logs", application_name, "warning")
 
-    core.call_all(
-        "config_load", "paperwork2", application_name, default_plugins
-    )
+    core.call_all("config_load")
+    core.call_all("config_load_plugins", application_name, default_plugins)
 
     parser = argparse.ArgumentParser()
     cmd_parser = parser.add_subparsers(

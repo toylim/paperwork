@@ -128,9 +128,8 @@ def main_main(in_args):
         "info" if len(in_args) <= 0 else "warning"
     )
 
-    core.call_all(
-        "config_load", "paperwork2", "paperwork-gtk", DEFAULT_GUI_PLUGINS
-    )
+    core.call_all("config_load")
+    core.call_all("config_load_plugins", "paperwork-gtk", DEFAULT_GUI_PLUGINS)
 
     if len(in_args) <= 0:
 
