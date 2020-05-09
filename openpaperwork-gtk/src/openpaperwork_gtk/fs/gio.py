@@ -252,6 +252,7 @@ class _GioUTF8FileAdapter(io.RawIOBase):
 class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
     def __init__(self):
         super().__init__()
+        self.vfs = Gio.Vfs.get_default()
         self.tmp_files = set()
 
     def get_interfaces(self):
@@ -269,7 +270,7 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
         if not self._is_file_uri(uri):
             return None
 
-        f = Gio.File.new_for_uri(uri)
+        f = self.vfs.get_file_for_uri(uri)
         if ('w' not in mode and 'a' not in mode):
             if self.fs_exists(uri) is None:
                 return None
@@ -289,7 +290,7 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             return None
 
         try:
-            f = Gio.File.new_for_uri(url)
+            f = self.vfs.get_file_for_uri(url)
             if not f.query_exists():
                 # this file does not exist for us, but it does not mean
                 # another implementation of the plugin interface 'fs'
@@ -305,7 +306,7 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             return None
 
         try:
-            f = Gio.File.new_for_uri(url)
+            f = self.vfs.get_file_for_uri(url)
             if not f.query_exists():
                 return None
             children = f.enumerate_children(
@@ -326,8 +327,8 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             return None
 
         try:
-            old = Gio.File.new_for_uri(old_url)
-            new = Gio.File.new_for_uri(new_url)
+            old = self.vfs.get_file_for_uri(old_url)
+            new = self.vfs.get_file_for_uri(new_url)
             assert(not old.equal(new))
             old.move(new, Gio.FileCopyFlags.NONE)
         except GLib.GError as exc:
@@ -340,7 +341,7 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
 
         try:
             LOGGER.info("Deleting %s (trash=%s) ...", url, trash)
-            f = Gio.File.new_for_uri(url)
+            f = self.vfs.get_file_for_uri(url)
 
             if not trash:
                 deleted = f.delete()
@@ -389,7 +390,7 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
 
         try:
             LOGGER.info("Deleting %s ...", url)
-            f = Gio.File.new_for_uri(url)
+            f = self.vfs.get_file_for_uri(url)
             deleted = False
             if trash:
                 try:
@@ -440,7 +441,7 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             return None
 
         try:
-            f = Gio.File.new_for_uri(url)
+            f = self.vfs.get_file_for_uri(url)
             if not f.query_exists():
                 raise IOError("File {} does not exist".format(str(url)))
             fi = f.query_info(
@@ -462,7 +463,7 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             return None
 
         try:
-            f = Gio.File.new_for_uri(url)
+            f = self.vfs.get_file_for_uri(url)
             fi = f.query_info(
                 Gio.FILE_ATTRIBUTE_STANDARD_SIZE, Gio.FileQueryInfoFlags.NONE
             )
@@ -476,7 +477,7 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             return None
 
         try:
-            f = Gio.File.new_for_uri(url)
+            f = self.vfs.get_file_for_uri(url)
             if not f.query_exists():
                 return None
             fi = f.query_info(
@@ -499,8 +500,8 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
         if not self._is_file_uri(old_url) or not self._is_file_uri(new_url):
             return None
         try:
-            old = Gio.File.new_for_uri(old_url)
-            new = Gio.File.new_for_uri(new_url)
+            old = self.vfs.get_file_for_uri(old_url)
+            new = self.vfs.get_file_for_uri(new_url)
             if new.query_exists():
                 new.delete()
             old.copy(new, Gio.FileCopyFlags.ALL_METADATA)
@@ -514,7 +515,7 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             return None
 
         try:
-            f = Gio.File.new_for_uri(url)
+            f = self.vfs.get_file_for_uri(url)
             if not f.query_exists():
                 if os.name == "nt":
                     # WORKAROUND(Jflesch): On Windows+MSYS2,
@@ -561,7 +562,7 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
         if not self._is_file_uri(parent_uri):
             return None
 
-        parent = Gio.File.new_for_uri(parent_uri)
+        parent = self.vfs.get_file_for_uri(parent_uri)
         for f in self._recurse(parent, dir_included):
             yield f.get_uri()
 
@@ -584,7 +585,7 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
         if not self._is_file_uri(uri):
             return None
 
-        gfile = Gio.File.new_for_uri(uri)
+        gfile = self.vfs.get_file_for_uri(uri)
         info = gfile.query_info(
             "standard::content-type", Gio.FileQueryInfoFlags.NONE
         )
@@ -602,7 +603,7 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             return None
 
         try:
-            f = Gio.File.new_for_uri(url)
+            f = self.vfs.get_file_for_uri(url)
             fi = f.query_info(
                 Gio.FILE_ATTRIBUTE_ACCESS_CAN_WRITE,
                 Gio.FileQueryInfoFlags.NONE
