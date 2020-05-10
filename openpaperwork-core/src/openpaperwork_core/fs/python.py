@@ -30,6 +30,9 @@ class Plugin(CommonFsPluginBase):
         if path is None:
             return None
 
+        if 'w' not in mode and 'a' not in mode and not os.path.exists(path):
+            return None
+
         if 'b' in mode:
             return open(path, mode)
         return codecs.open(path, mode, encoding='utf-8')
