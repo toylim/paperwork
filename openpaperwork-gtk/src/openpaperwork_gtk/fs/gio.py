@@ -250,7 +250,7 @@ class _GioUTF8FileAdapter(io.RawIOBase):
 
 
 class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
-    PRIORITY = 1000
+    PRIORITY = 50
 
     def __init__(self):
         super().__init__()
