@@ -56,5 +56,7 @@ There is no GUI here. The GUI is
     include_package_data=True,
     package_dir={'': 'src'},
     zip_safe=True,
-    install_requires=[]
+    install_requires=[
+        "distro",  # chkdeps
+    ]
 )
