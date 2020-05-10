@@ -18,6 +18,8 @@ LOGGER = logging.getLogger(__name__)
 
 
 class Plugin(openpaperwork_core.PluginBase):
+    PRIORITY = 1000
+
     """
     A main loop based on GLib's mainloop.
     See `openpaperwork_core.mainloop.asyncio` for doc.
