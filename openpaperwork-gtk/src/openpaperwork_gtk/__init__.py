@@ -10,6 +10,7 @@ CLI_PLUGINS = [
     'openpaperwork_gtk.external_apps.gio',
     'openpaperwork_gtk.fs.gio',
     'openpaperwork_gtk.l10n',
+    'openpaperwork_gtk.mainloop.glib',
 ]
 
 GUI_PLUGINS = [
