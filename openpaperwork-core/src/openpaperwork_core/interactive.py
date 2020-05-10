@@ -141,7 +141,7 @@ class Plugin(PluginBase):
         self.core.call_success(
             "mainloop_execute", self.core.call_all, "on_quit"
         )
-        self.core.call_all(
+        self.core.call_success(
             "mainloop_execute", self.core.call_all, "mainloop_quit_graceful"
         )
 

@@ -59,6 +59,9 @@ class Plugin(openpaperwork_core.PluginBase):
             LOGGER.error("Main loop stopped because %s", str(halt_cause))
             raise halt_cause
 
+        self.loop = None
+        return True
+
     def mainloop_get_thread_id(self):
         """
         Gets the ID of the thread running the main loop. `None` if no
@@ -71,14 +74,17 @@ class Plugin(openpaperwork_core.PluginBase):
         Wait for all the scheduled callbacks to be executed and then stops
         the main loop.
         """
+        if self.loop is None:
+            return None
         self.mainloop_schedule(self._mainloop_quit_graceful)
+        return True
 
     def _mainloop_quit_graceful(self):
         if self.task_count > 1:  # keep in mind this function is in a task too
             LOGGER.info(
                 "Quit graceful: Remaining tasks: %d", self.task_count - 1
             )
-            self.mainloop_schedule(self.mainloop_quit_graceful, delay_s=0.2)
+            self.mainloop_schedule(self._mainloop_quit_graceful, delay_s=0.2)
             return
 
         LOGGER.info("Quit graceful: Quitting")
@@ -92,6 +98,8 @@ class Plugin(openpaperwork_core.PluginBase):
         Note that it cannot interrupt a callback being executed, but no
         callback scheduled after this one will be executed.
         """
+        if self.loop is None:
+            return None
         self.loop.stop()
         self.loop = None
         self.task_count = 0
@@ -147,6 +155,7 @@ class Plugin(openpaperwork_core.PluginBase):
         if delay_s != 0:
             args = (self.loop.call_later, delay_s) + args
         self.loop.call_soon_threadsafe(args[0], *(args[1:]))
+        return True
 
     def mainloop_execute(self, func, *args, **kwargs):
         """
@@ -183,4 +192,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
         if exc[0] is not None:
             raise exc[0]
+        if out[0] is None:
+            # cannot return None, other mainloop_execute() keep looking for
+            # other mainloop_execute()
+            return True
         return out[0]

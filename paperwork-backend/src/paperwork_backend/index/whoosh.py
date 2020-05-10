@@ -180,7 +180,7 @@ class WhooshTransaction(sync.BaseTransaction):
             self.writer.commit()
             self.writer = None
         self.notify_done(ID)
-        self.core.call_all(
+        self.core.call_success(
             "mainloop_schedule", self.core.call_all,
             'on_index_commit_end'
         )

@@ -75,11 +75,17 @@ class Plugin(openpaperwork_core.PluginBase):
             LOGGER.error("Main loop stopped because %s", str(halt_cause))
             raise halt_cause
 
+        self.loop = None
+        return True
+
     def mainloop_get_thread_id(self):
         return self.loop_ident
 
     def mainloop_quit_graceful(self):
+        if self.loop is None:
+            return None
         self.mainloop_schedule(self._mainloop_quit_graceful)
+        return True
 
     def _mainloop_quit_graceful(self):
         quit_now = True
@@ -96,7 +102,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         if not quit_now:
             self.mainloop_schedule(
-                self.mainloop_quit_graceful, delay_s=0.2
+                self._mainloop_quit_graceful, delay_s=0.2
             )
             return
 
@@ -109,6 +115,9 @@ class Plugin(openpaperwork_core.PluginBase):
             self.active_tasks = collections.defaultdict(lambda: 0)
 
     def mainloop_quit_now(self):
+        if self.loop is None:
+            return None
+
         with self.lock:
             self.loop.quit()
             self.loop = None
@@ -176,6 +185,7 @@ class Plugin(openpaperwork_core.PluginBase):
             GLib.idle_add(decorator, func, args, priority=GLib.PRIORITY_LOW)
         else:
             GLib.timeout_add(delay_s * 1000, decorator, func, args)
+        return True
 
     def mainloop_execute(self, func, *args, **kwargs):
         current = threading.current_thread().ident
@@ -208,4 +218,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
         if exc[0] is not None:
             raise exc[0]
+        if out[0] is None:
+            # cannot return None, other mainloop_execute() keep looking for
+            # other mainloop_execute()
+            return True
         return out[0]

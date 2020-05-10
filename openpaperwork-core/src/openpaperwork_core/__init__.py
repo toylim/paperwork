@@ -415,8 +415,7 @@ class Core(object):
         """
         Look for a plugin method called `callback_name` and calls it.
         Raises an error if no such method exists. If many exists,
-        raises a warning and call one at random.
-        Returns the value return by the callback.
+        call one at random. Returns the value return by the callback.
 
         Method call order is defined by the plugin priorities: Plugins with
         a higher priority get their methods called first.
@@ -449,11 +448,6 @@ class Core(object):
         if len(callbacks) <= 0:
             raise IndexError(
                 "No method '{}' found !".format(callback_name)
-            )
-        if len(callbacks) > 1:
-            LOGGER.warning(
-                "More than one method '%s' found ! [%s]", callback_name,
-                ", ".join([callback[1] for callback in callbacks])
             )
         if self.log_all:
             print(

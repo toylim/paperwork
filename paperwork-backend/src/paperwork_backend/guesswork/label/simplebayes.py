@@ -295,7 +295,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         self.nb_changes += len(todos)
 
     def cancel(self):
-        self.core.call_one(
+        self.core.call_success(
             "mainloop_schedule", self.core.call_all,
             "on_label_guesser_canceled"
         )
@@ -311,7 +311,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
 
     def commit(self):
         LOGGER.info("Updating training ...")
-        self.core.call_all(
+        self.core.call_success(
             "mainloop_schedule", self.core.call_all,
             "on_label_guesser_commit_start"
         )
@@ -322,7 +322,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             self.core.call_one("mainloop_execute", self.cursor.close)
             self.cursor = None
             self.notify_done(ID)
-            self.core.call_one(
+            self.core.call_success(
                 "mainloop_schedule", self.core.call_all,
                 'on_label_guesser_commit_end'
             )
@@ -349,7 +349,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             self.core.call_one("mainloop_execute", self.cursor.close)
         self.cursor = None
         self.notify_done(ID)
-        self.core.call_one(
+        self.core.call_success(
             "mainloop_schedule", self.core.call_all,
             'on_label_guesser_commit_end'
         )
