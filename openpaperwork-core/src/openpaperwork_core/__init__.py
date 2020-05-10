@@ -9,6 +9,40 @@ import time
 
 LOGGER = logging.getLogger(__name__)
 
+MINIMUM_CONFIG_PLUGINS = [
+    # You also have to provide a plugin providing the interface 'app'
+    'openpaperwork_core.archives',
+    'openpaperwork_core.cmd.config',
+    'openpaperwork_core.cmd.plugins',
+    'openpaperwork_core.config',
+    'openpaperwork_core.config.automatic_plugin_reset',
+    'openpaperwork_core.config.backend.configparser',
+    'openpaperwork_core.display.print',
+    'openpaperwork_core.fs.python',
+    'openpaperwork_core.logs.archives',
+    'openpaperwork_core.logs.print',
+    'openpaperwork_core.paths.xdg',
+    'openpaperwork_core.uncaught_exception',
+]
+
+
+RECOMMENDED_PLUGINS = [
+    'openpaperwork_core.cmd.chkdeps',
+    'openpaperwork_core.external_apps.dbus',
+    'openpaperwork_core.external_apps.windows',
+    'openpaperwork_core.external_apps.xdg',
+    'openpaperwork_core.flatpak',
+    'openpaperwork_core.fs.memory',
+    'openpaperwork_core.http',
+    'openpaperwork_core.i18n.python',
+    'openpaperwork_core.l10n.python',
+    'openpaperwork_core.perfcheck.log',
+    'openpaperwork_core.resources.frozen',
+    'openpaperwork_core.resources.setuptools',
+    'openpaperwork_core.thread.pool',
+    'openpaperwork_core.work_queue.default',
+]
+
 
 def _(s):
     return gettext.dgettext('openpaperwork_core', s)
