@@ -18,6 +18,7 @@ MINIMUM_CONFIG_PLUGINS = [
     'openpaperwork_core.config.automatic_plugin_reset',
     'openpaperwork_core.config.backend.configparser',
     'openpaperwork_core.display.print',
+    'openpaperwork_core.frozen',
     'openpaperwork_core.fs.python',
     'openpaperwork_core.logs.archives',
     'openpaperwork_core.logs.print',

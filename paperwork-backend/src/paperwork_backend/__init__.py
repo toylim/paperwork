@@ -9,7 +9,6 @@ def _(s):
 
 
 DEFAULT_CONFIG_PLUGINS = openpaperwork_core.MINIMUM_CONFIG_PLUGINS + [
-    'openpaperwork_core.frozen',
     'openpaperwork_gtk.fs.gio',
     'paperwork_backend.app',
 ]
