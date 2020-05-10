@@ -250,6 +250,8 @@ class _GioUTF8FileAdapter(io.RawIOBase):
 
 
 class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
+    PRIORITY = 1000
+
     def __init__(self):
         super().__init__()
         self.vfs = Gio.Vfs.get_default()
