@@ -342,8 +342,11 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             return None
 
         try:
-            LOGGER.info("Deleting %s (trash=%s) ...", url, trash)
             f = self.vfs.get_file_for_uri(url)
+            if not f.query_exists():
+                return None
+
+            LOGGER.info("Deleting %s (trash=%s) ...", url, trash)
 
             if not trash:
                 deleted = f.delete()

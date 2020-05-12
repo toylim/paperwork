@@ -70,6 +70,8 @@ class Plugin(CommonFsPluginBase):
         if path is None:
             return
 
+        if not os.path.exists(path):
+            return None
         os.unlink(path)
         return True
 
