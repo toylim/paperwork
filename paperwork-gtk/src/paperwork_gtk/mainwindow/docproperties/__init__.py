@@ -82,6 +82,14 @@ class DocPropertiesEditor(object):
             "doc_properties_components_set_active_docs", docs
         )
 
+    def _open_doc(self, upd):
+        active_docs = {doc[0] for doc in self.active_docs}
+        if upd.doc_id is not None and upd.doc_id not in active_docs:
+            doc_url = self.core.call_success("doc_id_to_url", upd.doc_id)
+            if doc_url is None:
+                return
+            self.core.call_all("doc_open", upd.doc_id, doc_url)
+
     def _apply(self, *args, **kwargs):
         LOGGER.info(
             "Changes validated by the user (multiple_docs=%s)",
@@ -96,6 +104,8 @@ class DocPropertiesEditor(object):
             args=("doc_properties_components_apply_changes", upd)
         )
         # drop call_all return value
+        promise = promise.then(lambda *args, **kwargs: None)
+        promise = promise.then(self._open_doc, upd)
         promise = promise.then(lambda *args, **kwargs: None)
         promise = promise.then(
             self.core.call_all, "search_update_document_list"
