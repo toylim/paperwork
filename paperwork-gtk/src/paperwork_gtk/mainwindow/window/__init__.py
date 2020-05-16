@@ -112,7 +112,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
         if hasattr(GLib, 'set_application_name'):
-            GLib.set_application_name(_("Paperwork"))
+            GLib.set_application_name("Paperwork")
         GLib.set_prgname("paperwork")
 
         app = Gtk.Application(
@@ -152,7 +152,7 @@ class Plugin(openpaperwork_core.PluginBase):
         for side in self.defaults.keys():
             self.mainwindow_show_default(side)
 
-        self.widget_tree.get_object("mainwindow").set_visible(True)
+        self.mainwindow.set_visible(True)
         self.core.call_all("on_gtk_window_opened", self.mainwindow)
 
     def on_quit(self):
