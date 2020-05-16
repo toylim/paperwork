@@ -23,7 +23,17 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def gtk_entry_set_colors(self, gtk_entry, fg="black", bg="#CC3030"):
-        css = "* { color: %s; background: %s }" % (fg, bg)
+        css = """
+        * {
+            color: %s;
+            background: %s;
+        }
+
+        * selection {
+            color: white;
+            background: #3b84e9;
+        }
+        """ % (fg, bg)
         css_provider = Gtk.CssProvider()
         css_provider.load_from_data(css.encode())
         css_context = gtk_entry.get_style_context()
