@@ -332,6 +332,8 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             old = self.vfs.get_file_for_uri(old_url)
             new = self.vfs.get_file_for_uri(new_url)
             assert(not old.equal(new))
+            if not old.query_exists():
+                return None
             old.move(new, Gio.FileCopyFlags.NONE)
         except GLib.GError as exc:
             LOGGER.warning("Gio.Gerror", exc_info=exc)

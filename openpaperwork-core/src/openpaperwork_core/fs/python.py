@@ -61,6 +61,8 @@ class Plugin(CommonFsPluginBase):
         new_path = self._uri_to_path(new_uri)
         if old_path is None or new_path is None:
             return None
+        if not os.path.exists(old_path):
+            return None
 
         os.rename(old_path, new_path)
         return True
