@@ -23,8 +23,6 @@ import PIL.ImageDraw
 import openpaperwork_core
 import openpaperwork_gtk.deps
 
-from ... import _
-
 
 LOGGER = logging.getLogger(__name__)
 
@@ -264,7 +262,7 @@ class Plugin(openpaperwork_core.PluginBase):
         left = self.stacks['left']['body']
         left_alloc = left.get_allocation()
         left_width = left_alloc.width
-        (left_x, _) = left.translate_coordinates(self.mainwindow, 0, 0)
+        (left_x, left_y) = left.translate_coordinates(self.mainwindow, 0, 0)
         left = left_x + left_width
 
         with self.core.call_success("fs_open", out, 'rb') as fd:
