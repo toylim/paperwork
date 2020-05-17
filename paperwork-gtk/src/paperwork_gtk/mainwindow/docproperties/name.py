@@ -109,14 +109,13 @@ class Plugin(openpaperwork_core.PluginBase):
             return
 
         doc_id = self.widget_tree.get_object("docname_entry").get_text()
-        try:
-            doc_id = self.core.call_success("i18n_parse_date_short", doc_id)
-            doc_id = self.core.call_success("doc_get_id_by_date", doc_id)
-        except ValueError as exc:
+        doc_date = self.core.call_success("i18n_parse_date_short", doc_id)
+        if doc_date is None:
             LOGGER.warning(
-                "Failed to parse document date: %s. Using as is",
-                exc_info=exc
+                "Failed to parse document date: %s. Using as is", doc_id
             )
+        else:
+            doc_id = self.core.call_success("doc_get_id_by_date", doc_date)
 
         orig_id = out.doc_id
         orig_date = self.core.call_success("doc_get_date_by_id", orig_id)
