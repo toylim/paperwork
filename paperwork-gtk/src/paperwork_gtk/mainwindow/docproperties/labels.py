@@ -209,10 +209,12 @@ class LabelEditor(object):
             button.set_label(label[0])
             button.set_sensitive(False)
 
-            label_action = LabelAction(False)
             toggle = widget_tree_label.get_object("toggle_button")
             toggle.set_sensitive(False)
-            self._update_button_img(toggle, label_action)
+            image = Gtk.Image.new_from_icon_name(
+                "list-add-symbolic", Gtk.IconSize.MENU
+            )
+            toggle.set_image(image)
 
             color = self.core.call_success("label_color_to_rgb", label[1])
             color_button = widget_tree_label.get_object("color_button")
