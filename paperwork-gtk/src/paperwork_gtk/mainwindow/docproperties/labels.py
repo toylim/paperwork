@@ -262,7 +262,7 @@ class LabelEditor(object):
             label_button.set_label(new_label_txt)
 
         dialog = widget_tree.get_object("label_name_dialog")
-        dialog.set_transient_for(self.windows[-1])
+        dialog.set_transient_for(self.plugin.windows[-1])
         dialog.set_modal(True)
         dialog.connect("response", on_response)
         dialog.set_visible(True)
