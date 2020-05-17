@@ -194,7 +194,7 @@ class Plugin(openpaperwork_core.PluginBase):
         if name in self.navigation_stacks[side]:
             self.navigation_stacks[side].remove(name)
         self.navigation_stacks[side].append(name)
-        self._mainwindow_show(side)
+        return self._mainwindow_show(side)
 
     def _mainwindow_show(self, side: str):
         stacks = self.stacks[side]
@@ -213,11 +213,15 @@ class Plugin(openpaperwork_core.PluginBase):
             if None not in component_names.values():
                 break
 
+        has_changed = False
         for (h, stack) in stacks.items():
             if h not in component_names or component_names[h] is None:
                 continue
+            if stack.get_visible_child_name() == component_names[h]:
+                continue
+            has_changed = True
             stack.set_visible_child_name(component_names[h])
-        return True
+        return has_changed
 
     def mainwindow_show_default(self, side: str):
         # the default component may be incomplete (for instance, it may
