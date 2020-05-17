@@ -15,7 +15,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="receives_default">False</property>
-            <property name="relief">none</property>
+            <property name="relief">half</property>
             <property name="always_show_image">True</property>
             <child>
               <object class="GtkImage">

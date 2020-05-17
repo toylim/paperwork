@@ -86,17 +86,11 @@
 
         <child>
           <object class="GtkButton" id="new_label_button">
+            <property name="label">gtk-add</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="relief">GTK_RELIEF_NONE</property>
-            <child>
-              <object class="GtkImage">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="icon_size">1</property>
-                <property name="icon_name">list-add-symbolic</property>
-              </object>
-            </child>
+            <property name="receives_default">False</property>
+            <property name="use_stock">True</property>
           </object>
           <packing>
             <property name="expand">False</property>
