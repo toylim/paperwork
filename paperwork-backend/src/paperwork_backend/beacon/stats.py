@@ -125,7 +125,7 @@ class Plugin(openpaperwork_core.PluginBase):
             'date': None,
             'file_type': _("App. & system info."),
             'file_url': _("Select to generate"),
-            'file_size': _("Select to generate"),
+            'file_size': 0,
         }
 
     def _write_stats_to_tmp_file(self, stats):

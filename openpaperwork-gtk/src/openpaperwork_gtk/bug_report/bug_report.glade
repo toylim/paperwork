@@ -23,12 +23,26 @@
       <!-- column-name id -->
       <column type="gchararray"/>
     </columns>
+    <data>
+      <row>
+        <col id="0">False</col>
+        <col id="1" translatable="yes">12</col>
+        <col id="2" translatable="yes">Image</col>
+        <col id="3" translatable="yes">/home/jflesch/.local/share/camion/21211212_crash_screenshot.png</col>
+      </row>
+      <row>
+        <col id="0">True</col>
+        <col id="1" translatable="yes">1</col>
+        <col id="2" translatable="yes">Text</col>
+        <col id="3" translatable="yes">/home/jflesch/camion/20200101_logs.txt</col>
+      </row>
+    </data>
   </object>
   <object class="GtkAssistant" id="bug_report_dialog">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes" context="Title of the bug report dialog." comments="Feel free to put the translation for &quot;Bug report&quot; instead.">Bug Spray</property>
-    <property name="default_width">640</property>
-    <property name="default_height">400</property>
+    <property name="default_width">1000</property>
+    <property name="default_height">520</property>
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">dialog</property>
     <property name="use_header_bar">1</property>
@@ -98,6 +112,18 @@
                               <object class="GtkCellRendererText"/>
                               <attributes>
                                 <attribute name="text">3</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn">
+                            <property name="title" translatable="yes">File</property>
+                            <property name="sort_column_id">4</property>
+                            <child>
+                              <object class="GtkCellRendererText"/>
+                              <attributes>
+                                <attribute name="text">5</attribute>
                               </attributes>
                             </child>
                           </object>

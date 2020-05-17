@@ -82,8 +82,8 @@ class Plugin(openpaperwork_core.PluginBase):
         assistant.set_page_complete(page, enabled)
 
     def _i18n_file_size(self, file_size):
-        if isinstance(file_size, str):
-            return file_size
+        if isinstance(file_size, str) or file_size <= 0:
+            return ""
         return self.core.call_success("i18n_file_size", file_size)
 
     def open_bug_report(self, parent_window):
@@ -134,9 +134,7 @@ class Plugin(openpaperwork_core.PluginBase):
                     i['file_type'],
                     i['file_url'],
                     self._shorten_url(i['file_url']),
-                    i['file_size']
-                    if not isinstance(i['file_size'], str)
-                    else 0,
+                    i['file_size'],
                     self._i18n_file_size(i['file_size']),
                     i['id'],
                 ]
@@ -209,11 +207,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 row[4] = infos['file_url']
                 row[5] = self._shorten_url(infos['file_url'])
             if 'file_size' in infos:
-                row[6] = (
-                    infos['file_size']
-                    if not isinstance(infos['file_size'], str)
-                    else 0
-                )
+                row[6] = infos['file_size']
                 row[7] = self._i18n_file_size(infos['file_size'])
             break
         self._on_url_selected(widget_tree)

@@ -249,7 +249,7 @@ class Plugin(openpaperwork_core.PluginBase):
             'date': None,
             'file_type': _("App. screenshots"),
             'file_url': _("Select to generate"),
-            'file_size': _("Select to generate"),
+            'file_size': 0,
         }
 
     def _update_attachment(self, file_url, *args):
