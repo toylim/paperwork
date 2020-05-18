@@ -16,6 +16,7 @@ from . import _
 LOGGER = logging.getLogger(__name__)
 SCREENSHOT_DATE_FORMAT = "%Y%m%d_%H%M_%S"
 MAX_DAYS = 31
+MAX_UNCAUGHT_EXCEPTION_SCREENSHOTS = 5
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -23,6 +24,7 @@ class Plugin(openpaperwork_core.PluginBase):
         super().__init__()
         self.windows = []
         self.archiver = None
+        self.nb_uncaught = 0
 
     def get_interfaces(self):
         return [
@@ -228,6 +230,11 @@ class Plugin(openpaperwork_core.PluginBase):
         return True
 
     def on_uncaught_exception(self, exc_info):
+        self.nb_uncaught += 1
+        if self.nb_uncaught > MAX_UNCAUGHT_EXCEPTION_SCREENSHOTS:
+            # limit the number of screenshots in one session.
+            return
+
         LOGGER.info("Uncaught exception. Taking screenshots")
         (_, promise) = self.screenshot_snap_all_promise(
             name="uncaught_exception_screenshots"
