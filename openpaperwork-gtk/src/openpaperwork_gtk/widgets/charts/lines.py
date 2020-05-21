@@ -490,7 +490,7 @@ if __name__ == "__main__":
         model.append(line)
 
     core = openpaperwork_core.Core()
-    core.load("openpaperwork_gtk.charts.lines")
+    core.load("openpaperwork_gtk.widgets.charts.lines")
     core.init()
 
     chart_lines = core.call_success(
