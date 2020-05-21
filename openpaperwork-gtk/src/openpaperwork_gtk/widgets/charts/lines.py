@@ -345,7 +345,8 @@ class Lines(object):
             )
             for (k, v) in lines.items()
         ]
-        self.lines = [Line.make_line_sum(self.lines)] + self.lines
+        if len(self.lines) > 1:
+            self.lines = [Line.make_line_sum(self.lines)] + self.lines
         for line in self.lines:
             self.minmax = (
                 (
