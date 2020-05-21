@@ -333,6 +333,7 @@ class Lines(object):
         self.lines = []
 
     def reload(self):
+        self.minmax = ((math.inf, 0), (0, 0),)
         self.color_generator.reset()
         lines = collections.defaultdict(list)
         for (liststore_idx, line) in enumerate(self.liststore):
