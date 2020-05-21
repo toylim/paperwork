@@ -202,9 +202,9 @@ class Point(object):
 
 
 class Line(object):
-    LEGEND_CIRCLE_RADIUS = 10
-    LEGEND_LINE_HEIGHT = 20
-    LEGEND_SPACING = 10
+    LEGEND_CIRCLE_RADIUS = 8
+    LEGEND_LINE_HEIGHT = 16
+    LEGEND_SPACING = 8
 
     def __init__(self, line_name, points, color, line_width=1.0):
         self.line_name = line_name
@@ -329,6 +329,9 @@ class Lines(object):
         self.lines = []
         self.minmax = ((math.inf, 0), (0, 0),)
 
+    def reset(self):
+        self.lines = []
+
     def reload(self):
         self.color_generator.reset()
         lines = collections.defaultdict(list)
@@ -358,6 +361,9 @@ class Lines(object):
         w = self.minmax[0][1] - self.minmax[0][0]
         h = self.minmax[1][1] - self.minmax[1][0]
 
+        if w == 0 or h == 0:
+            return
+
         draw_ctx = draw_ctx.scale(widget_size[0] / w, widget_size[1] / h)
         widget_size = (w, h)
 
@@ -379,24 +385,55 @@ class Lines(object):
 class ChartDrawer(object):
     MARGIN = 5
 
-    def __init__(self, schema, liststore, color_generator):
+    def __init__(self, core, schema, liststore, color_generator):
+        self.core = core
         self.lines = Lines(schema, liststore, color_generator)
 
         self.chart_widget = Gtk.DrawingArea.new()
-        self.chart_widget.set_size_request(-1, 300)
+        self.chart_widget.set_size_request(-1, 200)
+        self.chart_widget.set_visible(True)
         self.chart_widget.connect("draw", self.draw_chart)
 
         self.legend_widget = Gtk.DrawingArea.new()
+        self.legend_widget.set_visible(True)
+        self.legend_widget.set_size_request(
+            # TODO(Jflesch): need better sizing
+            -1, 2 * (Line.LEGEND_LINE_HEIGHT + (2 * self.MARGIN))
+        )
         self.legend_widget.connect("draw", self.draw_legend)
 
         liststore.connect("row-changed", self.reload)
         liststore.connect("row-deleted", self.reload)
         liststore.connect("row-inserted", self.reload)
         liststore.connect("rows-reordered", self.reload)
-        self.reload()
+
+        self.has_changed = False
+        self.reload_planned = False
+        self._reload()
 
     def reload(self, *args, **kwargs):
+        self.lines.reset()
+        self.chart_widget.queue_draw()
+        self.legend_widget.queue_draw()
+        if self.reload_planned:
+            self.has_changed = True
+        else:
+            self.has_changed = False
+            self.reload_planned = True
+            promise = openpaperwork_core.promise.DelayPromise(
+                self.core, delay_s=0.25
+            )
+            promise.then(self._reload)
+            promise.schedule()
+
+    def _reload(self):
+        self.reload_planned = False
+        if self.has_changed:
+            self.reload()
+            return
         self.lines.reload()
+        self.chart_widget.queue_draw()
+        self.legend_widget.queue_draw()
 
     def draw_chart(self, widget, cairo_ctx):
         widget_size = (
@@ -433,7 +470,7 @@ class Plugin(openpaperwork_core.PluginBase):
         if not PANGO_AVAILABLE:
             out['pango'].update(openpaperwork_core.deps.PANGO)
 
-    def gtk_charts_lines_get_chart(
+    def gtk_charts_lines_get(
             self, liststore, *args, **kwargs):
         """
         Return a Gtk.Widget showing the specified line chart.
@@ -456,7 +493,7 @@ class Plugin(openpaperwork_core.PluginBase):
           toi the values on the Y axis. Must be strings
         """
         schema = Schema(*args, **kwargs)
-        return ChartDrawer(schema, liststore, self.color_generator)
+        return ChartDrawer(self.core, schema, liststore, self.color_generator)
 
 
 if __name__ == "__main__":
@@ -494,7 +531,7 @@ if __name__ == "__main__":
     core.init()
 
     chart_lines = core.call_success(
-        "gtk_charts_lines_get_chart", model,
+        "gtk_charts_lines_get", model,
         column_value_id_idx=0,
         column_line_id_idx=1,
         column_axis_x_values_idx=2,
