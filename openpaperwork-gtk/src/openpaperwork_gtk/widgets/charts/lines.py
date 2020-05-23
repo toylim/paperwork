@@ -382,6 +382,7 @@ class Lines(object):
         y = 0
         for line in self.lines:
             (x, y) = line.draw_legend(widget_size, cairo_ctx, x, y)
+        return (x, y)
 
 
 class ChartDrawer(object):
@@ -398,10 +399,6 @@ class ChartDrawer(object):
 
         self.legend_widget = Gtk.DrawingArea.new()
         self.legend_widget.set_visible(True)
-        self.legend_widget.set_size_request(
-            # TODO(Jflesch): need better sizing
-            -1, 2 * (Line.LEGEND_LINE_HEIGHT + (2 * self.MARGIN))
-        )
         self.legend_widget.connect("draw", self.draw_legend)
 
         liststore.connect("row-changed", self.reload)
@@ -452,7 +449,13 @@ class ChartDrawer(object):
             widget.get_allocated_height() - (2 * self.MARGIN),
         )
         cairo_ctx.translate(self.MARGIN, self.MARGIN)
-        self.lines.draw_legend(widget_size, cairo_ctx)
+        (x, y) = self.lines.draw_legend(widget_size, cairo_ctx)
+        if x > 0:
+            # the y we got is relative to the top of the current line.
+            # the height is starting at the bottom of the current line.
+            y += Line.LEGEND_SPACING + Line.LEGEND_LINE_HEIGHT
+        if y + self.MARGIN != widget_size[1]:
+            widget.set_size_request(-1, y + self.MARGIN)
 
 
 class Plugin(openpaperwork_core.PluginBase):
