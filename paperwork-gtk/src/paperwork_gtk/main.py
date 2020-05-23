@@ -22,6 +22,7 @@ DEFAULT_GUI_PLUGINS = (
         'openpaperwork_gtk.bug_report',
         'openpaperwork_gtk.bug_report.http',
         'openpaperwork_gtk.bug_report.zip',
+        'openpaperwork_gtk.dialogs.yes_no',
         'paperwork_backend.docscan.autoselect_scanner',
         'paperwork_backend.guesswork.cropping.calibration',
         'paperwork_gtk.actions.app_open_bug_report',

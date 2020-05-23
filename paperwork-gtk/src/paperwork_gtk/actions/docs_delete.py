@@ -8,17 +8,8 @@ try:
 except (ImportError, ValueError):
     GLIB_AVAILABLE = False
 
-try:
-    import gi
-    gi.require_version('Gtk', '3.0')
-    from gi.repository import Gtk
-    GTK_AVAILABLE = True
-except (ImportError, ValueError):
-    GTK_AVAILABLE = False
-
 import openpaperwork_core
 import openpaperwork_core.promise
-import openpaperwork_gtk.deps
 
 from .. import _
 
@@ -30,16 +21,11 @@ ACTION_NAME = "doc_delete_many"
 class Plugin(openpaperwork_core.PluginBase):
     PRIORITY = -100
 
-    def __init__(self):
-        super().__init__()
-        self.active_windows = []
-
     def get_interfaces(self):
         return [
             'chkdeps',
             'doc_action',
             'doc_open',
-            'gtk_window_listener',
         ]
 
     def get_deps(self):
@@ -59,6 +45,10 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'document_storage',
                 'defaults': ['paperwork_backend.model.workdir'],
+            },
+            {
+                'interface': 'gtk_dialog_yes_no',
+                'defaults': ['openpaperwork_gtk.dialogs.yes_no'],
             },
             {
                 'interface': 'gtk_doclist',
@@ -81,36 +71,16 @@ class Plugin(openpaperwork_core.PluginBase):
     def chkdeps(self, out: dict):
         if not GLIB_AVAILABLE:
             out['glib'].update(openpaperwork_core.deps.GLIB)
-        if not GTK_AVAILABLE:
-            out['gtk'].update(openpaperwork_gtk.deps.GTK)
 
     def on_doclist_initialized(self):
         item = Gio.MenuItem.new(_("Delete"), "win." + ACTION_NAME)
         self.core.call_all("docs_menu_append_item", item)
-
-    def on_gtk_window_opened(self, window):
-        self.active_windows.append(window)
-
-    def on_gtk_window_closed(self, window):
-        self.active_windows.remove(window)
 
     def _delete(self, action, parameter):
         docs = set()
         self.core.call_all("doc_selection_get", docs)
         LOGGER.info("Asking confirmation before deleting %d doc", len(docs))
         msg = _('Are you sure you want to delete %d documents ?') % len(docs)
-
-        confirm = Gtk.MessageDialog(
-            parent=self.active_windows[-1],
-            flags=Gtk.DialogFlags.MODAL |
-            Gtk.DialogFlags.DESTROY_WITH_PARENT,
-            message_type=Gtk.MessageType.WARNING,
-            buttons=Gtk.ButtonsType.YES_NO,
-            text=msg
-        )
-
-        confirm.connect("response", self._really_delete, docs)
-        confirm.show_all()
 
         if os.name == "nt":
             # On Windows, we have to be absolutely sure the PDF is actually
@@ -120,12 +90,14 @@ class Plugin(openpaperwork_core.PluginBase):
             # there is no "close()" method in Poppler
             gc.collect()
 
-    def _really_delete(self, dialog, response, docs):
-        if response != Gtk.ResponseType.YES:
-            LOGGER.info("User cancelled")
-            dialog.destroy()
+        self.core.call_all("gtk_show_dialog_yes_no", self, msg, docs)
+
+    def on_dialog_yes_no_reply(self, parent, reply, *args, **kwargs):
+        if parent is not self:
             return
-        dialog.destroy()
+        if not reply:
+            return
+        (docs,) = args
 
         self.core.call_all("doc_close")
 
