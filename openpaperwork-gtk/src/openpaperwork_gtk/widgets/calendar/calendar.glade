@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<interface domain="openpaperwork_gtk">
+  <requires lib="gtk+" version="3.20"/>
+
+  <object class="GtkPopover" id="calendar_popover">
+    <child>
+      <object class="GtkCalendar" id="calendar_calendar">
+        <property name="visible">True</property>
+      </object>
+    </child>
+  </object>
+</interface>

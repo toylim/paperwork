@@ -1,4 +1,3 @@
-import datetime
 import logging
 
 import openpaperwork_core
@@ -27,6 +26,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['paperwork_backend.model.workdir'],
             },
             {
+                'interface': 'gtk_calendar_popover',
+                'defaults': ['openpaperwork_gtk.widgets.calendar'],
+            },
+            {
                 'interface': 'gtk_doc_properties',
                 'defaults': ['paperwork_gtk.docproperties'],
             },
@@ -52,17 +55,13 @@ class Plugin(openpaperwork_core.PluginBase):
             "paperwork_gtk.mainwindow.docproperties", "name.glade"
         )
 
-        self.widget_tree.get_object("calendar_popover").set_relative_to(
+        self.core.call_all(
+            "gtk_calendar_add_popover",
             self.widget_tree.get_object("docname_entry")
         )
-        self.widget_tree.get_object("docname_entry").connect(
-            "icon-release", self._open_calendar
-        )
+
         self.widget_tree.get_object("docname_entry").connect(
             "changed", self._on_doc_date_changed
-        )
-        self.widget_tree.get_object("calendar_calendar").connect(
-            "day-selected-double-click", self._update_date
         )
 
         out.append(self.widget_tree.get_object("docname"))
@@ -73,21 +72,12 @@ class Plugin(openpaperwork_core.PluginBase):
         doc_txt = ""
         try:
             doc_date = self.core.call_success("doc_get_date_by_id", doc_id)
-            self.widget_tree.get_object("calendar_calendar").select_month(
-                doc_date.month - 1, doc_date.year
-            )
-            self.widget_tree.get_object("calendar_calendar").select_day(
-                doc_date.day
-            )
             doc_txt = self.core.call_success("i18n_date_short", doc_date)
         except Exception as exc:
             LOGGER.warning(
                 "Failed to parse document date: %s --> %s", doc_id, exc
             )
         self.widget_tree.get_object("docname_entry").set_text(doc_txt)
-
-    def _open_calendar(self, gtk_entry, icon_pos, event):
-        self.widget_tree.get_object("calendar_popover").set_visible(True)
 
     def _on_doc_date_changed(self, gtk_entry):
         txt = gtk_entry.get_text()
@@ -96,13 +86,6 @@ class Plugin(openpaperwork_core.PluginBase):
             self.core.call_all("gtk_entry_reset_colors", gtk_entry)
         else:
             self.core.call_all("gtk_entry_set_colors", gtk_entry, bg="#ee9000")
-
-    def _update_date(self, gtk_calendar):
-        date = self.widget_tree.get_object("calendar_calendar").get_date()
-        date = datetime.datetime(year=date[0], month=date[1] + 1, day=date[2])
-        date = self.core.call_success("i18n_date_short", date)
-        self.widget_tree.get_object("docname_entry").set_text(date)
-        self.widget_tree.get_object("calendar_popover").set_visible(False)
 
     def doc_properties_components_apply_changes(self, out):
         if out.multiple_docs:

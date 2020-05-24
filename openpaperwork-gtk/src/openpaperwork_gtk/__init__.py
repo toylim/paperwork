@@ -21,5 +21,6 @@ GUI_PLUGINS = [
     'openpaperwork_gtk.pixbuf.pillow',
     'openpaperwork_gtk.resources',
     'openpaperwork_gtk.screenshots',
+    'openpaperwork_gtk.widgets.calendar',
     'openpaperwork_gtk.widgets.progress',
 ]
