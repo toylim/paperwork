@@ -46,10 +46,10 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def gtk_show_dialog_yes_no(self, origin, msg, *args, **kwargs):
         confirm = Gtk.MessageDialog(
-            origin=self.windows[-1],
+            parent=self.windows[-1],
             flags=(
                 Gtk.DialogFlags.MODAL |
-                Gtk.DialogFlags.DESTROY_WITH_origin
+                Gtk.DialogFlags.DESTROY_WITH_PARENT
             ),
             message_type=Gtk.MessageType.WARNING,
             buttons=Gtk.ButtonsType.YES_NO,
