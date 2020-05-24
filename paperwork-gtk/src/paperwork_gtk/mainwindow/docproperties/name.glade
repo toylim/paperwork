@@ -41,12 +41,4 @@
       </packing>
     </child>
   </object>
-
-  <object class="GtkPopover" id="calendar_popover">
-    <child>
-      <object class="GtkCalendar" id="calendar_calendar">
-        <property name="visible">True</property>
-      </object>
-    </child>
-  </object>
 </interface>
