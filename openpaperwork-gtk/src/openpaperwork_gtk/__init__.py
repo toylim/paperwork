@@ -18,6 +18,8 @@ GUI_PLUGINS = [
     'openpaperwork_gtk.bug_report.http',
     'openpaperwork_gtk.bug_report.zip',
     'openpaperwork_gtk.colors',
+    'openpaperwork_gtk.dialogs.single_entry',
+    'openpaperwork_gtk.dialogs.yes_no',
     'openpaperwork_gtk.pixbuf.pillow',
     'openpaperwork_gtk.resources',
     'openpaperwork_gtk.screenshots',
