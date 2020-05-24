@@ -232,42 +232,26 @@ class LabelEditor(object):
         listbox.add(self.widget_tree.get_object("row_add_label"))
 
     def _on_label_button_clicked(self, label_button, label):
-        widget_tree = self.core.call_success(
-            "gtk_load_widget_tree",
-            "paperwork_gtk.mainwindow.docproperties", "label_name_dialog.glade"
-        )
         original_label = label
         if label in self.changed_labels:
             label = self.changed_labels[label]
+        self.core.call_success(
+            "gtk_show_dialog_single_entry",
+            self.plugin, _("Renaming label"),
+            label[0], self, label_button, original_label, label
+        )
 
-        widget_tree.get_object("label_name").set_text(label[0])
+    def on_label_rename_response(
+            self, new_label_txt, label_button, original_label, label):
+        new_label_txt = new_label_txt.strip()
 
-        def on_response(dialog, response_id):
-            if (response_id != 0 and
-                    response_id != Gtk.ResponseType.ACCEPT and
-                    response_id != Gtk.ResponseType.OK and
-                    response_id != Gtk.ResponseType.YES and
-                    response_id != Gtk.ResponseType.APPLY):
-                dialog.destroy()
-                return
+        if not self._check_label_name(new_label_txt):
+            return
 
-            new_label_txt = widget_tree.get_object("label_name").get_text()
-            dialog.destroy()
+        LOGGER.info("Renaming label %s --> %s", label, new_label_txt)
+        self.changed_labels[original_label] = (new_label_txt, label[1])
 
-            if not self._check_label_name(new_label_txt):
-                return
-
-            new_label_txt = new_label_txt.strip()
-            LOGGER.info("Renaming label %s --> %s", label, new_label_txt)
-            self.changed_labels[original_label] = (new_label_txt, label[1])
-
-            label_button.set_label(new_label_txt)
-
-        dialog = widget_tree.get_object("label_name_dialog")
-        dialog.set_transient_for(self.plugin.windows[-1])
-        dialog.set_modal(True)
-        dialog.connect("response", on_response)
-        dialog.set_visible(True)
+        label_button.set_label(new_label_txt)
 
     def _on_toggle(self, button, label, label_action):
         label_action.on_change()
@@ -588,6 +572,16 @@ class Plugin(openpaperwork_core.PluginBase):
     def doc_properties_components_cancel_changes(self):
         for editor in self.editors:
             editor.doc_properties_components_cancel_changes()
+
+    def on_dialog_single_entry_reply(
+            self, parent, r, new_value, *args, **kwargs):
+        if parent is not self:
+            return
+        if not r:
+            return
+        editor = args[0]
+        args = args[1:]
+        editor.on_label_rename_response(new_value, *args, **kwargs)
 
     def doc_transaction_start(self, out: list, total_expected=-1):
         class RefreshTransaction(paperwork_backend.sync.BaseTransaction):
