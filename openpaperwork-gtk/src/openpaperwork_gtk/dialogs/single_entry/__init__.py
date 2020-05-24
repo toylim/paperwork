@@ -46,7 +46,7 @@ class Plugin(openpaperwork_core.PluginBase):
             out['gtk'].update(openpaperwork_gtk.deps.GTK)
 
     def gtk_show_dialog_single_entry(
-            self, parent, title, original_value, *args, **kwargs):
+            self, origin, title, original_value, *args, **kwargs):
         widget_tree = self.core.call_success(
             "gtk_load_widget_tree",
             "openpaperwork_gtk.dialogs.single_entry", "single_entry.glade"
@@ -58,13 +58,13 @@ class Plugin(openpaperwork_core.PluginBase):
         dialog.set_transient_for(self.windows[-1])
         dialog.set_modal(True)
         dialog.connect(
-            "response", self._on_response, (widget_tree, parent, args, kwargs)
+            "response", self._on_response, (widget_tree, origin, args, kwargs)
         )
         dialog.show_all()
         return True
 
     def _on_response(self, dialog, response_id, args):
-        (widget_tree, parent, args, kwargs) = args
+        (widget_tree, origin, args, kwargs) = args
         new_value = widget_tree.get_object("entry").get_text()
         dialog.destroy()
 
@@ -79,6 +79,6 @@ class Plugin(openpaperwork_core.PluginBase):
             r = True
         self.core.call_all(
             "on_dialog_single_entry_reply",
-            parent, r, new_value,
+            origin, r, new_value,
             *args, **kwargs
         )

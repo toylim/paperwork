@@ -44,29 +44,31 @@ class Plugin(openpaperwork_core.PluginBase):
     def on_gtk_window_closed(self, window):
         self.windows.remove(window)
 
-    def gtk_show_dialog_yes_no(self, parent, msg, *args, **kwargs):
+    def gtk_show_dialog_yes_no(self, origin, msg, *args, **kwargs):
         confirm = Gtk.MessageDialog(
-            parent=self.windows[-1],
-            flags=Gtk.DialogFlags.MODAL |
-            Gtk.DialogFlags.DESTROY_WITH_PARENT,
+            origin=self.windows[-1],
+            flags=(
+                Gtk.DialogFlags.MODAL |
+                Gtk.DialogFlags.DESTROY_WITH_origin
+            ),
             message_type=Gtk.MessageType.WARNING,
             buttons=Gtk.ButtonsType.YES_NO,
             text=msg
         )
-        confirm.connect("response", self._on_response, parent, (args, kwargs))
+        confirm.connect("response", self._on_response, origin, (args, kwargs))
         confirm.show_all()
         return True
 
-    def _on_response(self, dialog, response, parent, args):
+    def _on_response(self, dialog, response, origin, args):
         (args, kwargs) = args
         if response != Gtk.ResponseType.YES:
             LOGGER.info("User cancelled")
             dialog.destroy()
             self.core.call_all(
-                "on_dialog_yes_no_reply", parent, False, *args, **kwargs
+                "on_dialog_yes_no_reply", origin, False, *args, **kwargs
             )
             return
         dialog.destroy()
         self.core.call_all(
-            "on_dialog_yes_no_reply", parent, True, *args, **kwargs
+            "on_dialog_yes_no_reply", origin, True, *args, **kwargs
         )
