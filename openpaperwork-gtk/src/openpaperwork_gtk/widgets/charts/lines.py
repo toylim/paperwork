@@ -52,13 +52,15 @@ class Schema(object):
             column_axis_x_values_idx,
             column_axis_x_names_idx,
             column_axis_y_values_idx,
-            column_axis_y_names_idx):
+            column_axis_y_names_idx,
+            highlight_x_range=(math.inf, -math.inf)):
         self.column_value_id_idx = column_value_id_idx
         self.column_line_id_idx = column_line_id_idx
         self.column_axis_x_values_idx = column_axis_x_values_idx
         self.column_axis_x_names_idx = column_axis_x_names_idx
         self.column_axis_y_values_idx = column_axis_y_values_idx
         self.column_axis_y_names_idx = column_axis_y_names_idx
+        self.highlight_x_range = highlight_x_range
 
 
 class ColorGenerator(object):
@@ -97,6 +99,9 @@ class DrawContext(object):
     def set_source_rgb(self, r, g, b):
         self.ctx.set_source_rgb(r, g, b)
 
+    def set_source_rgba(self, r, g, b, a):
+        self.ctx.set_source_rgba(r, g, b, a)
+
     def set_line_width(self, line_width):
         self.ctx.set_line_width(line_width)
 
@@ -106,8 +111,14 @@ class DrawContext(object):
     def line_to(self, pt_x, pt_y):
         self.ctx.line_to(pt_x, pt_y)
 
+    def rectangle(self, x, y, w, h):
+        self.ctx.rectangle(x, y, w, h)
+
     def stroke(self):
         self.ctx.stroke()
+
+    def fill(self):
+        self.ctx.fill()
 
     def translate(self, x, y):
         return DrawContextTranslated(self, x, y)
@@ -128,6 +139,9 @@ class DrawContextTranslated(DrawContext):
     def line_to(self, pt_x, pt_y):
         self.ctx.line_to(pt_x + self.x, pt_y + self.y)
 
+    def rectangle(self, x, y, w, h):
+        self.ctx.rectangle(x + self.x, y + self.y, w, h)
+
 
 class DrawContextScaled(DrawContext):
     def __init__(self, ctx, scale_x, scale_y):
@@ -140,6 +154,9 @@ class DrawContextScaled(DrawContext):
 
     def line_to(self, pt_x, pt_y):
         self.ctx.line_to(pt_x * self.x, pt_y * self.y)
+
+    def rectangle(self, x, y, w, h):
+        self.ctx.rectangle(x * self.x, y * self.y, w * self.x, h * self.y)
 
 
 class Point(object):
@@ -321,6 +338,8 @@ class Line(object):
 
 
 class Lines(object):
+    HIGHLIGHT_COLOR = (0.5, 0.5, 0.5, 0.5)
+
     def __init__(self, schema, liststore, color_generator):
         self.schema = schema
         self.liststore = liststore
@@ -359,6 +378,38 @@ class Lines(object):
                 ),
             )
 
+    def draw_highlight(self, widget_size, draw_ctx):
+        x_range = self.schema.highlight_x_range
+        if x_range[1] <= x_range[0]:
+            return
+        if x_range[0] is -math.inf:
+            x_range = (self.minmax[0][0], self.x_range[1])
+        if x_range[1] is math.inf:
+            x_range = (x_range[0], self.minmax[0][1])
+        x_range = (
+            (
+                x_range[0] - self.minmax[0][0]
+            ) / (
+                self.minmax[0][1] - self.minmax[0][0]
+            ),
+            (
+                x_range[1] - self.minmax[0][0]
+            ) / (
+                self.minmax[0][1] - self.minmax[0][0]
+            ),
+        )
+        x_range = (x_range[0] * widget_size[0], x_range[1] * widget_size[0])
+
+        draw_ctx.save()
+        try:
+            draw_ctx.set_source_rgba(*self.HIGHLIGHT_COLOR)
+            draw_ctx.rectangle(
+                int(x_range[0]) + 1, 0, x_range[1] - x_range[0], widget_size[1]
+            )
+            draw_ctx.fill()
+        finally:
+            draw_ctx.restore()
+
     def draw_chart(self, widget_size, draw_ctx):
         w = self.minmax[0][1] - self.minmax[0][0]
         h = self.minmax[1][1] - self.minmax[1][0]
@@ -368,6 +419,8 @@ class Lines(object):
 
         draw_ctx = draw_ctx.scale(widget_size[0] / w, widget_size[1] / h)
         widget_size = (w, h)
+
+        self.draw_highlight(widget_size, draw_ctx)
 
         draw_ctx = draw_ctx.translate(
             -self.minmax[0][0], min(0, self.minmax[1][0])
