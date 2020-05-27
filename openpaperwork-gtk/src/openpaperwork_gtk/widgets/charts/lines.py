@@ -92,6 +92,17 @@ class DrawContext(object):
     def __init__(self, ctx):
         self.ctx = ctx
 
+    def get_cairo(self):
+        if hasattr(self.ctx, 'get_cairo'):
+            return self.ctx.get_cairo()
+        return self.ctx
+
+    def translate_pt(self, pt_x, pt_y):
+        return (pt_x, pt_y)
+
+    def untranslate_pt(self, pt_x, pt_y):
+        return (pt_x, pt_y)
+
     def distance(self, pt_a_x, pt_a_y, pt_b_x, pt_b_y):
         d_x = abs(pt_a_x - pt_b_x)
         d_y = abs(pt_a_y - pt_b_y)
@@ -143,6 +154,14 @@ class DrawContextTranslated(DrawContext):
         self.x = translation_x
         self.y = translation_y
 
+    def translate_pt(self, pt_x, pt_y):
+        (pt_x, pt_y) = (pt_x + self.x, pt_y + self.y)
+        return self.ctx.translate_pt(pt_x, pt_y)
+
+    def untranslate_pt(self, pt_x, pt_y):
+        (pt_x, pt_y) = self.ctx.untranslate_pt(pt_x, pt_y)
+        return (pt_x - self.x, pt_y - self.y)
+
     def distance(
             self,
             pt_untranslated_x, pt_untranslated_y,
@@ -173,6 +192,14 @@ class DrawContextScaled(DrawContext):
         self.x = scale_x
         self.y = scale_y
 
+    def translate_pt(self, pt_x, pt_y):
+        (pt_x, pt_y) = (pt_x * self.x, pt_y * self.y)
+        return self.ctx.translate_pt(pt_x, pt_y)
+
+    def untranslate_pt(self, pt_x, pt_y):
+        (pt_x, pt_y) = self.ctx.untranslate_pt(pt_x, pt_y)
+        return (pt_x / self.x, pt_y / self.y)
+
     def distance(
             self,
             pt_unscaled_x, pt_unscaled_y,
@@ -199,6 +226,7 @@ class DrawContextScaled(DrawContext):
 
 class Point(object):
     RADIUS = 2
+    LABEL_LINE_HEIGHT = 14
 
     def __init__(self, liststore_idx, x, y, label_x, label_y, color):
         self.liststore_idx = liststore_idx
@@ -267,6 +295,66 @@ class Point(object):
         )
         draw_ctx.fill()
 
+    def draw_label_x(self, widget_size, draw_ctx):
+        height = (self.label_x.count("\n") + 1) * self.LABEL_LINE_HEIGHT
+
+        cairo_ctx = draw_ctx.get_cairo()
+        x = draw_ctx.translate_pt(self.x, widget_size[1] - self.y)[0]
+        widget_size = draw_ctx.translate_pt(widget_size[0], widget_size[1])
+
+        layout = PangoCairo.create_layout(cairo_ctx)
+        layout.set_text(self.label_x, -1)
+
+        txt_size = layout.get_size()
+        if 0 in txt_size:
+            return
+
+        cairo_ctx.save()
+        try:
+            txt_scale = height / txt_size[1]
+            txt_width = txt_size[0] * txt_scale
+            if x <= widget_size[0] / 2:
+                x += 5
+            else:
+                x -= (txt_width + 10)
+
+            cairo_ctx.set_source_rgb(0, 0, 0)
+            cairo_ctx.translate(x, 0)
+            cairo_ctx.scale(txt_scale * Pango.SCALE, txt_scale * Pango.SCALE)
+            PangoCairo.update_layout(cairo_ctx, layout)
+            PangoCairo.show_layout(cairo_ctx, layout)
+        finally:
+            cairo_ctx.restore()
+
+    def draw_label_y(self, widget_size, draw_ctx):
+        height = (self.label_y.count("\n") + 1) * self.LABEL_LINE_HEIGHT
+
+        cairo_ctx = draw_ctx.get_cairo()
+        y = draw_ctx.translate_pt(self.x, widget_size[1] - self.y)[1]
+        widget_size = draw_ctx.translate_pt(widget_size[0], widget_size[1])
+
+        layout = PangoCairo.create_layout(cairo_ctx)
+        layout.set_text(self.label_y, -1)
+
+        txt_size = layout.get_size()
+        if 0 in txt_size:
+            return
+
+        cairo_ctx.save()
+        try:
+            txt_scale = height / txt_size[1]
+            if y <= widget_size[1] / 2:
+                y += 2
+            else:
+                y -= (height + 2)
+            cairo_ctx.set_source_rgb(0, 0, 0)
+            cairo_ctx.translate(0, y)
+            cairo_ctx.scale(txt_scale * Pango.SCALE, txt_scale * Pango.SCALE)
+            PangoCairo.update_layout(cairo_ctx, layout)
+            PangoCairo.show_layout(cairo_ctx, layout)
+        finally:
+            cairo_ctx.restore()
+
     def draw_highlight(self, widget_size, draw_ctx):
         draw_ctx.set_source_rgb(0.57, 0.7, 0.837)
         draw_ctx.set_line_width(1)
@@ -282,6 +370,9 @@ class Point(object):
         draw_ctx.move_to(self.x, -widget_size[1] * 2)
         draw_ctx.line_to(self.x, widget_size[1] * 2)
         draw_ctx.stroke()
+
+        self.draw_label_x(widget_size, draw_ctx)
+        self.draw_label_y(widget_size, draw_ctx)
 
     def distance(self, widget_size, draw_ctx, x, y):
         return draw_ctx.distance(self.x, widget_size[1] - self.y, x, y)
@@ -398,7 +489,6 @@ class Line(object):
             cairo_ctx.scale(txt_scale * Pango.SCALE, txt_scale * Pango.SCALE)
             PangoCairo.update_layout(cairo_ctx, layout)
             PangoCairo.show_layout(cairo_ctx, layout)
-            cairo_ctx.translate(-x, -y)
 
             x += txt_width + self.LEGEND_SPACING
         finally:
@@ -608,9 +698,13 @@ class ChartDrawer(object):
             widget.get_allocated_width() - (2 * self.MARGIN),
             widget.get_allocated_height() - (2 * self.MARGIN),
         )
-        (dist, point) = self.lines.get_closest_point(
+        r = self.lines.get_closest_point(
             widget_size, draw_ctx, event.x, event.y
         )
+        if r is None:
+            self.lines.active_point = None
+            return
+        (dist, point) = r
         if self.lines.active_point is not point:
             self.lines.active_point = point
             self.chart_widget.queue_draw()
@@ -701,10 +795,10 @@ if __name__ == "__main__":
         ("value A73", "line A", 7, 3, "A7", "A3"),
         ("value A79", "line A", 7, 9, "A7", "A9"),
         ("value B79", "line B", 7, 9, "B7", "B9"),
-        ("value A83", "line A", 7, 3, "A8", "A3"),
-        ("value B88", "line B", 7, 8, "B8", "B8"),
-        ("value A97", "line A", 7, 7, "A9", "A7"),
-        ("value B95", "line B", 7, 5, "B9", "B5"),
+        ("value A83", "line A", 8, 3, "A8", "A3"),
+        ("value B88", "line B", 8, 8, "B8", "B8"),
+        ("value A97", "line A", 9, 7, "A9", "A7"),
+        ("value B95", "line B", 9, 5, "B9", "B5"),
         ("value A10-5", "line A", 10, -5, "A10", "A-5"),
         ("value B910", "line B", 9, 10, "B9", "B10"),
     )
