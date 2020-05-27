@@ -24,7 +24,9 @@ except (ImportError, ValueError):
 
 if GI_AVAILABLE:
     try:
+        gi.require_version('Gdk', '3.0')
         gi.require_version('Gtk', '3.0')
+        from gi.repository import Gdk
         from gi.repository import Gtk
         GTK_AVAILABLE = True
     except (ImportError, ValueError):
@@ -90,6 +92,14 @@ class DrawContext(object):
     def __init__(self, ctx):
         self.ctx = ctx
 
+    def distance(self, pt_a_x, pt_a_y, pt_b_x, pt_b_y):
+        d_x = abs(pt_a_x - pt_b_x)
+        d_y = abs(pt_a_y - pt_b_y)
+        return (d_x ** 2) + (d_y ** 2)
+
+    def arc(self, x, y, radius, angle1, angle2):
+        self.ctx.arc(x, y, radius, angle1, angle2)
+
     def save(self):
         self.ctx.save()
 
@@ -133,6 +143,20 @@ class DrawContextTranslated(DrawContext):
         self.x = translation_x
         self.y = translation_y
 
+    def distance(
+            self,
+            pt_untranslated_x, pt_untranslated_y,
+            pt_translated_x, pt_translated_y):
+        pt_a_x = pt_untranslated_x + self.x
+        pt_a_y = pt_untranslated_y + self.y
+        return self.ctx.distance(
+            pt_a_x, pt_a_y,
+            pt_translated_x, pt_translated_y,
+        )
+
+    def arc(self, x, y, radius, angle1, angle2):
+        self.ctx.arc(x + self.x, y + self.y, radius, angle1, angle2)
+
     def move_to(self, pt_x, pt_y):
         self.ctx.move_to(pt_x + self.x, pt_y + self.y)
 
@@ -149,6 +173,20 @@ class DrawContextScaled(DrawContext):
         self.x = scale_x
         self.y = scale_y
 
+    def distance(
+            self,
+            pt_unscaled_x, pt_unscaled_y,
+            pt_scaled_x, pt_scaled_y):
+        pt_a_x = pt_unscaled_x * self.x
+        pt_a_y = pt_unscaled_y * self.y
+        return self.ctx.distance(
+            pt_a_x, pt_a_y,
+            pt_scaled_x, pt_scaled_y,
+        )
+
+    def arc(self, x, y, radius, angle1, angle2):
+        self.ctx.arc(x * self.x, y * self.y, radius, angle1, angle2)
+
     def move_to(self, pt_x, pt_y):
         self.ctx.move_to(pt_x * self.x, pt_y * self.y)
 
@@ -160,6 +198,8 @@ class DrawContextScaled(DrawContext):
 
 
 class Point(object):
+    RADIUS = 2
+
     def __init__(self, liststore_idx, x, y, label_x, label_y, color):
         self.liststore_idx = liststore_idx
         self.x = x
@@ -175,6 +215,13 @@ class Point(object):
             self.label_x, self.label_y,
             self.color
         )
+
+    def __lt__(self, other):
+        if self.x < other.x:
+            return True
+        if self.y < other.y:
+            return True
+        return False
 
     @staticmethod
     def merge(pts):
@@ -214,8 +261,30 @@ class Point(object):
         )
 
     def draw_chart(self, widget_size, draw_ctx):
-        # TODO
-        pass
+        draw_ctx.arc(
+            self.x, widget_size[1] - self.y,
+            self.RADIUS, 0, math.pi * 2
+        )
+        draw_ctx.fill()
+
+    def draw_highlight(self, widget_size, draw_ctx):
+        draw_ctx.set_source_rgb(0.57, 0.7, 0.837)
+        draw_ctx.set_line_width(1)
+
+        # TODO(Jflesch): we should use the real widget size, and not
+        # the widget size relative to point (0, 0)
+        draw_ctx.move_to(-widget_size[0] * 2, widget_size[1] - self.y)
+        draw_ctx.line_to(widget_size[0] * 2, widget_size[1] - self.y)
+        draw_ctx.stroke()
+
+        # TODO(Jflesch): we should use the real widget size, and not
+        # the widget size relative to point (0, 0)
+        draw_ctx.move_to(self.x, -widget_size[1] * 2)
+        draw_ctx.line_to(self.x, widget_size[1] * 2)
+        draw_ctx.stroke()
+
+    def distance(self, widget_size, draw_ctx, x, y):
+        return draw_ctx.distance(self.x, widget_size[1] - self.y, x, y)
 
 
 class Line(object):
@@ -261,17 +330,17 @@ class Line(object):
             ]
         pts.sort(key=lambda pt: pt[1].x)
 
-        total_txt = _("Total")
+        total_txt = _("Total: {}")
 
         last_y = collections.defaultdict(lambda: 0)
         for (line_name, pt) in pts:
             last_y[line_name] = pt.y
             pt.y = sum(last_y.values())
-            pt.label_y = total_txt
+            pt.label_y = total_txt.format(pt.y)
 
         pts = [pt for (line_name, pt) in pts]
         pts = Point.merge_same_x(pts)
-        return Line(total_txt, pts, SUM_COLOR, 2.0)
+        return Line(_("Total"), pts, SUM_COLOR, 2.0)
 
     def draw_chart(self, widget_size, draw_ctx):
         draw_ctx.save()
@@ -336,6 +405,12 @@ class Line(object):
             cairo_ctx.restore()
         return (x, y)
 
+    def get_closest_point(self, widget_size, draw_ctx, x, y):
+        return min((
+            (point.distance(widget_size, draw_ctx, x, y), point)
+            for point in self.points
+        ), default=None)
+
 
 class Lines(object):
     HIGHLIGHT_COLOR = (0.5, 0.5, 0.5, 0.5)
@@ -344,6 +419,7 @@ class Lines(object):
         self.schema = schema
         self.liststore = liststore
         self.color_generator = color_generator
+        self.active_point = None
 
         self.lines = []
         self.minmax = ((math.inf, 0), (0, 0),)
@@ -378,7 +454,7 @@ class Lines(object):
                 ),
             )
 
-    def draw_highlight(self, widget_size, draw_ctx):
+    def draw_chart_highlight(self, widget_size, draw_ctx):
         x_range = self.schema.highlight_x_range
         if x_range[1] <= x_range[0]:
             return
@@ -420,15 +496,21 @@ class Lines(object):
         draw_ctx = draw_ctx.scale(widget_size[0] / w, widget_size[1] / h)
         widget_size = (w, h)
 
-        self.draw_highlight(widget_size, draw_ctx)
+        self.draw_chart_highlight(widget_size, draw_ctx)
 
         draw_ctx = draw_ctx.translate(
             -self.minmax[0][0], min(0, self.minmax[1][0])
         )
-        widget_size = (widget_size[0] - self.minmax[0][0], widget_size[1])
+        widget_size = (widget_size[0] + self.minmax[0][0], widget_size[1])
 
-        for line in self.lines:
-            line.draw_chart(widget_size, draw_ctx)
+        draw_ctx.save()
+        try:
+            for line in self.lines:
+                line.draw_chart(widget_size, draw_ctx)
+        finally:
+            draw_ctx.restore()
+        if self.active_point is not None:
+            self.active_point.draw_highlight(widget_size, draw_ctx)
 
     def draw_legend(self, widget_size, cairo_ctx):
         x = 0
@@ -436,6 +518,26 @@ class Lines(object):
         for line in self.lines:
             (x, y) = line.draw_legend(widget_size, cairo_ctx, x, y)
         return (x, y)
+
+    def get_closest_point(self, widget_size, draw_ctx, x, y):
+        w = self.minmax[0][1] - self.minmax[0][0]
+        h = self.minmax[1][1] - self.minmax[1][0]
+
+        if w == 0 or h == 0:
+            return None
+
+        draw_ctx = draw_ctx.scale(widget_size[0] / w, widget_size[1] / h)
+        widget_size = (w, h)
+
+        draw_ctx = draw_ctx.translate(
+            -self.minmax[0][0], min(0, self.minmax[1][0])
+        )
+        widget_size = (widget_size[0] - self.minmax[0][0], widget_size[1])
+
+        return min((
+            line.get_closest_point(widget_size, draw_ctx, x, y)
+            for line in self.lines
+        ), default=None)
 
 
 class ChartDrawer(object):
@@ -449,6 +551,8 @@ class ChartDrawer(object):
         self.chart_widget.set_size_request(-1, 200)
         self.chart_widget.set_visible(True)
         self.chart_widget.connect("draw", self.draw_chart)
+        self.chart_widget.connect("realize", self._on_chart_realized)
+        self.chart_widget.connect("motion-notify-event", self._on_mouse_motion)
 
         self.legend_widget = Gtk.DrawingArea.new()
         self.legend_widget.set_visible(True)
@@ -459,9 +563,19 @@ class ChartDrawer(object):
         liststore.connect("row-inserted", self.reload)
         liststore.connect("rows-reordered", self.reload)
 
+        self._on_chart_realized()
+
         self.has_changed = False
         self.reload_planned = False
         self._reload()
+
+    def _on_chart_realized(self, *args, **kwargs):
+        mask = Gdk.EventMask.POINTER_MOTION_MASK
+        self.chart_widget.add_events(mask)
+        if self.chart_widget.get_window() is not None:
+            self.chart_widget.get_window().set_events(
+                self.chart_widget.get_window().get_events() | mask
+            )
 
     def reload(self, *args, **kwargs):
         self.lines.reset()
@@ -486,6 +600,20 @@ class ChartDrawer(object):
         self.lines.reload()
         self.chart_widget.queue_draw()
         self.legend_widget.queue_draw()
+
+    def _on_mouse_motion(self, widget, event):
+        draw_ctx = DrawContext(None)
+        draw_ctx = draw_ctx.translate(self.MARGIN, self.MARGIN)
+        widget_size = (
+            widget.get_allocated_width() - (2 * self.MARGIN),
+            widget.get_allocated_height() - (2 * self.MARGIN),
+        )
+        (dist, point) = self.lines.get_closest_point(
+            widget_size, draw_ctx, event.x, event.y
+        )
+        if self.lines.active_point is not point:
+            self.lines.active_point = point
+            self.chart_widget.queue_draw()
 
     def draw_chart(self, widget, cairo_ctx):
         widget_size = (
