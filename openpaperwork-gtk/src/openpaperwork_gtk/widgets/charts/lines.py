@@ -288,13 +288,6 @@ class Point(object):
             color
         )
 
-    def draw_chart(self, widget_size, draw_ctx):
-        draw_ctx.arc(
-            self.x, widget_size[1] - self.y,
-            self.RADIUS, 0, math.pi * 2
-        )
-        draw_ctx.fill()
-
     def draw_label_x(self, widget_size, draw_ctx):
         height = (self.label_x.count("\n") + 1) * self.LABEL_LINE_HEIGHT
 
@@ -444,14 +437,6 @@ class Line(object):
                 else:
                     draw_ctx.line_to(pt.x, widget_size[1] - pt.y)
             draw_ctx.stroke()
-        finally:
-            draw_ctx.restore()
-
-        draw_ctx.save()
-        try:
-            draw_ctx.set_source_rgb(*self.color)
-            for pt in self.points:
-                pt.draw_chart(widget_size, draw_ctx)
         finally:
             draw_ctx.restore()
 
