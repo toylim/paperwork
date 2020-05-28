@@ -94,7 +94,7 @@ If you installed it manually (for development), you can follow the same process 
 
 ## Donate
 
-<a href="https://openpaper.work/download#donate">Help us help you ! ;-)</a>
+[Help us help you ! ;-)](https://www.patreon.com/openpaper)
 
 
 ## Contact/Help
