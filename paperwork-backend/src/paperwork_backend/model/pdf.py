@@ -480,7 +480,7 @@ class Plugin(openpaperwork_core.PluginBase):
             r = self.cache_nb_pages[doc_url]
         else:
             # Poppler is not thread-safe
-            r = self.core.call_success(
+            r = self.core.call_one(
                 "mainloop_execute", self._doc_get_real_nb_pages_by_url, doc_url
             )
             if r is not None:
@@ -563,7 +563,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def doc_get_text_by_url(self, out: list, doc_url):
         # Poppler is not thread-safe
-        return self.core.call_success(
+        return self.core.call_one(
             "mainloop_execute",
             self._doc_get_text_by_url, out, doc_url
         )
@@ -592,7 +592,7 @@ class Plugin(openpaperwork_core.PluginBase):
         if page_idx is None:
             return None
         # Poppler is not thread-safe
-        return self.core.call_success(
+        return self.core.call_one(
             "mainloop_execute", self._page_has_text_by_url, doc_url, page_idx
         )
 
@@ -640,7 +640,7 @@ class Plugin(openpaperwork_core.PluginBase):
         if page_idx is None:
             return None
         # Poppler is not thread-safe
-        return self.core.call_success(
+        return self.core.call_one(
             "mainloop_execute", self._page_get_boxes_by_url, doc_url, page_idx
         )
 
@@ -711,7 +711,7 @@ class Plugin(openpaperwork_core.PluginBase):
         if page_idx is None:
             return None
         # Poppler is not thread-safe
-        return self.core.call_success(
+        return self.core.call_one(
             "mainloop_execute",
             self._page_get_paper_size_by_url, doc_url, page_idx
         )

@@ -59,7 +59,7 @@ class Plugin(openpaperwork_core.PluginBase):
         ldata = len(data)
         data = Gio.MemoryInputStream.new_from_data(data)
         self.core.call_all("on_objref_track", data)
-        doc = self.core.call_success(
+        doc = self.core.call_one(
             "mainloop_execute", Poppler.Document.new_from_stream,
             data, ldata, password=None
         )

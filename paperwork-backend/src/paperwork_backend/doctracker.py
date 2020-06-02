@@ -34,11 +34,11 @@ class DocTrackerTransaction(sync.BaseTransaction):
         super().__init__(plugin.core, total_expected)
         self.priority = -10000
 
-        self.sql = self.core.call_success(
+        self.sql = self.core.call_one(
             "mainloop_execute", sql.cursor
         )
 
-        self.core.call_success(
+        self.core.call_one(
             "mainloop_execute", self.sql.execute, "BEGIN TRANSACTION"
         )
 
@@ -78,7 +78,7 @@ class DocTrackerTransaction(sync.BaseTransaction):
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
         actual = self._get_actual_doc_data(doc_id, doc_url)
 
-        self.core.call_success(
+        self.core.call_one(
             "mainloop_execute", self.sql.execute,
             "INSERT OR REPLACE INTO documents (doc_id, text, mtime)"
             " VALUES (?, ?, ?)",
@@ -87,7 +87,7 @@ class DocTrackerTransaction(sync.BaseTransaction):
 
     def del_obj(self, doc_id):
         self.notify_progress(ID, _("Document %s deleted") % (doc_id))
-        self.core.call_success(
+        self.core.call_one(
             "mainloop_execute", self.sql.execute,
             "DELETE FROM documents WHERE doc_id = ?",
             (doc_id,)
@@ -102,16 +102,14 @@ class DocTrackerTransaction(sync.BaseTransaction):
 
     def cancel(self):
         self.notify_progress(ID, _("Rolling back changes"))
-        self.core.call_success(
-            "mainloop_execute", self.sql.execute, "ROLLBACK"
-        )
-        self.core.call_success("mainloop_execute", self.sql.close)
+        self.core.call_one("mainloop_execute", self.sql.execute, "ROLLBACK")
+        self.core.call_one("mainloop_execute", self.sql.close)
         self.notify_done(ID)
 
     def commit(self):
         self.notify_progress(ID, _("Committing changes"))
-        self.core.call_success("mainloop_execute", self.sql.execute, "COMMIT")
-        self.core.call_success("mainloop_execute", self.sql.close)
+        self.core.call_one("mainloop_execute", self.sql.execute, "COMMIT")
+        self.core.call_one("mainloop_execute", self.sql.close)
         self.notify_done(ID)
 
 
@@ -162,21 +160,21 @@ class Plugin(openpaperwork_core.PluginBase):
             "fs_join", self.paperwork_dir, 'doc_tracking.db'
         )
         sql_file = self.core.call_success("fs_unsafe", sql_file)
-        self.sql = self.core.call_success(
+        self.sql = self.core.call_one(
             "mainloop_execute", sqlite3.connect, sql_file
         )
         for query in CREATE_TABLES:
-            self.core.call_success("mainloop_execute", self.sql.execute, query)
+            self.core.call_one("mainloop_execute", self.sql.execute, query)
 
     def doc_tracker_register(self, name, transaction_factory):
         self.transaction_factories.append((name, transaction_factory))
 
     def doc_tracker_get_all_doc_ids(self):
-        doc_ids = self.core.call_success(
+        doc_ids = self.core.call_one(
             "mainloop_execute", self.sql.execute,
             "SELECT doc_id FROM documents"
         )
-        doc_ids = self.core.call_success(
+        doc_ids = self.core.call_one(
             "mainloop_execute", list, doc_ids
         )
         return {doc_id[0] for doc_id in doc_ids}
@@ -189,12 +187,12 @@ class Plugin(openpaperwork_core.PluginBase):
         text. Since the document won't be available anymore, we pull its text
         from the database (for instance, for label guesser untraining)
         """
-        text = self.core.call_success(
+        text = self.core.call_one(
             "mainloop_execute", self.sql.execute,
             "SELECT text FROM documents WHERE doc_id = ? LIMIT 1",
             (doc_id,)
         )
-        text = self.core.call_success(
+        text = self.core.call_one(
             "mainloop_execute", list, text
         )
         if len(text) <= 0:

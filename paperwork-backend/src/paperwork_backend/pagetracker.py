@@ -36,27 +36,27 @@ class PageTracker(object):
     def __init__(self, core, sql_file):
         self.core = core
         sql_file = self.core.call_success("fs_unsafe", sql_file)
-        self.sql = self.core.call_success(
+        self.sql = self.core.call_one(
             "mainloop_execute", sqlite3.connect, sql_file
         )
         for query in CREATE_TABLES:
-            self.core.call_success("mainloop_execute", self.sql.execute, query)
+            self.core.call_one("mainloop_execute", self.sql.execute, query)
 
-        self.core.call_success(
+        self.core.call_one(
             "mainloop_execute", self.sql.execute, "BEGIN TRANSACTION"
         )
 
     def _close(self):
-        self.core.call_success("mainloop_execute", self.sql.close)
+        self.core.call_one("mainloop_execute", self.sql.close)
 
     def cancel(self):
-        self.core.call_success(
+        self.core.call_one(
             "mainloop_execute", self.sql.execute, "ROLLBACK"
         )
         self._close()
 
     def commit(self):
-        self.core.call_success("mainloop_execute", self.sql.execute, "COMMIT")
+        self.core.call_one("mainloop_execute", self.sql.execute, "COMMIT")
         self._close()
 
     def find_changes(self, doc_id, doc_url):
@@ -68,13 +68,13 @@ class PageTracker(object):
 
         out = []
 
-        db_pages = self.core.call_success(
+        db_pages = self.core.call_one(
             "mainloop_execute", self.sql.execute,
             "SELECT page, hash FROM pages"
             " WHERE doc_id = ?",
             (doc_id,)
         )
-        db_pages = self.core.call_success(
+        db_pages = self.core.call_one(
             "mainloop_execute",
             lambda pages: {r[0]: int(r[1], 16) for r in pages}, db_pages
         )
@@ -102,7 +102,7 @@ class PageTracker(object):
                         out.append(('upd', page_idx))
 
         for (db_page_idx, h) in db_pages.items():
-            self.core.call_success(
+            self.core.call_one(
                 "mainloop_execute", self.sql.execute,
                 "DELETE FROM pages"
                 " WHERE doc_id = ? AND page = ?",
@@ -118,7 +118,7 @@ class PageTracker(object):
         page_hash = self.core.call_success(
             "page_get_hash_by_url", doc_url, page_idx
         )
-        self.core.call_success(
+        self.core.call_one(
             "mainloop_execute", self.sql.execute,
             "INSERT OR REPLACE"
             " INTO pages (doc_id, page, hash)"
@@ -127,7 +127,7 @@ class PageTracker(object):
         )
 
     def delete_doc(self, doc_id):
-        self.core.call_success(
+        self.core.call_one(
             "mainloop_execute", self.sql.execute,
             "DELETE FROM pages WHERE doc_id = ?",
             (doc_id,)

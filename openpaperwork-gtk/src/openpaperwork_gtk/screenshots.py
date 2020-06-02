@@ -116,7 +116,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         promise = promise.then(lambda *args, **kwargs: None)
         promise = promise.then(
-            self.core.call_success, "mainloop_execute",
+            self.core.call_one, "mainloop_execute",
             self._snap_screenshot, fd
         )
         promise = promise.then(lambda *args, **kwargs: None)

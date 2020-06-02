@@ -36,17 +36,17 @@ class ProxyCore(object):
         self.core = core
 
     def call_all(self, *args, **kwargs):
-        return self.core.call_success(
+        return self.core.call_one(
             "mainloop_execute", self.core.call_all, *args, **kwargs
         )
 
     def call_success(self, *args, **kwargs):
-        return self.core.call_success(
+        return self.core.call_one(
             "mainloop_execute", self.core.call_success, *args, **kwargs
         )
 
     def call_one(self, *args, **kwargs):
-        return self.core.call_success(
+        return self.core.call_one(
             "mainloop_execute", self.core.call_one, *args, **kwargs
         )
 
@@ -138,10 +138,8 @@ class Plugin(PluginBase):
         if self.has_quit:
             return
         print("Quitting")
-        self.core.call_success(
-            "mainloop_execute", self.core.call_all, "on_quit"
-        )
-        self.core.call_success(
+        self.core.call_one("mainloop_execute", self.core.call_all, "on_quit")
+        self.core.call_one(
             "mainloop_execute", self.core.call_all, "mainloop_quit_graceful"
         )
 

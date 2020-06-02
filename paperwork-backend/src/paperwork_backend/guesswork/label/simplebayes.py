@@ -56,7 +56,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
 
         # use a dedicated connection to ensure thread-safety regarding
         # SQL transactions
-        self.cursor = self.core.call_success(
+        self.cursor = self.core.call_one(
             "mainloop_execute", plugin.sql.cursor
         )
         self.core.call_one(
@@ -65,11 +65,11 @@ class LabelGuesserTransaction(sync.BaseTransaction):
 
         self.nb_changes = 0
 
-        all_labels = self.core.call_success(
+        all_labels = self.core.call_one(
             "mainloop_execute", self.cursor.execute,
             "SELECT DISTINCT label FROM labels"
         )
-        self.all_labels = self.core.call_success(
+        self.all_labels = self.core.call_one(
             "mainloop_execute",
             lambda all_labels: {l[0] for l in all_labels},
             all_labels
@@ -110,12 +110,12 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         super().upd_obj(doc_id)
 
     def _check_label_exists_in_db(self, label):
-        r = self.core.call_success(
+        r = self.core.call_one(
             "mainloop_execute", self.cursor.execute,
             "SELECT COUNT(label) FROM labels WHERE label = ? LIMIT 1",
             (label,)
         )
-        r = self.core.call_success("mainloop_execute", next, r)[0]
+        r = self.core.call_one("mainloop_execute", next, r)[0]
         return r > 0
 
     def _get_actual_doc_data(self, doc_id, doc_url):
@@ -145,11 +145,11 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             "doc_tracker_get_doc_text_by_id", doc_id
         )
 
-        db_labels = self.core.call_success(
+        db_labels = self.core.call_one(
             "mainloop_execute", self.cursor.execute,
             "SELECT label FROM labels WHERE doc_id = ?", (doc_id,)
         )
-        db_labels = self.core.call_success("mainloop_execute", list, db_labels)
+        db_labels = self.core.call_one("mainloop_execute", list, db_labels)
         db_labels = {l[0] for l in db_labels}
 
         return {
@@ -213,11 +213,11 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             })
 
     def _get_all_labels_from_db(self):
-        all_labels = self.core.call_success(
+        all_labels = self.core.call_one(
             "mainloop_execute", self.cursor.execute,
             "SELECT DISTINCT label FROM labels"
         )
-        all_labels = self.core.call_success(
+        all_labels = self.core.call_one(
             "mainloop_execute",
             lambda all_labels: {l[0] for l in all_labels},
             all_labels
@@ -444,11 +444,11 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _load_all_bayes(self):
         self.bayes = {}
-        labels = self.core.call_success(
+        labels = self.core.call_one(
             "mainloop_execute",
             self.sql.execute, "SELECT DISTINCT label FROM labels"
         )
-        labels = self.core.call_success(
+        labels = self.core.call_one(
             "mainloop_execute",
             lambda labels: [l[0] for l in labels],
             labels

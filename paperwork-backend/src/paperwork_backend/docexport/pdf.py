@@ -235,7 +235,7 @@ class PagesToPdfUrlExportPipe(AbstractExportPipe):
             out = target_file_url
             list_img_boxes = input_data.iter(ExportDataType.IMG_BOXES)
 
-            creator = self.core.call_success(
+            creator = self.core.call_one(
                 "mainloop_execute", PdfCreator,
                 self.core, target_file_url, self.page_format, self.quality
             )
@@ -246,14 +246,12 @@ class PagesToPdfUrlExportPipe(AbstractExportPipe):
 
                 if doc.data[1] != last_doc and last_doc is not None:
                     # another doc, another output file, another PDFCreator
-                    self.core.call_success(
-                        "mainloop_execute", creator.finish
-                    )
+                    self.core.call_one("mainloop_execute", creator.finish)
                     out_files.append(out)
                     doc_idx += 1
                     out = target_file_url.rsplit(".", 1)
                     out = "{}_{}.{}".format(out[0], doc_idx, out[1])
-                    creator = self.core.call_success(
+                    creator = self.core.call_one(
                         "mainloop_execute", PdfCreator,
                         self.core, out, self.page_format, self.quality
                     )
@@ -264,10 +262,10 @@ class PagesToPdfUrlExportPipe(AbstractExportPipe):
                 # the UI
                 time.sleep(0.1)
                 (img, boxes) = img_boxes.data
-                self.core.call_success(
+                self.core.call_one(
                     "mainloop_execute", creator.set_page_size, img.size
                 )
-                self.core.call_success(
+                self.core.call_one(
                     "mainloop_execute", creator.paint_txt, boxes,
                     img.size
                 )
@@ -277,12 +275,10 @@ class PagesToPdfUrlExportPipe(AbstractExportPipe):
                     int(self.quality * img_size[1])
                 )
                 img = img.resize(img_size, PIL.Image.ANTIALIAS)
-                self.core.call_success(
-                    "mainloop_execute", creator.paint_img, img
-                )
-                self.core.call_success("mainloop_execute", creator.next_page)
+                self.core.call_one("mainloop_execute", creator.paint_img, img)
+                self.core.call_one("mainloop_execute", creator.next_page)
 
-            self.core.call_success("mainloop_execute", creator.finish)
+            self.core.call_one("mainloop_execute", creator.finish)
             out_files.append(out)
             return out_files
 

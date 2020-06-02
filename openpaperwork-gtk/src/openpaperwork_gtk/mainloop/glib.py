@@ -218,8 +218,4 @@ class Plugin(openpaperwork_core.PluginBase):
 
         if exc[0] is not None:
             raise exc[0]
-        if out[0] is None:
-            # cannot return None, other mainloop_execute() keep looking for
-            # other mainloop_execute()
-            return True
         return out[0]

@@ -87,7 +87,7 @@ class ProgressWidget(object):
         self.stay_alives = STAY_ALIVES
         while self.thread is not None:
             time.sleep(TIME_BETWEEN_UPDATES)
-            self.core.call_success(
+            self.core.call_one(
                 "mainloop_execute", self._upd_progress_widgets
             )
 

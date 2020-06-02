@@ -199,7 +199,7 @@ class Source(object):
         try:
             page_nb = 0
 
-            self.core.call_success(
+            self.core.call_one(
                 "mainloop_execute", self.core.call_all,
                 "on_scan_feed_start", scan_id
             )

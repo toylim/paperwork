@@ -59,7 +59,7 @@ class Plugin(openpaperwork_core.PluginBase):
         if not url.startswith("file://"):
             return None
         gio_file = Gio.File.new_for_uri(url)
-        doc = self.core.call_success(
+        doc = self.core.call_one(
             "mainloop_execute", Poppler.Document.new_from_gfile,
             gio_file, password=None
         )
