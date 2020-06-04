@@ -22,6 +22,7 @@ DEFAULT_GUI_PLUGINS = (
         'paperwork_backend.docscan.autoselect_scanner',
         'paperwork_backend.guesswork.cropping.calibration',
         'paperwork_gtk.actions.app_open_bug_report',
+        'paperwork_gtk.actions.copy_text',
         'paperwork_gtk.actions.doc_add_to_selection',
         'paperwork_gtk.actions.doc_delete',
         'paperwork_gtk.actions.doc_export',
