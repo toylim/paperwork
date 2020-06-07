@@ -190,7 +190,7 @@ class CairoRenderer(GObject.GObject):
                 cairo_ctx.set_source_surface(reduced_surface.surface)
                 cairo_ctx.paint()
             finally:
-                cairo_ctx.save()
+                cairo_ctx.restore()
 
         self.core.call_all("on_perfcheck_stop", task, size=self.size)
 
