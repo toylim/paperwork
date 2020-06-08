@@ -135,34 +135,39 @@ class CairoRenderer(GObject.GObject):
         POPPLER_DOCS.pop(self.file_url)
 
     def _draw(self, cairo_ctx, zoom):
-        cairo_ctx.save()
         try:
-            cairo_ctx.set_source_rgb(1.0, 1.0, 1.0)
-            cairo_ctx.scale(zoom, zoom)
-            cairo_ctx.rectangle(0, 0, self.size[0], self.size[1])
-            cairo_ctx.scale(
-                paperwork_backend.model.pdf.PDF_RENDER_FACTOR,
-                paperwork_backend.model.pdf.PDF_RENDER_FACTOR,
-            )
-            cairo_ctx.clip()
-            cairo_ctx.paint()
-            self.page.render(cairo_ctx)
+            cairo_ctx.save()
+            try:
+                cairo_ctx.set_source_rgb(1.0, 1.0, 1.0)
+                cairo_ctx.scale(zoom, zoom)
+                cairo_ctx.rectangle(0, 0, self.size[0], self.size[1])
+                cairo_ctx.scale(
+                    paperwork_backend.model.pdf.PDF_RENDER_FACTOR,
+                    paperwork_backend.model.pdf.PDF_RENDER_FACTOR,
+                )
+                cairo_ctx.clip()
+                cairo_ctx.paint()
+                self.page.render(cairo_ctx)
 
-            cairo_ctx.scale(
-                1 / paperwork_backend.model.pdf.PDF_RENDER_FACTOR,
-                1 / paperwork_backend.model.pdf.PDF_RENDER_FACTOR,
-            )
+                cairo_ctx.scale(
+                    1 / paperwork_backend.model.pdf.PDF_RENDER_FACTOR,
+                    1 / paperwork_backend.model.pdf.PDF_RENDER_FACTOR,
+                )
 
-            cairo_ctx.set_source_rgb(*self.OUTLINE)
-            outline_width = 1 / zoom
-            cairo_ctx.set_line_width(outline_width)
-            cairo_ctx.rectangle(
-                0, 0,
-                self.size[0] - outline_width, self.size[1] - outline_width
-            )
-            cairo_ctx.stroke()
-        finally:
-            cairo_ctx.restore()
+                cairo_ctx.set_source_rgb(*self.OUTLINE)
+                outline_width = 1 / zoom
+                cairo_ctx.set_line_width(outline_width)
+                cairo_ctx.rectangle(
+                    0, 0,
+                    self.size[0] - outline_width, self.size[1] - outline_width
+                )
+                cairo_ctx.stroke()
+            finally:
+                cairo_ctx.restore()
+        except Exception as exc:
+            LOGGER.error("CairoRenderer.draw() failed (PDF)", exc_info=exc)
+            # WORKAROUND(Jflesch): with some malformed PDF file, we get an
+            # exception on ctx.restore(), but the drawing was actually done.
 
     def draw(self, cairo_ctx):
         if not self.visible or self.page is None or self.size[0] == 0:
@@ -294,19 +299,24 @@ class Plugin(openpaperwork_core.PluginBase):
             cairo.FORMAT_ARGB32, width, height
         ))
         self.core.call_all("on_objref_track", surface)
-        ctx = cairo.Context(surface.surface)
 
-        ctx.save()
         try:
-            ctx.set_source_rgb(1.0, 1.0, 1.0)
-            ctx.rectangle(0, 0, width, height)
-            ctx.clip()
-            ctx.paint()
+            ctx = cairo.Context(surface.surface)
+            ctx.save()
+            try:
+                ctx.set_source_rgb(1.0, 1.0, 1.0)
+                ctx.rectangle(0, 0, width, height)
+                ctx.clip()
+                ctx.paint()
 
-            ctx.scale(factor_w, factor_h)
-            page.render(ctx)
-        finally:
-            ctx.restore()
+                ctx.scale(factor_w, factor_h)
+                page.render(ctx)
+            finally:
+                ctx.restore()
+        except Exception as exc:
+            LOGGER.error("pdf_page_to_cairo_surface() failed", exc_info=exc)
+            # WORKAROUND(Jflesch): with some malformed PDF file, we get an
+            # exception on ctx.restore(), but the drawing was actually done.
 
         self.core.call_all("on_perfcheck_stop", task, size=(width, height))
         return surface
