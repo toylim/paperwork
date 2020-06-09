@@ -16,19 +16,16 @@ LOGGER = logging.getLogger(__name__)
 
 
 class Plugin(openpaperwork_core.PluginBase):
-    PRIORITY = -300
+    PRIORITY = -150
 
     def __init__(self):
         super().__init__()
-        self.active_doc = None
-        self.active_windows = []
         self.action = None
 
     def get_interfaces(self):
         return [
             'chkdeps',
             'app_action',
-            'gtk_window_listener',
         ]
 
     def get_deps(self):
@@ -38,33 +35,22 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['paperwork_gtk.mainwindow.doclist'],
             },
             {
-                'interface': 'gtk_doclist',
-                'defaults': ['paperwork_gtk.mainwindow.doclist'],
+                'interface': 'gtk_shortcuts',
+                'defaults': ['paperwork_gtk.shortcutswin'],
             },
         ]
-
-    def init(self, core):
-        super().init(core)
-        if not GLIB_AVAILABLE:
-            return
 
     def chkdeps(self, out: dict):
         if not GLIB_AVAILABLE:
             out['glib'].update(openpaperwork_core.deps.GLIB)
 
     def on_doclist_initialized(self):
-        item = Gio.MenuItem.new(_("Report bug"), "win.open_bug_report")
+        item = Gio.MenuItem.new(_("Shortcuts"), "win.open_shortcuts")
         self.core.call_all("menu_app_append_item", item)
 
-        action = Gio.SimpleAction.new('open_bug_report', None)
-        action.connect("activate", self._open_bug_report)
+        action = Gio.SimpleAction.new('open_shortcuts', None)
+        action.connect("activate", self._open_shortcuts)
         self.core.call_all("app_actions_add", action)
 
-    def on_gtk_window_opened(self, window):
-        self.active_windows.append(window)
-
-    def on_gtk_window_closed(self, window):
-        self.active_windows.remove(window)
-
-    def _open_bug_report(self, *args, **kwargs):
-        self.core.call_all("open_bug_report", self.active_windows[-1])
+    def _open_shortcuts(self, *args, **kwargs):
+        self.core.call_success("gtk_show_shortcuts")
