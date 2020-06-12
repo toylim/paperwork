@@ -283,9 +283,12 @@ class Plugin(openpaperwork_core.PluginBase):
             default_filename = doc_id + ".pdf"
         else:
             job_name = "Paperwork {} p{}".format(
-                doc_id, ",".join(page_indexes)
+                doc_id, ",".join((str(p) for p in page_indexes))
             )
-            default_filename = "{}_p{}".format(doc_id, "_p".join(page_indexes))
+            default_filename = "{}_p{}".format(
+                doc_id,
+                "_p".join((str(p) for p in page_indexes))
+            )
 
         try:
             active_page_nb = page_indexes.index(active_page_idx)
