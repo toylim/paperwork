@@ -8,8 +8,7 @@ except (ImportError, ValueError):
     GLIB_AVAILABLE = False
 
 import openpaperwork_core
-
-from ... import _
+import openpaperwork_core.deps
 
 
 LOGGER = logging.getLogger(__name__)
@@ -25,8 +24,10 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_interfaces(self):
         return [
+            'action',
+            'action_docs',
+            'action_docs_properties',
             'chkdeps',
-            'docs_action',
         ]
 
     def get_deps(self):
@@ -34,10 +35,6 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'app_actions',
                 'defaults': ['paperwork_gtk.mainwindow.window'],
-            },
-            {
-                'interface': 'docs_actions',
-                'defaults': ['paperwork_gtk.mainwindow.doclist'],
             },
             {
                 'interface': 'doc_labels',
@@ -51,22 +48,13 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'gtk_doc_properties',
                 'defaults': ['paperwork_gtk.mainwindow.docproperties'],
             },
-            {
-                'interface': 'gtk_doclist',
-                'defaults': ['paperwork_gtk.mainwindow.doclist'],
-            },
         ]
 
     def init(self, core):
         super().init(core)
-
         action = Gio.SimpleAction.new(ACTION_NAME, None)
         action.connect("activate", self._open_editor)
         self.core.call_all("app_actions_add", action)
-
-    def on_doclist_initialized(self):
-        item = Gio.MenuItem.new(_("Change labels"), "win." + ACTION_NAME)
-        self.core.call_all("docs_menu_append_item", item)
 
     def chkdeps(self, out: dict):
         if not GLIB_AVAILABLE:

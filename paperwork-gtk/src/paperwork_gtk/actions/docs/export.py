@@ -9,16 +9,12 @@ except (ImportError, ValueError):
 import openpaperwork_core
 import openpaperwork_core.promise
 
-from ... import _
-
 
 LOGGER = logging.getLogger(__name__)
 ACTION_NAME = "doc_export_many"
 
 
 class Plugin(openpaperwork_core.PluginBase):
-    PRIORITY = -50
-
     def __init__(self):
         super().__init__()
         self.active_doc = (None, None)
@@ -26,8 +22,10 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_interfaces(self):
         return [
+            'action',
+            'action_docs',
+            'action_docs_export',
             'chkdeps',
-            'doc_action',
             'doc_open',
         ]
 
@@ -38,16 +36,8 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['paperwork_gtk.mainwindow.window'],
             },
             {
-                'interface': 'doc_actions',
-                'defaults': ['paperwork_gtk.mainwindow.doclist'],
-            },
-            {
                 'interface': 'doc_selection',
                 'defaults': ['paperwork_gtk.doc_selection'],
-            },
-            {
-                'interface': 'gtk_doclist',
-                'defaults': ['paperwork_gtk.mainwindow.doclist'],
             },
         ]
 
@@ -62,10 +52,6 @@ class Plugin(openpaperwork_core.PluginBase):
     def chkdeps(self, out: dict):
         if not GLIB_AVAILABLE:
             out['glib'].update(openpaperwork_core.deps.GLIB)
-
-    def on_doclist_initialized(self):
-        item = Gio.MenuItem.new(_("Export"), "win." + ACTION_NAME)
-        self.core.call_all("docs_menu_append_item", item)
 
     def doc_open(self, doc_id, doc_url):
         self.active_doc = (doc_id, doc_url)

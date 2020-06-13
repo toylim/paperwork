@@ -9,7 +9,7 @@ except (ImportError, ValueError):
     GLIB_AVAILABLE = False
 
 import openpaperwork_core
-import openpaperwork_core.promise
+import openpaperwork_core.deps
 
 from ... import _
 
@@ -19,10 +19,11 @@ ACTION_NAME = "doc_delete_many"
 
 
 class Plugin(openpaperwork_core.PluginBase):
-    PRIORITY = -100
-
     def get_interfaces(self):
         return [
+            'action',
+            'action_docs',
+            'action_docs_delete',
             'chkdeps',
             'doc_action',
             'doc_open',
@@ -35,10 +36,6 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['paperwork_gtk.mainwindow.window'],
             },
             {
-                'interface': 'doc_actions',
-                'defaults': ['paperwork_gtk.mainwindow.doclist'],
-            },
-            {
                 'interface': 'doc_selection',
                 'defaults': ['paperwork_gtk.doc_selection'],
             },
@@ -49,10 +46,6 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'gtk_dialog_yes_no',
                 'defaults': ['openpaperwork_gtk.dialogs.yes_no'],
-            },
-            {
-                'interface': 'gtk_doclist',
-                'defaults': ['paperwork_gtk.mainwindow.doclist'],
             },
             {
                 'interface': 'transaction_manager',
@@ -71,10 +64,6 @@ class Plugin(openpaperwork_core.PluginBase):
     def chkdeps(self, out: dict):
         if not GLIB_AVAILABLE:
             out['glib'].update(openpaperwork_core.deps.GLIB)
-
-    def on_doclist_initialized(self):
-        item = Gio.MenuItem.new(_("Delete"), "win." + ACTION_NAME)
-        self.core.call_all("docs_menu_append_item", item)
 
     def _delete(self, action, parameter):
         docs = set()
