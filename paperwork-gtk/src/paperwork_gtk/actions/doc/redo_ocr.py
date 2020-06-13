@@ -7,8 +7,8 @@ except (ImportError, ValueError):
     GLIB_AVAILABLE = False
 
 import openpaperwork_core
+import openpaperwork_core.deps
 import openpaperwork_core.promise
-import openpaperwork_gtk.deps
 
 from ... import _
 
@@ -18,8 +18,6 @@ ACTION_NAME = "doc_redo_ocr"
 
 
 class Plugin(openpaperwork_core.PluginBase):
-    PRIORITY = -90
-
     def __init__(self):
         super().__init__()
         self.active_doc = (None, None)
@@ -27,8 +25,10 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_interfaces(self):
         return [
+            'action',
+            'action_doc',
+            'action_doc_redo_ocr',
             'chkdeps',
-            'doc_action',
             'doc_open',
         ]
 
@@ -37,14 +37,6 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'app_actions',
                 'defaults': ['paperwork_gtk.mainwindow.window'],
-            },
-            {
-                'interface': 'doc_actions',
-                'defaults': ['paperwork_gtk.mainwindow.doclist'],
-            },
-            {
-                'interface': 'gtk_doclist',
-                'defaults': ['paperwork_gtk.mainwindow.doclist'],
             },
             {
                 'interface': 'ocr',
@@ -66,6 +58,7 @@ class Plugin(openpaperwork_core.PluginBase):
             return
         self.action = Gio.SimpleAction.new(ACTION_NAME, None)
         self.action.connect("activate", self._redo_ocr)
+        self.core.call_all("app_actions_add", self.action)
         self._update_sensitivity()
         self.core.call_all(
             "ocr_add_observer_on_enabled",
@@ -74,13 +67,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def chkdeps(self, out: dict):
         if not GLIB_AVAILABLE:
-            out['glib'].update(openpaperwork_gtk.deps.GLIB)
-
-    def on_doclist_initialized(self):
-        self.core.call_all("app_actions_add", self.action)
-        self.core.call_all(
-            "add_doc_action", _("Redo OCR on document"), "win." + ACTION_NAME
-        )
+            out['glib'].update(openpaperwork_core.deps.GLIB)
 
     def doc_open(self, doc_id, doc_url):
         self.active_doc = (doc_id, doc_url)

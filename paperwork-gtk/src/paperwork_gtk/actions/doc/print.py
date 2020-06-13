@@ -7,9 +7,7 @@ except (ImportError, ValueError):
     GLIB_AVAILABLE = False
 
 import openpaperwork_core
-import openpaperwork_gtk.deps
-
-from ... import _
+import openpaperwork_core.deps
 
 
 LOGGER = logging.getLogger(__name__)
@@ -17,18 +15,17 @@ ACTION_NAME = "doc_print"
 
 
 class Plugin(openpaperwork_core.PluginBase):
-    PRIORITY = -10
-
     def __init__(self):
         super().__init__()
         self.active_doc = None
         self.active_windows = []
-        self.action = None
 
     def get_interfaces(self):
         return [
+            'action',
+            'action_doc',
+            'action_doc_print',
             'chkdeps',
-            'doc_action',
             'doc_open',
         ]
 
@@ -37,14 +34,6 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'app_actions',
                 'defaults': ['paperwork_gtk.mainwindow.window'],
-            },
-            {
-                'interface': 'doc_actions',
-                'defaults': ['paperwork_gtk.mainwindow.doclist'],
-            },
-            {
-                'interface': 'gtk_doclist',
-                'defaults': ['paperwork_gtk.mainwindow.doclist'],
             },
             {
                 'interface': 'doc_print',
@@ -57,18 +46,13 @@ class Plugin(openpaperwork_core.PluginBase):
         if not GLIB_AVAILABLE:
             return
 
-        self.action = Gio.SimpleAction.new(ACTION_NAME, None)
-        self.action.connect("activate", self._print)
+        action = Gio.SimpleAction.new(ACTION_NAME, None)
+        action.connect("activate", self._print)
+        self.core.call_all("app_actions_add", action)
 
     def chkdeps(self, out: dict):
         if not GLIB_AVAILABLE:
-            out['glib'].update(openpaperwork_gtk.deps.GLIB)
-
-    def on_doclist_initialized(self):
-        self.core.call_all("app_actions_add", self.action)
-        self.core.call_all(
-            "add_doc_action", _("Print document"), "win." + ACTION_NAME
-        )
+            out['glib'].update(openpaperwork_core.deps.GLIB)
 
     def doc_open(self, doc_id, doc_url):
         self.active_doc = (doc_id, doc_url)
