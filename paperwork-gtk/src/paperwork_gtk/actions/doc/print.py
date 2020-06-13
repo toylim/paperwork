@@ -7,22 +7,23 @@ except (ImportError, ValueError):
     GLIB_AVAILABLE = False
 
 import openpaperwork_core
-import openpaperwork_core.promise
+import openpaperwork_gtk.deps
 
-from .. import _
+from ... import _
 
 
 LOGGER = logging.getLogger(__name__)
-ACTION_NAME = "doc_export_many"
+ACTION_NAME = "doc_print"
 
 
 class Plugin(openpaperwork_core.PluginBase):
-    PRIORITY = -50
+    PRIORITY = -10
 
     def __init__(self):
         super().__init__()
-        self.active_doc = (None, None)
-        self.active_page_idx = 0
+        self.active_doc = None
+        self.active_windows = []
+        self.action = None
 
     def get_interfaces(self):
         return [
@@ -42,12 +43,12 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['paperwork_gtk.mainwindow.doclist'],
             },
             {
-                'interface': 'doc_selection',
-                'defaults': ['paperwork_gtk.doc_selection'],
-            },
-            {
                 'interface': 'gtk_doclist',
                 'defaults': ['paperwork_gtk.mainwindow.doclist'],
+            },
+            {
+                'interface': 'doc_print',
+                'defaults': ['paperwork_gtk.print'],
             },
         ]
 
@@ -55,28 +56,26 @@ class Plugin(openpaperwork_core.PluginBase):
         super().init(core)
         if not GLIB_AVAILABLE:
             return
-        action = Gio.SimpleAction.new(ACTION_NAME, None)
-        action.connect("activate", self._export)
-        self.core.call_all("app_actions_add", action)
+
+        self.action = Gio.SimpleAction.new(ACTION_NAME, None)
+        self.action.connect("activate", self._print)
 
     def chkdeps(self, out: dict):
         if not GLIB_AVAILABLE:
-            out['glib'].update(openpaperwork_core.deps.GLIB)
+            out['glib'].update(openpaperwork_gtk.deps.GLIB)
 
     def on_doclist_initialized(self):
-        item = Gio.MenuItem.new(_("Export"), "win." + ACTION_NAME)
-        self.core.call_all("docs_menu_append_item", item)
+        self.core.call_all("app_actions_add", self.action)
+        self.core.call_all(
+            "add_doc_action", _("Print document"), "win." + ACTION_NAME
+        )
 
     def doc_open(self, doc_id, doc_url):
         self.active_doc = (doc_id, doc_url)
 
-    def on_page_shown(self, active_page_idx):
-        self.active_page_idx = active_page_idx
+    def doc_close(self):
+        self.active_doc = None
 
-    def _export(self, action, parameter):
-        docs = set()
-        self.core.call_all("doc_selection_get", docs)
-        self.core.call_all(
-            "gtk_open_exporter_multiple_docs", docs,
-            self.active_doc[0], self.active_doc[1], self.active_page_idx
-        )
+    def _print(self, *args, **kwargs):
+        assert(self.active_doc is not None)
+        self.core.call_all("doc_print", *self.active_doc)

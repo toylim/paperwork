@@ -9,7 +9,7 @@ except (ImportError, ValueError):
 import openpaperwork_core
 import openpaperwork_core.promise
 
-from .. import _
+from ... import _
 
 
 LOGGER = logging.getLogger(__name__)

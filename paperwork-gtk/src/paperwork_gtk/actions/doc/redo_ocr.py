@@ -10,22 +10,20 @@ import openpaperwork_core
 import openpaperwork_core.promise
 import openpaperwork_gtk.deps
 
-from .. import _
+from ... import _
 
 
 LOGGER = logging.getLogger(__name__)
-ACTION_NAME = "page_redo_ocr"
+ACTION_NAME = "doc_redo_ocr"
 
 
 class Plugin(openpaperwork_core.PluginBase):
-    PRIORITY = -70
+    PRIORITY = -90
 
     def __init__(self):
         super().__init__()
         self.active_doc = (None, None)
-        self.active_page_idx = -1
         self.action = None
-        self.item = None
 
     def get_interfaces(self):
         return [
@@ -41,18 +39,20 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['paperwork_gtk.mainwindow.window'],
             },
             {
+                'interface': 'doc_actions',
+                'defaults': ['paperwork_gtk.mainwindow.doclist'],
+            },
+            {
+                'interface': 'gtk_doclist',
+                'defaults': ['paperwork_gtk.mainwindow.doclist'],
+            },
+            {
                 'interface': 'ocr',
                 'defaults': ['paperwork_backend.guesswork.ocr.pyocr'],
             },
             {
                 'interface': 'ocr_settings',
                 'defaults': ['paperwork_backend.pyocr'],
-            },
-            {
-                'interface': 'page_actions',
-                'defaults': [
-                    'paperwork_gtk.mainwindow.docview.pageinfo.actions'
-                ],
             },
             {
                 'interface': 'transaction_manager',
@@ -64,28 +64,23 @@ class Plugin(openpaperwork_core.PluginBase):
         super().init(core)
         if not GLIB_AVAILABLE:
             return
-
-        self.item = Gio.MenuItem.new(
-            _("Redo OCR on page"), "win." + ACTION_NAME
-        )
-
         self.action = Gio.SimpleAction.new(ACTION_NAME, None)
         self.action.connect("activate", self._redo_ocr)
-
-        self.core.call_all("app_actions_add", self.action)
-
         self._update_sensitivity()
         self.core.call_all(
             "ocr_add_observer_on_enabled",
             self._update_sensitivity
         )
 
-    def on_page_menu_ready(self):
-        self.core.call_all("page_menu_append_item", self.item)
-
     def chkdeps(self, out: dict):
         if not GLIB_AVAILABLE:
             out['glib'].update(openpaperwork_gtk.deps.GLIB)
+
+    def on_doclist_initialized(self):
+        self.core.call_all("app_actions_add", self.action)
+        self.core.call_all(
+            "add_doc_action", _("Redo OCR on document"), "win." + ACTION_NAME
+        )
 
     def doc_open(self, doc_id, doc_url):
         self.active_doc = (doc_id, doc_url)
@@ -97,34 +92,45 @@ class Plugin(openpaperwork_core.PluginBase):
         enabled = self.core.call_success("ocr_is_enabled")
         self.action.set_enabled(enabled is not None)
 
-    def on_page_shown(self, page_idx):
-        self.active_page_idx = page_idx
-
-    def _redo_ocr(self, *args, **kwargs):
+    def _redo_ocr(self, action, parameter):
+        assert(self.active_doc is not None)
         (doc_id, doc_url) = self.active_doc
-        page_idx = self.active_page_idx
+
+        nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)
+        if nb_pages is None:
+            LOGGER.warning("No pages in document %s. Nothing to do", doc_id)
+            return
+
+        LOGGER.info(
+            "Will redo OCR on document %s (nb pages = %d)", doc_id, nb_pages
+        )
 
         promise = openpaperwork_core.promise.Promise(
             self.core, self.core.call_all,
-            args=(
-                "on_progress", "redo_ocr", 0.0,
-                _("OCR on {doc_id} p{page_idx}").format(
-                    doc_id=doc_id, page_idx=page_idx
-                )
-            )
+            args=("on_progress", "redo_ocr", 0.0, _("OCR on %s") % doc_id)
         )
         promise = promise.then(lambda *args, **kwargs: None)
 
-        promise = promise.then(openpaperwork_core.promise.ThreadedPromise(
-            self.core, self.core.call_all,
-            args=("ocr_page_by_url", doc_url, page_idx,)
-        ))
-        promise = promise.then(lambda *args, **kwargs: None)
+        for page_idx in range(0, nb_pages):
+            promise = promise.then(
+                self.core.call_all, "on_progress", "redo_ocr",
+                page_idx / nb_pages,
+                _("OCR on {doc_id} p{page_idx}").format(
+                    doc_id=doc_id, page_idx=(page_idx + 1)
+                )
+            )
+            promise = promise.then(lambda *args, **kwargs: None)
+            promise = promise.then(openpaperwork_core.promise.ThreadedPromise(
+                self.core, self.core.call_all,
+                args=("ocr_page_by_url", doc_url, page_idx,)
+            ))
+            promise = promise.then(lambda *args, **kwargs: None)
 
         promise = promise.then(
             self.core.call_all, "on_progress", "redo_ocr", 1.0
         )
         promise = promise.then(lambda *args, **kwargs: None)
+
         promise = promise.then(self.core.call_success(
             "transaction_simple_promise", (('upd', doc_id),)
         ))

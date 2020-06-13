@@ -1,4 +1,3 @@
-import itertools
 import logging
 
 try:
@@ -8,25 +7,28 @@ except (ImportError, ValueError):
     GLIB_AVAILABLE = False
 
 import openpaperwork_core
+import openpaperwork_core.promise
 
-from .. import _
+from ... import _
 
 
 LOGGER = logging.getLogger(__name__)
-ACTION_NAME = "doc_change_labels"
+ACTION_NAME = "doc_export_many"
 
 
 class Plugin(openpaperwork_core.PluginBase):
+    PRIORITY = -50
+
     def __init__(self):
         super().__init__()
-        self.menu_add = None
-        self.menu_remove = None
-        self.idx_generator = itertools.count()
+        self.active_doc = (None, None)
+        self.active_page_idx = 0
 
     def get_interfaces(self):
         return [
             'chkdeps',
-            'docs_action',
+            'doc_action',
+            'doc_open',
         ]
 
     def get_deps(self):
@@ -36,20 +38,12 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['paperwork_gtk.mainwindow.window'],
             },
             {
-                'interface': 'docs_actions',
+                'interface': 'doc_actions',
                 'defaults': ['paperwork_gtk.mainwindow.doclist'],
-            },
-            {
-                'interface': 'doc_labels',
-                'defaults': ['paperwork_backend.model.labels'],
             },
             {
                 'interface': 'doc_selection',
                 'defaults': ['paperwork_gtk.doc_selection'],
-            },
-            {
-                'interface': 'gtk_doc_properties',
-                'defaults': ['paperwork_gtk.mainwindow.docproperties'],
             },
             {
                 'interface': 'gtk_doclist',
@@ -59,26 +53,30 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def init(self, core):
         super().init(core)
-
+        if not GLIB_AVAILABLE:
+            return
         action = Gio.SimpleAction.new(ACTION_NAME, None)
-        action.connect("activate", self._open_editor)
+        action.connect("activate", self._export)
         self.core.call_all("app_actions_add", action)
-
-    def on_doclist_initialized(self):
-        item = Gio.MenuItem.new(_("Change labels"), "win." + ACTION_NAME)
-        self.core.call_all("docs_menu_append_item", item)
 
     def chkdeps(self, out: dict):
         if not GLIB_AVAILABLE:
             out['glib'].update(openpaperwork_core.deps.GLIB)
 
-    def _open_editor(self, action, parameter):
-        selection = set()
-        self.core.call_all("doc_selection_get", selection)
+    def on_doclist_initialized(self):
+        item = Gio.MenuItem.new(_("Export"), "win." + ACTION_NAME)
+        self.core.call_all("docs_menu_append_item", item)
 
-        if len(selection) <= 0:
-            LOGGER.info("No document selected")
-            return
+    def doc_open(self, doc_id, doc_url):
+        self.active_doc = (doc_id, doc_url)
 
-        LOGGER.info("Opening properties for %d documents", len(selection))
-        self.core.call_all("open_docs_properties", selection)
+    def on_page_shown(self, active_page_idx):
+        self.active_page_idx = active_page_idx
+
+    def _export(self, action, parameter):
+        docs = set()
+        self.core.call_all("doc_selection_get", docs)
+        self.core.call_all(
+            "gtk_open_exporter_multiple_docs", docs,
+            self.active_doc[0], self.active_doc[1], self.active_page_idx
+        )

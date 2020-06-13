@@ -7,30 +7,30 @@ except (ImportError, ValueError):
     GLIB_AVAILABLE = False
 
 import openpaperwork_core
+import openpaperwork_core.promise
 import openpaperwork_gtk.deps
 
-from .. import _
+from ... import _
 
 
 LOGGER = logging.getLogger(__name__)
-ACTION_NAME = "page_export"
+ACTION_NAME = "page_reset"
 
 
 class Plugin(openpaperwork_core.PluginBase):
-    PRIORITY = 0
+    PRIORITY = -80
 
     def __init__(self):
         super().__init__()
         self.active_doc = None
         self.active_page_idx = -1
-        self.active_windows = []
         self.action = None
         self.item = None
 
     def get_interfaces(self):
         return [
             'chkdeps',
-            'page_action',
+            'doc_action',
             'doc_open',
         ]
 
@@ -41,14 +41,22 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['paperwork_gtk.mainwindow.window'],
             },
             {
-                'interface': 'gtk_exporter',
-                'defaults': ['paperwork_gtk.mainwindow.exporter'],
+                'interface': 'document_storage',
+                'defaults': ['paperwork_backend.model.workdir'],
             },
             {
                 'interface': 'page_actions',
                 'defaults': [
                     'paperwork_gtk.mainwindow.docview.pageinfo.actions'
                 ],
+            },
+            {
+                'interface': 'page_reset',
+                'defaults': ['paperwork_backend.model.img_overlay'],
+            },
+            {
+                'interface': 'transaction_manager',
+                'defaults': ['paperwork_backend.sync'],
             },
         ]
 
@@ -57,10 +65,10 @@ class Plugin(openpaperwork_core.PluginBase):
         if not GLIB_AVAILABLE:
             return
 
-        self.item = Gio.MenuItem.new(_("Export page"), "win." + ACTION_NAME)
+        self.item = Gio.MenuItem.new(_("Reset page"), "win." + ACTION_NAME)
 
         self.action = Gio.SimpleAction.new(ACTION_NAME, None)
-        self.action.connect("activate", self._open_exporter)
+        self.action.connect("activate", self._reset)
 
         self.core.call_all("app_actions_add", self.action)
 
@@ -80,8 +88,17 @@ class Plugin(openpaperwork_core.PluginBase):
     def on_page_shown(self, page_idx):
         self.active_page_idx = page_idx
 
-    def _open_exporter(self, *args, **kwargs):
+    def _reset(self, *args, **kwargs):
         assert(self.active_doc is not None)
-        self.core.call_all(
-            "gtk_open_exporter", *self.active_doc, self.active_page_idx
+
+        (doc_id, doc_url) = self.active_doc
+        page_idx = self.active_page_idx
+
+        LOGGER.info("Will reset page %s p%d", doc_id, page_idx)
+
+        self.core.call_all("page_reset_by_url", doc_url, page_idx)
+        self.core.call_all("doc_reload", doc_id, doc_url)
+        self.core.call_success(
+            "mainloop_schedule", self.core.call_all, "doc_goto_page", page_idx
         )
+        self.core.call_success("transaction_simple", (("upd", doc_id),))

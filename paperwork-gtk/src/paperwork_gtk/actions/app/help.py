@@ -8,7 +8,7 @@ except (ImportError, ValueError):
 
 import openpaperwork_core
 
-from .. import _
+from ... import _
 
 
 LOGGER = logging.getLogger(__name__)
