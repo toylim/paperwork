@@ -10,27 +10,36 @@ import openpaperwork_core
 import openpaperwork_core.deps
 
 
+from ... import _
+
+
 LOGGER = logging.getLogger(__name__)
 
 
 class Plugin(openpaperwork_core.PluginBase):
+    PRIORITY = -1000
+
     def get_interfaces(self):
         return [
             'chkdeps',
-            'action',
-            'action_app',
-            'action_app_help',
+            'menu',
+            'menu_app',
+            'menu_app_help',
         ]
 
     def get_deps(self):
         return [
             {
-                'interface': 'app_actions',
-                'defaults': ['paperwork_gtk.mainwindow.window'],
+                'interface': 'action_app_help',
+                'defaults': ['paperwork_gtk.actions.app.help'],
             },
             {
                 'interface': 'help_documents',
                 'defaults': ['paperwork_gtk.model.help'],
+            },
+            {
+                'interface': 'gtk_app_menu',
+                'defaults': ['paperwork_gtk.mainwindow.doclist'],
             },
         ]
 
@@ -38,13 +47,9 @@ class Plugin(openpaperwork_core.PluginBase):
         if not GIO_AVAILABLE:
             out['glib'].update(openpaperwork_core.deps.GLIB)
 
-    def init(self, core):
-        super().init(core)
+    def on_doclist_initialized(self):
+        menu = Gio.Menu()
         for (title, file_name) in self.core.call_success("help_get_files"):
-            action = Gio.SimpleAction.new('open_help.' + file_name, None)
-            action.connect("activate", self.doc_open_help, file_name)
-            self.core.call_all("app_actions_add", action)
-
-    def doc_open_help(self, action, parameter, file_name):
-        doc_url = self.core.call_success("help_get_file", file_name)
-        self.core.call_all("doc_open", "help_" + file_name, doc_url)
+            item = Gio.MenuItem.new(title, "win.open_help." + file_name)
+            menu.append_item(item)
+        self.core.call_all("menu_app_append_submenu", _("Help"), menu)
