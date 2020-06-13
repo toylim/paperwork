@@ -7,8 +7,8 @@ except (ImportError, ValueError):
     GLIB_AVAILABLE = False
 
 import openpaperwork_core
+import openpaperwork_core.deps
 import openpaperwork_core.promise
-import openpaperwork_gtk.deps
 
 from ... import _
 
@@ -18,19 +18,18 @@ ACTION_NAME = "page_redo_ocr"
 
 
 class Plugin(openpaperwork_core.PluginBase):
-    PRIORITY = -70
-
     def __init__(self):
         super().__init__()
         self.active_doc = (None, None)
         self.active_page_idx = -1
         self.action = None
-        self.item = None
 
     def get_interfaces(self):
         return [
+            'action',
+            'action_page',
+            'action_page_redo_ocr',
             'chkdeps',
-            'doc_action',
             'doc_open',
         ]
 
@@ -49,12 +48,6 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['paperwork_backend.pyocr'],
             },
             {
-                'interface': 'page_actions',
-                'defaults': [
-                    'paperwork_gtk.mainwindow.docview.pageinfo.actions'
-                ],
-            },
-            {
                 'interface': 'transaction_manager',
                 'defaults': ['paperwork_backend.sync'],
             },
@@ -71,7 +64,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
         self.action = Gio.SimpleAction.new(ACTION_NAME, None)
         self.action.connect("activate", self._redo_ocr)
-
         self.core.call_all("app_actions_add", self.action)
 
         self._update_sensitivity()
@@ -80,12 +72,9 @@ class Plugin(openpaperwork_core.PluginBase):
             self._update_sensitivity
         )
 
-    def on_page_menu_ready(self):
-        self.core.call_all("page_menu_append_item", self.item)
-
     def chkdeps(self, out: dict):
         if not GLIB_AVAILABLE:
-            out['glib'].update(openpaperwork_gtk.deps.GLIB)
+            out['glib'].update(openpaperwork_core.deps.GLIB)
 
     def doc_open(self, doc_id, doc_url):
         self.active_doc = (doc_id, doc_url)
