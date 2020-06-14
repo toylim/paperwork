@@ -42,6 +42,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_interfaces(self):
         return [
             'app_actions',
+            'app_shortcuts',
             'chkdeps',
             'gtk_mainwindow',
             'screenshot_provider',
@@ -294,3 +295,21 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         with self.core.call_success("fs_open", out, 'wb') as fd:
             img.save(fd, format="PNG")
+
+    def app_shortcut_add(
+            self, shortcut_group, shortcut_desc, shortcut_keys, action_name):
+        """
+        Arguments:
+           - shortcut_group: Group name in which this shortcut belongs
+             (human readable, translated ; actually used in the shortcut window
+             if enabled)
+           - shortcut_desc: Describe the shortcut
+             (human readable, translated ; actually used in the shortcut window
+             if enabled)
+           - shortcut_keys: see gtk_accelerator_parse()
+           - action_name: GAction that must be triggered
+        """
+        LOGGER.info("Keyboard shortcut: %s --> %s", shortcut_keys, action_name)
+        self.mainwindow.get_application().set_accels_for_action(
+            action_name, (shortcut_keys, None)
+        )

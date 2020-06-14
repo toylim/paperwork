@@ -25,7 +25,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return [
             {
-                'interface': 'gtk_shortcuts',
+                'interface': 'gtk_shortcut_help',
                 'defaults': ['paperwork_gtk.shortcutswin'],
             },
         ]
