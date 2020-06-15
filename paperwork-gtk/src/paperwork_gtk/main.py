@@ -21,6 +21,7 @@ DEFAULT_GUI_PLUGINS = (
         'openpaperwork_core.spatial.rtree',
         'paperwork_backend.docscan.autoselect_scanner',
         'paperwork_backend.guesswork.cropping.calibration',
+        'paperwork_gtk.actions.app.find',
         'paperwork_gtk.actions.app.help',
         'paperwork_gtk.actions.app.open_bug_report',
         'paperwork_gtk.actions.app.open_shortcuts',

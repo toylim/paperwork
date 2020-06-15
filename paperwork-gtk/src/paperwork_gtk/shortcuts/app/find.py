@@ -28,15 +28,17 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all(
             "app_shortcut_add",
             _("Global"), _("Find"),
-            "<Control>F", "win.app_find"
+            "<Control>f", "win.app_find"
         )
-        self.core.call_all(
-            "app_shortcut_add",
-            _("Global"), _("Find the next match"),
-            "<Control>G", "win.app_find_next"
-        )
-        self.core.call_all(
-            "app_shortcut_add",
-            _("Global"), _("Find the previous match"),
-            "<Control><Shift>G", "win.app_find_prev"
-        )
+
+        # TODO
+        # self.core.call_all(
+        #     "app_shortcut_add",
+        #     _("Global"), _("Find the next match"),
+        #     "<Control>G", "win.app_find_next"
+        # )
+        # self.core.call_all(
+        #     "app_shortcut_add",
+        #     _("Global"), _("Find the previous match"),
+        #     "<Control><Shift>G", "win.app_find_prev"
+        # )

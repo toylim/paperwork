@@ -28,5 +28,5 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all(
             "app_shortcut_add",
             _("Page"), _("Copy selected text to clipboard"),
-            "<Control>C", "win.page_copy_text"
+            "<Control>c", "win.page_copy_text"
         )

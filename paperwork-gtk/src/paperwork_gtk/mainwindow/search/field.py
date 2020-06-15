@@ -162,3 +162,7 @@ class Plugin(openpaperwork_core.PluginBase):
             self.core.call_success("fs_join", out_dir, "search.png"),
             margins=(50, 50, 50, 140)
         )
+
+    def search_focus(self):
+        LOGGER.info("Focusing on search field")
+        self.widget_tree.get_object("search_entry").grab_focus()
