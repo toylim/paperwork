@@ -186,6 +186,9 @@ class Plugin(openpaperwork_core.PluginBase):
         body.reorder_child(widget, vposition)
 
     def _on_new_doc(self, button):
+        self.doc_open_new()
+
+    def doc_open_new(self):
         new_doc = self.core.call_success("get_new_doc")
         self.core.call_all("doc_open", *new_doc)
         self.doclist_show(self.docs, show_new=True)

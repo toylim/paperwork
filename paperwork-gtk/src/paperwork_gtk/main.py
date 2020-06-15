@@ -28,6 +28,7 @@ DEFAULT_GUI_PLUGINS = (
         'paperwork_gtk.actions.doc.add_to_selection',
         'paperwork_gtk.actions.doc.delete',
         'paperwork_gtk.actions.doc.export',
+        'paperwork_gtk.actions.doc.new',
         'paperwork_gtk.actions.doc.open_external',
         'paperwork_gtk.actions.doc.prev_next',
         'paperwork_gtk.actions.doc.print',
