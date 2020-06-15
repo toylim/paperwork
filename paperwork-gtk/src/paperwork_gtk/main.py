@@ -29,6 +29,7 @@ DEFAULT_GUI_PLUGINS = (
         'paperwork_gtk.actions.doc.delete',
         'paperwork_gtk.actions.doc.export',
         'paperwork_gtk.actions.doc.open_external',
+        'paperwork_gtk.actions.doc.prev_next',
         'paperwork_gtk.actions.doc.print',
         'paperwork_gtk.actions.doc.properties',
         'paperwork_gtk.actions.doc.redo_ocr',

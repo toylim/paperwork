@@ -608,3 +608,15 @@ class Plugin(openpaperwork_core.PluginBase):
         self.widget_tree.get_object(
             "doclist_selection_multiple_nb_docs"
         ).set_text(_("%d documents") % count)
+
+    def open_next_doc(self, offset=1):
+        try:
+            idx = self.docs.index(self.active_doc)
+            idx += offset
+        except ValueError:
+            idx = 0
+        idx = max(idx, 0)
+        idx = min(idx, len(self.docs))
+        (doc_id, doc_url) = self.docs[idx]
+        self.core.call_all("doc_open", doc_id, doc_url)
+        self._reselect_current_doc(scroll=True)

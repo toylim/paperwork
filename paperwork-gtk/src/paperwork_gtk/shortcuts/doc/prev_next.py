@@ -28,10 +28,10 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all(
             "app_shortcut_add",
             _("Document list"), _("Open next document"),
-            "<Control><Alt>Page_Down", "win.doc_next"
+            "<Control>Page_Down", "win.doc_next"
         )
         self.core.call_all(
             "app_shortcut_add",
             _("Global"), _("Open previous document"),
-            "<Control><Alt>Page_Up", "win.doc_prev"
+            "<Control>Page_Up", "win.doc_prev"
         )
