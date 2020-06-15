@@ -40,6 +40,7 @@ DEFAULT_GUI_PLUGINS = (
         'paperwork_gtk.actions.docs.select_all',
         'paperwork_gtk.actions.page.copy_text',
         'paperwork_gtk.actions.page.delete',
+        'paperwork_gtk.actions.page.edit',
         'paperwork_gtk.actions.page.export',
         'paperwork_gtk.actions.page.print',
         'paperwork_gtk.actions.page.redo_ocr',
