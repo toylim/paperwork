@@ -1,3 +1,4 @@
+import collections
 import logging
 
 try:
@@ -19,8 +20,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
         self.windows = []
-        self.widget_tree = None
-        self.groups = {}
+        self.groups = collections.defaultdict(list)
 
     def get_interfaces(self):
         return [
@@ -38,13 +38,6 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def init(self, core):
-        super().init(core)
-        self.widget_tree = self.core.call_success(
-            "gtk_load_widget_tree",
-            "paperwork_gtk.shortcutswin", "shortcutswin.glade"
-        )
-
     def chkdeps(self, out: dict):
         if not GTK_AVAILABLE:
             out['gtk'].update(openpaperwork_gtk.deps.GTK)
@@ -54,12 +47,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def on_gtk_window_closed(self, window):
         self.windows.remove(window)
-
-    def gtk_show_shortcuts(self):
-        LOGGER.info("Showing shortcuts")
-        window = self.widget_tree.get_object("shortcuts")
-        window.set_transient_for(self.windows[-1])
-        window.show_all()
 
     def app_shortcut_add(
             self, shortcut_group, shortcut_desc, shortcut_keys, action_name):
@@ -73,19 +60,37 @@ class Plugin(openpaperwork_core.PluginBase):
             "Keyboard shortcut: %s --> %s:%s",
             shortcut_keys, shortcut_group, shortcut_desc
         )
+        group = self.groups[shortcut_group]
+        group.append((
+            shortcut_desc, shortcut_keys, action_name
+        ))
 
-        section = self.widget_tree.get_object("shortcuts_mainwindow")
+    def gtk_show_shortcuts(self):
+        LOGGER.info("Showing shortcuts")
+        widget_tree = self.core.call_success(
+            "gtk_load_widget_tree",
+            "paperwork_gtk.shortcutswin", "shortcutswin.glade"
+        )
+        section = widget_tree.get_object("shortcuts_mainwindow")
+        window = widget_tree.get_object("shortcuts")
 
-        group = self.groups.get(shortcut_group, None)
-        if group is None:
+        groups = {}
+        for shortcut_group in sorted(list(self.groups.keys())):
             group = Gtk.ShortcutsGroup()
             group.set_property("title", shortcut_group)
             group.set_visible(True)
-            self.groups[shortcut_group] = group
+            groups[shortcut_group] = group
             section.add(group)
 
-        shortcut = Gtk.ShortcutsShortcut()
-        shortcut.set_property("accelerator", shortcut_keys)
-        shortcut.set_property("title", shortcut_desc)
-        shortcut.set_visible(True)
-        group.add(shortcut)
+        for (shortcut_group, shortcuts) in self.groups.items():
+            group = groups[shortcut_group]
+            shortcuts = sorted(list(shortcuts))
+            for (shortcut_desc, shortcut_keys, actions_name) in shortcuts:
+                shortcut = Gtk.ShortcutsShortcut()
+                shortcut.set_property("accelerator", shortcut_keys)
+                shortcut.set_property("title", shortcut_desc)
+                shortcut.set_visible(True)
+                group.add(shortcut)
+
+        window.set_transient_for(self.windows[-1])
+        window.show_all()
