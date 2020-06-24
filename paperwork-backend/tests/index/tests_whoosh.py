@@ -99,3 +99,34 @@ class TestIndex(unittest.TestCase):
                 ('test_doc', 'file:///somewhere/test_doc')
             ]
         )
+
+    def test_suggestion(self):
+        results = []
+        self.core.call_all("suggestion_get", results, "flesch")
+        self.assertEqual(results, [])
+
+        self.fake_storage.docs = [
+            {
+                'id': 'test_doc',
+                'url': 'file:///somewhere/test_doc',
+                'mtime': 123,
+                'text': 'Whoosh and Flesch are\nthe best',
+                'labels': set(),
+            }
+        ]
+
+        transactions = []
+        self.core.call_all('doc_transaction_start', transactions)
+        transactions.sort(key=lambda transaction: -transaction.priority)
+        for transaction in transactions:
+            transaction.add_obj('test_doc')
+        for transaction in transactions:
+            transaction.commit()
+
+        results = []
+        self.core.call_all("suggestion_get", results, "Whoosh flech best")
+        self.assertEqual(
+            results, [
+                "Whoosh flesch best",
+            ]
+        )

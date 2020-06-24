@@ -202,6 +202,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_interfaces(self):
         return [
             "index",
+            "suggestions",
             "syncable",
         ]
 
@@ -369,6 +370,39 @@ class Plugin(openpaperwork_core.PluginBase):
             if len(results) <= 0:
                 return None
             return results[0]
+
+    def suggestion_get(self, out: list, sentence):
+        keywords = sentence.split(" ")
+        base_search = " ".join(keywords).strip()
+
+        query_parser = self.query_parsers['strict'][0]
+        with self.index.searcher() as searcher:
+            corrector = searcher.corrector("content")
+            label_corrector = searcher.corrector("label")
+            for (keyword_idx, keyword) in enumerate(keywords):
+                if len(keyword) <= 3:
+                    continue
+
+                keyword_suggestions = list(label_corrector.suggest(
+                    keyword, limit=2
+                ))
+                keyword_suggestions += list(corrector.suggest(
+                    keyword, limit=5
+                ))
+                for keyword_suggestion in keyword_suggestions:
+                    new_suggestion = keywords[:]
+                    new_suggestion[keyword_idx] = keyword_suggestion
+                    new_suggestion = u" ".join(new_suggestion).strip()
+
+                    if new_suggestion == base_search:
+                        continue
+
+                    # make sure it would return results
+                    query = query_parser.parse(new_suggestion)
+                    results = searcher.search(query, limit=1)
+                    if len(results) <= 0:
+                        continue
+                    out.append(new_suggestion)
 
     def sync(self, promises: list):
         """
