@@ -1,38 +1,51 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.22.1 -->
 <interface domain="paperwork_gtk">
+  <requires lib="gtk+" version="3.6"/>
   <object class="GtkBox" id="search_field">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="orientation">horizontal</property>
+    <property name="orientation">vertical</property>
     <child>
-      <object class="GtkSearchEntry" id="search_entry">
-        <property name="visible">True</property>
-        <property name="can_focus">True</property>
-        <property name="placeholder_text" translatable="yes">Search</property>
-        <property name="invisible_char">•</property>
-        <property name="margin">5</property>
-        <property name="input_hints">GTK_INPUT_HINT_SPELLCHECK | GTK_INPUT_HINT_WORD_COMPLETION</property>
-      </object>
-      <packing>
-        <property name="expand">True</property>
-        <property name="fill">True</property>
-        <property name="position">0</property>
-      </packing>
-    </child>
-    <child>
-      <object class="GtkButton" id="search_dialog_button">
+      <object class="GtkBox">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="relief">GTK_RELIEF_NONE</property>
-        <property name="has_tooltip">True</property>
-        <property name="tooltip_text" translatable="yes">Advanced search</property>
         <child>
-          <object class="GtkImage">
+          <object class="GtkSearchEntry" id="search_entry">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="invisible_char">•</property>
+            <property name="placeholder_text" translatable="yes">Search</property>
+            <property name="input_hints">GTK_INPUT_HINT_SPELLCHECK | GTK_INPUT_HINT_WORD_COMPLETION | GTK_INPUT_HINT_NO_EMOJI | GTK_INPUT_HINT_NONE</property>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="search_dialog_button">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="icon_name">text-editor-symbolic</property>
-            <property name="icon_size">1</property>
+            <property name="receives_default">False</property>
+            <property name="has_tooltip">True</property>
+            <property name="tooltip_text" translatable="yes">Advanced search</property>
+            <property name="relief">none</property>
+            <child>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="icon_name">text-editor-symbolic</property>
+                <property name="icon_size">1</property>
+              </object>
+            </child>
           </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
         </child>
       </object>
       <packing>

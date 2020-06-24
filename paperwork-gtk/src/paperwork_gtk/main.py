@@ -95,6 +95,7 @@ DEFAULT_GUI_PLUGINS = (
         'paperwork_gtk.mainwindow.pageeditor',
         'paperwork_gtk.mainwindow.search.advanced',
         'paperwork_gtk.mainwindow.search.field',
+        'paperwork_gtk.mainwindow.search.suggestions',
         'paperwork_gtk.mainwindow.window',
         'paperwork_gtk.menus.app.help',
         'paperwork_gtk.menus.app.open_bug_report',

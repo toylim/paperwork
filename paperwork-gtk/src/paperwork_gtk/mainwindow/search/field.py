@@ -91,8 +91,6 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def search_update_document_list(self, _=None):
-        self.core.call_all("work_queue_cancel_all", "doc_search")
-
         query = self.search_entry.get_text()
         LOGGER.info("Looking for [%s]", query)
         self.core.call_all("search_by_keywords", query)
@@ -104,6 +102,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.search_entry.set_text(text)
 
     def search_by_keywords(self, query):
+        self.core.call_all("work_queue_cancel_all", "doc_search")
         self.core.call_all("on_search_start", query)
         if query == "":
             out = []
@@ -166,3 +165,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def search_focus(self):
         LOGGER.info("Focusing on search field")
         self.widget_tree.get_object("search_entry").grab_focus()
+
+    def search_field_add(self, widget):
+        search_field = self.widget_tree.get_object("search_field")
+        search_field.add(widget)
