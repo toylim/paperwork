@@ -60,8 +60,10 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def _get_suggestions(self, query):
-        out = []
+        out = set()
         self.core.call_all("suggestion_get", out, query)
+        out = list(out)
+        out.sort()
         return out
 
     def _show_suggestions(self, suggestions, query):

@@ -123,8 +123,10 @@ class TestIndex(unittest.TestCase):
         for transaction in transactions:
             transaction.commit()
 
-        results = []
+        results = set()
         self.core.call_all("suggestion_get", results, "Whoosh flech best")
+        results = list(results)
+        results.sort()
         self.assertEqual(
             results, [
                 "Whoosh flesch best",
