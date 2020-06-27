@@ -44,7 +44,7 @@
                 <property name="margin_right">5</property>
                 <property name="margin_top">5</property>
                 <property name="margin_bottom">5</property>
-                <property name="label" translatable="yes">Suggestions</property>
+                <property name="label" translatable="yes">Did you mean ?</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
@@ -77,47 +77,32 @@
           </packing>
         </child>
         <child>
-          <object class="GtkOverlay">
+          <object class="GtkScrolledWindow">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can_focus">True</property>
+            <property name="shadow_type">in</property>
             <child>
-              <object class="GtkScrolledWindow">
+              <object class="GtkTreeView" id="treeview_suggestions">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="shadow_type">in</property>
+                <property name="model">liststore_suggestions</property>
+                <property name="headers_visible">False</property>
+                <property name="search_column">0</property>
+                <property name="activate_on_single_click">True</property>
+                <child internal-child="selection">
+                  <object class="GtkTreeSelection"/>
+                </child>
                 <child>
-                  <object class="GtkTreeView" id="treeview_suggestions">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="model">liststore_suggestions</property>
-                    <property name="headers_visible">False</property>
-                    <property name="search_column">0</property>
-                    <property name="activate_on_single_click">True</property>
-                    <child internal-child="selection">
-                      <object class="GtkTreeSelection"/>
-                    </child>
+                  <object class="GtkTreeViewColumn">
+                    <property name="title" translatable="yes">column</property>
                     <child>
-                      <object class="GtkTreeViewColumn">
-                        <property name="title" translatable="yes">column</property>
-                        <child>
-                          <object class="GtkCellRendererText"/>
-                          <attributes>
-                            <attribute name="text">0</attribute>
-                          </attributes>
-                        </child>
-                      </object>
+                      <object class="GtkCellRendererText"/>
+                      <attributes>
+                        <attribute name="text">0</attribute>
+                      </attributes>
                     </child>
                   </object>
                 </child>
-              </object>
-              <packing>
-                <property name="index">-1</property>
-              </packing>
-            </child>
-            <child type="overlay">
-              <object class="GtkSpinner" id="spinner_suggestions">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
               </object>
             </child>
           </object>

@@ -76,29 +76,19 @@ class Plugin(openpaperwork_core.PluginBase):
         model.clear()
         for suggestion in suggestions:
             model.append((suggestion,))
-
-        spinner = self.widget_tree.get_object("spinner_suggestions")
-        spinner.stop()
-        spinner.set_visible(False)
+        self.widget_tree.get_object(
+            "suggestions_revealer"
+        ).set_reveal_child(len(suggestions) > 0)
 
     def search_by_keywords(self, query):
         self.widget_tree.get_object("liststore_suggestions").clear()
 
-        spinner = self.widget_tree.get_object("spinner_suggestions")
-
-        if query == "":
-            self.widget_tree.get_object(
-                "suggestions_revealer"
-            ).set_reveal_child(False)
-            spinner.stop()
-            spinner.set_visible(False)
-            return
-
         self.widget_tree.get_object(
             "suggestions_revealer"
-        ).set_reveal_child(True)
-        spinner.start()
-        spinner.set_visible(True)
+        ).set_reveal_child(False)
+
+        if query == "":
+            return
 
         promise = openpaperwork_core.promise.ThreadedPromise(
             self.core, self._get_suggestions, args=(query,)
