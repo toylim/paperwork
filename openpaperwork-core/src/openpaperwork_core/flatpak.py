@@ -1,4 +1,5 @@
 import logging
+import os
 import shutil
 import tempfile
 
@@ -18,6 +19,12 @@ class Plugin(PluginBase):
         self.flatpak = False
         self.tmp_dir = None
 
+    def get_interfaces(self):
+        return [
+            'flatpak',
+            'stats',
+        ]
+
     def get_deps(self):
         return [
             {
@@ -32,7 +39,7 @@ class Plugin(PluginBase):
 
     def init(self, core):
         super().init(core)
-        self.flatpak = self.core.call_success(
+        self.flatpak = (os.name == 'posix') and self.core.call_success(
             "fs_isdir", "file:///app"
         ) is not None
         LOGGER.info("Flatpak environment: %s", self.flatpak)
@@ -42,6 +49,11 @@ class Plugin(PluginBase):
                 self.core.call_success("paths_get_data_dir"), "tmp"
             )
             self.core.call_all("fs_mkdir_p", self.tmp_dir)
+
+    def is_in_flatpak(self):
+        if self.flatpak:
+            return True
+        return None
 
     def fs_mktemp(self, prefix=None, suffix=None, mode='w+b', **kwargs):
         """
@@ -67,3 +79,12 @@ class Plugin(PluginBase):
         if not self.flatpak:
             return
         shutil.rmtree(self.core.call_success("fs_unsafe", self.tmp_dir))
+
+    def stats_get(self, out: dict):
+        if not self.flatpak:
+            return
+
+        if 'os_name' in out:
+            out['os_name'] += ' (flatpak)'
+        else:
+            out['os_name'] = 'GNU/Linux (flatpak)'

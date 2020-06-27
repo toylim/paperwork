@@ -6,6 +6,8 @@ import openpaperwork_core
 
 
 class Plugin(openpaperwork_core.PluginBase):
+    PRIORITY = 1000
+
     def get_interfaces(self):
         return ['stats']
 
@@ -18,8 +20,6 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def stats_get(self, out: dict):
-        flatpak = os.path.exists("/app")
-
         if os.name == 'nt':
             distribution = str(platform.win32_ver())
         else:
@@ -30,8 +30,6 @@ class Plugin(openpaperwork_core.PluginBase):
         os_name = os.name
         if os_name != 'nt':  # processor contains too much infos on Windows
             processor = str(platform.processor())
-            if flatpak:
-                os_name += " (flatpak)"
 
         out['os_name'] = os_name
         out['platform_architecture'] = str(platform.architecture())
