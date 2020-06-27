@@ -20,6 +20,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
         self.widget_tree = None
+        self.extra_widget = None
         self.config = [
             (
                 'settings_scanner_name', 'scanner_device_value',
@@ -83,6 +84,9 @@ class Plugin(openpaperwork_core.PluginBase):
         promise = promise.then(set_scanner_name)
         self.core.call_success("scan_schedule", promise)
 
+    def settings_scanner_set_extra_widget(self, widget):
+        self.extra_widget = widget
+
     def complete_settings(self, global_widget_tree):
         widget_tree = self.core.call_success(
             "gtk_load_widget_tree", "paperwork_gtk.settings.scanner",
@@ -97,7 +101,8 @@ class Plugin(openpaperwork_core.PluginBase):
                 widget_tree.get_object("scanner_resolution"),
                 widget_tree.get_object("scanner_mode"),
                 widget_tree.get_object("scanner_calibration"),
-            ]
+            ],
+            extra_widget=self.extra_widget
         )
 
         def refresh(*args, **kwargs):

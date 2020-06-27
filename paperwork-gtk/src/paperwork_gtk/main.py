@@ -127,6 +127,7 @@ DEFAULT_GUI_PLUGINS = (
         'paperwork_gtk.settings.ocr.settings',
         'paperwork_gtk.settings.scanner.calibration',
         'paperwork_gtk.settings.scanner.dev_id_popover',
+        'paperwork_gtk.settings.scanner.flatpak',
         'paperwork_gtk.settings.scanner.mode_popover',
         'paperwork_gtk.settings.scanner.resolution_popover',
         'paperwork_gtk.settings.scanner.settings',

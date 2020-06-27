@@ -100,7 +100,8 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all("on_settings_closed", global_widget_tree)
         self.settings_dialog = None
 
-    def add_setting_to_dialog(self, global_widget_tree, title, widgets):
+    def add_setting_to_dialog(
+            self, global_widget_tree, title, widgets, extra_widget=None):
         """
         Add a setting or a set of settings to the main screen in the settings
         dialog.
@@ -113,6 +114,11 @@ class Plugin(openpaperwork_core.PluginBase):
             "paperwork_gtk.settings", "settings_section.glade"
         )
         widget_tree.get_object("setting_section_name").set_text(title)
+
+        if extra_widget:
+            box = widget_tree.get_object("settings_title_box")
+            box.pack_start(extra_widget, expand=False, fill=False, padding=0)
+
         inner = widget_tree.get_object("setting_box")
         for widget in widgets:
             inner.pack_start(widget, expand=False, fill=True, padding=0)
