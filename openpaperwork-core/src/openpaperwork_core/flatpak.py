@@ -72,6 +72,7 @@ class Plugin(PluginBase):
             prefix=prefix, suffix=suffix, delete=False, mode=mode,
             dir=self.core.call_success("fs_unsafe", self.tmp_dir)
         )
+        LOGGER.info("Flatpak tmp file: %s --> %s", self.tmp_dir, tmp.name)
         self.tmp_files.add(tmp.name)
         return (self.core.call_success("fs_safe", tmp.name), tmp)
 
