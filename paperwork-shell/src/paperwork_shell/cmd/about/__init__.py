@@ -1,7 +1,11 @@
+import os
 import random
+import shutil
+import sys
 
 import fabulous.image
 import fabulous.text
+import getkey
 
 import openpaperwork_core
 
@@ -31,6 +35,84 @@ COLORS = [
 ]
 
 
+class Paperwork(object):
+    def __init__(self, core):
+        self.core = core
+
+    def show(self):
+        nb_lines = 0
+
+        logo = self.core.call_success(
+            "resources_get_file",
+            "paperwork_shell.cmd.about", "logo.png"
+        )
+        logo = self.core.call_success("fs_unsafe", logo)
+        logo = fabulous.image.Image(logo, width=60)
+        logo = logo.reduce(logo.convert())
+        for line in logo:
+            print((16 * " ") + line)
+            nb_lines += 1
+
+        txt = fabulous.text.Text(
+            "Paperwork",
+            skew=5, color="#abcdef", font="times", fsize=25, shadow=False
+        )
+        for line in txt:
+            print(line)
+            nb_lines += 1
+
+        print("Paperwork")
+        print((8 * " ") + _('Version: ') + self.core.call_success(
+            "app_get_version"
+        ))
+        print((8 * " ") + _("Because sorting documents is a machine's job."))
+        nb_lines += 3
+        return nb_lines
+
+
+class Section(object):
+    def __init__(self, name, authors, fonts):
+        self.name = name
+        self.authors = authors
+        self.fonts = fonts
+
+    @staticmethod
+    def _group_small_words(words):
+        buf = []
+        for word in words:
+            buf.append(word)
+            if len(word) > 3:
+                yield " ".join(buf)
+                buf = []
+        if len(buf) > 0:
+            yield " ".join(buf)
+
+    def show(self):
+        nb_lines = 0
+        color = random.choice(COLORS)
+        font = random.choice(self.fonts)
+
+        words = self.name.split()
+        for word in self._group_small_words(words):
+            txt = fabulous.text.Text(
+                word, skew=0, color=color, font=font, fsize=18, shadow=False
+            )
+            for line in txt:
+                print(line)
+                nb_lines += 1
+
+        print(self.name)
+        nb_lines += 1
+        for author in self.authors:
+            txt = author[1]
+            if author[2] > 0:
+                txt += " ({})".format(author[2])
+            print((8 * " ") + txt)
+            nb_lines += 1
+
+        return nb_lines
+
+
 class Plugin(openpaperwork_core.PluginBase):
     def get_interfaces(self):
         return ['shell']
@@ -56,50 +138,73 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def cmd_complete_argparse(self, parser):
-        parser.add_parser(
-            'about', help=_("About Paperwork")
-        )
+        parser.add_parser('about', help=_("About Paperwork"))
 
     def cmd_run(self, args):
         if args.command != 'about':
             return None
 
-        self._show_logo()
-
         fonts = self._get_available_fonts()
-
-        paperwork = [
-            (
-                '',
-                _('Version: ') + self.core.call_success("app_get_version"),
-                -1,
-            ),
-            (
-                '',
-                _("Because sorting documents is a machine's job."),
-                -1,
-            )
-        ]
-        self._show_section(
-            "Paperwork", paperwork, fonts, color="#abcdef", size=28, skew=5
-        )
-        for x in range(0, 7):
-            print("")
 
         sections = {}
         self.core.call_all("authors_get", sections)
         sections = [x for x in sections.items()]
         sections.sort(key=lambda x: x[0].lower())
 
-        for (k, v) in sections:
-            if len(v) <= 0:
-                continue
-            for x in range(0, 7):
-                print("")
-            self._show_section(k, v, fonts)
+        sections = (
+            [Paperwork(self.core)] +
+            [Section(k, v, fonts) for (k, v) in sections if len(v) >= 0]
+        )
 
+        if os.name == "nt":
+            self._show_all(sections)
+        else:
+            self._show_page_by_page(sections)
+
+    def _show_all(self, sections):
+        for section in sections:
+            for x in range(0, 7):
+                print()
+            section.show()
         print()
         print()
+
+    def _show_page_by_page(self, sections):
+        t_height = shutil.get_terminal_size()[1] - 2
+
+        idx = 0
+        while True:
+            nb_lines = t_height
+
+            print()
+            print()
+            nb_lines -= 2
+
+            sys.stdout.write("\033[2J")
+            section = sections[idx]
+
+            nb_lines -= section.show()
+            for x in range(0, nb_lines):
+                print()
+
+            print(
+                "    " + "    ".join([
+                    _("<-- Previous"),
+                    _("Next -->"),
+                    _("q: quit")
+                ])
+            )
+
+            key = getkey.getkey()
+            if key.lower() == 'q':
+                return
+
+            if key == getkey.keys.LEFT or key == '4':
+                idx -= 1
+            elif key == getkey.keys.RIGHT or key == '6':
+                idx += 1
+            idx = max(0, idx)
+            idx = min(len(sections) - 1, idx)
 
     def _get_available_fonts(self):
         all_fonts = fabulous.text.get_font_files()
@@ -111,53 +216,3 @@ class Plugin(openpaperwork_core.PluginBase):
                 continue
             out.append(font)
         return out
-
-    def _show_logo(self):
-        logo = self.core.call_success(
-            "resources_get_file",
-            "paperwork_shell.cmd.about", "logo.png"
-        )
-        logo = self.core.call_success("fs_unsafe", logo)
-        logo = fabulous.image.Image(logo, width=60)
-        logo = logo.reduce(logo.convert())
-        for line in logo:
-            print((16 * " ") + line)
-
-    @staticmethod
-    def _group_small_words(words):
-        buf = []
-        for word in words:
-            buf.append(word)
-            if len(word) > 3:
-                yield " ".join(buf)
-                buf = []
-        if len(buf) > 0:
-            yield " ".join(buf)
-
-    def _show_section_title(
-            self, section_name, authors, fonts, size, skew, color):
-        if color is None:
-            color = random.choice(COLORS)
-        font = random.choice(fonts)
-
-        words = section_name.split()
-        for word in self._group_small_words(words):
-            txt = fabulous.text.Text(
-                word,
-                skew=skew, color=color, font=font, fsize=size, shadow=False
-            )
-            for line in txt:
-                print(line)
-
-    def _show_section(
-            self,
-            section_name, authors, fonts, size=18, color=None, skew=None):
-        self._show_section_title(
-            section_name, authors, fonts, size, skew, color
-        )
-        print(section_name)
-        for author in authors:
-            txt = author[1]
-            if author[2] > 0:
-                txt += " ({})".format(author[2])
-            print((8 * " ") + txt)

@@ -69,6 +69,7 @@ setuptools.setup(
     zip_safe=True,
     install_requires=[
         "fabulous",
+        "getkey",
         "openpaperwork-core",
         "paperwork-backend",
     ]
