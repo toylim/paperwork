@@ -68,11 +68,12 @@ class Plugin(openpaperwork_core.PluginBase):
 
         documentation = authors.pop("Documentation", [])
         translators = authors.pop("Translators", [])
-
+        version = self.core.call_success("app_get_version")
         icon = self.core.call_success("icon_get_pixbuf", "paperwork", 128)
 
         about_dialog = widget_tree.get_object("about_dialog")
         about_dialog.set_logo(icon)
+        about_dialog.set_version(version)
 
         for (k, v) in authors.items():
             self._set_authors_list(
