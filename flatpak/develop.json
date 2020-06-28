@@ -135,6 +135,10 @@
                     "sha256": "68c7c702c3b34deacf427f6c0f1fd66c5c2aa12d7801aa32442fc1a71c8ce059"
                 },
                 {
+                    "type": "patch",
+                    "path": "getkey-setup.diff"
+                },
+                {
                     "type": "file",
                     "path": "pip-Makefile",
                     "dest-filename": "Makefile"
