@@ -5,11 +5,13 @@ import sys
 
 import fabulous.image
 import fabulous.text
-import getkey
 
 import openpaperwork_core
 
 from ... import _
+
+if os.name != "nt":
+    import getkey
 
 
 # XXX(Jflesch): crappy workaround for an unmaintained library ...

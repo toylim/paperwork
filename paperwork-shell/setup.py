@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os
 import sys
 
 import setuptools
@@ -69,10 +70,9 @@ setuptools.setup(
     zip_safe=True,
     install_requires=[
         "fabulous",
-        "getkey",
         "openpaperwork-core",
         "paperwork-backend",
-    ]
+    ] + (["getkey"] if os.name != 'nt' else [])
 )
 
 if quiet:
