@@ -21,12 +21,6 @@ ${VERSION_FILE}:
 	$(eval branch_name = $(shell git symbolic-ref HEAD 2>/dev/null))
 	if [ -n "${branch_name}" ] && [ "${branch_name}" != "refs/heads/master" ] ; then echo -n "-${branch_name}" >> $@ ; fi
 	echo "\"" >> $@
-	echo "authors_code = \"\"\"" >> $@
-	echo "    Code contributors:" >> $@
-	git shortlog -sne >> $@
-	echo "\"\"\"" >> $@
-	echo >> $@
-	cat ../AUTHORS.py >> $@
 
 doc:
 

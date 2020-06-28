@@ -28,6 +28,7 @@ upload_doc: doc/_build/html/index.html
 	cd .. && ./ci/deliver_doc.sh ${CURDIR}/doc/_build/html paperwork_backend
 
 data:
+	$(MAKE) -C $(CURDIR)/src/paperwork_backend/authors data
 
 check:
 	flake8 src/paperwork_backend
@@ -63,6 +64,7 @@ release_pypi:
 clean:
 	rm -f ${VERSION_FILE}
 	rm -rf build dist *.egg-info
+	$(MAKE) -C $(CURDIR)/src/paperwork_backend/authors clean
 
 # PIP_ARGS is used by Flatpak build
 install_py: ${VERSION_FILE} l10n_compile

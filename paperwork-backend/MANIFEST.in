@@ -1,4 +1,3 @@
-recursive-include src *.py *.mo
-include AUTHORS
+recursive-include src *.py *.mo *.json
 include *.markdown
 include LICENSE

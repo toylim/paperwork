@@ -8,7 +8,6 @@ ALL_COMPONENTS = \
 
 build:
 
-
 openpaperwork-core_install_py:
 	echo "Installing openpaperwork-core"
 	$(MAKE) -C openpaperwork-core install_py
@@ -46,6 +45,7 @@ data: $(ALL_COMPONENTS:%=%_data)
 
 upload_data: data
 	tar -cvzf data.tar.gz \
+		paperwork-backend/src/paperwork_backend/authors/*.json \
 		paperwork-gtk/src/paperwork_gtk/model/help/out/*.pdf \
 		paperwork-gtk/src/paperwork_gtk/icon/out/*.png
 	ci/deliver_data.sh data.tar.gz
@@ -65,6 +65,9 @@ release_pypi: download_data l10n_compile $(ALL_COMPONENTS:%=%_release_pypi)
 release: $(ALL_COMPONENTS:%=%_release)
 ifeq (${RELEASE}, )
 	@echo "You must specify a release version (make release RELEASE=1.2.3)"
+	@echo "Also makes sure to update:"
+	@echo "- AUTHORS.ui.json"
+	@echo "- AUTHORS.patrons.json (from Patreon, all patrons >= 10)"
 else
 	@echo "Will release: ${RELEASE}"
 	git tag -a ${RELEASE} -m ${RELEASE}

@@ -20,6 +20,8 @@ _version.py
 *.dll
 out.*
 rclone*
+AUTHORS.json
+AUTHORS.git.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

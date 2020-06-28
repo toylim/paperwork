@@ -24,6 +24,8 @@ DEFAULT_PLUGINS = (
         'openpaperwork_core.external_apps.xdg',
         'openpaperwork_core.http',
         'openpaperwork_core.perfcheck.log',
+        'paperwork_backend.authors',
+        'paperwork_backend.authors.translators',
         'paperwork_backend.beacon.stats',
         'paperwork_backend.beacon.sysinfo',
         'paperwork_backend.beacon.update',
