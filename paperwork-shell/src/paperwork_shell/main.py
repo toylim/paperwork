@@ -34,6 +34,7 @@ DEFAULT_SHELL_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
 ]
 
 DEFAULT_CLI_PLUGINS = DEFAULT_SHELL_PLUGINS + [
+    "paperwork_shell.cmd.about",
     "paperwork_shell.display.docrendering.extra_text",
     "paperwork_shell.display.docrendering.img",
     "paperwork_shell.display.docrendering.labels",

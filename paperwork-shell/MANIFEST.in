@@ -1,2 +1,2 @@
-recursive-include src *.py *.mo
+recursive-include src *.py *.mo *.png
 include *.markdown
