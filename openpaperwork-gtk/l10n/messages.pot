@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-03 16:16+0200\n"
+"POT-Creation-Date: 2020-06-28 17:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/zip.py:58
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/zip.py:56
 msgid "ZIP file"
 msgstr ""
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/zip.py:63
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/zip.py:61
 #, python-format
 msgid ""
 "Build a ZIP file containing all the attachments.\n"
@@ -29,27 +29,27 @@ msgid ""
 "\">Paperwork's bug tracker</a> and attach this ZIP file to the ticket."
 msgstr ""
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:42
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:40
 msgid "Creating bug report ..."
 msgstr ""
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:44
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:42
 msgid "Sending bug report attachment ..."
 msgstr ""
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:163
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:161
 msgid "Send automatically"
 msgstr ""
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:164
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:162
 msgid "Send the bug report automatically to OpenPaper.work"
 msgstr ""
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:259
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:257
 msgid "Success"
 msgstr ""
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:275
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:273
 #, python-format
 msgid ""
 "Transfer failed:\n"
@@ -57,7 +57,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:281
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:279
 msgid "FAILED"
 msgstr ""
 
@@ -65,12 +65,20 @@ msgstr ""
 msgid "Now"
 msgstr ""
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:242
-#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:250
+#: openpaperwork-gtk/src/openpaperwork_gtk/widgets/charts/lines.py:417
+msgid "Total: {}"
+msgstr ""
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/widgets/charts/lines.py:427
+msgid "Total"
+msgstr ""
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:249
+#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:257
 msgid "App. screenshots"
 msgstr ""
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:251
+#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:258
 msgid "Select to generate"
 msgstr ""
 
