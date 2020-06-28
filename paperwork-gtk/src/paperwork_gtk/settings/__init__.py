@@ -1,15 +1,6 @@
 import logging
 
-try:
-    from gi.repository import Gio
-    GIO_AVAILABLE = True
-except (ImportError, ValueError):
-    GIO_AVAILABLE = False
-
 import openpaperwork_core
-import openpaperwork_core.deps
-
-from .. import _
 
 
 LOGGER = logging.getLogger(__name__)
@@ -31,10 +22,6 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return [
             {
-                'interface': 'app_actions',
-                'defaults': ['paperwork_gtk.mainwindow.window'],
-            },
-            {
                 'interface': 'config',
                 'defaults': ['openpaperwork_core.config'],
             },
@@ -54,19 +41,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def on_gtk_window_closed(self, window):
         self.active_windows.remove(window)
 
-    def on_doclist_initialized(self):
-        item = Gio.MenuItem.new(_("Settings"), "win.open_settings")
-        self.core.call_all("menu_app_append_item", item)
-
-        action = Gio.SimpleAction.new('open_settings', None)
-        action.connect("activate", self.open_settings)
-        self.core.call_all("app_actions_add", action)
-
-    def chkdeps(self, out: dict):
-        if not GIO_AVAILABLE:
-            out['glib'].update(openpaperwork_core.deps.GLIB)
-
-    def open_settings(self, *args, **kwargs):
+    def gtk_open_settings(self, *args, **kwargs):
         self.core.call_success(
             "gtk_load_css",
             "paperwork_gtk.settings", "settings.css"
