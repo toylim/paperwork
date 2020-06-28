@@ -1,0 +1,89 @@
+import openpaperwork_core
+
+
+class Plugin(openpaperwork_core.PluginBase):
+    def __init__(self):
+        super().__init__()
+        self.windows = []
+
+    def get_interfaces(self):
+        return [
+            'gtk_about',
+            'gtk_window_listener',
+        ]
+
+    def get_deps(self):
+        return [
+            {
+                'interface': 'authors',
+                'defaults': ['paperwork_backend.authors'],
+            },
+            {
+                'interface': 'app',
+                'defaults': ['paperwork_backend.app'],
+            },
+            {
+                'interface': 'gtk_resources',
+                'defaults': ['openpaperwork_gtk.resources'],
+            },
+            {
+                'interface': 'icon',
+                'defaults': ['paperwork_gtk.icon'],
+            },
+        ]
+
+    def on_gtk_window_opened(self, window):
+        self.windows.append(window)
+
+    def on_gtk_window_closed(self, window):
+        self.windows.remove(window)
+
+    def _set_authors_str(self, method, authors):
+        out = ""
+        for (email, name, line_count) in authors:
+            if line_count > 0:
+                out += "{} ({})\n".format(name, line_count)
+            else:
+                out += "{}\n".format(name)
+        method(out)
+
+    def _set_authors_list(self, method, authors):
+        out = []
+        print(authors)
+        for (email, name, line_count) in authors:
+            txt = name
+            if line_count > 0:
+                txt += " ({})".format(line_count)
+            out.append(txt)
+        method(out)
+
+    def gtk_open_about(self):
+        widget_tree = self.core.call_success(
+            "gtk_load_widget_tree",
+            "paperwork_gtk.about", "about.glade"
+        )
+
+        authors = {}
+        self.core.call_all("authors_get", authors)
+
+        documentation = authors.pop("Documentation", [])
+        translators = authors.pop("Translators", [])
+
+        icon = self.core.call_success("icon_get_pixbuf", "paperwork", 128)
+
+        about_dialog = widget_tree.get_object("about_dialog")
+        about_dialog.set_logo(icon)
+
+        for (k, v) in authors.items():
+            self._set_authors_list(
+                lambda authors: about_dialog.add_credit_section(k, authors),
+                v
+            )
+        if len(translators) > 0:
+            self._set_authors_str(
+                about_dialog.set_translator_credits, translators
+            )
+        self._set_authors_list(about_dialog.set_documenters, documentation)
+
+        about_dialog.set_transient_for(self.windows[-1])
+        about_dialog.set_visible(True)
