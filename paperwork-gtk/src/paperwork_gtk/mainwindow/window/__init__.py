@@ -309,6 +309,8 @@ class Plugin(openpaperwork_core.PluginBase):
            - shortcut_keys: see gtk_accelerator_parse()
            - action_name: GAction that must be triggered
         """
+        if self.mainwindow is None:
+            return
         LOGGER.info("Keyboard shortcut: %s --> %s", shortcut_keys, action_name)
         self.mainwindow.get_application().set_accels_for_action(
             action_name, (shortcut_keys, None)
