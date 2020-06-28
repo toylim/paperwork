@@ -19,6 +19,10 @@ LOGGER = logging.getLogger(__name__)
 class Plugin(openpaperwork_core.PluginBase):
     PRIORITY = -1000
 
+    def __init__(self):
+        super().__init__()
+        self.menu = None
+
     def get_interfaces(self):
         return [
             'chkdeps',
@@ -47,9 +51,15 @@ class Plugin(openpaperwork_core.PluginBase):
         if not GIO_AVAILABLE:
             out['glib'].update(openpaperwork_core.deps.GLIB)
 
+    def init(self, core):
+        super().init(core)
+        self.menu = Gio.Menu()
+
     def on_doclist_initialized(self):
-        menu = Gio.Menu()
         for (title, file_name) in self.core.call_success("help_get_files"):
             item = Gio.MenuItem.new(title, "win.open_help." + file_name)
-            menu.append_item(item)
-        self.core.call_all("menu_app_append_submenu", _("Help"), menu)
+            self.menu.append_item(item)
+        self.core.call_all("menu_app_append_submenu", _("Help"), self.menu)
+
+    def help_add_menu_item(self, menu_item):
+        self.menu.append_item(menu_item)

@@ -16,7 +16,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 class Plugin(openpaperwork_core.PluginBase):
-    PRIORITY = -150
+    PRIORITY = -1500
 
     def get_interfaces(self):
         return [
@@ -43,4 +43,4 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def on_doclist_initialized(self):
         item = Gio.MenuItem.new(_("Shortcuts"), "win.open_shortcuts")
-        self.core.call_all("menu_app_append_item", item)
+        self.core.call_all("help_add_menu_item", item)
