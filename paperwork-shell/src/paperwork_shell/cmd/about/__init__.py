@@ -206,24 +206,37 @@ class Plugin(openpaperwork_core.PluginBase):
             for x in range(0, nb_lines):
                 print()
 
-            print(
-                "    " + "    ".join([
-                    _("<-- Previous"),
-                    _("Next -->"),
-                    _("q: quit")
-                ])
-            )
+            txt = "    "
+            if idx > 0:
+                txt += _("<-- Previous") + "    "
+            if idx < len(sections) - 1:
+                txt += _("Next -->") + "    "
+            txt += _("q: quit")
+            print(txt)
 
-            key = getkey.getkey()
-            if key.lower() == 'q':
-                return
+            has_valid_key = False
+            while not has_valid_key:
+                key = getkey.getkey()
+                if key.lower() == 'q':
+                    return
 
-            if key == getkey.keys.LEFT or key == '4':
-                idx -= 1
-            elif key == getkey.keys.RIGHT or key == '6':
-                idx += 1
-            idx = max(0, idx)
-            idx = min(len(sections) - 1, idx)
+                if (
+                        key == getkey.keys.LEFT or
+                        key == '4' or
+                        key == getkey.keys.BACKSPACE):
+                    idx -= 1
+                    has_valid_key = True
+                elif (
+                        key == getkey.keys.RIGHT or
+                        key == '6' or
+                        key == ' ' or
+                        key == '\n'):
+                    idx += 1
+                    if idx < len(sections):
+                        has_valid_key = True
+
+                idx = max(0, idx)
+                idx = min(len(sections) - 1, idx)
 
     def _get_available_fonts(self):
         all_fonts = fabulous.text.get_font_files()
