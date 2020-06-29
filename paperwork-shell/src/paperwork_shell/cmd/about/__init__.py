@@ -27,6 +27,18 @@ LiberationMono-Bold
 LiberationSans-Bold
 times
 timesbd
+FreeMono
+FreeMonoBold
+FreeMonoBoldOblique
+FreeMonoOblique
+FreeSans
+FreeSansBold
+FreeSansBoldOblique
+FreeSansOblique
+FreeSerif
+FreeSerifBold
+FreeSerifBoldItalic
+FreeSerifItalic
 """.strip().split()  # to make copy and paste faster
 
 COLORS = [
@@ -38,8 +50,9 @@ COLORS = [
 
 
 class Paperwork(object):
-    def __init__(self, core):
+    def __init__(self, core, fonts):
         self.core = core
+        self.fonts = fonts
 
     def show(self):
         nb_lines = 0
@@ -55,9 +68,13 @@ class Paperwork(object):
             print((16 * " ") + line)
             nb_lines += 1
 
+        font = "FreeSans"
+        if font not in self.fonts:
+            font = self.fonts[0]
+
         txt = fabulous.text.Text(
             "Paperwork",
-            skew=5, color="#abcdef", font="times", fsize=25, shadow=False
+            skew=5, color="#abcdef", font=font, fsize=25, shadow=False
         )
         for line in txt:
             print(line)
@@ -154,7 +171,7 @@ class Plugin(openpaperwork_core.PluginBase):
         sections.sort(key=lambda x: x[0].lower())
 
         sections = (
-            [Paperwork(self.core)] +
+            [Paperwork(self.core, fonts)] +
             [Section(k, v, fonts) for (k, v) in sections if len(v) >= 0]
         )
 
