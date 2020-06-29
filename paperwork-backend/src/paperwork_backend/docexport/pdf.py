@@ -136,13 +136,13 @@ class PdfCreator(object):
 
         for line in boxes:
             for word in line.word_boxes:
-                if word.position[0][0] <= 0 and word.position[0][1] <= 0:
+                if word.position[0][0] <= 0 and line.position[0][1] <= 0:
                     continue
 
                 box_size = (
                     (word.position[1][0] - word.position[0][0])
                     * scale_factor,
-                    (word.position[1][1] - word.position[0][1])
+                    (line.position[1][1] - line.position[0][1])
                     * scale_factor
                 )
                 if 0 in box_size:
@@ -165,7 +165,7 @@ class PdfCreator(object):
                     self.pdf_context.set_source_rgb(0, 0, 0)
                     self.pdf_context.translate(
                         word.position[0][0] * scale_factor,
-                        word.position[0][1] * scale_factor
+                        line.position[0][1] * scale_factor
                     )
 
                     # make the text use the whole box space
