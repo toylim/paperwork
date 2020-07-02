@@ -60,6 +60,8 @@ class NotifyBuilder(object):
 
 
 class Plugin(openpaperwork_core.PluginBase):
+    PRIORITY = 1000
+
     def __init__(self):
         # WORKAROUND(Jflesch): Keep a reference to the notifications.
         # Otherwise we never get the action from the user.
@@ -73,10 +75,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_deps(self):
         return [
-            {
-                'interface': 'app',
-                'defaults': 'paperwork_backend.app',
-            },
         ]
 
     def init(self, core):
@@ -93,6 +91,4 @@ class Plugin(openpaperwork_core.PluginBase):
             r = NotifyBuilder(title)
             self.notification_refs.append(r)
             return r
-        # TODO(Jflesch): need another plugin fall back on classical ugly popup
-        LOGGER.error("TODO")
         return None

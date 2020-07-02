@@ -66,7 +66,7 @@ class Plugin(openpaperwork_core.PluginBase):
             },
             {
                 'interface': 'notifications',
-                'defaults': ['paperwork_gtk.notify'],
+                'defaults': ['paperwork_gtk.notifications.dialog'],
             },
             {
                 'interface': 'transaction_manager',
