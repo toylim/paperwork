@@ -518,6 +518,19 @@ class Core(object):
     def get_deps(self, plugin_name):
         plugin = self.plugins[plugin_name]
         for dep in plugin.get_deps():
+            if 'interface' not in dep:
+                raise KeyError(
+                    "Missing interface in dependency list of plugin"
+                    " '{}'".format(plugin_name)
+                )
+            if 'defaults' not in dep:
+                raise KeyError(
+                    "Missing default plugins in dependency list of plugin"
+                    " '{}' (interface={})".format(
+                        plugin_name, dep['interface']
+                    )
+                )
+
             yield {
                 'interface': dep['interface'],
                 'actives': {
