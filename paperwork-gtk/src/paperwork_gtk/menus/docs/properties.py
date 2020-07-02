@@ -36,7 +36,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return [
             {
                 'interface': 'action_docs_properties',
-                'default': ['paperwork_gtk.actions.docs.properties'],
+                'defaults': ['paperwork_gtk.actions.docs.properties'],
             },
             {
                 'interface': 'docs_actions',
