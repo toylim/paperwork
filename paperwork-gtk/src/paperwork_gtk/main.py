@@ -50,6 +50,7 @@ DEFAULT_GUI_PLUGINS = (
         'paperwork_gtk.actions.page.reset',
         'paperwork_gtk.busy.mouse',
         'paperwork_gtk.cmd.install',
+        'paperwork_gtk.docimport',
         'paperwork_gtk.doc_selection',
         'paperwork_gtk.drawer.calibration',
         'paperwork_gtk.drawer.frame',
