@@ -112,9 +112,8 @@ class Plugin(openpaperwork_core.PluginBase):
         LOGGER.info("Drop: %s --> %s p%d", src_uri, dst_doc_id, dst_page_idx)
 
         if "doc_id=" not in src_uri or "page=" not in src_uri:
-            # treat it as an import
-            # TODO(Jflesch)
-            LOGGER.info("TODO: Import of %s", src_uri)
+            LOGGER.info("Drop: Import of %s", src_uri)
+            self.core.call_all("gtk_doc_import", [src_uri])
             return
         else:
             # moving page inside the current document
@@ -154,7 +153,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def drag_and_drop_apply(self):
         if len(self.updated) <= 0:
-            LOGGER.info("Nothing to do")
             return
 
         self.promise = self.promise.then(self.core.call_success(

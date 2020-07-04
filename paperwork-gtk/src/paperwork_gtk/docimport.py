@@ -193,25 +193,26 @@ class Plugin(openpaperwork_core.PluginBase):
         for (k, v) in file_import.stats.items():
             LOGGER.info("- %s: %s", k, v)
 
-    def gtk_doc_import(self, file_url):
-        LOGGER.info("Importing: %s", file_url)
+    def gtk_doc_import(self, file_urls):
+        LOGGER.info("Importing: %s", file_urls)
 
         file_import = paperwork_backend.docimport.FileImport(
-            file_url, self.active_doc_id
+            file_urls, self.active_doc_id
         )
 
         importers = []
         self.core.call_all("get_importer", importers, file_import)
         if len(importers) <= 0:
-            self._show_no_importer(file_url)
+            self._show_no_importer(file_urls)
             return
         # TODO(Jflesch): Should ask the user what must be done
         importer = importers[0]
 
-        self._add_to_recent(file_url)
+        self._add_to_recent(file_urls)
 
         promise = importer.get_import_promise()
         promise = promise.then(lambda *args, **kwargs: None)
         promise = promise.then(self._log_result, file_import)
         promise = promise.then(self._show_result, file_import)
         self.core.call_success("transaction_schedule", promise)
+        return True
