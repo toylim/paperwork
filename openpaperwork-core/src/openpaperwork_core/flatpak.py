@@ -10,7 +10,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 class Plugin(PluginBase):
-    PRIORITY = 50
+    PRIORITY = 75
 
     def __init__(self):
         super().__init__()
