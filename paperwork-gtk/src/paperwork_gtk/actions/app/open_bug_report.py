@@ -17,7 +17,6 @@ class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
         self.active_doc = None
-        self.active_windows = []
 
     def get_interfaces(self):
         return [
@@ -45,11 +44,5 @@ class Plugin(openpaperwork_core.PluginBase):
         action.connect("activate", self._open_bug_report)
         self.core.call_all("app_actions_add", action)
 
-    def on_gtk_window_opened(self, window):
-        self.active_windows.append(window)
-
-    def on_gtk_window_closed(self, window):
-        self.active_windows.remove(window)
-
     def _open_bug_report(self, *args, **kwargs):
-        self.core.call_all("open_bug_report", self.active_windows[-1])
+        self.core.call_all("open_bug_report")

@@ -18,9 +18,13 @@ class Plugin(openpaperwork_core.PluginBase):
         self.url_selected = None
         self.method_radio = None
         self.method_set_file_urls_callbacks = {}
+        self.windows = []
 
     def get_interfaces(self):
-        return ['gtk_bug_report_dialog']
+        return [
+            'gtk_bug_report_dialog',
+            'gtk_window_listener',
+        ]
 
     def get_deps(self):
         return [
@@ -45,6 +49,12 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_core.i18n.python'],
             },
         ]
+
+    def on_gtk_window_opened(self, window):
+        self.windows.append(window)
+
+    def on_gtk_window_closed(self, window):
+        self.windows.remove(window)
 
     def _shorten_url(self, url):
         if "://" not in url:
@@ -86,7 +96,7 @@ class Plugin(openpaperwork_core.PluginBase):
             return ""
         return self.core.call_success("i18n_file_size", file_size)
 
-    def open_bug_report(self, parent_window):
+    def open_bug_report(self):
         self.method_radio = None
         self.url_selected = None
 
@@ -147,7 +157,8 @@ class Plugin(openpaperwork_core.PluginBase):
                 "on_bug_report_attachment_selected", i['id'], widget_tree
             )
 
-        dialog.set_transient_for(parent_window)
+        if len(self.windows) > 0:
+            dialog.set_transient_for(self.windows[-1])
         dialog.connect("close", self._on_close)
         dialog.connect("cancel", self._on_close)
         dialog.connect("prepare", self._on_prepare, widget_tree)
