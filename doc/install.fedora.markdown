@@ -1,8 +1,5 @@
 # Paperwork installation on GNU/Linux Fedora
 
-# Paperwork installation on GNU/Linux Debian or GNU/Linux Ubuntu
-
-
 ## Packages
 
 This is the recommended method of installation.
