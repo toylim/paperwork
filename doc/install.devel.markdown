@@ -3,6 +3,10 @@
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) carefully before submitting any
 merge request.
 
+In this document, it is assumed you are already familiar with the basics of
+Git.
+
+
 ## Paperwork in a Virtualenv
 
 This is the recommended approach for development. If you intend to work on
@@ -16,28 +20,30 @@ that did the installation will be the only one able to run Paperwork. No
 shortcut will be installed in the menus of your window manager. Paperwork
 won't be available directly on your PATH.
 
-Libinsane is scan library required by Paperwork. You need it in your
-development environment. There are other dependencies that may be required.
-
-To make things simpler, Paperwork repository includes a script
-(`activate\_test\_env.sh`) to create a Python virtualenv including Libinsane
-and any other possible dependencies. The Makefile (`make install`) can install
-most of the dependencies and Paperwork components in one shot.
-`paperwork-shell` can then take care of installing some dependencies that
-can only be installed system-wide.
+Paperwork depends on various libraries. Development should be done against the
+latest versions of the OpenPaper.work's librairies (Libinsane, Libpillowfight,
+PyOCR, etc). To make things simpler, Paperwork repository includes a script
+to create and load a Python virtualenv (`source ./activate_test_env.sh`).
+It will automatically get OpenPaper.work's librairies fresh from Git and
+install them in this virtualenv.
+Then the command `make install` will install Paperwork components using Python
+setuptools. Python setuptools will automatically fetch and install pure-Python
+dependencies. Finally, `paperwork-cli chkdeps` and `paperwork-gtk chkdeps`
+will take care of installing the remaining dependencies system-wide using the
+package manager of your Linux distribution (APT, Dnf, Pacman, etc).
 
 
 ### Requirements
 
-For Paperwork, you will have to install
+You will have to install
 [python3-virtualenv](https://pypi.python.org/pypi/virtualenv):
 
 ```sh
 sudo apt install python3-virtualenv virtualenv python3-dev
 ```
 
-You will also need to build Libinsane [from
-sources](https://doc.openpaper.work/libinsane/latest/libinsane/install.html):
+[Libinsane](https://gitlab.gnome.org/World/OpenPaperwork/libinsane/-/blob/master/README.markdown)
+will also be built. This build requires various dependencies:
 
 ```sh
 sudo apt install \
@@ -53,7 +59,7 @@ sudo apt install \
 ```
 
 
-### Setting up a development environment
+### Setting up a virtualenv
 
 
 ```sh
@@ -62,37 +68,61 @@ cd ~/git
 
 git clone https://gitlab.gnome.org/World/OpenPaperwork/paperwork.git
 cd paperwork
-git checkout develop  # or 'master', 'release-xxx', 'wip-xxx', etc
+
+# - 'develop' is the branch where any new features, bug fixes, etc should go by
+#   default.
+# - 'testing' is only for bug fixes, translations and documentations during
+#   the testing phase *only*
+# - 'master' is the latest stable version of Paperwork + some bug fixes (only
+#   the project maintainer add commits in this branch).
+git checkout develop
 
 # Will create the Python virtualenv if it doesn't exist.
-# It will compile Libinsane and set the correct environment variables to use it
-# without installing it
+# It will compile Libinsane and some other librairies. It will then set the
+# correct environment variables to use them without installing them
+# system-wide.
 source ./activate_test_env.sh
 
-# you're now in a virtualenv
+# you're now in the virtualenv
 
-# 'make install' will install Paperwork in the virtual environment
-make install  # or 'make install_py'
+# 'make install' will install Paperwork in the virtualenv
+make install
 
-# takes care of the dependencies that cannot be installed in the virtual
-# environment (Gtk, Tesseract, etc)
+# takes care of the dependencies that cannot be installed in the virtualenv
+# (Gtk, Tesseract, etc)
 paperwork-cli chkdeps
 paperwork-gtk chkdeps
 ```
 
-### Using the virtual environment
+
+### Running Paperwork from the virtualenv
 
 ```sh
 cd ~/git/paperwork
+
 source ./activate_test_env.sh
-
 # you're now in a virtualenv
-
-# 'make install' will install Paperwork in the virtual environment
-make install  # or 'make install_py'
 
 # Running your version of Paperwork:
 paperwork-gtk
 ```
+
+
+### Updating
+
+```sh
+cd ~/git/paperwork
+
+git pull
+
+make clean
+git submodule update --recursive --remote
+
+source ./activate_test_env.sh
+# you're now in a virtualenv
+
+make install
+```
+
 
 Enjoy :-)
