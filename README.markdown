@@ -81,12 +81,6 @@ it first before installing the new version.
   * [Development](doc/devel.windows.markdown)
 
 
-## Usage
-
-* [GTK interface](paperwork-gtk/README.markdown)
-* [Shell interface](paperwork-shell/README.markdown)
-
-
 ## Uninstallation
 
 ### GNU/Linux
