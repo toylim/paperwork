@@ -41,6 +41,9 @@ In other words, let the machine do most of the work for you.
   <img src="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/1.0/settings.png" width="443" height="286" />
 </a>
 
+### Command line
+
+![Command line](http://storage.sbg.cloud.ovh.net/v1/AUTH_6c4273c748b243c58df3f6942075e0c9/gitlab.gnome.org/paperwork-shell/search.gif)
 
 ## Main features
 
@@ -53,7 +56,7 @@ In other words, let the machine do most of the work for you.
 * Keyword suggestions
 * Quick edit of scans
 * PDF support
-* [Kick-ass command line interface](http://storage.sbg.cloud.ovh.net/v1/AUTH_6c4273c748b243c58df3f6942075e0c9/gitlab.gnome.org/paperwork-shell/search.gif)
+* [Kick-ass command line interface](/paperwork-shell/README.markdown)
 
 Papers are organized into documents. Each document contains pages.
 
@@ -84,7 +87,7 @@ it first before installing the new version.
 * [Shell interface](paperwork-shell/README.markdown)
 
 
-## Uninstall
+## Uninstallation
 
 ### GNU/Linux
 
@@ -101,7 +104,7 @@ If you installed it manually (for development), you can follow the same process 
 
 ## Donate
 
-<a href="https://openpaper.work/download#donate">Help us help you ! ;-)</a>
+[Help us help you ! ;-)](https://openpaper.work/download#donate)
 
 
 ## Contact/Help
