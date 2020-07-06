@@ -71,10 +71,10 @@ it first before installing the new version.
     * [GNU/Linux Fedora](doc/install.fedora.markdown)
     * [GNU/Linux Gentoo](doc/install.gentoo.markdown)
     * [GNU/Linux Ubuntu](doc/install.debian.markdown)
-  * [Using Flatpak](flatpak/README.markdown)
+  * [Using Flatpak](doc/install.flatpak.markdown)
   * [GNU/Linux Development](doc/install.devel.markdown)
 * Microsoft Windows:
-  * [Installation](https://openpaper.work)
+  * [Installer](https://openpaper.work)
   * [Development](doc/devel.windows.markdown)
 
 

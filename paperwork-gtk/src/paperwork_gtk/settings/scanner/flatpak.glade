@@ -28,7 +28,7 @@
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
+        <property name="spacing">10</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="visible">True</property>
@@ -63,7 +63,7 @@
             <property name="margin_right">20</property>
             <property name="margin_top">20</property>
             <property name="margin_bottom">20</property>
-            <property name="label" translatable="yes">You are using Paperwork from a Flatpak container. Paperwork needs Saned to access your scanners. To enable Saned on the host system, you can use the following commands:</property>
+            <property name="label" translatable="yes">You are using Paperwork from a Flatpak container. Paperwork needs Saned to access your scanners. To enable Saned on the host system, you copy and paste the following commands in a terminal:</property>
             <property name="wrap">True</property>
           </object>
           <packing>

@@ -1,38 +1,33 @@
 # Paperwork installation on GNU/Linux ArchLinux
 
 
-## Package
+## Packages
+
+This is the recommended method of installation.
 
 A package is available in [AUR](https://www.archlinux.org/packages/community/any/paperwork/).
 
-If there is a problem with the package, please report it on
-[the mailing-list](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Contact).
-Please do **not** report issue with packages on Paperwork's bugtracker. It is
-**not** possible to assign issues to package maintainer on the bugtracker.
-
-## Manual installation
-
-See the [Fedora](install.fedora.markdown) or [Debian](install.debian.markdown) installation
-guides for reference.
-
-
-## Runtime dependencies
-
-### Paperwork
-
-Once installed, please run ```paperwork-shell chkdeps paperwork_backend```
-and ```paperwork-shell chkdeps paperwork``` to make sure all the required
+Once installed, you can run `paperwork-cli chkdeps`
+and `paperwork-gtk chkdeps` to make sure all the required
 depencies are installed.
 
-You can run ```paperwork-shell install``` to add a Paperwork entry
-in the menus of your desktop.
+You can start Paperwork with the command `paperwork-gtk`.
 
 
-## Running Paperwork
+## Flatpak
 
-If you used "paperwork-shell install", a shortcut should be available in the
-menus of your window manager (you may have to log out first).
+You can get more up-to-date versions of Paperwork
+[using Flatpak](install.flatpak.markdown). Just beware that those versions of
+Paperwork come directly from Paperwork developers themselves and haven't been
+reviewed by the ArchLinux package maintainer(s).
 
-You can also start Paperwork by running the command 'paperwork'.
 
-Enjoy :-)
+## Reporting a bug
+
+If you find a bug in the version of Paperwork packaged in GNU/Linux ArchLinux:
+
+- First try to reproduce it with the version of Paperwork in Flatpak.
+- If you can reproduce it with the Flatpak version, please
+  [report it on Paperwork bug tracker](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/-/issues)
+- If you can't reproduce it with the Flatpak version, please
+  [report it to the ArchLinux package maintainer(s)](https://wiki.archlinux.org/index.php/Bug_reporting_guidelines)

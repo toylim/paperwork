@@ -1,26 +1,35 @@
 # Paperwork installation on GNU/Linux Gentoo
 
-## Package
+## Packages
 
-    $ emerge paperwork
+This is the recommended method of installation.
 
-## Runtime dependencies
+A package is [available in GNU/Linux Gentoo](https://packages.gentoo.org/packages/app-text/paperwork).
 
-Some dependencies cannot be installed automatically. You can find all the
-missing dependencies by running 'paperwork-chkdeps'
+```sh
+sudo emerge paperwork
+```
 
-    $ paperwork-shell chkdeps paperwork_backend
-    $ paperwork-shell chkdeps paperwork
+Once installed, you can run `paperwork-cli chkdeps`
+and `paperwork-gtk chkdeps` to make sure all the required
+depencies are installed.
 
-Since Paperwork 1.2, you can add a Paperwork shortcut in your desktop menus
-with the following command:
+You can start Paperwork with the command `paperwork-gtk`.
 
-    $ paperwork-shell install
+## Flatpak
+
+If you want more up-to-date versions of Paperwork, you can install it
+[using Flatpak](install.flatpak.markdown). Just beware that those versions of
+Paperwork come directly from Paperwork developers themselves and haven't been
+reviewed by the Gentoo package maintainer(s).
 
 
-## Running Paperwork
+## Reporting a bug
 
-If you used "paperwork-shell install", a shortcut should be available in the
-menus of your window manager (you may have to log out first).
+If you find a bug in the version of Paperwork packaged in GNU/Linux Gentoo:
 
-You can also start Paperwork by running the command 'paperwork'.
+- First try to reproduce it with the version of Paperwork in Flatpak.
+- If you can reproduce it with the Flatpak version, please
+  [report it on Paperwork bug tracker](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/-/issues)
+- If you can't reproduce it with the Flatpak version, please
+  [report it to the Gentoo package maintainer(s)](https://wiki.gentoo.org/wiki/Bugzilla/Bug_report_guide)

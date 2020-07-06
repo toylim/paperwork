@@ -103,8 +103,14 @@ cd ~/git/paperwork
 source ./activate_test_env.sh
 # you're now in a virtualenv
 
-# Running your version of Paperwork:
+# Running Paperwork
 paperwork-gtk
+
+# or
+paperwork-cli --help
+
+# or
+paperwork-json --help
 ```
 
 
@@ -123,6 +129,5 @@ source ./activate_test_env.sh
 
 make install
 ```
-
 
 Enjoy :-)

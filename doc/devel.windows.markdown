@@ -7,7 +7,7 @@ Paperwork build is based on [Msys2](https://www.msys2.org/).
 
 You can have a look at the
 [.gitlab-ci.yml](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/blob/develop/.gitlab-ci.yml)
-(target 'windows_exe') to have an exhaustive list of all the required MSYS2 packages.
+(target `windows_exe`) to have an exhaustive list of all the required MSYS2 packages.
 Some Python packages are automatically downloaded and installed by setuptools when running
 `make install` / `make install_py` / `python3 ./setup.py install` / etc.
 
@@ -27,20 +27,18 @@ the files actually downloaded by the installer.
 
 ## Running
 
-
-Go to where you checked out Paperwork frontend,
-and run ```python3 paperwork\src\launcher.py```. Tesseract must be in your PATH.
+Once installed system-wide, you can run `paperwork-gtk`.
 
 
 ## Packaging
 
-```
-cd git\paperwork
+```sh
 make windows_exe
 ```
 
-It should create a directory 'paperwork' with all the required files, except Tesseract.
-This directory can be stored in a .zip file and deploy wherever you wish.
+It should create a directory 'paperwork' with all the required files, except
+Tesseract. This directory can be stored in a .zip file and deploy wherever you
+want.
 
 
 ## Adding Tesseract
