@@ -20,18 +20,9 @@ Its drawback:
 
 ## Installing Flatpak
 
-### GNU/Linux Debian
+* GNU/Linux Debian: `sudo apt install flatpak`
+* GNU/Linux Fedora: `sudo dnf install flatpak`
 
-```sh
-sudo apt install flatpak
-```
-
-### GNU/Linux Fedora
-
-```sh
-# Install Saned
-sudo dnf install flatpak
-```
 
 ## Installing Paperwork
 
@@ -47,12 +38,22 @@ flatpak --user install https://builder.openpaper.work/paperwork_<branch>.flatpak
 flatpak --user install https://builder.openpaper.work/paperwork_master.flatpakref
 ```
 
+Flatpak will add a Paperwork icon in your menus. You may have to log out and
+log back in to see it.
+
+Alternatively, you can start Paperwork from a terminal:
+
 ```sh
-# Start Paperwork
 flatpak run work.openpaper.Paperwork
 ```
 
+
 ## Allowing Paperwork to access scanners
+
+When installed using Flatpak, Paperwork runs in a container. This container prevents
+Paperwork from accessing devices directly. Therefore the scanning daemon
+[Saned](https://linux.die.net/man/1/saned) must be enabled on the host system,
+and connection must be allowed from 127.0.0.1.
 
 Instructions can be found in the settings of Paperwork:
 
@@ -67,47 +68,9 @@ Instructions can be found in the settings of Paperwork:
 flatpak --user update work.openpaper.Paperwork
 ```
 
-# Details
+# FAQ
 
-## Saned
-
-When installed using Flatpak, Paperwork runs in a container. This container prevents
-Paperwork from accessing devices directly. Therefore the scanning daemon
-[Saned](https://linux.die.net/man/1/saned) must be enabled on the host system,
-and connection must be allowed from 127.0.0.1.
-
-
-## Continuous builds
-
-For the continuous builds based on the branch 'master' (usually contains the latest
-release with some extra minor bugfixes):
-
-```shell
-flatpak --user install https://builder.openpaper.work/paperwork_master.flatpakref
-```
-
-For the continous builds based on the branch 'develop' (you can install both master
-and develop if you wish):
-
-```shell
-flatpak --user install https://builder.openpaper.work/paperwork_develop.flatpakref
-```
-
-
-## Running Paperwork
-
-Flatpak adds automatically a shortcut to your system menu.
-
-You can also run it from the command line:
-
-```sh
-flatpak run work.openpaper.Paperwork
-```
-
-
-## FAQ
-
-### How do I run paperwork-cli / paperwork-json ?
+## How do I run paperwork-cli / paperwork-json ?
 
 When using Flatpak, paperwork-cli is also available. Note that it will run
 inside Paperwork's container and cannot access files outside your home
@@ -126,7 +89,7 @@ flatpak run --command=paperwork-cli work.openpaper.Paperwork -bq import ~/tmp/pd
 ```
 
 
-### No text appears when rendering PDF files. What do I do ?
+## No text appears when rendering PDF files. What do I do ?
 
 If you run Paperwork from a terminal, you can see the message
 `some font thing has failed` every time you open a PDF file from Paperwork.
@@ -138,7 +101,7 @@ To fix it:
 - Run: `flatpak run --command=fc-cache work.openpaper.Paperwork -f`
 
 
-### What about i386 and ARM architectures ?
+## What about i386 and ARM architectures ?
 
 [Continous integration](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/pipelines)
 only builds Paperwork for amd64 (aka x86\_64). If you want to run Paperwork
@@ -149,7 +112,7 @@ If you don't know what architecture your computer is based and if your computer
 has more than 2GB of RAM, it is probably compatible with amd64.
 
 
-### How do I update The GPG public key of the Flatpak repository ?
+## How do I update The GPG public key of the Flatpak repository ?
 
 Paperwork repository GPG key expires every 2 years. When that happens, when you
 try updating Paperwork, you will get an output similar to the following one:
@@ -179,7 +142,7 @@ flatpak --user install https://builder.openpaper.work/paperwork_master.flatpakre
 ```
 
 
-## Build
+# Build
 
 Here are the instructions if you want to try to build the Flatpak version
 yourself.
