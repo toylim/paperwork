@@ -1,4 +1,4 @@
-Uninstallation *won't* delete your work directory.
+Uninstallation *won't* delete your work directory nor your documents.
 
 
 # Paperwork uninstallation using Flatpak
@@ -8,6 +8,13 @@ If you installed Paperwork using Flatpak, uninstalling it is easy:
 ```shell
 flatpak --user uninstall work.openpaper.Paperwork
 ```
+
+# Paperwork uninstallation using virtual-env
+
+If you installed Paperwork using Python's virtualenv
+(`source ./active_test_env.sh`), you can simply delete the directory
+`~/git/paperwork`.
+
 
 # Paperwork uninstallation using PIP
 

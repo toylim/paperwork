@@ -76,8 +76,8 @@ make install  # or 'make install_py'
 
 # takes care of the dependencies that cannot be installed in the virtual
 # environment (Gtk, Tesseract, etc)
-paperwork-shell chkdeps paperwork_backend
-paperwork-shell chkdeps paperwork
+paperwork-cli chkdeps
+paperwork-gtk chkdeps
 ```
 
 ### Using the virtual environment
@@ -92,7 +92,7 @@ source ./activate_test_env.sh
 make install  # or 'make install_py'
 
 # Running your version of Paperwork:
-paperwork
+paperwork-gtk
 ```
 
 Enjoy :-)
