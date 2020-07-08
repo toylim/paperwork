@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-28 17:24+0200\n"
+"POT-Creation-Date: 2020-07-08 22:17+0200\n"
 "PO-Revision-Date: 2020-05-03 15:37+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -286,6 +286,30 @@ msgstr ""
 msgid "All done !"
 msgstr ""
 
+#: paperwork-shell/src/paperwork_shell/cmd/about/__init__.py:84
+msgid "Version: "
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/about/__init__.py:87
+msgid "Because sorting documents is a machine's job."
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/about/__init__.py:160
+msgid "About Paperwork"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/about/__init__.py:211
+msgid "<-- Previous"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/about/__init__.py:213
+msgid "Next -->"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/about/__init__.py:214
+msgid "q: quit"
+msgstr ""
+
 #: paperwork-shell/src/paperwork_shell/cmd/ocr.py:50
 msgid "OCR document or pages"
 msgstr ""
@@ -444,7 +468,7 @@ msgstr ""
 msgid "No additional text"
 msgstr ""
 
-#: paperwork-shell/src/paperwork_shell/main.py:66
+#: paperwork-shell/src/paperwork_shell/main.py:67
 msgid "command"
 msgstr ""
 

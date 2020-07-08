@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-28 17:24+0200\n"
+"POT-Creation-Date: 2020-07-08 22:17+0200\n"
 "PO-Revision-Date: 2020-05-06 09:53+0000\n"
 "Last-Translator: Weblate Admin <jflesch@openpaper.work>\n"
 "Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
@@ -19,6 +19,31 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
 "X-Generator: Weblate 4.0.1\n"
+
+#: paperwork-gtk/src/paperwork_gtk/docimport.py:82
+#, python-format
+msgid "Don't know how to import '%s'. Sorry."
+msgstr ""
+
+#: paperwork-gtk/src/paperwork_gtk/docimport.py:99
+msgid "No new document to import found"
+msgstr ""
+
+#: paperwork-gtk/src/paperwork_gtk/docimport.py:139
+msgid "Imported file(s) deleted"
+msgstr ""
+
+#: paperwork-gtk/src/paperwork_gtk/docimport.py:146
+msgid "Imported:\n"
+msgstr ""
+
+#: paperwork-gtk/src/paperwork_gtk/docimport.py:152
+msgid "Import successful"
+msgstr ""
+
+#: paperwork-gtk/src/paperwork_gtk/docimport.py:161
+msgid "Delete imported files"
+msgstr ""
 
 #: paperwork-gtk/src/paperwork_gtk/print.py:42
 #, python-brace-format
@@ -208,12 +233,12 @@ msgid "Estimated file size: %s"
 msgstr ""
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/__init__.py:593
-#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:133
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:104
 msgid "Select a file or a directory to import"
 msgstr ""
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/__init__.py:602
-#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:153
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:124
 msgid "Any files"
 msgstr ""
 
@@ -223,6 +248,7 @@ msgid "%d documents"
 msgstr ""
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/doclist/name.py:59
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/controllers/title.py:23
 msgid "New document"
 msgstr ""
 
@@ -298,44 +324,19 @@ msgstr ""
 msgid "Scan from %s"
 msgstr ""
 
-#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:93
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:75
 msgid "Import image or PDF file(s)"
 msgstr ""
 
-#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:94
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:76
 msgid "Import file(s)"
 msgstr ""
 
-#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:147
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:118
 msgid "All supported file formats"
 msgstr ""
 
-#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:179
-#, python-format
-msgid "Don't know how to import '%s'. Sorry."
-msgstr ""
-
-#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:196
-msgid "No new document to import found"
-msgstr ""
-
-#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:231
-msgid "Imported:\n"
-msgstr ""
-
-#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:237
-msgid "Import successful"
-msgstr ""
-
-#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:246
-msgid "Delete imported files"
-msgstr ""
-
-#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:312
-msgid "Imported file(s) deleted"
-msgstr ""
-
-#: paperwork-gtk/src/paperwork_gtk/main.py:194
+#: paperwork-gtk/src/paperwork_gtk/main.py:197
 msgid "command"
 msgstr ""
 
@@ -538,8 +539,8 @@ msgstr ""
 #: paperwork-gtk/src/paperwork_gtk/settings/scanner/flatpak.glade.h:2
 msgid ""
 "You are using Paperwork from a Flatpak container. Paperwork needs Saned to "
-"access your scanners. To enable Saned on the host system, you can use the "
-"following commands:"
+"access your scanners. To enable Saned on the host system, you copy and paste "
+"the following commands in a terminal:"
 msgstr ""
 
 #: paperwork-gtk/src/paperwork_gtk/settings/stats.glade.h:1
