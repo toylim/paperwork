@@ -96,7 +96,7 @@ You can request deletion of your bug report by sending an email to &lt;a href="m
         <property name="can_focus">True</property>
         <property name="valign">center</property>
         <property name="vexpand">True</property>
-        <property name="label" translatable="yes">&lt;a href="https://openpaper.work/pouetpouet"&gt;https://openpaper.work/pouetpouet&lt;/a&gt;</property>
+        <property name="label">&lt;a href="https://openpaper.work/pouetpouet"&gt;https://openpaper.work/pouetpouet&lt;/a&gt;</property>
         <property name="use_markup">True</property>
         <property name="wrap">True</property>
         <property name="wrap_mode">char</property>
