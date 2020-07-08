@@ -26,15 +26,15 @@
     <data>
       <row>
         <col id="0">False</col>
-        <col id="1" translatable="yes">12</col>
-        <col id="2" translatable="yes">Image</col>
-        <col id="3" translatable="yes">/home/jflesch/.local/share/camion/21211212_crash_screenshot.png</col>
+        <col id="1">12</col>
+        <col id="2">Image</col>
+        <col id="3">/home/jflesch/.local/share/camion/21211212_crash_screenshot.png</col>
       </row>
       <row>
         <col id="0">True</col>
-        <col id="1" translatable="yes">1</col>
-        <col id="2" translatable="yes">Text</col>
-        <col id="3" translatable="yes">/home/jflesch/camion/20200101_logs.txt</col>
+        <col id="1">1</col>
+        <col id="2">Text</col>
+        <col id="3">/home/jflesch/camion/20200101_logs.txt</col>
       </row>
     </data>
   </object>
