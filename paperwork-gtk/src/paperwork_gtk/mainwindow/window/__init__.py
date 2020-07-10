@@ -63,6 +63,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_gtk.resources'],
             },
             {
+                'interface': 'icon',
+                'defaults': ['paperwork_gtk.icon'],
+            },
+            {
                 'interface': 'l10n_init',
                 'defaults': ['paperwork_gtk.l10n'],
             },
@@ -109,6 +113,14 @@ class Plugin(openpaperwork_core.PluginBase):
         self.mainwindow.connect(
             "size-allocate", self._on_mainwindow_size_allocate
         )
+
+        self.mainwindow.set_icon_list([
+            self.core.call_success("icon_get_pixbuf", "paperwork", 16),
+            self.core.call_success("icon_get_pixbuf", "paperwork", 32),
+            self.core.call_success("icon_get_pixbuf", "paperwork", 48),
+            self.core.call_success("icon_get_pixbuf", "paperwork", 64),
+            self.core.call_success("icon_get_pixbuf", "paperwork", 128),
+        ])
 
         if hasattr(GLib, 'set_application_name'):
             GLib.set_application_name("Paperwork")
