@@ -114,13 +114,17 @@ class Plugin(openpaperwork_core.PluginBase):
             "size-allocate", self._on_mainwindow_size_allocate
         )
 
-        self.mainwindow.set_icon_list([
-            self.core.call_success("icon_get_pixbuf", "paperwork", 16),
-            self.core.call_success("icon_get_pixbuf", "paperwork", 32),
-            self.core.call_success("icon_get_pixbuf", "paperwork", 48),
-            self.core.call_success("icon_get_pixbuf", "paperwork", 64),
-            self.core.call_success("icon_get_pixbuf", "paperwork", 128),
-        ])
+        try:
+            self.mainwindow.set_icon_list([
+                self.core.call_success("icon_get_pixbuf", "paperwork", 16),
+                self.core.call_success("icon_get_pixbuf", "paperwork", 32),
+                self.core.call_success("icon_get_pixbuf", "paperwork", 48),
+                self.core.call_success("icon_get_pixbuf", "paperwork", 64),
+                self.core.call_success("icon_get_pixbuf", "paperwork", 128),
+            ])
+        except KeyError as exc:
+            # Will fail when generating data for the first time.
+            LOGGER.warning("Failed to load main window icon", exc_info=exc)
 
         if hasattr(GLib, 'set_application_name'):
             GLib.set_application_name("Paperwork")
