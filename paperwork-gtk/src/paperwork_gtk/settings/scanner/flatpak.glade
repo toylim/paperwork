@@ -63,7 +63,7 @@
             <property name="margin_right">20</property>
             <property name="margin_top">20</property>
             <property name="margin_bottom">20</property>
-            <property name="label" translatable="yes">You are using Paperwork from a Flatpak container. Paperwork needs Saned to access your scanners. To enable Saned on the host system, you copy and paste the following commands in a terminal:</property>
+            <property name="label" translatable="yes">You are using Paperwork from a Flatpak container. Paperwork needs Saned to access your scanners. To enable Saned on the host system, you must copy and paste the following commands in a terminal:</property>
             <property name="wrap">True</property>
           </object>
           <packing>

@@ -237,7 +237,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             )
             self.notify_progress(
                 ID, _(
-                    "Training label guessing training for label '{}'"
+                    "Training label guesser for label '{}'"
                     " with all known documents ..."
                 ).format(todo['label'])
             )
