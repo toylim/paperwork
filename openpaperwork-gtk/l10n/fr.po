@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-07-08 22:21+0200\n"
-"PO-Revision-Date: 2020-05-03 17:47+0000\n"
+"PO-Revision-Date: 2020-07-13 09:33+0000\n"
 "Last-Translator: Weblate Admin <jflesch@openpaper.work>\n"
 "Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
 "openpaperwork-gtk/fr/>\n"
@@ -18,11 +18,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.0.1\n"
+"X-Generator: Weblate 4.1.1\n"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/zip.py:56
 msgid "ZIP file"
-msgstr ""
+msgstr "Fichier ZIP"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/zip.py:61
 #, python-format
@@ -31,18 +31,22 @@ msgid ""
 " If you want, you can then submit a bug report manually on <a href=\"%s"
 "\">Paperwork's bug tracker</a> and attach this ZIP file to the ticket."
 msgstr ""
+"Crée un fichier ZIP qui contient tous les documents.\n"
+"Si vous le souhaitez, vous pouvez soumettre un rapport de bogue manuellement "
+"sur <a href=\"%s\">le suivi de bogue de paperwork</a> et joignez ce fichier "
+"ZIP au ticket."
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:40
 msgid "Creating bug report ..."
-msgstr ""
+msgstr "Création d'un rapport de bogue…"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:42
 msgid "Sending bug report attachment ..."
-msgstr ""
+msgstr "Envoi de la pièce jointe du rapport de bogue…"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:161
 msgid "Send automatically"
-msgstr ""
+msgstr "Envoyer automatiquement"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:162
 msgid "Send the bug report automatically to OpenPaper.work"
@@ -50,7 +54,7 @@ msgstr "Envoyer le rapport de bug automatiquement à OpenPaper.work"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:257
 msgid "Success"
-msgstr ""
+msgstr "Succès"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:273
 #, python-format
@@ -59,39 +63,42 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"Le transfert a échoué :\n"
+"\n"
+"%s"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:279
 msgid "FAILED"
-msgstr ""
+msgstr "ÉCHEC"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/__init__.py:71
 msgid "Now"
-msgstr ""
+msgstr "Maintenant"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/widgets/charts/lines.py:417
 msgid "Total: {}"
-msgstr ""
+msgstr "Total : {}"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/widgets/charts/lines.py:427
 msgid "Total"
-msgstr ""
+msgstr "Total"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:249
 #: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:257
 msgid "App. screenshots"
-msgstr ""
+msgstr "Captures d'écran de l'app."
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:258
 msgid "Select to generate"
-msgstr ""
+msgstr "Sélectionner pour générer"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_zip.glade.h:1
 msgid "Please select where to save the ZIP file"
-msgstr ""
+msgstr "Veuillez sélectionner la destination où sauvegarder le fichier ZIP"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:1
 msgid "Bug description"
-msgstr ""
+msgstr "Description du bogue"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:2
 msgid ""
@@ -106,43 +113,57 @@ msgid ""
 "You can request deletion of your bug report by sending an email to <a href="
 "\"mailto:jflesch@openpaper.work\">jflesch@openpaper.work</a>."
 msgstr ""
+"Le rapport de bogue a été envoyé avec succès.\n"
+"\n"
+"Vous pouvez trouver le lien privé de votre rapport de bogue ci-dessous.\n"
+"\n"
+"<b>Soyez prudent en partageant ce lien.</b> Les fichiers joints au rapport "
+"de bogue (journaux, captures d'écran,…) ne contiennent pas d'informations "
+"privées. Mais il est vivement conseillé de les vérifier avant de partager ce "
+"lien.\n"
+"\n"
+"Vous pouvez demander la suppression de votre rapport de bogue en envoyant un "
+"courriel à cette adresse <a href=\"mailto:jflesch@openpaper.work\""
+">jflesch@openpaper.work</a>."
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:3
 msgid "Date"
-msgstr ""
+msgstr "Date"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:5
 msgid "File"
-msgstr ""
+msgstr "Fichier"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:6
 msgid "Size"
-msgstr ""
+msgstr "Taille"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:7
 msgid "Open file"
-msgstr ""
+msgstr "Ouvrir un fichier"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:8
 msgid "For your privacy, attachments may be partially censored when selected"
 msgstr ""
+"Pour protéger votre vie privée, les fichiers joints peuvent être "
+"partiellement censuré quand vous les sélectionnez"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:9
 msgid "Attachments to include in the bug report"
-msgstr ""
+msgstr "Fichiers à joindre à votre rapport de bogue"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:1
 msgid "Unexpected Error"
-msgstr ""
+msgstr "Erreur inattendue"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:2
 msgid "Report"
-msgstr ""
+msgstr "Signaler"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:3
 msgid "An unexpected error occured."
-msgstr ""
+msgstr "Une erreur inattendue s'est produite."
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/widgets/progress/progress_button.glade.h:1
 msgid "Show background tasks"
-msgstr ""
+msgstr "Afficher les tâches de fond"
