@@ -15,7 +15,7 @@ class Plugin(openpaperwork_core.PluginBase):
         "feeder": _("Feeder"),
         "flatbed": _("Flatbed"),
         "left aligned": _("left aligned"),
-        "right aligned": _("centrally aligned"),
+        "right aligned": _("right aligned"),
     }
 
     RE_SPLIT_SOURCE_NAME = [
