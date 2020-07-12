@@ -8,122 +8,127 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-06-28 17:24+0200\n"
-"PO-Revision-Date: 2020-05-03 15:35+0200\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2020-07-12 09:28+0000\n"
+"Last-Translator: Tobias <openpaper_translations@toerb.de>\n"
+"Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
+"openpaperwork-core/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ASCII\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.1.1\n"
 
 #: openpaperwork-core/src/openpaperwork_core/logs/archives.py:123
 #: openpaperwork-core/src/openpaperwork_core/logs/archives.py:134
 msgid "Log file"
-msgstr ""
+msgstr "Logdatei"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/util.py:10
 msgid "Y/n"
-msgstr ""
+msgstr "Y/n"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/util.py:13
 msgid "y/N"
-msgstr ""
+msgstr "y/N"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/config.py:50
 msgid "Manage Paperwork configuration"
-msgstr ""
+msgstr "Verwalte die Konfiguration von Paperwork"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/config.py:54
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:49
 msgid "sub-command"
-msgstr ""
+msgstr "Unterkommando"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/config.py:58
 msgid "Get a value from Paperwork's configuration"
-msgstr ""
+msgstr "Gebe einen spezifischen Eintrag der Konfiguration aus"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/config.py:63
 msgid "Set a value in Paperwork's configuration"
-msgstr ""
+msgstr "Setze einen spezifischen Eintrag der Konfiguration"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/config.py:66
 msgid "See 'config list_type'"
-msgstr ""
+msgstr "Siehe 'config list_type'"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/config.py:70
 msgid "Show Paperwork's configuration"
-msgstr ""
+msgstr "Gebe die Konfiguration von Paperwork aus"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/config.py:75
 msgid "Show value types you can use from command line"
 msgstr ""
+"Zeige die möglichen Werte, die über die Kommandozeile verwendet werden können"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:52
 msgid "Check that all required dependencies are installed"
-msgstr ""
+msgstr "Überprüfe, dass alle benötigten Abhängigkeiten installiert sind"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:73
 msgid "Missing dependencies:"
-msgstr ""
+msgstr "Fehlende Abhängigkeiten:"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:75
 #, python-brace-format
 msgid "- {dep_name} (package: {pkg_name})"
-msgstr ""
+msgstr "-{dep_name} (Paket: {pkg_name})"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:80
 msgid "UNKNOWN"
-msgstr ""
+msgstr "Unbekannt"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:100
 msgid "Suggested command:"
-msgstr ""
+msgstr "Vorgeschlagener Befehl:"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:105
 msgid "Do you want to run this command now ?"
-msgstr ""
+msgstr "Möchtest du dieses Kommando jetzt ausführen?"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:119
 msgid "Don't know how to install missing dependencies. Sorry."
 msgstr ""
+"Die Installationsroutine für unbekannte Abhängigkeiten konnte nicht erkannt "
+"werden."
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:122
 msgid "Nothing to do."
-msgstr ""
+msgstr "Es gibt nichts zu tun."
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:45
 #, python-format
 msgid "Manage %s plugins"
-msgstr ""
+msgstr "Verwalte Erweiterungen für %s"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:54
 #, python-format
 msgid "Show plugins enabled for %s"
-msgstr ""
+msgstr "Zeige alle aktivierten Erweiterungen für %s"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:60
 #, python-format
 msgid "Add plugin in %s"
-msgstr ""
+msgstr "Aktiviere Erweiterung für %s"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:66
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:77
 msgid "Do not correct dependencies automatically"
-msgstr ""
+msgstr "Korrigiere Abhängigkeiten nicht automatisch"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:71
 #, python-format
 msgid "Remove plugin from %s"
-msgstr ""
+msgstr "Deaktiviere Erweiterung für %s"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:82
 msgid "Clean up your mess by reseting the plugin list to its default value"
-msgstr ""
+msgstr "Setze die Liste an Erweiterungen zurück"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:89
 msgid "Show information regarding a plugin (must be enabled)"
-msgstr ""
+msgstr "Zeige Informationen über eine aktivierte Erweiterung"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:136
 #, python-brace-format
