@@ -121,7 +121,7 @@ class Node(object):
                     (new_rect[1][1] - new_rect[0][1])
                 )
                 waste = new_area - a[2] - b[2]
-                if waste > max_waste:
+                if waste > max_waste or r is None:
                     r = (a, b)
 
         assert(r is not None)
