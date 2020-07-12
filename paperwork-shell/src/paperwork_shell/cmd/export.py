@@ -74,7 +74,7 @@ class Plugin(openpaperwork_core.PluginBase):
             type=str, required=False,
             help=_(
                 "Export filters. Specify this option once for each filter"
-                " to apply (ex: '-f grayscale -f jpeg'."
+                " to apply (ex: '-f grayscale -f jpeg')."
             )
         )
         p.add_argument(
@@ -147,8 +147,8 @@ class Plugin(openpaperwork_core.PluginBase):
                 elif len(filters) > 0:
                     print(_(
                         "'{filter_name}' is an output filter."
-                        " No other filter can be added after '%s'."
-                    ).format(file_name=filters[-1].name))
+                        " No other filter can be added after '{filter_name}'."
+                    ).format(filter_name=filters[-1].name))
                 else:
                     print(_("No possible filters found"))
             return next_pipes
