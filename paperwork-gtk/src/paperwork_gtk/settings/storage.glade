@@ -30,7 +30,7 @@
     </child>
     <child>
       <object class="GtkButton" id="work_dir_chooser_button">
-        <property name="label" translatable="yes">some_work_directory</property>
+        <property name="label">some_work_directory</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="receives_default">False</property>

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-08 22:17+0200\n"
+"POT-Creation-Date: 2020-07-12 15:17+0200\n"
 "PO-Revision-Date: 2020-05-03 15:27+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -485,10 +485,6 @@ msgstr ""
 msgid "Work directory"
 msgstr ""
 
-#: paperwork-gtk/src/paperwork_gtk/settings/storage.glade.h:2
-msgid "some_work_directory"
-msgstr ""
-
 #: paperwork-gtk/src/paperwork_gtk/settings/ocr/settings.glade.h:1
 msgid "Languages"
 msgstr ""
@@ -568,10 +564,6 @@ msgid ""
 "</span>"
 msgstr ""
 
-#: paperwork-gtk/src/paperwork_gtk/settings/settings_section.glade.h:1
-msgid "Section title"
-msgstr ""
-
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/exporter.glade.h:1
 msgid "Export Steps"
 msgstr ""
@@ -602,10 +594,6 @@ msgstr ""
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/search/suggestions.glade.h:1
 msgid "Did you mean ?"
-msgstr ""
-
-#: paperwork-gtk/src/paperwork_gtk/mainwindow/search/suggestions.glade.h:2
-msgid "column"
 msgstr ""
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/search/field.glade.h:1

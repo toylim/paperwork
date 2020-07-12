@@ -94,7 +94,7 @@
                 </child>
                 <child>
                   <object class="GtkTreeViewColumn">
-                    <property name="title" translatable="yes">column</property>
+                    <property name="title"></property>
                     <child>
                       <object class="GtkCellRendererText"/>
                       <attributes>
