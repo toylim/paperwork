@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-05-04 10:54+0000\n"
-"PO-Revision-Date: 2020-05-05 12:55+0000\n"
+"PO-Revision-Date: 2020-07-13 09:33+0000\n"
 "Last-Translator: Weblate Admin <jflesch@openpaper.work>\n"
 "Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-help-documents/fr/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.0.1\n"
+"X-Generator: Weblate 4.1.1\n"
 
 #. type: Plain text
 #: data/intro.tex:11 data/usage.tex:19
@@ -87,7 +87,7 @@ msgstr ""
 #. type: section{#2}
 #: data/intro.tex:44
 msgid "Find"
-msgstr "Rechercher"
+msgstr "Trouver"
 
 #. type: wrapfigure
 #: data/intro.tex:50
@@ -250,12 +250,12 @@ msgstr ""
 #. type: subsection{#2}
 #: data/usage.tex:49
 msgid "Work directory"
-msgstr ""
+msgstr "Répertoire de travail"
 
 #. type: subsection{#2}
 #: data/usage.tex:51
 msgid "Scanner"
-msgstr ""
+msgstr "Scanner"
 
 #. type: subsubsection{#2}
 #: data/usage.tex:53
@@ -530,7 +530,7 @@ msgstr ""
 #. type: subsection{#2}
 #: data/usage.tex:261
 msgid "Images"
-msgstr ""
+msgstr "Images"
 
 #. type: document
 #: data/usage.tex:264
@@ -580,7 +580,7 @@ msgstr ""
 #. type: subsection{#2}
 #: data/usage.tex:285
 msgid "PDF"
-msgstr ""
+msgstr "PDF"
 
 #. type: document
 #: data/usage.tex:289
@@ -657,7 +657,7 @@ msgstr ""
 #. type: subsection{#2}
 #: data/usage.tex:394
 msgid "Advanced search"
-msgstr ""
+msgstr "Recherche avancée"
 
 #. type: section{#2}
 #: data/usage.tex:404
@@ -687,12 +687,12 @@ msgstr ""
 #. type: subsection{#2}
 #: data/usage.tex:446
 msgid "Document"
-msgstr ""
+msgstr "Document"
 
 #. type: subsection{#2}
 #: data/usage.tex:448
 msgid "Page"
-msgstr ""
+msgstr "Page"
 
 #. type: section{#2}
 #: data/usage.tex:450
