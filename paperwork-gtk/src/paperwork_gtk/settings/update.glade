@@ -18,6 +18,7 @@
             <property name="label" translatable="yes">Updates
 &lt;span foreground="gray"&gt;Check periodically for new versions of Paperwork&lt;/span&gt;</property>
             <property name="use_markup">True</property>
+            <property name="wrap">True</property>
             <property name="xalign">0</property>
           </object>
           <packing>
