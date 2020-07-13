@@ -10,7 +10,7 @@ class TestScannerI18n(unittest.TestCase):
         self.core.init()
 
         plugin = self.core.get_by_name("paperwork_backend.i18n.scanner")
-        plugin.KEYWORDS = {
+        plugin.keywords = {
             "centrally": "CENTRALLY",
             "feeder": "FEEDER",
             "flatbed": "FLATBED",
