@@ -3,39 +3,54 @@ import datetime
 from .. import (_, PluginBase)
 
 
-TODAY = _("Today")
-YESTERDAY = _("Yesterday")
-_SIZE_FMT_STRINGS = (
-    _('%3.1f bytes'),
-    _('%3.1f KiB'),
-    _('%3.1f MiB'),
-    _('%3.1f GiB'),
-    _('%3.1f TiB'),
-)
-
-
 class Plugin(PluginBase):
     def __init__(self):
         self.today = datetime.date.today()
         self.yesterday = self.today - datetime.timedelta(days=1)
 
+        # Need the l10n plugin to be loaded first before getting the
+        # translations
+        self.i18n_today = None
+        self.i18n_yesterday = None
+        self.i18n_sizes = ()
+
     def get_interfaces(self):
         return ['i18n']
+
+    def get_deps(self):
+        return [
+            {
+                'interface': 'l10n',
+                'defaults': ['openpaperwork_core.l10n.python'],
+            },
+        ]
+
+    def init(self, core):
+        super().init(core)
+        self.i18n_today = _("Today")
+        self.i18n_yesterday = _("Yesterday")
+        self.i18n_sizes = (
+            _('%3.1f bytes'),
+            _('%3.1f KiB'),
+            _('%3.1f MiB'),
+            _('%3.1f GiB'),
+            _('%3.1f TiB'),
+        )
 
     def i18n_date_short(self, date):
         if hasattr(date, 'date'):
             date = date.date()  # datetime --> date
         if date == self.today:
-            return TODAY
+            return self.i18n_today
         elif date == self.yesterday:
-            return YESTERDAY
+            return self.i18n_yesterday
         else:
             return date.strftime("%x")
 
     def i18n_parse_date_short(self, txt):
-        if txt == TODAY:
+        if txt == self.i18n_today:
             return self.today
-        elif txt == YESTERDAY:
+        elif txt == self.i18n_yesterday:
             return self.yesterday
         else:
             try:
@@ -54,8 +69,8 @@ class Plugin(PluginBase):
         return date.strftime("%B")
 
     def i18n_file_size(self, num):
-        for string in _SIZE_FMT_STRINGS:
+        for string in self.i18n_sizes:
             if num < 1024.0:
                 return string % (num)
             num /= 1024.0
-        return _SIZE_FMT_STRINGS[-1] % (num)
+        return self.i18n_sizes[-1] % (num)

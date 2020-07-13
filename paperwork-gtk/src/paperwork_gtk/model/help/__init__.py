@@ -9,11 +9,6 @@ from ... import _
 
 
 LOGGER = logging.getLogger(__name__)
-HELP_FILES = (
-    (_("Introduction"), "intro"),
-    (_("User manual"), "usage"),
-)
-LABEL = (_("Documentation"), "#ffffffffffff")
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -24,6 +19,9 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doc_urls_to_names_to_urls = {}
         self.doc_urls_to_names = {}
         self.thumbnails = {}
+        # At this point, translations are not yet available
+        self.help_files = ()
+        self.label = ()
 
     def get_interfaces(self):
         return [
@@ -60,8 +58,16 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
+    def init(self, core):
+        super().init(core)
+        self.help_files = (
+            (_("Introduction"), "intro"),
+            (_("User manual"), "usage"),
+        )
+        self.label = (_("Documentation"), "#ffffffffffff")
+
     def help_get_files(self):
-        return HELP_FILES
+        return self.help_files
 
     def help_get_file(self, name):
         lang = "en"
@@ -155,7 +161,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def doc_get_labels_by_url(self, out: set, doc_url):
         if doc_url not in self.doc_urls_to_names:
             return
-        out.add(LABEL)
+        out.add(self.label)
 
     def doc_get_labels_by_url_promise(self, out: list, doc_url):
         if doc_url not in self.doc_urls_to_names:
@@ -164,7 +170,7 @@ class Plugin(openpaperwork_core.PluginBase):
         def get_labels(labels=None):
             if labels is None:
                 labels = set()
-            labels.add(LABEL)
+            labels.add(self.label)
             return labels
 
         promise = openpaperwork_core.promise.Promise(
@@ -178,4 +184,4 @@ class Plugin(openpaperwork_core.PluginBase):
         return True
 
     def help_labels_get_all(self, out: set):
-        out.add(LABEL)
+        out.add(self.label)
