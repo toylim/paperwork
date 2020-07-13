@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-07-12 15:17+0200\n"
-"PO-Revision-Date: 2020-07-13 09:33+0000\n"
+"PO-Revision-Date: 2020-07-13 12:28+0000\n"
 "Last-Translator: Weblate Admin <jflesch@openpaper.work>\n"
 "Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-gtk/fr/>\n"
@@ -412,7 +412,7 @@ msgstr "Aide"
 
 #: paperwork-gtk/src/paperwork_gtk/menus/app/open_bug_report.py:49
 msgid "Report bug"
-msgstr "Rapporter un bug"
+msgstr "Signaler un bug"
 
 #: paperwork-gtk/src/paperwork_gtk/menus/app/open_shortcuts.py:45
 msgid "Shortcuts"
