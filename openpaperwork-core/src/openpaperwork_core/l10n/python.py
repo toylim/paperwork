@@ -18,6 +18,10 @@ class Plugin(PluginBase):
         'uk',
     )
 
+    def __init__(self):
+        super().__init__()
+        self.libintl = None
+
     def get_interfaces(self):
         return [
             'l10n',
