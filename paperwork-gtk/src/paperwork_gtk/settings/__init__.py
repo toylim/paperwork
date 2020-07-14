@@ -10,13 +10,15 @@ class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
         self.active_windows = []
-        self.settings_dialog = None
+        self.sections = {}
+        self.widget_tree = None
 
     def get_interfaces(self):
         return [
             'chkdeps',
             'gtk_settings_dialog',
             'gtk_window_listener',
+            'screenshot_provider',
         ]
 
     def get_deps(self):
@@ -32,6 +34,10 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'gtk_resources',
                 'defaults': ['openpaperwork_gtk.resources'],
+            },
+            {
+                'interface': 'screenshot',
+                'defaults': ['openpaperwork_gtk.screenshots'],
             },
         ]
 
@@ -51,9 +57,9 @@ class Plugin(openpaperwork_core.PluginBase):
             "gtk_load_widget_tree",
             "paperwork_gtk.settings", "settings.glade"
         )
+        self.widget_tree = global_widget_tree
         self.core.call_all('complete_settings', global_widget_tree)
         settings = global_widget_tree.get_object("settings_window")
-        self.settings_dialog = settings
         settings.set_transient_for(self.active_windows[-1])
         settings.set_modal(True)
         settings.connect("destroy", self._save_settings, global_widget_tree)
@@ -61,9 +67,10 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all("on_gtk_window_opened", settings)
 
     def close_settings(self):
-        if self.settings_dialog is not None:
-            self.settings_dialog.set_visible(False)
-            self.settings_dialog = None
+        if self.widget_tree is not None:
+            dialog = self.widget_tree.get_object("settings_window")
+            dialog.set_visible(False)
+            self.widget_tree = None
 
     def on_quit(self):
         self.close_settings()
@@ -73,7 +80,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all("config_save")
         self.core.call_all("on_gtk_window_closed", window)
         self.core.call_all("on_settings_closed", global_widget_tree)
-        self.settings_dialog = None
+        self.widget_tree = None
 
     def add_setting_to_dialog(
             self, global_widget_tree, title, widgets, extra_widget=None):
@@ -101,6 +108,7 @@ class Plugin(openpaperwork_core.PluginBase):
             widget_tree.get_object("setting_section"),
             expand=False, fill=True, padding=0
         )
+        self.sections[title] = widget_tree.get_object("setting_section")
         return True
 
     def add_setting_screen(
@@ -119,3 +127,31 @@ class Plugin(openpaperwork_core.PluginBase):
         global_widget_tree.get_object(
             "settings_stack_body"
         ).set_visible_child_name(name)
+
+    def screenshot_snap_all_doc_widgets(self, out_dir):
+        if self.widget_tree is None:
+            return
+        self.core.call_success(
+            "screenshot_snap_widget",
+            self.widget_tree.get_object("settings_window"),
+            self.core.call_success("fs_join", out_dir, "settings.png")
+        )
+        for (name, section) in self.sections.items():
+            name = name.lower().replace(" ", "_")
+            self.core.call_success(
+                "screenshot_snap_widget", section,
+                self.core.call_success(
+                    "fs_join", out_dir, "settings_{}.png".format(name)
+                ),
+                margins=(100, 100, 100, 100)
+            )
+
+    def settings_scroll_to_top(self):
+        scroll = self.widget_tree.get_object("settings_scrolled_window")
+        vadj = scroll.get_vadjustment()
+        vadj.set_value(vadj.get_lower())
+
+    def settings_scroll_to_bottom(self):
+        scroll = self.widget_tree.get_object("settings_scrolled_window")
+        vadj = scroll.get_vadjustment()
+        vadj.set_value(vadj.get_upper())

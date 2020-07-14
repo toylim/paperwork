@@ -19,6 +19,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
         self.widget_tree = None
+        self.settings_widget_tree = None
         self.size_allocate_connect_id = None
         self.scan_height = 0
         self.scan_width = 0
@@ -27,6 +28,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_interfaces(self):
         return [
             'gtk_settings_calibration',
+            'screenshot_provider',
         ]
 
     def get_deps(self):
@@ -74,9 +76,14 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'scan',
                 'defaults': ['paperwork_backend.docscan.libinsane'],
             },
+            {
+                'interface': 'screenshot',
+                'defaults': ['openpaperwork_gtk.screenshots'],
+            },
         ]
 
-    def complete_settings(self, global_widget_tree):
+    def complete_settings(self, settings_widget_tree):
+        self.settings_widget_tree = settings_widget_tree
         self.widget_tree = self.core.call_success(
             "gtk_load_widget_tree",
             "paperwork_gtk.settings.scanner", "calibration.glade"
@@ -94,7 +101,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
         self.widget_tree.get_object("calibration_back").connect(
-            "clicked", self._hide_calibration_screen, global_widget_tree
+            "clicked", self.hide_calibration_screen
         )
         self.widget_tree.get_object("calibration_scan").connect(
             "clicked", self._start_scan
@@ -111,22 +118,22 @@ class Plugin(openpaperwork_core.PluginBase):
 
         self.core.call_all(
             "add_setting_screen",
-            global_widget_tree,
+            settings_widget_tree,
             "calibration",
             self.widget_tree.get_object("calibration_header"),
             self.widget_tree.get_object("calibration_body"),
         )
 
     def complete_scanner_settings(
-            self, global_widget_tree, parent_widget_tree,
+            self, settings_widget_tree, parent_widget_tree,
             list_scanner_promise):
         assert(self.widget_tree is not None)
 
         parent_widget_tree.get_object("scanner_calibration").connect(
-            "clicked", self._display_calibration_screen, global_widget_tree
+            "clicked", self.display_calibration_screen, settings_widget_tree
         )
 
-    def on_settings_closed(self, global_widget_tree):
+    def on_settings_closed(self, settings_widget_tree):
         drawing_area = self.widget_tree.get_object("calibration_area")
         self.core.call_all("draw_scan_stop", drawing_area)
         if self.value_changed_connect_id is not None:
@@ -138,10 +145,10 @@ class Plugin(openpaperwork_core.PluginBase):
             )
             self.size_allocate_connect_id = None
 
-    def _display_calibration_screen(self, button, global_widget_tree):
+    def display_calibration_screen(self, *args, **kwargs):
         LOGGER.info("Switching to calibration screen")
         self.core.call_all(
-            "show_setting_screen", global_widget_tree, "calibration"
+            "show_setting_screen", self.settings_widget_tree, "calibration"
         )
 
         sources = self.widget_tree.get_object("calibration_sources")
@@ -206,9 +213,11 @@ class Plugin(openpaperwork_core.PluginBase):
 
         self.widget_tree.get_object("calibration_scan").set_sensitive(True)
 
-    def _hide_calibration_screen(self, button, global_widget_tree):
+    def hide_calibration_screen(self, *args, **kwargs):
         LOGGER.info("Switching back to settings")
-        self.core.call_all("show_setting_screen", global_widget_tree, "main")
+        self.core.call_all(
+            "show_setting_screen", self.settings_widget_tree, "main"
+        )
         self.core.call_all(
             "on_zoomable_widget_destroy",
             self.widget_tree.get_object("calibration_area"),
@@ -387,3 +396,20 @@ class Plugin(openpaperwork_core.PluginBase):
         promise = promise.then(lambda *args, **kwargs: None)
         promise = promise.then(self.core.call_all, "on_idle")
         promise.schedule()
+
+    def screenshot_snap_all_doc_widgets(self, out_dir):
+        if self.widget_tree is None:
+            return
+        if self.settings_widget_tree is None:
+            return
+
+        body = self.widget_tree.get_object("calibration_body")
+        if body is None:
+            return
+        self.core.call_success(
+            "screenshot_snap_widget", body,
+            self.core.call_success(
+                "fs_join", out_dir, "settings_calibration_dialog.png"
+            ),
+            margins=(100, 100, 100, 100)
+        )

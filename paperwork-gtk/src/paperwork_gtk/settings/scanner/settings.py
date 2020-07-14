@@ -39,6 +39,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_interfaces(self):
         return [
             'gtk_settings_scanner',
+            'screenshot_provider',
         ]
 
     def get_deps(self):
@@ -54,6 +55,10 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'gtk_resources',
                 'defaults': ['openpaperwork_gtk.resources'],
+            },
+            {
+                'interface': 'screenshot',
+                'defaults': ['openpaperwork_gtk.screenshots'],
             },
         ]
 
@@ -92,6 +97,7 @@ class Plugin(openpaperwork_core.PluginBase):
             "gtk_load_widget_tree", "paperwork_gtk.settings.scanner",
             "settings.glade"
         )
+        self.widget_tree = widget_tree
 
         self.core.call_success(
             "add_setting_to_dialog", global_widget_tree,
@@ -143,14 +149,34 @@ class Plugin(openpaperwork_core.PluginBase):
                 value = default_value
             widget_tree.get_object(widget_name).set_text(fmt(value))
 
+        active = self.core.call_success("config_get", "scanner_dev_id")
+        active = active is not None and active != ""
         buttons = [
             'scanner_resolution',
             'scanner_mode',
             'scanner_calibration',
         ]
-        active = self.core.call_success("config_get", "scanner_dev_id")
-        active = active is not None and active != ""
         for button in buttons:
             # WORKAROUND(Jflesch): set_sensitive() doesn't appear to work on
             # GtkMenuButton
             widget_tree.get_object(button).set_sensitive(active)
+
+    def screenshot_snap_all_doc_widgets(self, out_dir):
+        if self.widget_tree is None:
+            return
+
+        buttons = [
+            "scanner_device",
+            "scanner_resolution",
+            "scanner_mode",
+            "scanner_calibration",
+        ]
+        for button_name in buttons:
+            button = self.widget_tree.get_object(button_name)
+            self.core.call_success(
+                "screenshot_snap_widget", button,
+                self.core.call_success(
+                    "fs_join", out_dir, "settings_{}.png".format(button_name)
+                ),
+                margins=(100, 100, 100, 100)
+            )

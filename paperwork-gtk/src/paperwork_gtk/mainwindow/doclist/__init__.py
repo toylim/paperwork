@@ -623,3 +623,25 @@ class Plugin(openpaperwork_core.PluginBase):
         (doc_id, doc_url) = self.docs[idx]
         self.core.call_all("doc_open", doc_id, doc_url)
         self._reselect_current_doc(scroll=True)
+
+    def doc_menu_open(self):
+        if self.active_doc[0] is None:
+            return
+        doc_id = self.active_doc[0]
+        widget_tree = self.docid_to_widget_tree[doc_id]
+        button = widget_tree.get_object("doc_actions_menu")
+        button.clicked()
+
+    def screenshot_snap_doc_action_menu(self, out_file):
+        if self.active_doc[0] is None:
+            return
+        doc_id = self.active_doc[0]
+        widget_tree = self.docid_to_widget_tree[doc_id]
+        button = widget_tree.get_object("doc_actions_menu")
+
+        self.core.call_success(
+            "screenshot_snap_widget",
+            button,
+            out_file,
+            margins=(100, 50, 100, 200)
+        )

@@ -79,6 +79,9 @@ class Plugin(openpaperwork_core.PluginBase):
             "gtk_open_page_editor", *self.active_doc, self.active_page
         )
 
+    def page_menu_open(self):
+        self.widget_tree.get_object("page_actions_other").clicked()
+
     def page_menu_append_item(self, item):
         self.menu_model.append_item(item)
 
@@ -88,4 +91,12 @@ class Plugin(openpaperwork_core.PluginBase):
             self.widget_tree.get_object("page_actions"),
             self.core.call_success("fs_join", out_dir, "page_actions.png"),
             margins=(50, 50, 50, 50)
+        )
+
+    def screenshot_snap_page_action_menu(self, out_file):
+        self.core.call_success(
+            "screenshot_snap_widget",
+            self.widget_tree.get_object("page_actions"),
+            out_file,
+            margins=(50, 200, 50, 50)
         )

@@ -193,6 +193,21 @@ class Plugin(openpaperwork_core.PluginBase):
             finally:
                 cairo_ctx.restore()
 
+        # check it's visible enough
+        start = (
+            max(0, widget_position[0]),
+            max(0, widget_position[1]),
+        )
+        size = (
+            min(win_alloc.width - start[0], widget_alloc.width),
+            min(win_alloc.height - start[1], widget_alloc.height),
+        )
+        if size[0] <= 15 or size[1] <= 15:
+            LOGGER.warning(
+                "%s is folded/hidden. Cannot screenshot", gtk_widget
+            )
+            return None
+
         # then cut it
         start = (
             max(0, widget_position[0] - margins[0]),
@@ -208,12 +223,6 @@ class Plugin(openpaperwork_core.PluginBase):
                 widget_alloc.height + margins[1] + margins[3],
             )
         )
-
-        if size[0] <= 0 or size[1] <= 0:
-            LOGGER.warning(
-                "%s is folded/hidden. Cannot screenshot", gtk_widget
-            )
-            return None
 
         LOGGER.info(
             "Making screenshot of %s: %s (%s, %s)",

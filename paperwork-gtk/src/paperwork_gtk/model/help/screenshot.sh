@@ -39,7 +39,22 @@ paperwork-gtk << EOF
 wait()
 core.call_all("doc_open", "20990307_0000_00", "file://${WORKDIR}/20990307_0000_00")
 core.call_all("search_set", "label:contrat conditions generales")
+
 core.call_all("gtk_open_settings")
+wait()
+core.call_all("settings_scroll_to_bottom")
+wait()
+core.call_all("screenshot_snap_all_doc_widgets", "file://${OUT_DIR}")
+
+core.call_all("settings_scroll_to_top")
+wait()
+core.call_all("screenshot_snap_all_doc_widgets", "file://${OUT_DIR}")
+
+core.call_all("display_calibration_screen")
+wait()
+core.call_all("screenshot_snap_all_doc_widgets", "file://${OUT_DIR}")
+
+core.call_all("hide_calibration_screen")
 wait()
 core.call_all("screenshot_snap_all_doc_widgets", "file://${OUT_DIR}")
 
@@ -60,6 +75,14 @@ core.call_all("screenshot_snap_all_doc_widgets", "file://${OUT_DIR}")
 core.call_all("gtk_open_app_menu")
 wait()
 core.call_all("screenshot_snap_app_menu", "file://${OUT_DIR}/app_menu_opened.png")
+
+core.call_all("page_menu_open")
+wait()
+core.call_all("screenshot_snap_page_action_menu", "file://${OUT_DIR}/page_menu_opened.png")
+
+core.call_all("doc_menu_open")
+wait()
+core.call_all("screenshot_snap_doc_action_menu", "file://${OUT_DIR}/doc_menu_opened.png")
 EOF
 
 echo "Cleaning up the mess ..."
