@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-06-28 17:24+0200\n"
-"PO-Revision-Date: 2020-07-12 09:28+0000\n"
-"Last-Translator: Tobias <openpaper_translations@toerb.de>\n"
+"PO-Revision-Date: 2020-07-18 20:16+0000\n"
+"Last-Translator: Andreas Forster <aforster2311@gmail.com>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "openpaperwork-core/de/>\n"
 "Language: de\n"
@@ -136,90 +136,94 @@ msgid ""
 "Adding plugin '{plugin_name}' to satisfy dependency of '{other_plugin_name}' "
 "on interface '{interface}'"
 msgstr ""
+"Füge Plugin '{plugin_name}' hinzu, um die Abhängigeit von "
+"'{other_plugin_name}' am Interface '{interface}' zu erfüllen"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:153
 msgid "Plugin {} added"
-msgstr ""
+msgstr "Plugin {} hinzugefügt"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:175
 #, python-brace-format
 msgid "Removing plugin '{plugin_name}' due to missing dependency '{interface}'"
 msgstr ""
+"Entferne das Plugin '{plugin_name}' wegen der fehlenden Abhängigkeit "
+"'{interface}'"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:192
 msgid "Plugin {} removed"
-msgstr ""
+msgstr "Plugin {} entfernt"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:198
 msgid "Active plugins:"
-msgstr ""
+msgstr "Aktive Erweiterungen:"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:284
 #, python-format
 msgid "Plugin '%s' not enabled."
-msgstr ""
+msgstr "Plugin '%s' nicht aktiviert."
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:289
 #, python-format
 msgid "Plugin '%s':"
-msgstr ""
+msgstr "Plugin '%s':"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:291
 msgid "Implements:"
-msgstr ""
+msgstr "Implementiert:"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:294
 msgid "Depends on:"
-msgstr ""
+msgstr "Hängt ab von:"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:300
 #, python-format
 msgid "suggested: %s"
-msgstr ""
+msgstr "vorgeschlagen: %s"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:308
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:321
 msgid "Plugin name"
-msgstr ""
+msgstr "Plugin Name"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:309
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:322
 msgid "Interface"
-msgstr ""
+msgstr "Schnittstelle"
 
 #: openpaperwork-core/src/openpaperwork_core/config/backend/configparser.py:330
 msgid "App. config."
-msgstr ""
+msgstr "App. Konfiguration."
 
 #: openpaperwork-core/src/openpaperwork_core/i18n/python.py:6
 msgid "Today"
-msgstr ""
+msgstr "Heute"
 
 #: openpaperwork-core/src/openpaperwork_core/i18n/python.py:7
 msgid "Yesterday"
-msgstr ""
+msgstr "Gestern"
 
 #: openpaperwork-core/src/openpaperwork_core/i18n/python.py:9
 #, python-format
 msgid "%3.1f bytes"
-msgstr ""
+msgstr "%3.1f Bytes"
 
 #: openpaperwork-core/src/openpaperwork_core/i18n/python.py:10
 #, python-format
 msgid "%3.1f KiB"
-msgstr ""
+msgstr "%3.1f KiB"
 
 #: openpaperwork-core/src/openpaperwork_core/i18n/python.py:11
 #, python-format
 msgid "%3.1f MiB"
-msgstr ""
+msgstr "%3.1f MiB"
 
 #: openpaperwork-core/src/openpaperwork_core/i18n/python.py:12
 #, python-format
 msgid "%3.1f GiB"
-msgstr ""
+msgstr "%3.1f GiB"
 
 #: openpaperwork-core/src/openpaperwork_core/i18n/python.py:13
 #, python-format
 msgid "%3.1f TiB"
-msgstr ""
+msgstr "%3.1f TiB"
