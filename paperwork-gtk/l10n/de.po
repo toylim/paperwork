@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-07-12 15:17+0200\n"
-"PO-Revision-Date: 2020-07-12 02:20+0000\n"
-"Last-Translator: Tobias <openpaper_translations@toerb.de>\n"
+"PO-Revision-Date: 2020-07-19 14:28+0000\n"
+"Last-Translator: Andreas Forster <aforster2311@gmail.com>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-gtk/de/>\n"
 "Language: de\n"
@@ -23,143 +23,144 @@ msgstr ""
 #, python-format
 msgid "Don't know how to import '%s'. Sorry."
 msgstr ""
+"Es tut mir leid, ich weiß nicht wie ich die Datei '%s' importieren soll."
 
 #: paperwork-gtk/src/paperwork_gtk/docimport.py:99
 msgid "No new document to import found"
-msgstr ""
+msgstr "Keine neuen Dokumente zum importieren gefunden"
 
 #: paperwork-gtk/src/paperwork_gtk/docimport.py:139
 msgid "Imported file(s) deleted"
-msgstr ""
+msgstr "Importierte Datei(en) gelöscht"
 
 #: paperwork-gtk/src/paperwork_gtk/docimport.py:146
 msgid "Imported:\n"
-msgstr ""
+msgstr "Importiert:\n"
 
 #: paperwork-gtk/src/paperwork_gtk/docimport.py:152
 msgid "Import successful"
-msgstr ""
+msgstr "Import erfolgreich"
 
 #: paperwork-gtk/src/paperwork_gtk/docimport.py:161
 msgid "Delete imported files"
-msgstr ""
+msgstr "Lösche importierte Dateien"
 
 #: paperwork-gtk/src/paperwork_gtk/print.py:42
 #, python-brace-format
 msgid "Loading {doc_id} p{page_idx} for printing"
-msgstr ""
+msgstr "Lade {doc_id} p{page_idx} zum Drucken"
 
 #: paperwork-gtk/src/paperwork_gtk/print.py:144
 #, python-format
 msgid "Printing %s"
-msgstr ""
+msgstr "Drucke %s"
 
 #: paperwork-gtk/src/paperwork_gtk/print.py:179
 #, python-brace-format
 msgid "Printing {doc_id} ({page_idx}/{nb_pages})"
-msgstr ""
+msgstr "Drucke {doc_id} ({page_idx}/{nb_pages})"
 
 #: paperwork-gtk/src/paperwork_gtk/update_notification.py:9
 msgid "Now with 10% more freedom in it !"
-msgstr ""
+msgstr "Jetzt mit 10% mehr Freiheit darin!"
 
 #: paperwork-gtk/src/paperwork_gtk/update_notification.py:10
 #, python-format
 msgid "Buy it now and get a 100% discount !"
-msgstr ""
+msgstr "Kaufe jetzt und bekomme 100% Rabatt!"
 
 #: paperwork-gtk/src/paperwork_gtk/update_notification.py:11
 msgid "New features and bugs available !"
-msgstr ""
+msgstr "Neue Funktionen und Fehler verfügbar!"
 
 #: paperwork-gtk/src/paperwork_gtk/update_notification.py:12
 msgid "It's better when it's free."
-msgstr ""
+msgstr "Es ist besser wenn es frei ist."
 
 #: paperwork-gtk/src/paperwork_gtk/update_notification.py:13
 msgid "New taste !"
-msgstr ""
+msgstr "Neuer Geschmack!"
 
 #: paperwork-gtk/src/paperwork_gtk/update_notification.py:14
 msgid "We replaced your old bugs with new bugs. Enjoy."
-msgstr ""
+msgstr "Wir haben Deine alten Fehler durch neue Fehler ersetzt. Geniesse es."
 
 #: paperwork-gtk/src/paperwork_gtk/update_notification.py:15
 msgid "Smarter, Better, Stronger"
-msgstr ""
+msgstr "Smarter, Besser, Stärker"
 
 #: paperwork-gtk/src/paperwork_gtk/update_notification.py:45
 #, python-brace-format
 msgid "A new version of Paperwork is available: {new_version}"
-msgstr ""
+msgstr "Eine neue version von Paperwork ist verfügbar: {new_version}"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/update.py:60
 msgid "Updates"
-msgstr ""
+msgstr "Updates"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/storage.py:84
 msgid "Storage"
-msgstr ""
+msgstr "Verzeichnisse"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/storage.py:90
 msgid "Work Directory"
-msgstr ""
+msgstr "Arbeitsverzeichnis"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/ocr/settings.py:64
 msgid "Optical Character Recognition"
-msgstr ""
+msgstr "Texterkennung"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/ocr/settings.py:76
 msgid "OCR disabled"
-msgstr ""
+msgstr "OCR deaktiviert"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:15
 #: paperwork-gtk/src/paperwork_gtk/settings/scanner/popover_mode.glade.h:1
 msgid "Color"
-msgstr ""
+msgstr "Farbe"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:16
 #: paperwork-gtk/src/paperwork_gtk/settings/scanner/popover_mode.glade.h:2
 msgid "Grayscale"
-msgstr ""
+msgstr "Graustufen"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:17
 #: paperwork-gtk/src/paperwork_gtk/settings/scanner/popover_mode.glade.h:3
 msgid "Black & White"
-msgstr ""
+msgstr "Schwarz-Weiss"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:27
 msgid "No scanner selected"
-msgstr ""
+msgstr "Kein Scanner ausgewählt"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:31
 msgid "No resolution selected"
-msgstr ""
+msgstr "Keine Auflösung ausgewählt"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:31
 #: paperwork-gtk/src/paperwork_gtk/settings/scanner/resolution_popover.py:123
 msgid "{} dpi"
-msgstr ""
+msgstr "{} dpi"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:35
 msgid "No mode selected"
-msgstr ""
+msgstr "Kein Modus ausgewählt"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:98
 msgid "Scanner"
-msgstr ""
+msgstr "Scanner"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/scanner/dev_id_popover.py:67
 msgid "No scanner"
-msgstr ""
+msgstr "Kein Scanner"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/scanner/calibration.py:149
 msgid "Loading ..."
-msgstr ""
+msgstr "Lade ..."
 
 #: paperwork-gtk/src/paperwork_gtk/settings/scanner/resolution_popover.py:125
 msgid "{} dpi (recommended)"
-msgstr ""
+msgstr "{} dpi (empfohlen)"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/stats.py:60
 msgid "Help Improve Paperwork"
@@ -588,7 +589,7 @@ msgstr ""
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/doclist/doclist.glade.h:1
 msgid "Documents"
-msgstr ""
+msgstr "Dokumente"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/doclist/doclist.glade.h:2
 msgid "Selection"
