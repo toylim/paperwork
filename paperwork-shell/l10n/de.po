@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-07-08 22:17+0200\n"
-"PO-Revision-Date: 2020-07-12 10:10+0000\n"
-"Last-Translator: Tobias <openpaper_translations@toerb.de>\n"
+"PO-Revision-Date: 2020-07-19 14:28+0000\n"
+"Last-Translator: Andreas Forster <aforster2311@gmail.com>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-shell/de/>\n"
 "Language: de\n"
@@ -21,23 +21,23 @@ msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/cmd/rename.py:50
 msgid "Change a document identifier"
-msgstr ""
+msgstr "Ändere eine Dokument-Bezeichnung"
 
 #: paperwork-shell/src/paperwork_shell/cmd/rename.py:54
 msgid "Document to rename"
-msgstr ""
+msgstr "Umzubenennendes Dokument"
 
 #: paperwork-shell/src/paperwork_shell/cmd/rename.py:58
 msgid "New name for the document"
-msgstr ""
+msgstr "Neuer Name für das Dokument"
 
 #: paperwork-shell/src/paperwork_shell/cmd/search.py:63
 msgid "Search keywords in documents"
-msgstr ""
+msgstr "Suche Schlüsselwörter in Dokumenten"
 
 #: paperwork-shell/src/paperwork_shell/cmd/search.py:67
 msgid "Maximum number of results (default: 50)"
-msgstr ""
+msgstr "Maximale Anzahl an Ergebnissen (default: 50)"
 
 #: paperwork-shell/src/paperwork_shell/cmd/search.py:71
 msgid "Search keywords (none means all documents)"
