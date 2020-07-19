@@ -329,6 +329,8 @@ class Plugin(openpaperwork_core.PluginBase):
     def index_search(self, out: list, query, limit=None, search_type='fuzzy'):
         start = time.time()
 
+        out_set = set()
+
         query = query.strip()
         query = util.strip_accents(query)
         if query == "":
@@ -349,11 +351,13 @@ class Plugin(openpaperwork_core.PluginBase):
                     doc_url = self.core.call_success("doc_id_to_url", doc_id)
                     if doc_url is None:
                         continue
-                    out.append((doc_id, doc_url))
-                    if limit is not None and len(out) >= limit:
+                    out_set.add((doc_id, doc_url))
+                    if limit is not None and len(out_set) >= limit:
                         break
                 if has_results:
                     break
+
+        out += out_set
 
         stop = time.time()
         LOGGER.info(
