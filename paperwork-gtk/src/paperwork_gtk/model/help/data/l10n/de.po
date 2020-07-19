@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-05-04 10:54+0000\n"
-"PO-Revision-Date: 2020-05-05 12:55+0000\n"
-"Last-Translator: Weblate Admin <jflesch@openpaper.work>\n"
+"PO-Revision-Date: 2020-07-19 12:19+0000\n"
+"Last-Translator: Andreas Forster <aforster2311@gmail.com>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-help-documents/de/>\n"
 "Language: de\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.0.1\n"
+"X-Generator: Weblate 4.1.1\n"
 
 #. type: Plain text
 #: data/intro.tex:11 data/usage.tex:19
@@ -254,7 +254,7 @@ msgstr ""
 #. type: subsection{#2}
 #: data/usage.tex:51
 msgid "Scanner"
-msgstr ""
+msgstr "Scanner"
 
 #. type: subsubsection{#2}
 #: data/usage.tex:53
@@ -529,7 +529,7 @@ msgstr ""
 #. type: subsection{#2}
 #: data/usage.tex:261
 msgid "Images"
-msgstr ""
+msgstr "Bilder"
 
 #. type: document
 #: data/usage.tex:264
@@ -579,7 +579,7 @@ msgstr ""
 #. type: subsection{#2}
 #: data/usage.tex:285
 msgid "PDF"
-msgstr ""
+msgstr "PDF"
 
 #. type: document
 #: data/usage.tex:289
