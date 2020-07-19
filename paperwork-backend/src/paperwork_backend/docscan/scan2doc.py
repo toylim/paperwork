@@ -107,31 +107,32 @@ class Plugin(openpaperwork_core.PluginBase):
                 )
             return nb
 
-        def drop_scan_id(*args, **kwargs):
-            self.scan_id_to_doc_id.pop(scan_id)
-            self.doc_id_to_scan_id.pop(doc_id)
-            return (doc_id, doc_url)
+        def drop_scan_id(scan_id, doc_id):
+            self.scan_id_to_doc_id.pop(scan_id, None)
+            self.doc_id_to_scan_id.pop(doc_id, None)
 
-        def notify_end(*args, **kwargs):
+        def notify_end(scan_id, doc_id):
             self.core.call_all("on_scan2doc_end", scan_id, doc_id, doc_url)
             return (doc_id, doc_url)
 
-        def cancel(exc):
-            drop_scan_id()
+        def cancel(exc, scan_id, doc_id):
+            drop_scan_id(scan_id, doc_id)
             if new:
                 self.core.call_all("storage_delete_doc_id", doc_id)
             raise exc
 
-        def run_transactions(nb_imgs):
+        def run_transactions(nb_imgs, scan_id, doc_id):
             # start a second promise chain, but scheduled with
             # "transaction_schedule()"
-            promise = self.core.call_success(
+            promise = openpaperwork_core.promise.Promise(
+                self.core, drop_scan_id, args=(scan_id, doc_id)
+            )
+            promise = promise.then(self.core.call_success(
                 "transaction_simple_promise",
                 (("add" if new else "upd", doc_id),)
-            )
-            promise = promise.then(drop_scan_id)
-            promise = promise.then(notify_end)
-            promise = promise.catch(cancel)
+            ))
+            promise = promise.then(notify_end, scan_id, doc_id)
+            promise = promise.catch(cancel, scan_id, doc_id)
             self.core.call_success("transaction_schedule", promise)
             return (doc_id, doc_url)
 
@@ -142,7 +143,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         promise = promise.then(
             openpaperwork_core.promise.ThreadedPromise(
-                self.core, run_transactions
+                self.core, run_transactions, args=(scan_id, doc_id)
             )
         )
         promise = promise.catch(cancel)
