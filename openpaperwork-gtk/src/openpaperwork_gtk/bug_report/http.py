@@ -225,9 +225,14 @@ class Plugin(openpaperwork_core.PluginBase):
         self._send()
 
     def _get_description(self):
+        author = self.widget_tree.get_object("bug_report_http_author")
+        author = author.get_text()
+
         start = self.description.get_iter_at_offset(0)
         end = self.description.get_iter_at_offset(-1)
-        return self.description.get_text(start, end, False)
+        description = self.description.get_text(start, end, False)
+
+        return "Author: {}\n\n{}".format(author, description)
 
     def _send(self):
         promise = openpaperwork_core.promise.Promise(
