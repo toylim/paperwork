@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-05-04 10:54+0000\n"
-"PO-Revision-Date: 2020-07-19 12:19+0000\n"
+"PO-Revision-Date: 2020-07-21 01:45+0000\n"
 "Last-Translator: Andreas Forster <aforster2311@gmail.com>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-help-documents/de/>\n"
@@ -691,7 +691,7 @@ msgstr ""
 #. type: subsection{#2}
 #: data/usage.tex:448
 msgid "Page"
-msgstr ""
+msgstr "Seite"
 
 #. type: section{#2}
 #: data/usage.tex:450
