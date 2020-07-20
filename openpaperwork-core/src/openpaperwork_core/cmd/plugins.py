@@ -118,7 +118,14 @@ class Plugin(PluginBase):
             # satisfied.
             # Do not use the core to load it, otherwise we won't be able
             # to use 'call_success()' or 'call_all().
-            module = importlib.import_module(plugin_name)
+            try:
+                module = importlib.import_module(plugin_name)
+            except ModuleNotFoundError:
+                if self.interactive:
+                    print(_("Error: Plugin '%s' not found") % plugin_name)
+                else:
+                    LOGGER.error("Plugin '%s' not found", plugin_name)
+                return False
             plugin = module.Plugin()
             deps = plugin.get_deps()
             for dep in deps:
@@ -142,9 +149,11 @@ class Plugin(PluginBase):
                             interface=dep['interface']
                         )
                     )
-                    self._cmd_add_plugin(
+                    r = self._cmd_add_plugin(
                         default, auto=True, added=added, save=False
                     )
+                    if not r:
+                        return r
 
         self.core.call_all("config_add_plugin", plugin_name)
         if save:
