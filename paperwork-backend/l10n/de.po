@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-07-12 12:57+0200\n"
-"PO-Revision-Date: 2020-07-19 14:28+0000\n"
+"PO-Revision-Date: 2020-07-20 09:28+0000\n"
 "Last-Translator: Andreas Forster <aforster2311@gmail.com>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-backend/de/>\n"
@@ -165,59 +165,59 @@ msgstr "Prüfe %s"
 
 #: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:494
 msgid "Getting scanner list ..."
-msgstr ""
+msgstr "Erhalte Scannerliste..."
 
 #: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:689
 msgid "Scanner info."
-msgstr ""
+msgstr "Scanner Info."
 
 #: paperwork-backend/src/paperwork_backend/i18n/pycountry.py:9
 msgid "English"
-msgstr ""
+msgstr "Englisch"
 
 #: paperwork-backend/src/paperwork_backend/i18n/pycountry.py:10
 msgid "French"
-msgstr ""
+msgstr "Französisch"
 
 #: paperwork-backend/src/paperwork_backend/i18n/pycountry.py:11
 msgid "German"
-msgstr ""
+msgstr "Deutsch"
 
 #: paperwork-backend/src/paperwork_backend/i18n/scanner.py:14
 msgid "centrally aligned"
-msgstr ""
+msgstr "zentriert"
 
 #: paperwork-backend/src/paperwork_backend/i18n/scanner.py:15
 msgid "Feeder"
-msgstr ""
+msgstr "Einzug"
 
 #: paperwork-backend/src/paperwork_backend/i18n/scanner.py:16
 msgid "Flatbed"
-msgstr ""
+msgstr "Flachbett"
 
 #: paperwork-backend/src/paperwork_backend/i18n/scanner.py:17
 msgid "left aligned"
-msgstr ""
+msgstr "linksbündig"
 
 #: paperwork-backend/src/paperwork_backend/i18n/scanner.py:18
 msgid "right aligned"
-msgstr ""
+msgstr "rechtsbündig"
 
 #: paperwork-backend/src/paperwork_backend/pageedit/pageeditor.py:80
 msgid "Color equalization"
-msgstr ""
+msgstr "Farbausgleich"
 
 #: paperwork-backend/src/paperwork_backend/pageedit/pageeditor.py:92
 msgid "Cropping"
-msgstr ""
+msgstr "Schneiden"
 
 #: paperwork-backend/src/paperwork_backend/pageedit/pageeditor.py:103
 msgid "Clockwise Rotation"
-msgstr ""
+msgstr "Drehen im Uhrzeigersinn"
 
 #: paperwork-backend/src/paperwork_backend/pageedit/pageeditor.py:112
 msgid "Counterclockwise Rotation"
-msgstr ""
+msgstr "Drehen gegen Uhrzeigersinn"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/cropping/calibration.py:53
 #, python-brace-format
