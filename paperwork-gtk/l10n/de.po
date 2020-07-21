@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-07-12 15:17+0200\n"
-"PO-Revision-Date: 2020-07-21 08:41+0000\n"
+"PO-Revision-Date: 2020-07-21 11:14+0000\n"
 "Last-Translator: Andreas Forster <aforster2311@gmail.com>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-gtk/de/>\n"
@@ -322,61 +322,63 @@ msgstr "Lade Text ..."
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/scan.py:118
 #, python-format
 msgid "Scan from %s"
-msgstr ""
+msgstr "Scanne von %s"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:75
 msgid "Import image or PDF file(s)"
-msgstr ""
+msgstr "Importiere Bild- oder PDF-Datei(en)"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:76
 msgid "Import file(s)"
-msgstr ""
+msgstr "Importiere Datei(en)"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:118
 msgid "All supported file formats"
-msgstr ""
+msgstr "Alle unterstützten Dateiformate"
 
 #: paperwork-gtk/src/paperwork_gtk/main.py:197
 msgid "command"
-msgstr ""
+msgstr "Kommando"
 
 #: paperwork-gtk/src/paperwork_gtk/model/help/__init__.py:13
 msgid "Introduction"
-msgstr ""
+msgstr "Einleitung"
 
 #: paperwork-gtk/src/paperwork_gtk/model/help/__init__.py:14
 msgid "User manual"
-msgstr ""
+msgstr "Benutzerhandbuch"
 
 #: paperwork-gtk/src/paperwork_gtk/model/help/__init__.py:16
 msgid "Documentation"
-msgstr ""
+msgstr "Anleitung"
 
 #: paperwork-gtk/src/paperwork_gtk/actions/page/delete.py:85
 #, python-brace-format
 msgid "Are you sure you want to delete page {page_idx} of document {doc_id} ?"
 msgstr ""
+"Sind Sie sicher dass Sie die Seite {page_idx} des Dokuments {doc_id} löschen "
+"möchten?"
 
 #: paperwork-gtk/src/paperwork_gtk/actions/page/redo_ocr.py:62
 #: paperwork-gtk/src/paperwork_gtk/menus/page/redo_ocr.py:50
 msgid "Redo OCR on page"
-msgstr ""
+msgstr "Wiederhole OCR auf Seite"
 
 #: paperwork-gtk/src/paperwork_gtk/actions/page/redo_ocr.py:100
 #: paperwork-gtk/src/paperwork_gtk/actions/doc/redo_ocr.py:105
 #, python-brace-format
 msgid "OCR on {doc_id} p{page_idx}"
-msgstr ""
+msgstr "OCR auf {doc_id}p{page_idx}"
 
 #: paperwork-gtk/src/paperwork_gtk/actions/docs/delete.py:72
 #, python-format
 msgid "Are you sure you want to delete %d documents ?"
-msgstr ""
+msgstr "Sind Sie sicher dass Sie %d Dokumente löschen möchten?"
 
 #: paperwork-gtk/src/paperwork_gtk/actions/doc/delete.py:78
 #, python-format
 msgid "Are you sure you want to delete document %s ?"
-msgstr ""
+msgstr "Sind Sie sicher dass Sie das Dokument %s löschen möchten?"
 
 #: paperwork-gtk/src/paperwork_gtk/actions/doc/redo_ocr.py:97
 #, python-format
@@ -498,31 +500,31 @@ msgstr ""
 
 #: paperwork-gtk/src/paperwork_gtk/settings/scanner/calibration.glade.h:2
 msgid "Automatic"
-msgstr ""
+msgstr "Automatisch"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/scanner/calibration.glade.h:3
 msgid "Scan"
-msgstr ""
+msgstr "Scanne"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/scanner/calibration.glade.h:4
 msgid "Scanner Calibration"
-msgstr ""
+msgstr "Scanner Kalibrierung"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.glade.h:1
 msgid "Device"
-msgstr ""
+msgstr "Gerät"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.glade.h:2
 msgid "Resolution"
-msgstr ""
+msgstr "Auflösung"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.glade.h:3
 msgid "Mode"
-msgstr ""
+msgstr "Modus"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.glade.h:4
 msgid "Calibration"
-msgstr ""
+msgstr "Kalibrierung"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.glade.h:5
 msgid "Re-calibrate"
