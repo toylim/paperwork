@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-07-08 22:17+0200\n"
-"PO-Revision-Date: 2020-07-19 14:28+0000\n"
+"PO-Revision-Date: 2020-07-22 10:43+0000\n"
 "Last-Translator: Andreas Forster <aforster2311@gmail.com>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-shell/de/>\n"
@@ -206,7 +206,7 @@ msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/cmd/import.py:62
 msgid "Import file(s)"
-msgstr ""
+msgstr "Importiere Datei(en)"
 
 #: paperwork-shell/src/paperwork_shell/cmd/import.py:67
 msgid "Target document for import"
@@ -472,7 +472,7 @@ msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/main.py:67
 msgid "command"
-msgstr ""
+msgstr "Kommando"
 
 #: paperwork-shell/src/paperwork_shell/display/scan.py:86
 msgid "Scanning page {} (expected size: {}x{}) ..."
