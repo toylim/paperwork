@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-05-04 10:54+0000\n"
-"PO-Revision-Date: 2020-07-21 08:41+0000\n"
+"PO-Revision-Date: 2020-07-22 15:43+0000\n"
 "Last-Translator: Andreas Forster <aforster2311@gmail.com>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-help-documents/de/>\n"
@@ -226,7 +226,7 @@ msgstr ""
 #. type: section{#2}
 #: data/usage.tex:33
 msgid "Settings"
-msgstr ""
+msgstr "Einstellungen"
 
 #. type: subsection{#2}
 #: data/usage.tex:35
@@ -249,7 +249,7 @@ msgstr ""
 #. type: subsection{#2}
 #: data/usage.tex:49
 msgid "Work directory"
-msgstr ""
+msgstr "Arbeitsverzeichnis"
 
 #. type: subsection{#2}
 #: data/usage.tex:51
@@ -656,7 +656,7 @@ msgstr ""
 #. type: subsection{#2}
 #: data/usage.tex:394
 msgid "Advanced search"
-msgstr ""
+msgstr "erweiterte Suche"
 
 #. type: section{#2}
 #: data/usage.tex:404
