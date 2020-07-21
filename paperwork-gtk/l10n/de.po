@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-07-12 15:17+0200\n"
-"PO-Revision-Date: 2020-07-21 01:45+0000\n"
+"PO-Revision-Date: 2020-07-21 08:41+0000\n"
 "Last-Translator: Andreas Forster <aforster2311@gmail.com>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-gtk/de/>\n"
@@ -182,95 +182,95 @@ msgstr "Seite"
 #: paperwork-gtk/src/paperwork_gtk/shortcuts/page/edit.py:30
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageinfo/actions.glade.h:1
 msgid "Edit"
-msgstr ""
+msgstr "Bearbeiten"
 
 #: paperwork-gtk/src/paperwork_gtk/shortcuts/page/copy_text.py:30
 msgid "Copy selected text to clipboard"
-msgstr ""
+msgstr "Markierten Text in die Zwischenablage kopieren"
 
 #: paperwork-gtk/src/paperwork_gtk/shortcuts/app/find.py:30
 #: paperwork-gtk/src/paperwork_gtk/shortcuts/doc/new.py:30
 #: paperwork-gtk/src/paperwork_gtk/shortcuts/doc/prev_next.py:35
 msgid "Global"
-msgstr ""
+msgstr "Global"
 
 #: paperwork-gtk/src/paperwork_gtk/shortcuts/app/find.py:30
 msgid "Find"
-msgstr ""
+msgstr "Suchen"
 
 #: paperwork-gtk/src/paperwork_gtk/shortcuts/doc/print.py:30
 #: paperwork-gtk/src/paperwork_gtk/shortcuts/doc/properties.py:30
 msgid "Document"
-msgstr ""
+msgstr "Dokument"
 
 #: paperwork-gtk/src/paperwork_gtk/shortcuts/doc/print.py:30
 msgid "Print"
-msgstr ""
+msgstr "Drucken"
 
 #: paperwork-gtk/src/paperwork_gtk/shortcuts/doc/new.py:30
 msgid "Create new document"
-msgstr ""
+msgstr "Neues Dokument"
 
 #: paperwork-gtk/src/paperwork_gtk/shortcuts/doc/properties.py:30
 msgid "Edit document properties"
-msgstr ""
+msgstr "Dokumenteneigenschaften bearbeiten"
 
 #: paperwork-gtk/src/paperwork_gtk/shortcuts/doc/prev_next.py:30
 msgid "Document list"
-msgstr ""
+msgstr "Dokumentenliste"
 
 #: paperwork-gtk/src/paperwork_gtk/shortcuts/doc/prev_next.py:30
 msgid "Open next document"
-msgstr ""
+msgstr "Öffne nächstes Dokument"
 
 #: paperwork-gtk/src/paperwork_gtk/shortcuts/doc/prev_next.py:35
 msgid "Open previous document"
-msgstr ""
+msgstr "Öffne vorheriges Dokument"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/__init__.py:372
 #, python-format
 msgid "Estimated file size: %s"
-msgstr ""
+msgstr "Geschätzte Dateigröße: %s"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/__init__.py:593
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:104
 msgid "Select a file or a directory to import"
-msgstr ""
+msgstr "Wähle eine Datei oder ein Verzeichnis zum Import"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/__init__.py:602
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:124
 msgid "Any files"
-msgstr ""
+msgstr "Alle Dateien"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/doclist/__init__.py:613
 #, python-format
 msgid "%d documents"
-msgstr ""
+msgstr "%d Dokumente"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/doclist/name.py:59
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/controllers/title.py:23
 msgid "New document"
-msgstr ""
+msgstr "Neues Dokument"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/doclist/thumbnailer.py:113
 msgid "Loading document thumbnails"
-msgstr ""
+msgstr "Lade Vorschaubilder"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:78
 msgid "Keyword(s)"
-msgstr ""
+msgstr "Suchbegriff(e)"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:131
 msgid "Label"
-msgstr ""
+msgstr "Label"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:143
 msgid "From:"
-msgstr ""
+msgstr "Von:"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:149
 msgid "to:"
-msgstr ""
+msgstr "bis:"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:259
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/name.glade.h:1
@@ -279,23 +279,23 @@ msgstr "Datum"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:291
 msgid "and"
-msgstr ""
+msgstr "und"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:292
 msgid "or"
-msgstr ""
+msgstr "oder"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:309
 msgid "not"
-msgstr ""
+msgstr "nicht"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:333
 msgid "Remove"
-msgstr ""
+msgstr "Entfernen"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:240
 msgid "Renaming label"
-msgstr ""
+msgstr "Label umbenennen"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:371
 #, python-brace-format
@@ -309,7 +309,7 @@ msgstr ""
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/controllers/empty_doc/__init__.py:89
 msgid "Empty"
-msgstr ""
+msgstr "Leer"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageview/__init__.py:85
 msgid "Loading page {}/{} ..."
@@ -317,7 +317,7 @@ msgstr ""
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageview/boxes/__init__.py:83
 msgid "Loading text ..."
-msgstr ""
+msgstr "Lade Text ..."
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/scan.py:118
 #, python-format
