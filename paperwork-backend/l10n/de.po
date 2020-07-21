@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-07-12 12:57+0200\n"
-"PO-Revision-Date: 2020-07-20 09:28+0000\n"
+"PO-Revision-Date: 2020-07-22 15:43+0000\n"
 "Last-Translator: Andreas Forster <aforster2311@gmail.com>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-backend/de/>\n"
@@ -248,26 +248,28 @@ msgstr ""
 #: paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:92
 #, python-format
 msgid "Training label guesser with added document %s"
-msgstr ""
+msgstr "Trainiere Label-Vorschlag mit hinzugefügtem Dokument %s"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:100
 #, python-format
 msgid "Untraining label guesser due to deleted document %s"
-msgstr ""
+msgstr "Bereinige Label-Vorschlag wegen gelöschtem Dokument %s"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:107
 #, python-format
 msgid "Training label guesser with updated document %s"
-msgstr ""
+msgstr "Trainiere Label-Vorschlag mit aktualisiertem Dokument %s"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:240
 msgid ""
 "Training label guessing training for label '{}' with all known documents ..."
 msgstr ""
+"Trainiere Label-Vorschlag für das Label '{}' mit allen bekannten Dokumenten "
+"..."
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:333
 msgid "Training label guessing ..."
-msgstr ""
+msgstr "Trainiere Label-Vorschlag ..."
 
 #: paperwork-backend/src/paperwork_backend/guesswork/color/libpillowfight.py:53
 #, python-brace-format
@@ -277,7 +279,7 @@ msgstr ""
 #: paperwork-backend/src/paperwork_backend/index/whoosh.py:113
 #, python-format
 msgid "Indexing new document %s"
-msgstr ""
+msgstr "Indiziere das neue Dokument %s"
 
 #: paperwork-backend/src/paperwork_backend/index/whoosh.py:122
 #, python-format
