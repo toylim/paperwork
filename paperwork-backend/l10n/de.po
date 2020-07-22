@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-07-12 12:57+0200\n"
-"PO-Revision-Date: 2020-07-22 15:43+0000\n"
+"PO-Revision-Date: 2020-07-22 20:50+0000\n"
 "Last-Translator: Andreas Forster <aforster2311@gmail.com>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-backend/de/>\n"
@@ -224,6 +224,8 @@ msgstr "Drehen gegen Uhrzeigersinn"
 msgid ""
 "Using calibration to crop page borders of document {doc_id} page {page_idx}"
 msgstr ""
+"Nutze Kalibrierung um den Rand des Dokuments {doc_id} Seite {page_idx} zu "
+"schneiden"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/cropping/libpillowfight.py:57
 #, python-brace-format
