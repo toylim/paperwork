@@ -5,6 +5,8 @@
 
 Paperwork build is based on [Msys2](https://www.msys2.org/).
 
+You must first compile and install [Libinsane](https://doc.openpaper.work/libinsane/latest/libinsane/install.html) in your MSYS2 environment.
+
 You can have a look at the
 [.gitlab-ci.yml](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/blob/develop/.gitlab-ci.yml)
 (target `windows_exe`) to have an exhaustive list of all the required MSYS2 packages.
