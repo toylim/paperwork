@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-07-08 22:17+0200\n"
-"PO-Revision-Date: 2020-07-22 10:43+0000\n"
+"PO-Revision-Date: 2020-07-24 16:33+0000\n"
 "Last-Translator: Andreas Forster <aforster2311@gmail.com>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-shell/de/>\n"
@@ -41,19 +41,19 @@ msgstr "Maximale Anzahl an Ergebnissen (default: 50)"
 
 #: paperwork-shell/src/paperwork_shell/cmd/search.py:71
 msgid "Search keywords (none means all documents)"
-msgstr ""
+msgstr "Suchbegriffe (keine Angabe bedeutet alle Dokumente)"
 
 #: paperwork-shell/src/paperwork_shell/cmd/search.py:92
 #: paperwork-shell/src/paperwork_shell/cmd/show.py:81
 #, python-format
 msgid "Document id: %s"
-msgstr ""
+msgstr "Dokumenten-ID %s"
 
 #: paperwork-shell/src/paperwork_shell/cmd/search.py:97
 #: paperwork-shell/src/paperwork_shell/cmd/show.py:87
 #, python-format
 msgid "Document date: %s"
-msgstr ""
+msgstr "Dokumentendatum: %s"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:57
 msgid ""
@@ -63,7 +63,7 @@ msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:63
 msgid "Document to export"
-msgstr ""
+msgstr "Zu exportierende Dokumente"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:67
 msgid ""
@@ -86,16 +86,16 @@ msgstr ""
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:119
 #, python-format
 msgid "Unknown filters: %s"
-msgstr ""
+msgstr "Unbekannte Filter: %s"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:141
 #, python-format
 msgid "Current filters: %s"
-msgstr ""
+msgstr "Aktuelle Filter: %s"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:144
 msgid "Next possible filters:"
-msgstr ""
+msgstr "Nächste mögliche Filter:"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:149
 #, python-format, python-brace-format
@@ -105,12 +105,12 @@ msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:153
 msgid "No possible filters found"
-msgstr ""
+msgstr "Keine möglichen Filter gefunden"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:170
 #, python-format
 msgid "Exporting to %s ... "
-msgstr ""
+msgstr "Exportiere nach %s ... "
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:175
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:101
@@ -121,37 +121,37 @@ msgstr ""
 #: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:89
 #: paperwork-shell/src/paperwork_shell/display/progress.py:39
 msgid "Done"
-msgstr ""
+msgstr "Erledigt"
 
 #: paperwork-shell/src/paperwork_shell/cmd/scan.py:51
 msgid "Scan pages"
-msgstr ""
+msgstr "Scanne Seiten"
 
 #: paperwork-shell/src/paperwork_shell/cmd/scan.py:55
 msgid "Document to which the scanned pages must be added"
-msgstr ""
+msgstr "Dokument zu dem die gescannten Seiten hinzugefügt werden sollen"
 
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:58
 msgid "Commands to manage labels"
-msgstr ""
+msgstr "Kommandos zum Verwalten von Labels"
 
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:61
 msgid "label command"
-msgstr ""
+msgstr "Label Kommando"
 
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:68
 #: paperwork-shell/src/paperwork_shell/cmd/delete.py:74
 msgid "Target documents"
-msgstr ""
+msgstr "Zieldokumente"
 
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:72
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:80
 msgid "Target document"
-msgstr ""
+msgstr "Zieldokument"
 
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:73
 msgid "Label to add"
-msgstr ""
+msgstr "hinzuzufügendes Label"
 
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:76
 msgid "Label color (ex: '#aa22cc')"
@@ -159,7 +159,7 @@ msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:81
 msgid "Label to remove"
-msgstr ""
+msgstr "zu löschendes Label"
 
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:85
 msgid "Label to remove on *all* documents"
@@ -167,7 +167,7 @@ msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:90
 msgid "Loading all labels ... "
-msgstr ""
+msgstr "Lade alle Labels ... "
 
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:178
 #, python-format
