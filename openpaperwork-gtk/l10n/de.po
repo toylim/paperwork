@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-07-08 22:21+0200\n"
-"PO-Revision-Date: 2020-07-12 10:10+0000\n"
-"Last-Translator: Tobias <openpaper_translations@toerb.de>\n"
+"PO-Revision-Date: 2020-07-24 04:43+0000\n"
+"Last-Translator: Andreas Forster <aforster2311@gmail.com>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "openpaperwork-gtk/de/>\n"
 "Language: de\n"
@@ -88,7 +88,7 @@ msgstr "Bildschirmfotos"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:258
 msgid "Select to generate"
-msgstr "Wähle aus"
+msgstr "Wähle zum Erzeugen"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_zip.glade.h:1
 msgid "Please select where to save the ZIP file"
