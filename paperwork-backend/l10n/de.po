@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-07-12 12:57+0200\n"
-"PO-Revision-Date: 2020-07-22 20:50+0000\n"
+"PO-Revision-Date: 2020-07-23 15:38+0000\n"
 "Last-Translator: Andreas Forster <aforster2311@gmail.com>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-backend/de/>\n"
@@ -88,7 +88,7 @@ msgstr "App. & System info."
 #: paperwork-backend/src/paperwork_backend/beacon/stats.py:127
 #: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:690
 msgid "Select to generate"
-msgstr "Wähle aus"
+msgstr "Wähle zum Erzeugen"
 
 #: paperwork-backend/src/paperwork_backend/beacon/stats.py:149
 msgid "Collecting statistics ..."
@@ -230,22 +230,23 @@ msgstr ""
 #: paperwork-backend/src/paperwork_backend/guesswork/cropping/libpillowfight.py:57
 #, python-brace-format
 msgid "Guessing page borders of document {doc_id} page {page_idx}"
-msgstr ""
+msgstr "Schätze Seitenrand von Dokument {doc_id} Seite {page_idx}"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/orientation/pyocr.py:39
 #, python-brace-format
 msgid "Guessing orientation on document {doc_id} page {page_idx}"
-msgstr ""
+msgstr "Schätze Textrichtung von Dokument {doc_id} Seite {page_idx}"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/ocr/pyocr.py:50
 #, python-brace-format
 msgid "Document {doc_id} p{page_idx} has already some text. No OCR run"
 msgstr ""
+"Dokument {doc_id}p{page_idx} hat bereits erkannten Text. Überspringe OCR"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/ocr/pyocr.py:58
 #, python-brace-format
 msgid "Running OCR on document {doc_id} page {page_idx}"
-msgstr ""
+msgstr "Führe OCR auf Dokument {doc_id} Seite {page_idx} aus"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:92
 #, python-format
@@ -276,7 +277,7 @@ msgstr "Trainiere Label-Vorschlag ..."
 #: paperwork-backend/src/paperwork_backend/guesswork/color/libpillowfight.py:53
 #, python-brace-format
 msgid "Adjusting colors of document {doc_id} page {page_idx}"
-msgstr ""
+msgstr "Passe die Farben auf Dokument {doc_id} Seite {page_idx} an"
 
 #: paperwork-backend/src/paperwork_backend/index/whoosh.py:113
 #, python-format
@@ -286,17 +287,17 @@ msgstr "Indiziere das neue Dokument %s"
 #: paperwork-backend/src/paperwork_backend/index/whoosh.py:122
 #, python-format
 msgid "Removing document %s from index"
-msgstr ""
+msgstr "Entferne Dokument %s vom Index"
 
 #: paperwork-backend/src/paperwork_backend/index/whoosh.py:132
 #, python-format
 msgid "Indexing updated document %s"
-msgstr ""
+msgstr "Indiziere das aktualisierte Dokument %s"
 
 #: paperwork-backend/src/paperwork_backend/index/whoosh.py:163
 msgid "Committing changes in the index ..."
-msgstr ""
+msgstr "Speichere Änderungen im Index ..."
 
 #: paperwork-backend/src/paperwork_backend/authors/translators.py:23
 msgid "[]"
-msgstr ""
+msgstr "[]"
