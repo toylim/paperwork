@@ -610,5 +610,13 @@ class Plugin(openpaperwork_core.PluginBase):
                 self.core.call_success(
                     "fs_join", out_dir, "doc_labels.png"
                 ),
-                margins=(10, 10, -100, -400)
+                margins=(10, 10, 10, -400)
+            )
+            self.core.call_success(
+                "screenshot_snap_widget",
+                editor.widget_tree.get_object("new_label_button"),
+                self.core.call_success(
+                    "fs_join", out_dir, "doc_new_label.png"
+                ),
+                margins=(400, 50, 50, 50)
             )

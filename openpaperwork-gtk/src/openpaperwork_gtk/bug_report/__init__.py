@@ -19,11 +19,13 @@ class Plugin(openpaperwork_core.PluginBase):
         self.method_radio = None
         self.method_set_file_urls_callbacks = {}
         self.windows = []
+        self.widget_tree = None
 
     def get_interfaces(self):
         return [
             'gtk_bug_report_dialog',
             'gtk_window_listener',
+            'screenshot_provider',
         ]
 
     def get_deps(self):
@@ -47,6 +49,10 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'i18n',
                 'defaults': ['openpaperwork_core.i18n.python'],
+            },
+            {
+                'interface': 'screenshot',
+                'defaults': ['openpaperwork_gtk.screenshots'],
             },
         ]
 
@@ -100,25 +106,25 @@ class Plugin(openpaperwork_core.PluginBase):
         self.method_radio = None
         self.url_selected = None
 
-        widget_tree = self.core.call_success(
+        self.widget_tree = self.core.call_success(
             "gtk_load_widget_tree",
             "openpaperwork_gtk.bug_report", "bug_report.glade"
         )
-        dialog = widget_tree.get_object("bug_report_dialog")
+        dialog = self.widget_tree.get_object("bug_report_dialog")
 
-        self.core.call_all("bug_report_complete", widget_tree)
+        self.core.call_all("bug_report_complete", self.widget_tree)
 
-        widget_tree.get_object("bug_report_toggle_renderer").connect(
-            "toggled", self._on_attachment_toggle, widget_tree
+        self.widget_tree.get_object("bug_report_toggle_renderer").connect(
+            "toggled", self._on_attachment_toggle, self.widget_tree
         )
-        widget_tree.get_object("bug_report_treeview").connect(
-            "row-activated", self._on_row_selected, widget_tree
+        self.widget_tree.get_object("bug_report_treeview").connect(
+            "row-activated", self._on_row_selected, self.widget_tree
         )
-        widget_tree.get_object("bug_report_open_file").connect(
+        self.widget_tree.get_object("bug_report_open_file").connect(
             "clicked", self._open_selected
         )
 
-        model = widget_tree.get_object("bug_report_model")
+        model = self.widget_tree.get_object("bug_report_model")
         model.clear()
 
         inputs = {}
@@ -154,18 +160,22 @@ class Plugin(openpaperwork_core.PluginBase):
             if not i['include_by_default']:
                 continue
             self.core.call_all(
-                "on_bug_report_attachment_selected", i['id'], widget_tree
+                "on_bug_report_attachment_selected", i['id'], self.widget_tree
             )
 
         if len(self.windows) > 0:
             dialog.set_transient_for(self.windows[-1])
         dialog.connect("close", self._on_close)
         dialog.connect("cancel", self._on_close)
-        dialog.connect("prepare", self._on_prepare, widget_tree)
+        dialog.connect("prepare", self._on_prepare, self.widget_tree)
 
         dialog.set_visible(True)
         self.core.call_all("on_gtk_window_opened", dialog)
-        self._refresh_attachment_page_complete(widget_tree)
+        self._refresh_attachment_page_complete(self.widget_tree)
+
+    def close_bug_report(self):
+        dialog = self.widget_tree.get_object("bug_report_dialog")
+        dialog.destroy()
 
     def _on_attachment_toggle(self, cell_renderer, row_path, widget_tree):
         model = widget_tree.get_object("bug_report_model")
@@ -284,3 +294,12 @@ class Plugin(openpaperwork_core.PluginBase):
         model = widget_tree.get_object("bug_report_model")
         file_urls = [row[4] for row in model if row[0]]
         self.core.call_all("bug_report_set_file_urls_to_send", file_urls)
+
+    def screenshot_snap_all_doc_widgets(self, out_dir):
+        if self.widget_tree is None:
+            return
+        self.core.call_success(
+            "screenshot_snap_widget",
+            self.widget_tree.get_object("bug_report_dialog"),
+            self.core.call_success("fs_join", out_dir, "bug_report.png")
+        )

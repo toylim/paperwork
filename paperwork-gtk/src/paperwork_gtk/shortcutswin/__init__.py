@@ -21,6 +21,7 @@ class Plugin(openpaperwork_core.PluginBase):
         super().__init__()
         self.windows = []
         self.groups = collections.defaultdict(list)
+        self.widget_tree = None
 
     def get_interfaces(self):
         return [
@@ -28,6 +29,7 @@ class Plugin(openpaperwork_core.PluginBase):
             'chkdeps',
             'gtk_shortcut_help',
             'gtk_window_listener',
+            'screenshot_provider',
         ]
 
     def get_deps(self):
@@ -35,6 +37,10 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'gtk_resources',
                 'defaults': ['openpaperwork_gtk.resources'],
+            },
+            {
+                'interface': 'screenshot',
+                'defaults': ['openpaperwork_gtk.screenshots'],
             },
         ]
 
@@ -67,12 +73,12 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def gtk_show_shortcuts(self):
         LOGGER.info("Showing shortcuts")
-        widget_tree = self.core.call_success(
+        self.widget_tree = self.core.call_success(
             "gtk_load_widget_tree",
             "paperwork_gtk.shortcutswin", "shortcutswin.glade"
         )
-        section = widget_tree.get_object("shortcuts_mainwindow")
-        window = widget_tree.get_object("shortcuts")
+        section = self.widget_tree.get_object("shortcuts_mainwindow")
+        window = self.widget_tree.get_object("shortcuts")
 
         groups = {}
         for shortcut_group in sorted(list(self.groups.keys())):
@@ -94,3 +100,17 @@ class Plugin(openpaperwork_core.PluginBase):
 
         window.set_transient_for(self.windows[-1])
         window.show_all()
+
+    def gtk_hide_shortcuts(self):
+        if self.widget_tree is None:
+            return
+        window = self.widget_tree.get_object("shortcuts")
+        window.destroy()
+
+    def screenshot_snap_all_doc_widgets(self, out_dir):
+        if self.widget_tree is None:
+            return
+        self.core.call_success(
+            "screenshot_snap_widget", self.widget_tree.get_object("shortcuts"),
+            self.core.call_success("fs_join", out_dir, "shortcuts.png"),
+        )
