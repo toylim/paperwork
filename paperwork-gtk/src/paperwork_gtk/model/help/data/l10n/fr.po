@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-07-26 00:19+0200\n"
-"PO-Revision-Date: 2020-07-13 09:33+0000\n"
+"PO-Revision-Date: 2020-07-26 14:39+0000\n"
 "Last-Translator: Weblate Admin <jflesch@openpaper.work>\n"
 "Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-help-documents/fr/>\n"
@@ -92,7 +92,7 @@ msgstr "Trouver"
 #. type: wrapfigure
 #: data/intro.tex:50
 msgid "{r}{0.5\\textwidth}"
-msgstr ""
+msgstr "{r}{0.5\\textwidth}"
 
 #. type: document
 #: data/intro.tex:56
@@ -214,16 +214,18 @@ msgid ""
 "colorlinks, citecolor=black, filecolor=black, linkcolor=black, "
 "urlcolor=black, linktoc=all,"
 msgstr ""
+"colorlinks, citecolor=black, filecolor=black, linkcolor=black, "
+"urlcolor=black, linktoc=all,"
 
 #. type: title{#1}
 #: data/usage.tex:20
 msgid "Paperwork manual"
-msgstr ""
+msgstr "Manuel de Paperwork"
 
 #. type: section{#2}
 #: data/usage.tex:32
 msgid "Introduction"
-msgstr ""
+msgstr "Introduction"
 
 #. type: document
 #: data/usage.tex:41
@@ -233,6 +235,11 @@ msgid ""
 "them back later is worrisome, at best. For most organized people, naming and "
 "sorting them is as tedious as watching paint dry."
 msgstr ""
+"La plupart des documents personnels sont plutôt récurrents : fiches de "
+"paies, quittances de loyer, facture d'électricité, etc. Pour la plupart des "
+"gens mal-organisés, devoir les retrouver plus tard est, au mieux, "
+"inquiétant. Pour la plupart des gens organisés, les nommer et les trier est "
+"aussi ennuyeux que regarder la pluie tomber."
 
 #. type: document
 #: data/usage.tex:45
@@ -241,6 +248,10 @@ msgid ""
 "job.  Humans should do as little as possible while machines do most of the "
 "work.  The end goal here is \"scan \\& forget\"."
 msgstr ""
+"L'idée principale derrière Paperwork est que gérer les documents est un "
+"travail d'ordinateurs. Les humains devraient faire aussi peu que possible "
+"pendant que les machines font le gros du travail. L'objectif final ici est "
+"\"scanner & oublier\"."
 
 #. type: document
 #: data/usage.tex:49
@@ -249,11 +260,15 @@ msgid ""
 "individually, organize them in complex hierachy, tag them manually each "
 "time, fix OCR minor glitches, etc, then Paperwork is not for you."
 msgstr ""
+"Si vous cherchez un logiciel qui vous laissera nommer les documents "
+"individuellement, les organiser dans des hiérarchies complexes, les marquer "
+"manuellement à chaque fois, corriger les ratés mineurs de l'OCR, etc, alors "
+"Paperwork n'est pas pour vous."
 
 #. type: section{#2}
 #: data/usage.tex:52
 msgid "Definitions"
-msgstr ""
+msgstr "Définitions"
 
 #. type: subsection{#2}
 #: data/usage.tex:54 data/usage.tex:158
@@ -266,6 +281,9 @@ msgid ""
 "Paperwork stores all your documents in a single directory: the work "
 "directory.  In this directory, each document has its own sub-directory."
 msgstr ""
+"Paperwork enregistre tous vos documents dans un seul répertoire : Le "
+"répertoire de travail. Dans ce répertoire, chaque document a son propre sous-"
+"répertoire."
 
 #. type: document
 #: data/usage.tex:61
@@ -274,6 +292,9 @@ msgid ""
 "advantage: You don't have to worry about file names and directory structures "
 "anymore."
 msgstr ""
+"Bien que cela rende Paperwork difficile à utiliser avec d'autres outils, ça "
+"a un avantage majeur : Vous n'avez pas à vous inquiéter des noms des "
+"fichiers et de la structure des répertoires."
 
 #. type: subsection{#2}
 #: data/usage.tex:63
@@ -286,6 +307,8 @@ msgid ""
 "In Paperwork, a document is a set of pages. On disk, it can either be a set "
 "of JPEG files or a PDF file."
 msgstr ""
+"Dans Paperwork, un document est ensemble de pages. Sur le disque, ça peut "
+"être un jeu de fichiers JPEG ou un fichier PDF."
 
 #. type: document
 #: data/usage.tex:74
@@ -293,6 +316,8 @@ msgid ""
 "Documents are identified only by a date. It can either be the date you "
 "imported them (default) or some date of your choosing."
 msgstr ""
+"Chaque document est identifié uniquement par une date. Il peut s'agir de la "
+"date à laquelle vous l'avez importé (par défaut) ou une date de votre choix."
 
 #. type: document
 #: data/usage.tex:77
@@ -300,6 +325,8 @@ msgid ""
 "They are displayed on the left side of the main window (green part on the "
 "screenshot above)."
 msgstr ""
+"Ils sont affichés sur le coté gauche de la fenêtre principale (partie en "
+"vert sur la capture d'écran ci-dessous)."
 
 #. type: subsection{#2}
 #: data/usage.tex:80
@@ -311,6 +338,8 @@ msgstr "Page"
 msgid ""
 "In Paperwork, a page is just an image and the word positions on this image."
 msgstr ""
+"Dans Paperwork, une page est juste une image et les positions des mots sur "
+"cette image."
 
 #. type: document
 #: data/usage.tex:88
@@ -321,6 +350,12 @@ msgid ""
 "for each page. So the text extracted from images is stored in hOCR files "
 "beside the JPEG files."
 msgstr ""
+"Les images peuvent venir d'un scanner ou être importées. Dans ces cas, elles "
+"sont enregistrées sous forme de fichiers JPEG et leur texte est extrait "
+"grâce à la ROC (Reconnaissance Optique de Caractères). ROC est un processus "
+"assez long. Il peut prendre jusqu'à plusieurs minutes pour chaque page. Par "
+"conséquent, le texte extrait est enregistré dans des fichiers hOCR à coté "
+"des fichiers JPEG."
 
 #. type: document
 #: data/usage.tex:91
@@ -328,6 +363,8 @@ msgid ""
 "Pages can also be the pages from a PDF file. In that case, by default, "
 "Paperwork just stores a copy of the PDF file."
 msgstr ""
+"Les pages peuvent aussi être les pages d'un fichier PDF. Dans ce cas, par "
+"défaut, Paperwork enregistre simplement une copie du fichier PDF."
 
 #. type: document
 #: data/usage.tex:95
@@ -335,6 +372,8 @@ msgid ""
 "Paperwork does not track whether a page is recto or verso.  Paperwork does "
 "not track the paper size corresponding to a page (A4, Letter, etc)."
 msgstr ""
+"Paperwork ne mémorise pas si une page est le recto ou le verso. Paperwork ne "
+"mémorise pas la taille du papier (A4, Letter, etc) correspondant à la page."
 
 #. type: document
 #: data/usage.tex:98
@@ -342,13 +381,13 @@ msgid ""
 "Pages are displayed on the right side of the main window (blue part on the "
 "screenshot above)."
 msgstr ""
+"Les pages sont affichées sur le coté droit de la fenêtre principale (la "
+"partie en bleu sur la capture d'écran ci-dessus)."
 
 #. type: subsection{#2}
 #: data/usage.tex:101
-#, fuzzy
-#| msgid "Labels and additional keywords"
 msgid "Indexation and Keywords"
-msgstr "Labels et mot-clés additionels"
+msgstr "Indexation et mots-clés"
 
 #. type: document
 #: data/usage.tex:108
@@ -356,11 +395,13 @@ msgid ""
 "Of course, you need a way to find back your documents. Paperwork manages an "
 "index with all the keywords found in your documents."
 msgstr ""
+"Bien sûr, vous avez besoin de pouvoir retrouver vos documents. Paperwork "
+"gère un index avec tout les mots-clés trouvés dans vos documents."
 
 #. type: document
 #: data/usage.tex:110
 msgid "Just type in a few keywords, and you will get your documents back."
-msgstr ""
+msgstr "Tapez juste quelques mots-clés, et vous retrouverez vos documents."
 
 #. type: document
 #: data/usage.tex:128
@@ -423,7 +464,7 @@ msgstr "Scanner"
 #. type: subsubsection{#2}
 #: data/usage.tex:182
 msgid "Device"
-msgstr ""
+msgstr "Périphérique"
 
 #. type: document
 #: data/usage.tex:189
@@ -439,10 +480,8 @@ msgstr ""
 
 #. type: subsubsection{#2}
 #: data/usage.tex:194
-#, fuzzy
-#| msgid "Scanner"
 msgid "Scan Mode"
-msgstr "Scanner"
+msgstr "Mode du scanner"
 
 #. type: document
 #: data/usage.tex:202
@@ -594,7 +633,7 @@ msgstr ""
 #. type: paragraph{#2}
 #: data/usage.tex:273
 msgid "Flatpak"
-msgstr ""
+msgstr "Flatpak"
 
 #. type: verbatim
 #: data/usage.tex:279
@@ -677,7 +716,7 @@ msgstr ""
 #. type: subsection{#2}
 #: data/usage.tex:326
 msgid "Updates"
-msgstr ""
+msgstr "Mises à jour"
 
 #. type: document
 #: data/usage.tex:334
@@ -694,10 +733,8 @@ msgstr ""
 
 #. type: section{#2}
 #: data/usage.tex:339
-#, fuzzy
-#| msgid "Document"
 msgid "New document"
-msgstr "Document"
+msgstr "Nouveau document"
 
 #. type: section{#2}
 #: data/usage.tex:342
@@ -1160,7 +1197,7 @@ msgstr ""
 #. type: itemize
 #: data/usage.tex:641
 msgid "Cropping"
-msgstr ""
+msgstr "Recadrage"
 
 #. type: itemize
 #: data/usage.tex:641
@@ -1201,10 +1238,8 @@ msgstr ""
 
 #. type: section{#2}
 #: data/usage.tex:653
-#, fuzzy
-#| msgid "Settings"
 msgid "Deleting"
-msgstr "Réglages"
+msgstr "Effacer"
 
 #. type: document
 #: data/usage.tex:656
@@ -1703,10 +1738,8 @@ msgstr ""
 
 #. type: section{#2}
 #: data/usage.tex:907
-#, fuzzy
-#| msgid "Settings"
 msgid "Getting support"
-msgstr "Réglages"
+msgstr "Obtenir de l'aide"
 
 #. type: document
 #: data/usage.tex:910
@@ -1798,7 +1831,7 @@ msgstr ""
 #. type: subsubsection{#2}
 #: data/usage.tex:952
 msgid "ZIP file"
-msgstr ""
+msgstr "Fichier ZIP"
 
 #. type: document
 #: data/usage.tex:956
