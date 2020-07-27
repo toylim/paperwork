@@ -502,6 +502,24 @@ Beware: Once you have closed document properties, there is no way to put back
 the deleted label.
 
 
+\subsection{Automatic label guessing}
+
+Paperwork does use artificial intelligence. It uses a fairly simple method
+actually:
+\href{https://en.wikipedia.org/wiki/Naive_Bayes_classifier}{Naive Bayes classifiers}.
+It's the same technology used by email clients to classify mails as spam/non-spam.
+
+Based on all the keywords in all your documents that have (or haven't) a label,
+it can estimate a probability that a document containing the same keywords
+should have or shouldn't have this same label. If the probability is high
+enough, it puts the label on the document automatically when you import it or
+scan it.
+
+Of course, this approach means that Paperwork needs enough samples to work
+reliably. You can expect it to start working once you have about 100 documents
+or more (and only for labels that are on more than 10 documents or more).
+
+
 \section{Searching}
 
 \subsection{Simple search}

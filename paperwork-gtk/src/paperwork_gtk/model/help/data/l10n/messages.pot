@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2020-07-26 00:19+0200\n"
+"POT-Creation-Date: 2020-07-27 12:05+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -589,7 +589,7 @@ msgid "Ubuntu"
 msgstr ""
 
 #. type: subsection{#2}
-#: data/usage.tex:307 data/usage.tex:777
+#: data/usage.tex:307 data/usage.tex:795
 msgid "Windows"
 msgstr ""
 
@@ -932,25 +932,58 @@ msgid ""
 "back the deleted label."
 msgstr ""
 
-#. type: section{#2}
+#. type: subsection{#2}
 #: data/usage.tex:506
+msgid "Automatic label guessing"
+msgstr ""
+
+#. type: document
+#: data/usage.tex:511
+msgid ""
+"Paperwork does use artificial intelligence. It uses a fairly simple method "
+"actually: \\href{https://en.wikipedia.org/wiki/Naive_Bayes_classifier}{Naive "
+"Bayes classifiers}.  It's the same technology used by email clients to "
+"classify mails as spam/non-spam."
+msgstr ""
+
+#. type: document
+#: data/usage.tex:517
+msgid ""
+"Based on all the keywords in all your documents that have (or haven't) a "
+"label, it can estimate a probability that a document containing the same "
+"keywords should have or shouldn't have this same label. If the probability "
+"is high enough, it puts the label on the document automatically when you "
+"import it or scan it."
+msgstr ""
+
+#. type: document
+#: data/usage.tex:521
+msgid ""
+"Of course, this approach means that Paperwork needs enough samples to work "
+"reliably. You can expect it to start working once you have about 100 "
+"documents or more (and only for labels that are on more than 10 documents or "
+"more)."
+msgstr ""
+
+#. type: section{#2}
+#: data/usage.tex:524
 msgid "Searching"
 msgstr ""
 
 #. type: subsection{#2}
-#: data/usage.tex:508
+#: data/usage.tex:526
 msgid "Simple search"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:515
+#: data/usage.tex:533
 msgid ""
 "You simply enter keywords in the search field. In a few seconds, you will "
 "get all the documents containing those keywords."
 msgstr ""
 
 #. type: document
-#: data/usage.tex:519
+#: data/usage.tex:537
 msgid ""
 "Paperwork does a \"fuzzy\" search: documents with keywords close to the one "
 "you gave but not identical are also returned (for instance, 'flech' instead "
@@ -958,7 +991,7 @@ msgid ""
 msgstr ""
 
 #. type: document
-#: data/usage.tex:524
+#: data/usage.tex:542
 msgid ""
 "You can also use "
 "\\href{https://whoosh.readthedocs.io/en/latest/querylang.html}{Whoosh query "
@@ -967,12 +1000,12 @@ msgid ""
 msgstr ""
 
 #. type: subsection{#2}
-#: data/usage.tex:527
+#: data/usage.tex:545
 msgid "Advanced search"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:544
+#: data/usage.tex:562
 msgid ""
 "The advanced search dialog helps creating complex search queries. You can "
 "specify various criterias and once you click on the apply button, it will "
@@ -981,27 +1014,27 @@ msgid ""
 msgstr ""
 
 #. type: section{#2}
-#: data/usage.tex:547
+#: data/usage.tex:565
 msgid "Viewing"
 msgstr ""
 
 #. type: subsection{#2}
-#: data/usage.tex:553
+#: data/usage.tex:571
 msgid "Zoom level"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:559
+#: data/usage.tex:577
 msgid "You can change the scale at which pages are displayed using this control."
 msgstr ""
 
 #. type: subsection{#2}
-#: data/usage.tex:562
+#: data/usage.tex:580
 msgid "View pages as grid"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:570
+#: data/usage.tex:588
 msgid ""
 "When clicking this button, Paperwork will try to display pages on 3 "
 "columns.  In this mode, you can drag'n'drop pages to move them inside the "
@@ -1009,12 +1042,12 @@ msgid ""
 msgstr ""
 
 #. type: subsection{#2}
-#: data/usage.tex:573
+#: data/usage.tex:591
 msgid "View pages as list"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:581
+#: data/usage.tex:599
 msgid ""
 "When clicking this button, pages will be scaled so their width is the "
 "maximum width allowed by the main window. In this mode, you can select text "
@@ -1022,12 +1055,12 @@ msgid ""
 msgstr ""
 
 #. type: subsection{#2}
-#: data/usage.tex:583
+#: data/usage.tex:601
 msgid "Highlight all words"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:591
+#: data/usage.tex:609
 msgid ""
 "This option allows to see quickly all the words identified by OCR. Sometimes "
 "(rarely) OCR misses entire chunk in a page. This option allow to see such "
@@ -1035,22 +1068,22 @@ msgid ""
 msgstr ""
 
 #. type: section{#2}
-#: data/usage.tex:593
+#: data/usage.tex:611
 msgid "Moving pages"
 msgstr ""
 
 #. type: subsection{#2}
-#: data/usage.tex:595
+#: data/usage.tex:613
 msgid "Inside a document"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:597 data/usage.tex:606
+#: data/usage.tex:615 data/usage.tex:624
 msgid "You must display the document pages as a grid (See \\ref{layout:grid})."
 msgstr ""
 
 #. type: document
-#: data/usage.tex:602
+#: data/usage.tex:620
 msgid ""
 "You can then grab a page (hold the left click button), drag it and drop it "
 "wherever you want in a document. While dragging, a blue marker will show you "
@@ -1059,36 +1092,36 @@ msgid ""
 msgstr ""
 
 #. type: subsection{#2}
-#: data/usage.tex:604
+#: data/usage.tex:622
 msgid "From a document to another"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:609
+#: data/usage.tex:627
 msgid ""
 "You can then grab a page (hold the left click button), drag it and drop it "
 "in the document list, on the document in which you want the page to go."
 msgstr ""
 
 #. type: section{#2}
-#: data/usage.tex:611
+#: data/usage.tex:629
 msgid "Copying text"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:617
+#: data/usage.tex:635
 msgid "You must display the document pages as a list (See \\ref{layout:paged})."
 msgstr ""
 
 #. type: document
-#: data/usage.tex:620
+#: data/usage.tex:638
 msgid ""
 "You can then select text in a page. Hold the left click button to start "
 "selecting, mouse the mouse cursor to select more words, then release it."
 msgstr ""
 
 #. type: document
-#: data/usage.tex:624
+#: data/usage.tex:642
 msgid ""
 "You can then copy the selected text, either by pressing Ctrl-C or by using "
 "the page menu at the bottom right of the main window. Once copied, you can "
@@ -1096,51 +1129,51 @@ msgid ""
 msgstr ""
 
 #. type: section{#2}
-#: data/usage.tex:626
+#: data/usage.tex:644
 msgid "Editing a page"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:632
+#: data/usage.tex:650
 msgid "Paperwork includes a very simple image editor. It provides 4 functions:"
 msgstr ""
 
 #. type: itemize
-#: data/usage.tex:641
+#: data/usage.tex:659
 msgid "Cropping"
 msgstr ""
 
 #. type: itemize
-#: data/usage.tex:641
+#: data/usage.tex:659
 msgid "Rotating the page by 90\\degree (can be rotated multiple times)"
 msgstr ""
 
 #. type: itemize
-#: data/usage.tex:641
+#: data/usage.tex:659
 msgid "Rotating the page by -90\\degree (can be rotated multiple times)"
 msgstr ""
 
 #. type: itemize
-#: data/usage.tex:641
+#: data/usage.tex:659
 msgid ""
 "Automatic Color Equalization: An algorithm that adjust the image brightness, "
 "contrast and colors to make it as readable as possible."
 msgstr ""
 
 #. type: section{#2}
-#: data/usage.tex:643
+#: data/usage.tex:661
 msgid "Reseting a page"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:646
+#: data/usage.tex:664
 msgid ""
 "Reseting a page returns it to its state when it was scanned or imported, "
 "before any pre-processing did occur."
 msgstr ""
 
 #. type: document
-#: data/usage.tex:650
+#: data/usage.tex:668
 msgid ""
 "This can be helpful if you made a bad modification on the page (cropped a "
 "wrong area for instance), if the calibration settings weren't appropriate or "
@@ -1148,19 +1181,19 @@ msgid ""
 msgstr ""
 
 #. type: section{#2}
-#: data/usage.tex:653
+#: data/usage.tex:671
 msgid "Deleting"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:656
+#: data/usage.tex:674
 msgid ""
 "When deleting either documents or pages, they are actually moved in the "
 "trash bin of your computer."
 msgstr ""
 
 #. type: document
-#: data/usage.tex:660
+#: data/usage.tex:678
 msgid ""
 "\\textbf{Important note regarding Flatpak:} A bug may prevent Paperwork from "
 "moving files to the trash (we are working on it). In that case, Paperwork "
@@ -1168,17 +1201,17 @@ msgid ""
 msgstr ""
 
 #. type: section{#2}
-#: data/usage.tex:663
+#: data/usage.tex:681
 msgid "Exporting"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:665
+#: data/usage.tex:683
 msgid "You can export both documents or single pages."
 msgstr ""
 
 #. type: document
-#: data/usage.tex:669
+#: data/usage.tex:687
 msgid ""
 "In both cases, various transformations can be applied before actually "
 "exporting them. For instance, you can turn color pages into grayscale pages "
@@ -1186,34 +1219,34 @@ msgid ""
 msgstr ""
 
 #. type: section{#2}
-#: data/usage.tex:672
+#: data/usage.tex:690
 msgid "Printing"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:674
+#: data/usage.tex:692
 msgid "You can print both documents or single pages."
 msgstr ""
 
 #. type: document
-#: data/usage.tex:677
+#: data/usage.tex:695
 msgid ""
 "Beware that pages are always sent as images to your printer. So for very big "
 "documents, a few minutes may go by before the actual printing start."
 msgstr ""
 
 #. type: section{#2}
-#: data/usage.tex:680
+#: data/usage.tex:698
 msgid "Backup"
 msgstr ""
 
 #. type: section{#2}
-#: data/usage.tex:682
+#: data/usage.tex:700
 msgid "Synchronisation between multiple computers"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:688
+#: data/usage.tex:706
 msgid ""
 "While Paperwork is a personal document manager, it is not a file "
 "synchronization application. They are applications dedicated to file "
@@ -1223,7 +1256,7 @@ msgid ""
 msgstr ""
 
 #. type: document
-#: data/usage.tex:695
+#: data/usage.tex:713
 msgid ""
 "When you start Paperwork, one of the first things it does is check the "
 "content of the work directory. It looks for any changes and updates its "
@@ -1234,29 +1267,29 @@ msgid ""
 msgstr ""
 
 #. type: subsection{#2}
-#: data/usage.tex:698
+#: data/usage.tex:716
 msgid "USB key / USB drive"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:701
+#: data/usage.tex:719
 msgid ""
 "This is the simplest way to share documents. Simply copy your work directory "
 "to an USB key, tell Paperwork to use it, and you're done."
 msgstr ""
 
 #. type: document
-#: data/usage.tex:703
+#: data/usage.tex:721
 msgid "Beware: You should backup your USB key from time to time on another one."
 msgstr ""
 
 #. type: subsection{#2}
-#: data/usage.tex:706
+#: data/usage.tex:724
 msgid "File Synchronization applications"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:712
+#: data/usage.tex:730
 msgid ""
 "Those applications synchronize a local directory with a remote server (or "
 "cloud). All the changes you do in your folder are applied on the server. All "
@@ -1265,7 +1298,7 @@ msgid ""
 msgstr ""
 
 #. type: document
-#: data/usage.tex:716
+#: data/usage.tex:734
 msgid ""
 "Beware: If you choose to host your documents on someone else server "
 "(DropBox, OneDrive, etc), they can access all your documents. Paperwork does "
@@ -1273,7 +1306,7 @@ msgid ""
 msgstr ""
 
 #. type: document
-#: data/usage.tex:720
+#: data/usage.tex:738
 msgid ""
 "Paperwork is tested daily with Nextcloud. While this is not the easiest one "
 "to install, Nextcloud let you host your files yourself. There are other "
@@ -1281,19 +1314,19 @@ msgid ""
 msgstr ""
 
 #. type: document
-#: data/usage.tex:723
+#: data/usage.tex:741
 msgid ""
 "Using DropBox or OneDrive can make sense if you're sharing "
 "not-so-confidential documents with others (associations, etc)."
 msgstr ""
 
 #. type: subsubsection{#2}
-#: data/usage.tex:726
+#: data/usage.tex:744
 msgid "Shared folder"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:731
+#: data/usage.tex:749
 msgid ""
 "If all your computers are on the same network, you can share your work "
 "directory. However, be really careful regarding permissions.  Being too "
@@ -1302,43 +1335,43 @@ msgid ""
 msgstr ""
 
 #. type: document
-#: data/usage.tex:734
+#: data/usage.tex:752
 msgid ""
 "Beware: Using a shared folder means having a single copy of your work "
 "directory. You should do regular backups of your work directory."
 msgstr ""
 
 #. type: section{#2}
-#: data/usage.tex:737
+#: data/usage.tex:755
 msgid "Encryption"
 msgstr ""
 
 #. type: subsection{#2}
-#: data/usage.tex:739 data/usage.tex:984
+#: data/usage.tex:757 data/usage.tex:1002
 msgid "GNU/Linux"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:741
+#: data/usage.tex:759
 msgid "GNU/Linux distributions include many tools to encrypt whole directories."
 msgstr ""
 
 #. type: document
-#: data/usage.tex:751
+#: data/usage.tex:769
 msgid ""
 "With Paperwork, there are 2 directories that should be encrypted to protect "
 "your privacy:"
 msgstr ""
 
 #. type: itemize
-#: data/usage.tex:751
+#: data/usage.tex:769
 msgid ""
 "Your work directory (by default \\textasciitilde /papers, can be changed in "
 "the settings)"
 msgstr ""
 
 #. type: itemize
-#: data/usage.tex:751
+#: data/usage.tex:769
 msgid ""
 "The cache directory (\\textasciitilde /.local/share/paperwork2, cannot be "
 "changed) (it contains index files from which the content of your documents "
@@ -1346,7 +1379,7 @@ msgid ""
 msgstr ""
 
 #. type: document
-#: data/usage.tex:755
+#: data/usage.tex:773
 msgid ""
 "Note that if you want to be sure that your data are always encrypted, it's "
 "recommended to encrypt your whole home directory or even your whole system "
@@ -1354,12 +1387,12 @@ msgid ""
 msgstr ""
 
 #. type: subsubsection{#2}
-#: data/usage.tex:757
+#: data/usage.tex:775
 msgid "cryptsetup"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:761
+#: data/usage.tex:779
 msgid ""
 "Most GNU/Linux distribution installer now provide an optio4n to encrypt your "
 "whole system or your whole /home with cryptsetup . This is the recommended "
@@ -1367,17 +1400,17 @@ msgid ""
 msgstr ""
 
 #. type: subsubsection{#2}
-#: data/usage.tex:763
+#: data/usage.tex:781
 msgid "Encfs"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:765
+#: data/usage.tex:783
 msgid "Encfs can also be used to create encrypted directories easily."
 msgstr ""
 
 #. type: document
-#: data/usage.tex:769
+#: data/usage.tex:787
 msgid ""
 "Beware that Encfs seems to have some security weaknesses. So, while it's "
 "probably enough to prevent a laptop thief from accessing your documents, "
@@ -1386,7 +1419,7 @@ msgid ""
 msgstr ""
 
 #. type: verbatim
-#: data/usage.tex:773
+#: data/usage.tex:791
 #, no-wrap
 msgid ""
 "$ encfs ~/.local/share/.paperwork2 ~/.local/share/paperwork2\n"
@@ -1394,58 +1427,58 @@ msgid ""
 msgstr ""
 
 #. type: document
-#: data/usage.tex:780
+#: data/usage.tex:798
 msgid ""
 "On Windows, you're strongly advised to enable BitLocker to protect your "
 "documents. If unavailable, there are other applications (Veracrypt, etc)."
 msgstr ""
 
 #. type: section{#2}
-#: data/usage.tex:783
+#: data/usage.tex:801
 msgid "Keyboard shortcuts"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:794
+#: data/usage.tex:812
 msgid ""
 "Keyboard shortcuts can be seen by opening the application menu, selecting "
 "\"Help\" and then \"Shortcuts\"."
 msgstr ""
 
 #. type: subsection{#2}
-#: data/usage.tex:797
+#: data/usage.tex:815
 msgid "Paperwork's files locations"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:806
+#: data/usage.tex:824
 msgid "By default:"
 msgstr ""
 
 #. type: itemize
-#: data/usage.tex:806
+#: data/usage.tex:824
 msgid "Configuration : \\textasciitilde /.config/paperwork2.conf"
 msgstr ""
 
 #. type: itemize
-#: data/usage.tex:806
+#: data/usage.tex:824
 msgid "Index : \\textasciitilde /.local/share/paperwork2"
 msgstr ""
 
 #. type: itemize
-#: data/usage.tex:806
+#: data/usage.tex:824
 msgid "Documents : \\textasciitilde /papers"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:806
+#: data/usage.tex:824
 msgid ""
 "(same paths are used on Windows ; \\textasciitilde{} = C:\\textbackslash "
 "Users{[}login{]} ; folders are hidden)"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:810
+#: data/usage.tex:828
 msgid ""
 "The index is always updated according based on the documents in the work "
 "directory. When Paperwork starts, the modification time of each file is used "
@@ -1453,27 +1486,27 @@ msgid ""
 msgstr ""
 
 #. type: subsection{#2}
-#: data/usage.tex:812
+#: data/usage.tex:830
 msgid "Work directory layout"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:814
+#: data/usage.tex:832
 msgid "workdir|rootdir = \\textasciitilde /papers (by default)"
 msgstr ""
 
 #. type: subsubsection{#2}
-#: data/usage.tex:816
+#: data/usage.tex:834
 msgid "Global organisation"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:818
+#: data/usage.tex:836
 msgid "In the work directory, you have folders, one per document."
 msgstr ""
 
 #. type: document
-#: data/usage.tex:822
+#: data/usage.tex:840
 msgid ""
 "The folder names are (usually) the scan/import date of the document: "
 "YYYYMMDD\\_hhmm\\_ss{[}\\_<idx>{]}. The suffix 'idx' is optional and is just "
@@ -1481,29 +1514,29 @@ msgid ""
 msgstr ""
 
 #. type: document
-#: data/usage.tex:837
+#: data/usage.tex:855
 msgid "In every folder you have:"
 msgstr ""
 
 #. type: itemize
-#: data/usage.tex:837
+#: data/usage.tex:855
 msgid "For image documents:"
 msgstr ""
 
 #. type: itemize
-#: data/usage.tex:837
+#: data/usage.tex:855
 msgid "paper.$<$X$>$.jpg: The original page in JPG format (X starts at 1)"
 msgstr ""
 
 #. type: itemize
-#: data/usage.tex:837 data/usage.tex:849
+#: data/usage.tex:855 data/usage.tex:867
 msgid ""
 "paper.$<$X$>$.edited.jpg (optional): The page as edited by the user (X "
 "starts at 1)"
 msgstr ""
 
 #. type: itemize
-#: data/usage.tex:837
+#: data/usage.tex:855
 msgid ""
 "paper.$<$X$>$.words (optional): A hOCR file, containing all the words found "
 "on the page using the OCR (optional, but required for indexing ; can be "
@@ -1511,36 +1544,36 @@ msgid ""
 msgstr ""
 
 #. type: itemize
-#: data/usage.tex:837
+#: data/usage.tex:855
 msgid ""
 "paper.1.thumb.jpg (optional, generated automatically): A thumbnail version "
 "of the page (faster to load)"
 msgstr ""
 
 #. type: itemize
-#: data/usage.tex:837 data/usage.tex:849
+#: data/usage.tex:855 data/usage.tex:867
 msgid ""
 "labels (optional): a text file containing the labels applied on this "
 "document"
 msgstr ""
 
 #. type: itemize
-#: data/usage.tex:837 data/usage.tex:849
+#: data/usage.tex:855 data/usage.tex:867
 msgid "extra.txt (optional): extra keywords added by the user"
 msgstr ""
 
 #. type: itemize
-#: data/usage.tex:849
+#: data/usage.tex:867
 msgid "For PDF documents:"
 msgstr ""
 
 #. type: itemize
-#: data/usage.tex:849
+#: data/usage.tex:867
 msgid "doc.pdf: the document"
 msgstr ""
 
 #. type: itemize
-#: data/usage.tex:849
+#: data/usage.tex:867
 msgid ""
 "paper.$<$X$>$.words (optional): A hOCR file, containing all the words found "
 "on the page using the OCR. Some PDF contains crap instead of the real text, "
@@ -1548,12 +1581,12 @@ msgid ""
 msgstr ""
 
 #. type: document
-#: data/usage.tex:851
+#: data/usage.tex:869
 msgid "Here is an example a work directory organisation:"
 msgstr ""
 
 #. type: verbatim
-#: data/usage.tex:878
+#: data/usage.tex:896
 #, no-wrap
 msgid ""
 "$ find ~/papers\n"
@@ -1585,17 +1618,17 @@ msgid ""
 msgstr ""
 
 #. type: subsubsection{#2}
-#: data/usage.tex:881
+#: data/usage.tex:899
 msgid "hOCR files"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:883
+#: data/usage.tex:901
 msgid "With Tesseract, the hOCR file can be obtained with following command:"
 msgstr ""
 
 #. type: verbatim
-#: data/usage.tex:885
+#: data/usage.tex:903
 #, no-wrap
 msgid ""
 "tesseract paper.<X>.jpg paper.<X> -l <lang> hocr && mv paper.<X>.html "
@@ -1603,96 +1636,96 @@ msgid ""
 msgstr ""
 
 #. type: document
-#: data/usage.tex:887
+#: data/usage.tex:905
 msgid "For example:"
 msgstr ""
 
 #. type: verbatim
-#: data/usage.tex:889
+#: data/usage.tex:907
 #, no-wrap
 msgid "tesseract paper.1.jpg paper.1 -l fra hocr && mv paper.1.html paper.1.words"
 msgstr ""
 
 #. type: subsubsection{#2}
-#: data/usage.tex:892
+#: data/usage.tex:910
 msgid "Label files"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:894
+#: data/usage.tex:912
 msgid "Here is an example of content of a label file:"
 msgstr ""
 
 #. type: verbatim
-#: data/usage.tex:896
+#: data/usage.tex:914
 #, no-wrap
 msgid "facture,#0000b1588c61 logement,#f6b6ffff0000"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:899
+#: data/usage.tex:917
 msgid ""
 "It's always \\[label\\],\\[color\\]. For a same label, the color should "
 "always be the same."
 msgstr ""
 
 #. type: subsection{#2}
-#: data/usage.tex:901
+#: data/usage.tex:919
 msgid "Statistics"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:905
+#: data/usage.tex:923
 msgid ""
 "You can get various statistics regarding your documents. Just have a look at "
 "the diagnostic output. Statistics are close to the end of the output."
 msgstr ""
 
 #. type: section{#2}
-#: data/usage.tex:907
+#: data/usage.tex:925
 msgid "Getting support"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:910
+#: data/usage.tex:928
 msgid ""
 "A forum dedicated to Paperwork exists: "
 "\\href{https://forum.openpaper.work}{https://forum.openpaper.work}."
 msgstr ""
 
 #. type: document
-#: data/usage.tex:913
+#: data/usage.tex:931
 msgid ""
 "There is also an IRC channel for live discussions: "
 "\\href{https://webchat.freenode.net/}{Freenode}, channel \\#openpaperwork"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:916
+#: data/usage.tex:934
 msgid ""
 "If you have questions regarding Paperwork or simply want to chat, those are "
 "the places to go."
 msgstr ""
 
 #. type: section{#2}
-#: data/usage.tex:918
+#: data/usage.tex:936
 msgid "Reporting issues"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:921
+#: data/usage.tex:939
 msgid ""
 "If you noticed a bug in Paperwork (and you are sure it's a bug), you can "
 "make a bug report."
 msgstr ""
 
 #. type: subsection{#2}
-#: data/usage.tex:923
+#: data/usage.tex:941
 msgid "Bug Tracker"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:926
+#: data/usage.tex:944
 msgid ""
 "One way to create bug reports is to create tickets on "
 "\\href{https://gitlab.gnome.org/World/OpenPaperwork/paperwork/issues}{Paperwork "
@@ -1700,33 +1733,33 @@ msgid ""
 msgstr ""
 
 #. type: document
-#: data/usage.tex:929
+#: data/usage.tex:947
 msgid ""
 "This is the recommended way to submit a bug report if you would like to "
 "discuss it with Paperwork developpers."
 msgstr ""
 
 #. type: document
-#: data/usage.tex:932
+#: data/usage.tex:950
 msgid ""
 "To make sure you include all the required informations, you can use the tool "
 "integrated in Paperwork (see below)."
 msgstr ""
 
 #. type: subsection{#2}
-#: data/usage.tex:935
+#: data/usage.tex:953
 msgid "Automatic bug report"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:942
+#: data/usage.tex:960
 msgid ""
 "Paperwork includes a tool to make reporting bugs easier. It allows you to "
 "get easily all the required information to make a perfect bug report."
 msgstr ""
 
 #. type: document
-#: data/usage.tex:946
+#: data/usage.tex:964
 msgid ""
 "All attachments are automatically censored to protect your privacy: Document "
 "contents are blurred in screenshots and logs are censored to remove your "
@@ -1734,19 +1767,19 @@ msgid ""
 msgstr ""
 
 #. type: document
-#: data/usage.tex:949
+#: data/usage.tex:967
 msgid ""
 "If the bug you want to report is related scanners, please include \"Scanner "
 "info.\" in the bug report files."
 msgstr ""
 
 #. type: subsubsection{#2}
-#: data/usage.tex:952
+#: data/usage.tex:970
 msgid "ZIP file"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:956
+#: data/usage.tex:974
 msgid ""
 "You can then obtain a ZIP file with all the data. Please make sure the "
 "content of the ZIP file does not contain private information (it shouldn't, "
@@ -1755,12 +1788,12 @@ msgid ""
 msgstr ""
 
 #. type: subsubsection{#2}
-#: data/usage.tex:959
+#: data/usage.tex:977
 msgid "Automatic submission"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:963
+#: data/usage.tex:981
 msgid ""
 "You can also let the tool submit the bug report to openpaper.work "
 "automatically. In that case, you won't be able to discuss the bug with "
@@ -1768,7 +1801,7 @@ msgid ""
 msgstr ""
 
 #. type: document
-#: data/usage.tex:970
+#: data/usage.tex:988
 msgid ""
 "If you do, the tool will give you a URL to see the submitted bug report.  "
 "This URL is private and shouldn't be shared until you made sure there is no "
@@ -1779,24 +1812,24 @@ msgid ""
 msgstr ""
 
 #. type: section{#2}
-#: data/usage.tex:973
+#: data/usage.tex:991
 msgid "Uninstalling"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:976
+#: data/usage.tex:994
 msgid ""
 "Paperwork can be uninstalled. Uninstalling Paperwork \\emph{will never} "
 "remove your work directory or your documents."
 msgstr ""
 
 #. type: subsection{#2}
-#: data/usage.tex:978
+#: data/usage.tex:996
 msgid "Windows 10"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:982
+#: data/usage.tex:1000
 msgid ""
 "Paperwork can be uninstalled as any Windows applications, by going in "
 "Windows Control Panel, clicking on \"Applications\", finding Paperwork in "
@@ -1804,7 +1837,7 @@ msgid ""
 msgstr ""
 
 #. type: document
-#: data/usage.tex:988
+#: data/usage.tex:1006
 msgid ""
 "If you installed Paperwork using the package manager from your distribution "
 "(the recommended way), the uninstallation method depends on the package "
@@ -1812,25 +1845,25 @@ msgid ""
 msgstr ""
 
 #. type: document
-#: data/usage.tex:991
+#: data/usage.tex:1009
 msgid ""
 "For instance, on GNU/Linux Debian or GNU/Linux Ubuntu, the following command "
 "will take care of it:"
 msgstr ""
 
 #. type: verbatim
-#: data/usage.tex:994
+#: data/usage.tex:1012
 #, no-wrap
 msgid "sudo apt remove --purge paperwork-\\*"
 msgstr ""
 
 #. type: document
-#: data/usage.tex:997
+#: data/usage.tex:1015
 msgid "If you installed it using Flatpak, you can use the following command:"
 msgstr ""
 
 #. type: verbatim
-#: data/usage.tex:1000
+#: data/usage.tex:1018
 #, no-wrap
 msgid "flatpak --user uninstall work.openpaper.Paperwork"
 msgstr ""
