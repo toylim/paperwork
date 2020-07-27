@@ -366,7 +366,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def _get_pdf_url(self, doc_url):
         if doc_url.endswith(".pdf"):
             return doc_url
-        pdf_url = doc_url + "/" + PDF_FILENAME
+        pdf_url = self.core.call_success("fs_join", doc_url, PDF_FILENAME)
         if self.core.call_success("fs_exists", pdf_url) is None:
             return None
         return pdf_url

@@ -56,6 +56,9 @@ class Page(GObject.GObject):
         page_img_url = self.core.call_success(
             "page_get_img_url", self.doc_url, self.page_idx
         )
+        LOGGER.info(
+            "URL for %s p%d: %s", self.doc_url, self.page_idx, page_img_url
+        )
         assert(page_img_url is not None)
 
         self.renderer = self.core.call_success(
