@@ -935,11 +935,6 @@ facture,#0000b1588c61 logement,#f6b6ffff0000
 It's always \[label\],\[color\]. For a same label, the color should
 always be the same.
 
-\subsection{Statistics}
-
-You can get various statistics regarding your documents. Just have
-a look at the diagnostic output. Statistics are close to the end
-of the output.
 
 \section{Getting support}
 
@@ -982,8 +977,11 @@ All attachments are automatically censored to protect your privacy: Document
 contents are blurred in screenshots and logs are censored to remove your user
 name.
 
-If the bug you want to report is related scanners, please include
+If the bug you want to report is related to scanners, please include
 "Scanner info." in the bug report files.
+
+If te bug you want to report is related to a display problem, please include
+"App. screenshots" in the bug report files.
 
 
 \subsubsection{ZIP file}
@@ -997,26 +995,20 @@ safe than sorry). Then you can add this ZIP file to a ticket on Gitlab.
 
 You can also let the tool submit the bug report to openpaper.work
 automatically. In that case, you won't be able to discuss the bug with
-developers (or you have to leave a way to contact in the bug report).
+developers (or you have to leave a way to contact you in the bug report).
 
-If you do, the tool will give you a URL to see the submitted bug report.
-This URL is private and shouldn't be shared until you made sure there is no
-private information in the bug report. If there are private information,
-you can request deletion of the bug report by sending an email to
-jflesch@openpaper.work (please specify the private URI in your mail so we can
-be sure that you are the one who submitted the bug report).
+If you use the automatic submission , the tool will give you an URL to see the
+submitted bug report. This URL is private and shouldn't be shared until you
+made sure there is no private information in the bug report. If there is
+private information, you can request deletion of the bug report by sending an
+email to jflesch@openpaper.work (please specify the private URI in your mail
+so we can be sure that you are the one who submitted the bug report).
 
 
 \section{Uninstalling}
 
 Paperwork can be uninstalled. Uninstalling Paperwork \emph{will never}
 remove your work directory or your documents.
-
-\subsection{Windows 10}
-
-Paperwork can be uninstalled as any Windows applications, by going in
-Windows Control Panel, clicking on "Applications", finding Paperwork in the
-list, and then clicking on "uninstall".
 
 \subsection{GNU/Linux}
 
@@ -1036,5 +1028,11 @@ If you installed it using Flatpak, you can use the following command:
 \begin{verbatim}
 flatpak --user uninstall work.openpaper.Paperwork
 \end{verbatim}
+
+\subsection{Windows 10}
+
+Paperwork can be uninstalled as any Windows applications, by going in
+Windows Control Panel, clicking on "Applications", finding Paperwork in the
+list, and then clicking on "uninstall".
 
 \end{document}
