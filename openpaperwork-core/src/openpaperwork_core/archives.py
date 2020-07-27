@@ -60,7 +60,7 @@ class ArchiveHandler(object):
             if (now - date).days <= MAX_DAYS:
                 continue
             LOGGER.info("Deleting obsolete log file: %s", file_path)
-            self.core.call_all("fs_unlink", file_path)
+            self.core.call_all("fs_unlink", file_path, trash=False)
 
 
 class Plugin(PluginBase):
