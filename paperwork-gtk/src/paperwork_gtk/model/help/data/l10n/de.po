@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-07-27 12:05+0200\n"
-"PO-Revision-Date: 2020-07-22 15:43+0000\n"
+"PO-Revision-Date: 2020-08-06 12:25+0000\n"
 "Last-Translator: Andreas Forster <aforster2311@gmail.com>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-help-documents/de/>\n"
@@ -221,7 +221,7 @@ msgstr ""
 #. type: section{#2}
 #: data/usage.tex:32
 msgid "Introduction"
-msgstr ""
+msgstr "Einleitung"
 
 #. type: document
 #: data/usage.tex:41
@@ -421,7 +421,7 @@ msgstr "Scanner"
 #. type: subsubsection{#2}
 #: data/usage.tex:182
 msgid "Device"
-msgstr ""
+msgstr "Gerät"
 
 #. type: document
 #: data/usage.tex:189
@@ -592,7 +592,7 @@ msgstr ""
 #. type: paragraph{#2}
 #: data/usage.tex:273
 msgid "Flatpak"
-msgstr ""
+msgstr "Flatpak"
 
 #. type: verbatim
 #: data/usage.tex:279
@@ -675,7 +675,7 @@ msgstr ""
 #. type: subsection{#2}
 #: data/usage.tex:326
 msgid "Updates"
-msgstr ""
+msgstr "Updates"
 
 #. type: document
 #: data/usage.tex:334
@@ -692,10 +692,8 @@ msgstr ""
 
 #. type: section{#2}
 #: data/usage.tex:339
-#, fuzzy
-#| msgid "Document"
 msgid "New document"
-msgstr "Dokument"
+msgstr "Neues Dokument"
 
 #. type: section{#2}
 #: data/usage.tex:342
@@ -1191,7 +1189,7 @@ msgstr ""
 #. type: itemize
 #: data/usage.tex:659
 msgid "Cropping"
-msgstr ""
+msgstr "Schneiden"
 
 #. type: itemize
 #: data/usage.tex:659
@@ -1829,7 +1827,7 @@ msgstr ""
 #. type: subsubsection{#2}
 #: data/usage.tex:970
 msgid "ZIP file"
-msgstr ""
+msgstr "ZIP Datei"
 
 #. type: document
 #: data/usage.tex:974
