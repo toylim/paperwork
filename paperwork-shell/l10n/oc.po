@@ -8,33 +8,36 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-07-08 22:17+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2020-08-11 21:27+0000\n"
+"Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
+"Language-Team: Occitan <http://translations.openpaper.work/projects/"
+"paperwork/paperwork-shell/oc/>\n"
 "Language: oc\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 4.1.1\n"
 
 #: paperwork-shell/src/paperwork_shell/cmd/rename.py:50
 msgid "Change a document identifier"
-msgstr ""
+msgstr "Cambiar l’identificant d’un document"
 
 #: paperwork-shell/src/paperwork_shell/cmd/rename.py:54
 msgid "Document to rename"
-msgstr ""
+msgstr "Document de renomenar"
 
 #: paperwork-shell/src/paperwork_shell/cmd/rename.py:58
 msgid "New name for the document"
-msgstr ""
+msgstr "Nom novèl pel document"
 
 #: paperwork-shell/src/paperwork_shell/cmd/search.py:63
 msgid "Search keywords in documents"
-msgstr ""
+msgstr "Cercar de mots clau pels documents"
 
 #: paperwork-shell/src/paperwork_shell/cmd/search.py:67
 msgid "Maximum number of results (default: 50)"
-msgstr ""
+msgstr "Nombre maximum de resultats (per defaut : 50)"
 
 #: paperwork-shell/src/paperwork_shell/cmd/search.py:71
 msgid "Search keywords (none means all documents)"
@@ -44,13 +47,13 @@ msgstr ""
 #: paperwork-shell/src/paperwork_shell/cmd/show.py:81
 #, python-format
 msgid "Document id: %s"
-msgstr ""
+msgstr "Identificant del document : %s"
 
 #: paperwork-shell/src/paperwork_shell/cmd/search.py:97
 #: paperwork-shell/src/paperwork_shell/cmd/show.py:87
 #, python-format
 msgid "Document date: %s"
-msgstr ""
+msgstr "Data del document : %s"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:57
 msgid ""
@@ -60,7 +63,7 @@ msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:63
 msgid "Document to export"
-msgstr ""
+msgstr "Document d’exportar"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:67
 msgid ""
@@ -83,16 +86,16 @@ msgstr ""
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:119
 #, python-format
 msgid "Unknown filters: %s"
-msgstr ""
+msgstr "Fichièrs desconeguts : %s"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:141
 #, python-format
 msgid "Current filters: %s"
-msgstr ""
+msgstr "Filtres actuals : %s"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:144
 msgid "Next possible filters:"
-msgstr ""
+msgstr "Filtres seguents possibles :"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:149
 #, python-format, python-brace-format
@@ -102,7 +105,7 @@ msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:153
 msgid "No possible filters found"
-msgstr ""
+msgstr "Cap de filtre pas trobat"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:170
 #, python-format
@@ -203,7 +206,7 @@ msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/cmd/import.py:62
 msgid "Import file(s)"
-msgstr ""
+msgstr "Importar"
 
 #: paperwork-shell/src/paperwork_shell/cmd/import.py:67
 msgid "Target document for import"
@@ -469,7 +472,7 @@ msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/main.py:67
 msgid "command"
-msgstr ""
+msgstr "comanda"
 
 #: paperwork-shell/src/paperwork_shell/display/scan.py:86
 msgid "Scanning page {} (expected size: {}x{}) ..."
