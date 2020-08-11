@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-07-08 22:17+0200\n"
-"PO-Revision-Date: 2020-08-10 20:50+0000\n"
+"PO-Revision-Date: 2020-08-12 18:39+0000\n"
 "Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
 "Language-Team: Occitan <http://translations.openpaper.work/projects/"
 "paperwork/openpaperwork-core/oc/>\n"
@@ -43,27 +43,29 @@ msgstr "jos-comanda"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/config.py:58
 msgid "Get a value from Paperwork's configuration"
-msgstr ""
+msgstr "Obténer una valor a partir de la configuracion de Paperwork"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/config.py:63
 msgid "Set a value in Paperwork's configuration"
-msgstr ""
+msgstr "Definir una valor dins la configuracion de Paperwork"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/config.py:66
 msgid "See 'config list_type'"
-msgstr ""
+msgstr "Veire 'config list_type'"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/config.py:70
 msgid "Show Paperwork's configuration"
-msgstr ""
+msgstr "Mostrar la configuracion de Paperwork"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/config.py:75
 msgid "Show value types you can use from command line"
 msgstr ""
+"Mostrar los tipes de valors que podètz utilizar a partir de la linha de "
+"comanda"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:52
 msgid "Check that all required dependencies are installed"
-msgstr ""
+msgstr "Verificar que totas las dependéncias requeridas son installadas"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:73
 msgid "Missing dependencies:"
@@ -72,7 +74,7 @@ msgstr "Dependéncias mancantas :"
 #: openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:75
 #, python-brace-format
 msgid "- {dep_name} (package: {pkg_name})"
-msgstr ""
+msgstr "- {dep_name} (paquet : {pkg_name})"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:80
 msgid "UNKNOWN"
@@ -88,7 +90,7 @@ msgstr "Volètz executar aquesta comanda ara ?"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:119
 msgid "Don't know how to install missing dependencies. Sorry."
-msgstr ""
+msgstr "Sabi pas cossí installar aquestas dependéncias. Desconsolat."
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:122
 msgid "Nothing to do."
@@ -102,30 +104,30 @@ msgstr "Gerir lo modul %s"
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:54
 #, python-format
 msgid "Show plugins enabled for %s"
-msgstr ""
+msgstr "Mostrar los moduls activats per %s"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:60
 #, python-format
 msgid "Add plugin in %s"
-msgstr ""
+msgstr "Ajustar un modul dins %s"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:66
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:77
 msgid "Do not correct dependencies automatically"
-msgstr ""
+msgstr "Corregir pas automaticament las dependéncias"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:71
 #, python-format
 msgid "Remove plugin from %s"
-msgstr ""
+msgstr "Tirar lo modul de %s"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:82
 msgid "Clean up your mess by reseting the plugin list to its default value"
-msgstr ""
+msgstr "Reïnicializar la lista dels moduls a la valor de defaut"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:89
 msgid "Show information regarding a plugin (must be enabled)"
-msgstr ""
+msgstr "Mostrar las informacions que concernisson un modul (deu èsser activat)"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:136
 #, python-brace-format
@@ -133,46 +135,50 @@ msgid ""
 "Adding plugin '{plugin_name}' to satisfy dependency of '{other_plugin_name}' "
 "on interface '{interface}'"
 msgstr ""
+"Ajusta l modul « {plugin_name} » per satisfar la dependéncia de « "
+"{other_plugin_name} » sus l’interfàcia « {interface} »"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:153
 msgid "Plugin {} added"
-msgstr ""
+msgstr "Modul {} ajustat"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:175
 #, python-brace-format
 msgid "Removing plugin '{plugin_name}' due to missing dependency '{interface}'"
 msgstr ""
+"Tira lo modul « {plugin_name} » a causa de la dependéncia mancanta « "
+"{interface} »"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:192
 msgid "Plugin {} removed"
-msgstr ""
+msgstr "Modul {} tirat"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:198
 msgid "Active plugins:"
-msgstr ""
+msgstr "Moduls actius :"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:284
 #, python-format
 msgid "Plugin '%s' not enabled."
-msgstr ""
+msgstr "Modul « %s » pas activat."
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:289
 #, python-format
 msgid "Plugin '%s':"
-msgstr ""
+msgstr "Modul « %s » :"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:291
 msgid "Implements:"
-msgstr ""
+msgstr "Implementa :"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:294
 msgid "Depends on:"
-msgstr ""
+msgstr "Depend de :"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:300
 #, python-format
 msgid "suggested: %s"
-msgstr ""
+msgstr "Suggerit : %s"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:308
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:321
@@ -186,7 +192,7 @@ msgstr "Interfàcia"
 
 #: openpaperwork-core/src/openpaperwork_core/config/backend/configparser.py:330
 msgid "App. config."
-msgstr ""
+msgstr "Config. de l'ap."
 
 #: openpaperwork-core/src/openpaperwork_core/i18n/python.py:6
 msgid "Today"
@@ -199,24 +205,24 @@ msgstr "Ièr"
 #: openpaperwork-core/src/openpaperwork_core/i18n/python.py:9
 #, python-format
 msgid "%3.1f bytes"
-msgstr ""
+msgstr "%3.1f octets"
 
 #: openpaperwork-core/src/openpaperwork_core/i18n/python.py:10
 #, python-format
 msgid "%3.1f KiB"
-msgstr ""
+msgstr "%3.1f Kio"
 
 #: openpaperwork-core/src/openpaperwork_core/i18n/python.py:11
 #, python-format
 msgid "%3.1f MiB"
-msgstr ""
+msgstr "%3.1f MiO"
 
 #: openpaperwork-core/src/openpaperwork_core/i18n/python.py:12
 #, python-format
 msgid "%3.1f GiB"
-msgstr ""
+msgstr "%3.1f Gio"
 
 #: openpaperwork-core/src/openpaperwork_core/i18n/python.py:13
 #, python-format
 msgid "%3.1f TiB"
-msgstr ""
+msgstr "%3.1f Tio"
