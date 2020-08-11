@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-07-08 22:21+0200\n"
-"PO-Revision-Date: 2020-08-11 06:14+0000\n"
+"PO-Revision-Date: 2020-08-13 04:14+0000\n"
 "Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
 "Language-Team: Occitan <http://translations.openpaper.work/projects/"
 "paperwork/openpaperwork-gtk/oc/>\n"
@@ -30,22 +30,25 @@ msgid ""
 " If you want, you can then submit a bug report manually on <a href=\"%s"
 "\">Paperwork's bug tracker</a> and attach this ZIP file to the ticket."
 msgstr ""
+"Crear un fichièr ZIP que conten totes los documents.\n"
+"Se volètz, podètz enviar un senhalament de bug manualament sul <a href=\"%s\""
+">seguiment de bugs de paperwork</a> e ajustar aqueste fichièr ZIP al ticket."
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:40
 msgid "Creating bug report ..."
-msgstr ""
+msgstr "Creacion d’un senhalament de bug…"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:42
 msgid "Sending bug report attachment ..."
-msgstr ""
+msgstr "Mandadís de la pèça-junta del senhalament de bug…"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:161
 msgid "Send automatically"
-msgstr ""
+msgstr "Enviar automaticament"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:162
 msgid "Send the bug report automatically to OpenPaper.work"
-msgstr ""
+msgstr "Enviar lo senhalament de bug automaticament a OpenPaper.work"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:257
 msgid "Success"
@@ -58,10 +61,13 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"Lo transferiment a pas reüssit :\n"
+"\n"
+"%s"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:279
 msgid "FAILED"
-msgstr ""
+msgstr "FRACÀS"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/__init__.py:71
 msgid "Now"
@@ -69,7 +75,7 @@ msgstr "Ara"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/widgets/charts/lines.py:417
 msgid "Total: {}"
-msgstr ""
+msgstr "Total : {}"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/widgets/charts/lines.py:427
 msgid "Total"
@@ -78,7 +84,7 @@ msgstr "Total"
 #: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:249
 #: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:257
 msgid "App. screenshots"
-msgstr ""
+msgstr "Captura d’ecran de l’aplicacion"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:258
 msgid "Select to generate"
@@ -86,11 +92,11 @@ msgstr "Seleccionar per generar"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_zip.glade.h:1
 msgid "Please select where to save the ZIP file"
-msgstr ""
+msgstr "Mercés de seleccionar la destinacion de la salvagarda del fichièr ZIP"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:1
 msgid "Bug description"
-msgstr ""
+msgstr "Descripcion del bug"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:2
 msgid ""
@@ -125,14 +131,16 @@ msgstr "Dobrís lo fichièr"
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:8
 msgid "For your privacy, attachments may be partially censored when selected"
 msgstr ""
+"Per protegir vòstra vida privada, los fichièrs junts pòdon èsser "
+"parcialament censurat quand los seleccionatz"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:9
 msgid "Attachments to include in the bug report"
-msgstr ""
+msgstr "Fichièrs de juntar al senhalament de bug"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:1
 msgid "Unexpected Error"
-msgstr ""
+msgstr "Error inesperada"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:2
 msgid "Report"
@@ -140,8 +148,8 @@ msgstr "Rapòrt"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:3
 msgid "An unexpected error occured."
-msgstr ""
+msgstr "Una error inesperada s’es producha."
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/widgets/progress/progress_button.glade.h:1
 msgid "Show background tasks"
-msgstr ""
+msgstr "Afichar los prètzfaches de fons"
