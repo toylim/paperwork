@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: 2020-07-27 12:05+0200\n"
-"PO-Revision-Date: 2020-08-11 21:46+0000\n"
+"PO-Revision-Date: 2020-08-13 04:14+0000\n"
 "Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
 "Language-Team: Occitan <http://translations.openpaper.work/projects/"
 "paperwork/paperwork-help-documents/oc/>\n"
@@ -181,7 +181,7 @@ msgstr ""
 #. type: title{#1}
 #: data/usage.tex:20
 msgid "Paperwork manual"
-msgstr ""
+msgstr "Manual de Paperwork"
 
 #. type: section{#2}
 #: data/usage.tex:32
@@ -308,7 +308,7 @@ msgstr ""
 #. type: subsection{#2}
 #: data/usage.tex:101
 msgid "Indexation and Keywords"
-msgstr ""
+msgstr "Indexacion e mots clau"
 
 #. type: document
 #: data/usage.tex:108
@@ -400,7 +400,7 @@ msgstr ""
 #. type: subsubsection{#2}
 #: data/usage.tex:194
 msgid "Scan Mode"
-msgstr ""
+msgstr "Mòde del numerizador"
 
 #. type: document
 #: data/usage.tex:202
@@ -413,7 +413,7 @@ msgstr ""
 #. type: subsubsection{#2}
 #: data/usage.tex:205
 msgid "Scan Resolution"
-msgstr ""
+msgstr "Resolucion del numerizador"
 
 #. type: document
 #: data/usage.tex:212
@@ -497,7 +497,7 @@ msgstr ""
 #. type: subsubsection{#2}
 #: data/usage.tex:237
 msgid "Scanner calibration"
-msgstr ""
+msgstr "Calibratge del numerizador"
 
 #. type: document
 #: data/usage.tex:247
@@ -512,7 +512,7 @@ msgstr ""
 #. type: subsection{#2}
 #: data/usage.tex:250
 msgid "OCR"
-msgstr ""
+msgstr "ROC"
 
 #. type: document
 #: data/usage.tex:257
@@ -547,7 +547,7 @@ msgstr ""
 #. type: subsubsection{#2}
 #: data/usage.tex:271
 msgid "Adding languages"
-msgstr ""
+msgstr "Apondon de lengas"
 
 #. type: paragraph{#2}
 #: data/usage.tex:273
@@ -563,11 +563,16 @@ msgid ""
 "flatpak config --user --set languages \"<langs>\"\n"
 "flatpak update"
 msgstr ""
+"<langs> es una lista de lenga amb un còdi de doas letras separadas per « ; »"
+"\n"
+"# ex : en;fr;oc\n"
+"flatpak config --user --set languages \"<langs>\"\n"
+"flatpak update"
 
 #. type: paragraph{#2}
 #: data/usage.tex:283
 msgid "Debian"
-msgstr ""
+msgstr "Debian"
 
 #. type: verbatim
 #: data/usage.tex:288 data/usage.tex:304
@@ -577,11 +582,15 @@ msgid ""
 "# ex: 'fra' for French\n"
 "$ sudo apt-get install tesseract-ocr tesseract-ocr-<lang>"
 msgstr ""
+"# <lang> es una lista de lenga amb un còdi de tres letras\n"
+"# ex : « fra » pel francés\n"
+"# ex : « oci » per l'occitan\n"
+"$ sudo apt-get install tesseract-ocr tesseract-ocr-<lang>"
 
 #. type: paragraph{#2}
 #: data/usage.tex:291
 msgid "Fedora"
-msgstr ""
+msgstr "Fedora"
 
 #. type: verbatim
 #: data/usage.tex:296
@@ -591,16 +600,19 @@ msgid ""
 "# ex: 'fra' for French\n"
 "$ sudo dnf install tesseract tesseract-langpack-<lang>"
 msgstr ""
+"# <lang> es una lista de lenga amb un còdi de tres letras\n"
+"# ex : « oci » per l'occitan\n"
+"$ sudo apt-get install tesseract-ocr tesseract-ocr-<lang>"
 
 #. type: paragraph{#2}
 #: data/usage.tex:299
 msgid "Ubuntu"
-msgstr ""
+msgstr "Ubuntu"
 
 #. type: subsection{#2}
 #: data/usage.tex:307 data/usage.tex:795
 msgid "Windows"
-msgstr ""
+msgstr "Windows"
 
 #. type: document
 #: data/usage.tex:310
@@ -620,7 +632,7 @@ msgstr ""
 #. type: subsubsection{#2}
 #: data/usage.tex:317
 msgid "Disabling OCR"
-msgstr ""
+msgstr "Desactivacion de la ROC"
 
 #. type: document
 #: data/usage.tex:323
@@ -658,7 +670,7 @@ msgstr "Document novèl"
 #. type: section{#2}
 #: data/usage.tex:342
 msgid "Scanning"
-msgstr ""
+msgstr "Numerizacion"
 
 #. type: document
 #: data/usage.tex:348
@@ -817,7 +829,7 @@ msgstr ""
 #. type: section{#2}
 #: data/usage.tex:428
 msgid "Labels"
-msgstr ""
+msgstr "Etiquetas"
 
 #. type: document
 #: data/usage.tex:444
@@ -977,7 +989,7 @@ msgstr ""
 #. type: section{#2}
 #: data/usage.tex:524
 msgid "Searching"
-msgstr ""
+msgstr "Recèrca"
 
 #. type: subsection{#2}
 #: data/usage.tex:526
@@ -1066,7 +1078,7 @@ msgstr ""
 #. type: subsection{#2}
 #: data/usage.tex:601
 msgid "Highlight all words"
-msgstr ""
+msgstr "Suslinhar totes los mots"
 
 #. type: document
 #: data/usage.tex:609
@@ -1785,7 +1797,7 @@ msgstr ""
 #. type: subsubsection{#2}
 #: data/usage.tex:970
 msgid "ZIP file"
-msgstr ""
+msgstr "Fichièr ZIP"
 
 #. type: document
 #: data/usage.tex:974
