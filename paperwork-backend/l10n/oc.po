@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-07-12 12:57+0200\n"
-"PO-Revision-Date: 2020-08-12 06:31+0000\n"
+"PO-Revision-Date: 2020-08-13 04:14+0000\n"
 "Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
 "Language-Team: Occitan <http://translations.openpaper.work/projects/"
 "paperwork/paperwork-backend/oc/>\n"
@@ -253,26 +253,31 @@ msgstr "ROC en cors sus la pagina {page_idx} del document {doc_id}"
 #: paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:92
 #, python-format
 msgid "Training label guesser with added document %s"
-msgstr ""
+msgstr "Entrainament del devinaire d’etiquetas amb lo document %s ajustat"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:100
 #, python-format
 msgid "Untraining label guesser due to deleted document %s"
 msgstr ""
+"Mesa al deslembrièr de l’entrainament d’etiquetas en seguida de la "
+"supression del document %s"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:107
 #, python-format
 msgid "Training label guesser with updated document %s"
 msgstr ""
+"Entrainament del devinaire d’etiquetas amb la mesa a jorn del document %s"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:240
 msgid ""
 "Training label guessing training for label '{}' with all known documents ..."
 msgstr ""
+"Entrainament del devinaire d’etiquetas « {} » amb totes los documents "
+"coneguts…"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:333
 msgid "Training label guessing ..."
-msgstr ""
+msgstr "Entrainament del devinaire d’etiquetas…"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/color/libpillowfight.py:53
 #, python-brace-format
