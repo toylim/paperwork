@@ -189,16 +189,18 @@ class Plugin(openpaperwork_core.PluginBase):
         ))
         self.core.call_success("scan_schedule", promise)
 
-    def _show_sources(self, dev):
-        sources = [
-            (
-                source.get_name(),
-                self.core.call_success(
-                    "i18n_scanner_source", source.get_name()
-                ),
-            )
-            for source in dev.dev.get_children()
-        ]
+    def _show_sources(self, dev=None):
+        sources = []
+        if dev is not None:
+            sources = [
+                (
+                    source.get_name(),
+                    self.core.call_success(
+                        "i18n_scanner_source", source.get_name()
+                    ),
+                )
+                for source in dev.dev.get_children()
+            ]
         LOGGER.info("Found %d sources", len(sources))
 
         sources_widget = self.widget_tree.get_object("calibration_sources")
