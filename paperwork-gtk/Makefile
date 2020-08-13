@@ -27,8 +27,8 @@ doc:
 upload_doc:
 
 data:
-	$(MAKE) -C src/paperwork_gtk/model/help data
 	$(MAKE) -C src/paperwork_gtk/icon data
+	$(MAKE) -C src/paperwork_gtk/model/help data
 
 check:
 	flake8 --exclude=_version.py src/paperwork_gtk
