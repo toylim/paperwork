@@ -77,6 +77,10 @@ cd paperwork
 #   the project maintainer add commits in this branch).
 git checkout develop
 
+# Delete existing Python virtualenv if there is one.
+# Delete all Paperwork data files if they have been generated or downloaded.
+make clean
+
 # Will create the Python virtualenv if it doesn't exist.
 # It will compile Libinsane and some other librairies. It will then set the
 # correct environment variables to use them without installing them

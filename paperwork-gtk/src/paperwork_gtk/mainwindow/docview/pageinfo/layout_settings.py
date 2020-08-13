@@ -37,6 +37,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return [
             'chkdeps',
             'gtk_layout_settings',
+            'screenshot_provider',
         ]
 
     def get_deps(self):
@@ -52,6 +53,10 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'gtk_resources',
                 'defaults': ['openpaperwork_gtk.resources'],
+            },
+            {
+                'interface': 'screenshot',
+                'defaults': ['openpaperwork_gtk.screenshots'],
             },
         ]
 
@@ -79,7 +84,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         self.layout_icon = self.widget_tree.get_object("page_layout_icon")
         self.layout_button = self.widget_tree.get_object("page_layout")
-        self.layout_button.connect("clicked", self._open_layout_menu)
+        self.layout_button.connect("clicked", self.gtk_open_layout_settings)
 
         self.zoom = self.widget_tree.get_object("adjustment_zoom")
         self.zoom.connect("value-changed", self._on_zoom_changed)
@@ -120,10 +125,14 @@ class Plugin(openpaperwork_core.PluginBase):
         layout = self.layout_buttons[widget]['layout']
         self.core.call_all("docview_set_layout", layout)
 
-    def _open_layout_menu(self, *args, **kwargs):
+    def gtk_open_layout_settings(self, *args, **kwargs):
         menu = self.widget_tree.get_object("layout_settings")
         menu.set_relative_to(self.layout_button)
         menu.set_visible(True)
+
+    def gtk_close_layout_settings(self, *args, **kwargs):
+        menu = self.widget_tree.get_object("layout_settings")
+        menu.set_visible(False)
 
     def _on_zoom_changed(self, _=None):
         new_value = self.zoom.get_value()
@@ -142,3 +151,45 @@ class Plugin(openpaperwork_core.PluginBase):
                 self.zoom.set_value(zoom)
             finally:
                 self.notify = True
+
+    def screenshot_snap_all_doc_widgets(self, out_dir):
+        if self.widget_tree is None:
+            return
+
+        self.core.call_success(
+            "screenshot_snap_widget",
+            self.widget_tree.get_object("layout_settings"),
+            self.core.call_success("fs_join", out_dir, "docview_layout.png"),
+        )
+        self.core.call_success(
+            "screenshot_snap_widget",
+            self.widget_tree.get_object("layout_paged"),
+            self.core.call_success(
+                "fs_join", out_dir, "docview_layout_paged.png"
+            ),
+            margins=(50, 50, 50, 50)
+        )
+        self.core.call_success(
+            "screenshot_snap_widget",
+            self.widget_tree.get_object("layout_grid"),
+            self.core.call_success(
+                "fs_join", out_dir, "docview_layout_grid.png"
+            ),
+            margins=(50, 50, 50, 50)
+        )
+        self.core.call_success(
+            "screenshot_snap_widget",
+            self.widget_tree.get_object("scale_zoom"),
+            self.core.call_success(
+                "fs_join", out_dir, "docview_layout_scale.png"
+            ),
+            margins=(50, 50, 50, 50)
+        )
+        self.core.call_success(
+            "screenshot_snap_widget",
+            self.widget_tree.get_object("show_all_boxes"),
+            self.core.call_success(
+                "fs_join", out_dir, "docview_layout_show_all_boxes.png"
+            ),
+            margins=(275, 50, 50, 50)
+        )

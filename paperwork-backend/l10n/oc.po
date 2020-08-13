@@ -1,56 +1,56 @@
-# German translations for PACKAGE package.
-# Copyright (C) 2020 THE PACKAGE'S COPYRIGHT HOLDER
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# Automatically generated, 2020.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-07-12 12:57+0200\n"
-"PO-Revision-Date: 2020-07-23 15:38+0000\n"
-"Last-Translator: Andreas Forster <aforster2311@gmail.com>\n"
-"Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
-"paperwork-backend/de/>\n"
-"Language: de\n"
+"PO-Revision-Date: 2020-08-13 04:14+0000\n"
+"Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
+"Language-Team: Occitan <http://translations.openpaper.work/projects/"
+"paperwork/paperwork-backend/oc/>\n"
+"Language: oc\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
 "X-Generator: Weblate 4.1.1\n"
 
 #: paperwork-backend/src/paperwork_backend/doctracker.py:68
 #, python-format
 msgid "Document %s added"
-msgstr "Dokument %s hinzugefügt"
+msgstr "Document %s ajustat"
 
 #: paperwork-backend/src/paperwork_backend/doctracker.py:73
 #, python-format
 msgid "Document %s updated"
-msgstr "Dokument %s aktualisiert"
+msgstr "Document %s mes a jorn"
 
 #: paperwork-backend/src/paperwork_backend/doctracker.py:89
 #, python-format
 msgid "Document %s deleted"
-msgstr "Dokument %s gelöscht"
+msgstr "Document %s suprimit"
 
 #: paperwork-backend/src/paperwork_backend/doctracker.py:99
 #: paperwork-backend/src/paperwork_backend/index/whoosh.py:140
 #, python-format
 msgid "Examining document %s: unchanged"
-msgstr "Prüfe Dokument %s: unverändert"
+msgstr "Analisi del document %s : pas cambiat"
 
 #: paperwork-backend/src/paperwork_backend/doctracker.py:104
 msgid "Rolling back changes"
-msgstr "Mache Änderungen rückgängig"
+msgstr "Anullacion de las modificacions"
 
 #: paperwork-backend/src/paperwork_backend/doctracker.py:110
 msgid "Committing changes"
-msgstr "Speichere Änderungen"
+msgstr "Enregistrament de las modificacions"
 
 #: paperwork-backend/src/paperwork_backend/docimport/pdf.py:32
 msgid "Already imported"
-msgstr "Bereits importiert"
+msgstr "Ja importat"
 
 #: paperwork-backend/src/paperwork_backend/docimport/pdf.py:40
 msgid "PDF"
@@ -59,245 +59,250 @@ msgstr "PDF"
 #: paperwork-backend/src/paperwork_backend/docimport/pdf.py:41
 #: paperwork-backend/src/paperwork_backend/docimport/img.py:55
 msgid "Documents"
-msgstr "Dokumente"
+msgstr "Documents"
 
 #: paperwork-backend/src/paperwork_backend/docimport/pdf.py:57
 msgid "Import PDF"
-msgstr "Importiere PDF"
+msgstr "Importar un PDF"
 
 #: paperwork-backend/src/paperwork_backend/docimport/pdf.py:105
 msgid "PDF folder"
-msgstr "PDF Ordner"
+msgstr "Repertòri dels PDF"
 
 #: paperwork-backend/src/paperwork_backend/docimport/img.py:52
 msgid "Images"
-msgstr "Bilder"
+msgstr "Imatges"
 
 #: paperwork-backend/src/paperwork_backend/docimport/img.py:58
 msgid "Pages"
-msgstr "Seiten"
+msgstr "Paginas"
 
 #: paperwork-backend/src/paperwork_backend/docimport/img.py:77
 msgid "Append the image to the current document"
-msgstr "Hänge das Bild an das aktuelle Dokument an"
+msgstr "Ajustar l’imatge al document actual"
 
 #: paperwork-backend/src/paperwork_backend/beacon/stats.py:126
 msgid "App. & system info."
-msgstr "App. & System info."
+msgstr "Info. ap. e sistèma"
 
 #: paperwork-backend/src/paperwork_backend/beacon/stats.py:127
 #: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:690
 msgid "Select to generate"
-msgstr "Wähle zum Erzeugen"
+msgstr "Seleccionar per generar"
 
 #: paperwork-backend/src/paperwork_backend/beacon/stats.py:149
 msgid "Collecting statistics ..."
-msgstr "Sammle Statistiken ..."
+msgstr "Recuperacion de las estatisticas…"
 
 #: paperwork-backend/src/paperwork_backend/model/labels.py:47
 msgid "Loading labels of document {}"
-msgstr "Lade Dokumentenlabels {}"
+msgstr "Cargament de las etiquetas del document {}"
 
 #: paperwork-backend/src/paperwork_backend/docexport/pdf.py:100
 msgid "Original PDF(s)"
-msgstr "Originale(s) PDF(s)"
+msgstr "PDF original"
 
 #: paperwork-backend/src/paperwork_backend/docexport/pdf.py:293
 msgid "Generated PDF(s)"
-msgstr "Generierte PDF(s)"
+msgstr "PDF generat(s)"
 
 #: paperwork-backend/src/paperwork_backend/docexport/img.py:41
 #, python-brace-format
 msgid "Exporting {doc_id} p{page_idx} ..."
-msgstr "Exportiere {doc_id} p{page_idx} ..."
+msgstr "Export. de {doc_id} p{page_idx}…"
 
 #: paperwork-backend/src/paperwork_backend/docexport/img.py:86
 msgid "Exporting ..."
-msgstr "Exportiere ..."
+msgstr "Export. en cors…"
 
 #: paperwork-backend/src/paperwork_backend/docexport/img.py:121
 msgid "Split page(s) into image(s) and text(s)"
-msgstr "Teile Seite(n) in Bild(er) und Text"
+msgstr "Separar la(s) pagina(s) en imatge(s) e tèxte(s)"
 
 #: paperwork-backend/src/paperwork_backend/docexport/img.py:171
 msgid "Image file ({})"
-msgstr "Bilddatei ({})"
+msgstr "Fichièr imatge ({})"
 
 #: paperwork-backend/src/paperwork_backend/docexport/img.py:184
 msgid "Black & White"
-msgstr "Schwarz-Weiss"
+msgstr "Blanc e negre"
 
 #: paperwork-backend/src/paperwork_backend/docexport/img.py:195
 msgid "Grayscale"
-msgstr "Graustufen"
+msgstr "Nivèls de gris"
 
 #: paperwork-backend/src/paperwork_backend/docexport/generic.py:98
 msgid "Page by page processing"
-msgstr "Seitenweise Verarbeitung"
+msgstr "Tractament pagina per pagina"
 
 #: paperwork-backend/src/paperwork_backend/docexport/pillowfight.py:31
 msgid "Soft simplification"
-msgstr "Leichte Vereinfachung"
+msgstr "Simplificacion doça"
 
 #: paperwork-backend/src/paperwork_backend/docexport/pillowfight.py:50
 msgid "Hard simplification"
-msgstr "Starke Vereinfachung"
+msgstr "Simplificacion fòrta"
 
 #: paperwork-backend/src/paperwork_backend/docexport/pillowfight.py:52
 msgid "Extreme simplification"
-msgstr "Extreme Vereinfachung"
+msgstr "Simplificacion extrèma"
 
 #: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:208
 msgid "Starting scan ..."
-msgstr "Starte Scan..."
+msgstr "Aviada del numerizador…"
 
 #: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:216
 #: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:268
 #: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:279
 #, python-format
 msgid "Scanning page %d ..."
-msgstr "Scanne Seite %d ..."
+msgstr "Scan. de la pagina %d…"
 
 #: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:423
 #, python-format
 msgid "Examining %s"
-msgstr "Prüfe %s"
+msgstr "Analisi de %s"
 
 #: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:494
 msgid "Getting scanner list ..."
-msgstr "Erhalte Scannerliste..."
+msgstr "Recuperacion de la lista dels numerizadors…"
 
 #: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:689
 msgid "Scanner info."
-msgstr "Scanner Info."
+msgstr "Informacion del numerizador"
 
 #: paperwork-backend/src/paperwork_backend/i18n/pycountry.py:9
 msgid "English"
-msgstr "Englisch"
+msgstr "Anglés"
 
 #: paperwork-backend/src/paperwork_backend/i18n/pycountry.py:10
 msgid "French"
-msgstr "Französisch"
+msgstr "Francés"
 
 #: paperwork-backend/src/paperwork_backend/i18n/pycountry.py:11
 msgid "German"
-msgstr "Deutsch"
+msgstr "Alemand"
 
 #: paperwork-backend/src/paperwork_backend/i18n/scanner.py:14
 msgid "centrally aligned"
-msgstr "zentriert"
+msgstr "centrat"
 
 #: paperwork-backend/src/paperwork_backend/i18n/scanner.py:15
 msgid "Feeder"
-msgstr "Einzug"
+msgstr "Cargador papièr"
 
 #: paperwork-backend/src/paperwork_backend/i18n/scanner.py:16
 msgid "Flatbed"
-msgstr "Flachbett"
+msgstr "Platèl"
 
 #: paperwork-backend/src/paperwork_backend/i18n/scanner.py:17
 msgid "left aligned"
-msgstr "linksbündig"
+msgstr "alinhat a esquèrra"
 
 #: paperwork-backend/src/paperwork_backend/i18n/scanner.py:18
 msgid "right aligned"
-msgstr "rechtsbündig"
+msgstr "alinhat a drecha"
 
 #: paperwork-backend/src/paperwork_backend/pageedit/pageeditor.py:80
 msgid "Color equalization"
-msgstr "Farbausgleich"
+msgstr "Egalisacion de las colors"
 
 #: paperwork-backend/src/paperwork_backend/pageedit/pageeditor.py:92
 msgid "Cropping"
-msgstr "Schneiden"
+msgstr "Retalhatge"
 
 #: paperwork-backend/src/paperwork_backend/pageedit/pageeditor.py:103
 msgid "Clockwise Rotation"
-msgstr "Drehen im Uhrzeigersinn"
+msgstr "Rotacion orària"
 
 #: paperwork-backend/src/paperwork_backend/pageedit/pageeditor.py:112
 msgid "Counterclockwise Rotation"
-msgstr "Drehen gegen Uhrzeigersinn"
+msgstr "Rotacion anti-orària"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/cropping/calibration.py:53
 #, python-brace-format
 msgid ""
 "Using calibration to crop page borders of document {doc_id} page {page_idx}"
 msgstr ""
-"Nutze Kalibrierung um den Rand des Dokuments {doc_id} Seite {page_idx} zu "
-"schneiden"
+"Utilizacion del calibratge per retalhar la pagina {page_idx} del document "
+"{doc_id}"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/cropping/libpillowfight.py:57
 #, python-brace-format
 msgid "Guessing page borders of document {doc_id} page {page_idx}"
-msgstr "Schätze Seitenrand von Dokument {doc_id} Seite {page_idx}"
+msgstr "Localizacion dels bòrds de la pagina {page_idx} del document {doc_id}"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/orientation/pyocr.py:39
 #, python-brace-format
 msgid "Guessing orientation on document {doc_id} page {page_idx}"
-msgstr "Schätze Textrichtung von Dokument {doc_id} Seite {page_idx}"
+msgstr ""
+"Deteccion de l’orientacion de la pagina {page_idx} del document {doc_id}"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/ocr/pyocr.py:50
 #, python-brace-format
 msgid "Document {doc_id} p{page_idx} has already some text. No OCR run"
 msgstr ""
-"Dokument {doc_id}p{page_idx} hat bereits erkannten Text. Überspringe OCR"
+"Lo document {doc_id} p{page_idx} a ja un tèxt associat. La ROC serà pas "
+"realizada"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/ocr/pyocr.py:58
 #, python-brace-format
 msgid "Running OCR on document {doc_id} page {page_idx}"
-msgstr "Führe OCR auf Dokument {doc_id} Seite {page_idx} aus"
+msgstr "ROC en cors sus la pagina {page_idx} del document {doc_id}"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:92
 #, python-format
 msgid "Training label guesser with added document %s"
-msgstr "Trainiere Label-Vorschlag mit hinzugefügtem Dokument %s"
+msgstr "Entrainament del devinaire d’etiquetas amb lo document %s ajustat"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:100
 #, python-format
 msgid "Untraining label guesser due to deleted document %s"
-msgstr "Bereinige Label-Vorschlag wegen gelöschtem Dokument %s"
+msgstr ""
+"Mesa al deslembrièr de l’entrainament d’etiquetas en seguida de la "
+"supression del document %s"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:107
 #, python-format
 msgid "Training label guesser with updated document %s"
-msgstr "Trainiere Label-Vorschlag mit aktualisiertem Dokument %s"
+msgstr ""
+"Entrainament del devinaire d’etiquetas amb la mesa a jorn del document %s"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:240
 msgid ""
 "Training label guessing training for label '{}' with all known documents ..."
 msgstr ""
-"Trainiere Label-Vorschlag für das Label '{}' mit allen bekannten Dokumenten "
-"..."
+"Entrainament del devinaire d’etiquetas « {} » amb totes los documents "
+"coneguts…"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:333
 msgid "Training label guessing ..."
-msgstr "Trainiere Label-Vorschlag ..."
+msgstr "Entrainament del devinaire d’etiquetas…"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/color/libpillowfight.py:53
 #, python-brace-format
 msgid "Adjusting colors of document {doc_id} page {page_idx}"
-msgstr "Passe die Farben auf Dokument {doc_id} Seite {page_idx} an"
+msgstr "Ajustament de las color de la pagina {page_idx} del document {doc_id}"
 
 #: paperwork-backend/src/paperwork_backend/index/whoosh.py:113
 #, python-format
 msgid "Indexing new document %s"
-msgstr "Indiziere das neue Dokument %s"
+msgstr "Indexacion del document novèl %s"
 
 #: paperwork-backend/src/paperwork_backend/index/whoosh.py:122
 #, python-format
 msgid "Removing document %s from index"
-msgstr "Entferne Dokument %s vom Index"
+msgstr "Supression del document %s de l’ensenhador"
 
 #: paperwork-backend/src/paperwork_backend/index/whoosh.py:132
 #, python-format
 msgid "Indexing updated document %s"
-msgstr "Indiziere das aktualisierte Dokument %s"
+msgstr "Indexacion de la mesa a jorn del document %s"
 
 #: paperwork-backend/src/paperwork_backend/index/whoosh.py:163
 msgid "Committing changes in the index ..."
-msgstr "Speichere Änderungen im Index ..."
+msgstr "Enregistrament de las modificacion dins l’ensenhador…"
 
 #: paperwork-backend/src/paperwork_backend/authors/translators.py:23
 msgid "[]"
-msgstr "[]"
+msgstr "[\"Quentin PAGÈS\"]"

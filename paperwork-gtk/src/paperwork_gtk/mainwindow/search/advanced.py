@@ -454,12 +454,14 @@ class Plugin(openpaperwork_core.PluginBase):
         self.windows = []
         self.search_element_box = None
         self.search_elements = []
+        self.dialog = None
 
     def get_interfaces(self):
         return [
             'chkdeps',
             'gtk_advanced_search_dialog',
             'gtk_window_listener',
+            'screenshot_provider',
         ]
 
     def get_deps(self):
@@ -471,6 +473,10 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'gtk_resources',
                 'defaults': ['openpaperwork_gtk.resources'],
+            },
+            {
+                'interface': 'screenshot',
+                'defaults': ['openpaperwork_gtk.screenshots'],
             },
         ]
 
@@ -553,7 +559,9 @@ class Plugin(openpaperwork_core.PluginBase):
                 response_id == Gtk.ResponseType.APPLY):
             search = self._get_search_string()
             self.core.call_all("search_set", search)
+        self.gtk_close_advanced_search_dialog()
 
+    def gtk_close_advanced_search_dialog(self):
         self.dialog.destroy()
         self.widget_tree = None
         self.dialog = None
@@ -602,3 +610,14 @@ class Plugin(openpaperwork_core.PluginBase):
         out = out.strip()
         LOGGER.info("Search: [%s]", out)
         return out
+
+    def screenshot_snap_all_doc_widgets(self, out_dir):
+        if self.dialog is None:
+            return
+        self.core.call_success(
+            "screenshot_snap_widget",
+            self.dialog,
+            self.core.call_success(
+                "fs_join", out_dir, "advanced_search.png"
+            ),
+        )

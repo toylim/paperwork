@@ -19,6 +19,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_interfaces(self):
         return [
             'gtk_search_field',
+            'screenshot_provider',
             'syncable',
         ]
 
@@ -160,6 +161,14 @@ class Plugin(openpaperwork_core.PluginBase):
             "screenshot_snap_widget", self.search_entry,
             self.core.call_success("fs_join", out_dir, "search.png"),
             margins=(50, 50, 50, 140)
+        )
+        self.core.call_success(
+            "screenshot_snap_widget",
+            self.widget_tree.get_object("search_dialog_button"),
+            self.core.call_success(
+                "fs_join", out_dir, "advanced_search_button.png"
+            ),
+            margins=(200, 30, 30, 30)
         )
 
     def search_focus(self):

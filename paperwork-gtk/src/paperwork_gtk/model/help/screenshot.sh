@@ -39,6 +39,35 @@ paperwork-gtk << EOF
 wait()
 core.call_all("doc_open", "20990307_0000_00", "file://${WORKDIR}/20990307_0000_00")
 core.call_all("search_set", "label:contrat conditions generales")
+wait()
+
+core.call_all("open_bug_report")
+wait()
+core.call_all("screenshot_snap_all_doc_widgets", "file://${OUT_DIR}")
+
+core.call_all("close_bug_report")
+core.call_all("mainwindow_focus")
+
+core.call_all("gtk_show_shortcuts")
+wait()
+core.call_all("screenshot_snap_all_doc_widgets", "file://${OUT_DIR}")
+
+core.call_all("gtk_hide_shortcuts")
+core.call_all("mainwindow_focus")
+
+core.call_all("gtk_open_layout_settings")
+wait()
+core.call_all("screenshot_snap_all_doc_widgets", "file://${OUT_DIR}")
+
+core.call_all("gtk_close_layout_settings")
+core.call_all("mainwindow_focus")
+
+core.call_all("gtk_open_advanced_search_dialog")
+wait()
+core.call_all("screenshot_snap_all_doc_widgets", "file://${OUT_DIR}")
+
+core.call_all("gtk_close_advanced_search_dialog")
+core.call_all("mainwindow_focus")
 
 core.call_all("gtk_open_settings")
 wait()
