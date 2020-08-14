@@ -28,8 +28,7 @@ full paths (ex: `"c:\program files (x86)\Paperwork\paperwork-cli"`).
 
 ### In a Flatpak container
 
-You have to run the commands from inside the command inside the Flatpak
-container.
+You have to run the commands from inside the Flatpak container.
 
 ```sh
 flatpak run --command="paperwork-cli" work.openpaper.Paperwork <arguments>
