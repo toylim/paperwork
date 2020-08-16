@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-07-08 22:17+0200\n"
-"PO-Revision-Date: 2020-08-16 01:08+0000\n"
+"PO-Revision-Date: 2020-08-17 11:02+0000\n"
 "Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
 "Language-Team: Occitan <http://translations.openpaper.work/projects/"
 "paperwork/paperwork-shell/oc/>\n"
@@ -411,6 +411,8 @@ msgid ""
 "Default source on the scanner to use (if not specified, one will be selected "
 "randomly"
 msgstr ""
+"Font d’utilizar per defaut pel numerizador (se pas especificat, una font "
+"serà causida a l’asard)"
 
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:86
 msgid "Default resolution (dpi ; default=300)"
@@ -440,7 +442,7 @@ msgstr "Resolucion :"
 
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:183
 msgid "Source {} not found on device. Using another source"
-msgstr ""
+msgstr "Font {} pas trobada sul periferic. Una autra font serà utilizada"
 
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:203
 msgid "Default source:"
@@ -448,7 +450,7 @@ msgstr "Font per defaut :"
 
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:217
 msgid "Resolution {} not available. Adjusted to {}."
-msgstr ""
+msgstr "Resolucion {} pas disponibla. Adaptada a {}."
 
 #: paperwork-shell/src/paperwork_shell/cmd/show.py:51
 msgid "Show the content of a document"
@@ -461,23 +463,23 @@ msgstr "Pagina %d"
 
 #: paperwork-shell/src/paperwork_shell/cmd/sync.py:57
 msgid "Synchronize the index(es) with the content of the work directory"
-msgstr ""
+msgstr "Sincronizar l’ensenhador amb lo contengut del repertòri de trabalh"
 
 #: paperwork-shell/src/paperwork_shell/cmd/sync.py:68
 msgid "Synchronizing with work directory ..."
-msgstr ""
+msgstr "Sincronizacion amb lo repertòri de trabalh en cors…"
 
 #: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:43
 msgid "Manage additional text attached to documents"
-msgstr ""
+msgstr "Gerir los tèxtes addicionals estacats als documents"
 
 #: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:52
 msgid "Get a document additional text"
-msgstr ""
+msgstr "Obténer lo tèxt addicional d’un document"
 
 #: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:57
 msgid "Set a document additional text"
-msgstr ""
+msgstr "Definir lo tèxt addicional d’un document"
 
 #: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:79
 #: paperwork-shell/src/paperwork_shell/display/docrendering/extra_text.py:32
@@ -502,7 +504,7 @@ msgstr "Pagina {} numerizada (talha finala : {}x{})"
 
 #: paperwork-shell/src/paperwork_shell/display/scan.py:135
 msgid "End of paper feed"
-msgstr ""
+msgstr "Fin del cargador de documents"
 
 #: paperwork-shell/src/paperwork_shell/display/scan.py:151
 msgid "Page {} in document {} created"
