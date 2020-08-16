@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: 2020-07-27 12:05+0200\n"
-"PO-Revision-Date: 2020-08-13 04:14+0000\n"
+"PO-Revision-Date: 2020-08-17 11:03+0000\n"
 "Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
 "Language-Team: Occitan <http://translations.openpaper.work/projects/"
 "paperwork/paperwork-help-documents/oc/>\n"
@@ -109,7 +109,7 @@ msgstr ""
 #. type: subsection{#2}
 #: data/intro.tex:72 data/usage.tex:113
 msgid "Labels and additional keywords"
-msgstr "Etiquetas e mots claus adicionals"
+msgstr "Etiquetas e mots claus addicionals"
 
 #. type: document
 #: data/intro.tex:84
