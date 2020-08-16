@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-07-12 12:57+0200\n"
-"PO-Revision-Date: 2020-08-13 04:14+0000\n"
+"PO-Revision-Date: 2020-08-17 11:02+0000\n"
 "Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
 "Language-Team: Occitan <http://translations.openpaper.work/projects/"
 "paperwork/paperwork-backend/oc/>\n"
@@ -156,7 +156,7 @@ msgstr "Aviada del numerizador…"
 #: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:279
 #, python-format
 msgid "Scanning page %d ..."
-msgstr "Scan. de la pagina %d…"
+msgstr "Num. de la pagina %d…"
 
 #: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:423
 #, python-format
@@ -189,7 +189,7 @@ msgstr "centrat"
 
 #: paperwork-backend/src/paperwork_backend/i18n/scanner.py:15
 msgid "Feeder"
-msgstr "Cargador papièr"
+msgstr "Cargador de documents"
 
 #: paperwork-backend/src/paperwork_backend/i18n/scanner.py:16
 msgid "Flatbed"
