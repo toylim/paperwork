@@ -1,4 +1,5 @@
 import datetime
+import unicodedata
 
 from .. import (_, PluginBase)
 
@@ -74,3 +75,14 @@ class Plugin(PluginBase):
                 return string % (num)
             num /= 1024.0
         return self.i18n_sizes[-1] % (num)
+
+    def i18n_strip_accents(self, string):
+        """
+        Strip all the accents from the string
+        """
+        return u''.join(
+            (
+                character for character in unicodedata.normalize('NFD', string)
+                if unicodedata.category(character) != 'Mn'
+            )
+        )

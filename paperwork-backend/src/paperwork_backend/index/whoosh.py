@@ -10,7 +10,7 @@ import whoosh.sorting
 
 import openpaperwork_core
 
-from .. import (_, sync, util)
+from .. import (_, sync)
 
 
 LOGGER = logging.getLogger(__name__)
@@ -84,12 +84,12 @@ class WhooshTransaction(sync.BaseTransaction):
         doc_text = []
         self.core.call_all("doc_get_text_by_url", doc_text, doc_url)
         doc_text = "\n\n".join(doc_text)
-        doc_text = util.strip_accents(doc_text)
+        doc_text = self.core.call_success("i18n_strip_accents", doc_text)
 
         doc_labels = set()
         self.core.call_all("doc_get_labels_by_url", doc_labels, doc_url)
         doc_labels = ",".join([label[0] for label in doc_labels])
-        doc_labels = util.strip_accents(doc_labels)
+        doc_labels = self.core.call_success("i18n_strip_accents", doc_labels)
 
         doc_date = self.core.call_success("doc_get_date_by_id", doc_id)
         if doc_date is None:
@@ -217,6 +217,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_gtk.fs.gio'],
             },
             {
+                'interface': 'i18n',
+                'defaults': ['openpaperwork_core.i18n.python'],
+            },
+            {
                 'interface': 'mainloop',
                 'defaults': ['openpaperwork_gtk.mainloop.glib'],
             },
@@ -332,7 +336,7 @@ class Plugin(openpaperwork_core.PluginBase):
         out_set = set()
 
         query = query.strip()
-        query = util.strip_accents(query)
+        query = self.core.call_success("i18n_strip_accents", query)
         if query == "":
             queries = [whoosh.query.Every()]
         else:

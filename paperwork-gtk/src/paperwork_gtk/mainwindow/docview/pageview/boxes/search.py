@@ -2,7 +2,6 @@ import logging
 import re
 
 import openpaperwork_core
-import paperwork_backend.util
 
 
 LOGGER = logging.getLogger(__name__)
@@ -37,11 +36,15 @@ class Plugin(openpaperwork_core.PluginBase):
                     'paperwork_gtk.mainwindow.docview.pageview.boxes'
                 ],
             },
+            {
+                'interface': 'i18n',
+                'defaults': ['openpaperwork_core.i18n.python'],
+            },
         ]
 
     def on_search_start(self, query):
         query = self.re_split.split(
-            paperwork_backend.util.strip_accents(query)
+            self.core.call_success("i18n_strip_accents", query)
         )
         self.keywords = {
             keyword.lower() for keyword in query
@@ -64,7 +67,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
         for line_box in boxes:
             for word_box in line_box.word_boxes:
-                word = paperwork_backend.util.strip_accents(word_box.content)
+                word = self.core.call_success(
+                    "i18n_strip_accents", word_box.content
+                )
                 for w in self.re_split.split(word):
                     w = w.lower()
                     if w not in self.keywords:
