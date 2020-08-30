@@ -149,8 +149,15 @@ class LabelEditor(object):
         if doc_labels is not None:
             labels.update(doc_labels)
 
-        labels = list(labels)
+        labels = [
+            (
+                self.core.call_success("i18n_strip_accents", label[0].lower()),
+                label[0],
+                label[1]
+            ) for label in labels
+        ]
         labels.sort()
+        labels = [(label[1], label[2]) for label in labels]
 
         if doc_labels is not None:
             doc_labels = {doc_label[0] for doc_label in doc_labels}
@@ -529,6 +536,10 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'gtk_resources',
                 'defaults': ['openpaperwork_gtk.resources'],
+            },
+            {
+                'interface': 'i18n',
+                'defaults': ['openpaperwork_core.i18n.python'],
             },
             {
                 'interface': 'screenshot',

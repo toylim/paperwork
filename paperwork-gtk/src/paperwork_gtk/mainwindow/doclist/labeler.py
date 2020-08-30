@@ -29,11 +29,18 @@ class LabelingTask(object):
             if hasattr(widget, 'txt'):
                 self.flowlayout.remove(widget)
 
-        labels = list(labels)
+        labels = [
+            (
+                self.core.call_success("i18n_strip_accents", label[0].lower()),
+                label[0],
+                label[1]
+            ) for label in labels
+        ]
         labels.sort()
+
         for label in labels:
             try:
-                color = self.core.call_success("label_color_to_rgb", label[1])
+                color = self.core.call_success("label_color_to_rgb", label[2])
             except Exception as exc:
                 LOGGER.warning(
                     "Invalid label %s on document %s", label, self.doc_id,
@@ -41,7 +48,7 @@ class LabelingTask(object):
                 )
                 continue
             widget = self.core.call_success(
-                "gtk_widget_label_new", label[0], color
+                "gtk_widget_label_new", label[1], color
             )
             widget.set_visible(True)
             self.flowlayout.add_child(widget, Gtk.Align.END)
@@ -95,6 +102,10 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'gtk_widget_label',
                 'defaults': ['paperwork_gtk.widget.label'],
+            },
+            {
+                'interface': 'i18n',
+                'defaults': ['openpaperwork_core.i18n.python'],
             },
             {
                 'interface': 'work_queue',

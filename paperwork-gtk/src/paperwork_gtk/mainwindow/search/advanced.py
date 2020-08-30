@@ -83,12 +83,12 @@ class SearchElementText(SearchElement):
 
 class SearchElementLabel(SearchElement):
     def __init__(self, dialog):
-        super(SearchElementLabel, self).__init__(dialog, Gtk.ComboBoxText())
+        super().__init__(dialog, Gtk.ComboBoxText())
 
         labels = set()
         self.dialog.core.call_all("labels_get_all", labels)
         labels = [l[0] for l in labels]
-        labels.sort()
+        labels = self.dialog.core.call_success("i18n_sort", labels)
 
         store = Gtk.ListStore.new([GObject.TYPE_STRING])
         for label in labels:
@@ -473,6 +473,10 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'gtk_resources',
                 'defaults': ['openpaperwork_gtk.resources'],
+            },
+            {
+                'interface': 'i18n',
+                'defaults': ['openpaperwork_core.i18n.python'],
             },
             {
                 'interface': 'screenshot',

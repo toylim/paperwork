@@ -86,3 +86,8 @@ class Plugin(PluginBase):
                 if unicodedata.category(character) != 'Mn'
             )
         )
+
+    def i18n_sort(self, l):
+        t = [(self.i18n_strip_accents(str(e).lower()), e) for e in l]
+        t.sort()
+        return [e[1] for e in t]
