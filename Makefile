@@ -90,7 +90,7 @@ pyocr_win32:
 libpillowfight_win32:
 	${MAKE} -C sub/libpillowfight install_py
 
-windows_exe:
+windows_exe: download_data
 	# dirty hack to make cx_freeze happy
 	# Cx_freeze looks for a file sqlite3.dll whereas in MSYS2, it's called
 	# libsqlite3-0.dll
