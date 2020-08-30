@@ -1,7 +1,5 @@
 import logging
 
-import PIL
-import PIL.Image
 import pillowfight
 
 import openpaperwork_core
@@ -348,15 +346,26 @@ class Plugin(openpaperwork_core.PluginBase):
         (self.scan_width, self.scan_height) = scan_img.size
         self.scan_img = scan_img
 
+        LOGGER.info("Calibration scan ready")
+
+        if self.core.call_success("config_get", "scanner_calibration") is None:
+            # Put the frame a little bit inside the image to make the
+            # corner handles more visible
+            calibration = [
+                min(50, self.scan_width),
+                min(50, self.scan_height),
+                max(self.scan_width - 50, 0),
+                max(self.scan_height - 50, 0),
+            ]
+            LOGGER.info("Setting default calibration area: %s", calibration)
+            self.core.call_all(
+                "config_put", "scanner_calibration", calibration
+            )
+
         self.core.call_all("draw_pillow_start", drawing_area, scan_img)
         self.core.call_all(
             "draw_calibration_start", drawing_area, scan_img.size
         )
-
-        LOGGER.info("Calibration scan ready")
-
-        if self.core.call_success("config_get", "scanner_calibration") is None:
-            self._guess_scan_borders()
 
     def _on_maximize(self, button):
         if self.scan_height <= 0 or self.scan_width <= 0:
@@ -373,14 +382,7 @@ class Plugin(openpaperwork_core.PluginBase):
         LOGGER.info("Guessing scan borders")
 
         def find_scan_borders(scan_img):
-            # It's actually faster to resize down the image than look
-            # for the scan borders on the full-size image.
-            scan_img = scan_img.resize(
-                (int(scan_img.size[0] / 2), int(scan_img.size[1] / 2)),
-                PIL.Image.ANTIALIAS
-            )
             frame = pillowfight.find_scan_borders(scan_img)
-            frame = (frame[0] * 2, frame[1] * 2, frame[2] * 2, frame[3] * 2)
             return frame
 
         promise = openpaperwork_core.promise.Promise(
