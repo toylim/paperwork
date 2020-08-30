@@ -128,7 +128,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         if hasattr(GLib, 'set_application_name'):
             GLib.set_application_name("Paperwork")
-        GLib.set_prgname("paperwork")
+        GLib.set_prgname("work.openpaper.Paperwork")
 
         app = Gtk.Application(
             application_id=None,
