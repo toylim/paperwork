@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-01 22:01+0200\n"
-"PO-Revision-Date: 2020-07-13 09:33+0000\n"
-"Last-Translator: Weblate Admin <jflesch@openpaper.work>\n"
+"PO-Revision-Date: 2020-09-02 17:30+0000\n"
+"Last-Translator: Jerome Flesch <jflesch@openpaper.work>\n"
 "Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-shell/fr/>\n"
 "Language: fr\n"
@@ -109,13 +109,13 @@ msgid "Next possible filters:"
 msgstr "Filtres suivants possibles :"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:149
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid ""
 "'{filter_name}' is an output filter. No other filter can be added after "
 "'{filter_name}'."
 msgstr ""
 "'{filter_name}' est un filtre de sortie. Aucun autre filtre ne peut être "
-"ajouté après '%s'."
+"ajouté après '{filter_name}'."
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:153
 msgid "No possible filters found"
