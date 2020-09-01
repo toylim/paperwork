@@ -12,12 +12,6 @@ LOGGER = logging.getLogger(__name__)
 
 
 class Plugin(PluginBase):
-    LANGS = (
-        'es',
-        'fr',
-        'uk',
-    )
-
     def __init__(self):
         super().__init__()
         self.libintl = None
@@ -70,10 +64,7 @@ class Plugin(PluginBase):
 
         self.l10n_load('openpaperwork_core.l10n', 'openpaperwork_core')
 
-    def l10n_load(self, python_package, text_domain, langs=None):
-        if langs is None:
-            langs = self.LANGS
-
+    def l10n_load(self, python_package, text_domain):
         path = self.core.call_success(
             "resources_get_dir", python_package, 'out'
         )
