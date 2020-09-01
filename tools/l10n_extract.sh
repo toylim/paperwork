@@ -3,6 +3,7 @@
 LANGS="de_DE.UTF-8:de
 es_ES.UTF-8:es
 fr_FR.UTF-8:fr
+oc_FR.UTF-8:oc
 uk_UA.UTF-8:uk"
 
 if [ -z "$1" ] || [ -z "$2" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ] ; then
