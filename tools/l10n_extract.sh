@@ -84,7 +84,7 @@ do
 			-o ${po_file}
 	else
 		echo "messages.pot --> ${po_file} (upd)"
-		msgmerge -U ${po_file} "${dst_dir}/messages.pot"
+		msgmerge -N -U ${po_file} "${dst_dir}/messages.pot"
 	fi
 	if [ $? -ne 0 ] ; then
 		echo "msginit / msgmerge failed ! Unable to create or update .po file !"
