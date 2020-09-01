@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-01 22:01+0200\n"
-"PO-Revision-Date: 2020-08-17 01:16+0000\n"
+"PO-Revision-Date: 2020-09-02 17:30+0000\n"
 "Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
 "Language-Team: Occitan <http://translations.openpaper.work/projects/"
 "paperwork/openpaperwork-core/oc/>\n"
@@ -130,9 +130,9 @@ msgid "Show information regarding a plugin (must be enabled)"
 msgstr "Mostrar las informacions que concernisson un modul (deu èsser activat)"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:125
-#, fuzzy, python-format
+#, python-format
 msgid "Error: Plugin '%s' not found"
-msgstr "Modul « %s » pas activat."
+msgstr "Error : modul « %s » pas trobat"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:143
 #, python-brace-format
