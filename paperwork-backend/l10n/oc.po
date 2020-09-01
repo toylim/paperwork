@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-01 22:01+0200\n"
-"PO-Revision-Date: 2020-08-17 11:02+0000\n"
+"PO-Revision-Date: 2020-09-02 17:30+0000\n"
 "Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
 "Language-Team: Occitan <http://translations.openpaper.work/projects/"
 "paperwork/paperwork-backend/oc/>\n"
@@ -269,11 +269,10 @@ msgstr ""
 "Entrainament del devinaire d’etiquetas amb la mesa a jorn del document %s"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:240
-#, fuzzy
 msgid "Training label guesser for label '{}' with all known documents ..."
 msgstr ""
-"Entrainament del devinaire d’etiquetas « {} » amb totes los documents "
-"coneguts…"
+"Entrainament del devinaire d’etiquetas per l’etiqueta « {} » amb totes los "
+"documents coneguts…"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:333
 msgid "Training label guessing ..."
