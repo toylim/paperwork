@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-01 22:01+0200\n"
-"PO-Revision-Date: 2020-08-17 11:02+0000\n"
+"PO-Revision-Date: 2020-09-02 06:24+0000\n"
 "Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
 "Language-Team: Occitan <http://translations.openpaper.work/projects/"
 "paperwork/paperwork-gtk/oc/>\n"
@@ -208,7 +208,7 @@ msgstr "Imprimir"
 
 #: paperwork-gtk/src/paperwork_gtk/shortcuts/doc/new.py:30
 msgid "Create new document"
-msgstr "Crear un novèl document"
+msgstr "Crear un document novèl"
 
 #: paperwork-gtk/src/paperwork_gtk/shortcuts/doc/properties.py:30
 msgid "Edit document properties"
@@ -542,7 +542,6 @@ msgid "Flatpak"
 msgstr "Flatpak"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/scanner/flatpak.glade.h:2
-#, fuzzy
 msgid ""
 "You are using Paperwork from a Flatpak container. Paperwork needs Saned to "
 "access your scanners. To enable Saned on the host system, you must copy and "
@@ -611,7 +610,6 @@ msgid "Quality"
 msgstr "Qualitat"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/exporter.glade.h:3
-#, fuzzy
 msgid "Paper format"
 msgstr "Format pagina"
 
