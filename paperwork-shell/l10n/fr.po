@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-28 17:24+0200\n"
+"POT-Creation-Date: 2020-09-01 22:01+0200\n"
 "PO-Revision-Date: 2020-07-13 09:33+0000\n"
 "Last-Translator: Weblate Admin <jflesch@openpaper.work>\n"
 "Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
@@ -62,8 +62,8 @@ msgid ""
 "20150303_2314_39 -p 2 -f img_boxes -f grayscale -f jpeg -o ~/tmp/pouet.jpg"
 msgstr ""
 "Exporter un document, une page, ou un jeu de pages. Exemple : paperwork-cli "
-"export 20150303_2314_39 -p 2 -f img_boxes -f grayscale -f jpeg -o ~/tmp/pouet"
-".jpg"
+"export 20150303_2314_39 -p 2 -f img_boxes -f grayscale -f jpeg -o ~/tmp/"
+"pouet.jpg"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:63
 msgid "Document to export"
@@ -78,9 +78,10 @@ msgstr ""
 "virgules, par défaut : toutes les pages)"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:76
+#, fuzzy
 msgid ""
 "Export filters. Specify this option once for each filter to apply (ex: '-f "
-"grayscale -f jpeg'."
+"grayscale -f jpeg')."
 msgstr ""
 "Filtres d'export. Indiquez cette option une fois pour chaque filtre à "
 "appliquer (ex : '-f grayscale -f jpeg')."
@@ -108,9 +109,10 @@ msgid "Next possible filters:"
 msgstr "Filtres suivants possibles :"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:149
-#, python-format, python-brace-format
+#, fuzzy, python-brace-format
 msgid ""
-"'{filter_name}' is an output filter. No other filter can be added after '%s'."
+"'{filter_name}' is an output filter. No other filter can be added after "
+"'{filter_name}'."
 msgstr ""
 "'{filter_name}' est un filtre de sortie. Aucun autre filtre ne peut être "
 "ajouté après '%s'."
@@ -185,8 +187,8 @@ msgstr "Chargement de toutes les étiquettes… "
 #, python-format
 msgid "Are you sure you want to delete label '%s' from all documents ?"
 msgstr ""
-"Êtes-vous sûr que vous voulez effacer l'étiquette '%s' de tous les documents "
-"?"
+"Êtes-vous sûr que vous voulez effacer l'étiquette '%s' de tous les "
+"documents ?"
 
 #: paperwork-shell/src/paperwork_shell/cmd/delete.py:62
 msgid "Delete a document or a page"
@@ -278,8 +280,8 @@ msgstr "Éditer une page"
 #: paperwork-shell/src/paperwork_shell/cmd/edit.py:99
 msgid "List of image modifiers (comma separated, possible values: {})"
 msgstr ""
-"Liste de modificateurs d'images (séparés par des virgules, valeurs possibles "
-": {})"
+"Liste de modificateurs d'images (séparés par des virgules, valeurs "
+"possibles : {})"
 
 #: paperwork-shell/src/paperwork_shell/cmd/edit.py:122
 msgid "Modifying document {} page {} ..."

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-12 15:17+0200\n"
+"POT-Creation-Date: 2020-09-01 22:01+0200\n"
 "PO-Revision-Date: 2020-08-17 11:02+0000\n"
 "Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
 "Language-Team: Occitan <http://translations.openpaper.work/projects/"
@@ -145,7 +145,7 @@ msgstr "{} ppp"
 msgid "No mode selected"
 msgstr "Cap de mòde pas seleccionat"
 
-#: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:98
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:104
 msgid "Scanner"
 msgstr "Numerizador"
 
@@ -153,7 +153,7 @@ msgstr "Numerizador"
 msgid "No scanner"
 msgstr "Cap de numerizador"
 
-#: paperwork-gtk/src/paperwork_gtk/settings/scanner/calibration.py:149
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/calibration.py:154
 msgid "Loading ..."
 msgstr "Cargament..."
 
@@ -292,17 +292,17 @@ msgstr "pas"
 msgid "Remove"
 msgstr "Levar"
 
-#: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:240
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:247
 msgid "Renaming label"
 msgstr "Renomenar l'etiqueta"
 
-#: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:371
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:378
 #, python-brace-format
 msgid "Changing label {old_label} into {new_label} on document {doc_id}"
 msgstr ""
 "Cambiament de l'etiqueta {old_label} en {new_label} sul document {doc_id}"
 
-#: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:437
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:444
 #, python-brace-format
 msgid "Deleting label {old_label} from document {doc_id}"
 msgstr "Supression de l'etiqueta {old_label} del document {doc_id}"
@@ -311,7 +311,7 @@ msgstr "Supression de l'etiqueta {old_label} del document {doc_id}"
 msgid "Empty"
 msgstr "Void"
 
-#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageview/__init__.py:85
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageview/__init__.py:88
 msgid "Loading page {}/{} ..."
 msgstr "Cargament de la pagina {}/{}…"
 
@@ -340,15 +340,15 @@ msgstr "Totes los formats de fichièrs compatibles"
 msgid "command"
 msgstr "comanda"
 
-#: paperwork-gtk/src/paperwork_gtk/model/help/__init__.py:13
+#: paperwork-gtk/src/paperwork_gtk/model/help/__init__.py:64
 msgid "Introduction"
 msgstr "Introduccion"
 
-#: paperwork-gtk/src/paperwork_gtk/model/help/__init__.py:14
+#: paperwork-gtk/src/paperwork_gtk/model/help/__init__.py:65
 msgid "User manual"
 msgstr "Mòde d'emplec"
 
-#: paperwork-gtk/src/paperwork_gtk/model/help/__init__.py:16
+#: paperwork-gtk/src/paperwork_gtk/model/help/__init__.py:67
 msgid "Documentation"
 msgstr "Documentacion"
 
@@ -542,10 +542,11 @@ msgid "Flatpak"
 msgstr "Flatpak"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/scanner/flatpak.glade.h:2
+#, fuzzy
 msgid ""
 "You are using Paperwork from a Flatpak container. Paperwork needs Saned to "
-"access your scanners. To enable Saned on the host system, you copy and paste "
-"the following commands in a terminal:"
+"access your scanners. To enable Saned on the host system, you must copy and "
+"paste the following commands in a terminal:"
 msgstr ""
 "Utilizatz Paperwork d’un contenedor Flatpak estant. Paperwork requerís Saned "
 "per accedir al numerizador. Per activar Saned sul sistèma, vos cal copiar "
@@ -557,8 +558,8 @@ msgid ""
 "<span foreground=\"gray\">Give us clues about how you use Paperwork</span>"
 msgstr ""
 "Enviar las estatisticas\n"
-"<span foreground=\"gray\">Ajudatz-nos a comprendre coma utilizatz "
-"Paperwork</span>"
+"<span foreground=\"gray\">Ajudatz-nos a comprendre coma utilizatz Paperwork</"
+"span>"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/stats.glade.h:3
 msgid ""
@@ -583,8 +584,8 @@ msgid ""
 msgstr ""
 "<span foreground=\"gray\">Aquestas estatisticas nos ajudaràn a far que "
 "Paperwork sia un logicial encara melhor. Nos mostran tanben que monde "
-"utilizan vertadièrament de nòstre trabalh, nos garda motivat per lo melhorar."
-"\n"
+"utilizan vertadièrament de nòstre trabalh, nos garda motivat per lo "
+"melhorar.\n"
 "\n"
 "Vaquí las donadas que reculhissèm :\n"
 "- Material : processor, memòria viva, resolucion d’ecran.\n"
@@ -610,7 +611,8 @@ msgid "Quality"
 msgstr "Qualitat"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/exporter.glade.h:3
-msgid "Page format"
+#, fuzzy
+msgid "Paper format"
 msgstr "Format pagina"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/exporter.glade.h:4

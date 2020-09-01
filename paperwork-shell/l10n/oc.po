@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-08 22:17+0200\n"
+"POT-Creation-Date: 2020-09-01 22:01+0200\n"
 "PO-Revision-Date: 2020-08-17 11:02+0000\n"
 "Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
 "Language-Team: Occitan <http://translations.openpaper.work/projects/"
@@ -77,12 +77,13 @@ msgstr ""
 "virgulas, per defaut : totas las paginas)"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:76
+#, fuzzy
 msgid ""
 "Export filters. Specify this option once for each filter to apply (ex: '-f "
-"grayscale -f jpeg'."
+"grayscale -f jpeg')."
 msgstr ""
-"Filtres d’export. Indicatz aquesta opcion un còp per cada filtre d’aplicar ("
-"ex : '-f grayscale -f jpeg')."
+"Filtres d’export. Indicatz aquesta opcion un còp per cada filtre d’aplicar "
+"(ex : '-f grayscale -f jpeg')."
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:83
 msgid ""
@@ -107,9 +108,10 @@ msgid "Next possible filters:"
 msgstr "Filtres seguents possibles :"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:149
-#, python-format, python-brace-format
+#, fuzzy, python-brace-format
 msgid ""
-"'{filter_name}' is an output filter. No other filter can be added after '%s'."
+"'{filter_name}' is an output filter. No other filter can be added after "
+"'{filter_name}'."
 msgstr ""
 "« {filter_name} » es un filtre de sortida. Cap d’autre filtre pòt pas èsser "
 "ajustar aprèp « %s »."
@@ -276,8 +278,8 @@ msgstr "Modificar una pagina"
 #: paperwork-shell/src/paperwork_shell/cmd/edit.py:99
 msgid "List of image modifiers (comma separated, possible values: {})"
 msgstr ""
-"Lista de modificacion d’imatges (separadas per de virgulas, valors possiblas "
-": {})"
+"Lista de modificacion d’imatges (separadas per de virgulas, valors "
+"possiblas : {})"
 
 #: paperwork-shell/src/paperwork_shell/cmd/edit.py:122
 msgid "Modifying document {} page {} ..."

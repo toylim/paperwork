@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-08 22:21+0200\n"
+"POT-Creation-Date: 2020-09-01 22:01+0200\n"
 "PO-Revision-Date: 2020-08-15 13:39+0000\n"
 "Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
 "Language-Team: Occitan <http://translations.openpaper.work/projects/"
@@ -31,8 +31,9 @@ msgid ""
 "\">Paperwork's bug tracker</a> and attach this ZIP file to the ticket."
 msgstr ""
 "Crear un fichièr ZIP que conten totes los documents.\n"
-"Se volètz, podètz enviar un senhalament de bug manualament sul <a href=\"%s\""
-">seguiment de bugs de paperwork</a> e ajustar aqueste fichièr ZIP al ticket."
+"Se volètz, podètz enviar un senhalament de bug manualament sul <a href=\"%s"
+"\">seguiment de bugs de paperwork</a> e ajustar aqueste fichièr ZIP al "
+"ticket."
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:40
 msgid "Creating bug report ..."
@@ -50,11 +51,11 @@ msgstr "Enviar automaticament"
 msgid "Send the bug report automatically to OpenPaper.work"
 msgstr "Enviar lo senhalament de bug automaticament a OpenPaper.work"
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:257
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:262
 msgid "Success"
 msgstr "Succès"
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:273
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:278
 #, python-format
 msgid ""
 "Transfer failed:\n"
@@ -65,11 +66,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:279
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:284
 msgid "FAILED"
 msgstr "FRACÀS"
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/__init__.py:71
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/__init__.py:77
 msgid "Now"
 msgstr "Ara"
 
@@ -81,12 +82,12 @@ msgstr "Total : {}"
 msgid "Total"
 msgstr "Total"
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:249
-#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:257
+#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:258
+#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:266
 msgid "App. screenshots"
 msgstr "Captura d’ecran de l’aplicacion"
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:258
+#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:267
 msgid "Select to generate"
 msgstr "Seleccionar per generar"
 
@@ -99,6 +100,14 @@ msgid "Bug description"
 msgstr "Descripcion del bug"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:2
+msgid "Anonymous"
+msgstr ""
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:3
+msgid "Bug Report Author"
+msgstr ""
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:4
 msgid ""
 "Bug report successfully submitted.\n"
 "\n"
@@ -116,13 +125,13 @@ msgstr ""
 "Traparetz çai-jos lo ligam privat de vòstre senhalament de bug.\n"
 "\n"
 "<b>Siatz prudents en partejant aqueste ligam.</b> Las pèças juntas del "
-"senhalament de bug (jornals, capturas d’ecran, …) contenon pas cap d’"
-"informacions privadas mas seriatz ben avisats de las verificar abans de "
+"senhalament de bug (jornals, capturas d’ecran, …) contenon pas cap "
+"d’informacions privadas mas seriatz ben avisats de las verificar abans de "
 "partejar aqueste ligam.\n"
 "\n"
-"Podètz demandar la supression de vòstre senhalament de bug en escrivent a l’"
-"adreça seguenta <a href=\"mailto:jflesch@openpaper.work\">jflesch@openpaper."
-"work</a>."
+"Podètz demandar la supression de vòstre senhalament de bug en escrivent a "
+"l’adreça seguenta <a href=\"mailto:jflesch@openpaper.work"
+"\">jflesch@openpaper.work</a>."
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:3
 msgid "Date"

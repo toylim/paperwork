@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-28 17:24+0200\n"
+"POT-Creation-Date: 2020-09-01 22:01+0200\n"
 "PO-Revision-Date: 2020-07-09 11:23+0000\n"
 "Last-Translator: Weblate Admin <jflesch@openpaper.work>\n"
 "Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
@@ -130,7 +130,12 @@ msgstr "Réinitialise la liste des plugins à sa valeur par défaut"
 msgid "Show information regarding a plugin (must be enabled)"
 msgstr "Montre les informations concernant un plugin (doit être activé)"
 
-#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:136
+#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:125
+#, fuzzy, python-format
+msgid "Error: Plugin '%s' not found"
+msgstr "Plugin '%s' non-activé."
+
+#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:143
 #, python-brace-format
 msgid ""
 "Adding plugin '{plugin_name}' to satisfy dependency of '{other_plugin_name}' "
@@ -139,91 +144,91 @@ msgstr ""
 "Ajoute le plugin '{plugin_name}' pour satisfaire la dépendance de "
 "'{other_plugin_name}' sur l'interface '{interface}'"
 
-#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:153
+#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:162
 msgid "Plugin {} added"
 msgstr "Plugin {} ajouté"
 
-#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:175
+#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:184
 #, python-brace-format
 msgid "Removing plugin '{plugin_name}' due to missing dependency '{interface}'"
 msgstr ""
 "Retire le plugin '{plugin_name}' à cause de la dépendance manquante "
 "'{interface}'"
 
-#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:192
+#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:201
 msgid "Plugin {} removed"
 msgstr "Plugin {} retiré"
 
-#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:198
+#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:207
 msgid "Active plugins:"
 msgstr "Plugins actifs :"
 
-#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:284
+#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:293
 #, python-format
 msgid "Plugin '%s' not enabled."
 msgstr "Plugin '%s' non-activé."
 
-#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:289
+#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:298
 #, python-format
 msgid "Plugin '%s':"
 msgstr "Plugin '%s' :"
 
-#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:291
+#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:300
 msgid "Implements:"
 msgstr "Implémente :"
 
-#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:294
+#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:303
 msgid "Depends on:"
 msgstr "Dépend de :"
 
-#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:300
+#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:309
 #, python-format
 msgid "suggested: %s"
 msgstr "Suggéré : %s"
 
-#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:308
-#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:321
+#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:317
+#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:330
 msgid "Plugin name"
 msgstr "Nom du plugin"
 
-#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:309
-#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:322
+#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:318
+#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:331
 msgid "Interface"
 msgstr "Interface"
 
-#: openpaperwork-core/src/openpaperwork_core/config/backend/configparser.py:330
+#: openpaperwork-core/src/openpaperwork_core/config/backend/configparser.py:333
 msgid "App. config."
 msgstr "Config. de l'app."
 
-#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:6
+#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:31
 msgid "Today"
 msgstr "Aujourd'hui"
 
-#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:7
+#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:32
 msgid "Yesterday"
 msgstr "Hier"
 
-#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:9
+#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:34
 #, python-format
 msgid "%3.1f bytes"
 msgstr "%3.1f octets"
 
-#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:10
+#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:35
 #, python-format
 msgid "%3.1f KiB"
 msgstr "%3.1f Kio"
 
-#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:11
+#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:36
 #, python-format
 msgid "%3.1f MiB"
 msgstr "%3.1f MiO"
 
-#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:12
+#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:37
 #, python-format
 msgid "%3.1f GiB"
 msgstr "%3.1f Gio"
 
-#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:13
+#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:38
 #, python-format
 msgid "%3.1f TiB"
 msgstr "%3.1f Tio"

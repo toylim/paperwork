@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-12 15:17+0200\n"
+"POT-Creation-Date: 2020-09-01 22:01+0200\n"
 "PO-Revision-Date: 2020-05-03 15:27+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -143,7 +143,7 @@ msgstr ""
 msgid "No mode selected"
 msgstr ""
 
-#: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:98
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:104
 msgid "Scanner"
 msgstr ""
 
@@ -151,7 +151,7 @@ msgstr ""
 msgid "No scanner"
 msgstr ""
 
-#: paperwork-gtk/src/paperwork_gtk/settings/scanner/calibration.py:149
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/calibration.py:154
 msgid "Loading ..."
 msgstr ""
 
@@ -290,16 +290,16 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
-#: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:240
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:247
 msgid "Renaming label"
 msgstr ""
 
-#: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:371
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:378
 #, python-brace-format
 msgid "Changing label {old_label} into {new_label} on document {doc_id}"
 msgstr ""
 
-#: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:437
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:444
 #, python-brace-format
 msgid "Deleting label {old_label} from document {doc_id}"
 msgstr ""
@@ -308,7 +308,7 @@ msgstr ""
 msgid "Empty"
 msgstr ""
 
-#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageview/__init__.py:85
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageview/__init__.py:88
 msgid "Loading page {}/{} ..."
 msgstr ""
 
@@ -337,15 +337,15 @@ msgstr ""
 msgid "command"
 msgstr ""
 
-#: paperwork-gtk/src/paperwork_gtk/model/help/__init__.py:13
+#: paperwork-gtk/src/paperwork_gtk/model/help/__init__.py:64
 msgid "Introduction"
 msgstr ""
 
-#: paperwork-gtk/src/paperwork_gtk/model/help/__init__.py:14
+#: paperwork-gtk/src/paperwork_gtk/model/help/__init__.py:65
 msgid "User manual"
 msgstr ""
 
-#: paperwork-gtk/src/paperwork_gtk/model/help/__init__.py:16
+#: paperwork-gtk/src/paperwork_gtk/model/help/__init__.py:67
 msgid "Documentation"
 msgstr ""
 
@@ -532,8 +532,8 @@ msgstr ""
 #: paperwork-gtk/src/paperwork_gtk/settings/scanner/flatpak.glade.h:2
 msgid ""
 "You are using Paperwork from a Flatpak container. Paperwork needs Saned to "
-"access your scanners. To enable Saned on the host system, you copy and paste "
-"the following commands in a terminal:"
+"access your scanners. To enable Saned on the host system, you must copy and "
+"paste the following commands in a terminal:"
 msgstr ""
 
 #: paperwork-gtk/src/paperwork_gtk/settings/stats.glade.h:1
@@ -573,7 +573,7 @@ msgid "Quality"
 msgstr ""
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/exporter.glade.h:3
-msgid "Page format"
+msgid "Paper format"
 msgstr ""
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/exporter.glade.h:4

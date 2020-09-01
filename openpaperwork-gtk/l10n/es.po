@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-08 22:21+0200\n"
+"POT-Creation-Date: 2020-09-01 22:01+0200\n"
 "PO-Revision-Date: 2020-05-03 15:37+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -45,11 +45,11 @@ msgstr ""
 msgid "Send the bug report automatically to OpenPaper.work"
 msgstr ""
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:257
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:262
 msgid "Success"
 msgstr ""
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:273
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:278
 #, python-format
 msgid ""
 "Transfer failed:\n"
@@ -57,11 +57,11 @@ msgid ""
 "%s"
 msgstr ""
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:279
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:284
 msgid "FAILED"
 msgstr ""
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/__init__.py:71
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/__init__.py:77
 msgid "Now"
 msgstr ""
 
@@ -73,12 +73,12 @@ msgstr ""
 msgid "Total"
 msgstr ""
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:249
-#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:257
+#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:258
+#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:266
 msgid "App. screenshots"
 msgstr ""
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:258
+#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:267
 msgid "Select to generate"
 msgstr ""
 
@@ -91,6 +91,14 @@ msgid "Bug description"
 msgstr ""
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:2
+msgid "Anonymous"
+msgstr ""
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:3
+msgid "Bug Report Author"
+msgstr ""
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:4
 msgid ""
 "Bug report successfully submitted.\n"
 "\n"

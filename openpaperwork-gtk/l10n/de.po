@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-08 22:21+0200\n"
+"POT-Creation-Date: 2020-09-01 22:01+0200\n"
 "PO-Revision-Date: 2020-07-24 04:43+0000\n"
 "Last-Translator: Andreas Forster <aforster2311@gmail.com>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
@@ -50,11 +50,11 @@ msgstr "Automatisch senden"
 msgid "Send the bug report automatically to OpenPaper.work"
 msgstr "Sende den Fehlerbericht automatisch an OpenPaper.work"
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:257
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:262
 msgid "Success"
 msgstr "Erfolg"
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:273
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:278
 #, python-format
 msgid ""
 "Transfer failed:\n"
@@ -65,11 +65,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:279
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:284
 msgid "FAILED"
 msgstr "Fehlgeschlagen"
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/__init__.py:71
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/__init__.py:77
 msgid "Now"
 msgstr "Jetzt"
 
@@ -81,12 +81,12 @@ msgstr "Gesamt: {}"
 msgid "Total"
 msgstr "Gesamt"
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:249
-#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:257
+#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:258
+#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:266
 msgid "App. screenshots"
 msgstr "Bildschirmfotos"
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:258
+#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:267
 msgid "Select to generate"
 msgstr "Wähle zum Erzeugen"
 
@@ -99,6 +99,14 @@ msgid "Bug description"
 msgstr "Fehlerbeschreibung"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:2
+msgid "Anonymous"
+msgstr ""
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:3
+msgid "Bug Report Author"
+msgstr ""
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:4
 msgid ""
 "Bug report successfully submitted.\n"
 "\n"
@@ -120,8 +128,8 @@ msgstr ""
 "sie prüfen, bevor du den Link weitergibst.\n"
 "\n"
 "Du kannst jederzeit eine Löschung deines Fehlerberichts verlangen. Schreibe "
-"dafür eine E-Mail an <a href=\"mailto:jflesch@openpaper.work\""
-">jflesch@openpaper.work</a>."
+"dafür eine E-Mail an <a href=\"mailto:jflesch@openpaper.work"
+"\">jflesch@openpaper.work</a>."
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:3
 msgid "Date"

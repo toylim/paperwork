@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-12 15:17+0200\n"
+"POT-Creation-Date: 2020-09-01 22:01+0200\n"
 "PO-Revision-Date: 2020-07-13 12:28+0000\n"
 "Last-Translator: Weblate Admin <jflesch@openpaper.work>\n"
 "Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
@@ -147,7 +147,7 @@ msgstr "{} ppp"
 msgid "No mode selected"
 msgstr "Pas de mode sélectionné"
 
-#: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:98
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/settings.py:104
 msgid "Scanner"
 msgstr "Scanner"
 
@@ -155,7 +155,7 @@ msgstr "Scanner"
 msgid "No scanner"
 msgstr "Pas de scanner"
 
-#: paperwork-gtk/src/paperwork_gtk/settings/scanner/calibration.py:149
+#: paperwork-gtk/src/paperwork_gtk/settings/scanner/calibration.py:154
 msgid "Loading ..."
 msgstr "Chargement…"
 
@@ -294,17 +294,17 @@ msgstr "non"
 msgid "Remove"
 msgstr "Retirer"
 
-#: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:240
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:247
 msgid "Renaming label"
 msgstr "Renommer le label"
 
-#: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:371
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:378
 #, python-brace-format
 msgid "Changing label {old_label} into {new_label} on document {doc_id}"
 msgstr ""
 "Changement de l'étiquette {old_label} en {new_label} sur le document {doc_id}"
 
-#: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:437
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:444
 #, python-brace-format
 msgid "Deleting label {old_label} from document {doc_id}"
 msgstr "Suppression de l'étiquette {old_label} du document {doc_id}"
@@ -313,7 +313,7 @@ msgstr "Suppression de l'étiquette {old_label} du document {doc_id}"
 msgid "Empty"
 msgstr "Vide"
 
-#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageview/__init__.py:85
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageview/__init__.py:88
 msgid "Loading page {}/{} ..."
 msgstr "Chargement de la page {}/{}…"
 
@@ -342,15 +342,15 @@ msgstr "Tous les formats de fichiers supportés"
 msgid "command"
 msgstr "commande"
 
-#: paperwork-gtk/src/paperwork_gtk/model/help/__init__.py:13
+#: paperwork-gtk/src/paperwork_gtk/model/help/__init__.py:64
 msgid "Introduction"
 msgstr "Introduction"
 
-#: paperwork-gtk/src/paperwork_gtk/model/help/__init__.py:14
+#: paperwork-gtk/src/paperwork_gtk/model/help/__init__.py:65
 msgid "User manual"
 msgstr "Manuel utilisateur"
 
-#: paperwork-gtk/src/paperwork_gtk/model/help/__init__.py:16
+#: paperwork-gtk/src/paperwork_gtk/model/help/__init__.py:67
 msgid "Documentation"
 msgstr "Documentation"
 
@@ -544,10 +544,11 @@ msgid "Flatpak"
 msgstr "Flatpak"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/scanner/flatpak.glade.h:2
+#, fuzzy
 msgid ""
 "You are using Paperwork from a Flatpak container. Paperwork needs Saned to "
-"access your scanners. To enable Saned on the host system, you copy and paste "
-"the following commands in a terminal:"
+"access your scanners. To enable Saned on the host system, you must copy and "
+"paste the following commands in a terminal:"
 msgstr ""
 "Vous utilisez Paperwork depuis un conteneur Flatpak. Paperwork a besoin de "
 "Saned pour accéder à votre scanner. Pour activer Saned sur le système, vous "
@@ -597,8 +598,8 @@ msgstr ""
 "- Nombre de fois que vous avez utilisé chaque fonctionnalité.\n"
 "\n"
 "Nous ne collectons pas le contenu des documents ni d'autre informations "
-"sensibles, mais nous considérons tout de même normal de vous demander avant "
-";-).\n"
+"sensibles, mais nous considérons tout de même normal de vous demander "
+"avant ;-).\n"
 "\n"
 "Les statistiques collectées sont visibles sur <a href=\"https ://openpaper."
 "work/paperwork/statistics\">openpaper.work</a>.\n"
@@ -613,7 +614,8 @@ msgid "Quality"
 msgstr "Qualité"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/exporter.glade.h:3
-msgid "Page format"
+#, fuzzy
+msgid "Paper format"
 msgstr "Format de papier"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/exporter.glade.h:4

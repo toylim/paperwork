@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-12 12:57+0200\n"
+"POT-Creation-Date: 2020-09-01 22:01+0200\n"
 "PO-Revision-Date: 2020-08-17 11:02+0000\n"
 "Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
 "Language-Team: Occitan <http://translations.openpaper.work/projects/"
@@ -183,23 +183,23 @@ msgstr "Francés"
 msgid "German"
 msgstr "Alemand"
 
-#: paperwork-backend/src/paperwork_backend/i18n/scanner.py:14
+#: paperwork-backend/src/paperwork_backend/i18n/scanner.py:38
 msgid "centrally aligned"
 msgstr "centrat"
 
-#: paperwork-backend/src/paperwork_backend/i18n/scanner.py:15
+#: paperwork-backend/src/paperwork_backend/i18n/scanner.py:39
 msgid "Feeder"
 msgstr "Cargador de documents"
 
-#: paperwork-backend/src/paperwork_backend/i18n/scanner.py:16
+#: paperwork-backend/src/paperwork_backend/i18n/scanner.py:40
 msgid "Flatbed"
 msgstr "Platèl"
 
-#: paperwork-backend/src/paperwork_backend/i18n/scanner.py:17
+#: paperwork-backend/src/paperwork_backend/i18n/scanner.py:41
 msgid "left aligned"
 msgstr "alinhat a esquèrra"
 
-#: paperwork-backend/src/paperwork_backend/i18n/scanner.py:18
+#: paperwork-backend/src/paperwork_backend/i18n/scanner.py:42
 msgid "right aligned"
 msgstr "alinhat a drecha"
 
@@ -269,8 +269,8 @@ msgstr ""
 "Entrainament del devinaire d’etiquetas amb la mesa a jorn del document %s"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:240
-msgid ""
-"Training label guessing training for label '{}' with all known documents ..."
+#, fuzzy
+msgid "Training label guesser for label '{}' with all known documents ..."
 msgstr ""
 "Entrainament del devinaire d’etiquetas « {} » amb totes los documents "
 "coneguts…"

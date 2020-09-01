@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-08 22:21+0200\n"
+"POT-Creation-Date: 2020-09-01 22:01+0200\n"
 "PO-Revision-Date: 2020-07-19 14:28+0000\n"
 "Last-Translator: Weblate Admin <jflesch@openpaper.work>\n"
 "Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
@@ -52,11 +52,11 @@ msgstr "Envoyer automatiquement"
 msgid "Send the bug report automatically to OpenPaper.work"
 msgstr "Envoyer le rapport de bug automatiquement à OpenPaper.work"
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:257
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:262
 msgid "Success"
 msgstr "Succès"
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:273
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:278
 #, python-format
 msgid ""
 "Transfer failed:\n"
@@ -67,11 +67,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:279
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:284
 msgid "FAILED"
 msgstr "ÉCHEC"
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/__init__.py:71
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/__init__.py:77
 msgid "Now"
 msgstr "Maintenant"
 
@@ -83,12 +83,12 @@ msgstr "Total : {}"
 msgid "Total"
 msgstr "Total"
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:249
-#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:257
+#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:258
+#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:266
 msgid "App. screenshots"
 msgstr "Captures d'écran de l'app."
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:258
+#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:267
 msgid "Select to generate"
 msgstr "Sélectionner pour générer"
 
@@ -101,6 +101,14 @@ msgid "Bug description"
 msgstr "Description du bogue"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:2
+msgid "Anonymous"
+msgstr ""
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:3
+msgid "Bug Report Author"
+msgstr ""
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:4
 msgid ""
 "Bug report successfully submitted.\n"
 "\n"
@@ -123,8 +131,8 @@ msgstr ""
 "lien.\n"
 "\n"
 "Vous pouvez demander la suppression de votre rapport de bogue en envoyant un "
-"courriel à cette adresse <a href=\"mailto:jflesch@openpaper.work\""
-">jflesch@openpaper.work</a>."
+"courriel à cette adresse <a href=\"mailto:jflesch@openpaper.work"
+"\">jflesch@openpaper.work</a>."
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:3
 msgid "Date"
