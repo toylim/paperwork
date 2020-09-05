@@ -21,20 +21,7 @@ class Plugin(openpaperwork_core.PluginBase):
         super().__init__()
         self.widget_tree = None
         self.extra_widget = None
-        self.config = [
-            (
-                'settings_scanner_name', 'scanner_device_value',
-                _("No scanner selected"), "{}".format
-            ),
-            (
-                'scanner_resolution', 'scanner_resolution_value',
-                _("No resolution selected"), _("{} dpi").format
-            ),
-            (
-                'scanner_mode', 'scanner_mode_value',
-                _("No mode selected"), self._translate_mode
-            ),
-        ]
+        self.config = []
 
     def get_interfaces(self):
         return [
@@ -47,6 +34,10 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'config',
                 'defaults': ['openpaperwork_core.config'],
+            },
+            {
+                'interface': 'l10n_init',
+                'defaults': ['paperwork_gtk.l10n'],
             },
             {
                 'interface': 'scan',
@@ -64,6 +55,21 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def init(self, core):
         super().init(core)
+
+        self.config = [
+            (
+                'settings_scanner_name', 'scanner_device_value',
+                _("No scanner selected"), "{}".format
+            ),
+            (
+                'scanner_resolution', 'scanner_resolution_value',
+                _("No resolution selected"), _("{} dpi").format
+            ),
+            (
+                'scanner_mode', 'scanner_mode_value',
+                _("No mode selected"), self._translate_mode
+            ),
+        ]
 
         opt = self.core.call_success(
             "config_build_simple", "settings_scanner", "name",
@@ -145,9 +151,11 @@ class Plugin(openpaperwork_core.PluginBase):
     def _refresh_settings(self, widget_tree):
         for (config_key, widget_name, default_value, fmt) in self.config:
             value = self.core.call_success("config_get", config_key)
-            if value is None:
+            if value is not None:
+                value = fmt(value)
+            else:
                 value = default_value
-            widget_tree.get_object(widget_name).set_text(fmt(value))
+            widget_tree.get_object(widget_name).set_text(value)
 
         active = self.core.call_success("config_get", "scanner_dev_id")
         active = active is not None and active != ""
