@@ -521,7 +521,8 @@ class Plugin(openpaperwork_core.PluginBase):
         return [
             "bug_report_attachments",
             "chkdeps",
-            "scan"
+            "scan",
+            "stats",
         ]
 
     def get_deps(self):
@@ -696,3 +697,9 @@ class Plugin(openpaperwork_core.PluginBase):
             return
         collector = BugReportCollector(self, args)
         collector.run()
+
+    def stats_get(self, out: dict):
+        if not LIBINSANE_AVAILABLE:
+            out['libinsane_version'] = "not installed"
+            return
+        out['libinsane_version'] = Libinsane.Api.get_version()
