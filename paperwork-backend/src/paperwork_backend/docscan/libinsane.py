@@ -399,7 +399,10 @@ class BugReportCollector(object):
     @staticmethod
     def _get_error_proof(func):
         try:
-            return str(func())
+            r = func()
+            if type(r) is bool or type(r) is int or type(r) is float:
+                return r
+            return str(r)
         except Exception as exc:
             return str(exc)
 
@@ -416,6 +419,12 @@ class BugReportCollector(object):
         out['value'] = self._get_error_proof(opt.get_value)
 
     def _collect_item_info(self, item, base_name, out: dict):
+        if item is None or item is False:
+            out['reachable'] = False
+            return
+
+        out['reachable'] = True
+
         try:
             name = item.get_name()
             if base_name is not None and base_name != "":
@@ -451,6 +460,14 @@ class BugReportCollector(object):
             fd.write(infos)
         return file_url
 
+    @staticmethod
+    def _collect_get_device(libinsane, dev_id):
+        try:
+            return libinsane.get_device(dev_id)
+        except Exception as exc:
+            LOGGER.error("Failed to get device [%s]", dev_id, exc_info=exc)
+            return False  # can't return None or it will be ignored
+
     def _collect_all_info(self, scanners):
         out = {}
         promise = openpaperwork_core.promise.Promise(self.core)
@@ -460,8 +477,8 @@ class BugReportCollector(object):
             }
             promise = promise.then(
                 openpaperwork_core.promise.ThreadedPromise(
-                    self.core, self.plugin.libinsane.get_device,
-                    args=(dev_id[len("libinsane:"):],)
+                    self.core, self._collect_get_device,
+                    args=(self.plugin.libinsane, dev_id[len("libinsane:"):],)
                 )
             )
             promise = promise.then(openpaperwork_core.promise.ThreadedPromise(
