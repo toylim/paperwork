@@ -28,7 +28,10 @@ class Plugin(PluginBase):
         if not PKG_RESOURCES_AVAILABLE:
             return
 
-        path = pkg_resources.resource_filename(pkg, filename)
+        try:
+            path = pkg_resources.resource_filename(pkg, filename)
+        except KeyError:
+            return None
 
         if not os.access(path, os.R_OK):
             LOGGER.warning("Failed to find resource file %s/%s", pkg, filename)
