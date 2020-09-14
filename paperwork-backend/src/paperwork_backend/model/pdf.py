@@ -43,6 +43,9 @@ class PdfWordBox(object):
             self.position, str(self.content)
         )
 
+    def __lt__(self, o):
+        return self.position < o.position
+
     def __repr__(self):
         return str(self)
 
