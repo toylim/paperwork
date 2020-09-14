@@ -1,10 +1,17 @@
+import collections
 import datetime
+import locale
 import unicodedata
 
 from .. import (_, PluginBase)
 
 
 class Plugin(PluginBase):
+    MONTH_FORMATS = collections.defaultdict(
+        lambda: "%B",
+        oc="%b",  # Occitan
+    )
+
     def __init__(self):
         self.today = datetime.date.today()
         self.yesterday = self.today - datetime.timedelta(days=1)
@@ -67,7 +74,12 @@ class Plugin(PluginBase):
     def i18n_date_long_month(self, date):
         if hasattr(date, 'date'):
             date = date.date()  # datetime --> date
-        return date.strftime("%B")
+        locale_msg = locale.getlocale(locale.LC_MESSAGES)
+        if locale_msg is None or locale_msg[0] is None:
+            locale_msg = None
+        else:
+            locale_msg = locale_msg[0].split("_", 1)[0]
+        return date.strftime(self.MONTH_FORMATS[locale_msg])
 
     def i18n_file_size(self, num):
         for string in self.i18n_sizes:
