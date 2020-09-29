@@ -43,7 +43,7 @@ for branch in master testing develop ; do
 
 		echo "==================================="
 		echo "Branch: ${branch}"
-		echo "Commit: ${commit}"
+		echo "Flatpak Commit: ${commit}"
 
 		for line in $(< ${stacktrace_file}) ; do
 			filename=$(echo "${line}"|cut -d'(' -f1)
