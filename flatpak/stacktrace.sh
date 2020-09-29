@@ -44,15 +44,25 @@ for branch in master testing develop ; do
 		echo "==================================="
 		echo "Branch: ${branch}"
 		echo "Flatpak Commit: ${commit}"
+		echo
 
 		for line in $(< ${stacktrace_file}) ; do
+			if [ -z "${line}" ] || [ "${line}" = "-" ] ; then
+				echo "(...)"
+				echo
+				continue
+			fi
+
 			filename=$(echo "${line}"|cut -d'(' -f1)
 			addr=$(echo "${line}"|cut -d'(' -f2|cut -d')' -f1)
 			result=$(flatpak run --devel --command=addr2line work.openpaper.Paperwork \
 				-i -p -f -e "${filename}" "${addr}")
-			echo "${filename}:${addr} : ${result}"
+			echo "IN: ${filename}(${addr})"
+			echo "ADDR2LINE: ${result}"
+			echo
 		done
 
+		echo
 		echo
 	done
 done
