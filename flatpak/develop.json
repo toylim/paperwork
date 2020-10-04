@@ -2,7 +2,7 @@
     "app-id": "work.openpaper.Paperwork",
     "branch": "develop",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "3.36",
+    "runtime-version": "3.38",
     "sdk": "org.gnome.Sdk",
     "command": "paperwork-gtk",
     "copy-icon": true,
@@ -159,42 +159,6 @@
                     "type": "file",
                     "path": "pip-Makefile",
                     "dest-filename": "Makefile"
-                }
-            ]
-        },
-        {
-            "name": "python-pillow",
-            "no-autogen": true,
-            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://files.pythonhosted.org/packages/3c/7e/443be24431324bd34d22dd9d11cc845d995bcd3b500676bcf23142756975/Pillow-5.4.1.tar.gz",
-                    "sha256": "5233664eadfa342c639b9b9977190d64ad7aca4edc51a966394d7e08e7f38a9f"
-                },
-                {
-                    "type": "file",
-                    "path": "pip-Makefile",
-                    "dest-filename": "Makefile"
-                }
-            ],
-            "modules": [
-                {
-                    "name": "python-olefile",
-                    "no-autogen": true,
-                    "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
-                    "sources": [
-                        {
-                            "type": "archive",
-                            "url": "https://files.pythonhosted.org/packages/34/81/e1ac43c6b45b4c5f8d9352396a14144bba52c8fec72a80f425f6a4d653ad/olefile-0.46.zip",
-                            "sha256": "133b031eaf8fd2c9399b78b8bc5b8fcbe4c31e85295749bb17a87cba8f3c3964"
-                        },
-                        {
-                            "type": "file",
-                            "path": "pip-Makefile",
-                            "dest-filename": "Makefile"
-                        }
-                    ]
                 }
             ]
         },
