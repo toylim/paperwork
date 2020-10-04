@@ -2,10 +2,12 @@
 
 WGET_OPTS="-q"
 
-branch=$(git symbolic-ref -q HEAD 2>/dev/null)
+branch=$(git symbolic-ref -q HEAD)
+echo "Current ref: ${branch}"
+
 branch=${branch##refs/heads/}
 branch=${branch:-master}
-commit="$(git rev-parse --short HEAD 2>/dev/null)"
+commit="$(git rev-parse --short HEAD)"
 
 echo "Current branch: ${branch}"
 echo "Current commit: ${commit}"
