@@ -74,7 +74,11 @@ class Plugin(PluginBase):
     def i18n_date_long_month(self, date):
         if hasattr(date, 'date'):
             date = date.date()  # datetime --> date
-        locale_msg = locale.getlocale(locale.LC_MESSAGES)
+        locale_msg = None
+        if hasattr(locale, 'LC_MESSAGE'):
+            locale_msg = locale.getlocale(locale.LC_MESSAGES)
+        elif hasattr(locale, 'LC_ALL'):
+            locale_msg = locale.getlocale(locale.LC_ALL)
         if locale_msg is None or locale_msg[0] is None:
             locale_msg = None
         else:
