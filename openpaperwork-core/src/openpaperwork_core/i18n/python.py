@@ -75,7 +75,7 @@ class Plugin(PluginBase):
         if hasattr(date, 'date'):
             date = date.date()  # datetime --> date
         locale_msg = None
-        if hasattr(locale, 'LC_MESSAGE'):
+        if hasattr(locale, 'LC_MESSAGES'):
             locale_msg = locale.getlocale(locale.LC_MESSAGES)
         elif hasattr(locale, 'LC_ALL'):
             locale_msg = locale.getlocale(locale.LC_ALL)
