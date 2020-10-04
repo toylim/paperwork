@@ -50,6 +50,7 @@ windows_exe:
 	(cd $(CURDIR)/src && find . -name '*.mo' -exec cp --parents \{\} $(CURDIR)/../build/exe/data \; )
 	(cd $(CURDIR)/src && find . -name '*.pdf' -exec cp --parents \{\} $(CURDIR)/../build/exe/data \; )
 	(cd $(CURDIR)/src && find . -name '*.png' -exec cp --parents \{\} $(CURDIR)/../build/exe/data \; )
+	(cd $(CURDIR)/src && find . -name '*.ico' -exec cp --parents \{\} $(CURDIR)/../build/exe/data \; )
 
 linux_exe:
 

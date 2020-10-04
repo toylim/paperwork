@@ -314,7 +314,7 @@ Section "Paperwork" SEC_PAPERWORK
 SectionEnd
 
 Section "Desktop icon" SEC_DESKTOP_ICON
-  CreateShortCut "$DESKTOP\\Paperwork.lnk" "$INSTDIR\\paperwork.exe" "" "$INSTDIR\\Data\\paperwork_64.ico" 0 SW_SHOWNORMAL "" "Paperwork"
+  CreateShortCut "$DESKTOP\\Paperwork.lnk" "$INSTDIR\\paperwork.exe" "" "$INSTDIR\\data\\paperwork_gtk\\data\\paperwork_64.ico" 0 SW_SHOWNORMAL "" "Paperwork"
 SectionEnd
 """
 
