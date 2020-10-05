@@ -592,6 +592,12 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
         if not self._is_file_uri(uri):
             return None
 
+        if os.name == 'nt':
+            # WORKAROUND(Jflesch):
+            # Gio.File.query_info().get_content_type() returns crap on Windows
+            # (for instance '.pdf' instead of 'application/pdf').
+            return None
+
         gfile = self.vfs.get_file_for_uri(uri)
         info = gfile.query_info(
             "standard::content-type", Gio.FileQueryInfoFlags.NONE
