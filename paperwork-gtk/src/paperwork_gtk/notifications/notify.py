@@ -87,7 +87,10 @@ class Plugin(openpaperwork_core.PluginBase):
             out['notify'].update(openpaperwork_gtk.deps.NOTIFY)
 
     def get_notification_builder(self, title, need_actions=False):
-        if not need_actions or "actions" in Notify.get_server_caps():
+        caps = Notify.get_server_caps()
+        if len(caps) <= 0:
+            return None
+        if not need_actions or "actions" in caps:
             r = NotifyBuilder(title)
             self.notification_refs.append(r)
             return r
