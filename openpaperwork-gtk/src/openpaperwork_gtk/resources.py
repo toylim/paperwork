@@ -1,5 +1,10 @@
+import gettext
 import logging
+import os
 import re
+
+if os.name == "nt":
+    import xml.etree.ElementTree
 
 try:
     import gi
@@ -59,6 +64,20 @@ class Plugin(openpaperwork_core.PluginBase):
         if not GTK_AVAILABLE:
             out['gtk'].update(deps.GTK)
 
+    @staticmethod
+    def _translate_xml(xml_str):
+        root = xml.etree.ElementTree.fromstring(xml_str)
+
+        translation_domain = "openpaperwork_gtk"
+        if 'domain' in root.attrib:
+            translation_domain = root.attrib['domain']
+
+        labels = root.findall('.//*[@translatable="yes"]')
+        for label in labels:
+            label.text = gettext.dgettext(translation_domain, label.text)
+        out = xml.etree.ElementTree.tostring(root, encoding='UTF-8')
+        return out.decode('utf-8')
+
     def gtk_load_widget_tree(self, pkg, filename):
         """
         Load a .glade file
@@ -92,7 +111,14 @@ class Plugin(openpaperwork_core.PluginBase):
                     "resources_get_file", pkg, filename
                 )
                 with self.core.call_success("fs_open", filepath, 'r') as fd:
-                    self.cache[k] = fd.read()
+                    xml = fd.read()
+                if os.name == "nt":
+                    # WORKAROUND(Jflesch):
+                    # for some reason,
+                    # Gtk.Builder.new_from_file()/new_from_string doesn't
+                    # translate on Windows
+                    xml = self._translate_xml(xml)
+                self.cache[k] = xml
             except Exception:
                 LOGGER.error(
                     "Failed to load widget tree from file %s:%s",
