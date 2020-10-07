@@ -25,9 +25,9 @@ try:
 except (ImportError, ValueError):
     GTK_AVAILABLE = False
 
-import openpaperwork_core
+import openpaperwork_core  # noqa: E402
 
-from . import deps
+from . import deps  # noqa: E402
 
 
 LOGGER = logging.getLogger(__name__)
