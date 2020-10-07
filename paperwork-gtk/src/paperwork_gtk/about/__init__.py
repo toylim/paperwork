@@ -1,4 +1,9 @@
+import logging
+
 import openpaperwork_core
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -49,7 +54,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _set_authors_list(self, method, authors):
         out = []
-        print(authors)
         for (email, name, line_count) in authors:
             txt = name
             if line_count > 0:
@@ -57,7 +61,13 @@ class Plugin(openpaperwork_core.PluginBase):
             out.append(txt)
         method(out)
 
+    def _on_close(self, dialog, *args, **kwargs):
+        LOGGER.info("Closing dialog 'about'")
+        dialog.destroy()
+        self.core.call_all("on_gtk_window_closed", dialog)
+
     def gtk_open_about(self):
+        LOGGER.info("Opening dialog 'about'")
         widget_tree = self.core.call_success(
             "gtk_load_widget_tree",
             "paperwork_gtk.about", "about.glade"
@@ -88,3 +98,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
         about_dialog.set_transient_for(self.windows[-1])
         about_dialog.set_visible(True)
+
+        about_dialog.connect("close", self._on_close)
+        about_dialog.connect("response", self._on_close)
+
+        self.core.call_all("on_gtk_window_opened", about_dialog)
