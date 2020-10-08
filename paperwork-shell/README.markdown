@@ -21,9 +21,11 @@ From there, `paperwork-xxx` means either `paperwork-cli` or `paperwork-json`.
 
 ### On Windows
 
-Installer doesn't modify your PATH. If you want to invoke paperwork-shell's
-commands, you either have to modify your PATH yourself, or use the commands
-full paths (ex: `"c:\program files (x86)\Paperwork\paperwork-cli"`).
+Only paperwork-json is available.
+
+Installer doesn't modify your PATH. If you want to invoke paperwork-json,
+you either have to modify your PATH yourself, or use the command
+full path (ex: `"c:\program files (x86)\Paperwork\paperwork-json.exe"`).
 
 
 ### In a Flatpak container
