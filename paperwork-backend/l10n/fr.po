@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-01 22:01+0200\n"
-"PO-Revision-Date: 2020-09-02 17:30+0000\n"
+"PO-Revision-Date: 2020-10-10 21:04+0000\n"
 "Last-Translator: Jerome Flesch <jflesch@openpaper.work>\n"
 "Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-backend/fr/>\n"
@@ -269,7 +269,6 @@ msgstr ""
 "Entraînement de l'estimateur d'étiquettes avec la mise à jour du document %s"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:240
-#, fuzzy
 msgid "Training label guesser for label '{}' with all known documents ..."
 msgstr ""
 "Entraînement de l'estimateur pour l'étiquette '{}' avec tous les documents "
