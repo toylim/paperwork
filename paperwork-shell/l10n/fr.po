@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-01 22:01+0200\n"
-"PO-Revision-Date: 2020-09-02 17:30+0000\n"
+"PO-Revision-Date: 2020-10-10 14:40+0000\n"
 "Last-Translator: Jerome Flesch <jflesch@openpaper.work>\n"
 "Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-shell/fr/>\n"
@@ -78,7 +78,6 @@ msgstr ""
 "virgules, par défaut : toutes les pages)"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:76
-#, fuzzy
 msgid ""
 "Export filters. Specify this option once for each filter to apply (ex: '-f "
 "grayscale -f jpeg')."
