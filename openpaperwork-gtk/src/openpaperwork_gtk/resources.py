@@ -1,5 +1,11 @@
+import gettext
 import logging
+import os
 import re
+
+if os.name == "nt":
+    import webbrowser
+    import xml.etree.ElementTree
 
 try:
     import gi
@@ -19,9 +25,9 @@ try:
 except (ImportError, ValueError):
     GTK_AVAILABLE = False
 
-import openpaperwork_core
+import openpaperwork_core  # noqa: E402
 
-from . import deps
+from . import deps  # noqa: E402
 
 
 LOGGER = logging.getLogger(__name__)
@@ -59,6 +65,44 @@ class Plugin(openpaperwork_core.PluginBase):
         if not GTK_AVAILABLE:
             out['gtk'].update(deps.GTK)
 
+    @staticmethod
+    def _translate_xml(xml_str):
+        root = xml.etree.ElementTree.fromstring(xml_str)
+
+        translation_domain = "openpaperwork_gtk"
+        if 'domain' in root.attrib:
+            translation_domain = root.attrib['domain']
+
+        labels = root.findall('.//*[@translatable="yes"]')
+        for label in labels:
+            label.text = gettext.dgettext(translation_domain, label.text)
+
+        out = xml.etree.ElementTree.tostring(root, encoding='UTF-8')
+        return out.decode('utf-8')
+
+    @staticmethod
+    def _windows_fix_widgets(widget_tree):
+        def open_uri(uri):
+
+            # XXX(Jflesch): Seems we get some garbarge in the URI sometimes ?!
+            uri = uri.replace("\u202f", "")
+
+            LOGGER.info("Opening URI [%s]", uri)
+            webbrowser.open(uri)
+
+        for obj in widget_tree.get_objects():
+            if isinstance(obj, Gtk.LinkButton):
+                obj.connect(
+                    "clicked",
+                    lambda button: open_uri(button.get_uri())
+                )
+            elif (isinstance(obj, Gtk.AboutDialog) or
+                    isinstance(obj, Gtk.Label)):
+                obj.connect(
+                    "activate-link",
+                    lambda widget, uri: open_uri(uri)
+                )
+
     def gtk_load_widget_tree(self, pkg, filename):
         """
         Load a .glade file
@@ -92,7 +136,14 @@ class Plugin(openpaperwork_core.PluginBase):
                     "resources_get_file", pkg, filename
                 )
                 with self.core.call_success("fs_open", filepath, 'r') as fd:
-                    self.cache[k] = fd.read()
+                    xml = fd.read()
+                if os.name == "nt":
+                    # WORKAROUND(Jflesch):
+                    # for some reason,
+                    # Gtk.Builder.new_from_file()/new_from_string doesn't
+                    # translate on Windows
+                    xml = self._translate_xml(xml)
+                self.cache[k] = xml
             except Exception:
                 LOGGER.error(
                     "Failed to load widget tree from file %s:%s",
@@ -102,7 +153,10 @@ class Plugin(openpaperwork_core.PluginBase):
 
         try:
             content = self.cache[k]
-            return Gtk.Builder.new_from_string(content, -1)
+            widget_tree = Gtk.Builder.new_from_string(content, -1)
+            if os.name == "nt":
+                self._windows_fix_widgets(widget_tree)
+            return widget_tree
         except Exception:
             LOGGER.error("Failed to load widget tree %s:%s", pkg, filename)
             raise

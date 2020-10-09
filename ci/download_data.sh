@@ -2,14 +2,20 @@
 
 WGET_OPTS="-q"
 
-branch=$(git symbolic-ref -q HEAD 2>/dev/null)
-branch=${branch##refs/heads/}
-branch=${branch:-master}
-commit="$(git rev-parse --short HEAD 2>/dev/null)"
+if [ -n "${CI_COMMIT_REF_NAME}" ] ; then
+	branch="${CI_COMMIT_REF_NAME}"
+else
+	branch=$(git symbolic-ref -q HEAD)
+	echo "Current ref: ${branch}"
 
-echo "Current branch: ${branch}"
+	branch=${branch##refs/heads/}
+	branch=${branch:-master}
+
+	echo "Current branch: ${branch}"
+fi
+
+commit="$(git rev-parse --short HEAD)"
 echo "Current commit: ${commit}"
-
 
 download()
 {

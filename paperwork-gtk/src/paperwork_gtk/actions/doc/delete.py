@@ -77,6 +77,8 @@ class Plugin(openpaperwork_core.PluginBase):
         LOGGER.info("Asking confirmation before deleting doc %s", active[0])
         msg = _('Are you sure you want to delete document %s ?') % active[0]
 
+        active_doc = self.active_doc
+
         if os.name == "nt":
             # On Windows, we have to be absolutely sure the PDF is actually
             # closed when we try to delete it because Windows s*cks pony d*cks
@@ -86,7 +88,7 @@ class Plugin(openpaperwork_core.PluginBase):
             gc.collect()
 
         self.core.call_all(
-            "gtk_show_dialog_yes_no", self, msg, self.active_doc
+            "gtk_show_dialog_yes_no", self, msg, active_doc
         )
 
     def on_dialog_yes_no_reply(self, parent, reply, *args, **kwargs):

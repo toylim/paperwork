@@ -45,11 +45,17 @@ windows_exe:
 	# and I don't want to have to patch the build machine to fix it every
 	# time.
 	mkdir -p $(CURDIR)/../build/exe/data
+	# We need the .ico at the root of the data/ folder
+	# The installer makes a desktop icon that expect paperwork_64.ico there,
+	# and since we use the same installer for all versions (master, testing,
+	# unstable, etc), we can't change this path yet.
+	cp $(CURDIR)/src/paperwork_gtk/data/*.ico $(CURDIR)/../build/exe/data
 	(cd $(CURDIR)/src && find . -name '*.css' -exec cp --parents \{\} $(CURDIR)/../build/exe/data \; )
 	(cd $(CURDIR)/src && find . -name '*.glade' -exec cp --parents \{\} $(CURDIR)/../build/exe/data \; )
 	(cd $(CURDIR)/src && find . -name '*.mo' -exec cp --parents \{\} $(CURDIR)/../build/exe/data \; )
 	(cd $(CURDIR)/src && find . -name '*.pdf' -exec cp --parents \{\} $(CURDIR)/../build/exe/data \; )
 	(cd $(CURDIR)/src && find . -name '*.png' -exec cp --parents \{\} $(CURDIR)/../build/exe/data \; )
+	(cd $(CURDIR)/src && find . -name '*.ico' -exec cp --parents \{\} $(CURDIR)/../build/exe/data \; )
 
 linux_exe:
 
