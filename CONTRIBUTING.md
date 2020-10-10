@@ -1,39 +1,53 @@
-# How to contribute ?
+# Reporting bug
+
+If you want open a ticket on Gitlab, the following information is needed:
+- Exact Paperwork version
+- Operation system (Windows ? Linux ?)
+- If you use Linux: how did you install Paperwork ? Using Flatpak ?
+- Logs of the session where the bug happened are strongly recommended.
+- If the bug is a UI bug, a screenshot is strongly recommended.
+
+---
+
+# Other contributions
 
 [You can help in many ways](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Contributing):
 - [Code contributions](doc/install.devel.markdown)
 - UX and UI designs ([example](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/issues/356#note_244099))
 - Testing
-- Translating
+- [Translating](https://translations.openpaper.work)
 - Documentation (markdown files or [LyX](https://www.lyx.org/)/[PDF files](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/tree/master/paperwork-gtk/doc)
   integrated in Paperwork)
 
 For most tasks, being familiar with Git is really helpful.
 
-Most of the communication happens on the [bug tracker](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/issues).
-Sometimes the [mailing-list](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Contact#mailing-list)
-or [IRC](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Contact#irc) are used too.
+Most of the communication happens on the
+[bug tracker](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/issues)
+or on the [forum](https://forum.openpaper.work/)
+Sometimes [IRC](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Contact#irc) is used too.
 
 
 # Code contribution rules
 
 * All commits go to the branch 'develop'. I (Jflesch) will cherry-pick them in master or release branches if required.
-* Paperwork is made to be *simple* to use (think simple enough that your own grandmother could install and use it)
+* Paperwork is made to be *simple* to use (think simple enough that your own mother could install and use it)
 * Paperwork is open-source software (GPLv3+)
-* Your changes must respect the [PEP8](https://www.python.org/dev/peps/pep-0008/) (you can use the command `make check` to check your changes)
-* You must not break existing features. You're strongly encouraged to discuss the changes you want to make beforehand (on the bug tracker, the mailing-list or IRC).
+* Run `make check` and `make test`. If they fail, you change will be rejected.
+* Consider adding automated tests.
+* Consider updating the user manual
+  (paperwork-gtk/src/paperwork\_gtk/model/help/data/\*,tex)
+* Your changes must respect the [PEP8](https://www.python.org/dev/peps/pep-0008/): you can use the command `make check` to check your changes
+* You must not break existing features. You're strongly encouraged to discuss the changes you want to make beforehand (on the bug tracker, on the forum or on IRC).
 * Your contribution must be maintainable: It must be clear enough so that somebody else can maintain it. If it is a complicated piece of code, please comment it as clearly as possible.
 * Your contribution must and will be reviewed (most likely by me, Jflesch)
-* If you make an important contribution, please try to maintain it (fix bug reported by other users regarding features you added, etc).
+* If you make an important contribution, please try to maintain it (fix bugs reported by other users regarding features you added, etc).
 * Unmaintained and unmaintainable pieces of code will be removed, sooner or later.
 * [Please try to have one change per commit](https://www.freshconsulting.com/atomic-commits/).
 * If you see pieces of code that doesn't follow these rules, feel free to make a cleanup commit to fix it. Please do not mix cleanups with other changes in a same commit.
 * If you add new dependencies, please update:
-  * `setup.py`: for Python dependencies
-  * `setup_cx_freeze.py`: for the build of the Windows executable (only for the GTK interface)
-  * `src/paperwork/deps.py`: frontend ; for non-Python dependencies
-  * `paperwork-backend/deps.py`: backend ; for non-Python dependencies
-  * `flatpak/develop.json`: Used to generate Flatpak packages (see `flatpak-builder`). To test your changes, you can generate standalone Paperwork Flatpak bundles with "cd flatpak ; make bundles" (it's quite long ; beware it will use your local `develop.json` but will package Paperwork from Github).
+  * setup.py scripts as required (beware of Windows support)
+  * `chkdeps()` methods as required
+  * Flatpak JSON files as required
 
 Same rules apply for all the libraries in Openpaperwork: PyOCR, Libinsane, etc.
 
@@ -42,13 +56,12 @@ Regarding PEP-8, the following rules must be strictly followed:
 1. Lines are at most 80 characters long
 2. Indentation is done using 4 spaces
 
-(again, please run `make check` before submitting a change)
-
 
 # Continous Integration and Delivery
 
-There is a [Continous Integration and Delivery](https://origami.openpaper.work) running.
-All changes must leave the CI/CD OK.
+There is a [Continous Integration and Delivery](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/pipelines) running.
+All changes must leave the CI/CD OK. You can have look at the file
+.gitlab-ci.yml to know what the CI/CD build and check.
 
 
 # Branches
