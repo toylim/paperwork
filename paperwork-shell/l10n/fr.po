@@ -10,7 +10,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-01 22:01+0200\n"
 "PO-Revision-Date: 2020-10-10 14:40+0000\n"
-"Last-Translator: Jerome Flesch <jflesch@openpaper.work>\n"
+"Last-Translator: LAZIC Anna <0.0.0.0.0.ffff.255.255.255.255@gmail.com>\n"
 "Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-shell/fr/>\n"
 "Language: fr\n"
@@ -293,7 +293,7 @@ msgstr "Original :"
 
 #: paperwork-shell/src/paperwork_shell/cmd/edit.py:147
 msgid "Generating in high quality and saving ..."
-msgstr "Enregistrement en haute-qualité…"
+msgstr "Enregistrement en haute qualité…"
 
 #: paperwork-shell/src/paperwork_shell/cmd/edit.py:175
 #: paperwork-shell/src/paperwork_shell/cmd/reset.py:123
