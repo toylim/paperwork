@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-01 22:01+0200\n"
-"PO-Revision-Date: 2020-10-10 14:40+0000\n"
+"PO-Revision-Date: 2020-10-11 11:12+0000\n"
 "Last-Translator: LAZIC Anna <0.0.0.0.0.ffff.255.255.255.255@gmail.com>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-shell/de/>\n"
@@ -89,7 +89,7 @@ msgid ""
 "Output file/directory. If not specified, will list the filters that could be "
 "chained after those already specified."
 msgstr ""
-"Ausgabedatei/verzeichnis. Wenn nicht angegeben, werden die Filter angezeigt "
+"Ausgabedatei/Verzeichnis. Wenn nicht angegeben, werden die Filter angezeigt "
 "die nach den bereits angegebenen angehängt werden können."
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:119
@@ -403,13 +403,15 @@ msgstr "Bestimme welcher Scanner und welche Einstellungen benützt werden sollen
 
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:75
 msgid "Scanner to use"
-msgstr "Benützt diesen Scanner"
+msgstr "Benütze diesen Scanner"
 
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:80
 msgid ""
 "Default source on the scanner to use (if not specified, one will be selected "
 "randomly)"
 msgstr ""
+"Standartquelle zu benützen (when nich festgelegt, wird eine zufällig "
+"ausgewählt)"
 
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:86
 msgid "Default resolution (dpi ; default=300)"
@@ -439,53 +441,53 @@ msgstr "Auflösung:"
 
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:183
 msgid "Source {} not found on device. Using another source"
-msgstr ""
+msgstr "Quelle {} nicht gefunden auf den Gerät. Benutzung einer andere Quelle"
 
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:203
 msgid "Default source:"
-msgstr ""
+msgstr "Standardquelle:"
 
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:217
 msgid "Resolution {} not available. Adjusted to {}."
-msgstr ""
+msgstr "{} Auflössung nicht verfügbar. Für {} angepasst."
 
 #: paperwork-shell/src/paperwork_shell/cmd/show.py:51
 msgid "Show the content of a document"
-msgstr ""
+msgstr "Stellt den Inhalt eines Dokumentes dar"
 
 #: paperwork-shell/src/paperwork_shell/cmd/show.py:99
 #, python-format
 msgid "Page %d"
-msgstr ""
+msgstr "Seite %d"
 
 #: paperwork-shell/src/paperwork_shell/cmd/sync.py:57
 msgid "Synchronize the index(es) with the content of the work directory"
-msgstr ""
+msgstr "Synchronisiert Index(e) mit dem Inhalt des Arbeitsverzeichnis"
 
 #: paperwork-shell/src/paperwork_shell/cmd/sync.py:68
 msgid "Synchronizing with work directory ..."
-msgstr ""
+msgstr "Synchronisierung mit des Arbeitsverzeichnis ..."
 
 #: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:43
 msgid "Manage additional text attached to documents"
-msgstr ""
+msgstr "Verwalte die dem Dokument beifefügten zusätzliche Texte"
 
 #: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:52
 msgid "Get a document additional text"
-msgstr ""
+msgstr "Erhalte den zusätzlichen Text eines Dokuments"
 
 #: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:57
 msgid "Set a document additional text"
-msgstr ""
+msgstr "Zusätzlicher Text eines Dokuments festlegen"
 
 #: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:79
 #: paperwork-shell/src/paperwork_shell/display/docrendering/extra_text.py:32
 msgid "Additional text:"
-msgstr ""
+msgstr "Zusätzlicher Text:"
 
 #: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:82
 msgid "No additional text"
-msgstr ""
+msgstr "Kein zusätzlicher Text"
 
 #: paperwork-shell/src/paperwork_shell/main.py:67
 msgid "command"
@@ -493,16 +495,16 @@ msgstr "Kommando"
 
 #: paperwork-shell/src/paperwork_shell/display/scan.py:86
 msgid "Scanning page {} (expected size: {}x{}) ..."
-msgstr ""
+msgstr "Scan des Seite {} (erwartete Größe: {}x{}) ..."
 
 #: paperwork-shell/src/paperwork_shell/display/scan.py:127
 msgid "Page {} scanned (actual size: {}x{})"
-msgstr ""
+msgstr "Seite {} gescannt (eigentliche Größe: {}x{})"
 
 #: paperwork-shell/src/paperwork_shell/display/scan.py:135
 msgid "End of paper feed"
-msgstr ""
+msgstr "Ende des Papiereinzugs"
 
 #: paperwork-shell/src/paperwork_shell/display/scan.py:151
 msgid "Page {} in document {} created"
-msgstr ""
+msgstr "Seite {} im Dokument {} erstellt"
