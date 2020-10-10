@@ -413,7 +413,7 @@ msgstr "Scanner à utiliser"
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:80
 msgid ""
 "Default source on the scanner to use (if not specified, one will be selected "
-"randomly"
+"randomly)"
 msgstr ""
 "Source à utiliser par défaut sur le scanner (si non-spécifié, une source "
 "sera sélectionnée au hasard)"

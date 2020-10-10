@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-01 22:01+0200\n"
+"POT-Creation-Date: 2020-10-10 16:37+0200\n"
 "PO-Revision-Date: 2020-08-06 11:39+0000\n"
 "Last-Translator: Andreas Forster <aforster2311@gmail.com>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
@@ -402,7 +402,7 @@ msgstr ""
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:80
 msgid ""
 "Default source on the scanner to use (if not specified, one will be selected "
-"randomly"
+"randomly)"
 msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:86
