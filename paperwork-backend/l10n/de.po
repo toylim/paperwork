@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-01 22:01+0200\n"
-"PO-Revision-Date: 2020-07-23 15:38+0000\n"
-"Last-Translator: Andreas Forster <aforster2311@gmail.com>\n"
+"PO-Revision-Date: 2020-10-10 21:04+0000\n"
+"Last-Translator: Jerome Flesch <jflesch@openpaper.work>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-backend/de/>\n"
 "Language: de\n"
@@ -264,11 +264,10 @@ msgid "Training label guesser with updated document %s"
 msgstr "Trainiere Label-Vorschlag mit aktualisiertem Dokument %s"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:240
-#, fuzzy
 msgid "Training label guesser for label '{}' with all known documents ..."
 msgstr ""
-"Trainiere Label-Vorschlag für das Label '{}' mit allen bekannten "
-"Dokumenten ..."
+"Trainiere Label-Vorschlag für das Label '{}' mit allen bekannten Dokumenten "
+"..."
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/simplebayes.py:333
 msgid "Training label guessing ..."
@@ -300,4 +299,4 @@ msgstr "Speichere Änderungen im Index ..."
 
 #: paperwork-backend/src/paperwork_backend/authors/translators.py:23
 msgid "[]"
-msgstr "[]"
+msgstr "[\"Andreas Forster\", \"Anna Lazic\", \"Tobias\"]"

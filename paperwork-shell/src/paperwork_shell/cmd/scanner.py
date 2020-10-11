@@ -78,7 +78,7 @@ class Plugin(openpaperwork_core.PluginBase):
             "--source", "-s", type=str, required=False,
             help=_(
                 "Default source on the scanner to use (if not specified,"
-                " one will be selected randomly"
+                " one will be selected randomly)"
             )
         )
         set_scanner.add_argument(

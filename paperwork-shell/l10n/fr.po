@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-01 22:01+0200\n"
-"PO-Revision-Date: 2020-09-02 17:30+0000\n"
-"Last-Translator: Jerome Flesch <jflesch@openpaper.work>\n"
+"PO-Revision-Date: 2020-10-10 14:40+0000\n"
+"Last-Translator: LAZIC Anna <0.0.0.0.0.ffff.255.255.255.255@gmail.com>\n"
 "Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-shell/fr/>\n"
 "Language: fr\n"
@@ -78,7 +78,6 @@ msgstr ""
 "virgules, par défaut : toutes les pages)"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:76
-#, fuzzy
 msgid ""
 "Export filters. Specify this option once for each filter to apply (ex: '-f "
 "grayscale -f jpeg')."
@@ -294,7 +293,7 @@ msgstr "Original :"
 
 #: paperwork-shell/src/paperwork_shell/cmd/edit.py:147
 msgid "Generating in high quality and saving ..."
-msgstr "Enregistrement en haute-qualité…"
+msgstr "Enregistrement en haute qualité…"
 
 #: paperwork-shell/src/paperwork_shell/cmd/edit.py:175
 #: paperwork-shell/src/paperwork_shell/cmd/reset.py:123
@@ -413,7 +412,7 @@ msgstr "Scanner à utiliser"
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:80
 msgid ""
 "Default source on the scanner to use (if not specified, one will be selected "
-"randomly"
+"randomly)"
 msgstr ""
 "Source à utiliser par défaut sur le scanner (si non-spécifié, une source "
 "sera sélectionnée au hasard)"

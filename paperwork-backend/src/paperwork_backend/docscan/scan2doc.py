@@ -146,5 +146,5 @@ class Plugin(openpaperwork_core.PluginBase):
                 self.core, run_transactions, args=(scan_id, doc_id)
             )
         )
-        promise = promise.catch(cancel)
+        promise = promise.catch(cancel, scan_id, doc_id)
         return promise

@@ -134,9 +134,14 @@ class Plugin(openpaperwork_core.PluginBase):
         dialog.set_filter(filter_all)
 
         dialog.connect("response", self._on_dialog_response)
+
+        self.core.call_all("pageadd_busy_add")
+
         dialog.show_all()
 
     def _on_dialog_response(self, dialog, response_id):
+        self.core.call_all("pageadd_busy_remove")
+
         if (response_id != 0 and
                 response_id != Gtk.ResponseType.ACCEPT and
                 response_id != Gtk.ResponseType.OK and
