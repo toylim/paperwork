@@ -15,7 +15,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.default_action_args = None
         self.active_doc_id = None
         self.active_doc_url = None
-        self.scanning = False
+        self.busy = 0
 
     def get_interfaces(self):
         return [
@@ -71,7 +71,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _update_sensitivity(self):
         sensitive = (
-            self.default_action is not None and not self.scanning
+            self.default_action is not None and self.busy <= 0
         )
         button = self.widget_tree.get_object("pageadd_button")
         button.set_sensitive(sensitive)
@@ -81,6 +81,14 @@ class Plugin(openpaperwork_core.PluginBase):
         self.default_action = callback
         self.default_action_args = args
         self.widget_tree.get_object("pageadd_button").set_label(txt)
+        self._update_sensitivity()
+
+    def pageadd_busy_add(self):
+        self.busy += 1
+        self._update_sensitivity()
+
+    def pageadd_busy_remove(self):
+        self.busy -= 1
         self._update_sensitivity()
 
     def _on_clicked(self, widget):
@@ -100,12 +108,10 @@ class Plugin(openpaperwork_core.PluginBase):
         self._update_sensitivity()
 
     def on_scan_feed_start(self, scan_id):
-        self.scanning = True
-        self._update_sensitivity()
+        self.pageadd_busy_add()
 
     def on_scan_feed_end(self, scan_id):
-        self.scanning = False
-        self._update_sensitivity()
+        self.pageadd_busy_remove()
 
     def screenshot_snap_all_doc_widgets(self, out_dir):
         self.core.call_success(
