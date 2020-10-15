@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-01 22:01+0200\n"
-"PO-Revision-Date: 2020-10-10 20:04+0000\n"
+"PO-Revision-Date: 2020-10-13 19:49+0000\n"
 "Last-Translator: LAZIC Anna <0.0.0.0.0.ffff.255.255.255.255@gmail.com>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "openpaperwork-gtk/de/>\n"
@@ -67,7 +67,7 @@ msgstr ""
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:284
 msgid "FAILED"
-msgstr "Fehlgeschlagen"
+msgstr "FEHLGESCHLAGEN"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/__init__.py:77
 msgid "Now"

@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-01 22:01+0200\n"
-"PO-Revision-Date: 2020-08-06 12:25+0000\n"
-"Last-Translator: Andreas Forster <aforster2311@gmail.com>\n"
+"PO-Revision-Date: 2020-10-12 18:04+0000\n"
+"Last-Translator: LAZIC Anna <0.0.0.0.0.ffff.255.255.255.255@gmail.com>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-help-documents/de/>\n"
 "Language: de\n"
@@ -94,7 +94,7 @@ msgstr "Suchen"
 #. type: wrapfigure
 #: data/intro.tex:50
 msgid "{r}{0.5\\textwidth}"
-msgstr ""
+msgstr "{r}{0.5\\textwidth}"
 
 #. type: document
 #: data/intro.tex:56
@@ -145,7 +145,8 @@ msgstr ""
 "Du hast eine wichtige E-Mail beantwortet und willst sie im Blick behalten? "
 "Das eingescannte Dokument war so unlesbar, dass Paperwork einige der "
 "enthaltenen Schlüsselworte gar nicht erkennen konnte? Füge eigene "
-"Schlüsselworte hinzu, damit dir nichts entgeht!"
+"Schlüsselworte hinzu, damit dir nichts entgeht! Alle Wörter die Du dazugibst "
+"werden suchbar, als ob sie auf dem gescannten Dokument geschrieben waren."
 
 #. type: document
 #: data/intro.tex:89
@@ -182,6 +183,8 @@ msgid ""
 "This document will automatically disappear from your document list as soon "
 "as you have created or imported your first document."
 msgstr ""
+"Dieses Dokument wird automatisch aus Deiner Dokumentenliste verschwinden, "
+"sobald Du dein ersted Dokument erstellt oder importiert hast."
 
 #. type: section{#2}
 #: data/intro.tex:108
@@ -212,6 +215,8 @@ msgid ""
 "colorlinks, citecolor=black, filecolor=black, linkcolor=black, "
 "urlcolor=black, linktoc=all,"
 msgstr ""
+"colorlinks, citecolor=black, filecolor=black, linkcolor=black, "
+"urlcolor=black, linktoc=all,"
 
 #. type: title{#1}
 #: data/usage.tex:20
@@ -343,10 +348,8 @@ msgstr ""
 
 #. type: subsection{#2}
 #: data/usage.tex:101
-#, fuzzy
-#| msgid "Labels and additional keywords"
 msgid "Indexation and Keywords"
-msgstr "Labels und zusätzliche Schlüsselworte"
+msgstr "Indexierung und Schlüsselwörter"
 
 #. type: document
 #: data/usage.tex:108
@@ -437,10 +440,8 @@ msgstr ""
 
 #. type: subsubsection{#2}
 #: data/usage.tex:194
-#, fuzzy
-#| msgid "Scanner"
 msgid "Scan Mode"
-msgstr "Scanner"
+msgstr "Scanmodus"
 
 #. type: document
 #: data/usage.tex:202
@@ -1258,10 +1259,8 @@ msgstr ""
 
 #. type: section{#2}
 #: data/usage.tex:691
-#, fuzzy
-#| msgid "Settings"
 msgid "Deleting"
-msgstr "Einstellungen"
+msgstr "Löschen"
 
 #. type: document
 #: data/usage.tex:694
@@ -1748,10 +1747,8 @@ msgstr ""
 
 #. type: section{#2}
 #: data/usage.tex:940
-#, fuzzy
-#| msgid "Settings"
 msgid "Getting support"
-msgstr "Einstellungen"
+msgstr "Unterstützung bekommen"
 
 #. type: document
 #: data/usage.tex:943
