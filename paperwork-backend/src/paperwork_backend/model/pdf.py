@@ -102,6 +102,11 @@ class PdfPageMapping(object):
 
         now = datetime.datetime.now().timestamp()
 
+        if target_page_idx is not None:
+            old_original = self.reverse_mapping.get(target_page_idx, None)
+            if old_original is not None:
+                self.mapping.pop(old_original)
+
         old_target = self.mapping.get(original_page_idx, None)
         if old_target is not None:
             self.reverse_mapping.pop(old_target)
