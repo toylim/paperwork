@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-01 22:01+0200\n"
-"PO-Revision-Date: 2020-09-14 19:58+0000\n"
+"PO-Revision-Date: 2020-10-17 05:34+0000\n"
 "Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
 "Language-Team: Occitan <http://translations.openpaper.work/projects/"
 "paperwork/paperwork-gtk/oc/>\n"
@@ -467,7 +467,7 @@ msgstr "Ajustar a la seleccion"
 
 #: paperwork-gtk/src/paperwork_gtk/menus/doc/open_external.py:36
 msgid "Open folder"
-msgstr "Dobrir un dossièr"
+msgstr "Dobrir lo dossièr"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/update.glade.h:1
 msgid ""

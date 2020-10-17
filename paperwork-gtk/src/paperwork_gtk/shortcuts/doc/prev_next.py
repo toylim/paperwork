@@ -32,6 +32,6 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         self.core.call_all(
             "app_shortcut_add",
-            _("Global"), _("Open previous document"),
+            _("Document list"), _("Open previous document"),
             "<Control>Page_Up", "win.doc_prev"
         )
