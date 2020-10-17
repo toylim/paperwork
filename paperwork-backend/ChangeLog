@@ -1,3 +1,14 @@
+2020/10/17 - 2.0:
+- Full rewrite
+- Use of plugin system of openpaperwork_core to split features
+- PDF can be edited
+- Pages can be reinitialized to their initial states (reset)
+- Multiple languages can be used for OCR
+- Automated tests have been added
+- Features that could be reused in other applications have been move to
+  openpaperwork_core and openpaperwork_gtk
+- Thumbnails are slightly smaller (they will be resized automatically)
+
 2019/12/20 - 1.3.1:
 - Backend: Check if thumbnail file is writable before updating it (thanks to
   Gregor Godbersen)
