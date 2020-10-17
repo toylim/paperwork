@@ -38,7 +38,7 @@ nb_commits="$2"
 for branch in master testing develop ; do
 	for commit in $(flatpak remote-info \
 			--log -c paperwork-origin \
-			work.openpaper.Paperwork//master \
+			work.openpaper.Paperwork//${branch} \
 			| head -n ${nb_commits}) ; do
 
 		echo "==================================="
@@ -55,7 +55,8 @@ for branch in master testing develop ; do
 
 			filename=$(echo "${line}"|cut -d'(' -f1)
 			addr=$(echo "${line}"|cut -d'(' -f2|cut -d')' -f1)
-			result=$(flatpak run --devel --command=addr2line work.openpaper.Paperwork \
+			result=$(flatpak run --devel --command=addr2line \
+				work.openpaper.Paperwork//${branch} \
 				-i -p -f -e "${filename}" "${addr}")
 			echo "IN: ${filename}(${addr})"
 			echo "ADDR2LINE: ${result}"
