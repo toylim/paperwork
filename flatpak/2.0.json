@@ -430,10 +430,6 @@
                 },
                 {
                     "type": "file",
-                    "path": "data.tar.gz"
-                },
-                {
-                    "type": "file",
                     "path": "pip-Makefile",
                     "dest-filename": "Makefile"
                 }
@@ -452,10 +448,6 @@
                     "type": "archive",
                     "url": "https://files.pythonhosted.org/packages/77/24/56696480a4509aca5fde27ec50045b103e9fc5fb21aa76393ff70da902c7/paperwork-shell-2.0.tar.gz",
                     "sha256": "8940974d2f23e942c6beec40c1052625515ab14150d470e72ed539f6b546fe6a"
-                },
-                {
-                    "type": "file",
-                    "path": "data.tar.gz"
                 },
                 {
                     "type": "file",
@@ -478,10 +470,6 @@
                     "type": "archive",
                     "url": "https://files.pythonhosted.org/packages/67/ee/1232f268d06b08cdda5d32ad1ef29a0a45ada23fb0b9381f16c818e86555/paperwork-2.0.tar.gz",
                     "sha256": "252f8f13375c2e8590561ed876939bdf5a0365e1bd93f17226c964df21d2fa41"
-                },
-                {
-                    "type": "file",
-                    "path": "data.tar.gz"
                 },
                 {
                     "type": "file",
