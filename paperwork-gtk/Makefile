@@ -70,7 +70,7 @@ else
 	grep ${RELEASE} data/work.openpaper.Paperwork.appdata.xml
 endif
 
-release_pypi: download_data
+release_pypi:
 	@echo "Releasing paperwork-gtk (paperwork) ..."
 	${PYTHON} ./setup.py sdist
 	twine upload dist/paperwork-${RELEASE}.tar.gz

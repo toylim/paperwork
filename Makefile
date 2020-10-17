@@ -60,7 +60,8 @@ doc: $(ALL_COMPONENTS:%=%_doc)
 
 upload_doc: $(ALL_COMPONENTS:%=%_upload_doc)
 
-release_pypi: download_data l10n_compile $(ALL_COMPONENTS:%=%_release_pypi)
+release_pypi: version download_data l10n_compile
+	$(MAKE) $(ALL_COMPONENTS:%=%_release_pypi)
 
 release: $(ALL_COMPONENTS:%=%_release)
 ifeq (${RELEASE}, )
