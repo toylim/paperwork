@@ -5,17 +5,6 @@ import openpaperwork_core
 from . import _
 
 
-RANDOM_DUMBNESSES = [
-    _("Now with 10% more freedom in it !"),
-    _("Buy it now and get a 100% discount !"),
-    _("New features and bugs available !"),
-    _("It's better when it's free."),  # Linus Torvalds citation, look it up :)
-    _("New taste !"),
-    _("We replaced your old bugs with new bugs. Enjoy."),
-    _("Smarter, Better, Stronger"),
-]
-
-
 class Plugin(openpaperwork_core.PluginBase):
     def get_interfaces(self):
         return [
@@ -40,6 +29,16 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def on_update_detected(self, local_version, remote_version):
+        random_dumbnesses = [
+            _("Now with 10% more freedom in it !"),
+            _("Buy it now and get a 100% discount !"),
+            _("New features and bugs available !"),
+            _("It's better when it's free."),  # Linus Torvalds citation, look it up :)
+            _("New taste !"),
+            _("We replaced your old bugs with new bugs. Enjoy."),
+            _("Smarter, Better, Stronger"),
+        ]
+
         notification = self.core.call_success(
             "get_notification_builder",
             _("A new version of Paperwork is available: {new_version}").format(
@@ -50,7 +49,7 @@ class Plugin(openpaperwork_core.PluginBase):
             return
         icon = self.core.call_success("icon_get_pixbuf", "paperwork", 32)
         notification.set_message(
-            random.choice(RANDOM_DUMBNESSES)
+            random.choice(random_dumbnesses)
         ).set_image_from_pixbuf(
             icon
         ).show()
