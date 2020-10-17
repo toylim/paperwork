@@ -33,10 +33,11 @@ class Plugin(openpaperwork_core.PluginBase):
             _("Now with 10% more freedom in it !"),
             _("Buy it now and get a 100% discount !"),
             _("New features and bugs available !"),
-            _("It's better when it's free."),  # Linus Torvalds citation, look it up :)
             _("New taste !"),
             _("We replaced your old bugs with new bugs. Enjoy."),
             _("Smarter, Better, Stronger"),
+            # Linus Torvalds citation, look it up :)
+            _("It's better when it's free."),
         ]
 
         notification = self.core.call_success(
