@@ -1,2 +1,3 @@
 recursive-include src *.py *.glade *.xml *.css *.svg *.png *.mo
+recursive-include tests *
 include *.md

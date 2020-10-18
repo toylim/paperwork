@@ -1,2 +1,3 @@
 recursive-include src *.py *.mo *.png
+recursive-include tests *
 include *.markdown
