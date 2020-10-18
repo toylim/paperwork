@@ -1,4 +1,5 @@
 recursive-include src *.py *.glade *.xml *.css *.svg *.png *.pdf *.mo
+recursive-include tests *
 include *.markdown
 include example-paperwork.conf
 include COPYING
