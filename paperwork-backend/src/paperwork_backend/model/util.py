@@ -31,7 +31,7 @@ def _shift_pages(core, page_filename_fmt, doc_url, start_page_idx, offset):
         core.call_all("fs_rename", old_url, new_url)
 
 
-def delete_page_file(core, page_filename_fmt, doc_url, page_idx):
+def delete_page_file(core, page_filename_fmt, doc_url, page_idx, trash=True):
     file_url = core.call_success(
         "fs_join", doc_url, page_filename_fmt.format(page_idx + 1)
     )
@@ -39,7 +39,7 @@ def delete_page_file(core, page_filename_fmt, doc_url, page_idx):
         LOGGER.info(
             "(%s) Deleting %s p%d:", page_filename_fmt, doc_url, page_idx
         )
-        core.call_all("fs_unlink", file_url)
+        core.call_all("fs_unlink", file_url, trash=trash)
 
     # move all the other pages 1 level down
     _shift_pages(core, page_filename_fmt, doc_url, page_idx, -1)

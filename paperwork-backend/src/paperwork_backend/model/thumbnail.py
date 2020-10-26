@@ -129,7 +129,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def page_delete_by_url(self, doc_url, page_idx):
         return util.delete_page_file(
-            self.core, PAGE_THUMBNAIL_FILENAME, doc_url, page_idx
+            self.core, PAGE_THUMBNAIL_FILENAME, doc_url, page_idx,
+            trash=False
         )
 
     def page_move_by_url(
