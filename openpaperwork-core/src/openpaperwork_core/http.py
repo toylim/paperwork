@@ -10,6 +10,7 @@ import http
 import http.client
 import json
 import logging
+import ssl
 import urllib
 
 from . import PluginBase
@@ -56,7 +57,8 @@ class JsonHttp(object):
         if protocol == "http":
             h = http.client.HTTPConnection(host=server)
         else:
-            h = http.client.HTTPSConnection(host=server)
+            ssl_context = ssl.create_default_context()
+            h = http.client.HTTPSConnection(host=server, context=ssl_context)
 
         if data is None or (isinstance(data, str) and data == ""):
             LOGGER.info("Sending GET %s/%s", server, path)
