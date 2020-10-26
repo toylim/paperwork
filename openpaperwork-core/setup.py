@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import sys
 
 from setuptools import setup, find_packages
@@ -19,6 +20,14 @@ except FileNotFoundError:
     print("ERROR: _version.py file is missing")
     print("ERROR: Please run 'make version' first")
     sys.exit(1)
+
+
+install_requires = [
+    "distro",  # chkdeps
+]
+
+if os.name == "nt":
+    install_requires.append("certifi")
 
 
 setup(
