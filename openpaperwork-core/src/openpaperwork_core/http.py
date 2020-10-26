@@ -6,16 +6,20 @@ https://openpaper.work/:
 - etc
 """
 import base64
-import certifi
 import http
 import http.client
 import json
 import logging
+import os
 import ssl
 import urllib
 
 from . import PluginBase
 from . import promise
+
+
+if os.name == "nt":
+    import certifi
 
 
 LOGGER = logging.getLogger(__name__)
@@ -57,11 +61,13 @@ class JsonHttp(object):
     def _request(self, data, protocol, server, path):
         if protocol == "http":
             h = http.client.HTTPConnection(host=server)
-        else:
-            # Required on Windows
+        elif os.name == "nt":
+            # On Windows, when frozen, we must specify a cafile
             cafile = certifi.where()
             ssl_context = ssl.create_default_context(cafile=cafile)
             h = http.client.HTTPSConnection(host=server, context=ssl_context)
+        else:
+            h = http.client.HTTPSConnection(host=server)
 
         if data is None or (isinstance(data, str) and data == ""):
             LOGGER.info("Sending GET %s/%s", server, path)
