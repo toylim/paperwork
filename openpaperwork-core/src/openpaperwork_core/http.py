@@ -6,6 +6,7 @@ https://openpaper.work/:
 - etc
 """
 import base64
+import certifi
 import http
 import http.client
 import json
@@ -57,7 +58,9 @@ class JsonHttp(object):
         if protocol == "http":
             h = http.client.HTTPConnection(host=server)
         else:
-            ssl_context = ssl.create_default_context()
+            # Required on Windows
+            cafile = certifi.where()
+            ssl_context = ssl.create_default_context(cafile=cafile)
             h = http.client.HTTPSConnection(host=server, context=ssl_context)
 
         if data is None or (isinstance(data, str) and data == ""):
