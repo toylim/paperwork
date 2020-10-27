@@ -127,7 +127,11 @@ class _GioFileAdapter(io.RawIOBase):
         self.gfd.truncate(size)
 
     def fileno(self):
-        raise io.UnsupportedOperation("fileno() called on Gio.File object")
+        if self.gout is not None and hasattr(self.gout, 'get_fd'):
+            return self.gout.get_fd()
+        if self.gin is not None and hasattr(self.gin, 'get_fd'):
+            return self.gin.get_fd()
+        raise io.UnsupportedOperation("fileno() on Gio.File unsupported")
 
     def isatty(self):
         return False
