@@ -116,10 +116,17 @@ class Plugin(PluginBase):
         self.log_handler.log_uncaught_exception()
 
     def bug_report_get_attachments(self, inputs: dict):
-        for (date, file_url) in self.archiver.get_archived():
+        archived = list(self.archiver.get_archived())
+        archived.sort(key=lambda x: x[0], reverse=True)
+
+        for (nb, (date, file_url)) in enumerate(archived):
             inputs[file_url] = {
                 'date': date,
-                'include_by_default': False,
+                # Users tend to send only the pre-selected elements in the bug
+                # reports. However, when they report a sudden crash, we need
+                # the logs of the previous session, not just the current one.
+                # --> Include the logs of the last 2 previous sessions too.
+                'include_by_default': nb <= 2,
                 'file_type': _("Log file"),
                 'file_url': file_url,
                 'file_size': self.core.call_success("fs_getsize", file_url),
