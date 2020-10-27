@@ -1,5 +1,4 @@
 import datetime
-import faulthandler
 import logging
 import sys
 import tempfile
@@ -148,8 +147,6 @@ class Plugin(PluginBase):
                     self.log_handler.out_fds.add(fd)
             if first is None and fd is not None:
                 first = fd
-        if first is not None:
-            faulthandler.enable(file=first)
 
     def _reload_config(self, *args, **kwargs):
         self._disable_logging()

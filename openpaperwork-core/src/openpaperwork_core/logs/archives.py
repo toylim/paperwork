@@ -1,3 +1,4 @@
+import faulthandler
 import logging
 
 from .. import (_, PluginBase)
@@ -35,6 +36,8 @@ class LogHandler(logging.Handler):
         self.out_fd = self.core.call_success(
             "fs_open", self.out_file_url, 'w'
         )
+        faulthandler.disable()
+        faulthandler.enable(file=self.out_fd)
 
     def emit(self, record):
         line = self.formatter.format(record) + "\n"
