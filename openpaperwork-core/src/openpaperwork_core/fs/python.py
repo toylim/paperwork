@@ -176,9 +176,15 @@ class Plugin(CommonFsPluginBase):
                 self, prefix=None, suffix=None, mode='w+b', on_disk=False,
                 **kwargs
             ):
-        tmp = tempfile.NamedTemporaryFile(
-            prefix=prefix, suffix=suffix, delete=False, mode=mode
-        )
+        if 'b' not in mode:
+            tmp = tempfile.NamedTemporaryFile(
+                prefix=prefix, suffix=suffix, delete=False, mode=mode,
+                encoding='utf-8'
+            )
+        else:
+            tmp = tempfile.NamedTemporaryFile(
+                prefix=prefix, suffix=suffix, delete=False, mode=mode
+            )
         self.tmp_files.add(tmp.name)
         return (self.fs_safe(tmp.name), tmp)
 
