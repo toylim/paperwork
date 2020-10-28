@@ -2,6 +2,7 @@ import getpass
 import logging
 import os
 import socket
+import urllib.parse
 
 from . import PluginBase
 
@@ -13,8 +14,11 @@ class Plugin(PluginBase):
     def __init__(self):
         self.replacements = (
             (os.path.expanduser("~"), "###HOME_DIR###"),
+            (urllib.parse.quote(os.path.expanduser("~")), "###HOME_DIR###"),
             (getpass.getuser(), "###USER_NAME###"),
+            (urllib.parse.quote(getpass.getuser()), "###USER_NAME###"),
             (socket.gethostname(), "###HOST_NAME###"),
+            (urllib.parse.quote(socket.gethostname()), "###HOST_NAME###"),
         )
 
     def get_interfaces(self):
