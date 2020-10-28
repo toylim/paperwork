@@ -25,7 +25,7 @@ class Plugin(CommonFsPluginBase):
             return None
         return self.fs_unsafe(uri)
 
-    def fs_open(self, uri, mode='r'):
+    def fs_open(self, uri, mode='r', **kwargs):
         path = self._uri_to_path(uri)
         if path is None:
             return None

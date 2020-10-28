@@ -135,7 +135,7 @@ class Plugin(CommonFsPluginBase):
         url = url[len('file:///'):]
         return url.split('/')
 
-    def fs_open(self, url, mode='r'):
+    def fs_open(self, url, mode='r', **kwargs):
         path = self._get_path(url)
 
         f = self.fs

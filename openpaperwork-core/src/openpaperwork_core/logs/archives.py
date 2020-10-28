@@ -34,7 +34,8 @@ class LogHandler(logging.Handler):
         self.out_file_url = self.archiver.get_new()
         self.formatter = logging.Formatter(self.LOG_FORMAT)
         self.out_fd = self.core.call_success(
-            "fs_open", self.out_file_url, 'w'
+            "fs_open", self.out_file_url, 'w',
+            needs_fileno=True
         )
         faulthandler.disable()
         faulthandler.enable(file=self.out_fd)
