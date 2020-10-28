@@ -58,6 +58,8 @@ class Plugin(openpaperwork_core.PluginBase):
         doc_nb_pages = self.core.call_success(
             "doc_get_nb_pages_by_url", doc_url
         )
+        if doc_nb_pages is None:
+            return
 
         for page_idx in range(0, doc_nb_pages):
             text = self.page_get_text_by_url(doc_url, page_idx)
