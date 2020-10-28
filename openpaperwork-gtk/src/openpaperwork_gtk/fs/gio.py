@@ -272,7 +272,12 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
     def _is_file_uri(uri):
         return uri.startswith("file://")
 
-    def fs_open(self, uri, mode='r'):
+    def fs_open(self, uri, mode='r', needs_fileno=False, **kwargs):
+        if needs_fileno:
+            # On Windows, `Gio.[Unix]OutputStream.get_fd()` doesn't seem
+            # to be available
+            return
+
         if not self._is_file_uri(uri):
             return None
 

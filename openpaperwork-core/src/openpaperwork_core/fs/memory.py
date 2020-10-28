@@ -112,7 +112,9 @@ class Plugin(CommonFsPluginBase):
             return None
         return uri[len("memory://"):]
 
-    def fs_open(self, uri, mode='r'):
+    def fs_open(self, uri, mode='r', needs_fileno=False, **kwargs):
+        if needs_fileno:
+            return None
         mem_id = self._get_memory_id(uri)
         if mem_id is None:
             return None
