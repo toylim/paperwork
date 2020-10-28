@@ -165,6 +165,7 @@ else:
         "GModule-2.0",
         "GObject-2.0",
         "Gtk-3.0",
+        "HarfBuzz-0.0",
         "Notify-0.7",
         "Pango-1.0",
         "PangoCairo-1.0",
