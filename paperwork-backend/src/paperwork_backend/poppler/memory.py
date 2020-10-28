@@ -3,6 +3,7 @@ import openpaperwork_core.deps
 
 try:
     import gi
+    from gi.repository import GLib
     GI_AVAILABLE = True
 except (ImportError, ValueError):
     GI_AVAILABLE = False
@@ -57,7 +58,11 @@ class Plugin(openpaperwork_core.PluginBase):
         with self.core.call_success("fs_open", url, "rb") as fd:
             data = fd.read()
         ldata = len(data)
-        data = Gio.MemoryInputStream.new_from_data(data)
+        data = GLib.Bytes.new(data)
+        # Gio.MemoryInputStream.new_from_data() may leak
+        # https://stackoverflow.com/questions/45838863/gio-memoryinputstream
+        # --> use Gio.MemoryInputStream.new_from_bytes() instead
+        data = Gio.MemoryInputStream.new_from_bytes(data)
         self.core.call_all("on_objref_track", data)
         doc = self.core.call_one(
             "mainloop_execute", Poppler.Document.new_from_stream,
