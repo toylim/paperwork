@@ -98,8 +98,20 @@ workdir = file:///home/jflesch/papers
 
 $ paperwork-cli config put workdir str file:///home/jflesch/tmp/papers
 workdir = file:///home/jflesch/tmp/papers
+```
 
-$ paperwork-cli config list_plugins
+`paperwork-xxx config` provides various sub-sub-commands to read and modify
+Paperwork config and enable/disable `paperwork-shell`'s plugins.
+
+The one most important settings is the work directory path: `workdir`. It
+indicates where documents managed by Paperwork must be stored. It *must* be
+an URL (`file://xxx`).
+
+
+### plugins
+
+```sh
+$ paperwork-cli plugins list
 openpaperwork_core.logs.print
 openpaperwork_gtk.mainloop.glib
 openpaperwork_core.config
@@ -113,23 +125,16 @@ paperwork_shell.display.progress
 paperwork_shell.display.scan
 ```
 
-`paperwork-xxx config` provides various sub-sub-commands to read and modify
-Paperwork config and enable/disable `paperwork-shell`'s plugins.
-
 While most settings are shared between Paperwork UIs (paperwork-shell and
 paperwork-gtk), plugins lists are *not*. If you want to modify
-`paperwork-gtk`'s plugin list, you have to use `paperwork-gtk config` instead.
-
-The one most important settings is the work directory path: `workdir`. It
-indicates where documents managed by Paperwork must be stored. It *must* be
-an URL (`file://xxx`).
+`paperwork-gtk`'s plugin list, you have to use `paperwork-gtk plugins` instead.
 
 If you want to enable or disable features, you can simply add or remove
 the corresponding plugin. For instance, to disable the automatic OCR run
 on imported documents or scanned pages:
 
-```
-$ paperwork-cli config remove_plugin paperwork_backend.guesswork.ocr.pyocr
+```sh
+$ paperwork-cli plugins remove paperwork_backend.guesswork.ocr.pyocr
 Plugin paperwork_backend.guesswork.ocr.pyocr removed
 ```
 
@@ -244,6 +249,7 @@ created.
 
 If you get warnings and errors from the Libinsane, you can safely ignore them
 unless the scan didn't work.
+
 
 ### import
 
