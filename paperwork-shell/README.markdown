@@ -46,7 +46,7 @@ flatpak run --command="paperwork-cli" work.openpaper.Paperwork chkdeps
 
 ## Sub-commands
 
-Paperwork-shell's commands expects sub-commands (similar to `git`). You can
+Paperwork-shell's commands expect sub-commands (similar to `git`). You can
 obtain all the sub-commands and their expected arguments using `--help`
 (long help) or `-h` (short help).
 
@@ -137,6 +137,17 @@ on imported documents or scanned pages:
 $ paperwork-cli plugins remove paperwork_backend.guesswork.ocr.pyocr
 Plugin paperwork_backend.guesswork.ocr.pyocr removed
 ```
+
+`paperwork-cli plugins remove` and `paperwork-cli plugins add` take
+dependencies into account: `remove` will also remove all the plugins
+that depends on the one you're removing. `add` will also add all the
+plugins required for the one you're adding.
+
+Some plugins are mandatory and cannot be disabled (mainly all the plugins
+required to read the configuration file).
+
+If something go wrong, you can reset the plugin list to its default
+with `paperwork-cli plugins reset`.
 
 
 ### sync
