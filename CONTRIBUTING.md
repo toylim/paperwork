@@ -7,8 +7,6 @@ If you want open a ticket on Gitlab, the following information is needed:
 - Logs of the session where the bug happened are strongly recommended.
 - If the bug is a UI bug, a screenshot is strongly recommended.
 
----
-
 # Other contributions
 
 [You can help in many ways](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Contributing):
@@ -29,15 +27,16 @@ Sometimes [IRC](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Con
 
 # Code contribution rules
 
-* All commits go to the branch 'develop'. I (Jflesch) will cherry-pick them in master or release branches if required.
+* All commits go to the branch `develop`. I (Jflesch) will cherry-pick them in the branches `master` (stable) or `testing` (release) if required.
 * Paperwork is made to be *simple* to use (think simple enough that your own mother could install and use it)
 * Paperwork is open-source software (GPLv3+)
-* Run `make check` and `make test`. If they fail, you change will be rejected.
+* Run `make check` and `make test`. If they fail, your changes will be rejected.
 * Consider adding automated tests.
 * Consider updating the user manual
-  (paperwork-gtk/src/paperwork\_gtk/model/help/data/\*,tex)
+  (paperwork-gtk/src/paperwork\_gtk/model/help/data/\*.tex)
 * Your changes must respect the [PEP8](https://www.python.org/dev/peps/pep-0008/): you can use the command `make check` to check your changes
-* You must not break existing features. You're strongly encouraged to discuss the changes you want to make beforehand (on the bug tracker, on the forum or on IRC).
+* You must not break existing features.
+* You're strongly encouraged to discuss the changes you want to make beforehand (on the bug tracker, on the forum or on IRC).
 * Your contribution must be maintainable: It must be clear enough so that somebody else can maintain it. If it is a complicated piece of code, please comment it as clearly as possible.
 * Your contribution must and will be reviewed (most likely by me, Jflesch)
 * If you make an important contribution, please try to maintain it (fix bugs reported by other users regarding features you added, etc).
@@ -83,6 +82,39 @@ Bug fixes and other contributions always go first in the branch `develop`.
 They may or may not be cherry-picked into the branches `testing` and `master` by
 Paperwork maintainer (Jerome Flesch).
 
+# Main dependencies
+
+Paperwork depends on various libraries:
+
+* GLib, Cairo, GTK, etc: GUI
+* Poppler: Reading PDF
+* Pillow: Reading images, basic operations on images, writing images
+* [PyOCR](https://gitlab.gnome.org/World/OpenPaperwork/pyocr):
+  Wrapper for Tesseract + Parsing and writing of hOCR files
+* [Libpillowfight](https://gitlab.gnome.org/World/OpenPaperwork/libpillowfight):
+  Various image processing algorithms
+* [Libinsane](https://gitlab.gnome.org/World/OpenPaperwork/libinsane):
+  Crossplatform access to scanners
+
+# General code structure
+
+Paperwork is divided in many Python packages:
+
+* openpaperwork-core:
+  - The [core](https://doc.openpaper.work/openpaperwork_core/latest) is the piece
+    of code that manages the plugins. It's designed to be as minimal as possible.
+  - Various plugins who could be useful in pretty much any other application,
+   GUI or not (for instance, [Pythoness](https://framagit.org/OpenPaperwork/pythoness)).
+* openpaperwork-gtk:
+  - Various plugins who could be useful in pretty much any Gnome/GTK application
+    (for instance, [Pythoness](https://framagit.org/OpenPaperwork/pythoness)).
+* paperwork-backend:
+  - Plugins for Paperwork independant from any type of frontends (plugins to manage the
+    work directory, provide various features, access scanners, etc)
+* paperwork-gtk:
+  - Plugins and bootstrap module that compose the GTK user interface of Paperwork
+* paperwork-shell:
+  - Plugins and bootstrap module that compose the shell interface (CLI or JSON)
 
 # Tips
 
@@ -110,12 +142,12 @@ ERROR.
 
 If you want to make changes, here is a tip that can help you:
 
-Paperwork looks for a file `paperwork.conf` in the current work directory before
-looking for a `.paperwork.conf` in your home directory. So if you want to
+Paperwork looks for a file `paperwork2.conf` in the current work directory before
+looking for a `~/.config/paperwork2.conf` in your home directory. So if you want to
 use a different configuration and/or a different set of documents for development
-than for your real-life work, just copy your `~/.paperwork.conf` to
-`./paperwork.conf`. Note that the settings dialog will also take care of
-updating `./paperwork.conf` instead of `~/.paperwork.conf` if it exists.
+than for your real-life work, just copy your `~/.config/paperwork2.conf` to
+`./paperwork2.conf`. Note that the settings dialog will also take care of
+updating `./paperwork2.conf` instead of `~/.config/paperwork2.conf` if it exists.
 
 
 # Versionning
