@@ -127,6 +127,17 @@ class Plugin(openpaperwork_core.PluginBase):
             list_scanner_promise):
         assert(self.widget_tree is not None)
 
+        def set_sensitive():
+            dev_id = self.core.call_success("config_get", "scanner_dev_id")
+            parent_widget_tree.get_object("scanner_calibration").set_sensitive(
+                True if dev_id is not None and dev_id != "" else False
+            )
+
+        set_sensitive()
+        self.core.call_all(
+            "config_add_observer", "scanner_dev_id", set_sensitive
+        )
+
         parent_widget_tree.get_object("scanner_calibration").connect(
             "clicked", self.display_calibration_screen, settings_widget_tree
         )

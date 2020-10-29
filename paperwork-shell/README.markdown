@@ -46,7 +46,7 @@ flatpak run --command="paperwork-cli" work.openpaper.Paperwork chkdeps
 
 ## Sub-commands
 
-Paperwork-shell's commands expects sub-commands (similar to `git`). You can
+Paperwork-shell's commands expect sub-commands (similar to `git`). You can
 obtain all the sub-commands and their expected arguments using `--help`
 (long help) or `-h` (short help).
 
@@ -98,8 +98,20 @@ workdir = file:///home/jflesch/papers
 
 $ paperwork-cli config put workdir str file:///home/jflesch/tmp/papers
 workdir = file:///home/jflesch/tmp/papers
+```
 
-$ paperwork-cli config list_plugins
+`paperwork-xxx config` provides various sub-sub-commands to read and modify
+Paperwork config and enable/disable `paperwork-shell`'s plugins.
+
+The one most important settings is the work directory path: `workdir`. It
+indicates where documents managed by Paperwork must be stored. It *must* be
+an URL (`file://xxx`).
+
+
+### plugins
+
+```sh
+$ paperwork-cli plugins list
 openpaperwork_core.logs.print
 openpaperwork_gtk.mainloop.glib
 openpaperwork_core.config
@@ -113,25 +125,29 @@ paperwork_shell.display.progress
 paperwork_shell.display.scan
 ```
 
-`paperwork-xxx config` provides various sub-sub-commands to read and modify
-Paperwork config and enable/disable `paperwork-shell`'s plugins.
-
 While most settings are shared between Paperwork UIs (paperwork-shell and
 paperwork-gtk), plugins lists are *not*. If you want to modify
-`paperwork-gtk`'s plugin list, you have to use `paperwork-gtk config` instead.
-
-The one most important settings is the work directory path: `workdir`. It
-indicates where documents managed by Paperwork must be stored. It *must* be
-an URL (`file://xxx`).
+`paperwork-gtk`'s plugin list, you have to use `paperwork-gtk plugins` instead.
 
 If you want to enable or disable features, you can simply add or remove
 the corresponding plugin. For instance, to disable the automatic OCR run
 on imported documents or scanned pages:
 
-```
-$ paperwork-cli config remove_plugin paperwork_backend.guesswork.ocr.pyocr
+```sh
+$ paperwork-cli plugins remove paperwork_backend.guesswork.ocr.pyocr
 Plugin paperwork_backend.guesswork.ocr.pyocr removed
 ```
+
+`paperwork-cli plugins remove` and `paperwork-cli plugins add` take
+dependencies into account: `remove` will also remove all the plugins
+that depends on the one you're removing. `add` will also add all the
+plugins required for the one you're adding.
+
+Some plugins are mandatory and cannot be disabled (mainly all the plugins
+required to read the configuration file).
+
+If something go wrong, you can reset the plugin list to its default
+with `paperwork-cli plugins reset`.
 
 
 ### sync
@@ -244,6 +260,7 @@ created.
 
 If you get warnings and errors from the Libinsane, you can safely ignore them
 unless the scan didn't work.
+
 
 ### import
 
