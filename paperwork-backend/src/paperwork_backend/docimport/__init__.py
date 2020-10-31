@@ -127,3 +127,6 @@ class RecursiveFileImporter(BaseFileImporter):
             for file_uri in self.core.call_success("fs_recurse", dir_uri):
                 if factory.is_importable(self.core, file_uri):
                     yield (dir_uri, file_uri)
+
+    def get_name(self):
+        return self.single_file_importer_factory.get_recursive_name()

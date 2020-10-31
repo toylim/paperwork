@@ -76,6 +76,13 @@ class SingleImgImporterFactory(object):
     def get_name():
         return _("Append the image to the current document")
 
+    @staticmethod
+    def get_recursive_name():
+        return _(
+            "Find the images recursively and import them to the current"
+            " document"
+        )
+
     def is_importable(self, core, file_uri):
         mime = core.call_success("fs_get_mime", file_uri)
         if mime is not None:

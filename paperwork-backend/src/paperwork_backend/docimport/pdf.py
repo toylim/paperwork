@@ -56,6 +56,10 @@ class SinglePdfImporterFactory(object):
     def get_name():
         return _("Import PDF")
 
+    @staticmethod
+    def get_recursive_name():
+        return _("Import PDFs recursively")
+
     def is_importable(self, core, file_uri):
         mime = core.call_success("fs_get_mime", file_uri)
         if mime is not None:
