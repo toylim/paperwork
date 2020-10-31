@@ -122,7 +122,7 @@ class RecursiveFileImporter(BaseFileImporter):
     def _get_importables(self):
         factory = self.single_file_importer_factory
         for dir_uri in self.file_import.ignored_files:
-            if self.core.call_success("fs_isdir", dir_uri) is False:
+            if not self.core.call_success("fs_isdir", dir_uri):
                 continue
             for file_uri in self.core.call_success("fs_recurse", dir_uri):
                 if factory.is_importable(self.core, file_uri):
