@@ -69,14 +69,11 @@ class Plugin(openpaperwork_core.PluginBase):
     def doc_properties_components_set_active_doc(self, doc_id, doc_url):
         self.active_doc = (doc_id, doc_url)
 
-        doc_txt = ""
-        try:
-            doc_date = self.core.call_success("doc_get_date_by_id", doc_id)
+        doc_date = self.core.call_success("doc_get_date_by_id", doc_id)
+        if doc_date is not None:
             doc_txt = self.core.call_success("i18n_date_short", doc_date)
-        except Exception as exc:
-            LOGGER.warning(
-                "Failed to parse document date: %s --> %s", doc_id, exc
-            )
+        else:
+            doc_txt = doc_id
         self.widget_tree.get_object("docname_entry").set_text(doc_txt)
 
     def _on_doc_date_changed(self, gtk_entry):
@@ -102,11 +99,17 @@ class Plugin(openpaperwork_core.PluginBase):
 
         orig_id = out.doc_id
         orig_date = self.core.call_success("doc_get_date_by_id", orig_id)
-        orig_date = orig_date.date()
+        if orig_date is not None:
+            orig_date = orig_date.date()
+        else:
+            orig_date = orig_id
 
         dest_id = doc_id
         dest_date = self.core.call_success("doc_get_date_by_id", dest_id)
-        dest_date = dest_date.date()
+        if dest_date is not None:
+            dest_date = dest_date.date()
+        else:
+            dest_date = dest_id
 
         if orig_date == dest_date:
             return
