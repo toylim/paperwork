@@ -11,9 +11,12 @@ class TitleController(BaseDocViewController):
             doc_date = self.plugin.core.call_success(
                 "doc_get_date_by_id", doc_id
             )
-            doc_date = self.plugin.core.call_success(
-                "i18n_date_short", doc_date
-            )
+            if doc_date is not None:
+                doc_date = self.plugin.core.call_success(
+                    "i18n_date_short", doc_date
+                )
+            else:
+                doc_date = doc_id
             self.plugin.widget_tree.get_object(
                 "docview_header"
             ).set_title(doc_date)

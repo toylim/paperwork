@@ -306,20 +306,21 @@ class Plugin(openpaperwork_core.PluginBase):
         for (doc_id, doc_url) in docs:
             doc_date = self.core.call_success("doc_get_date_by_id", doc_id)
 
-            if doc_date.year != self.last_date.year:
-                doc_year = self.core.call_success(
-                    "i18n_date_long_year", doc_date
-                )
-                self._add_date_box("year_box.glade", doc_year)
+            if doc_date is not None:
+                if doc_date.year != self.last_date.year:
+                    doc_year = self.core.call_success(
+                        "i18n_date_long_year", doc_date
+                    )
+                    self._add_date_box("year_box.glade", doc_year)
 
-            if (doc_date.year != self.last_date.year or
-                    doc_date.month != self.last_date.month):
-                doc_month = self.core.call_success(
-                    "i18n_date_long_month", doc_date
-                )
-                self._add_date_box("month_box.glade", doc_month)
+                if (doc_date.year != self.last_date.year or
+                        doc_date.month != self.last_date.month):
+                    doc_month = self.core.call_success(
+                        "i18n_date_long_month", doc_date
+                    )
+                    self._add_date_box("month_box.glade", doc_month)
 
-            self.last_date = doc_date
+                self.last_date = doc_date
 
             self._add_doc_box(doc_id, doc_url)
 
@@ -376,7 +377,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def _reselect_current_doc(self, scroll=True):
         (doc_id, doc_url) = self.active_doc
 
-        if doc_id not in self.docid_to_row:
+        if doc_id not in {doc[0] for doc in self.docs}:
             LOGGER.info(
                 "Document %s not found in the document list", doc_id
             )

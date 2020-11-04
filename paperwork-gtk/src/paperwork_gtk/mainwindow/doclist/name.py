@@ -59,7 +59,10 @@ class Plugin(openpaperwork_core.PluginBase):
             doc_txt = _("New document")
         else:
             doc_date = self.core.call_success("doc_get_date_by_id", doc_id)
-            doc_txt = self.core.call_success("i18n_date_short", doc_date)
+            if doc_date is not None:
+                doc_txt = self.core.call_success("i18n_date_short", doc_date)
+            else:
+                doc_txt = doc_id
         label = Gtk.Label.new(doc_txt)
         label.set_visible(True)
         custom_flowlayout.add_child(label, Gtk.Align.START)

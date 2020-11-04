@@ -14,6 +14,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with Paperwork.  If not, see <http://www.gnu.org/licenses/>.
 import logging
+import sys
 
 import openpaperwork_core
 import openpaperwork_core.promise
@@ -109,11 +110,14 @@ class Plugin(openpaperwork_core.PluginBase):
                     " must be used", args.files
                 )
                 return self._file_import_to_dict(file_import)
-            print(_("Found many ways to import file(s) %s:") % args.files)
+            print(_("Found many ways to import file(s) %s.") % args.files)
+            print(_("Please select the way you want:"))
             choice = -1
             while choice not in range(0, len(importers)):
                 for (idx, importer) in enumerate(importers):
                     print("  {} - {}".format(idx + 1, importer.get_name()))
+                sys.stdout.write("? ")
+                sys.stdout.flush()
                 choice = int(input()) - 1
 
         importer = importers[choice]
