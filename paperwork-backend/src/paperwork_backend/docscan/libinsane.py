@@ -453,7 +453,7 @@ class BugReportCollector(object):
             infos, indent=4, separators=(",", ": "), sort_keys=True
         )
         (file_url, fd) = self.core.call_success(
-            "fs_mktemp", prefix="statistics_", suffix=".json", mode="w",
+            "fs_mktemp", prefix="scanner_", suffix=".json", mode="w",
             on_disk=True
         )
         with fd:
