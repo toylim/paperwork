@@ -51,7 +51,9 @@ def move_page_file(
             source_doc_url, source_page_idx,
             dest_doc_url, dest_page_idx
         ):
-    assert(core.call_success("fs_exists", dest_doc_url) is not None)
+    if core.call_success("fs_exists", dest_doc_url) is None:
+        assert(dest_page_idx == 0)
+        core.call_success("fs_mkdir_p", dest_doc_url)
 
     LOGGER.info(
         "(%s) Move %s p%d --> %s p%d:", page_filename_fmt,

@@ -710,3 +710,35 @@ class TestAll(unittest.TestCase):
         self.assertEqual(doc_pdf_hashes[3], new_doc_pdf_hashes[2])
         self.assertEqual(doc_c_hashes[0], new_doc_pdf_hashes[3])
         self.assertEqual(doc_c_hashes[2], new_doc_pdf_hashes[4])
+
+    def test_img_page_move_new_doc(self):
+        self.new_doc = self.core.call_success(
+            "fs_join", self.work_dir_url, "19871224_1233_00"
+        )
+
+        nb = self.core.call_success("doc_get_nb_pages_by_url", self.doc_b)
+        self.assertEqual(nb, 4)
+        doc_b_hashes = [
+            self._get_page_hash(self.doc_b, page_idx)
+            for page_idx in range(0, 4)
+        ]
+        self.core.call_all(
+            "page_move_by_url",
+            self.doc_b, 1,
+            self.new_doc, 0
+        )
+
+        nb = self.core.call_success("doc_get_nb_pages_by_url", self.doc_b)
+        self.assertEqual(nb, 3)
+        nb = self.core.call_success("doc_get_nb_pages_by_url", self.new_doc)
+        self.assertEqual(nb, 1)
+        new_doc_b_hashes = [
+            self._get_page_hash(self.doc_b, page_idx)
+            for page_idx in range(0, 3)
+        ]
+        new_doc_hash = self._get_page_hash(self.new_doc, 0)
+        self.assertEqual(doc_b_hashes[0], new_doc_b_hashes[0])
+        self.assertEqual(doc_b_hashes[2], new_doc_b_hashes[1])
+        self.assertEqual(doc_b_hashes[3], new_doc_b_hashes[2])
+
+        self.assertEqual(doc_b_hashes[1], new_doc_hash)
