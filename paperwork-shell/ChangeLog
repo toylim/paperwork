@@ -1,0 +1,7 @@
+2020/11/15 - 2.0.1:
+- cmd.import: When many importers match, make it clearer to the user that an
+  input is required.
+- Include tests in Pypi package (thanks to Elliott Sales de Andrade)
+
+2020/10/17 - 2.0:
+- Initial release

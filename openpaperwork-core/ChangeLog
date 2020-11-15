@@ -1,0 +1,15 @@
+2020/11/15 - 2.0.1:
+- Bug report censoring: Take into account that some strings in the logs may be
+  URL-encoded and censor them too (for instance, path to the user home
+  directory)
+- fault handler: Prefer dumping the output of faulthandler in the log file
+  instead of stderr (can't do both inforunately)
+- Logs archive + bug report: by default, report the logs of the last 2 previous
+  sessions too
+- fs.python: Text files must be encoded in UTF-8
+- Windows packaging: Fix HTTPS support: Use the certifi module to provide root
+  certificates
+- Include tests in Pypi package (thanks to Elliott Sales de Andrade)
+
+2020/10/17 - 2.0:
+- Initial release

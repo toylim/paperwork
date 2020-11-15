@@ -1,3 +1,13 @@
+2020/11/15 - 2.0.1:
+- GTK: take into account that document IDs may not be the expected date+time
+  format (no uncaught exception should be raised in that case)
+- GTK: doclist: Fix: When the document list, scroll to the currently-opened
+  document.
+- settings/calibration: Disable the calibration settings button if no scanner
+  is selected
+- update notifications: make sure the funny strings are displayed translated
+- Include tests in Pypi package (thanks to Elliott Sales de Andrade)
+
 2020/10/17 - 2.0:
 - Full rewrite
 - Use of plugin system of openpaperwork_core to split features

@@ -1,0 +1,6 @@
+2020/11/15 - 2.0.1:
+- fs.gio: Text files must be encoded in UTF-8
+- Include tests in Pypi package (thanks to Elliott Sales de Andrade)
+
+2020/10/17 - 2.0:
+- Initial release
