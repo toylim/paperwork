@@ -66,8 +66,8 @@ else
 	@echo "Will release: ${RELEASE}"
 	@echo "Checking release is in ChangeLog ..."
 	grep ${RELEASE} ChangeLog | grep -v "/xx"
-	@echo "Checking release is in data/work.openpaper.Paperwork.appdata.xml ..."
-	grep ${RELEASE} data/work.openpaper.Paperwork.appdata.xml
+	@echo "Checking release is in work.openpaper.Paperwork.appdata.xml ..."
+	grep ${RELEASE} src/paperwork_gtk/data/work.openpaper.Paperwork.appdata.xml
 endif
 
 release_pypi:

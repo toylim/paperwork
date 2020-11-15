@@ -1,3 +1,16 @@
+2020/11/15 - 2.0.1:
+- Model: Fix: When the user move a page, they may actually creating a new document.
+- Libinsane + bug report: the file to attach to the bug report should be
+  called 'scanner_*.json', not 'statistics_*.json'
+- Import: Don't use the same name for recursive importer and single importer.
+- Import: If the single file importer has matched a file to import, make sure
+  the recursive one doesn't match it too.
+- Windows: poppler.memory: work around suspected memory leak regarding
+  Gio.MemoryInput.new_from_data()
+- When thumbnail are deleted by user action, never send them to trash, really
+  delete them instead.
+- Include tests in Pypi package (thanks to Elliott Sales de Andrade)
+
 2020/10/17 - 2.0:
 - Full rewrite
 - Use of plugin system of openpaperwork_core to split features
