@@ -506,6 +506,10 @@ class Plugin(openpaperwork_core.PluginBase):
             LOGGER.error("Failed to load widget tree")
             return
 
+        if self.dialog is not None:
+            LOGGER.warning("Advanced search dialog already opened")
+            return
+
         self.dialog = self.widget_tree.get_object("search_dialog")
         self.dialog.set_transient_for(self.windows[-1])
 
