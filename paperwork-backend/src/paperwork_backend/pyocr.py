@@ -121,22 +121,16 @@ def get_default_ocr_langs(allow_none=False):
 
     ocr_tools = pyocr.get_available_tools()
     if len(ocr_tools) == 0:
-        if allow_none:
-            return None
-        else:
-            return [DEFAULT_OCR_LANG]
+        return None if allow_none else [DEFAULT_OCR_LANG]
     ocr_langs = ocr_tools[0].get_available_languages()
 
     lang = find_language(allow_none=True)
     if lang is None:
-        return None
+        return None if allow_none else [DEFAULT_OCR_LANG]
     lang = pycountry_to_tesseract(lang, ocr_langs)
     if lang is not None:
         return [lang]
-    if allow_none:
-        return None
-    else:
-        return [DEFAULT_OCR_LANG]
+    return None if allow_none else [DEFAULT_OCR_LANG]
 
 
 class Plugin(openpaperwork_core.PluginBase):

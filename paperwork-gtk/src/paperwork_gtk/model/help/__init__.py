@@ -72,8 +72,13 @@ class Plugin(openpaperwork_core.PluginBase):
     def help_get_file(self, name):
         lang = "en"
         try:
-            lang = locale.getdefaultlocale()[0][:2]
-            LOGGER.info("User language: %s", lang)
+            lang = locale.getdefaultlocale()[0]
+            if lang is None:
+                lang = "en"
+                LOGGER.warning("Failed to get default locale !")
+            else:
+                lang = lang[:2]
+                LOGGER.info("User language: %s", lang)
         except Exception as exc:
             LOGGER.error(
                 "get_documentation(): Failed to figure out locale."
