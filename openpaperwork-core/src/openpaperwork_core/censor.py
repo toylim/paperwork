@@ -63,7 +63,7 @@ class Plugin(PluginBase):
         else:
             basename = self.core.call_success("fs_basename", input_url)
             (output_url, fd_out) = self.core.call_success(
-                "fs_mktemp", prefix="censored_", suffix=basename,
+                "fs_mktemp", prefix="censored_", suffix="_" + basename,
                 mode="w", on_disk=tmp_on_disk
             )
 
