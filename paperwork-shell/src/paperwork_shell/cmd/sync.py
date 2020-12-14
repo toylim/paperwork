@@ -72,7 +72,7 @@ class Plugin(openpaperwork_core.PluginBase):
             lambda: collections.defaultdict(list)
         )
 
-        self.core.call_success("transaction_sync_all")
+        self.core.call_all("transaction_sync_all")
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
         if self.interactive:

@@ -150,6 +150,7 @@ DEFAULT_GUI_PLUGINS = (
         'paperwork_gtk.shortcuts.page.copy_text',
         'paperwork_gtk.shortcuts.page.edit',
         'paperwork_gtk.shortcutswin',
+        'paperwork_gtk.sync_on_start',
         'paperwork_gtk.update_notification',
         'paperwork_gtk.widget.flowlayout',
         'paperwork_gtk.widget.label',
@@ -180,9 +181,6 @@ def main_main(in_args):
     if len(in_args) <= 0:
 
         core.call_all("on_initialized")
-
-        LOGGER.info("Starting synchronization ...")
-        core.call_success("transaction_sync_all")
 
         LOGGER.info("Ready")
         core.call_one("mainloop", halt_on_uncaught_exception=False)
