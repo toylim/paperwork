@@ -109,10 +109,43 @@ class Plugin(openpaperwork_core.PluginBase):
         entry.set("Categories", "Office;Scanning;OCR;Archiving;GNOME;")
         entry.set("Terminal", "false")
         entry.set("Comment", "Grepping dead trees the easy way")
-        entry.set("Exec", "paperwork-gtk")
+        # It's possible to add several actions to a single desktop file.
+        # Ideally, we want a main "Open paperwork" and a secondary "Import
+        # these files to paperwork". Unfortunately, the specification does
+        # not allow specifying different MimeType= for the main and secondary
+        # actions. So we always import (possibly 0) files.
+        # https://specifications.freedesktop.org/desktop-entry-spec/1.5/ar01s11.html
+        entry.set("Exec", "paperwork-gtk import %U")
         entry.set("Name", "Paperwork")
         entry.set("Icon", "work.openpaper.Paperwork")
         entry.set("Keywords", "document;scanner;ocr;")
+        # PDF and all image formats supported by pillow
+        entry.set("MimeType",
+                  "application/pdf;"
+                  "image/png;"
+                  "image/jpeg;"
+                  "image/bmp;"
+                  "image/gif;"
+                  "image/ico;"
+                  "image/icon;"
+                  "image/jp2;"
+                  "image/jpeg;"
+                  "image/jpeg2000;"
+                  "image/jpg;"
+                  "image/jpx;"
+                  "image/pjpeg;"
+                  "image/png;"
+                  "image/tiff;"
+                  "image/webp;"
+                  "image/x-MS-bmp;"
+                  "image/x-bmp;"
+                  "image/x-portable-bitmap;"
+                  "image/x-portable-graymap;"
+                  "image/x-portable-pixmap;"
+                  "image/x-tga;"
+                  "image/x-png;"
+                  )
+        entry.validate()
         entry.write()
         print("Done")
 
