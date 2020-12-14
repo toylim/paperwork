@@ -62,7 +62,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         button = widget_tree.get_object("button_flatpak_info")
         self.core.call_all("settings_scanner_set_extra_widget", button)
-        button.connect("clicked", self._on_clicked, widget_tree)
+        button.connect("clicked", self._on_clicked)
 
     def on_gtk_window_opened(self, window):
         self.windows.append(window)
@@ -70,7 +70,14 @@ class Plugin(openpaperwork_core.PluginBase):
     def on_gtk_window_closed(self, window):
         self.windows.remove(window)
 
-    def _on_clicked(self, button, widget_tree):
+    def _on_clicked(self, button):
+        widget_tree = self.core.call_success(
+            "gtk_load_widget_tree", "paperwork_gtk.settings.scanner",
+            "flatpak.glade"
+        )
+        if widget_tree is None:
+            return
+
         dialog = widget_tree.get_object("flatpak_info_dialog")
         dialog.set_transient_for(self.windows[-1])
         dialog.set_modal(True)
