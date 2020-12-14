@@ -5,6 +5,7 @@ class Setting(object):
     def __init__(self, value, default_func):
         self.value = value
         self.default_value_func = default_func
+        self.observers = []
 
     def get(self):
         if self.value is None:
@@ -13,6 +14,14 @@ class Setting(object):
 
     def put(self, v):
         self.value = v
+        for obs in self.observers:
+            obs()
+
+    def add_observer(self, obs):
+        self.observers.append(obs)
+
+    def remove_observer(self, obs):
+        self.observers.remove(obs)
 
 
 class Plugin(PluginBase):
@@ -73,5 +82,11 @@ class Plugin(PluginBase):
     def config_remove_plugin(self, plugin):
         raise NotImplementedError()
 
-    def onfig_list_plugins(self):
+    def config_list_plugins(self):
         raise NotImplementedError()
+
+    def config_add_observer(self, key: str, callback):
+        self._settings[key].add_observer(callback)
+
+    def config_remove_observer(self, key: str, callback):
+        self._settings[key].remove_observer(callback)

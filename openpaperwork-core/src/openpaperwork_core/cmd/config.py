@@ -20,12 +20,20 @@ from .. import (_, PluginBase)
 
 LOGGER = logging.getLogger(__name__)
 
+
+def bool_from_str(s):
+    s = s.strip()
+    if s == "" or s == "0" or s.lower() == "false":
+        return False
+    return True
+
+
 # Only basic types are handled by shell commands
 CMD_VALUE_TYPES = {
     'str': str,
     'int': int,
     'float': float,
-    'bool': bool,
+    'bool': bool_from_str,
 }
 
 

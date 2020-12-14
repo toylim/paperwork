@@ -497,6 +497,10 @@ class Plugin(openpaperwork_core.PluginBase):
             out['gtk'].update(openpaperwork_gtk.deps.GTK)
 
     def gtk_open_advanced_search_dialog(self):
+        if self.dialog is not None:
+            LOGGER.warning("Advanced search dialog already opened")
+            return
+
         self.widget_tree = self.core.call_success(
             "gtk_load_widget_tree",
             "paperwork_gtk.mainwindow.search", "advanced.glade"

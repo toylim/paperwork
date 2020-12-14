@@ -133,9 +133,19 @@ paperwork-gtk
 
 ## Debug
 
-You can use the environment variable `PAPERWORK\_VERBOSE` to increase or
-decrease the logging level. The accepted values are: DEBUG, INFO, WARNING,
-ERROR.
+On GNU/Linux, you can increase debug level by using the following command:
+
+```sh
+paperwork-gtk config put log_level str debug
+```
+
+Or, if you use Flatpak:
+
+```sh
+flatpak run --command=paperwork-gtk work.openpaper.Paperwork config put log_level str debug
+```
+
+You can revert the log level by setting it back to `info` instead of `debug`.
 
 
 ## Separate Paperwork configuration for development from your day-to-day configuration

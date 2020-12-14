@@ -146,10 +146,13 @@ class PdfPageMapping(object):
         with self.core.call_success("fs_open", self.map_url, "r") as fd:
             # drop the first line
             lines = fd.readlines()[1:]
-            for line in lines:
-                (orig_page_idx, target_page_idx) = line.split(",", 1)
-                orig_page_idx = int(orig_page_idx)
-                target_page_idx = int(target_page_idx)
+            lines = [line.split(",", 1) for line in lines]
+            lines = [
+                (int(orig_page_idx), int(target_page_idx))
+                for (orig_page_idx, target_page_idx) in lines
+            ]
+            lines.sort()
+            for (orig_page_idx, target_page_idx) in lines:
                 if target_page_idx < 0:
                     target_page_idx = None
                 self.set_mapping(orig_page_idx, target_page_idx)
