@@ -40,6 +40,11 @@ class Plugin(PluginBase):
             )
             return
 
+        basename = self.core.call_success("fs_basename", url)
+        if basename.startswith("censored_"):
+            LOGGER.info("Attachmnent %s appears to be already censored", url)
+            return
+
         LOGGER.info("Censoring %s:%s", attachment_id, url)
 
         censored = self.core.call_success(
