@@ -25,14 +25,6 @@ from .. import PluginBase
 
 LOGGER = logging.getLogger(__name__)
 
-# Only basic types are handled by shell commands
-CMD_VALUE_TYPES = {
-    'str': str,
-    'int': int,
-    'float': float,
-    'bool': bool,
-}
-
 
 class Setting(object):
     def __init__(self, core, section, token, default_value_func):
