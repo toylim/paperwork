@@ -1,6 +1,5 @@
 import collections
 import logging
-import threading
 
 try:
     from gi.repository import GObject
@@ -176,7 +175,6 @@ def recompute_box_positions(core, widgets, width, spacing=(0, 0)):
 class CustomFlowLayout(Gtk.Box):
     def __init__(self, core, spacing=(0, 0)):
         super().__init__()
-        self.mutex = threading.RLock()
         self.core = core
 
         self.widgets = collections.OrderedDict()
@@ -198,47 +196,40 @@ class CustomFlowLayout(Gtk.Box):
         self.queue_resize()
 
     def _on_remove(self, _, widget):
-        with self.mutex:
-            self.widgets.pop(widget)
-            self.queue_draw()
-            self.queue_resize()
+        self.widgets.pop(widget)
+        self.queue_draw()
+        self.queue_resize()
 
     def do_forall(self, include_internals: bool, callback, callback_data=None):
-        if not hasattr(self, 'mutex'):
+        if not hasattr(self, 'widgets'):
             return
-        with self.mutex:
-            if not hasattr(self, 'widgets'):
-                return
-            widgets = self.widgets.copy()
-            for widget in widgets:
-                callback(widget)
+        widgets = self.widgets.copy()
+        for widget in widgets:
+            callback(widget)
 
     def add_child(self, widget, alignment):
-        with self.mutex:
-            w = WidgetInfo(widget, alignment)
-            self.widgets[widget] = w
-            self.add(widget)
+        w = WidgetInfo(widget, alignment)
+        self.widgets[widget] = w
+        self.add(widget)
 
     def do_get_request_mode(self):
         return Gtk.SizeRequestMode.WIDTH_FOR_HEIGHT
 
     def do_get_preferred_width(self):
-        with self.mutex:
-            min_width = 0
-            nat_width = 0
-            for widget in self.widgets.values():
-                widget.update_widget_size()
-                min_width = max(widget.size[0], min_width)
-                nat_width += widget.size[0]
+        min_width = 0
+        nat_width = 0
+        for widget in self.widgets.values():
+            widget.update_widget_size()
+            min_width = max(widget.size[0], min_width)
+            nat_width += widget.size[0]
         return (min_width, nat_width)
 
     def do_get_preferred_height_for_width(self, width):
-        with self.mutex:
-            requested_height = recompute_height_for_width(
-                self.widgets.values(), width, self.spacing
-            )
-            requested_height += self.bottom_margin
-            return (requested_height, requested_height)
+        requested_height = recompute_height_for_width(
+            self.widgets.values(), width, self.spacing
+        )
+        requested_height += self.bottom_margin
+        return (requested_height, requested_height)
 
     def do_get_preferred_height(self):
         (min_width, nat_width) = self.do_get_preferred_width()
@@ -255,33 +246,31 @@ class CustomFlowLayout(Gtk.Box):
         if self.allocation is None:
             return
 
-        with self.mutex:
-            for widget in self.widgets.values():
-                widget.update_widget_size()
+        for widget in self.widgets.values():
+            widget.update_widget_size()
 
-            (
-                _, self.requested_width, self.requested_height
-            ) = recompute_box_positions(
-                self.core, self.widgets.values(), self.allocation.width,
-                self.spacing
-            )
-            self.requested_height += self.bottom_margin
+        (
+            _, self.requested_width, self.requested_height
+        ) = recompute_box_positions(
+            self.core, self.widgets.values(), self.allocation.width,
+            self.spacing
+        )
+        self.requested_height += self.bottom_margin
 
-            for widget in self.widgets.values():
-                rect = Gdk.Rectangle()
-                rect.x = self.allocation.x + widget.position[0]
-                rect.y = self.allocation.y + widget.position[1]
-                rect.width = widget.size[0]
-                rect.height = widget.size[1]
-                widget.widget.size_allocate(rect)
+        for widget in self.widgets.values():
+            rect = Gdk.Rectangle()
+            rect.x = self.allocation.x + widget.position[0]
+            rect.y = self.allocation.y + widget.position[1]
+            rect.width = widget.size[0]
+            rect.height = widget.size[1]
+            widget.widget.size_allocate(rect)
 
     def _on_destroy(self, _):
-        with self.mutex:
-            if not hasattr(self, 'widgets'):
-                return
-            for widget in self.widgets.keys():
-                widget.unparent()
-            self.widgets = collections.OrderedDict()
+        if not hasattr(self, 'widgets'):
+            return
+        for widget in self.widgets.keys():
+            widget.unparent()
+        self.widgets = collections.OrderedDict()
 
     def set_bottom_margin(self, height):
         self.bottom_margin = height
