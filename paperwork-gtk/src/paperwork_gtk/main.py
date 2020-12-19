@@ -200,12 +200,8 @@ def main_main(in_args):
 
         core.call_all("cmd_set_interactive", True)
 
-        r = core.call_all("cmd_run", args)
-        if r <= 0:
-            print("Unknown command or argument(s): {}".format(in_args))
-            sys.exit(1)
+        core.call_all("cmd_run", args)
         core.call_all("on_quit")
-        return r
 
 
 def main():
