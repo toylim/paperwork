@@ -619,6 +619,10 @@ class Plugin(openpaperwork_core.PluginBase):
         return True
 
     def scan_list_scanners_promise(self):
+        """
+        Return a promise for listing scanners.
+        Must be started with "scan_schedule()", not "promise.schedule()" !
+        """
         def list_scanners(*args, **kwargs):
             with LOCK:
                 if len(self.devices_cache) > 0:
@@ -657,6 +661,10 @@ class Plugin(openpaperwork_core.PluginBase):
         return promise
 
     def scan_get_scanner_promise(self, scanner_dev_id=None):
+        """
+        Return a promise getting a scanner instance.
+        Must be started with "scan_schedule()", not "promise.schedule()" !
+        """
         def get_scanner(scanner_dev_id):
             if self._last_scanner is not None:
                 self._last_scanner.close()
@@ -685,6 +693,10 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def scan_promise(self, *args, source_id=None, **kwargs):
+        """
+        Return a promise that will run a scan.
+        Must be started with "scan_schedule()", not "promise.schedule()" !
+        """
         scanner_dev_id = self.core.call_success(
             "config_get", "scanner_dev_id"
         )
