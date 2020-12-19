@@ -106,7 +106,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _get_scanners_info(self, devs):
         promise = openpaperwork_core.promise.Promise(self.core)
-        for (dev_id, dev_name) in devs:
+        for dev in devs:
+            dev_id = dev[0]
+            dev_nane = dev[1]
             promise = promise.then(self.core.call_success(
                 "scan_get_scanner_promise", dev_id
             ))

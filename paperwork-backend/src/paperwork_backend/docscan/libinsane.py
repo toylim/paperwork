@@ -471,7 +471,9 @@ class BugReportCollector(object):
     def _collect_all_info(self, scanners):
         out = {}
         promise = openpaperwork_core.promise.Promise(self.core)
-        for (dev_id, dev_name) in scanners:
+        for dev in scanners:
+            dev_id = dev[0]
+            dev_name = dev[1]
             out[dev_id] = {
                 'listing_name': dev_name
             }
@@ -626,7 +628,9 @@ class Plugin(openpaperwork_core.PluginBase):
                         'libinsane:' + dev.get_dev_id(),
                         "{} {}".format(
                             dev.get_dev_vendor(), dev.get_dev_model()
-                        )
+                        ),
+                        dev.get_dev_vendor(),
+                        dev.get_dev_model(),
                     )
                     for dev in devs
                 ]
