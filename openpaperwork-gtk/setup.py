@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import sys
 
 from setuptools import setup, find_packages
@@ -52,6 +53,6 @@ A bunch of plugins for Paperwork related to GLib and GTK.
     packages=find_packages('src'),
     package_dir={'': 'src'},
     include_package_data=True,
-    zip_safe=True,
+    zip_safe=(os.name != 'nt'),
     install_requires=[]
 )
