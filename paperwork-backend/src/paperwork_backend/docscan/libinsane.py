@@ -121,22 +121,30 @@ class Source(object):
             "config_put", "scanner_source_id", self.source_id
         )
 
-    def get_resolutions(self):
-        with LOCK:
-            LOGGER.info(
-                "Looking for possible values for option 'resolution' on %s"
-                " : %s ...", str(self.scanner), self.source_id
-            )
-            options = self.source.get_options()
-            options = {opt.get_name(): opt for opt in options}
+    def _get_option(self, name):
+        LOGGER.info(
+            "Looking for possible values for option '%s' on %s"
+            " : %s ...", name, str(self.scanner), self.source_id
+        )
+        options = self.source.get_options()
+        options = {opt.get_name(): opt for opt in options}
+        return options[name]
 
-            opt = options['resolution']
+    def _get_opt_constraint(self, name):
+        with LOCK:
+            opt = self._get_option(name)
             constraint = opt.get_constraint()
             LOGGER.info(
-                "%s : %s : resolution : Possible values: %s",
-                str(self.scanner), self.source_id, constraint
+                "%s : %s : %s : Possible values: %s",
+                str(self.scanner), self.source_id, name, constraint
             )
             return constraint
+
+    def get_modes(self):
+        return self._get_opt_constraint('mode')
+
+    def get_resolutions(self):
+        return self._get_opt_constraint('resolution')
 
     def get_resolutions_promise(self):
         return openpaperwork_core.promise.ThreadedPromise(
