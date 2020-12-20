@@ -77,6 +77,7 @@ There is no GUI here. The GUI is
         "distro",
         "openpaperwork-core",
         "Pillow",
+        "psutil",
         "pycountry",
         "pyocr",
         "pypillowfight>=0.3.0",
