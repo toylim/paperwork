@@ -9,3 +9,18 @@
 #doclist_scroll button image {
 	border: 0px;
 }
+
+.search_field {
+  padding: 12px;
+  background-color: @theme_bg_color;
+}
+
+.search-left, .search-right {
+  border: 1px solid shade(@theme_bg_color, 0.9);
+  background-color: shade(@theme_bg_color, 0.9);
+}
+
+.search-left:hover {
+  background-color: #fcfbfb;
+}
+

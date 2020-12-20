@@ -10,6 +10,9 @@
       <object class="GtkBox">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
+        <style>
+          <class name="search_field"/>
+        </style>
         <child>
           <object class="GtkSearchEntry" id="search_entry">
             <property name="visible">True</property>
@@ -17,6 +20,10 @@
             <property name="invisible_char">•</property>
             <property name="placeholder_text" translatable="yes">Search</property>
             <property name="input_hints">GTK_INPUT_HINT_SPELLCHECK | GTK_INPUT_HINT_WORD_COMPLETION | GTK_INPUT_HINT_NO_EMOJI | GTK_INPUT_HINT_NONE</property>
+            <style>
+              <class name="button-left"/>
+              <class name="search-left"/>
+            </style>
           </object>
           <packing>
             <property name="expand">True</property>
@@ -32,6 +39,10 @@
             <property name="has_tooltip">True</property>
             <property name="tooltip_text" translatable="yes">Advanced search</property>
             <property name="relief">none</property>
+            <style>
+              <class name="button-right"/>
+              <class name="search-right"/>
+            </style>
             <child>
               <object class="GtkImage">
                 <property name="visible">True</property>
