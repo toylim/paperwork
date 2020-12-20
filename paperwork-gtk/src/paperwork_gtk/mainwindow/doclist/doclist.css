@@ -24,3 +24,17 @@
   background-color: #fcfbfb;
 }
 
+
+.date_label {
+  color: #c1bab5;
+  font-size: large;
+  font-weight: 800;
+  margin-top: 12px;
+  margin-left: 6px;
+  margin-right: 6px;
+}
+
+.border-bottom-light {
+  padding-bottom: 4px;
+  border-bottom: 1px solid shade(@theme_bg_color, 0.7);
+}
