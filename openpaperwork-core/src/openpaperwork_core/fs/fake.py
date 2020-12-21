@@ -85,6 +85,7 @@ class FakeFileAdapter(io.RawIOBase):
     def write(self, b):
         self.content = self.content[:self.pos]
         self.content += b
+        self.pos += len(b)
         return len(b)
 
     def writelines(self, lines):
