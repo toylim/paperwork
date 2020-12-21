@@ -294,6 +294,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def doclist_extend(self, nb_docs):
         start = time.time()
+        # FIXME: show month only when there are too many documents. How many?
+        show_month = True
 
         docs = self.docs[
             self.doc_visibles:self.doc_visibles + nb_docs
@@ -307,18 +309,22 @@ class Plugin(openpaperwork_core.PluginBase):
             doc_date = self.core.call_success("doc_get_date_by_id", doc_id)
 
             if doc_date is not None:
-                if doc_date.year != self.last_date.year:
-                    doc_year = self.core.call_success(
-                        "i18n_date_long_year", doc_date
-                    )
-                    self._add_date_box("year_box.glade", doc_year)
+                if not show_month:
+                    if doc_date.year != self.last_date.year:
+                        doc_year = self.core.call_success(
+                            "i18n_date_long_year", doc_date
+                        )
+                        self._add_date_box("year_box.glade", doc_year)
 
-                if (doc_date.year != self.last_date.year or
-                        doc_date.month != self.last_date.month):
-                    doc_month = self.core.call_success(
-                        "i18n_date_long_month", doc_date
-                    )
-                    self._add_date_box("month_box.glade", doc_month)
+                else:
+                    if (doc_date.year != self.last_date.year or
+                            doc_date.month != self.last_date.month):
+                        doc_year = self.core.call_success(
+                                "i18n_date_long_year", doc_date
+                            ) + " / " + self.core.call_success(
+                                "i18n_date_long_month", doc_date
+                            )
+                        self._add_date_box("year_box.glade", doc_year)
 
                 self.last_date = doc_date
 
