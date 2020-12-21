@@ -111,7 +111,7 @@ class TestWorkdir(unittest.TestCase):
             "file:///some_work_dir/20200508_2002_25"
         )
 
-        self.assertEquals(
+        self.assertEqual(
             self.fs.fs, {
                 "some_work_dir": {
                     "20190904_1327_10": {
@@ -148,7 +148,7 @@ class TestWorkdir(unittest.TestCase):
             "file:///some_work_dir/20190904_1327_10"
         )
 
-        self.assertEquals(
+        self.assertEqual(
             self.fs.fs, {
                 "some_work_dir": {
                     "20190904_1327_10": {
