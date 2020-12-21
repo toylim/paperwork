@@ -121,22 +121,30 @@ class Source(object):
             "config_put", "scanner_source_id", self.source_id
         )
 
-    def get_resolutions(self):
-        with LOCK:
-            LOGGER.info(
-                "Looking for possible values for option 'resolution' on %s"
-                " : %s ...", str(self.scanner), self.source_id
-            )
-            options = self.source.get_options()
-            options = {opt.get_name(): opt for opt in options}
+    def _get_option(self, name):
+        LOGGER.info(
+            "Looking for possible values for option '%s' on %s"
+            " : %s ...", name, str(self.scanner), self.source_id
+        )
+        options = self.source.get_options()
+        options = {opt.get_name(): opt for opt in options}
+        return options[name]
 
-            opt = options['resolution']
+    def _get_opt_constraint(self, name):
+        with LOCK:
+            opt = self._get_option(name)
             constraint = opt.get_constraint()
             LOGGER.info(
-                "%s : %s : resolution : Possible values: %s",
-                str(self.scanner), self.source_id, constraint
+                "%s : %s : %s : Possible values: %s",
+                str(self.scanner), self.source_id, name, constraint
             )
             return constraint
+
+    def get_modes(self):
+        return self._get_opt_constraint('mode')
+
+    def get_resolutions(self):
+        return self._get_opt_constraint('resolution')
 
     def get_resolutions_promise(self):
         return openpaperwork_core.promise.ThreadedPromise(
@@ -471,7 +479,9 @@ class BugReportCollector(object):
     def _collect_all_info(self, scanners):
         out = {}
         promise = openpaperwork_core.promise.Promise(self.core)
-        for (dev_id, dev_name) in scanners:
+        for dev in scanners:
+            dev_id = dev[0]
+            dev_name = dev[1]
             out[dev_id] = {
                 'listing_name': dev_name
             }
@@ -609,6 +619,10 @@ class Plugin(openpaperwork_core.PluginBase):
         return True
 
     def scan_list_scanners_promise(self):
+        """
+        Return a promise for listing scanners.
+        Must be started with "scan_schedule()", not "promise.schedule()" !
+        """
         def list_scanners(*args, **kwargs):
             with LOCK:
                 if len(self.devices_cache) > 0:
@@ -626,7 +640,9 @@ class Plugin(openpaperwork_core.PluginBase):
                         'libinsane:' + dev.get_dev_id(),
                         "{} {}".format(
                             dev.get_dev_vendor(), dev.get_dev_model()
-                        )
+                        ),
+                        dev.get_dev_vendor(),
+                        dev.get_dev_model(),
                     )
                     for dev in devs
                 ]
@@ -645,6 +661,10 @@ class Plugin(openpaperwork_core.PluginBase):
         return promise
 
     def scan_get_scanner_promise(self, scanner_dev_id=None):
+        """
+        Return a promise getting a scanner instance.
+        Must be started with "scan_schedule()", not "promise.schedule()" !
+        """
         def get_scanner(scanner_dev_id):
             if self._last_scanner is not None:
                 self._last_scanner.close()
@@ -673,6 +693,10 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def scan_promise(self, *args, source_id=None, **kwargs):
+        """
+        Return a promise that will run a scan.
+        Must be started with "scan_schedule()", not "promise.schedule()" !
+        """
         scanner_dev_id = self.core.call_success(
             "config_get", "scanner_dev_id"
         )

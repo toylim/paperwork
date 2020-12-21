@@ -58,7 +58,18 @@ class Drawer(object):
     def on_scan_page_start(self, scan_params):
         self.scan_size = (scan_params.get_width(), scan_params.get_height())
         self.last_line = 0
-        LOGGER.info("Scan started: %s", self.scan_size)
+        LOGGER.info(
+            "Scan started: %s (expected: %dx%dpx)",
+            self.scan_size, self.scan_size[0], self.scan_size[1]
+        )
+        self.scan_size = (
+            # WORKAROUND(Jflesch): Some scanners (Fujistu mainly) return an
+            # image far too big in height. Cairo only allows a maximum image
+            # size of 32767 (see #define MAX_IMAGE_SIZE in
+            # cairo-image-surface.c)
+            min(self.scan_size[0], 32766),
+            min(self.scan_size[1], 32766),
+        )
         self.image = cairo.ImageSurface(
             cairo.FORMAT_RGB24, self.scan_size[0], self.scan_size[1]
         )

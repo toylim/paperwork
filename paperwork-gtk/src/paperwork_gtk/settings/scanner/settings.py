@@ -83,7 +83,9 @@ class Plugin(openpaperwork_core.PluginBase):
     def _update_scanner_name(self):
         def set_scanner_name(devs):
             active = self.core.call_success("config_get", "scanner_dev_id")
-            for (dev_id, dev_name) in devs:
+            for dev in devs:
+                dev_id = dev[0]
+                dev_name = dev[1]
                 if dev_id == active:
                     self.core.call_success(
                         "config_put", "settings_scanner_name", dev_name

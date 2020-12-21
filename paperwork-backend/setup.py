@@ -72,11 +72,12 @@ There is no GUI here. The GUI is
     packages=find_packages('src'),
     include_package_data=True,
     package_dir={'': 'src'},
-    zip_safe=True,
+    zip_safe=(os.name != 'nt'),
     install_requires=[
         "distro",
         "openpaperwork-core",
         "Pillow",
+        "psutil",
         "pycountry",
         "pyocr",
         "pypillowfight>=0.3.0",
