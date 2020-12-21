@@ -127,6 +127,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             doc_text = []
             self.core.call_all("doc_get_text_by_url", doc_text, doc_url)
             doc_text = "\n\n".join(doc_text)
+            doc_text = self.core.call_success("i18n_strip_accents", doc_text)
         else:
             doc_text = None
 
@@ -393,6 +394,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_gtk.fs.gio'],
             },
             {
+                'interface': 'i18n',
+                'defaults': ['openpaperwork_core.i18n.python'],
+            },
+            {
                 'interface': 'mainloop',
                 'defaults': ['openpaperwork_gtk.mainloop.glib'],
             },
@@ -485,6 +490,7 @@ class Plugin(openpaperwork_core.PluginBase):
         doc_txt = "\n\n".join(doc_txt)
         if doc_txt == u"":
             return
+        doc_txt = self.core.call_success("i18n_strip_accents", doc_txt)
         if self.bayes is None:
             self._load_all_bayes()
         for (label_name, guesser) in self.bayes.items():
@@ -501,7 +507,15 @@ class Plugin(openpaperwork_core.PluginBase):
             no = scores['no']
             total = yes + no
             if total == 0:
+                LOGGER.info(
+                    "Yes[%f] / (Yes[%f] + No[%f]) = inf",
+                    yes, yes, no, self.THRESHOLD_YES_NO_RATIO
+                )
                 continue
+            LOGGER.info(
+                "Yes[%f] / (Yes[%f] + No[%f]) = %f (threshold: %f)",
+                yes, yes, no, (yes / total), self.THRESHOLD_YES_NO_RATIO
+            )
             if (yes / total) > self.THRESHOLD_YES_NO_RATIO:
                 yield label_name
 
