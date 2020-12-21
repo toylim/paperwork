@@ -23,7 +23,7 @@ class AbstractTestThread(unittest.TestCase):
                 def mainloop_unref(s, r):
                     pass
 
-        self.core = Core(allow_unsatisfied=True)
+        self.core = Core(auto_load_dependencies=True)
         self.core._load_module("dummy_mainloop", DummyMainloop())
         self.core.load(self.get_plugin_name())
         self.core.init()

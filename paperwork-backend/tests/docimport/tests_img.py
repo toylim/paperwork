@@ -14,7 +14,7 @@ class TestImgImport(unittest.TestCase):
                 "test_img.png"
             )
         )
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
 
         self.pillowed = []
         self.add_docs = []

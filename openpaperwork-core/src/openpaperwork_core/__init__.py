@@ -121,9 +121,9 @@ class Core(object):
     """
     Manage plugins and their callbacks.
     """
-    def __init__(self, allow_unsatisfied=False):
+    def __init__(self, auto_load_dependencies=False):
         """
-        `allow_unsatisfied=True` means that missing dependencies will be
+        `auto_load_dependencies=True` means that missing dependencies will be
         loaded automatically based on the default plugin list provided by
         plugins. This should be only used for testing.
         """
@@ -133,7 +133,7 @@ class Core(object):
         self._initialized = set()  # avoid double-init
         self.interfaces = collections.defaultdict(list)
         self.callbacks = collections.defaultdict(list)
-        self.allow_unsatisfied = allow_unsatisfied
+        self.auto_load_dependencies = auto_load_dependencies
 
         self.log_all = bool(os.getenv("CORE_LOG_ALL", 0))
         self.count_limit_per_second = int(os.getenv("CORE_CALL_LIMIT", 0))
@@ -211,7 +211,7 @@ class Core(object):
                 if len(defaults) <= 0:
                     continue
 
-                if (not self.allow_unsatisfied
+                if (not self.auto_load_dependencies
                         and (
                             'expected_already_satisfied' not in dep
                             or dep['expected_already_satisfied']

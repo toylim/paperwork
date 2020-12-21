@@ -9,7 +9,7 @@ import openpaperwork_core
 
 class TestImg(unittest.TestCase):
     def setUp(self):
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load("openpaperwork_core.fs.fake")
         self.core.load("paperwork_backend.model.thumbnail")
         self.core.init()

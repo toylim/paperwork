@@ -10,7 +10,7 @@ import openpaperwork_core
 class TestFileDescriptorLeak(unittest.TestCase):
     @unittest.skipUnless(os.name == 'posix', reason="Linux only")
     def test_fd_leak(self):
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load("openpaperwork_core.fs.python")
         self.core.load("paperwork_backend.poppler.file")
         self.core.init()
@@ -43,7 +43,7 @@ class TestFileDescriptorLeak(unittest.TestCase):
 
     @unittest.skipUnless(os.name == 'posix', reason="Linux only")
     def test_fd_leak2(self):
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load("openpaperwork_core.fs.python")
         self.core.load("paperwork_backend.poppler.file")
         self.core.init()

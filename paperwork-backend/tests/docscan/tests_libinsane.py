@@ -3,11 +3,11 @@ import unittest
 
 import gi
 gi.require_version('Libinsane', '1.0')
-from gi.repository import Libinsane
+from gi.repository import Libinsane  # noqa: E402
 
-import openpaperwork_core
+import openpaperwork_core  # noqa: E402
 
-import paperwork_backend.docscan.libinsane
+import paperwork_backend.docscan.libinsane  # noqa: E402
 
 
 class TestImageAssembler(unittest.TestCase):
@@ -47,7 +47,7 @@ class TestImageAssembler(unittest.TestCase):
 
 class TestLibinsane(unittest.TestCase):
     def setUp(self):
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load("openpaperwork_core.config.fake")
         self.core.load("openpaperwork_core.thread.simple")
         self.core.load("openpaperwork_core.work_queue.default")

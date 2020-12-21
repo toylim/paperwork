@@ -8,7 +8,7 @@ import openpaperwork_core
 
 class TestReadWrite(unittest.TestCase):
     def test_simple_getset(self):
-        core = openpaperwork_core.Core(allow_unsatisfied=True)
+        core = openpaperwork_core.Core(auto_load_dependencies=True)
 
         core.load('openpaperwork_core.config.backend.configparser')
         core.get_by_name(
@@ -44,7 +44,7 @@ class TestReadWrite(unittest.TestCase):
             ).base_path, trash=False)
 
     def test_no_config_file(self):
-        core = openpaperwork_core.Core(allow_unsatisfied=True)
+        core = openpaperwork_core.Core(auto_load_dependencies=True)
 
         core.load('openpaperwork_core.config.backend.configparser')
         core.get_by_name(
@@ -64,7 +64,7 @@ class TestReadWrite(unittest.TestCase):
             ).base_path, trash=False)
 
     def test_simple_readwrite(self):
-        core = openpaperwork_core.Core(allow_unsatisfied=True)
+        core = openpaperwork_core.Core(auto_load_dependencies=True)
 
         core.load('openpaperwork_core.config.backend.configparser')
         core.get_by_name(
@@ -102,7 +102,7 @@ class TestReadWrite(unittest.TestCase):
             ).base_path, trash=False)
 
     def test_observers(self):
-        core = openpaperwork_core.Core(allow_unsatisfied=True)
+        core = openpaperwork_core.Core(auto_load_dependencies=True)
 
         core.load('openpaperwork_core.config.backend.configparser')
         core.get_by_name(
@@ -152,7 +152,7 @@ class TestReadWrite(unittest.TestCase):
             ).base_path, trash=False)
 
     def test_simple_readwrite_list(self):
-        core = openpaperwork_core.Core(allow_unsatisfied=True)
+        core = openpaperwork_core.Core(auto_load_dependencies=True)
 
         core.load('openpaperwork_core.config.backend.configparser')
         core.get_by_name(
@@ -196,7 +196,7 @@ class TestReadWrite(unittest.TestCase):
             ).base_path, trash=False)
 
     def test_simple_readwrite_dict(self):
-        core = openpaperwork_core.Core(allow_unsatisfied=True)
+        core = openpaperwork_core.Core(auto_load_dependencies=True)
 
         core.load('openpaperwork_core.config.backend.configparser')
         core.get_by_name(
@@ -249,7 +249,7 @@ class TestReadWrite(unittest.TestCase):
             ).base_path, trash=False)
 
     def test_getset_date(self):
-        core = openpaperwork_core.Core(allow_unsatisfied=True)
+        core = openpaperwork_core.Core(auto_load_dependencies=True)
 
         core.load('openpaperwork_core.config.backend.configparser')
 

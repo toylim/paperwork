@@ -9,7 +9,7 @@ class TestIndex(unittest.TestCase):
     def setUp(self):
         self.tmp_index_dir = tempfile.mkdtemp(prefix="paperwork_backend_index")
 
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load("paperwork_backend.model.fake")
         self.core.load("paperwork_backend.index.whoosh")
         self.core.get_by_name("paperwork_backend.index.whoosh").index_dir = (

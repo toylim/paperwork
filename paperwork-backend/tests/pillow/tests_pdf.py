@@ -9,7 +9,7 @@ import openpaperwork_core.fs
 
 class TestPillowPdf(unittest.TestCase):
     def setUp(self):
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load("paperwork_backend.pillow.pdf")
         self.core.init()
 

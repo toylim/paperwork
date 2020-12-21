@@ -6,7 +6,7 @@ import openpaperwork_core
 
 class TestWorkdir(unittest.TestCase):
     def setUp(self):
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load("openpaperwork_core.config.fake")
         self.core.load("openpaperwork_core.fs.fake")
         self.core.load("paperwork_backend.model.img")
@@ -45,9 +45,10 @@ class TestWorkdir(unittest.TestCase):
         )
 
     def test_storage_get_new_doc(self):
-        now = lambda: datetime.datetime(
-            year=2019, month=9, day=4, hour=13, minute=27, second=10
-        )
+        def now():
+            return datetime.datetime(
+                year=2019, month=9, day=4, hour=13, minute=27, second=10
+            )
 
         self.fs.fs = {
             "some_work_dir": {
@@ -68,9 +69,10 @@ class TestWorkdir(unittest.TestCase):
         self.assertEqual(doc_url, "file:///some_work_dir/20190904_1327_10")
 
     def test_storage_get_new_doc_2(self):
-        now = lambda: datetime.datetime(
-            year=2019, month=9, day=4, hour=13, minute=27, second=10
-        )
+        def now():
+            return datetime.datetime(
+                year=2019, month=9, day=4, hour=13, minute=27, second=10
+            )
 
         self.fs.fs = {
             "some_work_dir": {
@@ -123,7 +125,7 @@ class TestWorkdir(unittest.TestCase):
             }
         )
 
-    def test_rename(self):
+    def test_rename2(self):
         self.fs.fs = {
             "some_work_dir": {
                 "20190904_1327_10": {

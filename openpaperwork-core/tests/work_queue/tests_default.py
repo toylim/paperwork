@@ -5,7 +5,7 @@ import openpaperwork_core
 
 class TestQueue(unittest.TestCase):
     def setUp(self):
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load("openpaperwork_core.work_queue.default")
         self.core.init()
 

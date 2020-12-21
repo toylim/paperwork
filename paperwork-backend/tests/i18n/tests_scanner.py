@@ -5,7 +5,7 @@ import openpaperwork_core
 
 class TestScannerI18n(unittest.TestCase):
     def setUp(self):
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load("paperwork_backend.i18n.scanner")
         self.core.init()
 
