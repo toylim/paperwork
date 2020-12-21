@@ -20,13 +20,8 @@
   background-color: shade(@theme_bg_color, 0.9);
 }
 
-.search-left:hover {
-  background-color: #fcfbfb;
-}
-
-
 .date_label {
-  color: #c1bab5;
+  color: shade(@theme_bg_color, 0.75);
   font-size: large;
   font-weight: 800;
   margin-top: 12px;
@@ -34,16 +29,15 @@
   margin-right: 6px;
 }
 
-
 .border-bottom-light {
   padding-bottom: 4px;
-  border-bottom: 1px solid shade(@theme_bg_color, 0.7);
+  border-bottom: 1px solid shade(@theme_bg_color, 0.75);
 }
 
 .doclist {
   padding-left: 6px;
   padding-right: 6px;
-  background-color: #f8f7f7;
+  background-color: @theme_bg_color;
 }
 
 .doclist_item {
@@ -58,14 +52,18 @@
 
 .doclist_item:hover {
   border: 1px solid shade(@theme_bg_color, 0.9);
-  background-color: mix(@theme_bg_color, #fcfbfb, 0.7);
+  background-color: mix(@theme_bg_color, @theme_base_color, 0.6);
   color: @theme_fg_color;
 }
 
 .doclist_item:selected {
   border: 1px solid shade(@theme_bg_color, 0.7);
-  background-color: #fcfbfb;
+  background-color: @theme_base_color;
   color: @theme_fg_color;
+}
+
+.doclist_item:selected image {
+  color: mix(@theme_base_color, @theme_fg_color, 0.85);
 }
 
 .doclist_item:hover .border-bottom-light, .doclist_item:selected .border-bottom-light {
