@@ -151,7 +151,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def doc_add_label_by_url(self, doc_url, label, color=None):
         assert("," not in label)
-
         current = set()
         self.doc_get_labels_by_url(current, doc_url)
         current = {k: v for (k, v) in current}
@@ -193,7 +192,8 @@ class Plugin(openpaperwork_core.PluginBase):
         with self.core.call_success("fs_open", labels_url, 'r') as file_desc:
             labels = file_desc.readlines()
 
-        labels = [l.split(",", 1) for l in labels if len(l.strip()) > 0]
+        labels = [l.strip() for l in labels]
+        labels = [l.split(",", 1) for l in labels if len(l) > 0]
         labels = {l: c for (l, c) in labels}
         try:
             labels.pop(label)
@@ -203,8 +203,11 @@ class Plugin(openpaperwork_core.PluginBase):
                 " was not found on the document", label, doc_url
             )
 
+        labels = [(label, color) for (label, color) in labels.items()]
+        labels.sort()
+
         with self.core.call_success("fs_open", labels_url, "w") as file_desc:
-            for (label, color) in labels.items():
+            for (label, color) in labels:
                 file_desc.write("{},{}\n".format(label, color))
         return True
 
