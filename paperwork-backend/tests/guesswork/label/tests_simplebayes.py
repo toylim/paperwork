@@ -119,7 +119,7 @@ class TestLabelGuesser(unittest.TestCase):
                 'id': 'new_doc',
                 'url': 'file:///somewhere/new_doc',
                 'mtime': 123,
-                'text': 'Simplebayes and Flesch are\ncamion',
+                'text': 'Simplebayes and Flesch are\ncamiön',
                 'labels': set(),
             },
             {  # new doc on which we will guess the labels
@@ -179,14 +179,14 @@ class TestLabelGuesser(unittest.TestCase):
                 'id': 'new_doc',
                 'url': 'file:///somewhere/new_doc',
                 'mtime': 123,
-                'text': 'Simplebayes and Flesch are\ncamion',
+                'text': 'Simplebayes and Flesch are\ncamiön',
                 'labels': {("some_label", "#123412341234")},
             },
             {  # new doc on which we will guess the labels
                 'id': 'new_doc_2',
                 'url': 'file:///somewhere/new_doc_2',
                 'mtime': 123,
-                'text': 'camion camion camion',
+                'text': 'camion camion camion',  # accents shouldn't matter
                 'labels': set(),
             }
         ]
@@ -318,7 +318,7 @@ class TestLabelGuesser(unittest.TestCase):
                 'id': 'new_doc',
                 'url': 'file:///somewhere/new_doc',
                 'mtime': 123,
-                'text': 'Simplebayes and Flesch are\ncamion',
+                'text': 'Simplebayes and Flesch are\ncamiön',
                 'labels': set(),
             },
             {  # new doc on which we will guess the labels
