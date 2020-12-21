@@ -19,7 +19,7 @@ class TestLoading(unittest.TestCase):
                 def test_method(self):
                     self.test_method_called = True
 
-        core = openpaperwork_core.Core(allow_unsatisfied=True)
+        core = openpaperwork_core.Core(auto_load_dependencies=True)
 
         import_module.return_value = TestModule()
         core.load('whatever_module')
@@ -150,7 +150,7 @@ class TestCall(unittest.TestCase):
                 def test_method(self):
                     self.test_method_called_c = True
 
-        core = openpaperwork_core.Core(allow_unsatisfied=True)
+        core = openpaperwork_core.Core(auto_load_dependencies=True)
 
         import_module.return_value = TestModuleC()
         core.load('module_c')
@@ -207,7 +207,7 @@ class TestCall(unittest.TestCase):
                     self.test_method_called_d = True
                     return None
 
-        core = openpaperwork_core.Core(allow_unsatisfied=True)
+        core = openpaperwork_core.Core(auto_load_dependencies=True)
 
         import_module.return_value = TestModuleB()
         core.load('module_b')
@@ -249,7 +249,7 @@ class TestCall(unittest.TestCase):
                 def test_method(self):
                     return "B"
 
-        core = openpaperwork_core.Core(allow_unsatisfied=True)
+        core = openpaperwork_core.Core(auto_load_dependencies=True)
 
         import_module.return_value = TestModuleA()
         core.load('module_a')
@@ -307,7 +307,7 @@ class TestDependencies(unittest.TestCase):
                 def init(self, core):
                     self.init_called = True
 
-        core = openpaperwork_core.Core(allow_unsatisfied=True)
+        core = openpaperwork_core.Core(auto_load_dependencies=True)
 
         import_module.return_value = TestModuleB()
         core.load('module_b')
@@ -331,7 +331,6 @@ class TestDependencies(unittest.TestCase):
             ]
         )
         self.assertEqual(core.get_by_interface('unknown_interface'), [])
-
 
     @unittest.mock.patch("importlib.import_module")
     def test_no_init_if_dropped(self, import_module):
@@ -367,7 +366,7 @@ class TestDependencies(unittest.TestCase):
                 def init(s, core):
                     self.init_called = True
 
-        core = openpaperwork_core.Core(allow_unsatisfied=False)
+        core = openpaperwork_core.Core(auto_load_dependencies=False)
 
         import_module.return_value = TestModuleB()
         core.load('module_b')

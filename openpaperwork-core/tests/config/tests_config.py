@@ -67,7 +67,7 @@ class MockConfigBackendModule(object):
 
 class TestConfig(unittest.TestCase):
     def setUp(self):
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core._load_module(
             "openpaperwork_core.config.backend.configparser",
             MockConfigBackendModule()

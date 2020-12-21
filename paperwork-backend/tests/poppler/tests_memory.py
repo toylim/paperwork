@@ -20,7 +20,7 @@ class TestMemoryDescriptorLeak(unittest.TestCase):
                     self.tracking = True
                     obj.weak_ref(s.on_dispose)
 
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load("openpaperwork_core.fs.python")
         self.core.load("paperwork_backend.poppler.memory")
         self.core._load_module("fake_module", FakeModule())

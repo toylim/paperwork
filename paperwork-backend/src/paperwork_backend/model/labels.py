@@ -11,6 +11,26 @@ LOGGER = logging.getLogger(__name__)
 LABELS_FILENAME = "labels"
 
 
+COLOR_NAMES = [
+    ('aqua', (0, 1, 1)),
+    ('black', (0, 0, 0)),
+    ('blue', (0, 0, 1)),
+    ('fuchsia', (1, 0, 1)),
+    ('gray', (0x80 / 0xFF, 0x80 / 0xFF, 0x80 / 0xFF)),
+    ('green', (0, 0x80 / 0xFF, 0)),
+    ('lime', (0, 1, 0)),
+    ('maroon', (0x80 / 0xFF, 0, 0)),
+    ('navy', (0, 0, 0x80 / 0xFF)),
+    ('olive', (0x80 / 0xFF, 0x80 / 0xFF, 0)),
+    ('purple', (0x80 / 0xFF, 0, 0x80 / 0xFF)),
+    ('red', (1, 0, 0)),
+    ('silver', (0xC0 / 0xFF, 0xC0 / 0xFF, 0xC0 / 0xFF)),
+    ('teal', (0, 0x80 / 0xFF, 0x80 / 0xFF)),
+    ('white', (1, 1, 1)),
+    ('yellow', (1, 1, 0)),
+]
+
+
 class LabelLoader(object):
     """
     Go through all the documents to figure out what labels exist.
@@ -151,7 +171,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def doc_add_label_by_url(self, doc_url, label, color=None):
         assert("," not in label)
-
         current = set()
         self.doc_get_labels_by_url(current, doc_url)
         current = {k: v for (k, v) in current}
@@ -193,7 +212,8 @@ class Plugin(openpaperwork_core.PluginBase):
         with self.core.call_success("fs_open", labels_url, 'r') as file_desc:
             labels = file_desc.readlines()
 
-        labels = [l.split(",", 1) for l in labels if len(l.strip()) > 0]
+        labels = [l.strip() for l in labels]
+        labels = [l.split(",", 1) for l in labels if len(l) > 0]
         labels = {l: c for (l, c) in labels}
         try:
             labels.pop(label)
@@ -203,8 +223,11 @@ class Plugin(openpaperwork_core.PluginBase):
                 " was not found on the document", label, doc_url
             )
 
+        labels = [(label, color) for (label, color) in labels.items()]
+        labels.sort()
+
         with self.core.call_success("fs_open", labels_url, "w") as file_desc:
-            for (label, color) in labels.items():
+            for (label, color) in labels:
                 file_desc.write("{},{}\n".format(label, color))
         return True
 
@@ -242,6 +265,31 @@ class Plugin(openpaperwork_core.PluginBase):
             + format(int(color[0] * 0xFF), '02x') + "00"
             + format(int(color[1] * 0xFF), '02x') + "00"
             + format(int(color[2] * 0xFF), '02x') + "00"
+        )
+
+    def label_color_rgb_to_text(self, color):
+        for (name, rgb) in COLOR_NAMES:
+            if color == rgb:
+                break
+        else:
+            def color_distance(a, b):
+                return (
+                    (abs(a[0] - b[0]) ** 2) +
+                    (abs(a[1] - b[1]) ** 2) +
+                    (abs(a[2] - b[2]) ** 2)
+                )
+
+            closest_color = min((
+                (color_distance(rgb, color), name)
+                for (name, rgb) in COLOR_NAMES
+            ))
+            name = "~" + closest_color[1]
+
+        return "#{:02X}{:02X}{:02X} ({})".format(
+            int(color[0] * 0xFF),
+            int(color[1] * 0xFF),
+            int(color[2] * 0xFF),
+            name
         )
 
     def label_load_all(self, promises: list):

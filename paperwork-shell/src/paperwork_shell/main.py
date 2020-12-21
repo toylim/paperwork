@@ -15,6 +15,7 @@ from paperwork_shell import _
 
 DEFAULT_SHELL_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'paperwork_backend.guesswork.cropping.libpillowfight',
+    'paperwork_shell.cmd.chkworkdir',
     'paperwork_shell.cmd.delete',
     'paperwork_shell.cmd.edit',
     'paperwork_shell.cmd.export',

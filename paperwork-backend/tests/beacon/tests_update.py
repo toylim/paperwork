@@ -1,4 +1,3 @@
-import cgi
 import datetime
 import http
 import http.server
@@ -12,7 +11,7 @@ import openpaperwork_core
 
 class TestUpdate(unittest.TestCase):
     def setUp(self):
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load("openpaperwork_core.config.fake")
         self.core.load("paperwork_backend.app")
         self.core.load("paperwork_backend.beacon.update")

@@ -25,7 +25,7 @@ class TestSync(unittest.TestCase):
         self.tmp_work_dir = tempfile.mkdtemp()
         os.environ['XDG_DATA_HOME'] = self.tmp_local_dir
 
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load("openpaperwork_core.config.fake")
         self.core.init()
 

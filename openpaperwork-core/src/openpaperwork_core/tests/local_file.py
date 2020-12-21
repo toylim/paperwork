@@ -14,7 +14,7 @@ class AbstractTestSafe(unittest.TestCase):
         assert()
 
     def setUp(self):
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load(self.get_plugin_name())
         self.core.init()
 
@@ -43,7 +43,7 @@ class AbstractTestUnsafe(unittest.TestCase):
         assert()
 
     def setUp(self):
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load(self.get_plugin_name())
         self.core.init()
 
@@ -77,7 +77,7 @@ class AbstractTestOpen(unittest.TestCase):
         assert()
 
     def setUp(self):
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load(self.get_plugin_name())
         self.core.init()
 
@@ -148,7 +148,7 @@ class AbstractTestExists(unittest.TestCase):
         assert()
 
     def setUp(self):
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load(self.get_plugin_name())
         self.core.init()
 
@@ -175,7 +175,7 @@ class AbstractTestListDir(unittest.TestCase):
         assert()
 
     def setUp(self):
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load(self.get_plugin_name())
         self.core.init()
 
@@ -223,7 +223,7 @@ class AbstractTestRename(unittest.TestCase):
         assert()
 
     def setUp(self):
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load(self.get_plugin_name())
         self.core.init()
 
@@ -264,7 +264,7 @@ class AbstractTestUnlink(unittest.TestCase):
         assert()
 
     def setUp(self):
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load(self.get_plugin_name())
         self.core.init()
 
@@ -293,7 +293,7 @@ class AbstractTestGetMtime(unittest.TestCase):
         assert()
 
     def setUp(self):
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load(self.get_plugin_name())
         self.core.init()
 
@@ -330,7 +330,7 @@ class AbstractTestGetsize(unittest.TestCase):
         assert()
 
     def setUp(self):
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load(self.get_plugin_name())
         self.core.init()
 
@@ -357,7 +357,7 @@ class AbstractTestIsdir(unittest.TestCase):
         assert()
 
     def setUp(self):
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load(self.get_plugin_name())
         self.core.init()
 
@@ -394,7 +394,7 @@ class AbstractTestCopy(unittest.TestCase):
         assert()
 
     def setUp(self):
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load(self.get_plugin_name())
         self.core.init()
 
@@ -439,7 +439,7 @@ class AbstractTestMkdirP(unittest.TestCase):
         assert()
 
     def setUp(self):
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load(self.get_plugin_name())
         self.core.init()
 
@@ -466,7 +466,7 @@ class AbstractTestBasename(unittest.TestCase):
         assert()
 
     def setUp(self):
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load(self.get_plugin_name())
         self.core.init()
 
@@ -487,7 +487,7 @@ class AbstractTestTemp(unittest.TestCase):
         assert()
 
     def setUp(self):
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load(self.get_plugin_name())
         self.core.init()
 

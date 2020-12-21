@@ -11,7 +11,7 @@ class AbstractTestCallback(unittest.TestCase):
         assert()
 
     def setUp(self):
-        self.core = Core(allow_unsatisfied=True)
+        self.core = Core(auto_load_dependencies=True)
         self.core.load(self.get_plugin_name())
         self.core.init()
 
@@ -38,7 +38,7 @@ class AbstractTestPromise(unittest.TestCase):
         assert()
 
     def setUp(self):
-        self.core = Core(allow_unsatisfied=True)
+        self.core = Core(auto_load_dependencies=True)
         self.core.load(self.get_plugin_name())
         self.core.init()
 

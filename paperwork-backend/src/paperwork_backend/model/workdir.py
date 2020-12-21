@@ -41,7 +41,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         self.core.call_all("config_register", "workdir", setting)
 
-    def storage_get_all_docs(self, out: list):
+    def storage_get_all_docs(self, out: list, only_valid=True):
         """
         Returns all document IDs and URLs in the work directory
         """
@@ -52,7 +52,9 @@ class Plugin(openpaperwork_core.PluginBase):
         LOGGER.info("Loading document list from %s", workdir)
         nb = 0
         for doc_url in self.core.call_success('fs_listdir', workdir):
-            if self.core.call_success("is_doc", doc_url) is None:
+            if (
+                    only_valid and
+                    self.core.call_success("is_doc", doc_url) is None):
                 continue
             out.append((
                 self.core.call_success("fs_basename", doc_url), doc_url

@@ -7,7 +7,7 @@ import paperwork_backend.model.util
 
 class TestUtil(unittest.TestCase):
     def setUp(self):
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load("openpaperwork_core.fs.fake")
         self.core.init()
 

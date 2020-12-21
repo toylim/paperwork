@@ -21,7 +21,7 @@ class TestBorder(unittest.TestCase):
             )
         )
 
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load("openpaperwork_core.config.fake")
         self.core.load("paperwork_backend.model.fake")
         self.core.load("paperwork_backend.doctracker")

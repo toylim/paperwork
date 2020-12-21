@@ -12,7 +12,7 @@ class TestLabelGuesser(unittest.TestCase):
             prefix="paperwork_backend_labels"
         )
 
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load("paperwork_backend.model.fake")
         self.core.load("paperwork_backend.doctracker")
         self.core.load("paperwork_backend.guesswork.label.simplebayes")

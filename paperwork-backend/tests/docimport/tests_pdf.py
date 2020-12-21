@@ -14,7 +14,7 @@ class TestPdfImport(unittest.TestCase):
                 os.path.dirname(os.path.abspath(__file__)), "test_doc.pdf"
             )
         )
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
 
         self.copies = []
         self.add_docs = []
@@ -183,7 +183,7 @@ class TestRecursivePdfImport(unittest.TestCase):
         self.test_dir_url = openpaperwork_core.fs.CommonFsPluginBase.fs_safe(
             os.path.dirname(os.path.abspath(__file__))
         )
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
 
         self.copies = []
         self.add_docs = []

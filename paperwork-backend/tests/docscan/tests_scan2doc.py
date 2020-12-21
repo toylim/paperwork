@@ -5,7 +5,7 @@ import openpaperwork_core
 
 class TestScan2Doc(unittest.TestCase):
     def setUp(self):
-        self.core = openpaperwork_core.Core(allow_unsatisfied=True)
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load("openpaperwork_core.fs.fake")
         self.core.load("paperwork_backend.docscan.fake")
         self.core.load("paperwork_backend.docscan.scan2doc")
