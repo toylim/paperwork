@@ -31,6 +31,8 @@ DEFAULT_PLUGINS = (
         'paperwork_backend.beacon.update',
         'paperwork_backend.cairo.pillow',
         'paperwork_backend.cairo.poppler',
+        'paperwork_backend.chkworkdir.empty_doc',
+        'paperwork_backend.chkworkdir.label_color',
         'paperwork_backend.docexport.generic',
         'paperwork_backend.docexport.img',
         'paperwork_backend.docexport.pdf',

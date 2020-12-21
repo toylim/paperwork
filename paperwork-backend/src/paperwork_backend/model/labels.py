@@ -11,6 +11,26 @@ LOGGER = logging.getLogger(__name__)
 LABELS_FILENAME = "labels"
 
 
+COLOR_NAMES = [
+    ('aqua', (0, 1, 1)),
+    ('black', (0, 0, 0)),
+    ('blue', (0, 0, 1)),
+    ('fuchsia', (1, 0, 1)),
+    ('gray', (0x80 / 0xFF, 0x80 / 0xFF, 0x80 / 0xFF)),
+    ('green', (0, 0x80 / 0xFF, 0)),
+    ('lime', (0, 1, 0)),
+    ('maroon', (0x80 / 0xFF, 0, 0)),
+    ('navy', (0, 0, 0x80 / 0xFF)),
+    ('olive', (0x80 / 0xFF, 0x80 / 0xFF, 0)),
+    ('purple', (0x80 / 0xFF, 0, 0x80 / 0xFF)),
+    ('red', (1, 0, 0)),
+    ('silver', (0xC0 / 0xFF, 0xC0 / 0xFF, 0xC0 / 0xFF)),
+    ('teal', (0, 0x80 / 0xFF, 0x80 / 0xFF)),
+    ('white', (1, 1, 1)),
+    ('yellow', (1, 1, 0)),
+]
+
+
 class LabelLoader(object):
     """
     Go through all the documents to figure out what labels exist.
@@ -245,6 +265,31 @@ class Plugin(openpaperwork_core.PluginBase):
             + format(int(color[0] * 0xFF), '02x') + "00"
             + format(int(color[1] * 0xFF), '02x') + "00"
             + format(int(color[2] * 0xFF), '02x') + "00"
+        )
+
+    def label_color_rgb_to_text(self, color):
+        for (name, rgb) in COLOR_NAMES:
+            if color == rgb:
+                break
+        else:
+            def color_distance(a, b):
+                return (
+                    (abs(a[0] - b[0]) ** 2) +
+                    (abs(a[1] - b[1]) ** 2) +
+                    (abs(a[2] - b[2]) ** 2)
+                )
+
+            closest_color = min((
+                (color_distance(rgb, color), name)
+                for (name, rgb) in COLOR_NAMES
+            ))
+            name = "~" + closest_color[1]
+
+        return "#{:02X}{:02X}{:02X} ({})".format(
+            int(color[0] * 0xFF),
+            int(color[1] * 0xFF),
+            int(color[2] * 0xFF),
+            name
         )
 
     def label_load_all(self, promises: list):
