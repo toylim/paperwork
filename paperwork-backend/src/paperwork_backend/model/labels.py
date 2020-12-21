@@ -60,6 +60,7 @@ class LabelLoader(object):
     def load_labels(self, *args, **kwargs):
         nb_docs = len(self.all_docs)
 
+        LOGGER.info("Loading labels from %d documents", nb_docs)
         for (doc_idx, (doc_id, doc_url)) in enumerate(self.all_docs):
             self.core.call_all(
                 "on_progress", "label_loading",
@@ -71,6 +72,10 @@ class LabelLoader(object):
             for label in labels:
                 self.plugin.all_labels[label[0]] = label[1]
         self.core.call_all("on_progress", "label_loading", 1.0)
+        LOGGER.info(
+            "%d labels loaded from %d documents",
+            len(self.plugin.all_labels), nb_docs
+        )
 
     def notify_done(self):
         self.core.call_one(
