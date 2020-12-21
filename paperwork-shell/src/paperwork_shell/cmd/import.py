@@ -42,6 +42,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 "defaults": "openpaperwork_gtk.fs.gio",
             },
             {
+                'interface': 'doc_labels',
+                'defaults': ['paperwork_backend.model.labels'],
+            },
+            {
                 "interface": "import",
                 "defaults": [
                     'paperwork_backend.docimport.img',
@@ -122,6 +126,22 @@ class Plugin(openpaperwork_core.PluginBase):
 
         importer = importers[choice]
         del importers
+
+        if self.interactive:
+            # We must load the labels before importing. Because the label
+            # guesser may want to add labels on documents, and therefore
+            # we need to know their color
+            # TODO(Jflesch): That's slow and overkill. There should be a better
+            # way (maybe storing the labels in ~/.local/share/paperwork2 ?)
+            print(_("Loading labels ..."))
+        promises = []
+        self.core.call_all("label_load_all", promises)
+        promise = promises[0]
+        for p in promises[1:]:
+            promise = promise.then(p)
+        # use transaction_schedule to make sure that document imports
+        # are not done before we have loaded the labels
+        self.core.call_one("transaction_schedule", promise)
 
         promise = importer.get_import_promise()
 
