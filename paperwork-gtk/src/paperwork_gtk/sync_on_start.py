@@ -20,6 +20,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_core.config'],
             },
             {
+                'interface': 'doc_labels',
+                'defaults': ['paperwork_backend.model.labels'],
+            },
+            {
                 'interface': 'transaction_manager',
                 'defaults': ['paperwork_backend.sync'],
             },
@@ -39,4 +43,14 @@ class Plugin(openpaperwork_core.PluginBase):
             LOGGER.info("Starting synchronization ...")
             self.core.call_all("transaction_sync_all")
         else:
-            LOGGER.info("Synchronization on start is disabled.")
+            LOGGER.info(
+                "Synchronization on start is disabled --> Just loading labels"
+            )
+            promises = []
+            self.core.call_all("label_load_all", promises)
+            promise = promises[0]
+            for p in promises[1:]:
+                promise = promise.then(p)
+            # use transaction_schedule to make sure that document imports
+            # are not done at the same time.
+            self.core.call_one("transaction_schedule", promise)
