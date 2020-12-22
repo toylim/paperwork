@@ -320,10 +320,10 @@ class Plugin(openpaperwork_core.PluginBase):
                     if (doc_date.year != self.last_date.year or
                             doc_date.month != self.last_date.month):
                         doc_year = self.core.call_success(
-                                "i18n_date_long_year", doc_date
-                            ) + " / " + self.core.call_success(
-                                "i18n_date_long_month", doc_date
-                            )
+                            "i18n_date_long_year", doc_date
+                        ) + " / " + self.core.call_success(
+                            "i18n_date_long_month", doc_date
+                        )
                         self._add_date_box("year_box.glade", doc_year)
 
                 self.last_date = doc_date
