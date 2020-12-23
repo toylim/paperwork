@@ -3,8 +3,8 @@ To use it:
 
 ```sh
 paperwork-cli plugins add \
-    paperwork_backend.guesswork.label.simplebayes.compute_threshold
-paperwork-cli compute_label_guessing_threshold
+    paperwork_backend.guesswork.label.simplebayes.sklearn_compute_threshold
+paperwork-cli compute_sklearn_label_guessing_threshold
 ```
 """
 
@@ -18,7 +18,7 @@ import sklearn.feature_extraction.text
 import openpaperwork_core
 
 
-NB_ITERATIONS = 16  # beware complexity will increase exponentionnally
+NB_ITERATIONS = 2  # beware complexity will increase exponentionnally
 
 
 def pairwise(iterable):
@@ -43,7 +43,7 @@ class Baye(object):
         # For reference, always returning "yes" gives an accuracy of ~0.0524
 
         # Best accuracy: ~0.9991 ; No threshold usable / to use
-        # self.sklearn_classifier = sklearn.naive_bayes.GaussianNB()
+        self.sklearn_classifier = sklearn.naive_bayes.GaussianNB()
 
         # Best accuracy: ~0.9634 ; Best threshold: ~0.068
         # self.sklearn_classifier = sklearn.naive_bayes.MultinomialNB()
