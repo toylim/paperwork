@@ -107,7 +107,6 @@ class Corpus(object):
             text = []
             self.core.call_all("doc_get_text_by_url", text, doc_url)
             text = "\n\n".join(text)
-            text = self.core.call_success("i18n_strip_accents", text)
 
             labels = set()
             self.core.call_all("doc_get_labels_by_url", labels, doc_url)
