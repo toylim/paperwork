@@ -41,6 +41,7 @@ class Baye(object):
 
         # For reference, always returning "no" gives an accuracy of ~0.9475
         # For reference, always returning "yes" gives an accuracy of ~0.0524
+        # For reference, simplebayes: accuracy=~0.9912 with threshold ~0.162
 
         # Best accuracy: ~0.9991 ; No threshold usable / to use
         self.sklearn_classifier = sklearn.naive_bayes.GaussianNB()

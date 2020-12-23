@@ -607,6 +607,34 @@ class Plugin(openpaperwork_core.PluginBase):
             "mainloop_execute", self._page_has_text_by_url, doc_url, page_idx
         )
 
+    def _page_get_text_by_url(self, doc_url, page_idx):
+        if doc_url in self.cache_nb_pages:
+            if page_idx >= self.cache_nb_pages[doc_url]:
+                return None
+
+        (pdf_url, pdf) = self._open_pdf(doc_url)
+        if pdf is None:
+            return None
+
+        page = pdf.get_page(page_idx)
+        if page is None:
+            return None
+
+        return page.get_text().strip()
+
+    def page_get_text_by_url(self, doc_url, page_idx):
+        pdf_url = self._get_pdf_url(doc_url)
+        if pdf_url is None:
+            return None
+        mapping = self._get_page_mapping(doc_url)
+        page_idx = mapping.get_original_page_idx(page_idx)
+        if page_idx is None:
+            return None
+        # Poppler is not thread-safe
+        return self.core.call_one(
+            "mainloop_execute", self._page_get_text_by_url, doc_url, page_idx
+        )
+
     def _page_get_boxes_by_url(self, doc_url, page_idx):
         if doc_url in self.cache_nb_pages:
             if page_idx >= self.cache_nb_pages[doc_url]:

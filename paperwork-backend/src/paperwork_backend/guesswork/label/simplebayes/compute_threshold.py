@@ -104,9 +104,10 @@ class Corpus(object):
                 "on_progress", "load_docs",
                 idx / total, "Loading document %s" % doc_id
             )
-            text = []
-            self.core.call_all("doc_get_text_by_url", text, doc_url)
-            text = "\n\n".join(text)
+
+            text = self.core.call_success("page_get_text_by_url", doc_url, 0)
+            if text is None:
+                continue
 
             labels = set()
             self.core.call_all("doc_get_labels_by_url", labels, doc_url)
