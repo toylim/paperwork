@@ -87,7 +87,7 @@ class SearchElementLabel(SearchElement):
 
         labels = set()
         self.dialog.core.call_all("labels_get_all", labels)
-        labels = [l[0] for l in labels]
+        labels = [label[0] for label in labels]
         labels = self.dialog.core.call_success("i18n_sort", labels)
 
         store = Gtk.ListStore.new([GObject.TYPE_STRING])
