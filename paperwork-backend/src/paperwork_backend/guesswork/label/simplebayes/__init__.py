@@ -24,7 +24,7 @@ import simplebayes
 import openpaperwork_core
 import openpaperwork_core.promise
 
-from ... import (_, sync, util)
+from .... import (_, sync, util)
 
 
 # Beware that we use Sqlite, but sqlite python module is not thread-safe
@@ -127,7 +127,6 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             doc_text = []
             self.core.call_all("doc_get_text_by_url", doc_text, doc_url)
             doc_text = "\n\n".join(doc_text)
-            doc_text = self.core.call_success("i18n_strip_accents", doc_text)
         else:
             doc_text = None
 
