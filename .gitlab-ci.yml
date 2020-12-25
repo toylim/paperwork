@@ -112,7 +112,7 @@ linux_flatpak:
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S zip unzip
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-nsis
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-nsis-nsisunz
-    - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i696-python-scikit-learn
+    - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-python-scikit-learn
     - git submodule init
     - git submodule update --recursive --remote
     - c:\msys64\usr\bin\bash -lc "make clean"
