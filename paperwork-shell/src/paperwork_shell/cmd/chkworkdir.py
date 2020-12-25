@@ -1,5 +1,12 @@
-import fabulous
-import fabulous.color
+try:
+    # Fabulous is available and installed on GNU/Linux systems, but not on
+    # Windows. Still this command can be called on Windows systems using
+    # "paperwork-json"
+    import fabulous
+    import fabulous.color
+    FABULOUS_AVAILABLE = True
+except (ImportError, ValueError):
+    FABULOUS_AVAILABLE = False
 
 import openpaperwork_core
 import openpaperwork_core.cmd.util
@@ -40,6 +47,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     @staticmethod
     def _color(color):
+        assert(FABULOUS_AVAILABLE)
         color = "#%1X%1X%1X" % (
             int(color[0] * 0xF),
             int(color[1] * 0xF),
