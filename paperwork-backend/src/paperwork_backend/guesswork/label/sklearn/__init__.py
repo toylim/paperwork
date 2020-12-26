@@ -11,6 +11,7 @@ import collections
 import logging
 import sqlite3
 
+import numpy
 import sklearn.feature_extraction.text
 import sklearn.naive_bayes
 
@@ -38,7 +39,101 @@ CREATE_TABLES = [
         " PRIMARY KEY (doc_id, label)"
         ")"
     ),
+    (  # see sklearn.feature_extraction.text.CountVectorizer.vocaulary_
+        "CREATE TABLE IF NOT EXISTS vocabulary ("
+        " word TEXT NOT NULL,"
+        " feature INTEGER NOT NULL,"
+        " PRIMARY KEY (feature)"
+        " UNIQUE (word)"
+        ")"
+    ),
+    (
+        "CREATE TABLE IF NOT EXISTS features ("
+        " doc_id TEXT NOT NULL,"
+        " vector NUMPY_ARRAY NOT NULL,"
+        " PRIMARY KEY (doc_id)"
+        ")"
+    )
 ]
+
+
+class SqliteNumpyArrayHandler(object):
+    @staticmethod
+    def _to_sqlite(np_array):
+        return np_array.tobytes()
+
+    @staticmethod
+    def _from_sqlite(raw):
+        return numpy.frombuffer(raw)
+
+    @classmethod
+    def register(cls):
+        sqlite3.register_adapter(numpy.array, cls._to_sqlite)
+        sqlite3.register_converter("NUMPY_ARRAY", cls._from_sqlite)
+
+
+class UpdatableVectorizer(object):
+    """
+    Vectorizer that we can update over time with new features
+    (word identifiers). Store the word->features in the SQLite database.
+    We only add words to the database, we never remove them, otherwise we
+    wouldn't be able to read the feature vectors correctly anymore.
+
+    No need to take deleted documents into account. Worst case scenario is
+    that we will end up with a lot of useless words in the vocabulary.
+    """
+    def __init__(self, core, db_cursor):
+        self.core = core
+        self.db_cursor = db_cursor
+
+        vocabulary = self.core.call_one(
+            "mainloop_execute", self.db_cursor.execute,
+            "SELECT word, feature FROM vocabulary"
+        )
+        vocabulary = self.core.call_one(
+            "mainloop_execute",
+            lambda r: {k: v for (k, v) in r},
+            vocabulary
+        )
+        self.updatable_vocabulary = vocabulary
+        self.last_feature_id = max(vocabulary.values(), default=-1)
+
+    def partial_fit_transform(self, corpus):
+        # A bit hackish: We just need the analyzer, so instantiating a full
+        # TfidVectorizer() is probably overkill, but meh.
+        tokenizer = sklearn.feature_extraction.text.TfidfVectorizer(
+        ).build_analyzer()
+        for doc_txt in corpus:
+            for word in tokenizer(doc_txt):
+                if word in self.updatable_vocabulary:
+                    continue
+                self.last_feature_id += 1
+                self.core.call_one(
+                    "mainloop_execute", self.db_cursor.execute,
+                    "INSERT INTO vocabulary (word, feature)"
+                    " SELECT ?, ?"
+                    "  WHERE NOT EXISTS("
+                    "   SELECT 1 FROM vocabulary WHERE word = ?"
+                    "  )",
+                    (word, self.last_feature_id, word)
+                )
+                self.updatable_vocabulary[word] = self.last_feature_id
+
+        return self.transform(corpus)
+
+    def transform(self, corpus):
+        # IMPORTANT: we must use use_idf=False here because we want the values
+        # in each feature vector to be independant from other vectors.
+        vectorizer = sklearn.feature_extraction.text.TfidfVectorizer(
+            use_idf=False, vocabulary=self.updatable_vocabulary
+        )
+        return vectorizer.fit_transform(corpus)
+
+    def copy(self):
+        r = UpdatableVectorizer(self.core, self.db_cursor)
+        r.updatable_vocabulary = dict(self.updatable_vocabulary)
+        r.last_feature_id = self.last_feature_id
+        return r
 
 
 class LabelGuesserTransaction(sync.BaseTransaction):
@@ -62,6 +157,17 @@ class LabelGuesserTransaction(sync.BaseTransaction):
 
         self.nb_changes = 0
 
+        self.vectorizer = UpdatableVectorizer(self.core, self.cursor)
+
+        # If we load the classifiers, we keep the vectorizer that goes with
+        # them, because the vectorizer must return vectors that have the size
+        # that the classifiers expect. If we would train the vectorizer with
+        # new documents, the vector sizes could increase
+        # Since loading the classifiers is a fairly long operations, we only
+        # do it if we actually need them.
+        self.original_vectorizer = None
+        self.classifiers = None
+
     def __enter__(self):
         pass
 
@@ -70,10 +176,30 @@ class LabelGuesserTransaction(sync.BaseTransaction):
 
     def add_obj(self, doc_id):
         if self.guess_labels:
-            doc_url = self.core.call_success("doc_id_to_url", doc_id)
             # we have a higher priority than index plugins, so it is a good
             # time to update the document labels
-            self.plugin._set_guessed_labels(doc_url)
+
+            doc_url = self.core.call_success("doc_id_to_url", doc_id)
+
+            has_labels = self.core.call_success(
+                "doc_has_labels_by_url", doc_url
+            )
+            if has_labels is not None:
+                LOGGER.info(
+                    "Document %s already has labels. Won't guess labels",
+                    doc_url
+                )
+                return
+
+            if self.classifiers is None:
+                self.original_vectorizer = self.vectorizer.copy()
+                self.classifiers = self.plugin._load_classifiers(
+                    self.original_vectorizer
+                )
+
+            self.plugin._set_guessed_labels(
+                doc_url, self.original_vectorizer, self.classifiers
+            )
 
         self.notify_progress(
             ID, _("Label guesser: added document %s") % doc_id
@@ -94,6 +220,10 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         self.core.call_one(
             "mainloop_execute", self.cursor.execute,
             "DELETE FROM labels WHERE doc_id = ?", (doc_id,)
+        )
+        self.core.call_one(
+            "mainloop_execute", self.cursor.execute,
+            "DELETE FROM features WHERE doc_id = ?", (doc_id,)
         )
 
     def del_obj(self, doc_id):
@@ -121,6 +251,17 @@ class LabelGuesserTransaction(sync.BaseTransaction):
                 " VALUES (?, ?)",
                 (doc_id, doc_label)
             )
+
+        doc_txt = []
+        self.core.call_all("doc_get_text_by_url", doc_txt, doc_url)
+        doc_txt = "\n\n".join(doc_txt).strip()
+
+        vector = self.vectorizer.partial_fit_transform([doc_txt])[0].toarray()
+        self.core.call_one(
+            "mainloop_execute", self.cursor.execute,
+            "INSERT INTO features (doc_id, vector) VALUES (?, ?)",
+            (doc_id, vector)
+        )
 
     def cancel(self):
         self.core.call_success(
@@ -178,6 +319,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.bayes_dir = None
         self.bayes = None
         self.sql = None
+        SqliteNumpyArrayHandler.register()
 
     def get_interfaces(self):
         return [
@@ -241,11 +383,11 @@ class Plugin(openpaperwork_core.PluginBase):
             )
         )
 
-    def _load_classifiers(self):
+    def _load_classifiers(self, vectorizer):
         LOGGER.info("Training classifiers ...")
         msg = _("Label guessing: Training ...")
 
-        label_cursor = self.core.call_one(
+        cursor = self.core.call_one(
             "mainloop_execute", self.sql.cursor
         )
 
@@ -253,7 +395,7 @@ class Plugin(openpaperwork_core.PluginBase):
             self.core.call_all("on_progress", "classifiers", 0.0, msg)
 
             all_labels = self.core.call_one(
-                "mainloop_execute", label_cursor.execute,
+                "mainloop_execute", cursor.execute,
                 "SELECT DISTINCT label FROM labels"
             )
             all_labels = self.core.call_one(
@@ -262,25 +404,36 @@ class Plugin(openpaperwork_core.PluginBase):
                 all_labels
             )
 
-            all_docs = self.core.call_success("doc_tracker_get_all_doc_ids")
+            all_features = self.core.call_one(
+                "mainloop_execute", cursor.execute,
+                "SELECT doc_id, vector FROM features"
+            )
+            all_features = self.core.call_one(
+                "mainloop_execute",
+                lambda all_features: [
+                    (doc_id, doc_vector)
+                    for (doc_id, doc_vector) in all_features
+                ],
+                all_features
+            )
 
             corpus = []
             targets = collections.defaultdict(list)
-            for doc_id in all_docs:
-                # prefer using the DB: it's faster for people using a remote
-                # work directory
-                doc_txt = self.core.call_success(
-                    "doc_tracker_get_doc_text_by_id", doc_id
+            total = len(all_features)
+            for (idx, (doc_id, doc_vector)) in enumerate(all_features):
+                required_padding = (
+                    vectorizer.last_feature_id + 1 - doc_vector.shape[0]
                 )
-                if doc_txt is None:
-                    continue
-                doc_txt = doc_txt.strip()
-                if doc_txt == "":
-                    continue
-                corpus.append(doc_txt)
+                assert(required_padding >= 0)
+                if required_padding > 0:
+                    doc_vector = numpy.hstack([
+                        doc_vector, numpy.zeros((required_padding,))
+                    ])
+
+                corpus.append(doc_vector)
 
                 doc_labels = self.core.call_one(
-                    "mainloop_execute", label_cursor.execute,
+                    "mainloop_execute", cursor.execute,
                     "SELECT label FROM labels WHERE doc_id = ?",
                     (doc_id,)
                 )
@@ -297,28 +450,27 @@ class Plugin(openpaperwork_core.PluginBase):
             if len(corpus) <= 1:
                 return (None, None)
 
-            vectorizer = sklearn.feature_extraction.text.TfidfVectorizer(
-                use_idf=False
-            )
-            corpus = vectorizer.fit_transform(corpus).toarray()
             classifiers = collections.defaultdict(
                 sklearn.naive_bayes.GaussianNB
             )
             total = len(targets)
             for (idx, (label, label_targets)) in enumerate(targets.items()):
-                if idx % 100 == 0:
-                    self.core.call_all(
-                        "on_progress", "classifiers", idx / total,
-                        _("Label guessing: Training ...")
-                    )
-                classifiers[label].fit(
-                    corpus, label_targets
+                self.core.call_all(
+                    "on_progress", "classifiers", idx / total,
+                    _("Label guessing: Training ...")
                 )
+                for batch in range(0, len(corpus), 200):
+                    batch_corpus = corpus[batch:batch + 200]
+                    batch_targets = label_targets[batch:batch + 200]
+                    classifiers[label].partial_fit(
+                        batch_corpus, batch_targets,
+                        classes=[0, 1]
+                    )
 
-            return (vectorizer, classifiers)
+            return classifiers
         finally:
             self.core.call_all("on_progress", "classifiers", 1.0, msg)
-            self.core.call_one("mainloop_execute", label_cursor.close)
+            self.core.call_one("mainloop_execute", cursor.close)
 
     def _guess(self, vectorizer, classifiers, doc_url):
         LOGGER.info("Guessing labels on %s", doc_url)
@@ -335,16 +487,7 @@ class Plugin(openpaperwork_core.PluginBase):
             if predicted:
                 yield label
 
-    def _set_guessed_labels(self, doc_url):
-        has_labels = self.core.call_success("doc_has_labels_by_url", doc_url)
-        if has_labels is not None:
-            LOGGER.info(
-                "Document %s already has labels. Won't guess labels", doc_url
-            )
-            return
-        (vectorizer, classifiers) = self._load_classifiers()
-        if vectorizer is None or classifiers is None:
-            return
+    def _set_guessed_labels(self, doc_url, vectorizer, classifiers):
         labels = self._guess(vectorizer, classifiers, doc_url)
         labels = list(labels)
         for label in labels:
