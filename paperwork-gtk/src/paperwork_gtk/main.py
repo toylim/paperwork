@@ -49,6 +49,7 @@ DEFAULT_GUI_PLUGINS = (
         'paperwork_gtk.actions.page.redo_ocr',
         'paperwork_gtk.actions.page.reset',
         'paperwork_gtk.busy.mouse',
+        'paperwork_gtk.cmd.import',
         'paperwork_gtk.cmd.install',
         'paperwork_gtk.docimport',
         'paperwork_gtk.doc_selection',

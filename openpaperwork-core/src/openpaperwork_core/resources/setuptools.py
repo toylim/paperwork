@@ -32,14 +32,14 @@ class Plugin(PluginBase):
             path = pkg_resources.resource_filename(pkg, filename)
         except KeyError:
             LOGGER.warning(
-                "Failed to find resource file %s/%s (1)",
+                "Failed to find resource file %s/%s, unknown to pkg_resources.",
                 pkg, filename
             )
             return None
 
         if not os.access(path, os.R_OK):
             LOGGER.warning(
-                "Failed to find resource file %s/%s (2)", pkg, filename
+                "Failed to find resource file %s/%s, tried at path %s.", pkg, filename, path
             )
             return None
 
