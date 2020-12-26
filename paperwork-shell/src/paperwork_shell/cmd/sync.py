@@ -37,7 +37,7 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 "interface": "syncable",
                 "defaults": [
-                    "paperwork_backend.guesswork.label.simplebayes",
+                    "paperwork_backend.guesswork.label.sklearn",
                     "paperwork_backend.guesswork.ocr.pyocr",
                     "paperwork_backend.index.whoosh",
                     "paperwork_backend.model.labels",
