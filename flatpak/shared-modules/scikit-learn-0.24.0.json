@@ -73,6 +73,22 @@
             ]
         },
         {
+            "name": "python-threadpoolctl",
+            "buildsystem": "simple",
+            "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
+            "build-commands": [
+                "python3 setup.py build -j 0",
+                "python3 setup.py install --prefix=/app --root=/ --optimize=1"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://files.pythonhosted.org/packages/78/e8/e39dc842f512ab5be11efe83160ddb7ad3c0cc1b8d42ce8c0469a0d2b926/threadpoolctl-2.1.0.tar.gz",
+                    "sha256": "ddc57c96a38beb63db45d6c159b5ab07b6bced12c45a1f07b2b92f272aebfa6b"
+                }
+            ]
+        },
+        {
             "name": "python-numpy",
             "buildsystem": "simple",
             "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
