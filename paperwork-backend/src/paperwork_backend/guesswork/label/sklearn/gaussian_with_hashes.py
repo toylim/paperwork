@@ -19,7 +19,9 @@ samples = 5
 
 
 class Baye(object):
-    def __init__(self, n_features):
+    def __init__(self, core, label, n_features):
+        self.core = core
+        self.label = label
         self.data = []
         self.counts = []
         self.tfid = []
@@ -44,14 +46,33 @@ class Baye(object):
         self.data.append(text)
         self.targets.append(category)
 
-    def hash_and_count(self):
-        self.counts = self.sklearn_hash_vectorizer.fit_transform(self.data)
-        self.tfid = self.sklearn_tfid_transformer.fit_transform(
-            self.counts
-        ).toarray()
-
     def seal(self):
-        self.sklearn_classifier.fit(self.tfid, self.targets)
+        r = 0
+        self.core.call_all(
+            "on_progress", "fitting", 0.0,
+            "Fitting training of label {} ...".format(self.label)
+        )
+        for pos in range(0, len(self.data), 50):
+            self.core.call_all(
+                "on_progress", "fitting", pos / len(self.data),
+                "Fitting training of label {} ...".format(self.label)
+            )
+            counts = self.sklearn_hash_vectorizer.fit_transform(
+                self.data[pos:pos + 50]
+            )
+            tfid = self.sklearn_tfid_transformer.fit_transform(
+                counts
+            ).toarray()
+
+            start = time.time()
+            self.sklearn_classifier.partial_fit(
+                tfid, self.targets[pos:pos + 50],
+                classes=[0, 1]
+            )
+            stop = time.time()
+            r += stop - start
+        self.core.call_all("on_progress", "fitting", 1.0)
+        return r
 
     def score(self, text, label):
         global samples
@@ -70,9 +91,10 @@ class Baye(object):
 
 
 class Bayes(object):
-    def __init__(self, labels, n_features):
+    def __init__(self, core, labels, n_features):
+        self.core = core
         self.bayes = {
-            label: Baye(n_features)
+            label: Baye(core, label, n_features)
             for label in labels
         }
 
@@ -80,18 +102,15 @@ class Bayes(object):
         self.bayes[label].fit("yes" if present else "no", text)
 
     def seal(self):
-        for v in self.bayes.values():
-            v.hash_and_count()
+        r = 0
+        for (idx, (k, v)) in enumerate(self.bayes.items()):
+            print("Fitting training of label {} ({}/{}) ...".format(
+                k, idx, len(self.bayes)
+            ))
+            r += v.seal()
 
-        start = time.time()
-
-        for v in self.bayes.values():
-            v.seal()
-
-        stop = time.time()
-
-        s = int(stop - start)
-        ms = int(((stop - start) * 1000) % 1000)
+        s = int(r)
+        ms = int(((r) * 1000) % 1000)
         print("Fitting took {}s {}ms for {} labels".format(
             s, ms, len(self.bayes)
         ))
@@ -176,7 +195,7 @@ class Corpus(object):
         self.core.call_all("on_progress", "load_docs", 1.0)
 
     def mk_bayes(self, n_features):
-        self.bayes = Bayes(self.labels, n_features)
+        self.bayes = Bayes(self.core, self.labels, n_features)
 
     def fit(self):
         for (idx, doc) in enumerate(self.documents):
@@ -250,7 +269,7 @@ class Plugin(openpaperwork_core.PluginBase):
         corpus = Corpus(self.core)
         corpus.load_all()
 
-        for two_pow in (2, 10, 16):
+        for two_pow in (16, 18, 20,):
             n_features = 2 ** two_pow
             corpus.mk_bayes(n_features)
             corpus.fit()
