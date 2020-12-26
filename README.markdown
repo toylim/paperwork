@@ -118,7 +118,7 @@ It mainly uses:
 * [Tesseract](https://github.com/tesseract-ocr)/[Pyocr](https://gitlab.gnome.org/World/OpenPaperwork/pyocr#readme): To extract the words from the pages (OCR)
 * [GTK](http://www.gtk.org/): For the user interface
 * [Whoosh](https://pypi.python.org/pypi/Whoosh/): To index and search documents, and provide keyword suggestions
-* [Simplebayes](https://pypi.python.org/pypi/simplebayes/): To guess the labels
+* [Scikit-learn](https://scikit-learn.org/): To guess the labels
 * [Pillow](https://pypi.python.org/pypi/Pillow/)/[Libpillowfight](https://gitlab.gnome.org/World/OpenPaperwork/libpillowfight): Image manipulation
 
 

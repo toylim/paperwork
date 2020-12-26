@@ -3,7 +3,7 @@ To use it:
 
 ```sh
 paperwork-cli plugins add \
-    paperwork_backend.guesswork.label.simplebayes.compute_threshold
+    paperwork_backend.guesswork.label.sklearn.compute_threshold
 paperwork-cli compute_sklearn_label_guessing_threshold
 ```
 """
@@ -217,6 +217,9 @@ class Plugin(openpaperwork_core.PluginBase):
     Add a command to search for the best threshold for
     paperwork_backend.guesswork.label.simplebayes (see THRESHOLD_YES_NO_RATIO)
     heuristically and based on the user's documents.
+
+    OBSOLETE: Now that we are using sklearn.GaussianNB, there is no need for
+    a threshold anymore.
     """
     def __init__(self):
         super().__init__()
