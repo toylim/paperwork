@@ -3,7 +3,7 @@ To use it:
 
 ```sh
 paperwork-cli plugins add \
-    paperwork_backend.guesswork.label.simplebayes.sklearn_compute_threshold
+    paperwork_backend.guesswork.label.simplebayes.compute_threshold
 paperwork-cli compute_sklearn_label_guessing_threshold
 ```
 """
