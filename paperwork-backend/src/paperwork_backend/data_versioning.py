@@ -53,7 +53,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 data_version, DATA_VERSION
             )
 
-            self.core.call_success("fs_rm_rf", data_dir)
+            self.core.call_success("fs_rm_rf", data_dir, trash=False)
             # call 'paths_get_data_dir' again to recreate the data directory
             data_dir = self.core.call_success("paths_get_data_dir")
 
