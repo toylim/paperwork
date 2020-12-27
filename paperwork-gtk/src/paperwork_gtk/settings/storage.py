@@ -97,6 +97,9 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         dialog.set_modal(True)
         dialog.set_local_only(False)
+        workdir = self.core.call_success("config_get", "workdir")
+        if self.core.call_success("fs_exists", workdir):
+            dialog.set_uri(workdir)
         dialog.connect("response", self._on_dialog_response, widget_tree)
         dialog.show_all()
 
