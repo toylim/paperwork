@@ -159,11 +159,11 @@ windows_exe:
   <<: *windows
   script:
     # We need rclone to upload the files on OVH object storage
-    - c:\msys64\usr\bin\rm -f rclone-v1.50.1-windows-386.zip
-    - c:\msys64\usr\bin\rm -rf rclone-v1.50.1-windows-386
-    - c:\msys64\usr\bin\wget -q https://downloads.rclone.org/v1.50.1/rclone-v1.50.1-windows-386.zip
-    - c:\msys64\usr\bin\unzip rclone-v1.50.1-windows-386.zip
-    - c:\msys64\usr\bin\cp rclone-v1.50.1-windows-386/rclone.exe /usr/bin
+    - c:\msys64\usr\bin\rm -f rclone-v1.53.3-windows-386.zip
+    - c:\msys64\usr\bin\rm -rf rclone-v1.53.3-windows-386
+    - c:\msys64\usr\bin\wget -q https://github.com/rclone/rclone/releases/download/v1.53.3/rclone-v1.53.3-windows-386.zip
+    - c:\msys64\usr\bin\unzip rclone-v1.53.3-windows-386.zip
+    - c:\msys64\usr\bin\cp rclone-v1.53.3-windows-386/rclone.exe /usr/bin
     # Build
     - c:\msys64\usr\bin\bash -lc "make windows_exe"
     - c:\msys64\usr\bin\bash -lc "./ci/deliver.sh dist/paperwork.zip windows .zip"
