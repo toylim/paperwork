@@ -508,7 +508,7 @@ class Plugin(openpaperwork_core.PluginBase):
             if total == 0:
                 LOGGER.info(
                     "Yes[%f] / (Yes[%f] + No[%f]) = inf",
-                    yes, yes, no, self.THRESHOLD_YES_NO_RATIO
+                    yes, yes, no
                 )
                 continue
             LOGGER.info(
