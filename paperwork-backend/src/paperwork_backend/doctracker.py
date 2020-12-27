@@ -130,6 +130,10 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return [
             {
+                'interface': 'data_versioning',
+                'defaults': ['paperwork_backend.data_versioning'],
+            },
+            {
                 'interface': 'document_storage',
                 'defaults': ['paperwork_backend.model.workdir'],
             },

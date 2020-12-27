@@ -329,6 +329,10 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return [
             {
+                'interface': 'data_versioning',
+                'defaults': ['paperwork_backend.data_versioning'],
+            },
+            {
                 'interface': 'doc_labels',
                 'defaults': ['paperwork_backend.model.labels'],
             },
