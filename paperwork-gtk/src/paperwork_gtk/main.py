@@ -19,6 +19,7 @@ DEFAULT_GUI_PLUGINS = (
     openpaperwork_gtk.GUI_PLUGINS +
     [
         'openpaperwork_core.spatial.rtree',
+        'openpaperwork_gtk.drawer.pillow',
         'openpaperwork_gtk.drawer.scan',
         'paperwork_backend.docscan.autoselect_scanner',
         'paperwork_backend.guesswork.cropping.calibration',
@@ -55,7 +56,6 @@ DEFAULT_GUI_PLUGINS = (
         'paperwork_gtk.doc_selection',
         'paperwork_gtk.drawer.calibration',
         'paperwork_gtk.drawer.frame',
-        'paperwork_gtk.drawer.pillow',
         'paperwork_gtk.gesture.drag_and_drop',
         'paperwork_gtk.gesture.zoom',
         'paperwork_gtk.icon',

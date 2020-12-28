@@ -41,7 +41,7 @@ class Plugin(openpaperwork_core.PluginBase):
             },
             {
                 'interface': 'gtk_drawer_pillow',
-                'defaults': ['paperwork_gtk.drawer.pillow'],
+                'defaults': ['openpaperwork_gtk.drawer.pillow'],
             },
             {
                 'interface': 'gtk_drawer_scan',
