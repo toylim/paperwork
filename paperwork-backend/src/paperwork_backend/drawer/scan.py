@@ -1,3 +1,8 @@
+"""
+Plugin to draw scan on GTK widgets.
+This code should be on Paperwork-gtk, but Ironscanner needs it to.
+"""
+
 import logging
 
 import openpaperwork_core

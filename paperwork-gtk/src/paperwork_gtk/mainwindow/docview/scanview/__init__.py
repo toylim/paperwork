@@ -166,8 +166,8 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'gtk_drawer_scan',
                 'defaults': [
-                    'paperwork_gtk_drawer.calibration',
-                    'paperwork_gtk_drawer.scan',
+                    'paperwork_backend.drawer.scan',
+                    'paperwork_gtk.drawer.calibration',
                 ],
             },
         ]
