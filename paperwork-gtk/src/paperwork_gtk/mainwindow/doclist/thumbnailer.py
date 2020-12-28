@@ -80,7 +80,7 @@ class Plugin(openpaperwork_core.PluginBase):
             },
             {
                 'interface': 'pillow_util',
-                'defaults': ['paperwork_backend.pillow.util'],
+                'defaults': ['openpaperwork_core.pillow.util'],
             },
             {
                 'interface': 'pixbuf_pillow',

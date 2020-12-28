@@ -1,9 +1,9 @@
 import PIL.ImageDraw
 
-import openpaperwork_core
+from .. import PluginBase
 
 
-class Plugin(openpaperwork_core.PluginBase):
+class Plugin(PluginBase):
     def get_interfaces(self):
         return ['pillow_util']
 

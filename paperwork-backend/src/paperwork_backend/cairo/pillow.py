@@ -367,7 +367,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return [
             {
                 'interface': 'pillow',
-                'defaults': ['paperwork_backend.pillow.img'],
+                'defaults': ['openpaperwork_core.pillow.img'],
             },
             {
                 'interface': 'work_queue',

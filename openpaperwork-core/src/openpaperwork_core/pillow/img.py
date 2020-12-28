@@ -3,14 +3,16 @@ import logging
 import PIL
 import PIL.Image
 
-import openpaperwork_core
-import openpaperwork_core.promise
+from .. import (
+    PluginBase,
+    promise
+)
 
 
 LOGGER = logging.getLogger(__name__)
 
 
-class Plugin(openpaperwork_core.PluginBase):
+class Plugin(PluginBase):
     FILE_EXTENSIONS = [
         "bmp",
         "gif",
@@ -63,7 +65,7 @@ class Plugin(openpaperwork_core.PluginBase):
         if not self._check_is_img(file_url):
             return None
 
-        return openpaperwork_core.promise.ThreadedPromise(
+        return promise.ThreadedPromise(
             self.core, self.url_to_img_size, args=(file_url,)
         )
 
@@ -84,7 +86,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return img
 
     def url_to_pillow_promise(self, file_url):
-        return openpaperwork_core.promise.ThreadedPromise(
+        return promise.ThreadedPromise(
             self.core, self.url_to_pillow, args=(file_url,)
         )
 

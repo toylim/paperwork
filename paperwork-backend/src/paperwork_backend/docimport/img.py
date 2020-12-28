@@ -140,7 +140,7 @@ class Plugin(openpaperwork_core.PluginBase):
             },
             {
                 'interface': 'pillow',
-                'defaults': ['paperwork_backend.pillow.img'],
+                'defaults': ['openpaperwork_core.pillow.img'],
             },
             {
                 'interface': 'thread',

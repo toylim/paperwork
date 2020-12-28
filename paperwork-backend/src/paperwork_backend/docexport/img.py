@@ -248,7 +248,7 @@ class Plugin(AbstractExportPipePlugin):
             {
                 'interface': 'pillow',
                 'defaults': [
-                    'paperwork_backend.pillow.img',
+                    'openpaperwork_core.pillow.img',
                     'paperwork_backend.pillow.pdf',
                 ],
             },
