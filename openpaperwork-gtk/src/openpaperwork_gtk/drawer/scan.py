@@ -227,7 +227,8 @@ class Plugin(openpaperwork_core.PluginBase):
         # we show the app as busy when the user clicks on 'scan'
         # and we stop the busy indicator when a page is actually scanning
         # instantiate a default drawer to keep track of the size and the chunks
-        self.active_drawers[scan_id] = Drawer(self.core)
+        if scan_id not in self.active_drawers:
+            self.active_drawers[scan_id] = Drawer(self.core)
 
     def on_scan_page_start(self, scan_id, page_nb, scan_params):
         self.core.call_all("on_idle")
