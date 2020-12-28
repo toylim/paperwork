@@ -3,9 +3,9 @@ import logging
 import os
 
 import openpaperwork_core
+import openpaperwork_core.beacon
 import openpaperwork_core.promise
 
-from . import PeriodicTask
 from .. import _version
 
 
@@ -96,7 +96,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def init(self, core):
         super().init(core)
-        self.periodic = PeriodicTask(
+        self.periodic = openpaperwork_core.beacon.PeriodicTask(
             "update",
             UPDATE_CHECK_INTERVAL,
             self.update_check,

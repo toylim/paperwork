@@ -6,8 +6,23 @@ import openpaperwork_core
 class TestSysinfo(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core(auto_load_dependencies=True)
-        self.core.load("paperwork_backend.app")
-        self.core.load("paperwork_backend.beacon.sysinfo")
+
+        class FakeAppModule(object):
+            class Plugin(openpaperwork_core.PluginBase):
+                def get_interfaces(self):
+                    return ['app']
+
+                def app_get_name(self):
+                    return "Paperwork"
+
+                def app_get_fs_name(self):
+                    return "paperwork2"
+
+                def app_get_version(self):
+                    return "2.1"
+
+        self.core._load_module("fake_app", FakeAppModule())
+        self.core.load("openpaperwork_core.beacon.sysinfo")
         self.core.init()
 
     def test_get(self):

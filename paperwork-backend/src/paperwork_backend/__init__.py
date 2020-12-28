@@ -17,6 +17,8 @@ DEFAULT_PLUGINS = (
     openpaperwork_core.RECOMMENDED_PLUGINS +
     openpaperwork_gtk.CLI_PLUGINS +
     [
+        'openpaperwork_core.beacon.stats',
+        'openpaperwork_core.beacon.sysinfo',
         'openpaperwork_core.bug_report.censor',
         'openpaperwork_core.censor',
         'openpaperwork_core.docscan.libinsane',
@@ -27,8 +29,6 @@ DEFAULT_PLUGINS = (
         'openpaperwork_core.perfcheck.log',
         'paperwork_backend.authors',
         'paperwork_backend.authors.translators',
-        'paperwork_backend.beacon.stats',
-        'paperwork_backend.beacon.sysinfo',
         'paperwork_backend.beacon.update',
         'paperwork_backend.cairo.pillow',
         'paperwork_backend.cairo.poppler',

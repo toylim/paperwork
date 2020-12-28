@@ -28,7 +28,7 @@ class Plugin(openpaperwork_core.PluginBase):
             },
             {
                 'interface': 'stats_post',
-                'defaults': ['paperwork_backend.beacon.stats'],
+                'defaults': ['openpaperwork_core.beacon.stats'],
             },
             {
                 'interface': 'gtk_resources',
