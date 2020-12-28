@@ -7,12 +7,12 @@ from gi.repository import Libinsane  # noqa: E402
 
 import openpaperwork_core  # noqa: E402
 
-import paperwork_backend.docscan.libinsane  # noqa: E402
+import openpaperwork_core.docscan.libinsane  # noqa: E402
 
 
 class TestImageAssembler(unittest.TestCase):
     def test_assembler(self):
-        assembler = paperwork_backend.docscan.libinsane.ImageAssembler(
+        assembler = openpaperwork_core.docscan.libinsane.ImageAssembler(
             line_width=5
         )
         assembler.MIN_CHUNK_SIZE = 12
@@ -51,13 +51,13 @@ class TestLibinsane(unittest.TestCase):
         self.core.load("openpaperwork_core.config.fake")
         self.core.load("openpaperwork_core.thread.simple")
         self.core.load("openpaperwork_core.work_queue.default")
-        self.core.load("paperwork_backend.docscan.libinsane")
+        self.core.load("openpaperwork_core.docscan.libinsane")
 
         self.called = False
         self.results = []
 
         # drop warnings logs from Libinsane because they pollute tests output
-        plugin = self.core.get_by_name("paperwork_backend.docscan.libinsane")
+        plugin = self.core.get_by_name("openpaperwork_core.docscan.libinsane")
         plugin.libinsane_logger.min_level = Libinsane.LogLevel.ERROR
 
         self.config = self.core.get_by_name("openpaperwork_core.config.fake")

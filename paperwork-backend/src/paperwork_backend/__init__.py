@@ -19,6 +19,7 @@ DEFAULT_PLUGINS = (
     [
         'openpaperwork_core.bug_report.censor',
         'openpaperwork_core.censor',
+        'openpaperwork_core.docscan.libinsane',
         'openpaperwork_core.external_apps.dbus',
         'openpaperwork_core.external_apps.windows',
         'openpaperwork_core.external_apps.xdg',
@@ -40,7 +41,6 @@ DEFAULT_PLUGINS = (
         'paperwork_backend.docexport.pillowfight',
         'paperwork_backend.docimport.img',
         'paperwork_backend.docimport.pdf',
-        'paperwork_backend.docscan.libinsane',
         'paperwork_backend.docscan.scan2doc',
         'paperwork_backend.doctracker',
         # ACE is disabled by default: it's slow, and actually makes some scans
