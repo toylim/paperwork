@@ -232,7 +232,7 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'cairo_url',
                 'defaults': [
-                    'paperwork_backend.cairo.pillow',
+                    'openpaperwork_core.cairo.pillow',
                     'paperwork_backend.cairo.poppler',
                 ],
             },

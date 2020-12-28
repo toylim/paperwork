@@ -178,7 +178,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return [
             {
                 'interface': 'pillow_to_surface',
-                'defaults': ['paperwork_backend.cairo.pillow'],
+                'defaults': ['openpaperwork_core.cairo.pillow'],
             },
             {
                 'interface': 'scan',
@@ -298,7 +298,7 @@ if __name__ == "__main__":
     core.load("openpaperwork_core.thread.simple")
     core.load("openpaperwork_core.work_queue.default")
     core.load("openpaperwork_gtk.fs.gio")
-    core.load("paperwork_backend.cairo.pillow")
+    core.load("openpaperwork_core.cairo.pillow")
     core.load("openpaperwork_core.pillow.img")
     core._load_module("scan", FakeModule)
     core._load_module("test", sys.modules[__name__])
