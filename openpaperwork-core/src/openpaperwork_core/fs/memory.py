@@ -40,6 +40,9 @@ class _MemoryFileAdapter(io.RawIOBase):
             self.io = self.io_cls(data)
         elif 'w' in mode:
             self.io = self.io_cls()
+            self.plugin.fs[self.key] = (
+                time.time(), b"" if 'b' in mode else ""
+            )
 
         self.get_content = (
             self.io.getbuffer if 'b' in mode else self.io.getvalue
@@ -84,11 +87,15 @@ class _MemoryFileAdapter(io.RawIOBase):
     def writelines(self, lines):
         self.write(b"".join(lines))
 
-    def close(self):
-        super().close()
+    def flush(self):
+        super().flush()
         if 'w' not in self.mode and 'a' not in self.mode:
             return
         self.plugin.fs[self.key] = (time.time(), self.get_content())
+
+    def close(self):
+        super().close()
+        self.flush()
 
     def __enter__(self):
         return self
