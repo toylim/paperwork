@@ -60,7 +60,6 @@ class _MemoryFileAdapter(io.RawIOBase):
         )
         self.seek = self.io.seek if hasattr(self.io, 'seek') else None
         self.tell = self.io.tell if hasattr(self.io, 'tell') else None
-        self.flush = self.io.flush if hasattr(self.io, 'flush') else None
         self.truncate = (
             self.io.truncate if hasattr(self.io, 'truncate') else None
         )
@@ -85,17 +84,25 @@ class _MemoryFileAdapter(io.RawIOBase):
         return False
 
     def writelines(self, lines):
-        self.write(b"".join(lines))
+        if 'b' in self.mode:
+            self.write(b"".join(lines))
+        else:
+            self.write("".join(lines))
 
     def flush(self):
         super().flush()
+        if hasattr(self.io, 'flush'):
+            self.io.flush()
         if 'w' not in self.mode and 'a' not in self.mode:
             return
-        self.plugin.fs[self.key] = (time.time(), self.get_content())
+        if 'b' in self.mode:
+            self.plugin.fs[self.key] = (time.time(), bytes(self.get_content()))
+        else:
+            self.plugin.fs[self.key] = (time.time(), str(self.get_content()))
 
     def close(self):
-        super().close()
         self.flush()
+        super().close()
 
     def __enter__(self):
         return self
