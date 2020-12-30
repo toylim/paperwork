@@ -243,7 +243,7 @@ class Plugin(openpaperwork_core.PluginBase):
         finally:
             cairo_ctx.restore()
 
-    def page_draw_box(
+    def _page_draw_box(
             self, cairo_ctx, page, box_position,
             border_color, border_width=2,
             box_content=None):
@@ -275,3 +275,13 @@ class Plugin(openpaperwork_core.PluginBase):
             cairo_ctx.stroke()
         finally:
             cairo_ctx.restore()
+
+    def page_draw_box(self, *args, **kwargs):
+        # WORKAROUND(Jflesch): with some malformed PDF file, we get unexpected
+        # exceptions. See:
+        # https://gitlab.gnome.org/World/OpenPaperwork/paperwork/-/issues/913
+        # https://gitlab.freedesktop.org/poppler/poppler/-/issues/1020
+        try:
+            self._page_draw_box(*args, **kwargs)
+        except Exception as exc:
+            LOGGER.error("page_draw_box() failed", exc_info=exc)
