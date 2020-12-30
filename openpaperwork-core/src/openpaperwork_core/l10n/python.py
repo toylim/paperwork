@@ -68,7 +68,12 @@ class Plugin(PluginBase):
         path = self.core.call_success(
             "resources_get_dir", python_package, 'out'
         )
-        assert(path is not None)
+        if path is not None:
+            LOGGER.error(
+                "Failed to access ressources '%s/out'", python_package
+            )
+            return None
+
         path = self.core.call_success("fs_unsafe", path)
 
         mo_file = gettext.find(text_domain, path)
