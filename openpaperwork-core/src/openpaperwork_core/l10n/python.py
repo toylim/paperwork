@@ -68,7 +68,7 @@ class Plugin(PluginBase):
         path = self.core.call_success(
             "resources_get_dir", python_package, 'out'
         )
-        if path is not None:
+        if path is None:
             LOGGER.error(
                 "Failed to access ressources '%s/out'", python_package
             )
