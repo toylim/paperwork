@@ -442,7 +442,11 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
 
     def _rm_rf(self, gfile):
         try:
-            to_delete = [f for f in self._recurse(gfile, dir_included=True)]
+            to_delete = [
+                f for f in self._recurse(
+                    gfile, dir_included=True, follow_symlinks=False
+                )
+            ]
             # make sure to delete the parent directory last:
             to_delete.sort(reverse=True, key=lambda f: f.get_uri())
             for f in to_delete:
@@ -547,7 +551,7 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
 
         return True
 
-    def _recurse(self, parent, dir_included=False):
+    def _recurse(self, parent, dir_included=False, follow_symlinks=True):
         """
         Yield all the children (depth first), but not the parent.
         """
@@ -564,9 +568,14 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
 
         for child in children:
             name = child.get_name()
+            if child.get_is_symlink() and not follow_symlinks:
+                yield parent.get_child(name)
+                continue
             child = parent.get_child(name)
             try:
-                for sub in self._recurse(child, dir_included=dir_included):
+                for sub in self._recurse(
+                        child, dir_included=dir_included,
+                        follow_symlinks=follow_symlinks):
                     yield sub
             except GLib.GError:
                 yield child
