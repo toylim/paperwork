@@ -4,6 +4,9 @@ import openpaperwork_core
 
 
 LOGGER = logging.getLogger(__name__)
+
+# TODO(Jflesch): this version shouldn't be common to all applications using
+# Openpaperwork-core
 DATA_VERSION = 1
 
 
@@ -59,3 +62,5 @@ class Plugin(openpaperwork_core.PluginBase):
 
             with self.core.call_success("fs_open", data_ver_file, 'w') as fd:
                 fd.write(str(DATA_VERSION))
+
+            self.core.call_all("on_data_files_deleted")

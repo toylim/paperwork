@@ -28,6 +28,10 @@ class Plugin(PluginBase):
     def get_deps(self):
         return [
             {
+                'interface': 'data_versioning',
+                'defaults': ['openpaperwork_core.data_versioning'],
+            },
+            {
                 'interface': 'fs',
                 'defaults': ['openpaperwork_core.fs.python'],
             },
@@ -43,12 +47,11 @@ class Plugin(PluginBase):
             "fs_isdir", "file:///app"
         ) is not None
         LOGGER.info("Flatpak environment: %s", self.flatpak)
-        if self.flatpak:
-            self.tmp_dir = self.core.call_success(
-                "fs_join",
-                self.core.call_success("paths_get_data_dir"), "tmp"
-            )
-            self.core.call_all("fs_mkdir_p", self.tmp_dir)
+        self.tmp_dir = self.core.call_success(
+            "fs_join",
+            self.core.call_success("paths_get_data_dir"), "tmp"
+        )
+        self.on_data_files_deleted()
 
     def is_in_flatpak(self):
         if self.flatpak:
@@ -68,6 +71,7 @@ class Plugin(PluginBase):
         if not self.flatpak:
             return None
 
+        self.core.call_all("fs_mkdir_p", self.tmp_dir)
         tmp = tempfile.NamedTemporaryFile(
             prefix=prefix, suffix=suffix, delete=False, mode=mode,
             dir=self.core.call_success("fs_unsafe", self.tmp_dir)

@@ -330,7 +330,7 @@ class Plugin(openpaperwork_core.PluginBase):
         return [
             {
                 'interface': 'data_versioning',
-                'defaults': ['paperwork_backend.data_versioning'],
+                'defaults': ['openpaperwork_core.data_versioning'],
             },
             {
                 'interface': 'doc_labels',

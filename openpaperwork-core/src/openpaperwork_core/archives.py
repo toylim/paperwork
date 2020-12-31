@@ -64,11 +64,19 @@ class ArchiveHandler(object):
 
 
 class Plugin(PluginBase):
+    def __init__(self):
+        super().__init__()
+        self.storage_dirs = []
+
     def get_interfaces(self):
         return ['file_archives']
 
     def get_deps(self):
         return [
+            {
+                'interface': 'data_versioning',
+                'defaults': ['openpaperwork_core.data_versioning'],
+            },
             {
                 'interface': 'fs',
                 'defaults': ['openpaperwork_core.fs.python'],
@@ -85,14 +93,15 @@ class Plugin(PluginBase):
         self.base_archive_dir = self.core.call_success(
             "fs_join", data_dir, "openpaperwork"
         )
-        self.core.call_all("fs_mkdir_p", self.base_archive_dir)
 
         LOGGER.info("Archiving to %s", self.base_archive_dir)
 
     def file_archive_get(self, storage_name, file_extension):
+        self.core.call_all("fs_mkdir_p", self.base_archive_dir)
         storage_dir = self.core.call_success(
             "fs_join", self.base_archive_dir, storage_name
         )
+        self.storage_dirs.append(storage_dir)
         LOGGER.info("Archiving '%s' to %s", storage_name, storage_dir)
         self.core.call_all("fs_mkdir_p", storage_dir)
         archiver = ArchiveHandler(

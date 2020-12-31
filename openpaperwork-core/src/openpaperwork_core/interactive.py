@@ -71,6 +71,10 @@ class Plugin(PluginBase):
     def get_deps(self):
         return [
             {
+                'interface': 'data_versioning',
+                'defaults': ['openpaperwork_core.data_versioning'],
+            },
+            {
                 'interface': 'fs',
                 'defaults': ['openpaperwork_core.fs.python'],
             },

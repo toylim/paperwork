@@ -153,6 +153,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'paths',
                 'defaults': ['openpaperwork_core.paths.xdg'],
             },
+            {
+                'interface': 'data_versioning',
+                'defaults': ['openpaperwork_core.data_versioning'],
+            },
         ]
 
     def init(self, core):
