@@ -82,7 +82,8 @@ class Plugin(PluginBase):
     def on_quit(self):
         if not self.flatpak:
             return
-        shutil.rmtree(self.core.call_success("fs_unsafe", self.tmp_dir))
+        if self.core.call_success("fs_exists", self.tmp_dir) is not None:
+            shutil.rmtree(self.core.call_success("fs_unsafe", self.tmp_dir))
 
     def stats_get(self, out: dict):
         if not self.flatpak:
