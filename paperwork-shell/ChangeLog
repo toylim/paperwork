@@ -1,3 +1,7 @@
+2021/01/01 - 2.0.2:
+- add command 'chkworkdir': Check work directory integrity and fix it
+- import: Fix: Load the labels before importing documents
+
 2020/11/15 - 2.0.1:
 - cmd.import: When many importers match, make it clearer to the user that an
   input is required.

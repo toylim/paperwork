@@ -1,3 +1,13 @@
+2021/01/01 - 2.0.2:
+- beacon.sysinfo: report some extra infos to openpaper.work:
+  CPU max frequency, number of CPU cores, amount of memory, version of Python.
+- add dependency on psutil
+- PyOCR: Fix for people who seem to have no locale configured (?!)
+- PDF: Fix: Write page mapping in the order of original page
+  indexes, as expected when we read it back later.
+  (otherwise, we may get weird behaviours)
+- Labels: When removing labels, don't add extra empty lines
+
 2020/11/15 - 2.0.1:
 - Model: Fix: When the user move a page, they may actually creating a new document.
 - Libinsane + bug report: the file to attach to the bug report should be

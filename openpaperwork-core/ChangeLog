@@ -1,3 +1,9 @@
+2021/01/01 - 2.0.2:
+- Commands "config": When parsing boolean value, accepts "false" and "0" as
+  input for False
+- bug_report censoring: Do not censor text files that have already been
+  censored (avoid renaming the file again and making the file name even longer)
+
 2020/11/15 - 2.0.1:
 - Bug report censoring: Take into account that some strings in the logs may be
   URL-encoded and censor them too (for instance, path to the user home

@@ -1,7 +1,34 @@
+2021/01/01 - 2.0.2:
+- pageview.boxes: add workaround regarding unexpected Poppler exceptions on
+  some PDF documents
+  (see https://gitlab.freedesktop.org/poppler/poppler/-/issues/1020 )
+- add a command "paperwork-gtk import": Open the GUI and import the documents
+  given as arguments (thanks to Guillaume Girol)
+- desktop file: associate "paperwork-gtk install" to PDF and images files,
+  so users can import files directly from their file browser (thanks to
+  Guillaume Girol)
+- add plugin 'sync_on_start':
+  Start the full synchronization when the GUI is started, but only if the
+  configuration allows it. (Before this plugin, synchronization was started
+  directly in the 'main.py')
+- advanced search: prevent the user from opening the dialog twice
+  (not supported)
+- Help documents: Fix for people who seem to have no locale configured (?!)
+- settings/scanner/flatpak: Fix the dialog explaining how to enable Flatpak:
+  Once the dialog has been closed and destroy, it could not be opened correctly
+  again.
+- drawer.scan: Workaround regarding scanners reporting an image too big for
+  Cairo ImageSurface (some Fujitsu scanners)
+- settings/storage: when opening the file chooser to select the work directory,
+  pre-select the current work directory
+- GTK: boxes.search: do not highlight the keywords "and" and "or".
+  They are used in Whoosh query syntax, but it's useless to highlight them in
+  documents.
+
 2020/11/15 - 2.0.1:
-- GTK: take into account that document IDs may not be the expected date+time
+- take into account that document IDs may not be the expected date+time
   format (no uncaught exception should be raised in that case)
-- GTK: doclist: Fix: When the document list, scroll to the currently-opened
+- doclist: Fix: When the document list, scroll to the currently-opened
   document.
 - settings/calibration: Disable the calibration settings button if no scanner
   is selected
