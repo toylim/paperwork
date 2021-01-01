@@ -13,6 +13,10 @@ SPLIT = r"\W+"
 class Plugin(openpaperwork_core.PluginBase):
     PRIORITY = 100
 
+    # those are keywords used in python-whoosh query syntax. There is no
+    # point in highlighting them
+    IGNORE_LIST = {"and", "or"}
+
     def __init__(self):
         super().__init__()
         self.re_split = re.compile(SPLIT)
@@ -70,6 +74,9 @@ class Plugin(openpaperwork_core.PluginBase):
                 word = self.core.call_success(
                     "i18n_strip_accents", word_box.content
                 )
+                word = word.strip()
+                if word.lower() in self.IGNORE_LIST:
+                    continue
                 for w in self.re_split.split(word):
                     w = w.lower()
                     if w not in self.keywords:
