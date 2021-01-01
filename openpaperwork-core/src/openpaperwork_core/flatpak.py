@@ -51,7 +51,6 @@ class Plugin(PluginBase):
             "fs_join",
             self.core.call_success("paths_get_data_dir"), "tmp"
         )
-        self.on_data_files_deleted()
 
     def is_in_flatpak(self):
         if self.flatpak:
