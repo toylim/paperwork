@@ -36,6 +36,11 @@
             <child>
               <object class="GtkImage" id="doc_thumbnail">
                 <property name="visible">False</property>
+                <property name="icon_name">x-office-document-symbolic</property>
+                <property name="icon_size">3</property>
+                <style>
+                  <class name="doclist_thumbnail"/>
+                </style>
               </object>
             </child>
           </object>

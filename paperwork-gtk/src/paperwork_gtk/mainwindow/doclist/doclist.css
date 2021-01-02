@@ -2,10 +2,6 @@
 	background-color: rgba(0, 0, 0, 0.25);
 }
 
-#doclist_scroll image {
-	border: 1px solid gray;
-}
-
 #doclist_scroll button image {
 	border: 0px;
 }
@@ -57,7 +53,7 @@
 }
 
 .doclist_item:selected {
-  border: 1px solid shade(@theme_bg_color, 0.7);
+  border: 1px solid shade(@theme_bg_color, 0.75);
   background-color: @theme_base_color;
   color: @theme_fg_color;
 }
@@ -69,4 +65,10 @@
 .doclist_item:hover .border-bottom-light, .doclist_item:selected .border-bottom-light {
   padding-bottom: 4px;
   border-bottom: 1px solid transparent;
+}
+
+.doclist_thumbnail {
+  border: 1px solid shade(@theme_bg_color, 0.75);
+  background-color: mix(@theme_bg_color, @theme_base_color, 0.9);
+  color: mix(@theme_base_color, @theme_fg_color, 0.85);
 }
