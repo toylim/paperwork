@@ -1,30 +1,29 @@
+# SOME DESCRIPTIVE TITLE
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-01 22:01+0200\n"
-"PO-Revision-Date: 2021-01-02 11:05+0000\n"
-"Last-Translator: Tom F <tom@mb.tu-ilmenau.de>\n"
-"Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
-"paperwork-help-documents/de/>\n"
-"Language: de\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.4\n"
 
 #. type: Plain text
 #: data/intro.tex:11 data/usage.tex:20
 msgid "\\date{}"
 msgstr ""
-"\\date{}\n"
-"\\usepackage[german]{babel}"
 
 #. type: title{#1}
 #: data/intro.tex:11
 msgid "Welcome to Paperwork !"
-msgstr "Willkommen bei Paperwork!"
+msgstr ""
 
 #. type: document
 #: data/intro.tex:20
@@ -35,13 +34,6 @@ msgid ""
 "read, classify, and memorize just in case you may need them later. Most of "
 "the time you won't, which means you waste your energy for nothing."
 msgstr ""
-"Sie treiben dich in den Wahnsinn: dein Handyanbieter, deine Bank, die Schule "
-"deiner Tochter, der Tierarzt deines Hundes, selbst dein Internetanbieter. Es "
-"scheint, als wollten sie dich in einer Flut aus Papier ertränken. Dokumente, "
-"die du lesen, sortieren und deren Inhalt du dir merken sollst. Nur für den "
-"Fall, dass du sie später noch mal brauchst – die meisten brauchst du "
-"allerdings so bald nicht wieder und du verschenkst deine Energie völlig "
-"umsonst."
 
 #. type: document
 #: data/intro.tex:24
@@ -50,15 +42,11 @@ msgid ""
 "searchable documents.  It's simple: just scan and forget. Looking for a "
 "specific paper? Just type in a few keywords and tada"
 msgstr ""
-"Paperwork wird dir helfen, dieser Papierflut Herr zu werden, indem es lose "
-"Zettel in durchsuchbare Dateien verwandelt. Ganz einfach: Dokument scannen "
-"und vergessen. Du suchst ein bestimmtes Schreiben? Einfach ein paar "
-"Schlüsselworte eintippen und tada!"
 
 #. type: section{#2}
 #: data/intro.tex:28
 msgid "Documents and pages"
-msgstr "Dokumente und Seiten"
+msgstr ""
 
 #. type: document
 #: data/intro.tex:36
@@ -67,10 +55,6 @@ msgid ""
 "list of all your documents sorted by the date they were imported. On the "
 "right (blue) are the pages of the currently selected paper."
 msgstr ""
-"Die Oberfläche von Paperwork teilt sich in zwei Bereiche auf: Auf der linken "
-"(grün hervorgehobenen) Seite befindet sich eine Liste aller Dokumente, "
-"sortiert nach Datum. Auf der rechten (blauen) Seite wird das gerade "
-"ausgewählte Dokument angezeigt."
 
 #. type: document
 #: data/intro.tex:41
@@ -80,21 +64,16 @@ msgid ""
 "scanner at home? You can still use the scanner you have at work. Paperwork "
 "will easily import PDF and image files."
 msgstr ""
-"Du kannst Dokumente aus verschiedenen Quellen importieren, abhängig vom "
-"angeschlossenen Gerät: Flachbettscanner, Dokumentenscanner mit Einzug, "
-"Digitalkamera usw. Du hast keinen Scanner zu Hause? du kannst auch den "
-"Scanner bei der Arbeit verwenden – Paperwork importiert ohne Weiteres auch "
-"bereits existierende PDF- und Bilddateien."
 
 #. type: section{#2}
 #: data/intro.tex:44
 msgid "Find"
-msgstr "Suchen"
+msgstr ""
 
 #. type: wrapfigure
 #: data/intro.tex:50
 msgid "{r}{0.5\\textwidth}"
-msgstr "{r}{0.5\\textwidth}"
+msgstr ""
 
 #. type: document
 #: data/intro.tex:56
@@ -105,16 +84,11 @@ msgid ""
 "to convert your papers into simple text files, so it's easy to search for "
 "text."
 msgstr ""
-"Finde ganz einfach, wonach du suchst: Tippe ein paar Schlüsselworte ins "
-"Suchfeld und die Dokumentenliste zeigt dir nur noch die relevanten Dateien "
-"an. Hier passiert die Magie: Paperwork verwendet optische Zeichenerkennung "
-"(engl.: optical character recognition, OCR), um deine Dokumente in einfache, "
-"durchsuchbare Textdateien umzuwandeln."
 
 #. type: section{#2}
 #: data/intro.tex:59
 msgid "Export"
-msgstr "Exportieren"
+msgstr ""
 
 #. type: document
 #: data/intro.tex:69
@@ -123,15 +97,11 @@ msgid ""
 "Multiple formats are supported: .pdf, .jpg, .txt, etc. And of course, paper "
 "(requires a printer, sold separately)."
 msgstr ""
-"Manchmal wirst du ein Dokument aus Paperwork exportieren wollen, um es "
-"jemandem zu senden. Verschiedene Formate werden unterstützt: .pdf, .jpg, ."
-"txt usw. Oder natürlich Papier (setzt einen Drucker voraus, nicht im "
-"Lieferumfang enthalten)."
 
 #. type: subsection{#2}
 #: data/intro.tex:72 data/usage.tex:113
 msgid "Labels and additional keywords"
-msgstr "Labels und zusätzliche Schlüsselworte"
+msgstr ""
 
 #. type: document
 #: data/intro.tex:84
@@ -142,11 +112,6 @@ msgid ""
 "the keywords you add will be searchable, as if they were directly written on "
 "the paper you scanned."
 msgstr ""
-"Du hast eine wichtige E-Mail beantwortet und willst sie im Blick behalten? "
-"Das eingescannte Dokument war so unlesbar, dass Paperwork einige der "
-"enthaltenen Schlüsselworte gar nicht erkennen konnte? Füge eigene "
-"Schlüsselworte hinzu, damit dir nichts entgeht! Alle Wörter die Du dazugibst "
-"werden suchbar, als ob sie auf dem gescannten Dokument geschrieben waren."
 
 #. type: document
 #: data/intro.tex:89
@@ -156,15 +121,11 @@ msgid ""
 "will learn which labels go on which documents and will automatically apply "
 "them on new documents."
 msgstr ""
-"Du willst deine Dokumente noch gründlicher organisieren? Dann nutze Labels. "
-"Jedes Label hat seine eigene Farbe. Mit der Zeit wird Paperwork lernen, "
-"welche Labels an welches Dokument gehören und sie beim Erfassen neuer "
-"Dokumente selbstständig ergänzen."
 
 #. type: section{#2}
 #: data/intro.tex:92
 msgid "Your first documents"
-msgstr "Deine ersten Dokumente"
+msgstr ""
 
 #. type: document
 #: data/intro.tex:102
@@ -173,9 +134,6 @@ msgid ""
 "of the main features of Paperwork. You can start using it by adding your "
 "first own paper."
 msgstr ""
-"Klick auf den \"+\"-Knopf, dann auf den \"Scan\"-Button und das war’s. Damit "
-"kennst du bereits die Hauptfunktionen von Paperwork. Du kannst mit der "
-"Benutzung direkt starten, indem du das erste Dokument hinzufügst."
 
 #. type: document
 #: data/intro.tex:105
@@ -183,13 +141,11 @@ msgid ""
 "This document will automatically disappear from your document list as soon "
 "as you have created or imported your first document."
 msgstr ""
-"Dieses Dokument wird automatisch aus Deiner Dokumentenliste verschwinden, "
-"sobald Du dein ersted Dokument erstellt oder importiert hast."
 
 #. type: section{#2}
 #: data/intro.tex:108
 msgid "Need more help ?"
-msgstr "Mehr Hilfe benötigt?"
+msgstr ""
 
 #. type: document
 #: data/intro.tex:116
@@ -197,8 +153,6 @@ msgid ""
 "If you need more help, there is a comprehensive manual you can find in the "
 "help section of Paperwork."
 msgstr ""
-"Wenn du mehr Hilfe benötigst, schau ins ausführliche Handbuch. Du findest es "
-"im Menü \"Hilfe\" von Paperwork."
 
 #. type: document
 #: data/intro.tex:119
@@ -206,8 +160,6 @@ msgid ""
 "We hope that you'll enjoy this piece of software. If you like it please tell "
 "us, and if you don't please tell us why!"
 msgstr ""
-"Wir hoffen, dass dir dieses Stück Software Freude bereiten wird. Wenn du "
-"Paperwork magst, sag es uns – und wenn nicht, verrat uns, warum nicht!"
 
 #. type: hypersetup{#1}
 #: data/usage.tex:20
@@ -215,18 +167,16 @@ msgid ""
 "colorlinks, citecolor=black, filecolor=black, linkcolor=black, "
 "urlcolor=black, linktoc=all,"
 msgstr ""
-"colorlinks, citecolor=black, filecolor=black, linkcolor=black, "
-"urlcolor=black, linktoc=all,"
 
 #. type: title{#1}
 #: data/usage.tex:20
 msgid "Paperwork manual"
-msgstr "Paperwork Handbuch"
+msgstr ""
 
 #. type: section{#2}
 #: data/usage.tex:32
 msgid "Introduction"
-msgstr "Einleitung"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:41
@@ -236,11 +186,6 @@ msgid ""
 "them back later is worrisome, at best. For most organized people, naming and "
 "sorting them is as tedious as watching paint dry."
 msgstr ""
-"Die meisten privaten Dokumente sind ziemlich wiederholend: "
-"Gehaltsabrechnungen, Mietabrechnungen, Stromrechnungen usw. Für die meisten "
-"unorganisierten Menschen ist es bestenfalls beunruhigend, diese später "
-"wiederfinden zu müssen. Für die meisten organisierten Menschen ist das "
-"Benennen und Sortieren so mühsam, wie Farbe beim Trocknen zuzusehen."
 
 #. type: document
 #: data/usage.tex:45
@@ -249,10 +194,6 @@ msgid ""
 "job.  Humans should do as little as possible while machines do most of the "
 "work.  The end goal here is \"scan \\& forget\"."
 msgstr ""
-"Die Grundidee hinter Paperwork ist es, dass die Verwaltung von Dokumenten "
-"ein Computerjob ist. Menschen sollten so wenig wie möglich tun, während "
-"Maschinen den Großteil der Arbeit erledigen. Das Ziel ist hier \"scannen \\& "
-"vergessen\"."
 
 #. type: document
 #: data/usage.tex:49
@@ -261,19 +202,16 @@ msgid ""
 "individually, organize them in complex hierachy, tag them manually each "
 "time, fix OCR minor glitches, etc, then Paperwork is not for you."
 msgstr ""
-"Wenn Sie eine Software suchen, mit der Sie jedes Dokument einzeln benennen, "
-"in einer komplexen Hierarchie organisieren, jedes Mal manuell markieren, "
-"kleinere OCR-Probleme beheben usw. können, dann ist Paperwork nichts für Sie."
 
 #. type: section{#2}
 #: data/usage.tex:52
 msgid "Definitions"
-msgstr "Definitionen"
+msgstr ""
 
 #. type: subsection{#2}
 #: data/usage.tex:54 data/usage.tex:158
 msgid "Work directory"
-msgstr "Arbeitsverzeichnis"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:57
@@ -281,9 +219,6 @@ msgid ""
 "Paperwork stores all your documents in a single directory: the work "
 "directory.  In this directory, each document has its own sub-directory."
 msgstr ""
-"Paperwork speichert alle Ihre Dokumente in einem einzigen Verzeichnis: dem "
-"Arbeitsverzeichnis. In diesem Verzeichnis hat jedes Dokument sein eigenes "
-"Unterverzeichnis."
 
 #. type: document
 #: data/usage.tex:61
@@ -292,14 +227,11 @@ msgid ""
 "advantage: You don't have to worry about file names and directory structures "
 "anymore."
 msgstr ""
-"Dies erschwert zwar die Verwendung von Paperwork mit anderen Tools, hat aber "
-"einen großen Vorteil: Sie müssen sich nicht mehr um Dateinamen und "
-"Verzeichnisstrukturen kümmern."
 
 #. type: subsection{#2}
 #: data/usage.tex:63
 msgid "Document"
-msgstr "Dokument"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:71
@@ -307,8 +239,6 @@ msgid ""
 "In Paperwork, a document is a set of pages. On disk, it can either be a set "
 "of JPEG files or a PDF file."
 msgstr ""
-"In Paperwork ist ein Dokument eine Ansammlung von Seiten. Auf der Festplatte "
-"kann dies entweder eine Ansammlung von JPEG-Dateien oder eine PDF-Datei sein."
 
 #. type: document
 #: data/usage.tex:74
@@ -316,9 +246,6 @@ msgid ""
 "Documents are identified only by a date. It can either be the date you "
 "imported them (default) or some date of your choosing."
 msgstr ""
-"Dokumente werden nur durch ein Datum identifiziert. Es kann entweder das "
-"Datum sein, an dem Sie sie importiert haben (voreingestellter Standard), "
-"oder ein von Ihnen gewähltes Datum."
 
 #. type: document
 #: data/usage.tex:77
@@ -326,20 +253,16 @@ msgid ""
 "They are displayed on the left side of the main window (green part on the "
 "screenshot above)."
 msgstr ""
-"Sie werden auf der linken Seite des Hauptfensters angezeigt (grüner Teil auf "
-"dem Screenshot oben)."
 
 #. type: subsection{#2}
 #: data/usage.tex:80
 msgid "Page"
-msgstr "Seite"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:82
-msgid ""
-"In Paperwork, a page is just an image and the word positions on this image."
+msgid "In Paperwork, a page is just an image and the word positions on this image."
 msgstr ""
-"In Paperwork ist eine Seite nur ein Bild und Wortpositionen auf diesem Bild."
 
 #. type: document
 #: data/usage.tex:88
@@ -350,12 +273,6 @@ msgid ""
 "for each page. So the text extracted from images is stored in hOCR files "
 "beside the JPEG files."
 msgstr ""
-"Bilder können von einem Scanner kommen oder importiert werden. In diesen "
-"Fällen wird es als JPEG-Datei gespeichert und der Text wird mit OCR (Optical "
-"Character Recognition, englisch für Zeichnerkennung) extrahiert. OCR ist ein "
-"ziemlich langwieriger Prozess. Er kann bis zu ein paar Minuten pro Seite "
-"dauern. Daher wird der aus den Bildern extrahierte Text in hOCR-Dateien "
-"neben den JPEG-Dateien gespeichert."
 
 #. type: document
 #: data/usage.tex:91
@@ -363,8 +280,6 @@ msgid ""
 "Pages can also be the pages from a PDF file. In that case, by default, "
 "Paperwork just stores a copy of the PDF file."
 msgstr ""
-"Seiten können auch die Seiten aus einer PDF-Datei sein. In diesem Fall "
-"speichert Paperwork standardmäßig nur eine Kopie der PDF-Datei."
 
 #. type: document
 #: data/usage.tex:95
@@ -372,9 +287,6 @@ msgid ""
 "Paperwork does not track whether a page is recto or verso.  Paperwork does "
 "not track the paper size corresponding to a page (A4, Letter, etc)."
 msgstr ""
-"Paperwork kümmert es nicht, ob eine Seite Vorder- oder Rückseite ist. "
-"Paperwork berücksichtigt auch nicht das Papierformat einer Seite (A4, "
-"Letter, u.s.w.)."
 
 #. type: document
 #: data/usage.tex:98
@@ -382,13 +294,11 @@ msgid ""
 "Pages are displayed on the right side of the main window (blue part on the "
 "screenshot above)."
 msgstr ""
-"Die Seiten werden auf der rechten Seite des Hauptfensters angezeigt (blauer "
-"Teil auf dem Screenshot oben)."
 
 #. type: subsection{#2}
 #: data/usage.tex:101
 msgid "Indexation and Keywords"
-msgstr "Indexierung und Schlüsselwörter"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:108
@@ -396,16 +306,11 @@ msgid ""
 "Of course, you need a way to find back your documents. Paperwork manages an "
 "index with all the keywords found in your documents."
 msgstr ""
-"Natürlich brauchen Sie eine Möglichkeit, Ihre Dokumente wiederzufinden. "
-"Paperwork verwaltet einen Index mit allen Schlagwörtern, die in Ihren "
-"Dokumenten gefunden wurden."
 
 #. type: document
 #: data/usage.tex:110
 msgid "Just type in a few keywords, and you will get your documents back."
 msgstr ""
-"Geben Sie einfach ein paar Schlüsselwörter ein, und Sie erhalten Ihre "
-"Dokumente zurück."
 
 #. type: document
 #: data/usage.tex:128
@@ -420,9 +325,6 @@ msgid ""
 "To mitigate those issues, you can add labels (or tags) on your documents and "
 "provide additional keywords. Both are added to the index."
 msgstr ""
-"Um diese Probleme abzumildern, können Sie Ihre Dokumente mit Etiketten (oder "
-"Tags) versehen und zusätzliche Schlüsselwörter angeben. Beides wird in den "
-"Index aufgenommen."
 
 #. type: document
 #: data/usage.tex:134
@@ -430,18 +332,16 @@ msgid ""
 "Labels are displayed beside documents. Additional keywords are almost never "
 "displayed."
 msgstr ""
-"Etiketten werden neben den Dokumenten angezeigt. Zusätzliche Stichwörter "
-"werden fast nie angezeigt."
 
 #. type: section{#2}
 #: data/usage.tex:137
 msgid "Settings"
-msgstr "Einstellungen"
+msgstr ""
 
 #. type: subsection{#2}
 #: data/usage.tex:139
 msgid "Accessing the settings"
-msgstr "Zugriff auf die Einstellungen"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:166
@@ -450,9 +350,6 @@ msgid ""
 "stored.  It can be a standard folder, a folder synchronized across multiple "
 "computers or on a network share."
 msgstr ""
-"Das Arbeitsverzeichnis ist das Verzeichnis, in dem Sie alle Ihre Dokumente "
-"speichern möchten. Das kann ein normaler Ordner, ein über mehrere Computer "
-"synchronisierter Ordner oder eine Netzwerkfreigabe sein."
 
 #. type: document
 #: data/usage.tex:169
@@ -460,9 +357,6 @@ msgid ""
 "Once you close the settings dialog, the work directory will be scanned and "
 "Paperwork index will be updated according to its index."
 msgstr ""
-"Nachdem Sie den Einstellungsdialog geschlossen haben, wird das "
-"Arbeitsverzeichnis gescannt und der Paperwork-Index wird entsprechend seinem "
-"Index aktualisiert."
 
 #. type: document
 #: data/usage.tex:172
@@ -470,18 +364,16 @@ msgid ""
 "Each time Paperwork starts, it will look for changes in this folder and "
 "synchronize its index accordingly."
 msgstr ""
-"Jedes Mal, wenn Paperwork startet, sucht es nach Änderungen in diesem Ordner "
-"und synchronisiert seinen Index entsprechend."
 
 #. type: subsection{#2}
 #: data/usage.tex:175
 msgid "Scanner"
-msgstr "Scanner"
+msgstr ""
 
 #. type: subsubsection{#2}
 #: data/usage.tex:182
 msgid "Device"
-msgstr "Gerät"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:189
@@ -489,19 +381,16 @@ msgid ""
 "When starting, Paperwork looks for scanners. The scanner to use can be "
 "selected in the settings."
 msgstr ""
-"Beim Start sucht Paperwork nach Scannern. Der zu verwendende Scanner kann in "
-"den Einstellungen ausgewählt werden."
 
 #. type: document
 #: data/usage.tex:191
 msgid "Webcams, file storage, etc, cannot be used. Only paper-eaters."
 msgstr ""
-"Webcams, Dateispeicher usw. können nicht verwendet werden. Nur Papierfresser."
 
 #. type: subsubsection{#2}
 #: data/usage.tex:194
 msgid "Scan Mode"
-msgstr "Scanmodus"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:202
@@ -510,14 +399,11 @@ msgid ""
 "scanners scan much faster in grayscale or even in black\\&white. Here you "
 "can select the mode to use."
 msgstr ""
-"Die meisten modernen Scanner scannen in Farbe in einer vertretbaren Zeit. "
-"Einige ältere Scanner scannen jedoch viel schneller in Graustufen oder sogar "
-"in Schwarz-Weiß. Hier können Sie den zu verwendenden Modus auswählen."
 
 #. type: subsubsection{#2}
 #: data/usage.tex:205
 msgid "Scan Resolution"
-msgstr "Scan-Auflösung"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:212
@@ -525,73 +411,71 @@ msgid ""
 "Scanner resolution defines how detailed the images coming from your scanner "
 "must be."
 msgstr ""
-"Die Scan-Auflösung legt fest, wie detailliert die von Ihrem Scanner "
-"kommenden Bilder sein müssen."
 
 #. type: document
 #: data/usage.tex:221
 msgid "Higher resolutions mean"
-msgstr "Höhere Auflösungen bedeuten"
+msgstr ""
 
 #. type: itemize
 #: data/usage.tex:221
 msgid "longer scans,"
-msgstr "längere Scans,"
+msgstr ""
 
 #. type: itemize
 #: data/usage.tex:221
 msgid "longer OCR,"
-msgstr "längere OCR,"
+msgstr ""
 
 #. type: itemize
 #: data/usage.tex:221
 msgid "more time to display,"
-msgstr "mehr Zeit für die Anzeige,"
+msgstr ""
 
 #. type: itemize
 #: data/usage.tex:221
 msgid "more space used on disk,"
-msgstr "mehr Speicherplatz auf der Festplatte verwendet,"
+msgstr ""
 
 #. type: itemize
 #: data/usage.tex:221
 msgid "but also better OCR."
-msgstr "aber auch eine bessere OCR."
+msgstr ""
 
 #. type: document
 #: data/usage.tex:231
 msgid "Lower resolutions mean"
-msgstr "Niedrigere Auflösungen bedeuten"
+msgstr ""
 
 #. type: itemize
 #: data/usage.tex:231
 msgid "shorter scans,"
-msgstr "kürzere Scans,"
+msgstr ""
 
 #. type: itemize
 #: data/usage.tex:231
 msgid "shorter OCR,"
-msgstr "kürzere OCR,"
+msgstr ""
 
 #. type: itemize
 #: data/usage.tex:231
 msgid "less time to display,"
-msgstr "weniger Zeit für die Anzeige,"
+msgstr ""
 
 #. type: itemize
 #: data/usage.tex:231
 msgid "less space used on disk,"
-msgstr "weniger Speicherplatz auf der Festplatte,"
+msgstr ""
 
 #. type: itemize
 #: data/usage.tex:231
 msgid "but also inferior OCR,"
-msgstr "aber auch eine minderwertige OCR,"
+msgstr ""
 
 #. type: itemize
 #: data/usage.tex:231
 msgid "and possibly unreadable image (even by a human)."
-msgstr "und ein möglicherweise unlesbares (auch von einem Menschen) Bild."
+msgstr ""
 
 #. type: document
 #: data/usage.tex:234
@@ -599,34 +483,26 @@ msgid ""
 "300 dpi is considered a good trade-off. You may want to reduce it to 200 dpi "
 "on slow computers."
 msgstr ""
-"300 dpi wird als guter Kompromiss angesehen. Auf langsamen Computern sollten "
-"Sie eventuell auf 200 dpi reduzieren."
 
 #. type: subsubsection{#2}
 #: data/usage.tex:237
 msgid "Scanner calibration"
-msgstr "Scanner-Kalibrierung"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:247
 msgid ""
 "Scanners tend to provide images actually bigger than the scanned pages.  "
 "Since most of the time, you will always scan pages having the same size (A4 "
-"or Letter usually), Paperwork provides an option called scanner calibration. "
-"Scanner calibration in Paperwork is simply an area that will always be "
-"cropped out of images coming from the scanner."
+"or Letter usually), Paperwork provides an option called scanner "
+"calibration. Scanner calibration in Paperwork is simply an area that will "
+"always be cropped out of images coming from the scanner."
 msgstr ""
-"Scanner neigen dazu, Bilder zu liefern, die größer sind als die gescannten "
-"Seiten.  Da Sie in den meisten Fällen immer Seiten mit der gleichen Größe ("
-"normalerweise A4 oder Letter) scannen werden, bietet Paperwork eine Option "
-"namens Scannerkalibrierung. Die Scannerkalibrierung in Paperwork ist einfach "
-"ein Bereich, der aus den die vom Scanner kommenden Bildern jedesmal "
-"ausgeschnitten wird."
 
 #. type: subsection{#2}
 #: data/usage.tex:250
 msgid "OCR"
-msgstr "OCR (optical character recognition, englisch für Texterkennung)"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:257
@@ -634,8 +510,6 @@ msgid ""
 "By default, Paperwork uses Tesseract for the OCR. If unavailable, it falls "
 "back on Cuneiform."
 msgstr ""
-"Paperwork verwendet standardmäßig Tesseract für die OCR. Wenn das nicht "
-"verfügbar ist, greift es auf Cuneiform zurück."
 
 #. type: document
 #: data/usage.tex:260
@@ -643,9 +517,6 @@ msgid ""
 "On Linux, if installed with Flatpak, Paperwork is always provided with "
 "Tesseract. On Windows, Paperwork is always provided with Tesseract."
 msgstr ""
-"Unter Linux wird Paperwork, wenn es mit Flatpak installiert wurde, immer mit "
-"Tesseract ausgeliefert. Unter Windows wird Paperwork immer mit Tesseract "
-"installiert."
 
 #. type: document
 #: data/usage.tex:263
@@ -653,8 +524,6 @@ msgid ""
 "To get better results, OCR tool need to know the language used in the "
 "document(s)."
 msgstr ""
-"Um bessere Ergebnisse zu erzielen, muss das OCR-Programm die in den "
-"Dokumenten verwendete Sprache kennen."
 
 #. type: document
 #: data/usage.tex:268
@@ -664,21 +533,16 @@ msgid ""
 "the OCR tool doesn't have the data required to read your language and you "
 "must install them."
 msgstr ""
-"Die im Einstellungsdialog von Paperwork verfügbaren Sprachen sind "
-"diejenigen, die vom OCR-Programm beherrscht werden. Wenn Ihre Sprache nicht "
-"in der Liste enthalten ist, bedeutet dies, dass das OCR-Programm nicht über "
-"die erforderlichen Sprachdaten verfügt und, dass Sie diese installieren "
-"müssen."
 
 #. type: subsubsection{#2}
 #: data/usage.tex:271
 msgid "Adding languages"
-msgstr "Sprachen hinzufügen"
+msgstr ""
 
 #. type: paragraph{#2}
 #: data/usage.tex:273
 msgid "Flatpak"
-msgstr "Flatpak"
+msgstr ""
 
 #. type: verbatim
 #: data/usage.tex:279
@@ -689,16 +553,11 @@ msgid ""
 "flatpak config --user --set languages \"<langs>\"\n"
 "flatpak update"
 msgstr ""
-"# <langs> ist eine Liste von zweibuchstabigen Ländercodes getrennt durch ';'"
-"\n"
-"# Beispiel: en;fr;de\n"
-"flatpak config --user --set languages \"<langs>\"\n"
-"flatpak update"
 
 #. type: paragraph{#2}
 #: data/usage.tex:283
 msgid "Debian"
-msgstr "Debian"
+msgstr ""
 
 #. type: verbatim
 #: data/usage.tex:288 data/usage.tex:304
@@ -708,14 +567,11 @@ msgid ""
 "# ex: 'fra' for French\n"
 "$ sudo apt-get install tesseract-ocr tesseract-ocr-<lang>"
 msgstr ""
-"# <lang> ist ein dreibuchstabiger Sprach-Code\n"
-"# Beispiel: 'fra' für Französisch\n"
-"$ sudo apt-get install tesseract-ocr tesseract-ocr-<lang>"
 
 #. type: paragraph{#2}
 #: data/usage.tex:291
 msgid "Fedora"
-msgstr "Fedora"
+msgstr ""
 
 #. type: verbatim
 #: data/usage.tex:296
@@ -725,19 +581,16 @@ msgid ""
 "# ex: 'fra' for French\n"
 "$ sudo dnf install tesseract tesseract-langpack-<lang>"
 msgstr ""
-"# <lang> ist ein dreibuchstabiger Sprach-Code\n"
-"# Beispiel: 'fra' für Französisch\n"
-"$ sudo dnf install tesseract tesseract-langpack-<lang>"
 
 #. type: paragraph{#2}
 #: data/usage.tex:299
 msgid "Ubuntu"
-msgstr "Ubuntu"
+msgstr ""
 
 #. type: subsection{#2}
 #: data/usage.tex:307 data/usage.tex:815
 msgid "Windows"
-msgstr "Windows"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:310
@@ -745,9 +598,6 @@ msgid ""
 "Tesseract and all its data files are provided by Paperwork's installer.  You "
 "can rerun the installer to install other languages."
 msgstr ""
-"Tesseract und alle seine Datendateien werden vom Installationsprogramm von "
-"Paperwork bereitgestellt. Sie können das Installationsprogramm erneut "
-"ausführen, um andere Sprachen zu installieren."
 
 #. type: document
 #: data/usage.tex:314
@@ -756,15 +606,11 @@ msgid ""
 "been packaged (in which case you can request it), or there is no data file "
 "available yet for this language."
 msgstr ""
-"Wenn eine Sprache im Installationsprogramm nicht verfügbar ist, bedeutet "
-"dies entweder, dass sie nicht mit eingepackt wurde (in diesem Fall können "
-"Sie sie anfordern), oder es ist noch keine Datendatei für diese Sprache "
-"verfügbar."
 
 #. type: subsubsection{#2}
 #: data/usage.tex:317
 msgid "Disabling OCR"
-msgstr "OCR deaktivieren"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:323
@@ -775,17 +621,11 @@ msgid ""
 "can be temporarily disabled. To disable OCR, you simply have to unselect all "
 "OCR languages."
 msgstr ""
-"Wenn Sie eine Seite mit Paperwork scannen, führt Paperwork sofort die OCR "
-"auf der Seite durch. Dieser Vorgang kann für jede Seite eine Weile dauern. "
-"Für den Fall, dass Sie viele Seiten schnell scannen möchten (z. B. bei der "
-"ersten Verwendung von Paperwork), kann die OCR vorübergehend deaktiviert "
-"werden. Um OCR zu deaktivieren, können Sie einfach alle OCR-Sprachen "
-"abwählen."
 
 #. type: subsection{#2}
 #: data/usage.tex:326
 msgid "Updates"
-msgstr "Updates"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:334
@@ -794,22 +634,16 @@ msgid ""
 "updates if it hasn't done so for a week or more. To know if a new version is "
 "available, it has to send an HTTPS query to 'openpaper.work'."
 msgstr ""
-"Wenn Sie diese Option aktivieren, sucht Paperwork beim Start nach Updates, "
-"falls es dies eine Woche oder länger nicht getan hat. Um zu prüfen, ob eine "
-"neue Version verfügbar ist, wird eine HTTPS-Anfrage an 'openpaper.work' "
-"gesendet."
 
 #. type: document
 #: data/usage.tex:336
 msgid "If an update is found, it will notify you but it won't install it."
 msgstr ""
-"Sie werden benachrichtigt, wenn ein Update gefunden wurde, aber es wird "
-"nicht installiert."
 
 #. type: section{#2}
 #: data/usage.tex:339
 msgid "New document"
-msgstr "Neues Dokument"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:345
@@ -820,12 +654,6 @@ msgid ""
 "You can add pages in it by scanning, importing file(s) or dropping a page "
 "from another in it."
 msgstr ""
-"Standardmäßig enthält Paperwork in der Dokumentenliste ein Dokument namens "
-"\"Neues Dokument\". Wenn Sie es öffnen, erscheint es immer leer. Dieses "
-"Dokument existiert tatsächlich noch nicht auf der Festplatte, aber es wird "
-"existieren, sobald Sie eine Seite hineinlegen. Sie können ihm Seiten "
-"hinzufügen, indem Sie scannen, Dateien importieren oder eine Seite aus einer "
-"anderen Datei darin ablegen."
 
 #. type: document
 #: data/usage.tex:350
@@ -835,10 +663,6 @@ msgid ""
 "replaced by this date, and a new \"New document\" will be added to the "
 "document list."
 msgstr ""
-"Sobald Sie einen Inhalt hineinlegen, bekommt dieses Dokument ein eigenes "
-"Datum (standardmäßig das aktuelle). In der Dokumentenliste wird \"Neues "
-"Dokument\" durch dieses Datum ersetzt, und ein neues \"Neues Dokument\" wird "
-"der Dokumentenliste hinzugefügt."
 
 #. type: document
 #: data/usage.tex:359
@@ -848,23 +672,18 @@ msgid ""
 "displayed. You can get it back by clicking the button \"+\" in the top left "
 "corner of the main window."
 msgstr ""
-"Wenn Sie gerade etwas suchen (siehe Kapitel \"Suchen\"), werden nur die "
-"Suchergebnisse angezeigt und daher wird dieses \"Neue Dokument\" nicht "
-"angezeigt. Sie können es zurückholen, indem Sie auf die Schaltfläche \"+\" "
-"in der linken oberen Ecke des Hauptfensters klicken."
 
 #. type: section{#2}
 #: data/usage.tex:362
 msgid "Scanning"
-msgstr "Scannen"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:368
 msgid ""
-"If a scanner has been selected in the settings, you can use it to scan pages."
+"If a scanner has been selected in the settings, you can use it to scan "
+"pages."
 msgstr ""
-"Wenn ein Scanner in den Einstellungen ausgewählt wurde, können Sie diesen "
-"zum Scannen von Seiten verwenden."
 
 #. type: document
 #: data/usage.tex:372
@@ -873,10 +692,6 @@ msgid ""
 "right gives access to possible page sources. Those page sources include your "
 "scanner sources (Flatbed, Feeder)."
 msgstr ""
-"In der Kopfleiste befindet sich eine Schaltfläche zum Hinzufügen von Seiten. "
-"Der kleine Pfeil auf der rechten Seite ermöglicht den Zugriff auf mögliche "
-"Seitenquellen. Zu diesen Seitenquellen gehören Ihre Scannerquellen ("
-"Flachbett, Einzug)."
 
 #. type: document
 #: data/usage.tex:375
@@ -884,13 +699,11 @@ msgid ""
 "Once you've selected the scanner source you want to use, you can click on "
 "the button \"Scan from ...\"."
 msgstr ""
-"Nachdem Sie die gewünschte Scannerquelle ausgewählt haben, können Sie auf "
-"die Schaltfläche \"Scannen von ...\" klicken."
 
 #. type: document
 #: data/usage.tex:377
 msgid "This will start a scan session:"
-msgstr "Dadurch wird eine Scan-Sitzung gestartet:"
+msgstr ""
 
 #. type: itemize
 #: data/usage.tex:386
@@ -898,25 +711,21 @@ msgid ""
 "Scanned pages are appended at the end of the current document.  If you use a "
 "feeder, Paperwork will scan pages until the feeder is empty."
 msgstr ""
-"Gescannte Seiten werden an das Ende des aktuellen Dokuments angehängt. Falls "
-"Sie einen automatischen Papiereinzug verwenden, scannt Paperwork Seiten, bis "
-"der Einzug leer ist."
 
 #. type: itemize
 #: data/usage.tex:386
 msgid "Paperwork will then crop them according to scanner calibration."
 msgstr ""
-"Die Papiere werden dann entsprechend der Scannerkalibrierung beschnitten."
 
 #. type: itemize
 #: data/usage.tex:386
 msgid "Paperwork will run OCR on them"
-msgstr "Paperwork lässt die OCR laufen"
+msgstr ""
 
 #. type: itemize
 #: data/usage.tex:386
 msgid "Paperwork will index them"
-msgstr "Paperwork wird sie indizieren"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:389
@@ -924,18 +733,16 @@ msgid ""
 "If this scan session creates a new document, Paperwork will try to set "
 "labels automatically on the document."
 msgstr ""
-"Wenn in dieser Scan-Sitzung ein neues Dokument erstellt wird, versucht "
-"Paperwork, automatisch Schlagwörter im Dokument zu setzen."
 
 #. type: section{#2}
 #: data/usage.tex:392
 msgid "Importing"
-msgstr "Import"
+msgstr ""
 
 #. type: subsection{#2}
 #: data/usage.tex:399
 msgid "Images"
-msgstr "Bilder"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:402
@@ -943,13 +750,11 @@ msgid ""
 "Paperwork supports a lot of file formats. It supports JPEG, PNG, GIF, BMP, "
 "TIFF, etc."
 msgstr ""
-"Paperwork unterstützt eine Vielzahl von Dateiformaten. Es unterstützt JPEG, "
-"PNG, GIF, BMP, TIFF, usw."
 
 #. type: document
 #: data/usage.tex:404
 msgid "Each image file is considered as a page."
-msgstr "Jede Bilddatei wird als eine Seite behandelt."
+msgstr ""
 
 #. type: document
 #: data/usage.tex:408
@@ -958,9 +763,6 @@ msgid ""
 "an empty document (\"New document\") to create a new document while "
 "importing."
 msgstr ""
-"Bilder werden immer an das aktuell geöffnete Dokument angehängt. Wählen Sie "
-"einfach ein leeres Dokument (\"Neues Dokument\"), um beim Importieren ein "
-"neues Dokument zu erstellen."
 
 #. type: document
 #: data/usage.tex:412
@@ -968,9 +770,6 @@ msgid ""
 "OCR is always run on imported images. If the imported image is the first "
 "page of a new document, Paperwork will automatically apply documents labels."
 msgstr ""
-"Auf importierten Bildern wird immer eine OCR ausgeführt. Falls das "
-"importierte Bild die erste Seite eines neuen Dokuments ist, erzeugt "
-"Paperwork automatisch Schlagwörter."
 
 #. type: document
 #: data/usage.tex:416
@@ -979,10 +778,6 @@ msgid ""
 "to handle images with only very little text or photos. Automatic labeling "
 "will not work correctly on such documents."
 msgstr ""
-"Beachten Sie, dass Paperwork ein Dokumentenmanager ist. Es kann zwar Bilder "
-"mit nur sehr wenig Text oder Fotos verarbeiten, ist aber nicht dafür "
-"ausgelegt. Die automatische Verschlagwortung wird bei solchen Dokumenten "
-"nicht korrekt funktionieren."
 
 #. type: document
 #: data/usage.tex:420
@@ -991,14 +786,11 @@ msgid ""
 "Automatic labeling uses recognized text and requires as many keywords on the "
 "first page as possible."
 msgstr ""
-"Die OCR (Tesseract) arbeitet sehr gut mit schwarzem Text auf weißem "
-"Hintergrund. Die automatische Verschlagwortung verwendet den erkannten Text "
-"und benötigt viele Schlüsselwörter auf der ersten Seite."
 
 #. type: subsection{#2}
 #: data/usage.tex:423
 msgid "PDF"
-msgstr "PDF"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:429
@@ -1009,12 +801,6 @@ msgid ""
 "as is, even if you edit some of its pages: the edited pages are stored "
 "beside the PDF file."
 msgstr ""
-"PDF-Dateien werden immer als ein ganzes Dokument betrachtet. Sie werden nie "
-"an ein bestehendes Dokument angehängt. Sie werden in das Arbeitsverzeichnis "
-"kopiert und umbenannt, aber ihr Inhalt wird nicht verändert. Paperwork "
-"behält die ursprüngliche PDF-Datei immer so bei, wie sie war, auch wenn Sie "
-"einige ihrer Seiten bearbeiten: Die bearbeiteten Seiten werden neben der PDF-"
-"Datei gespeichert."
 
 #. type: document
 #: data/usage.tex:434
@@ -1024,10 +810,6 @@ msgid ""
 "automatically apply document labels. Note that this process may take a few "
 "minutes for big PDFs files."
 msgstr ""
-"Paperwork sucht nach den Seiten, die kein Text beigefügt haben. Auf diesen "
-"Seiten wird automatisch eine OCR durchgeführt. Nachdem alle Seiten "
-"untersucht wurden, wird automatisch verschlagwortet. Beachten Sie, dass "
-"dieser Vorgang bei großen PDF-Dateien einige Minuten dauern kann."
 
 #. type: document
 #: data/usage.tex:437
@@ -1035,31 +817,25 @@ msgid ""
 "If the PDF is already part of your documents, Paperwork will simply ignore "
 "it."
 msgstr ""
-"Wenn die PDF-Datei bereits Teil Ihrer Dokumente ist, wird sie von Paperwork "
-"einfach ignoriert."
 
 #. type: subsection{#2}
 #: data/usage.tex:440
 msgid "Many PDFs in one shot"
-msgstr "Viele PDFs auf einen Schlag"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:445
 msgid ""
 "When importing, if you select a folder, Paperwork will browse this folder "
-"and look for PDFs to import. Already-imported PDFs are simply ignored. "
-"Folder is browsed recursively (all the folders inside the folder are also "
-"examined)."
+"and look for PDFs to import. Already-imported PDFs are simply "
+"ignored. Folder is browsed recursively (all the folders inside the folder "
+"are also examined)."
 msgstr ""
-"Wenn Sie beim Importieren einen Ordner auswählen, durchsucht Paperwork "
-"diesen Ordner und sucht nach zu importierenden PDF-Dateien. Bereits "
-"importierte PDF-Dateien werden einfach ignoriert. Der Ordner wird rekursiv "
-"durchsucht (alle Ordner innerhalb des Ordners werden ebenfalls abgearbeitet)."
 
 #. type: section{#2}
 #: data/usage.tex:448
 msgid "Labels"
-msgstr "Schlagwörter"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:464
@@ -1068,14 +844,11 @@ msgid ""
 "least one document. Otherwise, when you will restart Paperwork, labels "
 "without documents will disappear."
 msgstr ""
-"Derzeit gibt es eine Einschränkung in Paperwork: Jedes Schlagwort muss sich "
-"in mindestens einem Dokument finden. Andernfalls werden beim Neustart von "
-"Paperwork Schlagwörter ohne Dokumentenbezug verschwinden."
 
 #. type: subsection{#2}
 #: data/usage.tex:467
 msgid "Creating new labels"
-msgstr "Neue Schlagwörter einrichten"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:475
@@ -1084,9 +857,6 @@ msgid ""
 "color.  You can enter the label name in text field between the gray "
 "rectangle and the button \"+\"."
 msgstr ""
-"Sie können auf das graue Rechteck auf der linken Seite klicken, um die "
-"Schlagwortfarbe auszuwählen. Sie können den Schlagwortnamen in das Textfeld "
-"zwischen dem grauen Rechteck und der Schaltfläche \"+\" eingeben."
 
 #. type: document
 #: data/usage.tex:478
@@ -1094,8 +864,6 @@ msgid ""
 "Once you click on the button \"+\", the label will be added to the current "
 "document."
 msgstr ""
-"Sobald Sie auf die Schaltfläche \"+\" klicken, wird das Schlagwort zum "
-"aktuellen Dokument hinzugefügt."
 
 #. type: document
 #: data/usage.tex:481
@@ -1103,14 +871,11 @@ msgid ""
 "The label is actually added once you close document properties. Paperwork "
 "will then update its index accordingly."
 msgstr ""
-"Das Schlagwort wird endgültig hinzugefügt, sobald Sie die "
-"Dokumenteigenschaften schließen. Paperwork wird dann seinen Index "
-"entsprechend aktualisieren."
 
 #. type: subsection{#2}
 #: data/usage.tex:484
 msgid "Setting labels on documents"
-msgstr "Schlagwörter für Dokumente setzen"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:488
@@ -1119,10 +884,6 @@ msgid ""
 "of each label color, you have a button. This button allows you to add or "
 "remove labels on the current document."
 msgstr ""
-"Wenn Sie die Dokumenteigenschaften öffnen, wird die Schlagwortliste "
-"angezeigt. Auf der linken Seite jeder Schlagwortfarbe finden Sie eine "
-"Schaltfläche. Mit dieser Schaltfläche können Sie Schlagwörter zum aktuellen "
-"Dokument hinzufügen oder davon entfernen."
 
 #. type: document
 #: data/usage.tex:491
@@ -1130,14 +891,11 @@ msgid ""
 "The changes are actually written on disk once you close the document "
 "properties. Paperwork will update its index accordinly."
 msgstr ""
-"Die Änderungen werden endgültig auf die Festplatte geschrieben, wenn Sie die "
-"Dokumenteigenschaften schließen. Paperwork wird dann seinen Index "
-"entsprechend aktualisieren."
 
 #. type: subsection{#2}
 #: data/usage.tex:494
 msgid "Modifying a label color"
-msgstr "Ändern der Schlagwortfarbe"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:497
@@ -1145,9 +903,6 @@ msgid ""
 "When you open document properties, you can click on a label color to change "
 "it. A dialog will let you pick the new color."
 msgstr ""
-"Wenn Sie die Dokumenteigenschaften öffnen, können Sie auf eine "
-"Schlagwortfarbe klicken, um sie zu ändern. In einem Dialogfeld können Sie "
-"die neue Farbe auswählen."
 
 #. type: document
 #: data/usage.tex:501
@@ -1156,14 +911,11 @@ msgid ""
 "properties. Paperwork will then update the label on all the documents that "
 "use it."
 msgstr ""
-"Die Schlagwortfarbe wird endgültig auf der Festplatte geändert, wenn Sie die "
-"Dokumenteigenschaften schließen. Paperwork aktualisiert dann das Schlagwort "
-"für alle Dokumente, die dieses verwenden."
 
 #. type: subsection{#2}
 #: data/usage.tex:504
 msgid "Modifying a label name"
-msgstr "Ändern eines Schlagwortnamens"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:507
@@ -1171,9 +923,6 @@ msgid ""
 "When you open document properties, you can click on a label string to change "
 "it. A dialog will let you type in the new name."
 msgstr ""
-"Wenn Sie die Dokumenteigenschaften öffnen, können Sie auf einen "
-"Schlagwortnamen klicken, um diesen zu ändern. In einem Dialogfeld können Sie "
-"den neuen Namen eingeben."
 
 #. type: document
 #: data/usage.tex:511
@@ -1182,14 +931,11 @@ msgid ""
 "properties. Paperwork will then update the label on all the documents that "
 "use it and then reindex them all."
 msgstr ""
-"Der Schlagwortname wird endgültig auf der Festplatte geändert, wenn Sie die "
-"Dokumenteigenschaften schließen. Paperwork aktualisiert dann das Schlagwort "
-"für allen Dokumente, die dieses verwenden, und indiziert sie dann alle neu."
 
 #. type: subsection{#2}
 #: data/usage.tex:514
 msgid "Deleting a label"
-msgstr "Löschen eines Schlagwortes"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:517
@@ -1197,8 +943,6 @@ msgid ""
 "To the right of each label is white-on-black cross button. Clicking on it "
 "will allow you to delete a label."
 msgstr ""
-"Rechts von jedem Schlagwort befindet sich eine weiß-schwarze Kreuztaste. "
-"Wenn Sie darauf klicken, können Sie das Schlagwort löschen."
 
 #. type: document
 #: data/usage.tex:520
@@ -1207,9 +951,6 @@ msgid ""
 "all the documents having it. Paperwork will then update its index "
 "accordingly."
 msgstr ""
-"Nachdem Sie die Dokumenteigenschaften geschlossen haben, wird das Schlagwort "
-"für alle Dokumente entfernt, die es enthalten hatten. Paperwork wird dann "
-"seinen Index entsprechend aktualisieren."
 
 #. type: document
 #: data/usage.tex:523
@@ -1217,13 +958,11 @@ msgid ""
 "Beware: Once you have closed document properties, there is no way to put "
 "back the deleted label."
 msgstr ""
-"Achtung! Wenn Sie die Dokumenteigenschaften geschlossen haben, gibt es keine "
-"Möglichkeit, das gelöschte Schlagwort wieder einzufügen."
 
 #. type: subsection{#2}
 #: data/usage.tex:526
 msgid "Automatic label guessing"
-msgstr "Automatische Verschlagwortung"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:531
@@ -1233,11 +972,6 @@ msgid ""
 "Bayes classifiers}.  It's the same technology used by email clients to "
 "classify mails as spam/non-spam."
 msgstr ""
-"Paperwork nutzt künstliche Intelligenz. Es verwendet sogar eine ziemlich "
-"einfache Methode: \\href{https://en.wikipedia.org/wiki/"
-"Naive_Bayes_classifier}{Naive Bayes classifiers}. Dies ist die gleiche "
-"Technologie, die von E-Mail-Clients verwendet wird, um Mails als Spam/Nicht-"
-"Spam zu klassifizieren."
 
 #. type: document
 #: data/usage.tex:537
@@ -1248,12 +982,6 @@ msgid ""
 "is high enough, it puts the label on the document automatically when you "
 "import it or scan it."
 msgstr ""
-"Basierend auf allen Schlüsselwörtern in all Ihren Dokumenten, die ein "
-"Schlagwort haben (oder nicht), kann es eine Wahrscheinlichkeit abschätzen, "
-"dass ein Dokument, das dieselben Schlüsselwörter enthält, dasselbe "
-"Schlagwort haben oder nicht haben müsste. Wenn die Wahrscheinlichkeit hoch "
-"genug ist, wird das Dokument beim Importieren oder Scannen automagisch mit "
-"dem Schlagwort versehen."
 
 #. type: document
 #: data/usage.tex:541
@@ -1263,20 +991,16 @@ msgid ""
 "documents or more (and only for labels that are on more than 10 documents or "
 "more)."
 msgstr ""
-"Natürlich bedeutet dieser Ansatz, dass Paperwork genügend Muster benötigt, "
-"um zuverlässig zu arbeiten. Sie können davon ausgehen, dass dies ab etwa 100 "
-"Dokumenten funktioniert (und nur für Schlagwörter, die für mehr als 10 "
-"Dokumenten oder mehr gesetzt sind)."
 
 #. type: section{#2}
 #: data/usage.tex:544
 msgid "Searching"
-msgstr "Suchen"
+msgstr ""
 
 #. type: subsection{#2}
 #: data/usage.tex:546
 msgid "Simple search"
-msgstr "Einfache Suche"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:553
@@ -1284,8 +1008,6 @@ msgid ""
 "You simply enter keywords in the search field. In a few seconds, you will "
 "get all the documents containing those keywords."
 msgstr ""
-"Geben Sie einfach Stichwörter in das Suchfeld ein. In wenigen Sekunden "
-"erhalten Sie alle Dokumente, die diese Stichwörter enthalten."
 
 #. type: document
 #: data/usage.tex:557
@@ -1294,26 +1016,20 @@ msgid ""
 "you gave but not identical are also returned (for instance, 'flech' instead "
 "of 'flesch')."
 msgstr ""
-"Paperwork führt eine \"unscharfe\" Suche durch: Es werden auch Dokumente mit "
-"Stichwörtern zurückgegeben, die dem von Ihnen angegebenen ähnlich sind, aber "
-"nicht identisch sind (z. B. \"flech\" statt \"flesch\")."
 
 #. type: document
 #: data/usage.tex:562
 msgid ""
-"You can also use \\href{https://whoosh.readthedocs.io/en/latest/querylang."
-"html}{Whoosh query language} to make more complex queries. If you want "
-"examples, you can use the advanced search dialog described below."
+"You can also use "
+"\\href{https://whoosh.readthedocs.io/en/latest/querylang.html}{Whoosh query "
+"language} to make more complex queries. If you want examples, you can use "
+"the advanced search dialog described below."
 msgstr ""
-"Sie können auch die \\href{https://whoosh.readthedocs.io/en/latest/querylang."
-"html}{Whoosh-Abfragesprache} verwenden, um komplexere Abfragen zu erstellen. "
-"Wenn Sie Beispiele brauchen, können Sie den unten beschriebenen Dialog für "
-"die erweiterte Suche verwenden."
 
 #. type: subsection{#2}
 #: data/usage.tex:565
 msgid "Advanced search"
-msgstr "erweiterte Suche"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:582
@@ -1323,34 +1039,26 @@ msgid ""
 "generate a search query for you and put it immediately in the search field.  "
 "Search results will immediately be refreshed as well."
 msgstr ""
-"Der erweiterte Suchdialog hilft bei der Erstellung komplexer Suchanfragen. "
-"Sie können verschiedene Kriterien angeben und sobald Sie auf die "
-"Schaltfläche \"Anwenden\" klicken, wird eine Suchanfrage für Sie generiert "
-"und sofort in das Suchfeld eingefügt. Die Suchergebnisse werden ebenfalls "
-"sofort aktualisiert."
 
 #. type: section{#2}
 #: data/usage.tex:585
 msgid "Viewing"
-msgstr "Anzeigen"
+msgstr ""
 
 #. type: subsection{#2}
 #: data/usage.tex:591
 msgid "Zoom level"
-msgstr "Zoomstufe"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:597
-msgid ""
-"You can change the scale at which pages are displayed using this control."
+msgid "You can change the scale at which pages are displayed using this control."
 msgstr ""
-"Mit diesem Steuerelement können Sie die Vergrößerung ändern, mit der die "
-"Seiten angezeigt werden."
 
 #. type: subsection{#2}
 #: data/usage.tex:600
 msgid "View pages as grid"
-msgstr "Seiten im Raster anordnen"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:608
@@ -1359,14 +1067,11 @@ msgid ""
 "columns.  In this mode, you can drag'n'drop pages to move them inside the "
 "document or to another document."
 msgstr ""
-"Wenn Sie auf diese Schaltfläche klicken, versucht Paperwork, die Seiten in 3 "
-"Spalten anzuzeigen. In diesem Modus können Sie Seiten per Drag'n'Drop "
-"innerhalb des Dokuments oder in ein anderes Dokument verschieben."
 
 #. type: subsection{#2}
 #: data/usage.tex:611
 msgid "View pages as list"
-msgstr "Seiten in Listenform anordnen"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:619
@@ -1375,14 +1080,11 @@ msgid ""
 "maximum width allowed by the main window. In this mode, you can select text "
 "in the page (and then copy it)."
 msgstr ""
-"Wenn Sie auf diese Schaltfläche klicken, werden die Seiten so skaliert, dass "
-"ihre Breite der maximal zulässigen Breite des Hauptfensters entspricht. In "
-"diesem Modus können Sie Text auf der Seite auswählen (und dann kopieren)."
 
 #. type: subsection{#2}
 #: data/usage.tex:621
 msgid "Highlight all words"
-msgstr "Alle Wörter hervorheben"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:629
@@ -1391,42 +1093,35 @@ msgid ""
 "(rarely) OCR misses entire chunk in a page. This option allow to see such "
 "chunk quickly."
 msgstr ""
-"Mit dieser Option können Sie schnell alle von der OCR erkannten Wörter "
-"sehen. Manchmal (selten) verpasst OCR ganze Abschnitte auf einer Seite. Mit "
-"dieser Option können Sie solche Abschnitte schnell sehen."
 
 #. type: section{#2}
 #: data/usage.tex:631
 msgid "Moving pages"
-msgstr "Verschieben von Seiten"
+msgstr ""
 
 #. type: subsection{#2}
 #: data/usage.tex:633
 msgid "Inside a document"
-msgstr "Innerhalb eines Dokuments"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:635 data/usage.tex:644
 msgid "You must display the document pages as a grid (See \\ref{layout:grid})."
 msgstr ""
-"Sie müssen die Dokumentseiten als Raster anordnen (siehe~\\ref{layout:grid})."
 
 #. type: document
 #: data/usage.tex:640
 msgid ""
 "You can then grab a page (hold the left click button), drag it and drop it "
 "wherever you want in a document. While dragging, a blue marker will show you "
-"where the page would drop if you release the left click button of your mouse."
+"where the page would drop if you release the left click button of your "
+"mouse."
 msgstr ""
-"Sie können dann eine Seite greifen (halten Sie die linke Maustaste gedrückt)"
-", ziehen und an einer beliebigen Stelle im Dokument ablegen. Während des "
-"Ziehens zeigt Ihnen eine blaue Markierung an, wo die Seite landen würde, "
-"wenn Sie die linke Maustaste loslassen."
 
 #. type: subsection{#2}
 #: data/usage.tex:642
 msgid "From a document to another"
-msgstr "Zwischen Dokumenten"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:647
@@ -1434,21 +1129,16 @@ msgid ""
 "You can then grab a page (hold the left click button), drag it and drop it "
 "in the document list, on the document in which you want the page to go."
 msgstr ""
-"Sie können dann eine Seite greifen (halten Sie die linke Maustaste gedrückt)"
-", ziehen und in der Dokumentenliste auf dem Dokument ablegen, in dem die "
-"Seite erscheinen soll."
 
 #. type: section{#2}
 #: data/usage.tex:649
 msgid "Copying text"
-msgstr "Kopieren von Text"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:655
-msgid ""
-"You must display the document pages as a list (See \\ref{layout:paged})."
+msgid "You must display the document pages as a list (See \\ref{layout:paged})."
 msgstr ""
-"Sie müssen die Dokumentseiten als Liste anordnen (siehe~\\ref{layout:paged})."
 
 #. type: document
 #: data/usage.tex:658
@@ -1456,9 +1146,6 @@ msgid ""
 "You can then select text in a page. Hold the left click button to start "
 "selecting, mouse the mouse cursor to select more words, then release it."
 msgstr ""
-"Sie können dann Text auf einer Seite auswählen. Halten Sie die linke "
-"Maustaste gedrückt, um die Auswahl zu starten, bewegen Sie den Mauszeiger, "
-"um weitere Wörter auszuwählen, und lassen Sie dann die Taste los."
 
 #. type: document
 #: data/usage.tex:662
@@ -1467,36 +1154,31 @@ msgid ""
 "the page menu at the bottom right of the main window. Once copied, you can "
 "paste the selected text in any other application (Ctrl-V)."
 msgstr ""
-"Sie können dann den ausgewählten Text kopieren, entweder durch Drücken von "
-"Strg-C oder über das Seitenmenü unten rechts im Hauptfenster. Nach dem "
-"Kopieren können Sie den ausgewählten Text in jeder anderen Anwendung "
-"einfügen (Strg-V)."
 
 #. type: section{#2}
 #: data/usage.tex:664
 msgid "Editing a page"
-msgstr "Bearbeiten einer Seite"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:670
 msgid "Paperwork includes a very simple image editor. It provides 4 functions:"
 msgstr ""
-"Paperwork enthält einen sehr einfachen Bildeditor. Er bietet 4 Funktionen:"
 
 #. type: itemize
 #: data/usage.tex:679
 msgid "Cropping"
-msgstr "Schneiden"
+msgstr ""
 
 #. type: itemize
 #: data/usage.tex:679
 msgid "Rotating the page by 90\\degree (can be rotated multiple times)"
-msgstr "Drehen der Seite um 90\\degree (es darf mehrfach gedreht werden)"
+msgstr ""
 
 #. type: itemize
 #: data/usage.tex:679
 msgid "Rotating the page by -90\\degree (can be rotated multiple times)"
-msgstr "Drehen der Seite um -90\\degree (es darf mehrfach gedreht werden)"
+msgstr ""
 
 #. type: itemize
 #: data/usage.tex:679
@@ -1504,13 +1186,11 @@ msgid ""
 "Automatic Color Equalization: An algorithm that adjust the image brightness, "
 "contrast and colors to make it as readable as possible."
 msgstr ""
-"Automatische Farbabgleich: Ein Algorithmus passt die Bildhelligkeit, den "
-"Kontrast und die Farben an, um das Bild so gut wie möglich lesbar zu machen."
 
 #. type: section{#2}
 #: data/usage.tex:681
 msgid "Reseting a page"
-msgstr "Zurücksetzen einer Seite"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:684
@@ -1518,9 +1198,6 @@ msgid ""
 "Reseting a page returns it to its state when it was scanned or imported, "
 "before any pre-processing did occur."
 msgstr ""
-"Das Zurücksetzen einer Seite setzt diese in den Ausgangszustand zurück, in "
-"dem sie gescannt oder importiert wurde, bevor irgendeine Vorverarbeitung "
-"stattfand."
 
 #. type: document
 #: data/usage.tex:688
@@ -1529,15 +1206,11 @@ msgid ""
 "wrong area for instance), if the calibration settings weren't appropriate or "
 "if pre-processing algorithms messed up the page."
 msgstr ""
-"Dies kann hilfreich sein, wenn Sie eine falsche Änderung an der Seite "
-"vorgenommen haben (z. B. einen falschen Bereich beschnitten haben), wenn die "
-"Kalibrierungseinstellungen nicht passed gewählt waren oder falls "
-"Vorverarbeitungsalgorithmen die Seite verkorkst haben."
 
 #. type: section{#2}
 #: data/usage.tex:691
 msgid "Deleting"
-msgstr "Löschen"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:694
@@ -1545,8 +1218,6 @@ msgid ""
 "When deleting either documents or pages, they are actually moved in the "
 "trash bin of your computer."
 msgstr ""
-"Wenn Sie ein Dokument oder eine Seite löschen, werden diese in den "
-"Papierkorb Ihres Computers verschoben."
 
 #. type: document
 #: data/usage.tex:698
@@ -1555,20 +1226,16 @@ msgid ""
 "moving files to the trash (we are working on it). In that case, Paperwork "
 "will delete the file directly (no recovery possible)."
 msgstr ""
-"\\textbf{Wichtiger Hinweis zu Flatpak:} Ein Fehler kann Paperwork daran "
-"hindern, Dateien in den Papierkorb zu verschieben (wir arbeiten daran). In "
-"diesem Fall wird Paperwork die Datei direkt löschen (dann ist keine "
-"Wiederherstellung möglich)."
 
 #. type: section{#2}
 #: data/usage.tex:701
 msgid "Exporting"
-msgstr "Export"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:703
 msgid "You can export both documents or single pages."
-msgstr "Sie können sowohl Dokumente als auch einzelne Seiten exportieren."
+msgstr ""
 
 #. type: document
 #: data/usage.tex:707
@@ -1577,20 +1244,16 @@ msgid ""
 "exporting them. For instance, you can turn color pages into grayscale pages "
 "before putting them in a brand new PDF (making the resulting PDF smaller)."
 msgstr ""
-"In beiden Fällen können vor dem eigentlichen Exportieren verschiedene "
-"Transformationen vorgenommen werden. Zum Beispiel können Sie Farbseiten in "
-"Graustufen umwandeln, bevor Sie sie in eine neue PDF-Datei einfügen (wodurch "
-"die resultierende PDF-Datei kleiner wird)."
 
 #. type: section{#2}
 #: data/usage.tex:710
 msgid "Printing"
-msgstr "Drucken"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:712
 msgid "You can print both documents or single pages."
-msgstr "Sie können Dokumente und auch einzelne Seiten drucken."
+msgstr ""
 
 #. type: document
 #: data/usage.tex:715
@@ -1598,20 +1261,16 @@ msgid ""
 "Beware that pages are always sent as images to your printer. So for very big "
 "documents, a few minutes may go by before the actual printing start."
 msgstr ""
-"Beachten Sie, dass die Seiten immer als Bilder an Ihren Drucker gesendet "
-"werden. Bei sehr großen Dokumenten können also einige Minuten vergehen, "
-"bevor der eigentliche Druckvorgang beginnt."
 
 #. type: section{#2}
 #: data/usage.tex:718
-#, fuzzy
 msgid "Backup"
-msgstr "Backup"
+msgstr ""
 
 #. type: section{#2}
 #: data/usage.tex:720
 msgid "Synchronisation between multiple computers"
-msgstr "Synchronisation zwischen mehreren Computern"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:726
@@ -1622,11 +1281,6 @@ msgid ""
 "designed to be used with such applications (Nextcloud, Dropbox, OneDrive, "
 "SparkleShare, etc)."
 msgstr ""
-"Paperwork ist zwar ein persönlicher Dokumentenmanager, aber keine Anwendung "
-"zur Dateisynchronisation. Es gibt Anwendungen, die sich der "
-"Dateisynchronisation widmen und das bereits sehr gut tun. Daher ist "
-"Paperwork für die Verwendung mit solchen Anwendungen (Nextcloud, Dropbox, "
-"OneDrive, SparkleShare, etc.) konzipiert."
 
 #. type: document
 #: data/usage.tex:733
@@ -1638,18 +1292,11 @@ msgid ""
 "and if this change has been synchronized on another computer, the other "
 "Paperwork will automatically pick up this change when starting."
 msgstr ""
-"Nach dem Start prüft Paperwork als erstes den Inhalt des "
-"Arbeitsverzeichnisses. Es sucht nach Änderungen und aktualisiert seine "
-"Dokumentenliste und auch den Index automatisch. Wenn also eine andere "
-"Instanz von Paperwork auf einem anderen Computer etwas im Arbeitsverzeichnis "
-"geändert hat und diese Änderung auf einem anderen Computer synchronisiert "
-"wurde, wird das andere Paperwork diese Änderung beim Start automatisch "
-"übernehmen."
 
 #. type: subsection{#2}
 #: data/usage.tex:736
 msgid "USB key / USB drive"
-msgstr "USB-Stick / USB-Platte"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:739
@@ -1657,22 +1304,16 @@ msgid ""
 "This is the simplest way to share documents. Simply copy your work directory "
 "to an USB key, tell Paperwork to use it, and you're done."
 msgstr ""
-"Dies ist der einfachste Weg, um Dokumente gemeinsam zu nutzen. Kopieren Sie "
-"einfach Ihr Arbeitsverzeichnis auf einen USB-Stick, weisen Sie Paperwork an, "
-"es zu verwenden, und schon sind Sie fertig."
 
 #. type: document
 #: data/usage.tex:741
-msgid ""
-"Beware: You should backup your USB key from time to time on another one."
+msgid "Beware: You should backup your USB key from time to time on another one."
 msgstr ""
-"Achtung: Sie sollten Ihren USB-Stick von Zeit zu Zeit auf einem anderen "
-"sichern."
 
 #. type: subsection{#2}
 #: data/usage.tex:744
 msgid "File Synchronization applications"
-msgstr "Anwendungen zur Dateisynchronisation"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:750
@@ -1682,12 +1323,6 @@ msgid ""
 "the changes applied on the servers are applied to the computers that connect "
 "to it. The server can belong to you or to someone else (usually a company)."
 msgstr ""
-"Solche Anwendungen synchronisieren ein lokales Verzeichnis mit einem Remote-"
-"Server (oder einer Cloud). Alle Änderungen, die Sie in Ihrem Ordner "
-"vornehmen, werden auf auch dem Server vorgenommen. Alle Änderungen, die auf "
-"dem Server vorgenommen werden, werden auf allen verbundenen Computern "
-"angewendet. Der Server kann Ihnen oder einer anderen Person (normalerweise "
-"einer Firma) gehören."
 
 #. type: document
 #: data/usage.tex:754
@@ -1696,35 +1331,26 @@ msgid ""
 "(DropBox, OneDrive, etc), they can access all your documents. Paperwork does "
 "not encrypt them."
 msgstr ""
-"Achtung: Wenn Sie sich dafür entscheiden, Ihre Dokumente auf einem fremden "
-"Server zu hosten (DropBox, OneDrive, usw.), kann dieser auf alle Ihre "
-"Dokumente zugreifen. Paperwork verschlüsselt diese nicht selber."
 
 #. type: document
 #: data/usage.tex:758
 msgid ""
 "Paperwork is tested daily with Nextcloud. While this is not the easiest one "
-"to install, Nextcloud let you host your files yourself. There are other self-"
-"hosted alternatives that exist: SparkleShare, Syncthing, etc."
+"to install, Nextcloud let you host your files yourself. There are other "
+"self-hosted alternatives that exist: SparkleShare, Syncthing, etc."
 msgstr ""
-"Der Paperwork wird täglich mit Nextcloud getestet. Das ist zwar nicht die "
-"einfachste Variante, aber mit Nextcloud können Sie Ihre Dateien selbst "
-"hosten. Es gibt noch andere selbst gehostete Alternativen, die existieren: "
-"SparkleShare, Syncthing, usw."
 
 #. type: document
 #: data/usage.tex:761
 msgid ""
-"Using DropBox or OneDrive can make sense if you're sharing not-so-"
-"confidential documents with others (associations, etc)."
+"Using DropBox or OneDrive can make sense if you're sharing "
+"not-so-confidential documents with others (associations, etc)."
 msgstr ""
-"Die Verwendung von DropBox oder OneDrive könnte dann sinnvoll sein, wenn Sie "
-"nicht ganz so vertrauliche Dokumente mit anderen teilen (Vereine usw.)."
 
 #. type: subsubsection{#2}
 #: data/usage.tex:764
 msgid "Shared folder"
-msgstr "Gemeinsamer Ordner"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:769
@@ -1734,11 +1360,6 @@ msgid ""
 "permissive could let a pirate access all your personal documents ! And "
 "setting them correctly is tricky."
 msgstr ""
-"Wenn sich alle Ihre Computer im selben Netzwerk befinden, können Sie Ihr "
-"Arbeitsverzeichnis gemeinsam nutzen. Seien Sie jedoch sehr vorsichtig, was "
-"die Zugriffsrechte angeht. Wenn Sie zu freizügig sind, könnte ein böser "
-"Angreifer Zugriff auf alle Ihre persönlichen Dokumente erhalten! Und diese "
-"richtig einzustellen ist knifflig."
 
 #. type: document
 #: data/usage.tex:772
@@ -1746,28 +1367,21 @@ msgid ""
 "Beware: Using a shared folder means having a single copy of your work "
 "directory. You should do regular backups of your work directory."
 msgstr ""
-"Achtung! Die Verwendung eines gemeinsamen Ordners bedeutet, dass Sie nur "
-"eine einzige Kopie Ihres Arbeitsverzeichnisses haben. Sie sollten regelmäßig "
-"Backups Ihres Arbeitsverzeichnisses erstellen."
 
 #. type: section{#2}
 #: data/usage.tex:775
 msgid "Encryption"
-msgstr "Verschlüsselung"
+msgstr ""
 
 #. type: subsection{#2}
 #: data/usage.tex:777 data/usage.tex:1014
-#, fuzzy
 msgid "GNU/Linux"
-msgstr "GNU/Linux"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:779
-msgid ""
-"GNU/Linux distributions include many tools to encrypt whole directories."
+msgid "GNU/Linux distributions include many tools to encrypt whole directories."
 msgstr ""
-"GNU/Linux-Distributionen enthalten viele Werkzeuge zum Verschlüsseln ganzer "
-"Verzeichnisse."
 
 #. type: document
 #: data/usage.tex:789
@@ -1775,8 +1389,6 @@ msgid ""
 "With Paperwork, there are 2 directories that should be encrypted to protect "
 "your privacy:"
 msgstr ""
-"Für Paperwork sollten 2 Verzeichnisse zum Schutz Ihrer Privatsphäre "
-"verschlüsselt werden:"
 
 #. type: itemize
 #: data/usage.tex:789
@@ -1784,8 +1396,6 @@ msgid ""
 "Your work directory (by default \\textasciitilde /papers, can be changed in "
 "the settings)"
 msgstr ""
-"Ihr Arbeitsverzeichnis (standardmäßig ist das \\textasciitilde /papers, dies "
-"kann aber in den Einstellungen geändert werden)"
 
 #. type: itemize
 #: data/usage.tex:789
@@ -1794,9 +1404,6 @@ msgid ""
 "changed) (it contains index files from which the content of your documents "
 "could be partially recovered)"
 msgstr ""
-"Das Cache-Verzeichnis (\\textasciitilde /.local/share/paperwork2, dies kann "
-"nicht geändert werden) enthält Indexdateien, aus denen der Inhalt Ihrer "
-"Dokumente teilweise wiederhergestellt werden kann"
 
 #. type: document
 #: data/usage.tex:793
@@ -1805,15 +1412,11 @@ msgid ""
 "recommended to encrypt your whole home directory or even your whole system "
 "if possible."
 msgstr ""
-"Beachten Sie: Wenn Sie sicher sein wollen, dass Ihre Daten immer "
-"verschlüsselt sind, empfiehlt es sich, wenn möglich Ihr gesamtes Home-"
-"Verzeichnis oder sogar Ihr gesamtes System zu verschlüsseln."
 
 #. type: subsubsection{#2}
 #: data/usage.tex:795
-#, fuzzy
 msgid "cryptsetup"
-msgstr "cryptsetup"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:799
@@ -1822,35 +1425,25 @@ msgid ""
 "whole system or your whole /home with cryptsetup . This is the recommended "
 "method to protect your documents."
 msgstr ""
-"Die meisten GNU/Linux-Distributionen bieten mittlerweile eine Option an, um "
-"Ihr gesamtes System oder Ihr gesamtes /home mit cryptsetup zu verschlüsseln. "
-"Dies ist die empfohlene Methode, um Ihre Dokumente zu schützen."
 
 #. type: subsubsection{#2}
 #: data/usage.tex:801
-#, fuzzy
 msgid "Encfs"
-msgstr "Encfs"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:803
 msgid "Encfs can also be used to create encrypted directories easily."
 msgstr ""
-"Zur einfachen Erstellung verschlüsselter Verzeichnisse kann auch Encfs "
-"verwendet werden."
 
 #. type: document
 #: data/usage.tex:807
 msgid ""
 "Beware that Encfs seems to have some security weaknesses. So, while it's "
 "probably enough to prevent a laptop thief from accessing your documents, "
-"it's likely to be not enough to prevent the NSA or the police from doing "
-"so ;-)."
+"it's likely to be not enough to prevent the NSA or the police from doing so "
+";-)."
 msgstr ""
-"Beachten Sie, dass Encfs einige Sicherheitslücken zu haben scheint. Während "
-"es also wahrscheinlich ausreicht, um eine Laptop-Diebin daran zu hindern, "
-"auf Ihre Dokumente zuzugreifen, wird es wahrscheinlich nicht ausreichen, um "
-"die NSA oder die Polizei daran zu hindern ;-)."
 
 #. type: verbatim
 #: data/usage.tex:811
@@ -1859,8 +1452,6 @@ msgid ""
 "$ encfs ~/.local/share/.paperwork2 ~/.local/share/paperwork2\n"
 "$ encfs ~/.papers ~/papers"
 msgstr ""
-"$ encfs ~/.local/share/.paperwork2 ~/.local/share/paperwork2\n"
-"$ encfs ~/.papers ~/papers"
 
 #. type: document
 #: data/usage.tex:818
@@ -1868,14 +1459,11 @@ msgid ""
 "On Windows, you're strongly advised to enable BitLocker to protect your "
 "documents. If unavailable, there are other applications (Veracrypt, etc)."
 msgstr ""
-"Unter Windows wird zum Schutz Ihrer Dokumente dringend empfohlen, BitLocker "
-"zu aktivieren. Falls nicht verfügbar, gibt es andere Anwendungen (Veracrypt, "
-"usw.)."
 
 #. type: section{#2}
 #: data/usage.tex:821
 msgid "Keyboard shortcuts"
-msgstr "Tastenkürzel"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:832
@@ -1883,33 +1471,31 @@ msgid ""
 "Keyboard shortcuts can be seen by opening the application menu, selecting "
 "\"Help\" and then \"Shortcuts\"."
 msgstr ""
-"Die Tastenkürzel können Sie anzeigen, indem Sie das Anwendungsmenü öffnen, "
-"\"Hilfe\" und dann \"Tastenkürzel\" wählen."
 
 #. type: subsection{#2}
 #: data/usage.tex:835
 msgid "Paperwork's files locations"
-msgstr "Dateispeicherorte bei Paperwork"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:844
 msgid "By default:"
-msgstr "Voreingestellt:"
+msgstr ""
 
 #. type: itemize
 #: data/usage.tex:844
 msgid "Configuration : \\textasciitilde /.config/paperwork2.conf"
-msgstr "Einstellung: \\textasciitilde /.config/paperwork2.conf"
+msgstr ""
 
 #. type: itemize
 #: data/usage.tex:844
 msgid "Index : \\textasciitilde /.local/share/paperwork2"
-msgstr "Index : \\textasciitilde /.local/share/paperwork2"
+msgstr ""
 
 #. type: itemize
 #: data/usage.tex:844
 msgid "Documents : \\textasciitilde /papers"
-msgstr "Dokumente: \\textasciitilde /papers"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:844
@@ -1917,8 +1503,6 @@ msgid ""
 "(same paths are used on Windows ; \\textasciitilde{} = C:\\textbackslash "
 "Users{[}login{]} ; folders are hidden)"
 msgstr ""
-"(unter Windows werden dieselben Pfade verwendet; \\textasciitilde{} = C:"
-"\\textbackslash Users{[}login{]} ; Ordner sind ausgeblendet)"
 
 #. type: document
 #: data/usage.tex:848
@@ -1927,14 +1511,11 @@ msgid ""
 "directory. When Paperwork starts, the modification time of each file is used "
 "to detect changes on the documents."
 msgstr ""
-"Der Index wird auf der Grundlage der Dokumente im Arbeitsverzeichnis ständig "
-"aktualisiert. Beim Start von Paperwork wird die Änderungszeit jeder Datei "
-"genutzt, um Änderungen an den Dokumenten zu erkennen."
 
 #. type: subsection{#2}
 #: data/usage.tex:850
 msgid "Work directory layout"
-msgstr "Innere Struktur des Arbeitsverzeichnisses"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:852
@@ -1954,9 +1535,9 @@ msgstr ""
 #. type: document
 #: data/usage.tex:860
 msgid ""
-"The folder names are (usually) the scan/import date of the document: YYYYMMDD"
-"\\_hhmm\\_ss{[}\\_<idx>{]}. The suffix 'idx' is optional and is just a "
-"number added in case of name collision."
+"The folder names are (usually) the scan/import date of the document: "
+"YYYYMMDD\\_hhmm\\_ss{[}\\_<idx>{]}. The suffix 'idx' is optional and is just "
+"a number added in case of name collision."
 msgstr ""
 
 #. type: document
@@ -1999,7 +1580,8 @@ msgstr ""
 #. type: itemize
 #: data/usage.tex:875 data/usage.tex:887
 msgid ""
-"labels (optional): a text file containing the labels applied on this document"
+"labels (optional): a text file containing the labels applied on this "
+"document"
 msgstr ""
 
 #. type: itemize
@@ -2075,7 +1657,9 @@ msgstr ""
 #. type: verbatim
 #: data/usage.tex:923
 #, no-wrap
-msgid "tesseract paper.<X>.jpg paper.<X> -l <lang> hocr && mv paper.<X>.html paper.<X>.words"
+msgid ""
+"tesseract paper.<X>.jpg paper.<X> -l <lang> hocr && mv paper.<X>.html "
+"paper.<X>.words"
 msgstr ""
 
 #. type: document
@@ -2115,20 +1699,20 @@ msgstr ""
 #. type: section{#2}
 #: data/usage.tex:940
 msgid "Getting support"
-msgstr "Unterstützung bekommen"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:943
 msgid ""
-"A forum dedicated to Paperwork exists: \\href{https://forum.openpaper.work}"
-"{https://forum.openpaper.work}."
+"A forum dedicated to Paperwork exists: "
+"\\href{https://forum.openpaper.work}{https://forum.openpaper.work}."
 msgstr ""
 
 #. type: document
 #: data/usage.tex:946
 msgid ""
-"There is also an IRC channel for live discussions: \\href{https://webchat."
-"freenode.net/}{Freenode}, channel \\#openpaperwork"
+"There is also an IRC channel for live discussions: "
+"\\href{https://webchat.freenode.net/}{Freenode}, channel \\#openpaperwork"
 msgstr ""
 
 #. type: document
@@ -2158,9 +1742,9 @@ msgstr ""
 #. type: document
 #: data/usage.tex:959
 msgid ""
-"One way to create bug reports is to create tickets on \\href{https://gitlab."
-"gnome.org/World/OpenPaperwork/paperwork/issues}{Paperwork bug tracker: "
-"https://gitlab.gnome.org/World/OpenPaperwork/paperwork/issues}."
+"One way to create bug reports is to create tickets on "
+"\\href{https://gitlab.gnome.org/World/OpenPaperwork/paperwork/issues}{Paperwork "
+"bug tracker: https://gitlab.gnome.org/World/OpenPaperwork/paperwork/issues}."
 msgstr ""
 
 #. type: document
@@ -2214,7 +1798,7 @@ msgstr ""
 #. type: subsubsection{#2}
 #: data/usage.tex:988
 msgid "ZIP file"
-msgstr "ZIP Datei"
+msgstr ""
 
 #. type: document
 #: data/usage.tex:992
@@ -2305,6 +1889,3 @@ msgid ""
 "Windows Control Panel, clicking on \"Applications\", finding Paperwork in "
 "the list, and then clicking on \"uninstall\"."
 msgstr ""
-"Paperwork kann wie jede Windows-Anwendung deinstalliert werden, indem Sie in "
-"der Windows-Systemsteuerung auf \"Anwendungen\" klicken, Paperwork in der "
-"Liste suchen und dann auf \"deinstallieren\" klicken."
