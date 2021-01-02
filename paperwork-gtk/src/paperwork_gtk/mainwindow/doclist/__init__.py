@@ -354,16 +354,8 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doclist_extend(NB_DOCS_PER_PAGE)
         self._reselect_current_doc(scroll=scroll)
 
-    def on_search_start(self, query):
-        spinner = self.widget_tree.get_object("doclist_spinner")
-        spinner.set_visible(True)
-        spinner.start()
-
     def on_search_results(self, query, docs):
         self.doclist_show(docs, show_new=(query == ""))
-        spinner = self.widget_tree.get_object("doclist_spinner")
-        spinner.set_visible(False)
-        spinner.stop()
 
     def doc_close(self):
         self.active_doc = (None, None)
