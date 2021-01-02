@@ -16,29 +16,29 @@ In other words, let the machine do most of the work for you.
 
 ### Main Window
 
-<a href="http://youtu.be/RMazTTM6ltg">
-  <img src="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/1.0/main_window.png" width="447" height="280" />
+<a href="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/2.0/main_window.png">
+  <img src="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/2.0/main_window.png" width="447" height="280" />
 </a>
 
 
 ### Search Suggestions
 
-<a href="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/1.0/suggestions.png">
-  <img src="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/1.0/suggestions.png" width="155" height="313" />
+<a href="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/2.0/suggestions.png">
+  <img src="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/2.0/suggestions.png" width="155" height="313" />
 </a>
 
 
 ### Labels
 
-<a href="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/1.0/multiple_labels.png">
-  <img src="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/1.0/multiple_labels.png" width="187" height="262" />
+<a href="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/2.0/multiple_labels.png">
+  <img src="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/2.0/multiple_labels.png" width="187" height="262" />
 </a>
 
 
 ### Settings window
 
-<a href="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/1.0/settings.png">
-  <img src="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/1.0/settings.png" width="443" height="286" />
+<a href="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/2.0/settings.png">
+  <img src="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/2.0/settings.png" width="443" height="286" />
 </a>
 
 ### Command line
