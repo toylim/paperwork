@@ -4,7 +4,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-01 22:01+0200\n"
 "PO-Revision-Date: 2021-01-02 11:05+0000\n"
-"Last-Translator: Jerome Flesch <jflesch@openpaper.work>\n"
+"Last-Translator: Tom F <tom@mb.tu-ilmenau.de>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-help-documents/de/>\n"
 "Language: de\n"
@@ -1475,12 +1475,13 @@ msgstr ""
 #. type: section{#2}
 #: data/usage.tex:664
 msgid "Editing a page"
-msgstr ""
+msgstr "Bearbeiten einer Seite"
 
 #. type: document
 #: data/usage.tex:670
 msgid "Paperwork includes a very simple image editor. It provides 4 functions:"
 msgstr ""
+"Paperwork enthält einen sehr einfachen Bildeditor. Er bietet 4 Funktionen:"
 
 #. type: itemize
 #: data/usage.tex:679
@@ -1490,12 +1491,12 @@ msgstr "Schneiden"
 #. type: itemize
 #: data/usage.tex:679
 msgid "Rotating the page by 90\\degree (can be rotated multiple times)"
-msgstr ""
+msgstr "Drehen der Seite um 90\\degree (es darf mehrfach gedreht werden)"
 
 #. type: itemize
 #: data/usage.tex:679
 msgid "Rotating the page by -90\\degree (can be rotated multiple times)"
-msgstr ""
+msgstr "Drehen der Seite um -90\\degree (es darf mehrfach gedreht werden)"
 
 #. type: itemize
 #: data/usage.tex:679
@@ -1503,11 +1504,13 @@ msgid ""
 "Automatic Color Equalization: An algorithm that adjust the image brightness, "
 "contrast and colors to make it as readable as possible."
 msgstr ""
+"Automatische Farbabgleich: Ein Algorithmus passt die Bildhelligkeit, den "
+"Kontrast und die Farben an, um das Bild so gut wie möglich lesbar zu machen."
 
 #. type: section{#2}
 #: data/usage.tex:681
 msgid "Reseting a page"
-msgstr ""
+msgstr "Zurücksetzen einer Seite"
 
 #. type: document
 #: data/usage.tex:684
@@ -1515,6 +1518,9 @@ msgid ""
 "Reseting a page returns it to its state when it was scanned or imported, "
 "before any pre-processing did occur."
 msgstr ""
+"Das Zurücksetzen einer Seite setzt diese in den Ausgangszustand zurück, in "
+"dem sie gescannt oder importiert wurde, bevor irgendeine Vorverarbeitung "
+"stattfand."
 
 #. type: document
 #: data/usage.tex:688
@@ -1523,6 +1529,10 @@ msgid ""
 "wrong area for instance), if the calibration settings weren't appropriate or "
 "if pre-processing algorithms messed up the page."
 msgstr ""
+"Dies kann hilfreich sein, wenn Sie eine falsche Änderung an der Seite "
+"vorgenommen haben (z. B. einen falschen Bereich beschnitten haben), wenn die "
+"Kalibrierungseinstellungen nicht passed gewählt waren oder falls "
+"Vorverarbeitungsalgorithmen die Seite verkorkst haben."
 
 #. type: section{#2}
 #: data/usage.tex:691
@@ -1535,6 +1545,8 @@ msgid ""
 "When deleting either documents or pages, they are actually moved in the "
 "trash bin of your computer."
 msgstr ""
+"Wenn Sie ein Dokument oder eine Seite löschen, werden diese in den "
+"Papierkorb Ihres Computers verschoben."
 
 #. type: document
 #: data/usage.tex:698
@@ -1543,16 +1555,20 @@ msgid ""
 "moving files to the trash (we are working on it). In that case, Paperwork "
 "will delete the file directly (no recovery possible)."
 msgstr ""
+"\\textbf{Wichtiger Hinweis zu Flatpak:} Ein Fehler kann Paperwork daran "
+"hindern, Dateien in den Papierkorb zu verschieben (wir arbeiten daran). In "
+"diesem Fall wird Paperwork die Datei direkt löschen (dann ist keine "
+"Wiederherstellung möglich)."
 
 #. type: section{#2}
 #: data/usage.tex:701
 msgid "Exporting"
-msgstr ""
+msgstr "Export"
 
 #. type: document
 #: data/usage.tex:703
 msgid "You can export both documents or single pages."
-msgstr ""
+msgstr "Sie können sowohl Dokumente als auch einzelne Seiten exportieren."
 
 #. type: document
 #: data/usage.tex:707
@@ -1561,16 +1577,20 @@ msgid ""
 "exporting them. For instance, you can turn color pages into grayscale pages "
 "before putting them in a brand new PDF (making the resulting PDF smaller)."
 msgstr ""
+"In beiden Fällen können vor dem eigentlichen Exportieren verschiedene "
+"Transformationen vorgenommen werden. Zum Beispiel können Sie Farbseiten in "
+"Graustufen umwandeln, bevor Sie sie in eine neue PDF-Datei einfügen (wodurch "
+"die resultierende PDF-Datei kleiner wird)."
 
 #. type: section{#2}
 #: data/usage.tex:710
 msgid "Printing"
-msgstr ""
+msgstr "Drucken"
 
 #. type: document
 #: data/usage.tex:712
 msgid "You can print both documents or single pages."
-msgstr ""
+msgstr "Sie können Dokumente und auch einzelne Seiten drucken."
 
 #. type: document
 #: data/usage.tex:715
@@ -1578,16 +1598,20 @@ msgid ""
 "Beware that pages are always sent as images to your printer. So for very big "
 "documents, a few minutes may go by before the actual printing start."
 msgstr ""
+"Beachten Sie, dass die Seiten immer als Bilder an Ihren Drucker gesendet "
+"werden. Bei sehr großen Dokumenten können also einige Minuten vergehen, "
+"bevor der eigentliche Druckvorgang beginnt."
 
 #. type: section{#2}
 #: data/usage.tex:718
+#, fuzzy
 msgid "Backup"
-msgstr ""
+msgstr "Backup"
 
 #. type: section{#2}
 #: data/usage.tex:720
 msgid "Synchronisation between multiple computers"
-msgstr ""
+msgstr "Synchronisation zwischen mehreren Computern"
 
 #. type: document
 #: data/usage.tex:726
@@ -1598,6 +1622,11 @@ msgid ""
 "designed to be used with such applications (Nextcloud, Dropbox, OneDrive, "
 "SparkleShare, etc)."
 msgstr ""
+"Paperwork ist zwar ein persönlicher Dokumentenmanager, aber keine Anwendung "
+"zur Dateisynchronisation. Es gibt Anwendungen, die sich der "
+"Dateisynchronisation widmen und das bereits sehr gut tun. Daher ist "
+"Paperwork für die Verwendung mit solchen Anwendungen (Nextcloud, Dropbox, "
+"OneDrive, SparkleShare, etc.) konzipiert."
 
 #. type: document
 #: data/usage.tex:733
@@ -1609,11 +1638,18 @@ msgid ""
 "and if this change has been synchronized on another computer, the other "
 "Paperwork will automatically pick up this change when starting."
 msgstr ""
+"Nach dem Start prüft Paperwork als erstes den Inhalt des "
+"Arbeitsverzeichnisses. Es sucht nach Änderungen und aktualisiert seine "
+"Dokumentenliste und auch den Index automatisch. Wenn also eine andere "
+"Instanz von Paperwork auf einem anderen Computer etwas im Arbeitsverzeichnis "
+"geändert hat und diese Änderung auf einem anderen Computer synchronisiert "
+"wurde, wird das andere Paperwork diese Änderung beim Start automatisch "
+"übernehmen."
 
 #. type: subsection{#2}
 #: data/usage.tex:736
 msgid "USB key / USB drive"
-msgstr ""
+msgstr "USB-Stick / USB-Platte"
 
 #. type: document
 #: data/usage.tex:739
@@ -1621,17 +1657,22 @@ msgid ""
 "This is the simplest way to share documents. Simply copy your work directory "
 "to an USB key, tell Paperwork to use it, and you're done."
 msgstr ""
+"Dies ist der einfachste Weg, um Dokumente gemeinsam zu nutzen. Kopieren Sie "
+"einfach Ihr Arbeitsverzeichnis auf einen USB-Stick, weisen Sie Paperwork an, "
+"es zu verwenden, und schon sind Sie fertig."
 
 #. type: document
 #: data/usage.tex:741
 msgid ""
 "Beware: You should backup your USB key from time to time on another one."
 msgstr ""
+"Achtung: Sie sollten Ihren USB-Stick von Zeit zu Zeit auf einem anderen "
+"sichern."
 
 #. type: subsection{#2}
 #: data/usage.tex:744
 msgid "File Synchronization applications"
-msgstr ""
+msgstr "Anwendungen zur Dateisynchronisation"
 
 #. type: document
 #: data/usage.tex:750
@@ -1641,6 +1682,12 @@ msgid ""
 "the changes applied on the servers are applied to the computers that connect "
 "to it. The server can belong to you or to someone else (usually a company)."
 msgstr ""
+"Solche Anwendungen synchronisieren ein lokales Verzeichnis mit einem Remote-"
+"Server (oder einer Cloud). Alle Änderungen, die Sie in Ihrem Ordner "
+"vornehmen, werden auf auch dem Server vorgenommen. Alle Änderungen, die auf "
+"dem Server vorgenommen werden, werden auf allen verbundenen Computern "
+"angewendet. Der Server kann Ihnen oder einer anderen Person (normalerweise "
+"einer Firma) gehören."
 
 #. type: document
 #: data/usage.tex:754
@@ -1649,6 +1696,9 @@ msgid ""
 "(DropBox, OneDrive, etc), they can access all your documents. Paperwork does "
 "not encrypt them."
 msgstr ""
+"Achtung: Wenn Sie sich dafür entscheiden, Ihre Dokumente auf einem fremden "
+"Server zu hosten (DropBox, OneDrive, usw.), kann dieser auf alle Ihre "
+"Dokumente zugreifen. Paperwork verschlüsselt diese nicht selber."
 
 #. type: document
 #: data/usage.tex:758
@@ -1657,6 +1707,10 @@ msgid ""
 "to install, Nextcloud let you host your files yourself. There are other self-"
 "hosted alternatives that exist: SparkleShare, Syncthing, etc."
 msgstr ""
+"Der Paperwork wird täglich mit Nextcloud getestet. Das ist zwar nicht die "
+"einfachste Variante, aber mit Nextcloud können Sie Ihre Dateien selbst "
+"hosten. Es gibt noch andere selbst gehostete Alternativen, die existieren: "
+"SparkleShare, Syncthing, usw."
 
 #. type: document
 #: data/usage.tex:761
@@ -1664,11 +1718,13 @@ msgid ""
 "Using DropBox or OneDrive can make sense if you're sharing not-so-"
 "confidential documents with others (associations, etc)."
 msgstr ""
+"Die Verwendung von DropBox oder OneDrive könnte dann sinnvoll sein, wenn Sie "
+"nicht ganz so vertrauliche Dokumente mit anderen teilen (Vereine usw.)."
 
 #. type: subsubsection{#2}
 #: data/usage.tex:764
 msgid "Shared folder"
-msgstr ""
+msgstr "Gemeinsamer Ordner"
 
 #. type: document
 #: data/usage.tex:769
@@ -1678,6 +1734,11 @@ msgid ""
 "permissive could let a pirate access all your personal documents ! And "
 "setting them correctly is tricky."
 msgstr ""
+"Wenn sich alle Ihre Computer im selben Netzwerk befinden, können Sie Ihr "
+"Arbeitsverzeichnis gemeinsam nutzen. Seien Sie jedoch sehr vorsichtig, was "
+"die Zugriffsrechte angeht. Wenn Sie zu freizügig sind, könnte ein böser "
+"Angreifer Zugriff auf alle Ihre persönlichen Dokumente erhalten! Und diese "
+"richtig einzustellen ist knifflig."
 
 #. type: document
 #: data/usage.tex:772
@@ -1685,22 +1746,28 @@ msgid ""
 "Beware: Using a shared folder means having a single copy of your work "
 "directory. You should do regular backups of your work directory."
 msgstr ""
+"Achtung! Die Verwendung eines gemeinsamen Ordners bedeutet, dass Sie nur "
+"eine einzige Kopie Ihres Arbeitsverzeichnisses haben. Sie sollten regelmäßig "
+"Backups Ihres Arbeitsverzeichnisses erstellen."
 
 #. type: section{#2}
 #: data/usage.tex:775
 msgid "Encryption"
-msgstr ""
+msgstr "Verschlüsselung"
 
 #. type: subsection{#2}
 #: data/usage.tex:777 data/usage.tex:1014
+#, fuzzy
 msgid "GNU/Linux"
-msgstr ""
+msgstr "GNU/Linux"
 
 #. type: document
 #: data/usage.tex:779
 msgid ""
 "GNU/Linux distributions include many tools to encrypt whole directories."
 msgstr ""
+"GNU/Linux-Distributionen enthalten viele Werkzeuge zum Verschlüsseln ganzer "
+"Verzeichnisse."
 
 #. type: document
 #: data/usage.tex:789
@@ -1708,6 +1775,8 @@ msgid ""
 "With Paperwork, there are 2 directories that should be encrypted to protect "
 "your privacy:"
 msgstr ""
+"Für Paperwork sollten 2 Verzeichnisse zum Schutz Ihrer Privatsphäre "
+"verschlüsselt werden:"
 
 #. type: itemize
 #: data/usage.tex:789
@@ -1715,6 +1784,8 @@ msgid ""
 "Your work directory (by default \\textasciitilde /papers, can be changed in "
 "the settings)"
 msgstr ""
+"Ihr Arbeitsverzeichnis (standardmäßig ist das \\textasciitilde /papers, dies "
+"kann aber in den Einstellungen geändert werden)"
 
 #. type: itemize
 #: data/usage.tex:789
@@ -1723,6 +1794,9 @@ msgid ""
 "changed) (it contains index files from which the content of your documents "
 "could be partially recovered)"
 msgstr ""
+"Das Cache-Verzeichnis (\\textasciitilde /.local/share/paperwork2, dies kann "
+"nicht geändert werden) enthält Indexdateien, aus denen der Inhalt Ihrer "
+"Dokumente teilweise wiederhergestellt werden kann"
 
 #. type: document
 #: data/usage.tex:793
@@ -1731,11 +1805,15 @@ msgid ""
 "recommended to encrypt your whole home directory or even your whole system "
 "if possible."
 msgstr ""
+"Beachten Sie: Wenn Sie sicher sein wollen, dass Ihre Daten immer "
+"verschlüsselt sind, empfiehlt es sich, wenn möglich Ihr gesamtes Home-"
+"Verzeichnis oder sogar Ihr gesamtes System zu verschlüsseln."
 
 #. type: subsubsection{#2}
 #: data/usage.tex:795
+#, fuzzy
 msgid "cryptsetup"
-msgstr ""
+msgstr "cryptsetup"
 
 #. type: document
 #: data/usage.tex:799
@@ -1744,16 +1822,22 @@ msgid ""
 "whole system or your whole /home with cryptsetup . This is the recommended "
 "method to protect your documents."
 msgstr ""
+"Die meisten GNU/Linux-Distributionen bieten mittlerweile eine Option an, um "
+"Ihr gesamtes System oder Ihr gesamtes /home mit cryptsetup zu verschlüsseln. "
+"Dies ist die empfohlene Methode, um Ihre Dokumente zu schützen."
 
 #. type: subsubsection{#2}
 #: data/usage.tex:801
+#, fuzzy
 msgid "Encfs"
-msgstr ""
+msgstr "Encfs"
 
 #. type: document
 #: data/usage.tex:803
 msgid "Encfs can also be used to create encrypted directories easily."
 msgstr ""
+"Zur einfachen Erstellung verschlüsselter Verzeichnisse kann auch Encfs "
+"verwendet werden."
 
 #. type: document
 #: data/usage.tex:807
@@ -1763,6 +1847,10 @@ msgid ""
 "it's likely to be not enough to prevent the NSA or the police from doing "
 "so ;-)."
 msgstr ""
+"Beachten Sie, dass Encfs einige Sicherheitslücken zu haben scheint. Während "
+"es also wahrscheinlich ausreicht, um eine Laptop-Diebin daran zu hindern, "
+"auf Ihre Dokumente zuzugreifen, wird es wahrscheinlich nicht ausreichen, um "
+"die NSA oder die Polizei daran zu hindern ;-)."
 
 #. type: verbatim
 #: data/usage.tex:811
@@ -1771,6 +1859,8 @@ msgid ""
 "$ encfs ~/.local/share/.paperwork2 ~/.local/share/paperwork2\n"
 "$ encfs ~/.papers ~/papers"
 msgstr ""
+"$ encfs ~/.local/share/.paperwork2 ~/.local/share/paperwork2\n"
+"$ encfs ~/.papers ~/papers"
 
 #. type: document
 #: data/usage.tex:818
@@ -1778,11 +1868,14 @@ msgid ""
 "On Windows, you're strongly advised to enable BitLocker to protect your "
 "documents. If unavailable, there are other applications (Veracrypt, etc)."
 msgstr ""
+"Unter Windows wird zum Schutz Ihrer Dokumente dringend empfohlen, BitLocker "
+"zu aktivieren. Falls nicht verfügbar, gibt es andere Anwendungen (Veracrypt, "
+"usw.)."
 
 #. type: section{#2}
 #: data/usage.tex:821
 msgid "Keyboard shortcuts"
-msgstr ""
+msgstr "Tastenkürzel"
 
 #. type: document
 #: data/usage.tex:832
@@ -1790,31 +1883,33 @@ msgid ""
 "Keyboard shortcuts can be seen by opening the application menu, selecting "
 "\"Help\" and then \"Shortcuts\"."
 msgstr ""
+"Die Tastenkürzel können Sie anzeigen, indem Sie das Anwendungsmenü öffnen, "
+"\"Hilfe\" und dann \"Tastenkürzel\" wählen."
 
 #. type: subsection{#2}
 #: data/usage.tex:835
 msgid "Paperwork's files locations"
-msgstr ""
+msgstr "Dateispeicherorte bei Paperwork"
 
 #. type: document
 #: data/usage.tex:844
 msgid "By default:"
-msgstr ""
+msgstr "Voreingestellt:"
 
 #. type: itemize
 #: data/usage.tex:844
 msgid "Configuration : \\textasciitilde /.config/paperwork2.conf"
-msgstr ""
+msgstr "Einstellung: \\textasciitilde /.config/paperwork2.conf"
 
 #. type: itemize
 #: data/usage.tex:844
 msgid "Index : \\textasciitilde /.local/share/paperwork2"
-msgstr ""
+msgstr "Index : \\textasciitilde /.local/share/paperwork2"
 
 #. type: itemize
 #: data/usage.tex:844
 msgid "Documents : \\textasciitilde /papers"
-msgstr ""
+msgstr "Dokumente: \\textasciitilde /papers"
 
 #. type: document
 #: data/usage.tex:844
@@ -1822,6 +1917,8 @@ msgid ""
 "(same paths are used on Windows ; \\textasciitilde{} = C:\\textbackslash "
 "Users{[}login{]} ; folders are hidden)"
 msgstr ""
+"(unter Windows werden dieselben Pfade verwendet; \\textasciitilde{} = C:"
+"\\textbackslash Users{[}login{]} ; Ordner sind ausgeblendet)"
 
 #. type: document
 #: data/usage.tex:848
@@ -1830,11 +1927,14 @@ msgid ""
 "directory. When Paperwork starts, the modification time of each file is used "
 "to detect changes on the documents."
 msgstr ""
+"Der Index wird auf der Grundlage der Dokumente im Arbeitsverzeichnis ständig "
+"aktualisiert. Beim Start von Paperwork wird die Änderungszeit jeder Datei "
+"genutzt, um Änderungen an den Dokumenten zu erkennen."
 
 #. type: subsection{#2}
 #: data/usage.tex:850
 msgid "Work directory layout"
-msgstr ""
+msgstr "Innere Struktur des Arbeitsverzeichnisses"
 
 #. type: document
 #: data/usage.tex:852
