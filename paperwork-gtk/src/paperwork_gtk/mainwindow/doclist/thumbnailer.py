@@ -103,7 +103,6 @@ class Plugin(openpaperwork_core.PluginBase):
             (THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT),
             color="#EEEEEE"
         )
-        img = self.core.call_success("pillow_add_border", img)
         self.default_thumbnail = self.core.call_success(
             "pillow_to_pixbuf", img
         )
