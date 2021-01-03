@@ -124,7 +124,7 @@ Just type in a few keywords, and you will get your documents back.
 \end{figure}
 
 Unfortunately, sometimes, documents don't contain the keywords needed to find
-them back. Also OCR is a perfectly realiable process and may not work.
+them back. Also OCR is not a perfectly realiable process and may not work.
 
 To mitigate those issues, you can add labels (or tags) on your documents and
 provide additional keywords. Both are added to the index.
@@ -835,11 +835,11 @@ Keyboard shortcuts can be seen by opening the application menu, selecting
 
 By default:
 \begin{itemize}
-\item Configuration : \textasciitilde /.config/paperwork2.conf
-\item Index : \textasciitilde /.local/share/paperwork2
-\item Documents : \textasciitilde /papers
+\item Configuration: \textasciitilde /.config/paperwork2.conf
+\item Index: \textasciitilde /.local/share/paperwork2
+\item Documents: \textasciitilde /papers
 \end{itemize}
-(same paths are used on Windows ; \textasciitilde{} = C:\textbackslash Users{[}login{]}
+(same paths are used on Windows; \textasciitilde{} = C:\textbackslash Users{[}login{]}
 ; folders are hidden)
 
 The index is always updated according based on the documents in the
@@ -932,7 +932,7 @@ Here is an example of content of a label file:
 \begin{verbatim}
 facture,#0000b1588c61 logement,#f6b6ffff0000
 \end{verbatim}
-It's always \[label\],\[color\]. For a same label, the color should
+It's always $[$label$]$,$[$color$]$. For a same label, the color should
 always be the same.
 
 

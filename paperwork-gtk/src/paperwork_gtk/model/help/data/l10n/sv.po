@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2020-09-01 22:01+0200\n"
+"POT-Creation-Date: 2021-01-03 10:47+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -261,7 +261,8 @@ msgstr ""
 
 #. type: document
 #: data/usage.tex:82
-msgid "In Paperwork, a page is just an image and the word positions on this image."
+msgid ""
+"In Paperwork, a page is just an image and the word positions on this image."
 msgstr ""
 
 #. type: document
@@ -316,7 +317,8 @@ msgstr ""
 #: data/usage.tex:128
 msgid ""
 "Unfortunately, sometimes, documents don't contain the keywords needed to "
-"find them back. Also OCR is a perfectly realiable process and may not work."
+"find them back. Also OCR is not a perfectly realiable process and may not "
+"work."
 msgstr ""
 
 #. type: document
@@ -494,9 +496,9 @@ msgstr ""
 msgid ""
 "Scanners tend to provide images actually bigger than the scanned pages.  "
 "Since most of the time, you will always scan pages having the same size (A4 "
-"or Letter usually), Paperwork provides an option called scanner "
-"calibration. Scanner calibration in Paperwork is simply an area that will "
-"always be cropped out of images coming from the scanner."
+"or Letter usually), Paperwork provides an option called scanner calibration. "
+"Scanner calibration in Paperwork is simply an area that will always be "
+"cropped out of images coming from the scanner."
 msgstr ""
 
 #. type: subsection{#2}
@@ -681,8 +683,7 @@ msgstr ""
 #. type: document
 #: data/usage.tex:368
 msgid ""
-"If a scanner has been selected in the settings, you can use it to scan "
-"pages."
+"If a scanner has been selected in the settings, you can use it to scan pages."
 msgstr ""
 
 #. type: document
@@ -827,9 +828,9 @@ msgstr ""
 #: data/usage.tex:445
 msgid ""
 "When importing, if you select a folder, Paperwork will browse this folder "
-"and look for PDFs to import. Already-imported PDFs are simply "
-"ignored. Folder is browsed recursively (all the folders inside the folder "
-"are also examined)."
+"and look for PDFs to import. Already-imported PDFs are simply ignored. "
+"Folder is browsed recursively (all the folders inside the folder are also "
+"examined)."
 msgstr ""
 
 #. type: section{#2}
@@ -1020,10 +1021,9 @@ msgstr ""
 #. type: document
 #: data/usage.tex:562
 msgid ""
-"You can also use "
-"\\href{https://whoosh.readthedocs.io/en/latest/querylang.html}{Whoosh query "
-"language} to make more complex queries. If you want examples, you can use "
-"the advanced search dialog described below."
+"You can also use \\href{https://whoosh.readthedocs.io/en/latest/querylang."
+"html}{Whoosh query language} to make more complex queries. If you want "
+"examples, you can use the advanced search dialog described below."
 msgstr ""
 
 #. type: subsection{#2}
@@ -1052,7 +1052,8 @@ msgstr ""
 
 #. type: document
 #: data/usage.tex:597
-msgid "You can change the scale at which pages are displayed using this control."
+msgid ""
+"You can change the scale at which pages are displayed using this control."
 msgstr ""
 
 #. type: subsection{#2}
@@ -1114,8 +1115,7 @@ msgstr ""
 msgid ""
 "You can then grab a page (hold the left click button), drag it and drop it "
 "wherever you want in a document. While dragging, a blue marker will show you "
-"where the page would drop if you release the left click button of your "
-"mouse."
+"where the page would drop if you release the left click button of your mouse."
 msgstr ""
 
 #. type: subsection{#2}
@@ -1137,7 +1137,8 @@ msgstr ""
 
 #. type: document
 #: data/usage.tex:655
-msgid "You must display the document pages as a list (See \\ref{layout:paged})."
+msgid ""
+"You must display the document pages as a list (See \\ref{layout:paged})."
 msgstr ""
 
 #. type: document
@@ -1307,7 +1308,8 @@ msgstr ""
 
 #. type: document
 #: data/usage.tex:741
-msgid "Beware: You should backup your USB key from time to time on another one."
+msgid ""
+"Beware: You should backup your USB key from time to time on another one."
 msgstr ""
 
 #. type: subsection{#2}
@@ -1336,15 +1338,15 @@ msgstr ""
 #: data/usage.tex:758
 msgid ""
 "Paperwork is tested daily with Nextcloud. While this is not the easiest one "
-"to install, Nextcloud let you host your files yourself. There are other "
-"self-hosted alternatives that exist: SparkleShare, Syncthing, etc."
+"to install, Nextcloud let you host your files yourself. There are other self-"
+"hosted alternatives that exist: SparkleShare, Syncthing, etc."
 msgstr ""
 
 #. type: document
 #: data/usage.tex:761
 msgid ""
-"Using DropBox or OneDrive can make sense if you're sharing "
-"not-so-confidential documents with others (associations, etc)."
+"Using DropBox or OneDrive can make sense if you're sharing not-so-"
+"confidential documents with others (associations, etc)."
 msgstr ""
 
 #. type: subsubsection{#2}
@@ -1380,7 +1382,8 @@ msgstr ""
 
 #. type: document
 #: data/usage.tex:779
-msgid "GNU/Linux distributions include many tools to encrypt whole directories."
+msgid ""
+"GNU/Linux distributions include many tools to encrypt whole directories."
 msgstr ""
 
 #. type: document
@@ -1441,8 +1444,8 @@ msgstr ""
 msgid ""
 "Beware that Encfs seems to have some security weaknesses. So, while it's "
 "probably enough to prevent a laptop thief from accessing your documents, "
-"it's likely to be not enough to prevent the NSA or the police from doing so "
-";-)."
+"it's likely to be not enough to prevent the NSA or the police from doing "
+"so ;-)."
 msgstr ""
 
 #. type: verbatim
@@ -1484,23 +1487,23 @@ msgstr ""
 
 #. type: itemize
 #: data/usage.tex:844
-msgid "Configuration : \\textasciitilde /.config/paperwork2.conf"
+msgid "Configuration: \\textasciitilde /.config/paperwork2.conf"
 msgstr ""
 
 #. type: itemize
 #: data/usage.tex:844
-msgid "Index : \\textasciitilde /.local/share/paperwork2"
+msgid "Index: \\textasciitilde /.local/share/paperwork2"
 msgstr ""
 
 #. type: itemize
 #: data/usage.tex:844
-msgid "Documents : \\textasciitilde /papers"
+msgid "Documents: \\textasciitilde /papers"
 msgstr ""
 
 #. type: document
 #: data/usage.tex:844
 msgid ""
-"(same paths are used on Windows ; \\textasciitilde{} = C:\\textbackslash "
+"(same paths are used on Windows; \\textasciitilde{} = C:\\textbackslash "
 "Users{[}login{]} ; folders are hidden)"
 msgstr ""
 
@@ -1535,9 +1538,9 @@ msgstr ""
 #. type: document
 #: data/usage.tex:860
 msgid ""
-"The folder names are (usually) the scan/import date of the document: "
-"YYYYMMDD\\_hhmm\\_ss{[}\\_<idx>{]}. The suffix 'idx' is optional and is just "
-"a number added in case of name collision."
+"The folder names are (usually) the scan/import date of the document: YYYYMMDD"
+"\\_hhmm\\_ss{[}\\_<idx>{]}. The suffix 'idx' is optional and is just a "
+"number added in case of name collision."
 msgstr ""
 
 #. type: document
@@ -1580,8 +1583,7 @@ msgstr ""
 #. type: itemize
 #: data/usage.tex:875 data/usage.tex:887
 msgid ""
-"labels (optional): a text file containing the labels applied on this "
-"document"
+"labels (optional): a text file containing the labels applied on this document"
 msgstr ""
 
 #. type: itemize
@@ -1657,9 +1659,7 @@ msgstr ""
 #. type: verbatim
 #: data/usage.tex:923
 #, no-wrap
-msgid ""
-"tesseract paper.<X>.jpg paper.<X> -l <lang> hocr && mv paper.<X>.html "
-"paper.<X>.words"
+msgid "tesseract paper.<X>.jpg paper.<X> -l <lang> hocr && mv paper.<X>.html paper.<X>.words"
 msgstr ""
 
 #. type: document
@@ -1692,7 +1692,7 @@ msgstr ""
 #. type: document
 #: data/usage.tex:937
 msgid ""
-"It's always \\[label\\],\\[color\\]. For a same label, the color should "
+"It's always $[$label$]$,$[$color$]$. For a same label, the color should "
 "always be the same."
 msgstr ""
 
@@ -1704,15 +1704,15 @@ msgstr ""
 #. type: document
 #: data/usage.tex:943
 msgid ""
-"A forum dedicated to Paperwork exists: "
-"\\href{https://forum.openpaper.work}{https://forum.openpaper.work}."
+"A forum dedicated to Paperwork exists: \\href{https://forum.openpaper.work}"
+"{https://forum.openpaper.work}."
 msgstr ""
 
 #. type: document
 #: data/usage.tex:946
 msgid ""
-"There is also an IRC channel for live discussions: "
-"\\href{https://webchat.freenode.net/}{Freenode}, channel \\#openpaperwork"
+"There is also an IRC channel for live discussions: \\href{https://webchat."
+"freenode.net/}{Freenode}, channel \\#openpaperwork"
 msgstr ""
 
 #. type: document
@@ -1742,9 +1742,9 @@ msgstr ""
 #. type: document
 #: data/usage.tex:959
 msgid ""
-"One way to create bug reports is to create tickets on "
-"\\href{https://gitlab.gnome.org/World/OpenPaperwork/paperwork/issues}{Paperwork "
-"bug tracker: https://gitlab.gnome.org/World/OpenPaperwork/paperwork/issues}."
+"One way to create bug reports is to create tickets on \\href{https://gitlab."
+"gnome.org/World/OpenPaperwork/paperwork/issues}{Paperwork bug tracker: "
+"https://gitlab.gnome.org/World/OpenPaperwork/paperwork/issues}."
 msgstr ""
 
 #. type: document

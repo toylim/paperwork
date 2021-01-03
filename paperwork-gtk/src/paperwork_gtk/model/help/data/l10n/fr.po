@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-01 22:01+0200\n"
+"POT-Creation-Date: 2021-01-03 10:47+0100\n"
 "PO-Revision-Date: 2020-07-27 10:09+0000\n"
 "Last-Translator: Weblate Admin <jflesch@openpaper.work>\n"
 "Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
@@ -407,7 +407,8 @@ msgstr "Tapez juste quelques mots-clés, et vous retrouverez vos documents."
 #: data/usage.tex:128
 msgid ""
 "Unfortunately, sometimes, documents don't contain the keywords needed to "
-"find them back. Also OCR is a perfectly realiable process and may not work."
+"find them back. Also OCR is not a perfectly realiable process and may not "
+"work."
 msgstr ""
 
 #. type: document
@@ -1576,23 +1577,25 @@ msgstr ""
 
 #. type: itemize
 #: data/usage.tex:844
-msgid "Configuration : \\textasciitilde /.config/paperwork2.conf"
+msgid "Configuration: \\textasciitilde /.config/paperwork2.conf"
 msgstr ""
 
 #. type: itemize
 #: data/usage.tex:844
-msgid "Index : \\textasciitilde /.local/share/paperwork2"
+msgid "Index: \\textasciitilde /.local/share/paperwork2"
 msgstr ""
 
 #. type: itemize
 #: data/usage.tex:844
-msgid "Documents : \\textasciitilde /papers"
-msgstr ""
+#, fuzzy
+#| msgid "Documents and pages"
+msgid "Documents: \\textasciitilde /papers"
+msgstr "Les documents et les pages"
 
 #. type: document
 #: data/usage.tex:844
 msgid ""
-"(same paths are used on Windows ; \\textasciitilde{} = C:\\textbackslash "
+"(same paths are used on Windows; \\textasciitilde{} = C:\\textbackslash "
 "Users{[}login{]} ; folders are hidden)"
 msgstr ""
 
@@ -1781,7 +1784,7 @@ msgstr ""
 #. type: document
 #: data/usage.tex:937
 msgid ""
-"It's always \\[label\\],\\[color\\]. For a same label, the color should "
+"It's always $[$label$]$,$[$color$]$. For a same label, the color should "
 "always be the same."
 msgstr ""
 

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-01 22:01+0200\n"
+"POT-Creation-Date: 2021-01-03 10:47+0100\n"
 "PO-Revision-Date: 2021-01-02 11:05+0000\n"
 "Last-Translator: Tom F <tom@mb.tu-ilmenau.de>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
@@ -411,7 +411,8 @@ msgstr ""
 #: data/usage.tex:128
 msgid ""
 "Unfortunately, sometimes, documents don't contain the keywords needed to "
-"find them back. Also OCR is a perfectly realiable process and may not work."
+"find them back. Also OCR is not a perfectly realiable process and may not "
+"work."
 msgstr ""
 
 #. type: document
@@ -617,8 +618,8 @@ msgid ""
 "cropped out of images coming from the scanner."
 msgstr ""
 "Scanner neigen dazu, Bilder zu liefern, die größer sind als die gescannten "
-"Seiten.  Da Sie in den meisten Fällen immer Seiten mit der gleichen Größe ("
-"normalerweise A4 oder Letter) scannen werden, bietet Paperwork eine Option "
+"Seiten.  Da Sie in den meisten Fällen immer Seiten mit der gleichen Größe "
+"(normalerweise A4 oder Letter) scannen werden, bietet Paperwork eine Option "
 "namens Scannerkalibrierung. Die Scannerkalibrierung in Paperwork ist einfach "
 "ein Bereich, der aus den die vom Scanner kommenden Bildern jedesmal "
 "ausgeschnitten wird."
@@ -689,8 +690,7 @@ msgid ""
 "flatpak config --user --set languages \"<langs>\"\n"
 "flatpak update"
 msgstr ""
-"# <langs> ist eine Liste von zweibuchstabigen Ländercodes getrennt durch ';'"
-"\n"
+"# <langs> ist eine Liste von zweibuchstabigen Ländercodes getrennt durch ';'\n"
 "# Beispiel: en;fr;de\n"
 "flatpak config --user --set languages \"<langs>\"\n"
 "flatpak update"
@@ -875,8 +875,8 @@ msgid ""
 msgstr ""
 "In der Kopfleiste befindet sich eine Schaltfläche zum Hinzufügen von Seiten. "
 "Der kleine Pfeil auf der rechten Seite ermöglicht den Zugriff auf mögliche "
-"Seitenquellen. Zu diesen Seitenquellen gehören Ihre Scannerquellen ("
-"Flachbett, Einzug)."
+"Seitenquellen. Zu diesen Seitenquellen gehören Ihre Scannerquellen "
+"(Flachbett, Einzug)."
 
 #. type: document
 #: data/usage.tex:375
@@ -1418,10 +1418,10 @@ msgid ""
 "wherever you want in a document. While dragging, a blue marker will show you "
 "where the page would drop if you release the left click button of your mouse."
 msgstr ""
-"Sie können dann eine Seite greifen (halten Sie die linke Maustaste gedrückt)"
-", ziehen und an einer beliebigen Stelle im Dokument ablegen. Während des "
-"Ziehens zeigt Ihnen eine blaue Markierung an, wo die Seite landen würde, "
-"wenn Sie die linke Maustaste loslassen."
+"Sie können dann eine Seite greifen (halten Sie die linke Maustaste "
+"gedrückt), ziehen und an einer beliebigen Stelle im Dokument ablegen. "
+"Während des Ziehens zeigt Ihnen eine blaue Markierung an, wo die Seite "
+"landen würde, wenn Sie die linke Maustaste loslassen."
 
 #. type: subsection{#2}
 #: data/usage.tex:642
@@ -1434,9 +1434,9 @@ msgid ""
 "You can then grab a page (hold the left click button), drag it and drop it "
 "in the document list, on the document in which you want the page to go."
 msgstr ""
-"Sie können dann eine Seite greifen (halten Sie die linke Maustaste gedrückt)"
-", ziehen und in der Dokumentenliste auf dem Dokument ablegen, in dem die "
-"Seite erscheinen soll."
+"Sie können dann eine Seite greifen (halten Sie die linke Maustaste "
+"gedrückt), ziehen und in der Dokumentenliste auf dem Dokument ablegen, in "
+"dem die Seite erscheinen soll."
 
 #. type: section{#2}
 #: data/usage.tex:649
@@ -1898,23 +1898,33 @@ msgstr "Voreingestellt:"
 
 #. type: itemize
 #: data/usage.tex:844
-msgid "Configuration : \\textasciitilde /.config/paperwork2.conf"
+#, fuzzy
+#| msgid "Configuration : \\textasciitilde /.config/paperwork2.conf"
+msgid "Configuration: \\textasciitilde /.config/paperwork2.conf"
 msgstr "Einstellung: \\textasciitilde /.config/paperwork2.conf"
 
 #. type: itemize
 #: data/usage.tex:844
-msgid "Index : \\textasciitilde /.local/share/paperwork2"
+#, fuzzy
+#| msgid "Index : \\textasciitilde /.local/share/paperwork2"
+msgid "Index: \\textasciitilde /.local/share/paperwork2"
 msgstr "Index : \\textasciitilde /.local/share/paperwork2"
 
 #. type: itemize
 #: data/usage.tex:844
-msgid "Documents : \\textasciitilde /papers"
+#, fuzzy
+#| msgid "Documents : \\textasciitilde /papers"
+msgid "Documents: \\textasciitilde /papers"
 msgstr "Dokumente: \\textasciitilde /papers"
 
 #. type: document
 #: data/usage.tex:844
+#, fuzzy
+#| msgid ""
+#| "(same paths are used on Windows ; \\textasciitilde{} = C:\\textbackslash "
+#| "Users{[}login{]} ; folders are hidden)"
 msgid ""
-"(same paths are used on Windows ; \\textasciitilde{} = C:\\textbackslash "
+"(same paths are used on Windows; \\textasciitilde{} = C:\\textbackslash "
 "Users{[}login{]} ; folders are hidden)"
 msgstr ""
 "(unter Windows werden dieselben Pfade verwendet; \\textasciitilde{} = C:"
@@ -2108,7 +2118,7 @@ msgstr ""
 #. type: document
 #: data/usage.tex:937
 msgid ""
-"It's always \\[label\\],\\[color\\]. For a same label, the color should "
+"It's always $[$label$]$,$[$color$]$. For a same label, the color should "
 "always be the same."
 msgstr ""
 
