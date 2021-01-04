@@ -21,7 +21,7 @@
     ],
     "modules": [
         "shared-modules/tesseract-4.1.1.json",
-        "shared-modules/sane-backends-1.0.27.json",
+        "shared-modules/sane-backends-1.0.29.json",
         "shared-modules/setuptools-40.8.0.json",
         "shared-modules/scikit-learn-0.24.0.json",
         {
