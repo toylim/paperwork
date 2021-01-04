@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-01 22:01+0200\n"
-"PO-Revision-Date: 2021-01-03 11:02+0000\n"
-"Last-Translator: Jerome Flesch <jflesch@openpaper.work>\n"
+"PO-Revision-Date: 2021-01-05 17:31+0000\n"
+"Last-Translator: Tom F <tom@mb.tu-ilmenau.de>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-help-documents/de/>\n"
 "Language: de\n"
@@ -173,9 +173,9 @@ msgid ""
 "of the main features of Paperwork. You can start using it by adding your "
 "first own paper."
 msgstr ""
-"Klick auf den \"+\"-Knopf, dann auf den \"Scan\"-Button und das war’s. Damit "
-"kennst du bereits die Hauptfunktionen von Paperwork. Du kannst mit der "
-"Benutzung direkt starten, indem du das erste Dokument hinzufügst."
+"Klick auf den \"{}+\"{}-Knopf, dann auf den \"{}Scan\"{}-Button und das war’"
+"s. Damit kennst du bereits die Hauptfunktionen von Paperwork. Du kannst mit "
+"der Benutzung direkt starten, indem du das erste Dokument hinzufügst."
 
 #. type: document
 #: data/intro.tex:105
@@ -198,7 +198,7 @@ msgid ""
 "help section of Paperwork."
 msgstr ""
 "Wenn du mehr Hilfe benötigst, schau ins ausführliche Handbuch. Du findest es "
-"im Menü \"Hilfe\" von Paperwork."
+"im Menü \"{}Hilfe\"{} von Paperwork."
 
 #. type: document
 #: data/intro.tex:119
@@ -251,8 +251,8 @@ msgid ""
 msgstr ""
 "Die Grundidee hinter Paperwork ist es, dass die Verwaltung von Dokumenten "
 "ein Computerjob ist. Menschen sollten so wenig wie möglich tun, während "
-"Maschinen den Großteil der Arbeit erledigen. Das Ziel ist hier \"scannen \\& "
-"vergessen\"."
+"Maschinen den Großteil der Arbeit erledigen. Das Ziel ist hier \"{}scannen \\"
+"& vergessen\"{}."
 
 #. type: document
 #: data/usage.tex:49
@@ -374,7 +374,7 @@ msgid ""
 msgstr ""
 "Paperwork kümmert es nicht, ob eine Seite Vorder- oder Rückseite ist. "
 "Paperwork berücksichtigt auch nicht das Papierformat einer Seite (A4, "
-"Letter, u.s.w.)."
+"Letter, usw.)."
 
 #. type: document
 #: data/usage.tex:98
@@ -414,6 +414,9 @@ msgid ""
 "find them back. Also OCR is not a perfectly realiable process and may not "
 "work."
 msgstr ""
+"Leider enthalten Dokumente manchmal nicht die erforderlichen "
+"Schlüsselwörter, um sie wiederzufinden. Außerdem ist OCR kein perfekt "
+"zuverlässiger Prozess und funktioniert möglicherweise nicht."
 
 #. type: document
 #: data/usage.tex:131
@@ -820,8 +823,8 @@ msgid ""
 "You can add pages in it by scanning, importing file(s) or dropping a page "
 "from another in it."
 msgstr ""
-"Standardmäßig enthält Paperwork in der Dokumentenliste ein Dokument namens "
-"\"Neues Dokument\". Wenn Sie es öffnen, erscheint es immer leer. Dieses "
+"Standardmäßig enthält Paperwork in der Dokumentenliste ein Dokument namens \""
+"{}Neues Dokument\"{}. Wenn Sie es öffnen, erscheint es immer leer. Dieses "
 "Dokument existiert tatsächlich noch nicht auf der Festplatte, aber es wird "
 "existieren, sobald Sie eine Seite hineinlegen. Sie können ihm Seiten "
 "hinzufügen, indem Sie scannen, Dateien importieren oder eine Seite aus einer "
@@ -836,9 +839,9 @@ msgid ""
 "document list."
 msgstr ""
 "Sobald Sie einen Inhalt hineinlegen, bekommt dieses Dokument ein eigenes "
-"Datum (standardmäßig das aktuelle). In der Dokumentenliste wird \"Neues "
-"Dokument\" durch dieses Datum ersetzt, und ein neues \"Neues Dokument\" wird "
-"der Dokumentenliste hinzugefügt."
+"Datum (standardmäßig das aktuelle). In der Dokumentenliste wird \"{}Neues "
+"Dokument\"{} durch dieses Datum ersetzt, und ein neues \"{}Neues Dokument\"{}"
+" wird der Dokumentenliste hinzugefügt."
 
 #. type: document
 #: data/usage.tex:359
@@ -848,10 +851,10 @@ msgid ""
 "displayed. You can get it back by clicking the button \"+\" in the top left "
 "corner of the main window."
 msgstr ""
-"Wenn Sie gerade etwas suchen (siehe Kapitel \"Suchen\"), werden nur die "
-"Suchergebnisse angezeigt und daher wird dieses \"Neue Dokument\" nicht "
-"angezeigt. Sie können es zurückholen, indem Sie auf die Schaltfläche \"+\" "
-"in der linken oberen Ecke des Hauptfensters klicken."
+"Wenn Sie gerade etwas suchen (siehe Kapitel \"{}Suchen\"{}), werden nur die "
+"Suchergebnisse angezeigt und daher wird dieses \"{}Neue Dokument\"{} nicht "
+"angezeigt. Sie können es zurückholen, indem Sie auf die Schaltfläche \"{}+\""
+"{} in der linken oberen Ecke des Hauptfensters klicken."
 
 #. type: section{#2}
 #: data/usage.tex:362
@@ -885,7 +888,7 @@ msgid ""
 "the button \"Scan from ...\"."
 msgstr ""
 "Nachdem Sie die gewünschte Scannerquelle ausgewählt haben, können Sie auf "
-"die Schaltfläche \"Scannen von ...\" klicken."
+"die Schaltfläche \"{}Scannen von ...\"{} klicken."
 
 #. type: document
 #: data/usage.tex:377
@@ -959,8 +962,8 @@ msgid ""
 "importing."
 msgstr ""
 "Bilder werden immer an das aktuell geöffnete Dokument angehängt. Wählen Sie "
-"einfach ein leeres Dokument (\"Neues Dokument\"), um beim Importieren ein "
-"neues Dokument zu erstellen."
+"einfach ein leeres Dokument (\"{}Neues Dokument\"{}), um beim Importieren "
+"ein neues Dokument zu erstellen."
 
 #. type: document
 #: data/usage.tex:412
@@ -1024,7 +1027,7 @@ msgid ""
 "automatically apply document labels. Note that this process may take a few "
 "minutes for big PDFs files."
 msgstr ""
-"Paperwork sucht nach den Seiten, die kein Text beigefügt haben. Auf diesen "
+"Paperwork sucht nach den Seiten, die keinen Text beigefügt haben. Auf diesen "
 "Seiten wird automatisch eine OCR durchgeführt. Nachdem alle Seiten "
 "untersucht wurden, wird automatisch verschlagwortet. Beachten Sie, dass "
 "dieser Vorgang bei großen PDF-Dateien einige Minuten dauern kann."
@@ -1035,7 +1038,7 @@ msgid ""
 "If the PDF is already part of your documents, Paperwork will simply ignore "
 "it."
 msgstr ""
-"Wenn die PDF-Datei bereits Teil Ihrer Dokumente ist, wird sie von Paperwork "
+"Wenn eine PDF-Datei bereits Teil Ihrer Dokumente ist, wird sie von Paperwork "
 "einfach ignoriert."
 
 #. type: subsection{#2}
@@ -1086,7 +1089,7 @@ msgid ""
 msgstr ""
 "Sie können auf das graue Rechteck auf der linken Seite klicken, um die "
 "Schlagwortfarbe auszuwählen. Sie können den Schlagwortnamen in das Textfeld "
-"zwischen dem grauen Rechteck und der Schaltfläche \"+\" eingeben."
+"zwischen dem grauen Rechteck und der Schaltfläche \"{}+\"{} eingeben."
 
 #. type: document
 #: data/usage.tex:478
@@ -1094,7 +1097,7 @@ msgid ""
 "Once you click on the button \"+\", the label will be added to the current "
 "document."
 msgstr ""
-"Sobald Sie auf die Schaltfläche \"+\" klicken, wird das Schlagwort zum "
+"Sobald Sie auf die Schaltfläche \"{}+\"{} klicken, wird das Schlagwort zum "
 "aktuellen Dokument hinzugefügt."
 
 #. type: document
@@ -1266,7 +1269,7 @@ msgstr ""
 "Natürlich bedeutet dieser Ansatz, dass Paperwork genügend Muster benötigt, "
 "um zuverlässig zu arbeiten. Sie können davon ausgehen, dass dies ab etwa 100 "
 "Dokumenten funktioniert (und nur für Schlagwörter, die für mehr als 10 "
-"Dokumenten oder mehr gesetzt sind)."
+"Dokumente oder mehr gesetzt sind)."
 
 #. type: section{#2}
 #: data/usage.tex:544
@@ -1294,9 +1297,9 @@ msgid ""
 "you gave but not identical are also returned (for instance, 'flech' instead "
 "of 'flesch')."
 msgstr ""
-"Paperwork führt eine \"unscharfe\" Suche durch: Es werden auch Dokumente mit "
-"Stichwörtern zurückgegeben, die dem von Ihnen angegebenen ähnlich sind, aber "
-"nicht identisch sind (z. B. \"flech\" statt \"flesch\")."
+"Paperwork führt eine \"{}unscharfe\"{} Suche durch: Es werden auch Dokumente "
+"mit Stichwörtern zurückgegeben, die dem von Ihnen angegebenen ähnlich sind, "
+"aber nicht identisch sind (z. B. \"{}flech\"{} statt \"{}flesch\"{})."
 
 #. type: document
 #: data/usage.tex:562
@@ -1313,7 +1316,7 @@ msgstr ""
 #. type: subsection{#2}
 #: data/usage.tex:565
 msgid "Advanced search"
-msgstr "erweiterte Suche"
+msgstr "Erweiterte Suche"
 
 #. type: document
 #: data/usage.tex:582
@@ -1325,9 +1328,9 @@ msgid ""
 msgstr ""
 "Der erweiterte Suchdialog hilft bei der Erstellung komplexer Suchanfragen. "
 "Sie können verschiedene Kriterien angeben und sobald Sie auf die "
-"Schaltfläche \"Anwenden\" klicken, wird eine Suchanfrage für Sie generiert "
-"und sofort in das Suchfeld eingefügt. Die Suchergebnisse werden ebenfalls "
-"sofort aktualisiert."
+"Schaltfläche \"{}Anwenden\"{} klicken, wird eine Suchanfrage für Sie "
+"generiert und sofort in das Suchfeld eingefügt. Die Suchergebnisse werden "
+"ebenfalls sofort aktualisiert."
 
 #. type: section{#2}
 #: data/usage.tex:585
@@ -1393,7 +1396,7 @@ msgid ""
 msgstr ""
 "Mit dieser Option können Sie schnell alle von der OCR erkannten Wörter "
 "sehen. Manchmal (selten) verpasst OCR ganze Abschnitte auf einer Seite. Mit "
-"dieser Option können Sie solche Abschnitte schnell sehen."
+"dieser Option können Sie solche Abschnitte schnell erkennen."
 
 #. type: section{#2}
 #: data/usage.tex:631
@@ -1879,8 +1882,8 @@ msgid ""
 "Keyboard shortcuts can be seen by opening the application menu, selecting "
 "\"Help\" and then \"Shortcuts\"."
 msgstr ""
-"Die Tastenkürzel können Sie anzeigen, indem Sie das Anwendungsmenü öffnen, "
-"\"Hilfe\" und dann \"Tastenkürzel\" wählen."
+"Die Tastenkürzel können Sie anzeigen, indem Sie das Anwendungsmenü öffnen, \""
+"{}Hilfe\"{} und dann \"{}Tastenkürzel\"{} wählen."
 
 #. type: subsection{#2}
 #: data/usage.tex:835
@@ -1894,31 +1897,21 @@ msgstr "Voreingestellt:"
 
 #. type: itemize
 #: data/usage.tex:844
-#, fuzzy
-#| msgid "Configuration : \\textasciitilde /.config/paperwork2.conf"
 msgid "Configuration: \\textasciitilde /.config/paperwork2.conf"
 msgstr "Einstellung: \\textasciitilde /.config/paperwork2.conf"
 
 #. type: itemize
 #: data/usage.tex:844
-#, fuzzy
-#| msgid "Index : \\textasciitilde /.local/share/paperwork2"
 msgid "Index: \\textasciitilde /.local/share/paperwork2"
-msgstr "Index : \\textasciitilde /.local/share/paperwork2"
+msgstr "Index: \\textasciitilde /.local/share/paperwork2"
 
 #. type: itemize
 #: data/usage.tex:844
-#, fuzzy
-#| msgid "Documents : \\textasciitilde /papers"
 msgid "Documents: \\textasciitilde /papers"
 msgstr "Dokumente: \\textasciitilde /papers"
 
 #. type: document
 #: data/usage.tex:844
-#, fuzzy
-#| msgid ""
-#| "(same paths are used on Windows ; \\textasciitilde{} = C:\\textbackslash "
-#| "Users{[}login{]} ; folders are hidden)"
 msgid ""
 "(same paths are used on Windows; \\textasciitilde{} = C:\\textbackslash "
 "Users{[}login{]} ; folders are hidden)"
@@ -2001,7 +1994,7 @@ msgid ""
 msgstr ""
 "paper.$<$X$>$.words (optional): Eine hOCR-Datei, die alle per OCR auf der "
 "Seite gefunden Wörter enthält (optional, aber für die Indizierung "
-"erforderlich; kann mit der Option \"Wiederhole OCR\" neu erzeugt werden)."
+"erforderlich; kann mit der Option \"{}Wiederhole OCR\"{} neu erzeugt werden)."
 
 #. type: itemize
 #: data/usage.tex:875
@@ -2163,6 +2156,8 @@ msgid ""
 "It's always $[$label$]$,$[$color$]$. For a same label, the color should "
 "always be the same."
 msgstr ""
+"Es ist immer $[$label$]$,$[$color$]$. Bei gleichem Schlagwort sollte die "
+"Farbe immer gleich sein."
 
 #. type: section{#2}
 #: data/usage.tex:940
@@ -2277,8 +2272,8 @@ msgid ""
 "If the bug you want to report is related to scanners, please include "
 "\"Scanner info.\" in the bug report files."
 msgstr ""
-"Falls der zu meldende Fehler mit Scannern zusammenhängt, fügen Sie bitte "
-"\"Scanner info.\" in den Fehlerbericht ein."
+"Falls der zu meldende Fehler mit Scannern zusammenhängt, fügen Sie bitte \"{}"
+"Scanner info.\"{} in den Fehlerbericht ein."
 
 #. type: document
 #: data/usage.tex:985
@@ -2287,7 +2282,7 @@ msgid ""
 "\"App. screenshots\" in the bug report files."
 msgstr ""
 "Wenn der zu meldende Fehler mit einem Darstellungsproblem zusammenhängt, "
-"fügen Sie den Fehlerberichtsdateien bitte \"App. screenshots\" bei."
+"fügen Sie den Fehlerberichtsdateien bitte \"{}App. screenshots\"{} bei."
 
 #. type: subsubsection{#2}
 #: data/usage.tex:988
@@ -2408,5 +2403,5 @@ msgid ""
 "the list, and then clicking on \"uninstall\"."
 msgstr ""
 "Paperwork kann wie jede Windows-Anwendung deinstalliert werden, indem Sie in "
-"der Windows-Systemsteuerung auf \"Anwendungen\" klicken, Paperwork in der "
-"Liste suchen und dann auf \"deinstallieren\" klicken."
+"der Windows-Systemsteuerung auf \"{}Anwendungen\"{} klicken, Paperwork in "
+"der Liste suchen und dann auf \"{}deinstallieren\"{} klicken."
