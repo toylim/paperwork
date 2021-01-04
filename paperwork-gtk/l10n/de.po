@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-01 22:01+0200\n"
-"PO-Revision-Date: 2020-10-10 21:04+0000\n"
-"Last-Translator: LAZIC Anna <0.0.0.0.0.ffff.255.255.255.255@gmail.com>\n"
+"PO-Revision-Date: 2021-01-05 17:31+0000\n"
+"Last-Translator: Tom F <tom@mb.tu-ilmenau.de>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-gtk/de/>\n"
 "Language: de\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.1.1\n"
+"X-Generator: Weblate 4.4\n"
 
 #: paperwork-gtk/src/paperwork_gtk/docimport.py:82
 #, python-format
@@ -75,7 +75,7 @@ msgstr "Neue Funktionen und Fehler verfügbar!"
 
 #: paperwork-gtk/src/paperwork_gtk/update_notification.py:12
 msgid "It's better when it's free."
-msgstr "Es ist besser wenn es frei ist."
+msgstr "Es ist besser, wenn es frei ist."
 
 #: paperwork-gtk/src/paperwork_gtk/update_notification.py:13
 msgid "New taste !"
@@ -164,7 +164,7 @@ msgstr "{} dpi (empfohlen)"
 
 #: paperwork-gtk/src/paperwork_gtk/settings/stats.py:60
 msgid "Help Improve Paperwork"
-msgstr "Hilf Paperwork zu verbessern"
+msgstr "Hilf, Paperwork zu verbessern"
 
 #: paperwork-gtk/src/paperwork_gtk/cmd/install.py:40
 msgid "Install Paperwork icons and shortcuts"
@@ -378,7 +378,7 @@ msgstr "Sind Sie sicher dass Sie %d Dokumente löschen möchten?"
 #: paperwork-gtk/src/paperwork_gtk/actions/doc/delete.py:78
 #, python-format
 msgid "Are you sure you want to delete document %s ?"
-msgstr "Sind Sie sicher dass Sie das Dokument %s löschen möchten?"
+msgstr "Sind Sie sicher, dass Sie das Dokument %s löschen möchten?"
 
 #: paperwork-gtk/src/paperwork_gtk/actions/doc/redo_ocr.py:97
 #, python-format
@@ -548,7 +548,7 @@ msgid ""
 "access your scanners. To enable Saned on the host system, you must copy and "
 "paste the following commands in a terminal:"
 msgstr ""
-"Sie benutzen Paperwork in einem Flatpak Container. Paperwork benötigt Saned "
+"Sie benutzen Paperwork in einem Flatpak Container. Paperwork benötigt Saned, "
 "um auf Ihre Scanner zuzugreifen. Um Saned auf dem System zu aktivieren, "
 "kopieren Sie die folgenden Kommandos in eine Eingabeaufforderung und führen "
 "Sie sie aus:"
@@ -583,12 +583,11 @@ msgid ""
 "paperwork/statistics\">openpaper.work</a>.\n"
 "</span>"
 msgstr ""
-"<span foreground=\"gray\">Dieser Einblick wird uns helfen, Paperwork ein "
-"noch besseres Softwareprodukt für Sie zu machen. Statistiken zeigen auch "
-"dass die Leute unsere Arbeit nutzen, was uns motviert sie weiter zu "
-"verbessern.\n"
+"<span foreground=\"gray\">Dieser Einblick wird uns helfen, Paperwork noch "
+"besser für Sie zu machen. Die Statistiken zeigen auch, dass die Leute unsere "
+"Arbeit wirklich benutzen, was uns motviert sie weiter zu verbessern.\n"
 "\n"
-"Folgende Daten werden erfasse:\n"
+"Folgende Daten werden erfasst:\n"
 "- Hardware: CPU, RAM, Bildschirmauflösung.\n"
 "- Software: Version von Paperwork, Betriebssystem, Desktop-Umgebung, "
 "Systemsprache.\n"
@@ -597,7 +596,7 @@ msgstr ""
 "- Nutzungshäufigkeit für jedes Feature.\n"
 "\n"
 "Wir erfassen keinen Dokumenteninhalt oder sonstige vertrauliche oder "
-"persönlichen Informationen. Wir denken trotzdem dass es fair ist, Ihre "
+"persönlichen Informationen. Wir denken trotzdem, dass es fair ist, Ihre "
 "Zustimmung zu erfragen ;-).\n"
 "\n"
 "Die erfassten Statistiken sind auf <a href=\"https://openpaper.work/"
@@ -643,7 +642,7 @@ msgstr "Suche"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/search/field.glade.h:2
 msgid "Advanced search"
-msgstr "erweiterte Suche"
+msgstr "Erweiterte Suche"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/docproperties.glade.h:1
 msgid "Properties"
@@ -655,11 +654,11 @@ msgstr "Ändere die Farbe des Labels"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/label.glade.h:2
 msgid "Delete the label from all documents"
-msgstr "Lösche das Label von allen Dokumenten"
+msgstr "Lösche das Label für alle Dokumente"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/extra_text.glade.h:1
 msgid "Additional keywords"
-msgstr "zusätzliche Schlüsselwörter"
+msgstr "Zusätzliche Schlüsselwörter"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageinfo/layout_settings.glade.h:1
 msgid "Highlight words"
