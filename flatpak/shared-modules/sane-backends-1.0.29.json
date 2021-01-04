@@ -9,6 +9,10 @@
             "type": "archive",
             "url": "https://ftp.osuosl.org/.1/blfs/conglomeration/sane-backends/sane-backends-1.0.29.tar.gz",
             "sha256": "aa027b4e5f59849cd41b8c26d54584cf31fffd986049019be6ad4140e11ea8ed"
+        },
+        {
+            "type": "patch",
+            "path": "sanei_usb.c.diff"
         }
     ],
     "post-install": [
