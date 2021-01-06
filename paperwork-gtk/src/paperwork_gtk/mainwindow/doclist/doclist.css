@@ -17,8 +17,8 @@
 }
 
 .date_label {
-  color: shade(@theme_bg_color, 0.75);
-  font-size: large;
+  color: shade(@theme_bg_color, 0.55);
+  font-size: 11pt;
   font-weight: 800;
   padding-bottom: 2px;
   margin: 12px 6px -2px 6px;
@@ -69,4 +69,11 @@
   border: 1px solid shade(@theme_bg_color, 0.75);
   background-color: mix(@theme_bg_color, @theme_base_color, 0.9);
   color: mix(@theme_base_color, @theme_fg_color, 0.85);
+}
+
+.doclist_item label {
+  margin-left: 2px;
+  color: shade(@theme_bg_color, 0.35);
+  font-size: 11pt;
+  font-weight: normal;
 }
