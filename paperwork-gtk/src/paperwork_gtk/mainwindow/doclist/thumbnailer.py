@@ -116,7 +116,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def on_doc_box_creation(self, doc_id, gtk_row, gtk_custom_flowlayout):
         gtk_img = gtk_row.get_object("doc_thumbnail")
-        gtk_img.set_size_request(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT)
+        # placeholders must add borders to their size request
+        gtk_img.set_size_request(THUMBNAIL_WIDTH+2, THUMBNAIL_HEIGHT+2)
         gtk_img.set_visible(True)
 
         self.nb_to_load += 1
