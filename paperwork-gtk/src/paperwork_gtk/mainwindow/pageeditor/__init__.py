@@ -287,7 +287,7 @@ class Plugin(openpaperwork_core.PluginBase):
             },
             {
                 'interface': 'pillow_to_surface',
-                'defaults': ['openpaperwork_core.cairo.pillow'],
+                'defaults': ['paperwork_backend.cairo.pillow'],
             },
             {
                 'interface': 'resources',

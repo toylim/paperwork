@@ -308,7 +308,7 @@ class Plugin(AbstractExportPipePlugin):
         return super().get_deps() + [
             {
                 'interface': 'pillow_to_surface',
-                'defaults': ['openpaperwork_core.cairo.pillow'],
+                'defaults': ['paperwork_backend.cairo.pillow'],
             },
         ]
 
