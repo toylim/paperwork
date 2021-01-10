@@ -19,6 +19,7 @@ DELAY = 0.01
 PLACEHOLDER_HEIGHT = THUMBNAIL_HEIGHT + 2
 PLACEHOLDER_WIDTH = THUMBNAIL_WIDTH + 2
 
+
 class ThumbnailTask(object):
     def __init__(self, plugin, doc_id, gtk_image):
         self.plugin = plugin
