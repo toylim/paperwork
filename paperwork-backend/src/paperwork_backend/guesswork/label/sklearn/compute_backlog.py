@@ -209,7 +209,7 @@ class Corpus(object):
             print("Not enough documents left ({})".format(
                 len(self.documents)
             ))
-            return
+            return False
 
         for (idx, doc) in enumerate(docs):
             self.core.call_all(
@@ -220,6 +220,7 @@ class Corpus(object):
             doc.fit(self.bayes, self.labels)
         self.core.call_all("on_progress", "training", 1.0)
         print("Extracted features from %d documents" % len(docs))
+        return True
 
     def seal(self):
         print("Training...")
@@ -301,7 +302,8 @@ class Plugin(openpaperwork_core.PluginBase):
             print()
             print("Backlog {}:".format(backlog))
             corpus.reset()
-            corpus.fit(backlog)
+            if not corpus.fit(backlog):
+                return {}
             start = time.time()
             corpus.seal()
             stop = time.time()
@@ -310,3 +312,4 @@ class Plugin(openpaperwork_core.PluginBase):
             print("Backlog: {} ; Accuracy: {} ; Training time: {}s".format(
                 backlog, accuracy, int(stop - start)
             ))
+        return {}
