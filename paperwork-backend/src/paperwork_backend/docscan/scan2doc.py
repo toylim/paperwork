@@ -35,7 +35,7 @@ class Plugin(openpaperwork_core.PluginBase):
             },
             {
                 'interface': 'scan',
-                'defaults': ['openpaperwork_core.docscan.libinsane'],
+                'defaults': ['paperwork_backend.docscan.libinsane'],
             },
             {
                 'interface': 'thread',
