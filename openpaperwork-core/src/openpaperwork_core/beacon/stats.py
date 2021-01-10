@@ -51,7 +51,7 @@ class Plugin(openpaperwork_core.PluginBase):
             },
             {
                 'interface': 'mainloop',
-                'defaults': ['openpaperwork_gtk.mainloop.glib'],
+                'defaults': ['openpaperwork_core.mainloop.asyncio'],
             },
             {
                 'interface': 'thread',

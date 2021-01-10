@@ -7,7 +7,7 @@ import openpaperwork_core
 class TestPillowImg(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core(auto_load_dependencies=True)
-        self.core.load("openpaperwork_gtk.fs.gio")
+        self.core.load("openpaperwork_core.fs.python")
         self.core.load("openpaperwork_core.fs.memory")
         self.core.load("openpaperwork_core.pillow.img")
         self.core.init()

@@ -32,7 +32,7 @@ class Plugin(PluginBase):
         return [
             {
                 'interface': 'fs',
-                'defaults': ['openpaperwork_gtk.fs.gio']
+                'defaults': ['openpaperwork_core.fs.python']
             },
             {
                 'interface': 'mainloop',
