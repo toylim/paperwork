@@ -15,6 +15,9 @@ from ... import _
 LOGGER = logging.getLogger(__name__)
 DELAY = 0.01
 
+# placeholders size must include borders
+PLACEHOLDER_HEIGHT = THUMBNAIL_HEIGHT + 2
+PLACEHOLDER_WIDTH = THUMBNAIL_WIDTH + 2
 
 class ThumbnailTask(object):
     def __init__(self, plugin, doc_id, gtk_image):
@@ -116,8 +119,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def on_doc_box_creation(self, doc_id, gtk_row, gtk_custom_flowlayout):
         gtk_img = gtk_row.get_object("doc_thumbnail")
-        # placeholders must add borders to their size request
-        gtk_img.set_size_request(THUMBNAIL_WIDTH+2, THUMBNAIL_HEIGHT+2)
+        gtk_img.set_size_request(PLACEHOLDER_WIDTH, PLACEHOLDER_HEIGHT)
         gtk_img.set_visible(True)
 
         self.nb_to_load += 1
