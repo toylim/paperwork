@@ -9,7 +9,9 @@ It stores data in 2 ways:
 """
 import collections
 import logging
+import os
 import sqlite3
+import time
 
 import numpy
 import sklearn.feature_extraction.text
@@ -19,6 +21,10 @@ import openpaperwork_core
 import openpaperwork_core.promise
 
 from .... import (_, sync)
+
+
+# Limit the number of documents used for performance reasons
+MAX_DOC_BACKLOG = os.getenv("PAPERWORK_LABEL_TRAINING_BACKLOG", 50)
 
 
 # Beware that we use Sqlite, but sqlite python module is not thread-safe
@@ -164,7 +170,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         # that the classifiers expect. If we would train the vectorizer with
         # new documents, the vector sizes could increase
         # Since loading the classifiers is a fairly long operations, we only
-        # do it if we actually need them.
+        # do it when we actually need them.
         self.original_vectorizer = None
         self.classifiers = None
 
@@ -387,8 +393,67 @@ class Plugin(openpaperwork_core.PluginBase):
             )
         )
 
+    def _load_labels_and_features(self, cursor):
+        start = time.time()
+
+        all_labels = cursor.execute("SELECT DISTINCT label FROM labels")
+        all_labels = {l[0] for l in all_labels}
+        all_docs = cursor.execute(
+            "SELECT doc_id FROM features ORDER BY doc_id DESC"
+        )
+        all_docs = [l[0] for l in all_docs]
+
+        doc_ids = set()
+
+        for label in all_labels:
+            ds = cursor.execute(
+                "SELECT doc_id FROM labels WHERE label = ? LIMIT {}".format(
+                    MAX_DOC_BACKLOG
+                ),
+                (label,)
+            )
+            doc_ids.update((d[0] for d in ds))
+
+        # label --> number of doc without this label
+        no_label_counts = {l: 0 for l in all_labels}
+        for doc_id in all_docs:
+            if len(no_label_counts) <= 0:
+                break
+            doc_labels = cursor.execute(
+                "SELECT label FROM labels WHERE doc_id = ?", (doc_id,)
+            )
+            for label in list(no_label_counts.keys()):
+                if label in doc_labels:
+                    continue
+                doc_ids.add(doc_id)
+                no_label_counts[label] += 1
+                if no_label_counts[label] >= MAX_DOC_BACKLOG:
+                    no_label_counts.pop(label)
+
+        LOGGER.info(
+            "Loading features of %d documents for %d labels",
+            len(doc_ids), len(all_labels)
+        )
+
+        all_features = []
+        for doc_id in doc_ids:
+            vectors = cursor.execute(
+                "SELECT vector FROM features WHERE doc_id = ? LIMIT 1",
+                (doc_id,)
+            )
+            for vector in vectors:
+                all_features.append((doc_id, vector[0]))
+
+        stop = time.time()
+
+        LOGGER.info(
+            "Took %dms to load features of %d documents",
+            int((stop - start) * 1000), len(doc_ids)
+        )
+
+        return (all_labels, all_features)
+
     def _load_classifiers(self, vectorizer):
-        LOGGER.info("Training classifiers ...")
         msg = _("Label guessing: Training ...")
 
         cursor = self.core.call_one(
@@ -398,28 +463,12 @@ class Plugin(openpaperwork_core.PluginBase):
         try:
             self.core.call_all("on_progress", "classifiers", 0.0, msg)
 
-            all_labels = self.core.call_one(
-                "mainloop_execute", cursor.execute,
-                "SELECT DISTINCT label FROM labels"
-            )
-            all_labels = self.core.call_one(
-                "mainloop_execute",
-                lambda all_labels: {l[0] for l in all_labels},
-                all_labels
+            (all_labels, all_features) = self.core.call_one(
+                "mainloop_execute", self._load_labels_and_features, cursor
             )
 
-            all_features = self.core.call_one(
-                "mainloop_execute", cursor.execute,
-                "SELECT doc_id, vector FROM features"
-            )
-            all_features = self.core.call_one(
-                "mainloop_execute",
-                lambda all_features: [
-                    (doc_id, doc_vector)
-                    for (doc_id, doc_vector) in all_features
-                ],
-                all_features
-            )
+            LOGGER.info("Training classifiers ...")
+            start = time.time()
 
             corpus = []
             targets = collections.defaultdict(list)
@@ -470,6 +519,12 @@ class Plugin(openpaperwork_core.PluginBase):
                         batch_corpus, batch_targets,
                         classes=[0, 1]
                     )
+
+            stop = time.time()
+            LOGGER.info(
+                "Training took %dms",
+                int((stop - start) * 1000)
+            )
 
             return classifiers
         finally:
