@@ -34,9 +34,9 @@ import openpaperwork_gtk.deps
 
 class LabelWidget(Gtk.DrawingArea):
     FONT = ""
-    LABEL_HEIGHT = 25
+    LABEL_HEIGHT = 23
     LABEL_TEXT_SIZE = 13
-    LABEL_TEXT_SHIFT = 2    # Shift a bit to fix valignment
+    LABEL_TEXT_SHIFT = 3    # Shift a bit to fix valignment
     LABEL_CORNER_RADIUS = 5
 
     def __init__(self, core, label_txt, label_color, highlight=False):

@@ -2,10 +2,77 @@
 	background-color: rgba(0, 0, 0, 0.25);
 }
 
-#doclist_scroll image {
-	border: 1px solid gray;
-}
-
 #doclist_scroll button image {
 	border: 0px;
+}
+
+.search_field {
+  padding: 12px 12px 10px 12px;
+}
+
+.search-left, .search-right {
+  border: 1px solid shade(@theme_bg_color, 0.88);
+  background-color: shade(@theme_bg_color, 0.88);
+}
+
+.date_label {
+  color: mix(@theme_bg_color, @theme_fg_color, 0.70);
+  font-size: 11pt;
+  font-weight: 800;
+  padding-bottom: 2px;
+  margin: 12px 6px -2px 6px;
+}
+
+.border-bottom-light {
+  padding-bottom: 5px;
+  border-bottom: 1px solid shade(@theme_bg_color, 0.88);
+}
+
+.doclist {
+  padding: 2px 6px 0px 6px;
+  background-color: @theme_bg_color;
+}
+
+.doclist_item {
+  padding: 4px 6px 0px 6px;
+  border: 1px solid @theme_bg_color;
+  border-radius: 6px;
+  color: @theme_fg_color;
+}
+
+.doclist_item:hover {
+  margin-top: -2px;
+  padding: 6px 6px 0px 6px;
+  border: 1px solid shade(@theme_bg_color, 0.88);
+  background-color: shade(@theme_bg_color, 0.88);
+  color: @theme_fg_color;
+}
+
+.doclist_item:selected {
+  margin-top: -2px;
+  padding: 6px 6px 0px 6px;
+  border: 1px solid shade(@theme_bg_color, 0.75);
+  background-color: mix(@theme_bg_color, @theme_base_color, 0.6);
+  color: @theme_fg_color;
+}
+
+.doclist_item:selected image {
+  color: mix(@theme_base_color, @theme_fg_color, 0.85);
+}
+
+.doclist_item:hover .border-bottom-light, .doclist_item:selected .border-bottom-light {
+  border-bottom: 1px solid transparent;
+}
+
+.doclist_thumbnail {
+  border: 1px solid shade(@theme_bg_color, 0.75);
+  background-color: mix(@theme_bg_color, @theme_base_color, 0.9);
+  color: mix(@theme_base_color, @theme_fg_color, 0.85);
+}
+
+.doclist_item label {
+  margin-left: 2px;
+  color: mix(@theme_base_color, @theme_fg_color, 0.85);
+  font-size: 11pt;
+  font-weight: normal;
 }

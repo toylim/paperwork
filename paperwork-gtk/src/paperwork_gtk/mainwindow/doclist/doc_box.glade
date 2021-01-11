@@ -3,13 +3,17 @@
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkListBoxRow" id="doc_listbox">
     <property name="visible">True</property>
-
+    <style>
+      <class name="doclist_item"/>
+    </style>
     <child>
       <object class="GtkBox" id="doc_box">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="orientation">horizontal</property>
-
+        <style>
+          <class name="border-bottom-light"/>
+        </style>
         <child>
           <object class="GtkOverlay">
             <property name="visible">True</property>
@@ -32,6 +36,11 @@
             <child>
               <object class="GtkImage" id="doc_thumbnail">
                 <property name="visible">False</property>
+                <property name="icon_name">x-office-document-symbolic</property>
+                <property name="icon_size">3</property>
+                <style>
+                  <class name="doclist_thumbnail"/>
+                </style>
               </object>
             </child>
           </object>
