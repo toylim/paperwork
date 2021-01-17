@@ -24,7 +24,7 @@ from .... import (_, sync)
 
 
 # Limit the number of documents used for performance reasons
-MAX_DOC_BACKLOG = os.getenv("PAPERWORK_LABEL_TRAINING_BACKLOG", 50)
+MAX_DOC_BACKLOG = os.getenv("PAPERWORK_LABEL_TRAINING_BACKLOG", 75)
 
 
 # Beware that we use Sqlite, but sqlite python module is not thread-safe
