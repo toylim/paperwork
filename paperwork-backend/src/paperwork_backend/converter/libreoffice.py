@@ -117,7 +117,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.libreoffice = None
 
     def get_interfaces(self):
-        return ["converter"]
+        return ["doc_converter"]
 
     def get_deps(self):
         return [
@@ -186,3 +186,4 @@ class Plugin(openpaperwork_core.PluginBase):
                 self.core.call_success("fs_safe", dst_file),
                 out_pdf_file_url
             )
+        return True

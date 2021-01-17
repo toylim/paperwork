@@ -403,7 +403,9 @@ class Plugin(openpaperwork_core.PluginBase):
             return None
         return True
 
-    def doc_get_pdf_url_by_url(self, doc_url):
+    def doc_get_pdf_url_by_url(self, doc_url, write=False):
+        if write:
+            return self.core.call_success("fs_join", doc_url, PDF_FILENAME)
         return self._get_pdf_url(doc_url)
 
     def doc_internal_get_hash_by_url(self, out: list, doc_url):
