@@ -38,7 +38,7 @@ class TestConvertedPdf(unittest.TestCase):
         self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core._load_module("fake_module", FakeModule())
         self.core.load("openpaperwork_core.config.fake")
-        self.core.load("paperwork_backend.model.converted_pdf")
+        self.core.load("paperwork_backend.model.converted")
         self.core.init()
 
         self.config = self.core.get_by_name("openpaperwork_core.config.fake")

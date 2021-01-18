@@ -181,3 +181,7 @@ class Plugin(openpaperwork_core.PluginBase):
             self.core, self._check_all_docs
         )
         promises.insert(0, promise)
+
+    def doc_convert_and_import(self, file_url):
+        # TODO
+        pass
