@@ -619,6 +619,8 @@ class Plugin(openpaperwork_core.PluginBase):
             idx = 0
         idx = max(idx, 0)
         idx = min(idx, len(self.docs))
+        if idx >= len(self.docs):  # may happen with an empty doc list
+            return
         (doc_id, doc_url) = self.docs[idx]
         self.core.call_all("doc_open", doc_id, doc_url)
         self._reselect_current_doc(scroll=True)
