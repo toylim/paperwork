@@ -77,7 +77,7 @@ class SingleDocImporterFactory(object):
         if "." not in file_url:
             return False
         file_ext = file_url.rsplit(".", 1)[-1].lower()
-        return file_ext in self.plugin.file_types
+        return file_ext in self.plugin.file_types_by_ext
 
     def make_importer(self, file_import, file_uri):
         return SingleDocImporter(self.plugin, file_import, file_uri)
