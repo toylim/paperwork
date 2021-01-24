@@ -322,6 +322,8 @@ class PdfPageMapping(object):
 
 
 class Plugin(openpaperwork_core.PluginBase):
+    PRIORITY = 20
+
     def __init__(self):
         super().__init__()
         # we cache the hash of PDF files since they never change
@@ -408,21 +410,21 @@ class Plugin(openpaperwork_core.PluginBase):
             return self.core.call_success("fs_join", doc_url, PDF_FILENAME)
         return self._get_pdf_url(doc_url)
 
-    def doc_internal_get_hash_by_url(self, out: list, doc_url):
+    def flush_doc_cache(self, doc_url):
+        cache_key = "hash_{}".format(doc_url)
+        self.cache_hash.pop(cache_key, None)
+
+    def doc_get_hash_by_url(self, doc_url):
         pdf_url = self._get_pdf_url(doc_url)
         if pdf_url is None:
             return
-        mapping = self._get_page_mapping(doc_url)
-        h = mapping.get_map_hash()
-        if h is not None:
-            out.append(h)
 
         # cache the hash of doc.pdf to speed up imports
         cache_key = "hash_{}".format(doc_url)
         if cache_key not in self.cache_hash:
             h = self.core.call_success("fs_hash", pdf_url)
             self.cache_hash[cache_key] = h
-        out.append(self.cache_hash[cache_key])
+        return self.cache_hash[cache_key]
 
     def page_internal_get_hash_by_url(self, out: list, doc_url, page_idx):
         pdf_url = self._get_pdf_url(doc_url)

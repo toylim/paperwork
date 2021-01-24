@@ -21,6 +21,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.pending_doc_urls = set()
         self.file_types_by_ext = {}
         self.file_types_by_mime = {}
+        self.cache_hash = {}
 
     def get_interfaces(self):
         return [
@@ -112,6 +113,7 @@ class Plugin(openpaperwork_core.PluginBase):
             doc_file_url, self.file_types_by_ext[doc_ext],
             pdf
         )
+        self.core.call_all("flush_doc_cache", doc_url)
         LOGGER.info("PDF updated")
         self.core.call_all("on_progress", "converting", 1.0)
         return True
@@ -220,3 +222,12 @@ class Plugin(openpaperwork_core.PluginBase):
         except Exception:
             self.core.call_all("fs_rm_rf", doc_url, trash=False)
             raise
+
+    def doc_get_hash_by_url(self, doc_url):
+        (doc_file_url, doc_ext) = self._is_converted(doc_url)
+        if doc_file_url is None:
+            return None
+        if doc_url not in self.cache_hash:
+            h = self.core.call_success("fs_hash", doc_file_url)
+            self.cache_hash[doc_url] = h
+        return self.cache_hash[doc_url]
