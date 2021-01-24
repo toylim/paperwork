@@ -4,6 +4,7 @@ import subprocess
 import tempfile
 
 import openpaperwork_core
+import paperwork_backend.deps
 
 from .. import _
 
@@ -183,7 +184,10 @@ class Plugin(openpaperwork_core.PluginBase):
         self.libreoffice = None
 
     def get_interfaces(self):
-        return ["doc_converter"]
+        return [
+            "chkdeps",
+            "doc_converter",
+        ]
 
     def get_deps(self):
         return [
@@ -200,6 +204,10 @@ class Plugin(openpaperwork_core.PluginBase):
             if self.libreoffice is not None:
                 break
         LOGGER.info("Libreoffice: %s", self.libreoffice)
+
+    def chkdeps(self, out: dict):
+        if self.libreoffice is None:
+            out['libreoffice'] = paperwork_backend.deps.LIBREOFFICE
 
     def converter_get_file_types(self, out: set):
         if self.libreoffice is None:
