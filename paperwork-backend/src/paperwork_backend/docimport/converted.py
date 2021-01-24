@@ -46,7 +46,7 @@ class SingleDocImporter(object):
         elif "." in file_url:
             file_ext = file_url.rsplit(".", 1)[-1].lower()
             self.file_import.stats[
-                self.plugin.file_types_by_ext[file_ext]
+                self.plugin.file_types_by_ext[file_ext][1]
             ] += 1
 
         return True
