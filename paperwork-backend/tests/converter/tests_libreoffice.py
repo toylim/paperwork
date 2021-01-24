@@ -19,7 +19,7 @@ class TestLibreOfficePdf(unittest.TestCase):
             "fs_mktemp", suffix=".pdf"
         )
         tmp_fd.close()
-        self.core.call_success("fs_unlink", tmp_url)
+        self.core.call_success("fs_unlink", tmp_url, trash=False)
         self.assertIsNone(self.core.call_success("fs_exists", tmp_url))
 
         self.core.call_success(
@@ -31,4 +31,4 @@ class TestLibreOfficePdf(unittest.TestCase):
         )
 
         self.assertTrue(self.core.call_success("fs_exists", tmp_url))
-        self.core.call_success("fs_unlink", tmp_url)
+        self.core.call_success("fs_unlink", tmp_url, trash=False)
