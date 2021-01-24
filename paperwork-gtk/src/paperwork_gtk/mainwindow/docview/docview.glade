@@ -45,6 +45,7 @@
                     <property name="min_children_per_line">1</property>
                     <property name="max_children_per_line">5</property>
                     <property name="orientation">horizontal</property>
+                    <property name="halign">center</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
