@@ -62,7 +62,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return []
 
-    def storage_get_all_docs(self, out: list):
+    def storage_get_all_docs(self, out: list, only_valid=True):
         out += [
             (doc['id'], doc['url'])
             for doc in self.docs

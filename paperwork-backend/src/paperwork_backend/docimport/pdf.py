@@ -28,7 +28,7 @@ class SinglePdfImporter(object):
             "index_get_doc_id_by_hash", file_hash
         )
         if other_doc_id is not None:
-            LOGGER.info("%s was already imported", file_uri)
+            LOGGER.info("%s has already been imported", file_uri)
             self.file_import.stats[_("Already imported")] += 1
             return False
 
@@ -70,9 +70,7 @@ class SinglePdfImporterFactory(object):
             return True
 
     def make_importer(self, file_import, file_uri):
-        return SinglePdfImporter(
-            self.core, file_import, file_uri
-        )
+        return SinglePdfImporter(self.core, file_import, file_uri)
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -104,9 +102,9 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def get_import_mime_type(self, out: list):
-        out.append(("PDF", self.MIME_TYPE))
-        out.append((_("PDF folder"), "inode/directory"))
+    def get_import_mime_types(self, out: set):
+        out.add(("PDF", self.MIME_TYPE))
+        out.add((_("PDF folder"), "inode/directory"))
 
     def get_importer(self, out: list, file_import: FileImport):
         importer = DirectFileImporter(

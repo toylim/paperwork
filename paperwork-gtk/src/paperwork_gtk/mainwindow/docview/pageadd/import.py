@@ -97,8 +97,10 @@ class Plugin(openpaperwork_core.PluginBase):
     def _on_import(self, doc_id, doc_url, source_id):
         LOGGER.info("Opening file chooser dialog")
 
-        mimes = []
-        self.core.call_all("get_import_mime_type", mimes)
+        mimes = set()
+        self.core.call_all("get_import_mime_types", mimes)
+        mimes = list(mimes)
+        mimes.sort()
 
         dialog = Gtk.FileChooserDialog(
             _("Select a file or a directory to import"),

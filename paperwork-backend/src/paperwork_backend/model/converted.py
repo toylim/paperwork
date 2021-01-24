@@ -19,11 +19,13 @@ class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
         self.pending_doc_urls = set()
-        self.file_types = {}
+        self.file_types_by_ext = {}
+        self.file_types_by_mime = {}
 
     def get_interfaces(self):
         return [
-            "page_img",
+            "doc_convert_and_import",
+            "doc_hash",
             "sync",
         ]
 
@@ -56,7 +58,12 @@ class Plugin(openpaperwork_core.PluginBase):
 
         file_types = set()
         self.core.call_all("converter_get_file_types", file_types)
-        self.file_types = {ext: mime for (mime, ext) in file_types}
+        self.file_types_by_ext = {
+            ext: mime for (mime, ext, human_name) in file_types
+        }
+        self.file_types_by_mime = {
+            mime: ext for (mime, ext, human_name) in file_types
+        }
 
     def _is_converted(self, doc_url):
         for doc_file_url in self.core.call_success("fs_listdir", doc_url):
@@ -66,8 +73,9 @@ class Plugin(openpaperwork_core.PluginBase):
             (doc_filename, doc_ext) = doc_filename.rsplit(".", 1)
             doc_filename = doc_filename.lower()
             doc_ext = doc_ext.lower()
-            if doc_filename == "doc" and doc_ext in self.file_types:
+            if doc_filename == "doc" and doc_ext in self.file_types_by_ext:
                 return (doc_file_url, doc_ext)
+            return (None, None)
         else:
             # not a converted document
             return (None, None)
@@ -75,7 +83,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def _update_pdf(self, doc_id, doc_url, doc_file_url, doc_ext):
         LOGGER.debug(
             "Document %s: %s (%s)",
-            doc_id, doc_file_url, self.file_types[doc_ext]
+            doc_id, doc_file_url, self.file_types_by_ext[doc_ext]
         )
         doc_mtime = self.core.call_success("fs_get_mtime", doc_file_url)
 
@@ -89,7 +97,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         if pdf_mtime >= doc_mtime:
             LOGGER.debug("Document %s: PDF is up-to-date")
-            return
+            return False
 
         LOGGER.info(
             "Document %s: Updating PDF: %s --> %s",
@@ -101,11 +109,12 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         self.core.call_success(
             "convert_file_to_pdf",
-            doc_file_url, self.file_types[doc_ext],
+            doc_file_url, self.file_types_by_ext[doc_ext],
             pdf
         )
         LOGGER.info("PDF updated")
         self.core.call_all("on_progress", "converting", 1.0)
+        return True
 
     def page_get_img_url(self, doc_url, page_idx, write=False):
         if page_idx != 0:
@@ -123,13 +132,18 @@ class Plugin(openpaperwork_core.PluginBase):
 
         doc_id = self.core.call_success("doc_url_to_id", doc_url)
 
+        LOGGER.info("Checking conversion of document %s is up-to-date", doc_id)
+
         promise = openpaperwork_core.promise.ThreadedPromise(
             self.core, self._update_pdf, args=(
                 doc_id, doc_url, doc_file_url, doc_ext
             )
         )
 
-        def do_transaction():
+        def do_transaction(has_changed):
+            if not has_changed:
+                return
+
             transactions = []
             self.core.call_all("doc_transaction_start", transactions, 1)
             transactions.sort(key=lambda t: -t.priority)
@@ -152,9 +166,11 @@ class Plugin(openpaperwork_core.PluginBase):
         return None
 
     def _check_all_docs(self):
-        if len(self.file_types) <= 0:
+        if len(self.file_types_by_ext) <= 0:
             LOGGER.info("No file converter available")
             return
+
+        LOGGER.info("Checking all converted documents ...")
 
         all_docs = []
         self.core.call_all("storage_get_all_docs", all_docs, only_valid=False)
@@ -175,6 +191,7 @@ class Plugin(openpaperwork_core.PluginBase):
                     "on_progress", "converted_check", idx / total, msg
                 )
         self.core.call_all("on_progress", "converted_check", 1.0)
+        LOGGER.info("All converted documents have been checked")
 
     def sync(self, promises: list):
         promise = openpaperwork_core.promise.ThreadedPromise(
@@ -183,5 +200,23 @@ class Plugin(openpaperwork_core.PluginBase):
         promises.insert(0, promise)
 
     def doc_convert_and_import(self, file_url):
-        # TODO
-        pass
+        mime = self.core.call_success("fs_get_mime", file_url)
+        if mime is not None:
+            file_ext = self.file_types_by_mime[mime]
+        elif "." in file_url:
+            file_ext = file_url.rsplit(".", 1)[-1].lower()
+        else:
+            LOGGER.error("Failed to figure out file type of '%s'", file_url)
+            return (None, None)
+
+        file_name = "doc." + file_ext
+        (doc_id, doc_url) = self.core.call_success("storage_get_new_doc")
+        dst_file_url = self.core.call_success("fs_join", doc_url, file_name)
+        self.core.call_success("fs_mkdir_p", doc_url)
+        try:
+            self.core.call_success("fs_copy", file_url, dst_file_url)
+            self._update_pdf(doc_id, doc_url, dst_file_url, file_ext)
+            return (doc_id, doc_url)
+        except Exception:
+            self.core.call_all("fs_rm_rf", doc_url, trash=False)
+            raise

@@ -5,6 +5,8 @@ import tempfile
 
 import openpaperwork_core
 
+from .. import _
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -47,69 +49,133 @@ def which(program):
 
 class Plugin(openpaperwork_core.PluginBase):
     FILE_TYPES = {
-        ("application/msword", "doc"),
-        ("application/msword", "dot"),
-        ("application/vnd.ms-excel", "xlb"),
-        ("application/vnd.ms-excel", "xls"),
-        ("application/vnd.ms-excel", "xlt"),
-        ("application/vnd.ms-powerpoint", "pps"),
-        ("application/vnd.ms-powerpoint", "ppt"),
-        ("application/vnd.oasis.opendocument.chart", "odc"),
-        ("application/vnd.oasis.opendocument.database", "odb"),
-        ("application/vnd.oasis.opendocument.formula", "odf"),
-        ("application/vnd.oasis.opendocument.graphics", "odg"),
-        ("application/vnd.oasis.opendocument.graphics-template", "otg"),
-        ("application/vnd.oasis.opendocument.image", "odi"),
-        ("application/vnd.oasis.opendocument.presentation", "odp"),
         (
-            "application/vnd.oasis.opendocument.presentation-template",
-            "otp"
+            "application/msword", "doc",
+            "Microsoft Word (.doc)",
         ),
-        ("application/vnd.oasis.opendocument.spreadsheet", "ods"),
-        ("application/vnd.oasis.opendocument.spreadsheet-template", "ots"),
-        ("application/vnd.oasis.opendocument.text", "odt"),
-        ("application/vnd.oasis.opendocument.text-master", "odm"),
-        ("application/vnd.oasis.opendocument.text-template", "ott"),
-        ("application/vnd.oasis.opendocument.text-web", "oth"),
+        (
+            "application/msword", "dot",
+            _("Microsoft Word template (.dot)"),
+        ),
+        (
+            "application/vnd.ms-excel", "xls",
+            "Microsoft Excel (.xls)",
+        ),
+        (
+            "application/vnd.ms-excel", "xlt",
+            _("Microsoft Excel template (.xlt)"),
+        ),
+        (
+            "application/vnd.ms-powerpoint", "pps",
+            "Microsoft PowerPoint (.pps)",
+        ),
+        (
+            "application/vnd.ms-powerpoint", "ppt",
+            _("Microsoft PowerPoint template (.ppt)"),
+        ),
+        (
+            "application/vnd.oasis.opendocument.chart", "odc",
+            _("OpenOffice/LibreOffice Chart (.odc)"),
+        ),
+        (
+            "application/vnd.oasis.opendocument.database", "odb",
+            _("OpenOffice/LibreOffice Database (.odb)"),
+        ),
+        (
+            "application/vnd.oasis.opendocument.formula", "odf",
+            _("OpenOffice/LibreOffice Formula (.odf)"),
+        ),
+        (
+            "application/vnd.oasis.opendocument.graphics", "odg",
+            _("OpenOffice/LibreOffice Graphics (.odg)"),
+        ),
+        (
+            "application/vnd.oasis.opendocument.graphics-template", "otg",
+            _("OpenOffice/LibreOffice Graphics template (.otg)"),
+        ),
+        (
+            "application/vnd.oasis.opendocument.image", "odi",
+            _("OpenOffice/LibreOffice Image template (.odi)"),
+        ),
+        (
+            "application/vnd.oasis.opendocument.presentation", "odp",
+            _("OpenOffice/LibreOffice Presentation (.odp)"),
+        ),
+        (
+            "application/vnd.oasis.opendocument.presentation-template", "otp",
+            _("OpenOffice/LibreOffice Presentation template (.otp)"),
+        ),
+        (
+            "application/vnd.oasis.opendocument.spreadsheet", "ods",
+            _("OpenOffice/LibreOffice Spreadsheet (.ods)"),
+        ),
+        (
+            "application/vnd.oasis.opendocument.spreadsheet-template", "ots",
+            _("OpenOffice/LibreOffice Spreadsheet template (.ots)"),
+        ),
+        (
+            "application/vnd.oasis.opendocument.text", "odt",
+            _("OpenOffice/LibreOffice Text (.odt)"),
+        ),
+        (
+            "application/vnd.oasis.opendocument.text-master", "odm",
+            _("OpenOffice/LibreOffice Text master (.odm)"),
+        ),
+        (
+            "application/vnd.oasis.opendocument.text-template", "ott",
+            _("OpenOffice/LibreOffice Text template (.ott)"),
+        ),
+        (
+            "application/vnd.oasis.opendocument.text-web", "oth",
+            _("OpenOffice/LibreOffice Text web (.oth)"),
+        ),
         (
             "application/vnd.openxmlformats-officedocument.presentationml"
             ".presentation",
-            "pptx"
+            "pptx",
+            "Microsoft PowerPoint presentation (.pptx)",
         ),
         (
             "application/vnd.openxmlformats-officedocument.presentationml"
             ".slide",
-            "sldx"
+            "sldx",
+            _("Microsoft PowerPoint slide (.sldx)"),
         ),
         (
             "application/vnd.openxmlformats-officedocument.presentationml"
             ".slideshow",
-            "ppsx"
+            "ppsx",
+            _("Microsoft PowerPoint slideshow (.ppsx)"),
         ),
         (
             "application/vnd.openxmlformats-officedocument.presentationml"
             ".template",
-            "potx"
+            "potx",
+            _("Microsoft PowerPoint presentation template (.potx)"),
         ),
         (
             "application/vnd.openxmlformats-officedocument.spreadsheetml"
             ".sheet",
-            "xlsx"
+            "xlsx",
+            "Microsoft Excel (.xlsx)",
         ),
         (
             "application/vnd.openxmlformats-officedocument.spreadsheetml"
             ".template",
-            "xltx"
+            "xltx",
+            _("Microsoft Excel template (.xltx)"),
         ),
         (
             "application/vnd.openxmlformats-officedocument"
             ".wordprocessingml.document",
-            "docx"
+            "docx",
+            "Microsoft Word (.docx)",
         ),
         (
             "application/vnd.openxmlformats-officedocument"
             ".wordprocessingml.template",
-            "dotx"
+            "dotx",
+            _("Microsoft Word template (.dotx)"),
         ),
     }
 
@@ -144,7 +210,7 @@ class Plugin(openpaperwork_core.PluginBase):
         if self.libreoffice is None:
             return None
 
-        file_types = {k: v for (k, v) in self.FILE_TYPES}
+        file_types = {mime: ext for (mime, ext, desc) in self.FILE_TYPES}
         if mime_type not in file_types:
             return None
 

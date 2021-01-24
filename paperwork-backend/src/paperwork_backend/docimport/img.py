@@ -148,8 +148,8 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def get_import_mime_type(self, out: list):
-        out += self.IMG_MIME_TYPES
+    def get_import_mime_types(self, out: set):
+        out.update(self.IMG_MIME_TYPES)
 
     def get_importer(self, out: list, file_import: FileImport):
         importer = DirectFileImporter(

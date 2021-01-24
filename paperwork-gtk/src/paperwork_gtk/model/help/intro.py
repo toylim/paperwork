@@ -33,7 +33,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def init(self, core):
         super().init(core)
 
-    def storage_get_all_docs(self, out: list):
+    def storage_get_all_docs(self, out: list, only_valid=True):
         if self.deleted or len(out) > 0:
             self.doc_url = None
             return
