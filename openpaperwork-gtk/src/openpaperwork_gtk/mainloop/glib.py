@@ -82,8 +82,6 @@ class Plugin(openpaperwork_core.PluginBase):
         return self.loop_ident
 
     def mainloop_quit_graceful(self):
-        if self.loop is None:
-            return None
         self.mainloop_schedule(self._mainloop_quit_graceful)
         return True
 

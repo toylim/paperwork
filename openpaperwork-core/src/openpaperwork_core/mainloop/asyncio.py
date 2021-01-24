@@ -74,8 +74,6 @@ class Plugin(openpaperwork_core.PluginBase):
         Wait for all the scheduled callbacks to be executed and then stops
         the main loop.
         """
-        if self.loop is None:
-            return None
         self.mainloop_schedule(self._mainloop_quit_graceful)
         return True
 
