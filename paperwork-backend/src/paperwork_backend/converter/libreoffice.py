@@ -235,6 +235,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 "fs_copy", doc_file_uri,
                 self.core.call_success("fs_safe", src_file)
             )
+            if not self.core.call_success(
+                    "fs_exists", self.core.call_success("fs_safe", src_file)):
+                LOGGER.error("Failed to copy file %s", doc_file_uri)
+                return None
 
             os.chdir(tmp_dir)
             try:
@@ -242,14 +246,28 @@ class Plugin(openpaperwork_core.PluginBase):
                     x.format(in_doc=src_file, out_dir=tmp_dir)
                     for x in LIBREOFFICE_ARGS
                 ]
-                popen = subprocess.Popen([self.libreoffice] + args)
-                popen.communicate()
+                popen = subprocess.Popen(
+                    [self.libreoffice] + args,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE
+                )
+                (stdout, stderr) = popen.communicate()
+
+                self.core.call_success(
+                    "fs_copy",
+                    self.core.call_success("fs_safe", dst_file),
+                    out_pdf_file_url
+                )
+
+                if not self.core.call_success("fs_exists", out_pdf_file_url):
+                    LOGGER.error(
+                        "Failed to convert %s (%s) to %s (PDF)",
+                        doc_file_uri, mime_type, out_pdf_file_url
+                    )
+                    LOGGER.error("Command was: %s", [self.libreoffice] + args)
+                    LOGGER.error("LibreOffice stdout: %s", stdout)
+                    LOGGER.error("LibreOffice stderr: %s", stderr)
+                    return False
             finally:
                 os.chdir(cwd)
-
-            self.core.call_success(
-                "fs_copy",
-                self.core.call_success("fs_safe", dst_file),
-                out_pdf_file_url
-            )
         return True
