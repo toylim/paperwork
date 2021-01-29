@@ -270,7 +270,7 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
 
     @staticmethod
     def _is_file_uri(uri):
-        return uri.startswith("file://")
+        return True
 
     def fs_open(self, uri, mode='r', needs_fileno=False, **kwargs):
         if needs_fileno:
@@ -514,12 +514,6 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             raise IOError(str(exc))
 
     def fs_copy(self, old_url, new_url):
-        old_type = old_url.split(":", 1)[0]
-        new_type = new_url.split(":", 1)[0]
-        if old_type != new_type:
-            # use the more generic and cross-FS method
-            return super().fs_copy(old_url, new_url)
-
         if not self._is_file_uri(old_url) or not self._is_file_uri(new_url):
             return None
         try:
