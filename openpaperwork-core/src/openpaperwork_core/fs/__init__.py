@@ -88,3 +88,4 @@ class CommonFsPluginBase(openpaperwork_core.PluginBase):
             content = fd.read()
         with open(dest_url, 'wb') as fd:
             fd.write(content)
+        return True

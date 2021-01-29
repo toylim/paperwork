@@ -344,6 +344,7 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             if not old.query_exists():
                 return None
             old.move(new, Gio.FileCopyFlags.NONE)
+            return True
         except GLib.GError as exc:
             LOGGER.warning("Gio.Gerror", exc_info=exc)
             raise IOError(str(exc))
@@ -363,7 +364,7 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
                 deleted = f.delete()
                 if not deleted:
                     raise IOError("Failed to delete %s" % url)
-                return
+                return None
 
             deleted = False
             try:
@@ -393,6 +394,7 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
                     LOGGER.warning("Failed to deleted %s", url, exc_info=exc)
             if not deleted:
                 raise IOError("Failed to delete %s" % url)
+            return True
         except GLib.GError as exc:
             LOGGER.warning("Gio.Gerror", exc_info=exc)
             raise IOError(str(exc))
@@ -436,6 +438,7 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             if not deleted:
                 self._rm_rf(f)
             LOGGER.info("%s deleted", url)
+            return True
         except GLib.GError as exc:
             LOGGER.warning("Gio.Gerror", exc_info=exc)
             raise IOError(str(exc))
@@ -597,7 +600,7 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
 
         if os.name != 'nt':
             LOGGER.warning("fs_hide('%s') can only works on Windows", uri)
-            return
+            return None
         filepath = self.fs_unsafe(uri)
         LOGGER.info("Hiding file: {}".format(filepath))
         ret = ctypes.windll.kernel32.SetFileAttributesW(
@@ -605,6 +608,7 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
         )
         if not ret:
             raise ctypes.WinError()
+        return True
 
     def fs_get_mime(self, uri):
         if not self._is_file_uri(uri):
