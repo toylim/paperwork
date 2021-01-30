@@ -468,7 +468,7 @@ class Plugin(openpaperwork_core.PluginBase):
         LOGGER.info("Total word count before reduction: %d", word_count)
         if word_count <= MAX_WORDS:
             LOGGER.info("No reduction to do")
-            return
+            return corpus
 
         threshold = sorted(word_freq_sums, reverse=True)[MAX_WORDS]
         LOGGER.info("Word frequency threshold: %f", threshold)
