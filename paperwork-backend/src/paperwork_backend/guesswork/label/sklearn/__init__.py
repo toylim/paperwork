@@ -8,12 +8,14 @@ It stores data in 2 ways:
 - sqlite database
 """
 import collections
+import gc
 import logging
 import os
 import sqlite3
 import time
 
 import numpy
+import scipy.sparse
 import sklearn.feature_extraction.text
 import sklearn.naive_bayes
 
@@ -24,7 +26,9 @@ from .... import (_, sync)
 
 
 # Limit the number of documents used for performance reasons
-MAX_DOC_BACKLOG = os.getenv("PAPERWORK_LABEL_TRAINING_BACKLOG", 75)
+MAX_DOC_BACKLOG = os.getenv("PAPERWORK_LABEL_TRAINING_BACKLOG", 100)
+# Limit the number of words used for performance reasons
+MAX_WORDS = os.getenv("PAPERWORK_LABEL_TRAINING_MAX_WORDS", 15000)
 
 
 # Beware that we use Sqlite, but sqlite python module is not thread-safe
@@ -45,7 +49,7 @@ CREATE_TABLES = [
         " PRIMARY KEY (doc_id, label)"
         ")"
     ),
-    (  # see sklearn.feature_extraction.text.CountVectorizer.vocaulary_
+    (  # see sklearn.feature_extraction.text.CountVectorizer.vocabulary_
         "CREATE TABLE IF NOT EXISTS vocabulary ("
         " word TEXT NOT NULL,"
         " feature INTEGER NOT NULL,"
@@ -453,7 +457,47 @@ class Plugin(openpaperwork_core.PluginBase):
 
         return (all_labels, all_features)
 
+    def _reduce_corpus_words(self, corpus):
+        """
+        We may end up with a lot of different words (about 76000 in my case).
+        But most of them are actually too rare to be useful and they use
+        a lot memory and CPU time.
+        """
+        word_freq_sums = sum(corpus).toarray()[0]
+        word_count = word_freq_sums.shape[0]
+        LOGGER.info("Total word count before reduction: %d", word_count)
+        if word_count <= MAX_WORDS:
+            LOGGER.info("No reduction to do")
+            return
+
+        threshold = sorted(word_freq_sums, reverse=True)[MAX_WORDS]
+        LOGGER.info("Word frequency threshold: %f", threshold)
+
+        to_drop = []
+        for (idx, freq) in enumerate(word_freq_sums):
+            if freq > threshold:
+                continue
+            to_drop.append(idx)
+
+        for idx in range(0, len(corpus)):
+            arr = corpus[idx].toarray()[0]
+            arr = numpy.delete(arr, to_drop)
+            corpus[idx] = scipy.sparse.csr_matrix(arr)
+
+        LOGGER.info(
+            "Total word count after reduction: %d", word_count - len(to_drop)
+        )
+        return corpus
+
     def _load_classifiers(self, vectorizer):
+        # Jflesch> This is a very memory-intensive process. The Glib may try
+        # to allocate memory before the GC runs and AFAIK the Glib
+        # is not aware of Python GC, and so won't trigger it if required
+        # (instead it will abort).
+        # --> free as much memory as possible now
+        # (Remember that there may be 32bits version of Paperwork out there)
+        gc.collect()
+
         msg = _("Label guessing: Training ...")
 
         cursor = self.core.call_one(
@@ -479,9 +523,11 @@ class Plugin(openpaperwork_core.PluginBase):
                 )
                 assert(required_padding >= 0)
                 if required_padding > 0:
-                    doc_vector = numpy.hstack([
+                    doc_vector = scipy.sparse.hstack([
                         doc_vector, numpy.zeros((required_padding,))
                     ])
+                else:
+                    doc_vector = scipy.sparse.csr_matrix(doc_vector)
 
                 corpus.append(doc_vector)
 
@@ -503,6 +549,16 @@ class Plugin(openpaperwork_core.PluginBase):
             if len(corpus) <= 1:
                 return (None, None)
 
+            # no need to train on all the words. Only the most used words
+            corpus = self._reduce_corpus_words(corpus)
+
+            # Jflesch> This is a very memory-intensive process. The Glib may
+            # try to allocate memory before the GC runs and AFAIK the Glib
+            # is not aware of Python GC, and so won't trigger it if required
+            # (instead it will abort).
+            # --> free as much memory as possible now
+            gc.collect()
+
             classifiers = collections.defaultdict(
                 sklearn.naive_bayes.GaussianNB
             )
@@ -514,6 +570,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 )
                 for batch in range(0, len(corpus), 200):
                     batch_corpus = corpus[batch:batch + 200]
+                    batch_corpus = scipy.sparse.vstack(batch_corpus).toarray()
                     batch_targets = label_targets[batch:batch + 200]
                     classifiers[label].partial_fit(
                         batch_corpus, batch_targets,
@@ -525,6 +582,13 @@ class Plugin(openpaperwork_core.PluginBase):
                 "Training took %dms",
                 int((stop - start) * 1000)
             )
+
+            # Jflesch> This is a very memory-intensive process. The Glib may
+            # try to allocate memory before the GC runs and AFAIK the Glib
+            # is not aware of Python GC, and so won't trigger it if required
+            # (instead it will abort).
+            # --> free as much memory as possible now
+            gc.collect()
 
             return classifiers
         finally:
