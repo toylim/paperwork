@@ -25,10 +25,12 @@ import openpaperwork_core.promise
 from .... import (_, sync)
 
 
-# Limit the number of documents used for performance reasons
-MAX_DOC_BACKLOG = os.getenv("PAPERWORK_LABEL_TRAINING_BACKLOG", 100)
 # Limit the number of words used for performance reasons
-MAX_WORDS = os.getenv("PAPERWORK_LABEL_TRAINING_MAX_WORDS", 15000)
+MAX_WORDS = os.getenv("PAPERWORK_LABEL_GUESSING_MAX_WORDS", 15000)
+# Limit the number of documents used for performance reasons
+MAX_DOC_BACKLOG = os.getenv("PAPERWORK_LABEL_GUESSING_MAX_BACKLOG", 100)
+
+BATCH_SIZE = os.getenv("PAPERWORK_LABEL_GUESSING_BATCH_SIZE", 200)
 
 
 # Beware that we use Sqlite, but sqlite python module is not thread-safe
@@ -146,6 +148,222 @@ class UpdatableVectorizer(object):
         return r
 
 
+class BatchIterator(object):
+    def __init__(self, features, targets):
+        self.features = features
+        self.targets = targets
+        self.b = 0
+
+    def __iter__(self):
+        self.b = 0
+        return self
+
+    def __next__(self):
+        batch_corpus = self.features[self.b:self.b + BATCH_SIZE]
+        if len(batch_corpus) <= 0:
+            raise StopIteration()
+        batch_corpus = scipy.sparse.vstack(batch_corpus).toarray()
+        batch_targets = self.targets[self.b:self.b + BATCH_SIZE]
+        self.b += BATCH_SIZE
+        return (batch_corpus, batch_targets)
+
+
+class WordReductor(object):
+    def __init__(self, to_drop):
+        self.features_to_drop = to_drop
+
+    def reduce_features(self, features):
+        return numpy.delete(features, self.features_to_drop)
+
+
+class DummyWordReductor(object):
+    def reduce_features(self, features):
+        return features
+
+
+class Corpus(object):
+    """
+    Handles doc_ids and their associate feature vectors.
+    Make sure we train the document in the best order possible, so even
+    if the training is interrupted (time limit), we still have some training
+    for most labels.
+    """
+    def __init__(self, doc_ids, features, targets):
+        self.doc_ids = doc_ids
+        self.features = features
+        self.targets = targets
+
+    def standardize_feature_vectors(self, vectorizer):
+        for idx in range(0, len(self.features)):
+            doc_vector = self.features[idx]
+            required_padding = (
+                vectorizer.last_feature_id + 1 - doc_vector.shape[0]
+            )
+            assert(required_padding >= 0)
+            if required_padding > 0:
+                doc_vector = scipy.sparse.hstack([
+                    doc_vector, numpy.zeros((required_padding,))
+                ])
+            else:
+                doc_vector = scipy.sparse.csr_matrix(doc_vector)
+            self.features[idx] = doc_vector
+
+    def reduce_corpus_words(self):
+        """
+        We may end up with a lot of different words (about 76000 in my case).
+        But most of them are actually too rare to be useful and they use
+        a lot memory and CPU time.
+        """
+        word_freq_sums = sum(self.features).toarray()[0]
+        word_count = word_freq_sums.shape[0]
+        LOGGER.info("Total word count before reduction: %d", word_count)
+        if word_count <= MAX_WORDS:
+            LOGGER.info("No reduction to do")
+            return DummyWordReductor()
+
+        threshold = sorted(word_freq_sums, reverse=True)[MAX_WORDS]
+        LOGGER.info("Word frequency threshold: %f", threshold)
+
+        features_to_drop = []
+        for (idx, freq) in enumerate(word_freq_sums):
+            if freq > threshold:
+                continue
+            features_to_drop.append(idx)
+
+        reductor = WordReductor(features_to_drop)
+
+        for idx in range(0, len(self.features)):
+            self.features[idx] = scipy.sparse.csr_matrix(
+                reductor.reduce_features(
+                    self.features[idx].toarray()[0]
+                )
+            )
+
+        LOGGER.info(
+            "Total word count after reduction: %d",
+            word_count - len(reductor.features_to_drop)
+        )
+        return reductor
+
+    def get_doc_count(self):
+        return len(self.features)
+
+    def get_labels(self):
+        return self.targets.keys()
+
+    def get_batches(self, label):
+        return BatchIterator(self.features, self.targets[label])
+
+    @staticmethod
+    def _add_doc_ids(doc_weights, doc_ids):
+        # Assumes doc_ids are in reverse order (most recent first)
+        # Also assumes most recent documents are the most useful
+        assert(len(doc_ids) <= MAX_DOC_BACKLOG)
+        weigth = MAX_DOC_BACKLOG + 1
+        for doc_id in doc_ids:
+            doc_weights[doc_id] += weigth
+            weigth -= 1
+
+    @staticmethod
+    def load(cursor):
+        start = time.time()
+
+        # doc_id --> weigth
+        doc_weights = collections.defaultdict(lambda: 0)
+
+        all_labels = cursor.execute("SELECT DISTINCT label FROM labels")
+        all_labels = {l[0] for l in all_labels}
+        all_docs = cursor.execute(
+            "SELECT doc_id FROM features ORDER BY doc_id DESC"
+        )
+        all_docs = [l[0] for l in all_docs]
+
+        for label in all_labels:
+            ds = cursor.execute(
+                "SELECT doc_id FROM labels WHERE label = ?"
+                " ORDER BY doc_id DESC LIMIT {}".format(
+                    MAX_DOC_BACKLOG
+                ),
+                (label,)
+            )
+            Corpus._add_doc_ids(doc_weights, [d[0] for d in ds])
+
+        # label --> number of doc without this label
+        no_label_counts = {l: 0 for l in all_labels}
+        no_label_docids = {l: [] for l in all_labels}
+        for doc_id in all_docs:
+            if len(no_label_counts) <= 0:
+                break
+            doc_labels = cursor.execute(
+                "SELECT label FROM labels WHERE doc_id = ?", (doc_id,)
+            )
+            for label in list(no_label_counts.keys()):
+                if label in doc_labels:
+                    continue
+                no_label_docids[label].append(doc_id)
+                no_label_counts[label] += 1
+                if no_label_counts[label] >= MAX_DOC_BACKLOG:
+                    no_label_counts.pop(label)
+        for doc_ids in no_label_docids.values():
+            doc_ids.sort(reverse=True)
+            Corpus._add_doc_ids(doc_weights, doc_ids)
+
+        LOGGER.info(
+            "Loading features of %d documents for %d labels",
+            len(doc_ids), len(all_labels)
+        )
+
+        all_features = {}
+        for doc_id in doc_weights.keys():
+            vectors = cursor.execute(
+                "SELECT vector FROM features WHERE doc_id = ? LIMIT 1",
+                (doc_id,)
+            )
+            for vector in vectors:
+                all_features[doc_id] = vector[0]
+
+        all_features = [
+            [weight, doc_id, all_features[doc_id]]
+            for (doc_id, weight) in doc_weights.items()
+        ]
+        all_features.sort(reverse=True)
+        doc_ids = [
+            doc_id
+            for (weight, doc_id, features) in all_features
+        ]
+        features = [
+            features
+            for (weight, doc_id, features) in all_features
+        ]
+
+        # Load labels
+        targets = collections.defaultdict(list)
+        for (idx, doc_id) in enumerate(doc_ids):
+            doc_labels = cursor.execute(
+                "SELECT label FROM labels WHERE doc_id = ?",
+                (doc_id,)
+            )
+            doc_labels = [label[0] for label in doc_labels]
+            for label in all_labels:
+                present = label in doc_labels
+                targets[label].append(1 if present else 0)
+
+        corpus = Corpus(
+            doc_ids=doc_ids,
+            features=features,
+            targets=targets
+        )
+
+        stop = time.time()
+
+        LOGGER.info(
+            "Took %dms to load features of %d documents",
+            int((stop - start) * 1000), len(doc_ids)
+        )
+
+        return corpus
+
+
 class LabelGuesserTransaction(sync.BaseTransaction):
     def __init__(self, plugin, guess_labels=False, total_expected=-1):
         super().__init__(plugin.core, total_expected)
@@ -176,6 +394,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         # Since loading the classifiers is a fairly long operations, we only
         # do it when we actually need them.
         self.original_vectorizer = None
+        self.reductor = None
         self.classifiers = None
 
     def __enter__(self):
@@ -203,12 +422,14 @@ class LabelGuesserTransaction(sync.BaseTransaction):
 
             if self.classifiers is None:
                 self.original_vectorizer = self.vectorizer.copy()
-                self.classifiers = self.plugin._load_classifiers(
-                    self.original_vectorizer
-                )
+                (self.word_reductor, self.classifiers) = \
+                    self.plugin._load_classifiers(
+                        self.original_vectorizer
+                    )
 
             self.plugin._set_guessed_labels(
-                doc_url, self.original_vectorizer, self.classifiers
+                doc_url, self.original_vectorizer,
+                self.word_reductor, self.classifiers
             )
 
         self.notify_progress(
@@ -397,98 +618,6 @@ class Plugin(openpaperwork_core.PluginBase):
             )
         )
 
-    def _load_labels_and_features(self, cursor):
-        start = time.time()
-
-        all_labels = cursor.execute("SELECT DISTINCT label FROM labels")
-        all_labels = {l[0] for l in all_labels}
-        all_docs = cursor.execute(
-            "SELECT doc_id FROM features ORDER BY doc_id DESC"
-        )
-        all_docs = [l[0] for l in all_docs]
-
-        doc_ids = set()
-
-        for label in all_labels:
-            ds = cursor.execute(
-                "SELECT doc_id FROM labels WHERE label = ? LIMIT {}".format(
-                    MAX_DOC_BACKLOG
-                ),
-                (label,)
-            )
-            doc_ids.update((d[0] for d in ds))
-
-        # label --> number of doc without this label
-        no_label_counts = {l: 0 for l in all_labels}
-        for doc_id in all_docs:
-            if len(no_label_counts) <= 0:
-                break
-            doc_labels = cursor.execute(
-                "SELECT label FROM labels WHERE doc_id = ?", (doc_id,)
-            )
-            for label in list(no_label_counts.keys()):
-                if label in doc_labels:
-                    continue
-                doc_ids.add(doc_id)
-                no_label_counts[label] += 1
-                if no_label_counts[label] >= MAX_DOC_BACKLOG:
-                    no_label_counts.pop(label)
-
-        LOGGER.info(
-            "Loading features of %d documents for %d labels",
-            len(doc_ids), len(all_labels)
-        )
-
-        all_features = []
-        for doc_id in doc_ids:
-            vectors = cursor.execute(
-                "SELECT vector FROM features WHERE doc_id = ? LIMIT 1",
-                (doc_id,)
-            )
-            for vector in vectors:
-                all_features.append((doc_id, vector[0]))
-
-        stop = time.time()
-
-        LOGGER.info(
-            "Took %dms to load features of %d documents",
-            int((stop - start) * 1000), len(doc_ids)
-        )
-
-        return (all_labels, all_features)
-
-    def _reduce_corpus_words(self, corpus):
-        """
-        We may end up with a lot of different words (about 76000 in my case).
-        But most of them are actually too rare to be useful and they use
-        a lot memory and CPU time.
-        """
-        word_freq_sums = sum(corpus).toarray()[0]
-        word_count = word_freq_sums.shape[0]
-        LOGGER.info("Total word count before reduction: %d", word_count)
-        if word_count <= MAX_WORDS:
-            LOGGER.info("No reduction to do")
-            return corpus
-
-        threshold = sorted(word_freq_sums, reverse=True)[MAX_WORDS]
-        LOGGER.info("Word frequency threshold: %f", threshold)
-
-        to_drop = []
-        for (idx, freq) in enumerate(word_freq_sums):
-            if freq > threshold:
-                continue
-            to_drop.append(idx)
-
-        for idx in range(0, len(corpus)):
-            arr = corpus[idx].toarray()[0]
-            arr = numpy.delete(arr, to_drop)
-            corpus[idx] = scipy.sparse.csr_matrix(arr)
-
-        LOGGER.info(
-            "Total word count after reduction: %d", word_count - len(to_drop)
-        )
-        return corpus
-
     def _load_classifiers(self, vectorizer):
         # Jflesch> This is a very memory-intensive process. The Glib may try
         # to allocate memory before the GC runs and AFAIK the Glib
@@ -507,50 +636,19 @@ class Plugin(openpaperwork_core.PluginBase):
         try:
             self.core.call_all("on_progress", "classifiers", 0.0, msg)
 
-            (all_labels, all_features) = self.core.call_one(
-                "mainloop_execute", self._load_labels_and_features, cursor
+            corpus = self.core.call_one(
+                "mainloop_execute", Corpus.load, cursor
             )
 
             LOGGER.info("Training classifiers ...")
             start = time.time()
 
-            corpus = []
-            targets = collections.defaultdict(list)
-            total = len(all_features)
-            for (idx, (doc_id, doc_vector)) in enumerate(all_features):
-                required_padding = (
-                    vectorizer.last_feature_id + 1 - doc_vector.shape[0]
-                )
-                assert(required_padding >= 0)
-                if required_padding > 0:
-                    doc_vector = scipy.sparse.hstack([
-                        doc_vector, numpy.zeros((required_padding,))
-                    ])
-                else:
-                    doc_vector = scipy.sparse.csr_matrix(doc_vector)
-
-                corpus.append(doc_vector)
-
-                doc_labels = self.core.call_one(
-                    "mainloop_execute", cursor.execute,
-                    "SELECT label FROM labels WHERE doc_id = ?",
-                    (doc_id,)
-                )
-                doc_labels = self.core.call_one(
-                    "mainloop_execute",
-                    lambda r: {label for (label,) in r},
-                    doc_labels
-                )
-
-                for label in all_labels:
-                    present = label in doc_labels
-                    targets[label].append(1 if present else 0)
-
-            if len(corpus) <= 1:
+            if corpus.get_doc_count() <= 1:
                 return (None, None)
 
+            corpus.standardize_feature_vectors(vectorizer)
             # no need to train on all the words. Only the most used words
-            corpus = self._reduce_corpus_words(corpus)
+            reductor = corpus.reduce_corpus_words()
 
             # Jflesch> This is a very memory-intensive process. The Glib may
             # try to allocate memory before the GC runs and AFAIK the Glib
@@ -562,20 +660,29 @@ class Plugin(openpaperwork_core.PluginBase):
             classifiers = collections.defaultdict(
                 sklearn.naive_bayes.GaussianNB
             )
-            total = len(targets)
-            for (idx, (label, label_targets)) in enumerate(targets.items()):
-                self.core.call_all(
-                    "on_progress", "classifiers", idx / total,
-                    _("Label guessing: Training ...")
-                )
-                for batch in range(0, len(corpus), 200):
-                    batch_corpus = corpus[batch:batch + 200]
-                    batch_corpus = scipy.sparse.vstack(batch_corpus).toarray()
-                    batch_targets = label_targets[batch:batch + 200]
-                    classifiers[label].partial_fit(
-                        batch_corpus, batch_targets,
-                        classes=[0, 1]
-                    )
+
+            batch_iterators = [
+                (label, corpus.get_batches(label))
+                for label in corpus.get_labels()
+            ]
+            done = 0
+            total = len(batch_iterators) * corpus.get_doc_count()
+
+            try:
+                while True:
+                    for (label, batch_iterator) in batch_iterators:
+                        (batch_corpus, batch_targets) = next(batch_iterator)
+                        self.core.call_all(
+                            "on_progress", "classifiers", done / total,
+                            _("Label guessing: Training ...")
+                        )
+                        classifiers[label].partial_fit(
+                            batch_corpus, batch_targets,
+                            classes=[0, 1]
+                        )
+                        done += len(batch_corpus)
+            except StopIteration:
+                pass
 
             stop = time.time()
             LOGGER.info(
@@ -590,12 +697,12 @@ class Plugin(openpaperwork_core.PluginBase):
             # --> free as much memory as possible now
             gc.collect()
 
-            return classifiers
+            return (reductor, classifiers)
         finally:
             self.core.call_all("on_progress", "classifiers", 1.0, msg)
             self.core.call_one("mainloop_execute", cursor.close)
 
-    def _guess(self, vectorizer, classifiers, doc_url):
+    def _guess(self, vectorizer, reductor, classifiers, doc_url):
         LOGGER.info("Guessing labels on %s", doc_url)
         doc_txt = []
         self.core.call_all("doc_get_text_by_url", doc_txt, doc_url)
@@ -603,15 +710,17 @@ class Plugin(openpaperwork_core.PluginBase):
         if doc_txt == u"":
             return
 
-        vector = vectorizer.transform([doc_txt]).toarray()
+        vector = vectorizer.transform([doc_txt])
+        vector = vector.toarray()[0]
+        vector = reductor.reduce_features(vector)
 
         for (label, classifier) in classifiers.items():
-            predicted = classifier.predict(vector)[0]
+            predicted = classifier.predict([vector])[0]
             if predicted:
                 yield label
 
-    def _set_guessed_labels(self, doc_url, vectorizer, classifiers):
-        labels = self._guess(vectorizer, classifiers, doc_url)
+    def _set_guessed_labels(self, doc_url, vectorizer, reductor, classifiers):
+        labels = self._guess(vectorizer, reductor, classifiers, doc_url)
         labels = list(labels)
         for label in labels:
             self.core.call_success("doc_add_label_by_url", doc_url, label)
