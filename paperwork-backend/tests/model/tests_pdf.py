@@ -24,12 +24,12 @@ class TestHocr(unittest.TestCase):
 
         mapping = self.full_doc_url + "/page_map.csv"
         if self.core.call_success("fs_exists", mapping):
-            self.core.call_all("fs_unlink", mapping, trash=False)
+            self.core.call_success("fs_unlink", mapping, trash=False)
 
     def tearDown(self):
         mapping = self.full_doc_url + "/page_map.csv"
         if self.core.call_success("fs_exists", mapping):
-            self.core.call_all("fs_unlink", mapping, trash=False)
+            self.core.call_success("fs_unlink", mapping, trash=False)
 
     def test_is_doc(self):
         self.assertTrue(self.core.call_success("is_doc", self.simple_doc_url))

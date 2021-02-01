@@ -94,7 +94,7 @@ class Plugin(PluginBase):
         base_hist_dir = self.core.call_success(
             "fs_join", data_dir, "openpaperwork"
         )
-        self.core.call_all("fs_mkdir_p", base_hist_dir)
+        self.core.call_success("fs_mkdir_p", base_hist_dir)
         histfile = self.core.call_success(
             "fs_join", base_hist_dir, "interactive_history"
         )

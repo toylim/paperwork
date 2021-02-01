@@ -134,7 +134,7 @@ class Plugin(openpaperwork_core.PluginBase):
         LOGGER.info("Moving imported file(s) to trash ...")
         for file_uri in file_uris:
             LOGGER.info("Moving %s to trash ...", file_uri)
-            self.core.call_all("fs_unlink", file_uri)
+            self.core.call_success("fs_unlink", file_uri)
         notification = self.core.call_success(
             "get_notification_builder", _("Imported file(s) deleted"),
         )

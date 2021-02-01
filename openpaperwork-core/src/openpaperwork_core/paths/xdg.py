@@ -24,10 +24,10 @@ class Plugin(PluginBase):
             "fs_safe",
             os.getenv("XDG_CONFIG_HOME", os.path.expanduser("~/.config"))
         )
-        self.core.call_all("fs_mkdir_p", config_dir)
+        self.core.call_success("fs_mkdir_p", config_dir)
 
         if os.name == 'nt':  # hide ~/.local on Windows
-            self.core.call_all("fs_hide", config_dir)
+            self.core.call_success("fs_hide", config_dir)
 
         return config_dir
 
@@ -39,11 +39,11 @@ class Plugin(PluginBase):
 
         app_name = self.core.call_success("app_get_fs_name")
         app_dir = self.core.call_success("fs_join", data_dir, app_name)
-        self.core.call_all("fs_mkdir_p", app_dir)
+        self.core.call_success("fs_mkdir_p", app_dir)
 
         if os.name == 'nt':  # hide ~/.local on Windows
             local_dir = self.core.call_success("fs_safe", local_dir)
             if self.core.call_success("fs_isdir", local_dir) is not None:
-                self.core.call_all("fs_hide", local_dir)
+                self.core.call_success("fs_hide", local_dir)
 
         return app_dir

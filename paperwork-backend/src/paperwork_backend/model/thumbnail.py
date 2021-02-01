@@ -90,7 +90,7 @@ class Plugin(openpaperwork_core.PluginBase):
             if not self.core.call_success("fs_iswritable", thumbnail_url):
                 page_mtime = self.core.call_success("fs_get_mtime", page_url)
                 if thumbnail_mtime < page_mtime:
-                    self.core.call_all("fs_unlink", thumbnail_url)
+                    self.core.call_success("fs_unlink", thumbnail_url)
 
         if self.core.call_success("fs_exists", thumbnail_url) is not None:
             LOGGER.debug("Loading thumbnail for %s page %d", doc_url, page_idx)

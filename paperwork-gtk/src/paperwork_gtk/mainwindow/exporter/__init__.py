@@ -308,7 +308,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _hide_preview(self):
         if self.tmp_file_url is not None:
-            self.core.call_all("fs_unlink", self.tmp_file_url, trash=False)
+            self.core.call_success("fs_unlink", self.tmp_file_url, trash=False)
             self.tmp_file_url = None
         if self.renderer is not None:
             self.renderer.close()

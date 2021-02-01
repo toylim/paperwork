@@ -220,7 +220,7 @@ class Plugin(openpaperwork_core.PluginBase):
             self._update_pdf(doc_id, doc_url, dst_file_url, file_ext)
             return (doc_id, doc_url)
         except Exception:
-            self.core.call_all("fs_rm_rf", doc_url, trash=False)
+            self.core.call_success("fs_rm_rf", doc_url, trash=False)
             raise
 
     def doc_get_hash_by_url(self, doc_url):

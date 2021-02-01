@@ -598,7 +598,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 "fs_join", data_dir, "bayes"
             )
 
-        self.core.call_all("fs_mkdir_p", self.bayes_dir)
+        self.core.call_success("fs_mkdir_p", self.bayes_dir)
 
         sql_file = self.core.call_success(
             "fs_join", self.bayes_dir, 'label_guesser.db'

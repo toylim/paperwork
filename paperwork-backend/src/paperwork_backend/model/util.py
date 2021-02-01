@@ -28,7 +28,7 @@ def _shift_pages(core, page_filename_fmt, doc_url, start_page_idx, offset):
             )
         )
         LOGGER.info("  - %s --> %s", old_url, new_url)
-        core.call_all("fs_rename", old_url, new_url)
+        core.call_success("fs_rename", old_url, new_url)
 
 
 def delete_page_file(core, page_filename_fmt, doc_url, page_idx, trash=True):
@@ -39,7 +39,7 @@ def delete_page_file(core, page_filename_fmt, doc_url, page_idx, trash=True):
         LOGGER.info(
             "(%s) Deleting %s p%d:", page_filename_fmt, doc_url, page_idx
         )
-        core.call_all("fs_unlink", file_url, trash=trash)
+        core.call_success("fs_unlink", file_url, trash=trash)
 
     # move all the other pages 1 level down
     _shift_pages(core, page_filename_fmt, doc_url, page_idx, -1)
@@ -78,7 +78,7 @@ def move_page_file(
     )
     if core.call_success("fs_exists", src) is not None:
         LOGGER.info("  - %s --> %s", src, dst)
-        core.call_all("fs_rename", src, dst)
+        core.call_success("fs_rename", src, dst)
 
     _shift_pages(core, page_filename_fmt, source_doc_url, source_page_idx, -1)
 
@@ -91,7 +91,7 @@ def move_page_file(
 
     if core.call_success("fs_exists", src) is not None:
         LOGGER.info("  - %s --> %s", src, dst)
-        core.call_all("fs_rename", src, dst)
+        core.call_success("fs_rename", src, dst)
     return True
 
 
