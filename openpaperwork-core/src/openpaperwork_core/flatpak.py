@@ -70,7 +70,7 @@ class Plugin(PluginBase):
         if not self.flatpak:
             return None
 
-        self.core.call_all("fs_mkdir_p", self.tmp_dir)
+        self.core.call_success("fs_mkdir_p", self.tmp_dir)
         tmp = tempfile.NamedTemporaryFile(
             prefix=prefix, suffix=suffix, delete=False, mode=mode,
             dir=self.core.call_success("fs_unsafe", self.tmp_dir)

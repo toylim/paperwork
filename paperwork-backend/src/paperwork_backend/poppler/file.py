@@ -56,8 +56,6 @@ class Plugin(openpaperwork_core.PluginBase):
             # prevents deleting documents.
             return None
 
-        if not url.startswith("file://"):
-            return None
         gio_file = Gio.File.new_for_uri(url)
         doc = self.core.call_one(
             "mainloop_execute", Poppler.Document.new_from_gfile,

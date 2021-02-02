@@ -268,18 +268,11 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
         if not GLIB_AVAILABLE:
             out['glib'].update(deps.GLIB)
 
-    @staticmethod
-    def _is_file_uri(uri):
-        return uri.startswith("file://")
-
     def fs_open(self, uri, mode='r', needs_fileno=False, **kwargs):
         if needs_fileno:
             # On Windows, `Gio.[Unix]OutputStream.get_fd()` doesn't seem
             # to be available
             return
-
-        if not self._is_file_uri(uri):
-            return None
 
         f = self.vfs.get_file_for_uri(uri)
         if ('w' not in mode and 'a' not in mode):
@@ -297,9 +290,6 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             ))
 
     def fs_exists(self, url):
-        if not self._is_file_uri(url):
-            return None
-
         try:
             f = self.vfs.get_file_for_uri(url)
             if not f.query_exists():
@@ -313,9 +303,6 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             raise IOError(str(exc))
 
     def fs_listdir(self, url):
-        if not self._is_file_uri(url):
-            return None
-
         try:
             f = self.vfs.get_file_for_uri(url)
             if not f.query_exists():
@@ -332,11 +319,6 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             raise IOError(str(exc))
 
     def fs_rename(self, old_url, new_url):
-        if not self._is_file_uri(old_url):
-            return None
-        if not self._is_file_uri(new_url):
-            return None
-
         try:
             old = self.vfs.get_file_for_uri(old_url)
             new = self.vfs.get_file_for_uri(new_url)
@@ -350,9 +332,6 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             raise IOError(str(exc))
 
     def fs_unlink(self, url, trash=True, **kwargs):
-        if not self._is_file_uri(url):
-            return None
-
         try:
             f = self.vfs.get_file_for_uri(url)
             if not f.query_exists():
@@ -400,9 +379,6 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             raise IOError(str(exc))
 
     def fs_rm_rf(self, url, trash=True, **kwargs):
-        if not self._is_file_uri(url):
-            return None
-
         if self.fs_exists(url) is None:
             return None
 
@@ -460,9 +436,6 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             raise IOError(str(exc))
 
     def fs_get_mtime(self, url):
-        if not self._is_file_uri(url):
-            return None
-
         try:
             f = self.vfs.get_file_for_uri(url)
             if not f.query_exists():
@@ -482,9 +455,6 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             LOGGER.warning("Gio.Gerror", exc_info=exc)
 
     def fs_getsize(self, url):
-        if not self._is_file_uri(url):
-            return None
-
         try:
             f = self.vfs.get_file_for_uri(url)
             fi = f.query_info(
@@ -496,9 +466,6 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             raise IOError(str(exc))
 
     def fs_isdir(self, url):
-        if not self._is_file_uri(url):
-            return None
-
         try:
             f = self.vfs.get_file_for_uri(url)
             if not f.query_exists():
@@ -514,14 +481,6 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             raise IOError(str(exc))
 
     def fs_copy(self, old_url, new_url):
-        old_type = old_url.split(":", 1)[0]
-        new_type = new_url.split(":", 1)[0]
-        if old_type != new_type:
-            # use the more generic and cross-FS method
-            return super().fs_copy(old_url, new_url)
-
-        if not self._is_file_uri(old_url) or not self._is_file_uri(new_url):
-            return None
         try:
             old = self.vfs.get_file_for_uri(old_url)
             new = self.vfs.get_file_for_uri(new_url)
@@ -534,9 +493,6 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             return None
 
     def fs_mkdir_p(self, url):
-        if not self._is_file_uri(url):
-            return None
-
         try:
             f = self.vfs.get_file_for_uri(url)
             if not f.query_exists():
@@ -587,17 +543,11 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             yield parent
 
     def fs_recurse(self, parent_uri, dir_included=False):
-        if not self._is_file_uri(parent_uri):
-            return None
-
         parent = self.vfs.get_file_for_uri(parent_uri)
         for f in self._recurse(parent, dir_included):
             yield f.get_uri()
 
     def fs_hide(self, uri):
-        if not self._is_file_uri(uri):
-            return None
-
         if os.name != 'nt':
             LOGGER.warning("fs_hide('%s') can only works on Windows", uri)
             return None
@@ -611,9 +561,6 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
         return True
 
     def fs_get_mime(self, uri):
-        if not self._is_file_uri(uri):
-            return None
-
         if os.name == 'nt':
             # WORKAROUND(Jflesch):
             # Gio.File.query_info().get_content_type() returns crap on Windows
@@ -640,9 +587,6 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
         return (self.fs_safe(tmp.name), tmp)
 
     def fs_iswritable(self, url):
-        if not self._is_file_uri(url):
-            return None
-
         try:
             f = self.vfs.get_file_for_uri(url)
             fi = f.query_info(

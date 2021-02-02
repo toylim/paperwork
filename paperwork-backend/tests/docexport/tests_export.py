@@ -57,7 +57,7 @@ class TestExport(unittest.TestCase):
 
         self.assertEqual(len(self.result), 1)
         self.assertTrue(self.result[0].startswith("memory://"))
-        self.core.call_all("fs_unlink", self.result[0], trash=False)
+        self.core.call_success("fs_unlink", self.result[0], trash=False)
 
         (tmp_file, fd) = self.core.call_success(
             "fs_mktemp", prefix="paperwork-test-", suffix=".png"
@@ -78,7 +78,7 @@ class TestExport(unittest.TestCase):
         self.assertTrue(
             self.core.call_success("fs_getsize", self.result[0]) > 0
         )
-        self.core.call_all("fs_unlink", self.result[0], trash=False)
+        self.core.call_success("fs_unlink", self.result[0], trash=False)
 
     def test_img_to_pdf(self):
         pipeline = [
@@ -105,7 +105,7 @@ class TestExport(unittest.TestCase):
         # required by Poppler
         self.assertEqual(len(self.result), 1)
         self.assertTrue(self.result[0].startswith("file://"))
-        self.core.call_all("fs_unlink", self.result[0], trash=False)
+        self.core.call_success("fs_unlink", self.result[0], trash=False)
 
         (tmp_file, fd) = self.core.call_success(
             "fs_mktemp", prefix="paperwork-test-", suffix=".png"
@@ -126,4 +126,4 @@ class TestExport(unittest.TestCase):
         self.assertTrue(self.core.call_success(
             "fs_getsize", self.result[0]
         ) > 0)
-        self.core.call_all("fs_unlink", self.result[0], trash=False)
+        self.core.call_success("fs_unlink", self.result[0], trash=False)
