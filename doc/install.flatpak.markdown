@@ -88,6 +88,23 @@ flatpak run --command=paperwork-cli work.openpaper.Paperwork help import
 flatpak run --command=paperwork-cli work.openpaper.Paperwork -bq import ~/tmp/pdf
 ```
 
+## Installing support for additional languages
+
+By default, Flatpak installs support for English and the language of your
+system. If you want support for additional languages, you can use the following
+commands:
+
+```sh
+flatpak config --user --set languages "en;fr;de"
+flatpak update --user
+```
+
+To get support for all the languages supported by Tesseract (OCR):
+
+```sh
+flatpak install --reinstall --user work.openpaper.Paperwork.Locale
+```
+
 
 ## No text appears when rendering PDF files. What do I do ?
 
