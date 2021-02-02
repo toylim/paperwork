@@ -106,7 +106,9 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         self.core.call_all(
             "on_progress", "converting", 0.0,
-            _("Converting document %s to PDF ...")
+            _("Converting document %s to PDF ...") % self.core.call_success(
+                "fs_basename", doc_file_url
+            )
         )
         self.core.call_success(
             "convert_file_to_pdf",
