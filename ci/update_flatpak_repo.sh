@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/bash
 echo $PWD
 git log -1
 
@@ -133,6 +133,9 @@ if [ -z "$RCLONE_CONFIG_OVHSWIFT_USER" ] ; then
   exit 0
 fi
 
+RSYNC_USER=flatpak
+RSYNC_HOST=openpaper-flatpak-mirror.local
+
 echo "Syncing ..."
 
 # we must sync first the objects and the deltas before the references
@@ -148,7 +151,13 @@ for dest in \
 
 	local_path="/home/gitlab-runner/flatpak/${dest}"
 
-	echo "${local_path} --> ${dest} ..."
+	echo "Rsync ${local_path} --> ${dest} ..."
+	if ! time rsync -rtz ${local_path} ${RSYNC_USER}@${RSYNC_HOST}:public_html/paperwork_repo ; then
+		echo "rsync failed"
+		exit 1
+	fi
+
+	echo "Rclone ${local_path} --> ${dest} ..."
 
 	action="sync"
 	if [ -f "${local_path}" ] ; then
@@ -156,7 +165,7 @@ for dest in \
 		dest="$(dirname ${dest})"
 	fi
 
-	if ! rclone --fast-list --config ./ci/rclone.conf ${action} "${local_path}" "ovhswift:paperwork_flatpak/${dest}" ; then
+	if ! time rclone --fast-list --config ./ci/rclone.conf ${action} "${local_path}" "ovhswift:paperwork_flatpak/${dest}" ; then
 		echo "rclone failed"
 		exit 1
 	fi
