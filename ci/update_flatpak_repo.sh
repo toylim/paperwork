@@ -134,7 +134,7 @@ if [ -z "$RCLONE_CONFIG_OVHSWIFT_USER" ] ; then
 fi
 
 RSYNC_USER=flatpak
-RSYNC_HOST=openpaper-flatpak-mirror.local
+RSYNC_HOST=t.flesch.computer
 
 echo "Syncing ..."
 
