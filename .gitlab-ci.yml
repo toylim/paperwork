@@ -78,7 +78,7 @@ linux_flatpak:
   script:
     # not running as root, so we cannot actually install anything
     # - apt-get update
-    # - apt-get install -y -q rclone flatpak-builder
+    # - apt-get install -y -q rsync flatpak-builder
     - ./ci/update_flatpak_repo.sh
 
 

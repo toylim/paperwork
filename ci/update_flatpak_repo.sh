@@ -128,11 +128,6 @@ cd ..
 
 chmod -R a+rX ${HOME}/flatpak
 
-if [ -z "$RCLONE_CONFIG_OVHSWIFT_USER" ] ; then
-  echo "Delivery: No rclone credentials provided."
-  exit 0
-fi
-
 RSYNC_USER=flatpak
 RSYNC_HOST=t.flesch.computer
 
@@ -156,22 +151,6 @@ for dest in \
 		echo "rsync failed"
 		exit 1
 	fi
-
-	echo "Rclone ${local_path} --> ${dest} ..."
-
-	action="sync"
-	if [ -f "${local_path}" ] ; then
-		action="copy"
-		dest="$(dirname ${dest})"
-	fi
-
-	if ! time rclone --fast-list --config ./ci/rclone.conf ${action} "${local_path}" "ovhswift:paperwork_flatpak/${dest}" ; then
-		echo "rclone failed"
-		exit 1
-	fi
-
 done
-
-
 
 cleanup
