@@ -69,7 +69,6 @@ doc_devel:
 
 
 linux_flatpak:
-  image: debian:buster
   stage: deploy_linux
   only:
     - branches@World/OpenPaperwork/paperwork
@@ -77,8 +76,6 @@ linux_flatpak:
   tags:
     - openpaper-flatpak
   script:
-    - apt-get update
-    - apt-get install -y -q rsync flatpak-builder sudo
     - groupadd -g 1500 builder
     - useradd -u 1500 -g 1500 -ms /bin/bash builder
     - sudo -Eu builder bash ./ci/update_flatpak_repo.sh
