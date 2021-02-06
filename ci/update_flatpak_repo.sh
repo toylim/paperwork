@@ -2,6 +2,9 @@
 echo $PWD
 git log -1
 
+USER=builder
+export HOME=/home/${USER}
+
 LOCKDIR=/tmp/build.lock.d
 PIDFILE=${LOCKDIR}/pid
 
@@ -81,7 +84,7 @@ rm -f data.tar.gz
 download "https://download.openpaper.work/data/paperwork/${branch}_latest/data.tar.gz" data.tar.gz
 
 export EXPORT_ARGS="--gpg-sign=E5ACE6FEA7A6DD48"
-export REPO=/home/gitlab-runner/flatpak/paperwork_repo
+export REPO=/home/${USER}/flatpak/paperwork_repo
 
 for arch in x86_64 ; do
 	msg "=== Architecture: ${arch} ==="
@@ -128,13 +131,8 @@ cd ..
 
 chmod -R a+rX ${HOME}/flatpak
 
-if [ -z "$RCLONE_CONFIG_OVHSWIFT_USER" ] ; then
-  echo "Delivery: No rclone credentials provided."
-  exit 0
-fi
-
 RSYNC_USER=flatpak
-RSYNC_HOST=openpaper-flatpak-mirror.local
+RSYNC_HOST=t.flesch.computer
 
 echo "Syncing ..."
 
@@ -149,29 +147,13 @@ for dest in \
 		paperwork_repo/summary.sig \
 	; do
 
-	local_path="/home/gitlab-runner/flatpak/${dest}"
+	local_path="/home/${USER}/flatpak/${dest}"
 
 	echo "Rsync ${local_path} --> ${dest} ..."
 	if ! time rsync -rtz ${local_path} ${RSYNC_USER}@${RSYNC_HOST}:public_html/paperwork_repo ; then
 		echo "rsync failed"
 		exit 1
 	fi
-
-	echo "Rclone ${local_path} --> ${dest} ..."
-
-	action="sync"
-	if [ -f "${local_path}" ] ; then
-		action="copy"
-		dest="$(dirname ${dest})"
-	fi
-
-	if ! time rclone --fast-list --config ./ci/rclone.conf ${action} "${local_path}" "ovhswift:paperwork_flatpak/${dest}" ; then
-		echo "rclone failed"
-		exit 1
-	fi
-
 done
-
-
 
 cleanup
