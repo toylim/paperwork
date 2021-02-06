@@ -81,7 +81,7 @@ linux_flatpak:
     - apt-get install -y -q rsync flatpak-builder sudo
     - groupadd -g 1500 builder
     - useradd -u 1500 -g 1500 -ms /bin/bash builder
-    - sudo -u builder -s ./ci/update_flatpak_repo.sh
+    - sudo -u builder bash ./ci/update_flatpak_repo.sh
 
 
 .windows: &windows
