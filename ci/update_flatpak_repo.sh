@@ -2,6 +2,9 @@
 echo $PWD
 git log -1
 
+USER=builder
+export HOME=/home/${USER}
+
 LOCKDIR=/tmp/build.lock.d
 PIDFILE=${LOCKDIR}/pid
 
@@ -81,7 +84,7 @@ rm -f data.tar.gz
 download "https://download.openpaper.work/data/paperwork/${branch}_latest/data.tar.gz" data.tar.gz
 
 export EXPORT_ARGS="--gpg-sign=E5ACE6FEA7A6DD48"
-export REPO=/home/builder/flatpak/paperwork_repo
+export REPO=/home/${USER}/flatpak/paperwork_repo
 
 for arch in x86_64 ; do
 	msg "=== Architecture: ${arch} ==="
@@ -144,7 +147,7 @@ for dest in \
 		paperwork_repo/summary.sig \
 	; do
 
-	local_path="/home/builder/flatpak/${dest}"
+	local_path="/home/${USER}/flatpak/${dest}"
 
 	echo "Rsync ${local_path} --> ${dest} ..."
 	if ! time rsync -rtz ${local_path} ${RSYNC_USER}@${RSYNC_HOST}:public_html/paperwork_repo ; then
