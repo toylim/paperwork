@@ -341,7 +341,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         return len(docs)
 
-    def doclist_show(self, docs, show_new=True):
+    def doclist_show(self, docs, show_new=False):
         self.doclist_clear()
 
         scroll = (self.docs != docs)
@@ -355,7 +355,11 @@ class Plugin(openpaperwork_core.PluginBase):
         self._reselect_current_doc(scroll=scroll)
 
     def on_search_results(self, query, docs):
-        self.doclist_show(docs, show_new=(query == ""))
+        # Open last document on startup
+        if self.active_doc == (None, None):
+            (doc_id, doc_url) = docs[0]
+            self.core.call_all("doc_open", doc_id, doc_url)
+        self.doclist_show(docs)
 
     def doc_close(self):
         self.active_doc = (None, None)
