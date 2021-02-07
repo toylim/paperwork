@@ -256,7 +256,7 @@ class UpdatableVectorizer(object):
             doc_vector = numpy.delete(doc_vector, to_drop_for_this_doc)
             self.core.call_one(
                 "mainloop_execute", self.db_cursor.execute,
-                "UPDATE features SET vector = ? WHERE doc_id = ? LIMIT 1",
+                "UPDATE features SET vector = ? WHERE doc_id = ?",
                 (doc_vector, doc_id)
             )
         self.core.call_all("on_progress", "label_vector_gc", 1.0)
@@ -270,7 +270,7 @@ class UpdatableVectorizer(object):
             )
             self.core.call_one(
                 "mainloop_execute", self.db_cursor.execute,
-                "DELETE FROM vocabulary WHERE feature = ? LIMIT 1", (f,)
+                "DELETE FROM vocabulary WHERE feature = ?", (f,)
             )
             self.core.call_one(
                 "mainloop_execute", self.db_cursor.execute,
