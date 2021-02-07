@@ -31,11 +31,12 @@
             </style>
             <child>
 
-              <object class="GtkBox" id="doclist_body">
+              <object class="GtkBox" id="docview_box">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
-                <property name="name">doclist_body</property>
+                <property name="name">docview_box</property>
+
                 <child>
                   <object class="GtkFlowBox" id="docview_page_layout">
                     <property name="visible">True</property>
