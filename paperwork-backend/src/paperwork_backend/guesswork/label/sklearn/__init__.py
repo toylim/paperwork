@@ -85,6 +85,11 @@ class PluginConfig(object):
         # label
         'max_doc_backlog': 100,
         'max_time': 10,  # seconds
+
+        # if the document contains too few words, the classifiers tend to
+        # put every possible labels on it. --> we ignore documents with too
+        # few words / features.
+        'min_features': 10,
     }
 
     def __init__(self, core):
@@ -776,6 +781,22 @@ class Plugin(openpaperwork_core.PluginBase):
         vector = vectorizer.transform([doc_txt])
         vector = vector.toarray()[0]
         vector = reductor.reduce_features(vector)
+
+        min_features = self.config.get("min_features")
+        nb_features = 0
+        for f in vector:
+            if f > 0:
+                nb_features += 1
+
+        if nb_features <= min_features:
+            LOGGER.warning(
+                "Document doesn't contain enough different words"
+                " (%d ; min required is %d). Labels won't be guessed",
+                nb_features, min_features
+            )
+            return
+
+        LOGGER.info("Documents contains %d features", nb_features)
 
         for (label, classifier) in classifiers.items():
             predicted = classifier.predict([vector])[0]
