@@ -10,7 +10,6 @@ It stores data in 2 ways:
 import collections
 import gc
 import logging
-import os
 import sqlite3
 import time
 
@@ -23,15 +22,6 @@ import openpaperwork_core
 import openpaperwork_core.promise
 
 from .... import (_, sync)
-
-
-# Limit the number of words used for performance reasons
-MAX_WORDS = os.getenv("PAPERWORK_LABEL_GUESSING_MAX_WORDS", 15000)
-# Limit the number of documents used for performance reasons
-MAX_DOC_BACKLOG = os.getenv("PAPERWORK_LABEL_GUESSING_MAX_BACKLOG", 100)
-MAX_TIME = os.getenv("PAPERWORK_LABEL_GUESSING_MAX_TIME", 10)  # seconds
-
-BATCH_SIZE = os.getenv("PAPERWORK_LABEL_GUESSING_BATCH_SIZE", 200)
 
 
 # Beware that we use Sqlite, but sqlite python module is not thread-safe
@@ -83,6 +73,43 @@ class SqliteNumpyArrayHandler(object):
     def register(cls):
         sqlite3.register_adapter(numpy.array, cls._to_sqlite)
         sqlite3.register_converter("NUMPY_ARRAY", cls._from_sqlite)
+
+
+class PluginConfig(object):
+    SETTINGS = {  # settings --> default value
+        'batch_size': 200,
+        # Limit the number of words used for performance reasons
+        'max_words': 15000,
+        # Limit the number of documents used for performance reasons
+        # backlog is the number of required documents with and without each
+        # label
+        'max_doc_backlog': 100,
+        'max_time': 10,  # seconds
+    }
+
+    def __init__(self, core):
+        self.core = core
+
+    def register(self):
+        class Setting(object):
+            def __init__(s, setting, default_val):
+                s.setting = setting
+                s.default_val = default_val
+
+            def register(s):
+                setting = self.core.call_success(
+                    "config_build_simple", "label_guessing",
+                    s.setting, lambda: s.default_val
+                )
+                self.core.call_all(
+                    "config_register", "label_guessing_" + s.setting, setting
+                )
+
+        for (setting, default_val) in self.SETTINGS.items():
+            Setting(setting, default_val).register()
+
+    def get(self, key):
+        return self.core.call_success("config_get", "label_guessing_" + key)
 
 
 class UpdatableVectorizer(object):
@@ -150,22 +177,23 @@ class UpdatableVectorizer(object):
 
 
 class BatchIterator(object):
-    def __init__(self, features, targets):
+    def __init__(self, config, features, targets):
         self.features = features
         self.targets = targets
         self.b = 0
+        self.batch_size = config.get("batch_size")
 
     def __iter__(self):
         self.b = 0
         return self
 
     def __next__(self):
-        batch_corpus = self.features[self.b:self.b + BATCH_SIZE]
+        batch_corpus = self.features[self.b:self.b + self.batch_size]
         if len(batch_corpus) <= 0:
             raise StopIteration()
         batch_corpus = scipy.sparse.vstack(batch_corpus).toarray()
-        batch_targets = self.targets[self.b:self.b + BATCH_SIZE]
-        self.b += BATCH_SIZE
+        batch_targets = self.targets[self.b:self.b + self.batch_size]
+        self.b += self.batch_size
         return (batch_corpus, batch_targets)
 
 
@@ -189,7 +217,8 @@ class Corpus(object):
     if the training is interrupted (time limit), we still have some training
     for most labels.
     """
-    def __init__(self, doc_ids, features, targets):
+    def __init__(self, config, doc_ids, features, targets):
+        self.config = config
         self.doc_ids = doc_ids
         self.features = features
         self.targets = targets
@@ -215,14 +244,16 @@ class Corpus(object):
         But most of them are actually too rare to be useful and they use
         a lot memory and CPU time.
         """
+        max_words = self.config.get("max_words")
+
         word_freq_sums = sum(self.features).toarray()[0]
         word_count = word_freq_sums.shape[0]
         LOGGER.info("Total word count before reduction: %d", word_count)
-        if word_count <= MAX_WORDS:
+        if word_count <= max_words:
             LOGGER.info("No reduction to do")
             return DummyWordReductor()
 
-        threshold = sorted(word_freq_sums, reverse=True)[MAX_WORDS]
+        threshold = sorted(word_freq_sums, reverse=True)[max_words]
         LOGGER.info("Word frequency threshold: %f", threshold)
 
         features_to_drop = []
@@ -253,20 +284,20 @@ class Corpus(object):
         return self.targets.keys()
 
     def get_batches(self, label):
-        return BatchIterator(self.features, self.targets[label])
+        return BatchIterator(self.config, self.features, self.targets[label])
 
     @staticmethod
-    def _add_doc_ids(doc_weights, doc_ids):
+    def _add_doc_ids(max_doc_backlog, doc_weights, doc_ids):
         # Assumes doc_ids are in reverse order (most recent first)
         # Also assumes most recent documents are the most useful
-        assert(len(doc_ids) <= MAX_DOC_BACKLOG)
-        weigth = MAX_DOC_BACKLOG + 1
+        assert(len(doc_ids) <= max_doc_backlog)
+        weigth = max_doc_backlog + 1
         for doc_id in doc_ids:
             doc_weights[doc_id] += weigth
             weigth -= 1
 
     @staticmethod
-    def load(cursor):
+    def load(config, cursor):
         start = time.time()
 
         # doc_id --> weigth
@@ -279,15 +310,17 @@ class Corpus(object):
         )
         all_docs = [l[0] for l in all_docs]
 
+        max_doc_backlog = config.get("max_doc_backlog")
+
         for label in all_labels:
             ds = cursor.execute(
                 "SELECT doc_id FROM labels WHERE label = ?"
-                " ORDER BY doc_id DESC LIMIT {}".format(
-                    MAX_DOC_BACKLOG
-                ),
+                " ORDER BY doc_id DESC LIMIT {}".format(max_doc_backlog),
                 (label,)
             )
-            Corpus._add_doc_ids(doc_weights, [d[0] for d in ds])
+            Corpus._add_doc_ids(
+                max_doc_backlog, doc_weights, [d[0] for d in ds]
+            )
 
         # label --> number of doc without this label
         no_label_counts = {l: 0 for l in all_labels}
@@ -303,11 +336,11 @@ class Corpus(object):
                     continue
                 no_label_docids[label].append(doc_id)
                 no_label_counts[label] += 1
-                if no_label_counts[label] >= MAX_DOC_BACKLOG:
+                if no_label_counts[label] >= max_doc_backlog:
                     no_label_counts.pop(label)
         for doc_ids in no_label_docids.values():
             doc_ids.sort(reverse=True)
-            Corpus._add_doc_ids(doc_weights, doc_ids)
+            Corpus._add_doc_ids(max_doc_backlog, doc_weights, doc_ids)
 
         LOGGER.info(
             "Loading features of %d documents for %d labels",
@@ -350,6 +383,7 @@ class Corpus(object):
                 targets[label].append(1 if present else 0)
 
         corpus = Corpus(
+            config=config,
             doc_ids=doc_ids,
             features=features,
             targets=targets
@@ -550,6 +584,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         self.bayes_dir = None
         self.bayes = None
+        self.config = None
         self.sql = None
         SqliteNumpyArrayHandler.register()
 
@@ -560,6 +595,10 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_deps(self):
         return [
+            {
+                'interface': 'config',
+                'defaults': ['openpaperwork_core.config'],
+            },
             {
                 'interface': 'data_versioning',
                 'defaults': ['openpaperwork_core.data_versioning'],
@@ -592,6 +631,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def init(self, core):
         super().init(core)
+
+        self.config = PluginConfig(core)
+        self.config.register()
 
         if self.bayes_dir is None:
             data_dir = self.core.call_success("paths_get_data_dir")
@@ -638,7 +680,7 @@ class Plugin(openpaperwork_core.PluginBase):
             self.core.call_all("on_progress", "classifiers", 0.0, msg)
 
             corpus = self.core.call_one(
-                "mainloop_execute", Corpus.load, cursor
+                "mainloop_execute", Corpus.load, self.config, cursor
             )
 
             LOGGER.info("Training classifiers ...")
@@ -672,17 +714,18 @@ class Plugin(openpaperwork_core.PluginBase):
             loop_nb = 0
             timeout = False
 
+            max_time = self.config.get("max_time")
             fit_start = time.time()
             try:
                 while not timeout:
                     for (label, batch_iterator) in batch_iterators:
                         now = time.time()
-                        if loop_nb > 0 and now - fit_start > MAX_TIME:
+                        if loop_nb > 0 and now - fit_start > max_time:
                             timeout = True
                             LOGGER.warning(
                                 "Training is taking too long (%dms > %dms)."
                                 " Interrupting",
-                                (now - fit_start) * 1000, MAX_TIME * 1000
+                                (now - fit_start) * 1000, max_time * 1000
                             )
                             break
 
