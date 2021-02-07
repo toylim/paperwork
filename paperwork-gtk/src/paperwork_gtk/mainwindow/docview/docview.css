@@ -1,3 +1,7 @@
 #docview_scroll {
   background-color: shade(@theme_bg_color, 0.95);
 }
+
+#docview_box {
+  margin-top: 10px;
+}
