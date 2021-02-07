@@ -1,4 +1,3 @@
-import functools
 import openpaperwork_core
 
 
@@ -13,13 +12,6 @@ class Plugin(openpaperwork_core.PluginBase):
         if r == 0:
             return None
         return r
-
-    def doc_get_hash_by_url(self, doc_url):
-        out = []
-        self.core.call_all("doc_internal_get_hash_by_url", out, doc_url)
-        if len(out) <= 0:
-            return None
-        return functools.reduce(lambda x, y: x ^ y, out)
 
     def page_get_hash_by_url(self, doc_url, page_idx):
         out = []
