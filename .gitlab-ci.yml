@@ -77,9 +77,12 @@ linux_flatpak:
   tags:
     - openpaper-flatpak
   script:
-    - groupadd -g 1500 builder
-    - useradd -u 1500 -g 1500 -ms /bin/bash builder
-    - sudo -Eu builder bash ./ci/update_flatpak_repo.sh
+    # Running in from a gitlab-runner directly in a shell, as the user
+    # 'gitlab-runner'
+    # --> not running as root, so we cannot actually install anything
+    # - apt-get update
+    # - apt-get install -y -q rsync flatpak-builder make
+    - ./ci/update_flatpak_repo.sh
 
 
 .windows: &windows
