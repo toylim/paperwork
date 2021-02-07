@@ -29,6 +29,7 @@ from .... import (_, sync)
 MAX_WORDS = os.getenv("PAPERWORK_LABEL_GUESSING_MAX_WORDS", 15000)
 # Limit the number of documents used for performance reasons
 MAX_DOC_BACKLOG = os.getenv("PAPERWORK_LABEL_GUESSING_MAX_BACKLOG", 100)
+MAX_TIME = os.getenv("PAPERWORK_LABEL_GUESSING_MAX_TIME", 10)  # seconds
 
 BATCH_SIZE = os.getenv("PAPERWORK_LABEL_GUESSING_BATCH_SIZE", 200)
 
@@ -668,9 +669,23 @@ class Plugin(openpaperwork_core.PluginBase):
             done = 0
             total = len(batch_iterators) * corpus.get_doc_count()
 
+            loop_nb = 0
+            timeout = False
+
+            fit_start = time.time()
             try:
-                while True:
+                while not timeout:
                     for (label, batch_iterator) in batch_iterators:
+                        now = time.time()
+                        if loop_nb > 0 and now - fit_start > MAX_TIME:
+                            timeout = True
+                            LOGGER.warning(
+                                "Training is taking too long (%dms > %dms)."
+                                " Interrupting",
+                                (now - fit_start) * 1000, MAX_TIME * 1000
+                            )
+                            break
+
                         (batch_corpus, batch_targets) = next(batch_iterator)
                         self.core.call_all(
                             "on_progress", "classifiers", done / total,
@@ -681,13 +696,18 @@ class Plugin(openpaperwork_core.PluginBase):
                             classes=[0, 1]
                         )
                         done += len(batch_corpus)
+
+                    loop_nb += 1
             except StopIteration:
                 pass
 
             stop = time.time()
             LOGGER.info(
-                "Training took %dms",
-                int((stop - start) * 1000)
+                "Training took %dms (Fitting: %dms) ;"
+                " Training completed at %d%%",
+                (stop - start) * 1000,
+                (stop - fit_start) * 1000,
+                done * 100 / total
             )
 
             # Jflesch> This is a very memory-intensive process. The Glib may
