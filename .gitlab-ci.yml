@@ -80,7 +80,7 @@ linux_flatpak:
     # 'gitlab-runner'
     # --> not running as root, so we cannot actually install anything
     # - apt-get update
-    # - apt-get install -y -q rsync flatpak-builder
+    # - apt-get install -y -q rsync flatpak-builder make
     - ./ci/update_flatpak_repo.sh
 
 

@@ -2,8 +2,7 @@
 echo $PWD
 git log -1
 
-USER=builder
-export HOME=/home/${USER}
+USER=gitlab-runner
 
 LOCKDIR=/tmp/build.lock.d
 PIDFILE=${LOCKDIR}/pid
