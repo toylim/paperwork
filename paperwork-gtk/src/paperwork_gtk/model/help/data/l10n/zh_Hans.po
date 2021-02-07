@@ -7,13 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: 2021-01-03 10:47+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2021-02-07 12:49+0000\n"
+"Last-Translator: 玉堂白鹤 <yjwork@qq.com>\n"
+"Language-Team: Chinese (Simplified) <http://translations.openpaper.work/"
+"projects/paperwork/paperwork-help-documents/zh_Hans/>\n"
 "Language: zh_Hans\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 4.4\n"
 
 #. type: Plain text
 #: data/intro.tex:11 data/usage.tex:20
@@ -23,7 +26,7 @@ msgstr ""
 #. type: title{#1}
 #: data/intro.tex:11
 msgid "Welcome to Paperwork !"
-msgstr ""
+msgstr "欢迎使用 Paperwork !"
 
 #. type: document
 #: data/intro.tex:20
@@ -145,7 +148,7 @@ msgstr ""
 #. type: section{#2}
 #: data/intro.tex:108
 msgid "Need more help ?"
-msgstr ""
+msgstr "需要更多帮助 ?"
 
 #. type: document
 #: data/intro.tex:116
