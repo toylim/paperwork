@@ -14,9 +14,12 @@ INSTRUCTIONS = {
         "sudo adduser saned scanner\n"
         "sudo adduser saned lp\n"
     ),
-    # 'Fedora / CentOS / RHEL / …': (
-    #     "# TODO\n"
-    # ),
+    'Fedora / CentOS / RHEL / …': (
+        "sudo dnf install libinsane sane-backends-daemon\n"
+        "sudo sh -c \"echo 127.0.0.1 >> /etc/sane.d/saned.conf\"\n"
+        "sudo systemctl enable saned.socket\n"
+        "sudo systemctl start saned.socket\n"
+    ),
 }
 
 
