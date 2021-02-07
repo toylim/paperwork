@@ -123,9 +123,6 @@ class UpdatableVectorizer(object):
     (word identifiers). Store the word->features in the SQLite database.
     We only add words to the database, we never remove them, otherwise we
     wouldn't be able to read the feature vectors correctly anymore.
-
-    No need to take deleted documents into account. Worst case scenario is
-    that we will end up with a lot of useless words in the vocabulary.
     """
     def __init__(self, core, db_cursor):
         self.core = core
@@ -147,7 +144,10 @@ class UpdatableVectorizer(object):
         # A bit hackish: We just need the analyzer, so instantiating a full
         # TfidVectorizer() is probably overkill, but meh.
         tokenizer = sklearn.feature_extraction.text.TfidfVectorizer(
-        ).build_analyzer()
+            ).build_analyzer()
+        LOGGER.info(
+            "Vocabulary contains %d words before fitting", self.last_feature_id
+        )
         for doc_txt in corpus:
             for word in tokenizer(doc_txt):
                 if word in self.updatable_vocabulary:
@@ -163,6 +163,9 @@ class UpdatableVectorizer(object):
                     (word, self.last_feature_id, word)
                 )
                 self.updatable_vocabulary[word] = self.last_feature_id
+        LOGGER.info(
+            "Vocabulary contains %d words after fitting", self.last_feature_id
+        )
 
         return self.transform(corpus)
 
@@ -172,7 +175,109 @@ class UpdatableVectorizer(object):
         vectorizer = sklearn.feature_extraction.text.TfidfVectorizer(
             use_idf=False, vocabulary=self.updatable_vocabulary
         )
-        return vectorizer.fit_transform(corpus)
+        features = vectorizer.fit_transform(corpus)
+        LOGGER.info("%s features extracted", features.shape)
+        return features
+
+    def _find_unused(self):
+        doc_features = self.db_cursor.execute(
+            "SELECT vector FROM features"
+        )
+        sum_features = None
+        for (doc_vector,) in doc_features:
+            required_padding = (
+                self.last_feature_id + 1 - doc_vector.shape[0]
+            )
+            if required_padding > 0:
+                doc_vector = numpy.hstack([
+                    doc_vector, numpy.zeros((required_padding,))
+                ])
+            if sum_features is None:
+                sum_features = doc_vector
+            else:
+                sum_features += doc_vector
+
+        if sum_features is None:
+            return ([], 0)
+
+        return (
+            [f for (f, v) in enumerate(sum_features) if v == 0.0],
+            len(sum_features)
+        )
+
+    def _get_all_doc_ids(self):
+        doc_ids = self.db_cursor.execute("SELECT doc_id FROM features")
+        doc_ids = [doc_id[0] for doc_id in doc_ids]
+        return doc_ids
+
+    def gc(self):
+        """
+        Drop features that are unused anymore.
+
+        IMPORTANT: After this call, the vectorizer must no be used
+        (this method doesn't update the internal state of the vectorizer)
+        """
+        # we work in the main thread so we don't have to load all the feature
+        # vectors all at once in memory (we just need their sum)
+        LOGGER.info("Garbage collecting unused features ...")
+        (to_drop, total) = self.core.call_one(
+            "mainloop_execute", self._find_unused
+        )
+        if len(to_drop) <= 0:
+            LOGGER.info("No features to garbage collect (total=%d)", total)
+            return
+        LOGGER.info(
+            "%d/%d features will be removed from the database",
+            len(to_drop), total
+        )
+
+        doc_ids = self.core.call_one("mainloop_execute", self._get_all_doc_ids)
+
+        # first we reduce the document feature vectors
+        msg = _(
+            "Label guesser: Garbage-collecting unused document features ..."
+        )
+        self.core.call_all("on_progress", "label_vector_gc", 0.0, msg)
+        for (idx, doc_id) in enumerate(doc_ids):
+            self.core.call_all(
+                "on_progress", "label_vector_gc", idx / len(doc_ids), msg
+            )
+            doc_vector = self.core.call_one(
+                "mainloop_execute", self.db_cursor.execute,
+                "SELECT vector FROM features WHERE doc_id = ? LIMIT 1",
+                (doc_id,)
+            )
+            doc_vector = self.core.call_one(
+                "mainloop_execute", lambda v: list(v), doc_vector
+            )
+            doc_vector = doc_vector[0][0]
+
+            to_drop_for_this_doc = [f for f in to_drop if f < len(doc_vector)]
+            doc_vector = numpy.delete(doc_vector, to_drop_for_this_doc)
+            self.core.call_one(
+                "mainloop_execute", self.db_cursor.execute,
+                "UPDATE features SET vector = ? WHERE doc_id = ? LIMIT 1",
+                (doc_vector, doc_id)
+            )
+        self.core.call_all("on_progress", "label_vector_gc", 1.0)
+
+        # then we reduce the vocabulary accordingly
+        msg = _("Label guesser: Garbage-collecting unused words ...")
+        self.core.call_all("on_progress", "label_vocabulary_gc", 0.0, msg)
+        for (idx, f) in enumerate(to_drop):
+            self.core.call_all(
+                "on_progress", "label_vocabulary_gc", idx / len(to_drop), msg
+            )
+            self.core.call_one(
+                "mainloop_execute", self.db_cursor.execute,
+                "DELETE FROM vocabulary WHERE feature = ? LIMIT 1", (f,)
+            )
+            self.core.call_one(
+                "mainloop_execute", self.db_cursor.execute,
+                "UPDATE vocabulary SET feature = feature - 1"
+                " WHERE feature >= ?", (f,)
+            )
+        self.core.call_all("on_progress", "label_vocabulary_gc", 1.0, )
 
     def copy(self):
         r = UpdatableVectorizer(self.core, self.db_cursor)
@@ -202,7 +307,7 @@ class BatchIterator(object):
         return (batch_corpus, batch_targets)
 
 
-class WordReductor(object):
+class FeatureReductor(object):
     def __init__(self, to_drop):
         self.features_to_drop = to_drop
 
@@ -210,7 +315,7 @@ class WordReductor(object):
         return numpy.delete(features, self.features_to_drop)
 
 
-class DummyWordReductor(object):
+class DummyFeatureReductor(object):
     def reduce_features(self, features):
         return features
 
@@ -256,7 +361,7 @@ class Corpus(object):
         LOGGER.info("Total word count before reduction: %d", word_count)
         if word_count <= max_words:
             LOGGER.info("No reduction to do")
-            return DummyWordReductor()
+            return DummyFeatureReductor()
 
         threshold = sorted(word_freq_sums, reverse=True)[max_words]
         LOGGER.info("Word frequency threshold: %f", threshold)
@@ -267,7 +372,7 @@ class Corpus(object):
                 continue
             features_to_drop.append(idx)
 
-        reductor = WordReductor(features_to_drop)
+        reductor = FeatureReductor(features_to_drop)
 
         for idx in range(0, len(self.features)):
             self.features[idx] = scipy.sparse.csr_matrix(
@@ -424,6 +529,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         )
 
         self.nb_changes = 0
+        self.need_gc = False
 
         self.vectorizer = UpdatableVectorizer(self.core, self.cursor)
 
@@ -504,6 +610,12 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         )
         self.nb_changes += 1
         self._del_obj(doc_id)
+        LOGGER.info(
+            "Document %s has been deleted."
+            " Feature garbage-collecting will be run",
+            doc_id
+        )
+        self.need_gc = True
         super().del_obj(doc_id)
 
     def _upd_obj(self, doc_id):
@@ -566,6 +678,10 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             )
             LOGGER.info("Nothing to do. Training left unchanged.")
             return
+
+        if self.need_gc:
+            self.vectorizer.gc()
+            self.vectorizer = None
 
         self.notify_progress(
             ID, _("Commiting changes for label guessing ...")
@@ -632,6 +748,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'paths',
                 'defaults': ['openpaperwork_core.paths.xdg'],
             },
+            {
+                'interface': 'transaction_manager',
+                'defaults': ['paperwork_backend.sync'],
+            },
         ]
 
     def init(self, core):
@@ -682,7 +802,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
         try:
-            self.core.call_all("on_progress", "classifiers", 0.0, msg)
+            self.core.call_all("on_progress", "label_classifiers", 0.0, msg)
 
             corpus = self.core.call_one(
                 "mainloop_execute", Corpus.load, self.config, cursor
@@ -736,7 +856,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
                         (batch_corpus, batch_targets) = next(batch_iterator)
                         self.core.call_all(
-                            "on_progress", "classifiers", done / total,
+                            "on_progress", "label_classifiers", done / total,
                             _("Label guessing: Training ...")
                         )
                         classifiers[label].partial_fit(
@@ -767,7 +887,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
             return (reductor, classifiers)
         finally:
-            self.core.call_all("on_progress", "classifiers", 1.0, msg)
+            self.core.call_all("on_progress", "label_classifiers", 1.0, msg)
             self.core.call_one("mainloop_execute", cursor.close)
 
     def _guess(self, vectorizer, reductor, classifiers, doc_url):
