@@ -454,7 +454,7 @@ class Corpus(object):
 
         LOGGER.info(
             "Loading features of %d documents for %d labels",
-            len(doc_ids), len(all_labels)
+            len(doc_weights), len(all_labels)
         )
 
         all_features = {}
