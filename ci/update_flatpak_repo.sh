@@ -138,15 +138,15 @@ echo "Syncing ..."
 # we must sync first the objects and the deltas before the references
 # otherwise users might get temporarily an inconsistent content.
 for dest in \
-		paperwork_repo/config \
-		paperwork_repo/objects \
-		paperwork_repo/deltas \
-		paperwork_repo/refs \
-		paperwork_repo/summary \
-		paperwork_repo/summary.sig \
+		config \
+		objects \
+		deltas \
+		refs \
+		summary \
+		summary.sig \
 	; do
 
-	local_path="/home/${USER}/flatpak/${dest}"
+	local_path="${REPO}/${dest}"
 
 	echo "Rsync ${local_path} --> ${dest} ..."
 	if ! time rsync -rtz ${local_path} ${RSYNC_USER}@${RSYNC_HOST}:public_html/paperwork_repo ; then
