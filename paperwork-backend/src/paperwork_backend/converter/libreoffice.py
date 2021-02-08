@@ -16,6 +16,7 @@ LIBREOFFICE = [
     r'libreoffice',
     r'soffice.exe',
     r'C:\Program Files\LibreOffice\program\soffice.exe',
+    r'/app/libreoffice/program/soffice.bin',  # Flatpak
 ]
 
 LIBREOFFICE_ARGS = [
