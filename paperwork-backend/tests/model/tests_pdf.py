@@ -4,7 +4,7 @@ import unittest
 import openpaperwork_core
 
 
-class TestPdf(unittest.TestCase):
+class TestHocr(unittest.TestCase):
     def setUp(self):
         self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load("paperwork_backend.model.pdf")
@@ -14,7 +14,7 @@ class TestPdf(unittest.TestCase):
             "fs_safe",
             os.path.join(
                 os.path.dirname(os.path.abspath(__file__)),
-                "simple"
+                "simple_doc.pdf"
             )
         )
         self.full_doc_url = self.core.call_success(
