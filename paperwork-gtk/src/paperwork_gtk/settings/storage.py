@@ -118,6 +118,10 @@ class Plugin(openpaperwork_core.PluginBase):
         LOGGER.info("Setting work directory to %s", workdir)
         self.core.call_all("config_put", "workdir", workdir)
 
+        # Bug report 170: Make sure the current document (in the old work
+        # directory) is closed so the user cannot use it by accident anymore
+        self.core.call_all("doc_close")
+
         basename = self.core.call_success("fs_basename", workdir)
         widget_tree.get_object("work_dir_chooser_button").set_label(basename)
 
