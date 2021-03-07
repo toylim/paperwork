@@ -79,6 +79,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         docs = []
         self.core.call_all("index_search", docs, keywords, args.limit)
+        docs.sort(reverse=True)
 
         if self.interactive:
             renderers = []
