@@ -118,6 +118,7 @@ else:
         'libgdk-3-0.dll',
         'libgdk_pixbuf-2.0-0.dll',
         'libgtk-3-0.dll',
+        'libhandy-1-2.dll',
         'libinsane.dll',
         'libinsane_gobject.dll',
         'libnotify-4.dll',
@@ -165,6 +166,7 @@ else:
         "GModule-2.0",
         "GObject-2.0",
         "Gtk-3.0",
+        "Handy-1.2",
         "HarfBuzz-0.0",
         "Notify-0.7",
         "Pango-1.0",
@@ -172,6 +174,7 @@ else:
         "Poppler-0.18",
 
         "Libinsane-1.0",
+        "libhandy-1.2",
     ]
 
     for ns in required_gi_namespaces:
@@ -190,7 +193,7 @@ else:
 
         "gi",   # always seems to be needed
         "cairo",   # Only needed (for foreign structs) if no "import cairo"s
-
+        "handy",
         # XXX(Jflesch): bug ?
         "pyocr",
         "pyocr.libtesseract",
