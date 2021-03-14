@@ -67,7 +67,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         source_doc_url = self.core.call_success("doc_id_to_url", source_doc_id)
         dest_doc_url = self.core.call_success(
-            "doc_id_to_url", dest_doc_id, must_already_exist=False
+            "doc_id_to_url", dest_doc_id, existing=False
         )
 
         if self.interactive:
