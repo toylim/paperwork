@@ -12,6 +12,8 @@ try:
     import gi
     gi.require_version('Gtk', '3.0')
     from gi.repository import Gtk
+    gi.require_version('Handy', '1')
+    from gi.repository import Handy
     GTK_AVAILABLE = True
 except (ImportError, ValueError):
     GTK_AVAILABLE = False
@@ -78,6 +80,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def init(self, core):
         super().init(core)
+        Handy.init()
 
         self.core.call_success(
             "gtk_load_css",
