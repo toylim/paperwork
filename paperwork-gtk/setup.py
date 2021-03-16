@@ -193,7 +193,7 @@ else:
 
         "gi",   # always seems to be needed
         "cairo",   # Only needed (for foreign structs) if no "import cairo"s
-        "handy",
+
         # XXX(Jflesch): bug ?
         "pyocr",
         "pyocr.libtesseract",
