@@ -16,6 +16,13 @@ try:
 except (ImportError, ValueError):
     GTK_AVAILABLE = False
 
+try:
+    gi.require_version('Handy', '1')
+    from gi.repository import Handy
+    HDY_AVAILABLE = True
+except (ImportError, ValueError):
+    HDY_AVAILABLE = False
+
 import openpaperwork_core
 import openpaperwork_gtk.deps
 
@@ -179,6 +186,8 @@ class Plugin(openpaperwork_core.PluginBase):
             out['glib'].update(openpaperwork_gtk.deps.GLIB)
         if not GTK_AVAILABLE:
             out['gtk'].update(openpaperwork_gtk.deps.GTK)
+        if not HDY_AVAILABLE:
+            out['hdy'].update(openpaperwork_gtk.deps.HDY)
 
     def doclist_add(self, widget, vposition):
         body = self.widget_tree.get_object("doclist_body")
