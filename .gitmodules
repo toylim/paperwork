@@ -7,6 +7,3 @@
 [submodule "sub/libpillowfight"]
 	path = sub/libpillowfight
 	url = https://gitlab.gnome.org/World/OpenPaperwork/libpillowfight.git
-[submodule "sub/libhandy"]
-	path = sub/libhandy
-	url = https://gitlab.gnome.org/GNOME/libhandy.git
