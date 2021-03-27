@@ -4,6 +4,7 @@
 *.pyc
 build
 paperwork.conf
+paperwork_repo/
 dist/
 out/
 paperwork.egg-info/
