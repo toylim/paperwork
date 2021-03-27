@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: 2021-01-03 10:47+0100\n"
-"PO-Revision-Date: 2021-02-07 12:49+0000\n"
+"PO-Revision-Date: 2021-03-24 23:17+0000\n"
 "Last-Translator: 玉堂白鹤 <yjwork@qq.com>\n"
 "Language-Team: Chinese (Simplified) <http://translations.openpaper.work/"
 "projects/paperwork/paperwork-help-documents/zh_Hans/>\n"
@@ -71,7 +71,7 @@ msgstr ""
 #. type: section{#2}
 #: data/intro.tex:44
 msgid "Find"
-msgstr ""
+msgstr "查找"
 
 #. type: wrapfigure
 #: data/intro.tex:50
@@ -91,7 +91,7 @@ msgstr ""
 #. type: section{#2}
 #: data/intro.tex:59
 msgid "Export"
-msgstr ""
+msgstr "导出"
 
 #. type: document
 #: data/intro.tex:69
@@ -104,7 +104,7 @@ msgstr ""
 #. type: subsection{#2}
 #: data/intro.tex:72 data/usage.tex:113
 msgid "Labels and additional keywords"
-msgstr ""
+msgstr "标签和其他关键字"
 
 #. type: document
 #: data/intro.tex:84
@@ -174,12 +174,12 @@ msgstr ""
 #. type: title{#1}
 #: data/usage.tex:20
 msgid "Paperwork manual"
-msgstr ""
+msgstr "Paperwork 手册"
 
 #. type: section{#2}
 #: data/usage.tex:32
 msgid "Introduction"
-msgstr ""
+msgstr "介绍"
 
 #. type: document
 #: data/usage.tex:41
@@ -214,7 +214,7 @@ msgstr ""
 #. type: subsection{#2}
 #: data/usage.tex:54 data/usage.tex:158
 msgid "Work directory"
-msgstr ""
+msgstr "工作目录"
 
 #. type: document
 #: data/usage.tex:57
@@ -234,7 +234,7 @@ msgstr ""
 #. type: subsection{#2}
 #: data/usage.tex:63
 msgid "Document"
-msgstr ""
+msgstr "文档"
 
 #. type: document
 #: data/usage.tex:71
@@ -260,7 +260,7 @@ msgstr ""
 #. type: subsection{#2}
 #: data/usage.tex:80
 msgid "Page"
-msgstr ""
+msgstr "页面"
 
 #. type: document
 #: data/usage.tex:82
@@ -301,7 +301,7 @@ msgstr ""
 #. type: subsection{#2}
 #: data/usage.tex:101
 msgid "Indexation and Keywords"
-msgstr ""
+msgstr "索引和关键字"
 
 #. type: document
 #: data/usage.tex:108
@@ -340,7 +340,7 @@ msgstr ""
 #. type: section{#2}
 #: data/usage.tex:137
 msgid "Settings"
-msgstr ""
+msgstr "设置"
 
 #. type: subsection{#2}
 #: data/usage.tex:139
@@ -372,12 +372,12 @@ msgstr ""
 #. type: subsection{#2}
 #: data/usage.tex:175
 msgid "Scanner"
-msgstr ""
+msgstr "扫描仪"
 
 #. type: subsubsection{#2}
 #: data/usage.tex:182
 msgid "Device"
-msgstr ""
+msgstr "设备"
 
 #. type: document
 #: data/usage.tex:189
@@ -394,7 +394,7 @@ msgstr ""
 #. type: subsubsection{#2}
 #: data/usage.tex:194
 msgid "Scan Mode"
-msgstr ""
+msgstr "扫描模式"
 
 #. type: document
 #: data/usage.tex:202
@@ -449,7 +449,7 @@ msgstr ""
 #. type: document
 #: data/usage.tex:231
 msgid "Lower resolutions mean"
-msgstr ""
+msgstr "较低的分辨率意味着"
 
 #. type: itemize
 #: data/usage.tex:231
@@ -541,12 +541,12 @@ msgstr ""
 #. type: subsubsection{#2}
 #: data/usage.tex:271
 msgid "Adding languages"
-msgstr ""
+msgstr "添加语言"
 
 #. type: paragraph{#2}
 #: data/usage.tex:273
 msgid "Flatpak"
-msgstr ""
+msgstr "Flatpak"
 
 #. type: verbatim
 #: data/usage.tex:279
@@ -557,11 +557,15 @@ msgid ""
 "flatpak config --user --set languages \"<langs>\"\n"
 "flatpak update"
 msgstr ""
+"# <langs> 是使用 ';'分开的双字母语言代码列表\n"
+"# 例如: en;fr;de\n"
+"flatpak config --user --set languages \"<langs>\"\n"
+"flatpak update"
 
 #. type: paragraph{#2}
 #: data/usage.tex:283
 msgid "Debian"
-msgstr ""
+msgstr "Debian"
 
 #. type: verbatim
 #: data/usage.tex:288 data/usage.tex:304
@@ -571,11 +575,14 @@ msgid ""
 "# ex: 'fra' for French\n"
 "$ sudo apt-get install tesseract-ocr tesseract-ocr-<lang>"
 msgstr ""
+"# <lang> 是一个三字语言码\n"
+"# 例如: 'fra' 表示 French\n"
+"$ sudo apt-get install tesseract-ocr tesseract-ocr-<lang>"
 
 #. type: paragraph{#2}
 #: data/usage.tex:291
 msgid "Fedora"
-msgstr ""
+msgstr "Fedora"
 
 #. type: verbatim
 #: data/usage.tex:296
@@ -585,16 +592,19 @@ msgid ""
 "# ex: 'fra' for French\n"
 "$ sudo dnf install tesseract tesseract-langpack-<lang>"
 msgstr ""
+"# <lang> 是一个三字语言码\n"
+"# 例如: 'fra' 表示 French\n"
+"$ sudo dnf install tesseract tesseract-langpack-<lang>"
 
 #. type: paragraph{#2}
 #: data/usage.tex:299
 msgid "Ubuntu"
-msgstr ""
+msgstr "Ubuntu"
 
 #. type: subsection{#2}
 #: data/usage.tex:307 data/usage.tex:815
 msgid "Windows"
-msgstr ""
+msgstr "Windows"
 
 #. type: document
 #: data/usage.tex:310
@@ -629,7 +639,7 @@ msgstr ""
 #. type: subsection{#2}
 #: data/usage.tex:326
 msgid "Updates"
-msgstr ""
+msgstr "更新"
 
 #. type: document
 #: data/usage.tex:334
@@ -647,7 +657,7 @@ msgstr ""
 #. type: section{#2}
 #: data/usage.tex:339
 msgid "New document"
-msgstr ""
+msgstr "新建文档"
 
 #. type: document
 #: data/usage.tex:345
@@ -746,7 +756,7 @@ msgstr ""
 #. type: subsection{#2}
 #: data/usage.tex:399
 msgid "Images"
-msgstr ""
+msgstr "图像"
 
 #. type: document
 #: data/usage.tex:402
@@ -794,7 +804,7 @@ msgstr ""
 #. type: subsection{#2}
 #: data/usage.tex:423
 msgid "PDF"
-msgstr ""
+msgstr "PDF"
 
 #. type: document
 #: data/usage.tex:429
@@ -1033,7 +1043,7 @@ msgstr ""
 #. type: subsection{#2}
 #: data/usage.tex:565
 msgid "Advanced search"
-msgstr ""
+msgstr "高级搜索"
 
 #. type: document
 #: data/usage.tex:582
@@ -1172,7 +1182,7 @@ msgstr ""
 #. type: itemize
 #: data/usage.tex:679
 msgid "Cropping"
-msgstr ""
+msgstr "裁剪"
 
 #. type: itemize
 #: data/usage.tex:679
@@ -1703,7 +1713,7 @@ msgstr ""
 #. type: section{#2}
 #: data/usage.tex:940
 msgid "Getting support"
-msgstr ""
+msgstr "获得支持"
 
 #. type: document
 #: data/usage.tex:943
@@ -1802,7 +1812,7 @@ msgstr ""
 #. type: subsubsection{#2}
 #: data/usage.tex:988
 msgid "ZIP file"
-msgstr ""
+msgstr "ZIP 文件"
 
 #. type: document
 #: data/usage.tex:992
@@ -1868,7 +1878,7 @@ msgstr ""
 #: data/usage.tex:1024
 #, no-wrap
 msgid "sudo apt remove --purge paperwork-\\*"
-msgstr ""
+msgstr "sudo apt remove --purge paperwork-\\*"
 
 #. type: document
 #: data/usage.tex:1027
@@ -1884,7 +1894,7 @@ msgstr ""
 #. type: subsection{#2}
 #: data/usage.tex:1033
 msgid "Windows 10"
-msgstr ""
+msgstr "Windows 10"
 
 #. type: document
 #: data/usage.tex:1037
