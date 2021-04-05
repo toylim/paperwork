@@ -130,29 +130,4 @@ cd ..
 
 chmod -R a+rX ${HOME}/flatpak
 
-RSYNC_USER=flatpak
-RSYNC_HOST=t.flesch.computer
-
-echo "Syncing ..."
-
-# we must sync first the objects and the deltas before the references
-# otherwise users might get temporarily an inconsistent content.
-for dest in \
-		config \
-		objects \
-		deltas \
-		refs \
-		summary \
-		summary.sig \
-	; do
-
-	local_path="${REPO}/${dest}"
-
-	echo "Rsync ${local_path} --> ${dest} ..."
-	if ! time rsync -rtz ${local_path} ${RSYNC_USER}@${RSYNC_HOST}:public_html/paperwork_repo ; then
-		echo "rsync failed"
-		exit 1
-	fi
-done
-
 cleanup
