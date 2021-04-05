@@ -3,12 +3,12 @@ image: registry.gitlab.gnome.org/world/openpaperwork/paperwork/build
 stages:
   # no point in waiting for the tests to end before generating the data files
   # or the development documentation
-  - tests_data_doc
-  - deploy_linux
-  - deploy_windows
+  - tests
+  - data
+  - deploy
 
 check:
-  stage: tests_data_doc
+  stage: tests
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
@@ -26,7 +26,7 @@ check:
 
 
 test:
-  stage: tests_data_doc
+  stage: tests
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
@@ -41,7 +41,7 @@ test:
 
 
 generate_data:
-  stage: tests_data_doc
+  stage: data
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
@@ -56,7 +56,7 @@ generate_data:
 
 
 doc_devel:
-  stage: tests_data_doc
+  stage: data
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
@@ -69,7 +69,7 @@ doc_devel:
 
 
 linux_flatpak:
-  stage: deploy_linux
+  stage: deploy
   timeout: 48h
   only:
     - branches@World/OpenPaperwork/paperwork
@@ -126,7 +126,7 @@ linux_flatpak:
 
 
 windows_tests:
-  stage: tests_data_doc
+  stage: tests
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
@@ -149,7 +149,7 @@ windows_tests:
 
 
 windows_exe:
-  stage: deploy_windows
+  stage: deploy
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
