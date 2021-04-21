@@ -21,7 +21,7 @@
     ],
     "modules": [
         "shared-modules/tesseract-4.1.1.json",
-        "shared-modules/sane-backends-1.0.27.json",
+        "shared-modules/sane-backends-1.0.32.json",
         {
             "name": "python-setuptools",
             "buildsystem": "simple",
