@@ -86,8 +86,8 @@ def pillow_to_surface(core, img, intermediate="pixbuf", quality=90):
             data, GdkPixbuf.Colorspace.RGB, False, 8,
             width, height, width * 3
         )
-        width = max(width, 32 * 1024 - 1)  # Cairo limitation
-        height = max(height, 32 * 1024 - 1)  # Cairo limitation
+        width = min(width, 32 * 1024 - 1)  # Cairo limitation
+        height = min(height, 32 * 1024 - 1)  # Cairo limitation
         img_surface = ImgSurface(cairo.ImageSurface(
             cairo.FORMAT_RGB24, width, height
         ))
