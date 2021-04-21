@@ -16,13 +16,7 @@ check:
     - linux
     - volatile
   script:
-    - sh ./ci/set_apt_proxy.sh
     - make check
-
-
-.apt: &apt
-  before_script:
-    - sh ./ci/set_apt_proxy.sh
 
 
 test:
@@ -33,7 +27,6 @@ test:
   tags:
     - linux
     - volatile
-  <<: *apt
   script:
     - source ./activate_test_env.sh && make install
     - source ./activate_test_env.sh && paperwork-gtk chkdeps -y && paperwork-cli chkdeps -y
@@ -48,7 +41,6 @@ generate_data:
   tags:
     - linux
     - volatile
-  <<: *apt
   script:
     - source ./activate_test_env.sh && make install
     - source ./activate_test_env.sh && paperwork-gtk chkdeps -y && paperwork-cli chkdeps -y
@@ -63,7 +55,6 @@ doc_devel:
   tags:
     - linux
     - volatile
-  <<: *apt
   script:
     - source ./activate_test_env.sh && make doc && make upload_doc
 
