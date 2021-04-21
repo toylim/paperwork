@@ -5,6 +5,9 @@ import pillowfight
 import openpaperwork_core
 import openpaperwork_core.promise
 
+import paperwork_backend.cairo.pillow
+
+
 from ... import _
 
 
@@ -276,8 +279,12 @@ class Plugin(openpaperwork_core.PluginBase):
         return img
 
     def on_scan_page_start(self, scan_id, page_nb, scan_params):
-        self.scan_height = scan_params.get_height()
-        self.scan_width = scan_params.get_width()
+        (self.scan_width, self.scan_height) = (
+            paperwork_backend.cairo.pillow.limit_img_size((
+                scan_params.get_width(),
+                scan_params.get_height(),
+            ))
+        )
         if self.widget_tree is None:
             return
         self._update_calibration_area_size_based_on_scroll()
@@ -354,7 +361,9 @@ class Plugin(openpaperwork_core.PluginBase):
             LOGGER.info("No page scanned. Can't do calibration")
             return
 
-        (self.scan_width, self.scan_height) = scan_img.size
+        (self.scan_width, self.scan_height) = (
+            paperwork_backend.cairo.pillow.limit_img_size(scan_img.size)
+        )
         self.scan_img = scan_img
 
         LOGGER.info("Calibration scan ready")
@@ -375,7 +384,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
         self.core.call_all("draw_pillow_start", drawing_area, scan_img)
         self.core.call_all(
-            "draw_calibration_start", drawing_area, scan_img.size
+            "draw_calibration_start", drawing_area,
+            (self.scan_width, self.scan_height)
         )
 
     def _on_maximize(self, button):
