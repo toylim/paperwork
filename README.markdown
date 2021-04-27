@@ -38,7 +38,7 @@ In other words, let the machine do most of the work for you.
 ### Settings window
 
 <a href="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/2.0/settings.png">
-  <img src="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/2.0/settings.png" width="443" height="286" />
+  <img src="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/2.0/settings.png" width="301" height="416" />
 </a>
 
 ### Command line
