@@ -24,7 +24,7 @@ In other words, let the machine do most of the work for you.
 ### Search Suggestions
 
 <a href="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/2.0/suggestions.png">
-  <img src="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/2.0/suggestions.png" width="155" height="313" />
+  <img src="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/2.0/suggestions.png" width="325" height="396" />
 </a>
 
 
