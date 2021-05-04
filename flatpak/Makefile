@@ -1,4 +1,4 @@
-REPO ?= paperwork_repo
+REPO ?= $(realpath paperwork_repo)
 APP = work.openpaper.Paperwork
 ALL_TARGETS = $(patsubst %.json,%,$(wildcard *.json))
 ALL_BRANCHES = master testing develop
@@ -17,7 +17,7 @@ dist-clean: clean
 # Will export to the Flatpak repository $(REPO)
 %.app: ../work.openpaper.Paperwork.json
 	@echo flatpak-builder $< --\> $@ \($(REPO) ${EXPORT_ARGS} ${ARCH_ARGS}\)
-	cd ../ && flatpak-builder --repo=flatpak/$(REPO) -s "Build of Paperwork $(@:%.app=%) `date`" ${EXPORT_ARGS} ${ARCH_ARGS} flatpak/$@ work.openpaper.Paperwork.json
+	cd ../ && flatpak-builder --repo=$(REPO) -s "Build of Paperwork $(@:%.app=%) `date`" ${EXPORT_ARGS} ${ARCH_ARGS} flatpak/$@ work.openpaper.Paperwork.json
 
 upd_repo:
 	@echo flatpak build-update-repo $(REPO) \($(REPO) ${EXPORT_ARGS} ${ARCH_ARGS}\)
