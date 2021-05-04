@@ -7,7 +7,7 @@ all: upd_branches
 
 # clean: remove all intermediate files
 clean:
-	rm -rf $(patsubst %,%.app,$(ALL_TARGETS)) $(patsubst %,%.flatpak,$(ALL_TARGETS))
+	rm -rf *.app *.flatpak
 
 # dist-clean: remove *everything* that is not stored in Git
 dist-clean: clean
