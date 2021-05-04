@@ -283,7 +283,7 @@
                 },
                 {
                     "type": "file",
-                    "path": "flatpak/data.tar.gz"
+                    "path": "data.tar.gz"
                 }
             ]
         }
