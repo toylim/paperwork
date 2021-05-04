@@ -80,7 +80,7 @@ cd flatpak/
 
 rm -f data.tar.gz
 
-download "https://download.openpaper.work/data/paperwork/${branch}_latest/data.tar.gz" data.tar.gz
+download "https://download.openpaper.work/data/paperwork/${branch}_latest/data.tar.gz" ../data.tar.gz
 
 export EXPORT_ARGS="--gpg-sign=E5ACE6FEA7A6DD48"
 export REPO=/home/${USER}/flatpak/paperwork_repo
