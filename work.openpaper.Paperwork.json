@@ -400,6 +400,7 @@
                 {
                     "type": "git",
                     "path": ".",
+                    "branch": "master",
                     "disable-shallow-clone": true
                 },
                 {
