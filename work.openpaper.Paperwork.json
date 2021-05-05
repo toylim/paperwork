@@ -279,6 +279,7 @@
                 {
                     "type": "git",
                     "path": ".",
+                    "branch": "develop",
                     "disable-shallow-clone": true
                 },
                 {
