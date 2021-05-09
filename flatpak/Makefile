@@ -1,4 +1,4 @@
-REPO ?= $(realpath paperwork_repo)
+REPO ?= $(abspath paperwork_repo)
 APP = work.openpaper.Paperwork
 ALL_TARGETS = $(patsubst %.json,%,$(wildcard *.json))
 ALL_BRANCHES = master testing develop
