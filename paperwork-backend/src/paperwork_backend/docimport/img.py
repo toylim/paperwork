@@ -35,8 +35,12 @@ class SingleImgImporter(object):
         if nb_pages is None:
             nb_pages = 0
 
-        # Makes sure it's actually an image
+        # Makes sure it's actually an image and convert it to the expected
+        # format
         img = self.core.call_success("url_to_pillow", file_url)
+        if img is None:
+            LOGGER.error("Failed to load image %s", file_url)
+            return (None, None)
         page_url = self.core.call_success(
             "page_get_img_url", doc_url, nb_pages, write=True
         )
@@ -48,6 +52,8 @@ class SingleImgImporter(object):
         (self.doc_id, self.doc_url) = self._append_file_to_doc(
             file_uri, self.file_import.active_doc_id
         )
+        if self.doc_id is None:
+            return False
 
         self.file_import.stats[_("Images")] += 1
         if self.file_import.active_doc_id is None:

@@ -113,6 +113,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
         if "doc_id=" not in src_uri or "page=" not in src_uri:
             LOGGER.info("Drop: Import of %s", src_uri)
+            # TODO(Jflesch): Should import to the target document (drop)
+            # instead of the currently-opened document
             self.core.call_all("gtk_doc_import", [src_uri])
             return
         else:
