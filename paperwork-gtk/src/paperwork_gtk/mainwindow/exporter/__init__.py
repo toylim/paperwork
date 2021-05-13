@@ -577,7 +577,9 @@ class Plugin(openpaperwork_core.PluginBase):
     def _on_pipeline_changed(self, *args, **kwargs):
         self._rebuild_pipeline_from_ui()
         self._expand_pipeline()
-        self._refresh_pipeline_ui()
+        # WORKAROUND(JFlesch): call this method using mainloop_schedule.
+        # Otherwise, in Flatpak, with Gnome 40, it crashes.
+        self.core.call_one("mainloop_schedule", self._refresh_pipeline_ui)
         self._set_quality()
         self._set_page_format()
         self._reload_preview()
