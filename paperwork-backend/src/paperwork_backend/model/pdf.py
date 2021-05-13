@@ -535,9 +535,18 @@ class Plugin(openpaperwork_core.PluginBase):
         return "{}#page={}".format(pdf_url, str(original_page_idx + 1))
 
     @staticmethod
-    def _custom_split(input_str, input_rects, splitter):
+    def _custom_split(input_str, input_rects, splitter, log_txt):
         # turn text and layout from Poppler into boxes
-        assert(len(input_str) == len(input_rects))
+        # XXX(Jflesch): following assert fails sometimes ? oO
+        # assert(len(input_str) == len(input_rects))
+        if len(input_str) != len(input_rects):
+            LOGGER.warning(
+                "%s: Input strings: %d ; Input rects: %d",
+                log_txt, len(input_str), len(input_rects)
+            )
+            m = min(len(input_str), len(input_rects))
+            input_str = input_str[:m]
+            input_rects = input_rects[:m]
         input_el = zip(input_str, input_rects)
         for (is_split, group) in itertools.groupby(
                     input_el,
@@ -663,11 +672,11 @@ class Plugin(openpaperwork_core.PluginBase):
 
         line_boxes = []
         for (line, line_rects) in self._custom_split(
-                    txt, layout, lambda x: x == "\n"
+                    txt, layout, lambda x: x == "\n", "lines",
                 ):
             words = []
             for (word, word_rects) in self._custom_split(
-                        line, line_rects, lambda x: x.isspace()
+                        line, line_rects, lambda x: x.isspace(), "words"
                     ):
                 word_box = PdfWordBox(word, word_rects)
                 words.append(word_box)
