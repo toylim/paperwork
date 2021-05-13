@@ -54,6 +54,9 @@ class TestImgImport(unittest.TestCase):
                 def fs_mkdir_p(s, dir_uri):
                     return True
 
+                def url_to_pillow(s, file_uri):
+                    return "non-null value"
+
                 def pillow_to_url(s, img, dst_uri):
                     self.pillowed.append(dst_uri)
                     return dst_uri
