@@ -68,6 +68,7 @@ class TestPageEdit(unittest.TestCase):
                     ("file:///paper.1.jpeg", self.test_img),
                     ("file:///paper.2.jpeg", self.test_img),
                 ],
+                "page_boxes": [[], [], []],
             },
         ]
 

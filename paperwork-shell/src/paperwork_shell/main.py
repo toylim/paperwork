@@ -31,15 +31,15 @@ DEFAULT_SHELL_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'paperwork_shell.cmd.search',
     'paperwork_shell.cmd.show',
     'paperwork_shell.cmd.sync',
+    'paperwork_shell.display.docrendering.extra_text',
+    'paperwork_shell.display.docrendering.img',
+    'paperwork_shell.display.docrendering.labels',
+    'paperwork_shell.display.docrendering.text',
     'paperwork_shell.l10n',
 ]
 
 DEFAULT_CLI_PLUGINS = DEFAULT_SHELL_PLUGINS + [
     "paperwork_shell.cmd.about",
-    "paperwork_shell.display.docrendering.extra_text",
-    "paperwork_shell.display.docrendering.img",
-    "paperwork_shell.display.docrendering.labels",
-    "paperwork_shell.display.docrendering.text",
     'paperwork_shell.display.progress',
     "paperwork_shell.display.scan",
 ]
