@@ -53,7 +53,7 @@ class OrientationTransaction(sync.BaseTransaction):
             if not self.sync and change == 'new':
                 if self.core.call_success(
                             "page_has_text_by_url", doc_url, page_idx
-                        ) is not None:
+                        ):
                     LOGGER.debug(
                         "Document %s page %d has already some text",
                         doc_id, page_idx
