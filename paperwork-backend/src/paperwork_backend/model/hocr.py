@@ -67,13 +67,27 @@ class Plugin(openpaperwork_core.PluginBase):
                 continue
             out.append(text)
 
+    def page_reset_by_url(self, doc_url, page_idx):
+        page_url = self.core.call_success(
+            "fs_join", doc_url, PAGE_FILENAME_FMT.format(page_idx + 1)
+        )
+        if self.core.call_success("fs_exists", page_url) is None:
+            return None
+        self.core.call_all("fs_unlink", page_url, trash=False)
+
     def page_has_text_by_url(self, doc_url, page_idx):
         page_url = self.core.call_success(
             "fs_join", doc_url, PAGE_FILENAME_FMT.format(page_idx + 1)
         )
         if self.core.call_success("fs_exists", page_url) is None:
             return None
-        return True
+        text = self.page_get_text_by_url(doc_url, page_idx)
+        if text is None:
+            return None
+        text = text.strip()
+        # If the file exists and is valid, it takes precedence over text from,
+        # for instance, a PDF file --> we return False instead of None
+        return len(text) > 0
 
     def page_get_text_by_url(self, doc_url, page_idx):
         task = "hocr_load_page_text({} p{})".format(doc_url, page_idx)
@@ -90,13 +104,17 @@ class Plugin(openpaperwork_core.PluginBase):
 
         with file_desc:
             txt = file_desc.read().strip()
-
         try:
             tree = etree.XML(txt)
-            txt = etree.tostring(tree, encoding='utf-8', method='text')
-            if isinstance(txt, bytes):
-                txt = txt.decode('utf-8')
-            return txt
+            for tag in tree.iter():
+                if tag.tag != 'body':
+                    continue
+                txt = etree.tostring(tag, encoding='utf-8', method='text')
+                if isinstance(txt, bytes):
+                    txt = txt.decode('utf-8')
+                return txt
+            # No body ?!
+            return ""
         except etree.ParseError as exc:
             LOGGER.warning(
                 "%s contains invalid XML (%s). Will try with HTML parser",
