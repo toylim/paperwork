@@ -174,6 +174,11 @@ class Plugin(openpaperwork_core.PluginBase):
         self._show_result_doc(doc_id)
         self._show_result_notification(file_import)
 
+    def _reload_docs(self, file_import):
+        for doc_id in file_import.upd_doc_ids:
+            doc_url = self.core.call_success("doc_id_to_url", doc_id)
+            self.core.call_all("doc_reload", doc_id, doc_url)
+
     def _add_to_recent(self, file_uris):
         for file_uri in file_uris:
             if self.core.call_success("fs_isdir", file_uri) is None:
@@ -214,5 +219,6 @@ class Plugin(openpaperwork_core.PluginBase):
         promise = promise.then(lambda *args, **kwargs: None)
         promise = promise.then(self._log_result, file_import)
         promise = promise.then(self._show_result, file_import)
+        promise = promise.then(self._reload_docs, file_import)
         self.core.call_success("transaction_schedule", promise)
         return True
