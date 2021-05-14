@@ -107,14 +107,16 @@ class Plugin(openpaperwork_core.PluginBase):
         try:
             tree = etree.XML(txt)
             for tag in tree.iter():
-                if tag.tag != 'body':
+                tag_name = tag.tag.rsplit("}", 1)[-1]  # ignore namespace
+                if tag_name != 'body':
                     continue
                 txt = etree.tostring(tag, encoding='utf-8', method='text')
-                if isinstance(txt, bytes):
-                    txt = txt.decode('utf-8')
-                return txt
-            # No body ?!
-            return ""
+            else:
+                # No body ?!
+                txt = etree.tostring(tree, encoding='utf-8', method='text')
+            if isinstance(txt, bytes):
+                txt = txt.decode('utf-8')
+            return txt
         except etree.ParseError as exc:
             LOGGER.warning(
                 "%s contains invalid XML (%s). Will try with HTML parser",
