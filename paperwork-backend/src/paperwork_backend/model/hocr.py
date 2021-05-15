@@ -111,8 +111,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 if tag_name != 'body':
                     continue
                 txt = etree.tostring(tag, encoding='utf-8', method='text')
+                break
             else:
                 # No body ?!
+                LOGGER.warning("No tag 'body' found in %s", page_url)
                 txt = etree.tostring(tree, encoding='utf-8', method='text')
             if isinstance(txt, bytes):
                 txt = txt.decode('utf-8')
