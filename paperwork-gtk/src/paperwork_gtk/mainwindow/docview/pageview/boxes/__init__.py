@@ -160,6 +160,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 self.nb_to_load -= 1
             if ref in self.cache:
                 self.cache.pop(ref)
+            self._upd_progress()
             return
 
         if ref in self.cache:
