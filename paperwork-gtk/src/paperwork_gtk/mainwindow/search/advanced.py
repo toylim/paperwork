@@ -55,6 +55,9 @@ class SearchElement(object):
     def get_name():
         assert()
 
+    def on_model_updated(self):
+        pass
+
 
 class SearchElementText(SearchElement):
     """This is the keyword search term text field"""
@@ -84,17 +87,25 @@ class SearchElementText(SearchElement):
 class SearchElementLabel(SearchElement):
     def __init__(self, dialog):
         super().__init__(dialog, Gtk.ComboBoxText())
+        self.on_model_updated()
+        self.widget.set_active(0)
 
+    def on_model_updated(self):
         labels = set()
         self.dialog.core.call_all("labels_get_all", labels)
         labels = [label[0] for label in labels]
         labels = self.dialog.core.call_success("i18n_sort", labels)
 
         store = Gtk.ListStore.new([GObject.TYPE_STRING])
-        for label in labels:
-            store.append([label])
+        if len(labels) <= 0:
+            # happens temporarily when Paperwork starts
+            store.append([_("No labels")])
+            self.widget.set_sensitive(False)
+        else:
+            for label in labels:
+                store.append([label])
+            self.widget.set_sensitive(True)
         self.widget.set_model(store)
-        self.widget.set_active(0)
 
     def get_search_string(self):
         active_idx = self.get_widget().get_active()
@@ -446,6 +457,10 @@ class SearchLine(object):
             return sl
         assert()
 
+    def on_model_updated(self):
+        if self.element:
+            self.element.on_model_updated()
+
 
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
@@ -629,3 +644,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 "fs_join", out_dir, "advanced_search.png"
             ),
         )
+
+    def on_label_loading_end(self):
+        for element in self.search_elements:
+            element.on_model_updated()
