@@ -76,8 +76,20 @@ class Plugin(openpaperwork_core.PluginBase):
             doc_txt = doc_id
         self.widget_tree.get_object("docname_entry").set_text(doc_txt)
 
+    def _check_doc_id(self, doc_id):
+        if doc_id == "":
+            return False
+        for forbidden in ["/", "\\", "?", "*"]:
+            if forbidden in doc_id:
+                return False
+        return True
+
     def _on_doc_date_changed(self, gtk_entry):
         txt = gtk_entry.get_text()
+        txt = txt.strip()
+        if not self._check_doc_id(txt):
+            self.core.call_all("gtk_entry_set_colors", gtk_entry, bg="#ff0000")
+            return
         r = self.core.call_success("i18n_parse_date_short", txt)
         if r is not None:
             self.core.call_all("gtk_entry_reset_colors", gtk_entry)
@@ -89,6 +101,13 @@ class Plugin(openpaperwork_core.PluginBase):
             return
 
         doc_id = self.widget_tree.get_object("docname_entry").get_text()
+        doc_id = doc_id.strip()
+        if not self._check_doc_id(doc_id):
+            LOGGER.error(
+                "Invalid document id specified. Won't rename the document"
+            )
+            return
+
         doc_date = self.core.call_success("i18n_parse_date_short", doc_id)
         if doc_date is None:
             LOGGER.warning(
