@@ -126,6 +126,9 @@ class Plugin(openpaperwork_core.PluginBase):
         dest_url = self.core.call_success(
             "doc_rename_by_url", orig_url, dest_url
         )
+        if not dest_url:
+            LOGGER.warning("Renaming %s into %s failed", orig_id, dest_id)
+            return
         dest_id = self.core.call_success("doc_url_to_id", dest_url)
 
         out.del_docs.add(out.doc_id)
