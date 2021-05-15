@@ -267,8 +267,8 @@ class Plugin(openpaperwork_core.PluginBase):
         mtime = self.core.call_success("doc_get_mtime_by_url", doc_url)
         if mtime == self.active_doc_mtime:
             LOGGER.info(
-                "Reload for document %s requested, but mtime hasn't changed",
-                doc_url, mtime
+                "Reload for document %s requested, but mtime hasn't changed"
+                " (%s)", doc_url, mtime
             )
             return
         self.active_doc_mtime = mtime
