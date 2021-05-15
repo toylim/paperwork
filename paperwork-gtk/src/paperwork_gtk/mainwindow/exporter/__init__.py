@@ -96,6 +96,13 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_core.i18n.python'],
             },
             {
+                'interface': 'notifications',
+                'defaults': [
+                    'paperwork_gtk.notifications.dialog',
+                    'paperwork_gtk.notifications.notify',
+                ],
+            },
+            {
                 'interface': 'work_queue',
                 'defaults': ['openpaperwork_core.work_queue.default'],
             },
@@ -646,6 +653,17 @@ class Plugin(openpaperwork_core.PluginBase):
         promise = promise.then(lambda *args, **kwargs: None)
         promise = promise.then(Gtk.RecentManager().add_item, selected)
         promise = promise.then(lambda *args, **kwargs: None)
+        promise = promise.catch(self._on_error)
 
         # do not use the work queue ; must never be canceled
         promise.schedule()
+
+    def _on_error(self, exc):
+        LOGGER.error("Export failed", exc_info=exc)
+        notif = self.core.call_success(
+            "get_notification_builder",
+            _("Export has failed"),
+        )
+        notif.set_message(f"Export has failed: {type(exc)} {exc}")
+        notif.set_icon("dialog-error")
+        notif.show()
