@@ -157,12 +157,8 @@ class Core(object):
             return self.plugins[module_name]
 
         LOGGER.info("Loading plugin '%s' ...", module_name)
-        try:
-            module = importlib.import_module(module_name)
-            return self._load_module(module_name, module)
-        except Exception as exc:
-            LOGGER.error("Failed to load '%s'", module_name, exc_info=exc)
-            return None
+        module = importlib.import_module(module_name)
+        return self._load_module(module_name, module)
 
     def _load_module(self, module_name, module):
         """
@@ -282,14 +278,7 @@ class Core(object):
 
         LOGGER.info("Initializing plugin '%s' ...", type(plugin))
         stack.remove(plugin)
-        try:
-            plugin.init(self)
-        except Exception as exc:
-            LOGGER.error(
-                "Failed to initialized plugin '%s'",
-                type(plugin), exc_info=exc
-            )
-            return nb
+        plugin.init(self)
 
         self._register_plugin(plugin)
         nb += 1
@@ -452,7 +441,7 @@ class Core(object):
             )
         if self.log_all:
             print(
-                "[{}] call_all({}, args={}, kwargs={}) -> {}:{}".format(
+                "[{}] call_one({}, args={}, kwargs={}) -> {}:{}".format(
                     time.time(), callback_name, args, kwargs,
                     callbacks[0][0], callbacks[0][2]
                 )
@@ -501,17 +490,12 @@ class Core(object):
             LOGGER.warning("No method '%s' found", callback_name)
         for (priority, plugin, callback) in callbacks:
             if self.log_all:
-                print(
-                    "[{}] call_all({}, args={}, kwargs={}) -> {}:{}".format(
-                        time.time(), callback_name, args, kwargs,
-                        priority, callback
-                    )
-                )
-            try:
-                r = callback(*args, **kwargs)
-            except Exception:
-                LOGGER.error("Callback '%s' failed", str(callback))
-                raise
+                msg = "[{}] call_success({}, args={}, kwargs={}) -> {}:{}"
+                print(msg.format(
+                    time.time(), callback_name, args, kwargs, priority,
+                    callback
+                ))
+            r = callback(*args, **kwargs)
             if r is not None:
                 return r
         return None
