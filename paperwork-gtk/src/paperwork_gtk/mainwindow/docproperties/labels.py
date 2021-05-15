@@ -609,7 +609,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def sync(self, promises: list):
         pass
 
-    def on_all_labels_loaded(self):
+    def on_label_loading_end(self):
         for editor in self.editors:
             editor._refresh_list()
 
