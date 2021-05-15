@@ -2,19 +2,16 @@
 
 set -e
 
+# Explicitly set the revision of the test documents here, so we can figure out
+# exactly which version of Paperwork was tied to which version of the test
+# documents.
+TEST_DOCS_TAG="1.0"
+
 TMP_DIR="$(mktemp -d --suffix=paperwork)"
 echo "Temporary directory: ${TMP_DIR}"
 
 DATA_DIR="${PWD}/data"
 OUT_DIR="${PWD}/out"
-
-TEST_DOCS="${DATA_DIR}/paperwork_test-documents.tar.gz"
-
-if ! [ -f ${TEST_DOCS} ] ; then
-	echo "Downloading test documents ..."
-	wget -q https://download.openpaper.work/paperwork_test_documents.tar.gz \
-		-O "${TEST_DOCS}"
-fi
 
 mkdir -p "${TMP_DIR}/config"
 mkdir -p "${TMP_DIR}/local"
@@ -22,11 +19,12 @@ mkdir -p "${TMP_DIR}/papers"
 
 export XDG_CONFIG_HOME="${TMP_DIR}/config"
 export XDG_DATA_HOME="${TMP_DIR}/local"
-WORKDIR="${TMP_DIR}/papers"
+BASE_WORKDIR="${TMP_DIR}/papers"
+WORKDIR="${BASE_WORKDIR}/paperwork-test-documents/papers"
 
-cd "${WORKDIR}"
+cd "${BASE_WORKDIR}"
 echo "Extracting test documents ..."
-tar -xzf "${TEST_DOCS}"
+git clone --depth 1 --branch "${TEST_DOCS_TAG}" https://gitlab.gnome.org/World/OpenPaperwork/paperwork-test-documents.git
 
 echo "Updating Paperwork database ..."
 paperwork-cli config put workdir str "file://${WORKDIR}"
