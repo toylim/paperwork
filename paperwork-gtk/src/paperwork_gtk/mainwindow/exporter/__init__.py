@@ -614,6 +614,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
         dialog.connect("response", self._on_dialog_response)
         dialog.run()
+        dialog.hide()
+        dialog.destroy()
 
     def _on_dialog_response(self, dialog, response_id):
         if (response_id != Gtk.ResponseType.ACCEPT and
@@ -621,11 +623,9 @@ class Plugin(openpaperwork_core.PluginBase):
                 response_id != Gtk.ResponseType.YES and
                 response_id != Gtk.ResponseType.APPLY):
             LOGGER.info("User canceled (response_id=%d)", response_id)
-            dialog.destroy()
             return
 
         selected = dialog.get_uris()[0]
-        dialog.destroy()
         self.core.call_all("mainwindow_back", side="right")
 
         # make sure the file extension is set
