@@ -10,7 +10,6 @@ TEST_DOCS_TAG="1.0"
 TMP_DIR="$(mktemp -d --suffix=paperwork)"
 echo "Temporary directory: ${TMP_DIR}"
 
-DATA_DIR="${PWD}/data"
 OUT_DIR="${PWD}/out"
 
 mkdir -p "${TMP_DIR}/config"
