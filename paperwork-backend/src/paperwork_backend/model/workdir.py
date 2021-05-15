@@ -160,6 +160,10 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_success("fs_rm_rf", source_doc_url)
 
     def doc_rename_by_url(self, src_doc_url, dst_doc_url):
+        if not self.core.call_success("fs_isdir", src_doc_url):
+            # May happen on integrated documentation PDF files
+            LOGGER.warning("Cannot rename non-directory documents")
+            return
         idx = 0
         dst_url = dst_doc_url
         while self.core.call_success("fs_exists", dst_url) is not None:

@@ -58,6 +58,25 @@ sudo apt install \
         gtk-doc-tools
 ```
 
+Paperwork requires some data files (documentation, etc) that require a lot of
+dependencies and time to build. By default, if you don't have those data files,
+Makefiles and scripts will download the latest version made by the CI/CD builds.
+If you want to generate the data file (documentation, etc) yourself, you are
+going to need a whole lot of other dependencies:
+
+```sh
+sudo apt install \
+        imagemagick \
+        po4a \
+        texlive \
+        texlive-lang-english \
+        texlive-lang-french \
+        texlive-lang-german \
+        texlive-latex-extra \
+        texlive-latex-recommended \
+        xvfb
+```
+
 
 ### Setting up a virtualenv
 
@@ -134,4 +153,25 @@ source ./activate_test_env.sh
 make install
 ```
 
-Enjoy :-)
+
+### Generating data files
+
+Data files are:
+
+- Documentation files (.tex turned into .pdf)
+- Screenshots (taken with xvfb-run + a script ; used in the documentation
+  files)
+- Icons at various sizes
+
+To generate the screnshots,
+[the script](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/-/blob/develop/paperwork-gtk/src/paperwork_gtk/model/help/screenshot.sh)
+will automatically fetch test documents from here:
+https://gitlab.gnome.org/World/OpenPaperwork/paperwork-test-documents
+
+
+```sh
+cd ~/git/paperwork
+source ./activate_test_env.sh
+make install
+make data
+```
