@@ -23,8 +23,15 @@ BASE_WORKDIR="${TMP_DIR}/papers"
 WORKDIR="${BASE_WORKDIR}/paperwork-test-documents/papers"
 
 cd "${BASE_WORKDIR}"
-echo "Extracting test documents ..."
-git clone --depth 1 --branch "${TEST_DOCS_TAG}" https://gitlab.gnome.org/World/OpenPaperwork/paperwork-test-documents.git
+if [ -d "${PAPERWORK_TEST_DOCUMENTS}" ];
+then
+	rm -rf paperwork-test-documents
+	echo "Copying test documents from ${PAPERWORK_TEST_DOCUMENTS} to $(readlink -f .)/paperwork-test-documents ..."
+	cp -r --no-preserve=mode "${PAPERWORK_TEST_DOCUMENTS}" ./paperwork-test-documents
+else
+	echo "Downloading test documents to $(readlink -f .)/paperwork-test-documents ... If internet access is forbidden, set PAPERWORK_TEST_DOCUMENTS env var to the path to a pre-fetched copy."
+	git clone --depth 1 --branch "${TEST_DOCS_TAG}" https://gitlab.gnome.org/World/OpenPaperwork/paperwork-test-documents.git
+fi
 
 echo "Updating Paperwork database ..."
 paperwork-cli config put workdir str "file://${WORKDIR}"
