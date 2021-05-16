@@ -103,17 +103,17 @@ class Plugin(openpaperwork_core.PluginBase):
         doc_id = doc_id.strip()
 
         doc_date = self.core.call_success("i18n_parse_date_short", doc_id)
-        if doc_date is None:
-            LOGGER.warning(
-                "Failed to parse document date: %s. Using as is", doc_id
-            )
+        if doc_date is not None:
+            doc_id = self.core.call_success("doc_get_id_by_date", doc_date)
         elif not self._check_doc_id(doc_id):
             LOGGER.error(
                 "Invalid document id specified. Won't rename the document"
             )
             return
         else:
-            doc_id = self.core.call_success("doc_get_id_by_date", doc_date)
+            LOGGER.warning(
+                "Failed to parse document date: %s. Using as is", doc_id
+            )
 
         orig_id = out.doc_id
         orig_date = self.core.call_success("doc_get_date_by_id", orig_id)

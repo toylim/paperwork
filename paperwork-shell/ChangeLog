@@ -1,3 +1,10 @@
+2021/05/xx - 2.0.3:
+- Fix "paperwork-json show": paperwork-json uses document renderers too
+- Fix crash when uising "paperwork-cli rename"
+- Paperwork-cli/-json search: sort the documents by decreasing dates
+- Swedish translations added
+- Add LICENSE file in pypi package
+
 2021/01/01 - 2.0.2:
 - add command 'chkworkdir': Check work directory integrity and fix it
 - import: Fix: Load the labels before importing documents
