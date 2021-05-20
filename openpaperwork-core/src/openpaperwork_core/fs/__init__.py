@@ -32,7 +32,7 @@ class CommonFsPluginBase(openpaperwork_core.PluginBase):
         if uri[:2] == "\\\\" or "://" in uri:
             LOGGER.debug("safe: --> %s", uri)
             return uri
-        return pathlib.Path(uri).as_uri()
+        return pathlib.Path(uri).resolve(strict=True).as_uri()
 
     @staticmethod
     def fs_unsafe(uri):
