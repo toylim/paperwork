@@ -25,7 +25,11 @@ or on the [forum](https://forum.openpaper.work/)
 Sometimes [IRC](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Contact#irc) is used too.
 
 
-# Code contribution rules
+# Code contribution
+
+[OpenPaperwork-core documentation](https://doc.openpaper.work/openpaperwork_core/latest/)
+
+Rules are:
 
 * All commits go to the branch `develop`. I (Jflesch) will cherry-pick them in the branches `master` (stable) or `testing` (release) if required.
 * Paperwork is made to be *simple* to use (think simple enough that your own mother could install and use it)
