@@ -3,14 +3,6 @@ import logging
 import openpaperwork_core
 import openpaperwork_core.promise
 
-try:
-    import gi
-    gi.require_version('Handy', '1')
-    from gi.repository import Handy
-    HDY_AVAILABLE = True
-except (ImportError, ValueError):
-    HDY_AVAILABLE = False
-
 LOGGER = logging.getLogger(__name__)
 
 
@@ -196,10 +188,6 @@ class Plugin(openpaperwork_core.PluginBase):
                 "multiple", self, multiple_docs=True
             ),
         }
-
-    def chkdeps(self, out: dict):
-        if not HDY_AVAILABLE:
-            out['hdy'].update(openpaperwork_gtk.deps.HDY)
 
     def doc_open(self, doc_id, doc_url):
         for e in self.editors.values():

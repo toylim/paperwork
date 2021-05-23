@@ -9,13 +9,6 @@ try:
 except (ImportError, ValueError):
     GTK_AVAILABLE = False
 
-try:
-    gi.require_version('Handy', '1')
-    from gi.repository import Handy
-    HDY_AVAILABLE = True
-except (ImportError, ValueError):
-    HDY_AVAILABLE = False
-
 import openpaperwork_core
 import openpaperwork_gtk.deps
 
@@ -340,8 +333,6 @@ class Plugin(openpaperwork_core.PluginBase):
     def chkdeps(self, out: dict):
         if not GTK_AVAILABLE:
             out['gtk'].update(openpaperwork_gtk.deps.GTK)
-        if not HDY_AVAILABLE:
-            out['hdy'].update(openpaperwork_gtk.deps.HDY)
 
     def gtk_open_page_editor(self, doc_id, doc_url, page_idx):
         self.active_doc = (doc_id, doc_url)

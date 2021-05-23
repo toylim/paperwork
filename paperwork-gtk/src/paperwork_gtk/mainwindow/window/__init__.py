@@ -16,13 +16,6 @@ try:
 except (ImportError, ValueError):
     GTK_AVAILABLE = False
 
-try:
-    gi.require_version('Handy', '1')
-    from gi.repository import Handy
-    HDY_AVAILABLE = True
-except (ImportError, ValueError):
-    HDY_AVAILABLE = False
-
 import PIL
 import PIL.Image
 import PIL.ImageDraw
@@ -85,7 +78,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def init(self, core):
         super().init(core)
-        Handy.init()
 
         self.core.call_success(
             "gtk_load_css",
@@ -170,8 +162,6 @@ class Plugin(openpaperwork_core.PluginBase):
             out['glib'].update(openpaperwork_gtk.deps.GLIB)
         if not GTK_AVAILABLE:
             out['gtk'].update(openpaperwork_gtk.deps.GTK)
-        if not HDY_AVAILABLE:
-            out['hdy'].update(openpaperwork_gtk.deps.HDY)
 
     def on_initialized(self):
         for side in self.defaults.keys():
