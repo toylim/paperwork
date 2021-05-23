@@ -98,7 +98,7 @@ linux_flatpak:
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-ca-certificates
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-python3-setuptools
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-python3-pip
-    - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i386-libhandy
+    - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-libhandy
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-libnotify
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-poppler
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-python-psutil
