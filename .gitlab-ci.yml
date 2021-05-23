@@ -28,6 +28,7 @@ test:
     - linux
     - volatile
   script:
+    - echo deb http://deb.debian.org/debian buster-backports main > /etc/apt/sources.list.d/backports.list
     - apt-get update
     - source ./activate_test_env.sh && make install
     - source ./activate_test_env.sh && paperwork-gtk chkdeps -y && paperwork-cli chkdeps -y
@@ -43,6 +44,7 @@ generate_data:
     - linux
     - volatile
   script:
+    - echo deb http://deb.debian.org/debian buster-backports main > /etc/apt/sources.list.d/backports.list
     - apt-get update
     - source ./activate_test_env.sh && make install
     - source ./activate_test_env.sh && paperwork-gtk chkdeps -y && paperwork-cli chkdeps -y
