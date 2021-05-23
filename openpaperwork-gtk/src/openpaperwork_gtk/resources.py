@@ -25,6 +25,13 @@ try:
 except (ImportError, ValueError):
     GTK_AVAILABLE = False
 
+try:
+    gi.require_version('Handy', '1')
+    from gi.repository import Handy
+    HDY_AVAILABLE = True
+except (ImportError, ValueError):
+    HDY_AVAILABLE = False
+
 import openpaperwork_core  # noqa: E402
 
 from . import deps  # noqa: E402
@@ -59,11 +66,21 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
+    def init(self, core):
+        super().init(core)
+        if not HDY_AVAILABLE:
+            # init must still work so 'chkdeps' is still available
+            LOGGER.error("Failed to initalize Libhandy")
+            return
+        Handy.init()
+
     def chkdeps(self, out: dict):
         if not GDK_PIXBUF_AVAILABLE:
             out['gdk_pixbuf'].update(deps.GDK_PIXBUF)
         if not GTK_AVAILABLE:
             out['gtk'].update(deps.GTK)
+        if not HDY_AVAILABLE:
+            out['hdy'].update(deps.HDY)
 
     @staticmethod
     def _translate_xml(xml_str):
@@ -115,8 +132,10 @@ class Plugin(openpaperwork_core.PluginBase):
             GTK Widget Tree
         """
 
-        if not GTK_AVAILABLE:
-            LOGGER.error("gtk_load_widget_tree(): GTK is not available")
+        if not GTK_AVAILABLE or not HDY_AVAILABLE:
+            LOGGER.error(
+                "gtk_load_widget_tree(): GTK|Libhandy is not available"
+            )
             return None
 
         LOGGER.debug("Loading GTK widgets from %s:%s", pkg, filename)
@@ -169,8 +188,8 @@ class Plugin(openpaperwork_core.PluginBase):
             pkg -- Python package name
             filename -- css file name to load.
         """
-        if not GTK_AVAILABLE:
-            LOGGER.error("gtk_load_css(): GTK is not available")
+        if not GTK_AVAILABLE or not HDY_AVAILABLE:
+            LOGGER.error("gtk_load_css(): GTK|Libhandy is not available")
             return None
 
         LOGGER.debug("Loading CSS from %s:%s", pkg, filename)
