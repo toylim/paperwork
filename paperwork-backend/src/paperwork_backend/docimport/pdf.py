@@ -38,6 +38,8 @@ class SinglePdfImporter(object):
             "doc_pdf_import", file_uri,
             password=self.data['password'] if 'password' in self.data else None
         )
+        if self.doc_id is None:
+            return False
         self.file_import.new_doc_ids.add(self.doc_id)
         self.file_import.stats[_("PDF")] += 1
         self.file_import.stats[_("Documents")] += 1
@@ -74,9 +76,11 @@ class SinglePdfImporterFactory(object):
     def get_required_data(self, file_uri):
         try:
             self.core.call_success("poppler_open", file_uri, password=None)
+            LOGGER.info("%s: not password protected", file_uri)
             return set()
         except Exception:
             # XXX(Jflesch): there is no specific exception type ... :/
+            LOGGER.info("%s: password protected", file_uri)
             return {"password"}
 
     def make_importer(self, file_import, file_uri, data):

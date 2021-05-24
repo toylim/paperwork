@@ -764,6 +764,7 @@ class Plugin(openpaperwork_core.PluginBase):
             else:
                 LOGGER.error("Failed to read %s", pdf_url, exc_info=exc_info)
             self.core.call_success("fs_rm_rf", doc_url, trash=False)
+            return (None, None)
 
         return (doc_id, doc_url)
 
