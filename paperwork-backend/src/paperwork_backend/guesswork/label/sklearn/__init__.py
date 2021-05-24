@@ -195,7 +195,7 @@ class UpdatableVectorizer(object):
             if sum_features is None:
                 sum_features = doc_vector
             else:
-                sum_features += doc_vector
+                sum_features = sum_features + doc_vector
 
         if sum_features is None:
             return ([], 0)
