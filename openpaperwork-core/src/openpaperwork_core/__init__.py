@@ -43,6 +43,7 @@ RECOMMENDED_PLUGINS = [
     'openpaperwork_core.resources.frozen',
     'openpaperwork_core.resources.setuptools',
     'openpaperwork_core.thread.pool',
+    'openpaperwork_core.urls',
     'openpaperwork_core.work_queue.default',
 ]
 

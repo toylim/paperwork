@@ -47,7 +47,7 @@ class Plugin(openpaperwork_core.PluginBase):
         if not POPPLER_AVAILABLE:
             out['poppler'] = openpaperwork_core.deps.POPPLER
 
-    def poppler_open(self, url):
+    def poppler_open(self, url, password=None):
         if os.name == "nt":
             # WORKAROUND(Jflesch):
             # Disabled for now on Windows: There is a file descriptor leak
@@ -59,7 +59,7 @@ class Plugin(openpaperwork_core.PluginBase):
         gio_file = Gio.File.new_for_uri(url)
         doc = self.core.call_one(
             "mainloop_execute", Poppler.Document.new_from_gfile,
-            gio_file, password=None
+            gio_file, password=password
         )
         self.core.call_all("on_objref_track", doc)
         return doc
