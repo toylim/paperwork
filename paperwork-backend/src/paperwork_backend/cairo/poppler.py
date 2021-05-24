@@ -47,7 +47,8 @@ class CairoRenderer(GObject.GObject):
     }
     OUTLINE = (0.5, 0.5, 0.5)
 
-    def __init__(self, core, work_queue_name, file_url, page_idx):
+    def __init__(
+            self, core, work_queue_name, file_url, page_idx, password=None):
         global POPPLER_DOCS
 
         super().__init__()
@@ -55,6 +56,8 @@ class CairoRenderer(GObject.GObject):
         self.work_queue_name = work_queue_name
         self.file_url = file_url
         self.page_idx = page_idx
+        self.password = password
+
         self.visible = False
         self.blurry = False
         self.size = (0, 0)
@@ -64,7 +67,9 @@ class CairoRenderer(GObject.GObject):
             (doc, refcount) = POPPLER_DOCS[file_url]
         else:
             LOGGER.info("Opening PDF file {}".format(file_url))
-            doc = self.core.call_success("poppler_open", file_url)
+            doc = self.core.call_success(
+                "poppler_open", file_url, password=password
+            )
             refcount = 0
         POPPLER_DOCS[file_url] = (doc, refcount + 1)
 
@@ -228,6 +233,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'poppler',
                 'defaults': ['paperwork_backend.poppler.memory'],
             },
+            {
+                'interface': 'urls',
+                'defaults': ['openpaperwork_core.urls'],
+            },
         ]
 
     def chkdeps(self, out: dict):
@@ -237,25 +246,26 @@ class Plugin(openpaperwork_core.PluginBase):
             out['glib'].update(openpaperwork_core.deps.GLIB)
 
     def _check_is_pdf(self, file_url):
-        if file_url.lower().endswith(".pdf"):
-            return (file_url, 0)
-        if (self.FILE_EXTENSION + "#page=") not in file_url.lower():
-            return (None, None)
-        if "#" in file_url:
-            (file_url, page_idx) = file_url.rsplit("#page=", 1)
-            page_idx = int(page_idx) - 1
-        else:
-            page_idx = 0
-        return (file_url, page_idx)
+        (url, args) = self.core.call_success("url_args_split", file_url)
+        if not url.lower().endswith(self.FILE_EXTENSION):
+            return (None, None, None)
+
+        password = args.get('password', None)
+        if password is not None:
+            password = bytes.fromhex(password).decode("utf-8")
+        page_idx = int(args.get('page', 1)) - 1
+        return (url, page_idx, password)
 
     def url_to_img_size(self, file_url):
-        (file_url, page_idx) = self._check_is_pdf(file_url)
+        (file_url, page_idx, password) = self._check_is_pdf(file_url)
         if file_url is None:
             return None
 
         task = "url_to_img_size({})".format(file_url)
         self.core.call_all("on_perfcheck_start", task)
-        doc = self.core.call_success("poppler_open", file_url)
+        doc = self.core.call_success(
+            "poppler_open", file_url, password=password
+        )
         page = doc.get_page(page_idx)
 
         base_size = page.get_size()
@@ -268,20 +278,22 @@ class Plugin(openpaperwork_core.PluginBase):
         return size
 
     def url_to_img_size_promise(self, file_url):
-        (_file_url, page_idx) = self._check_is_pdf(file_url)
-        if _file_url is None:
+        (page_url, page_idx, password) = self._check_is_pdf(file_url)
+        if page_url is None:
             return None
 
         return openpaperwork_core.promise.Promise(
             self.core, self.url_to_img_size, args=(file_url,)
         )
 
-    def pdf_page_to_cairo_surface(self, file_url, page_idx):
+    def pdf_page_to_cairo_surface(self, file_url, page_idx, password=None):
         task = "pdf_page_to_cairo_surface({} p{})".format(file_url, page_idx)
 
         self.core.call_all("on_perfcheck_start", task)
 
-        doc = self.core.call_success("poppler_open", file_url)
+        doc = self.core.call_success(
+            "poppler_open", file_url, password=password
+        )
         page = doc.get_page(page_idx)
 
         base_size = page.get_size()
@@ -322,22 +334,24 @@ class Plugin(openpaperwork_core.PluginBase):
         return surface
 
     def url_to_cairo_surface(self, file_url):
-        (file_url, page_idx) = self._check_is_pdf(file_url)
+        (file_url, page_idx, password) = self._check_is_pdf(file_url)
         if file_url is None:
             return None
-        return self.pdf_page_to_cairo_surface(file_url, page_idx)
+        return self.pdf_page_to_cairo_surface(file_url, page_idx, password)
 
     def url_to_cairo_surface_promise(self, file_url):
-        (file_url, page_idx) = self._check_is_pdf(file_url)
+        (file_url, page_idx, password) = self._check_is_pdf(file_url)
         if file_url is None:
             return None
         return openpaperwork_core.promise.Promise(
             self.core, self.pdf_page_to_cairo_surface,
-            args=(file_url, page_idx)
+            args=(file_url, page_idx, password)
         )
 
     def cairo_renderer_by_url(self, work_queue_name, file_url):
-        (file_url, page_idx) = self._check_is_pdf(file_url)
+        (file_url, page_idx, password) = self._check_is_pdf(file_url)
         if file_url is None:
             return None
-        return CairoRenderer(self.core, work_queue_name, file_url, page_idx)
+        return CairoRenderer(
+            self.core, work_queue_name, file_url, page_idx, password
+        )
