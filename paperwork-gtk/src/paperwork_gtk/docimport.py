@@ -40,6 +40,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['paperwork_backend.model.workdir'],
             },
             {
+                'interface': 'gtk_dialog_single_entry',
+                'defaults': ['openpaperwork_gtk.dialogs.single_entry'],
+            },
+            {
                 'interface': 'import',
                 'defaults': [
                     'paperwork_backend.docimport.img',
@@ -94,6 +98,24 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         dialog.connect("response", lambda dialog, response: dialog.destroy())
         dialog.show_all()
+
+    def _request_password(self, importer, file_import):
+        self.core.call_success(
+            "gtk_show_dialog_single_entry", self,
+            _("PDF password"), "",
+            importer, file_import
+        )
+
+    def on_dialog_single_entry_reply(
+            self, origin, reply, password, importer, file_import):
+        if origin != self:
+            # Not ours
+            return
+        if not reply:
+            # User cancelled
+            return
+        self._do_import(importer, file_import, data={'password': password})
+        return True
 
     def _show_result_no_doc(self):
         msg = _("No new document to import found")
@@ -198,6 +220,14 @@ class Plugin(openpaperwork_core.PluginBase):
         for (k, v) in file_import.stats.items():
             LOGGER.info("- %s: %s", k, v)
 
+    def _do_import(self, importer, file_import, data=None):
+        promise = importer.get_import_promise(data)
+        promise = promise.then(lambda *args, **kwargs: None)
+        promise = promise.then(self._log_result, file_import)
+        promise = promise.then(self._show_result, file_import)
+        promise = promise.then(self._reload_docs, file_import)
+        self.core.call_success("transaction_schedule", promise)
+
     def gtk_doc_import(self, file_urls):
         LOGGER.info("Importing: %s", file_urls)
 
@@ -210,15 +240,22 @@ class Plugin(openpaperwork_core.PluginBase):
         if len(importers) <= 0:
             self._show_no_importer(file_urls)
             return
-        # TODO(Jflesch): Should ask the user what must be done
+        # TODO(Jflesch): Should ask the user what must be done if many
+        # importers are possible.
         importer = importers[0]
 
         self._add_to_recent(file_urls)
 
-        promise = importer.get_import_promise()
-        promise = promise.then(lambda *args, **kwargs: None)
-        promise = promise.then(self._log_result, file_import)
-        promise = promise.then(self._show_result, file_import)
-        promise = promise.then(self._reload_docs, file_import)
-        self.core.call_success("transaction_schedule", promise)
+        required = set()
+        for (k, v) in importer.get_required_data().items():
+            required.update(v)
+
+        LOGGER.info(
+            "Required data to import %s: %s",
+            file_urls, required
+        )
+        if "password" in required:
+            self._request_password(importer, file_import)
+        else:
+            self._do_import(importer, file_import)
         return True
