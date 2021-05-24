@@ -69,7 +69,11 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         p.add_argument(
             '--doc_id', '--doc', '-d', type=str, required=False,
-            help=_("Target document for import")
+            help=_("Target document for import"),
+        )
+        p.add_argument(
+            '--password', type=str, required=False,
+            help=_("PDF password"),
         )
         p.add_argument(
             'files', type=str, nargs='*',
@@ -143,7 +147,11 @@ class Plugin(openpaperwork_core.PluginBase):
         # are not done before we have loaded the labels
         self.core.call_one("transaction_schedule", promise)
 
-        promise = importer.get_import_promise()
+        data = {}
+        if args.password is not None:
+            data['password'] = args.password
+
+        promise = importer.get_import_promise(data)
 
         if self.interactive:
             print(_("Importing %s ...") % args.files)
