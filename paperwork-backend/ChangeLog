@@ -1,4 +1,4 @@
-2021/05/xx - 2.0.3:
+2021/05/24 - 2.0.3:
 - hOCR: fix page_get_text_by_url(): Do not return the hOCR title in the text
   (it's always "OCR output").
 - Image loading (used for file import): file extension check must be
