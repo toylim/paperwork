@@ -5,7 +5,7 @@ set -e
 # Explicitly set the revision of the test documents here, so we can figure out
 # exactly which version of Paperwork was tied to which version of the test
 # documents.
-TEST_DOCS_TAG="1.0"
+TEST_DOCS_TAG="2.0"
 
 TMP_DIR="$(mktemp -d --suffix=paperwork)"
 echo "Temporary directory: ${TMP_DIR}"
