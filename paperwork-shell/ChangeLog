@@ -1,4 +1,4 @@
-2021/05/xx - 2.0.3:
+2021/05/24 - 2.0.3:
 - Fix "paperwork-json show": paperwork-json uses document renderers too
 - Fix crash when uising "paperwork-cli rename"
 - Paperwork-cli/-json search: sort the documents by decreasing dates

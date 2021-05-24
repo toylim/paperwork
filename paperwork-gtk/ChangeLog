@@ -1,4 +1,4 @@
-2021/05/xx - 2.0.3:
+2021/05/24 - 2.0.3:
 - GTK: (may be important for package maintainers):
   "make data" --> "screenshot.sh": Download the test documents from a Git
   repository instead of a .tar.gz. See Gitlab issue #961.
