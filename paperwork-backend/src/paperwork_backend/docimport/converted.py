@@ -79,6 +79,9 @@ class SingleDocImporterFactory(object):
         file_ext = file_url.rsplit(".", 1)[-1].lower()
         return file_ext in self.plugin.file_types_by_ext
 
+    def get_required_data(self, file_uri):
+        return set()
+
     def make_importer(self, file_import, file_uri, data):
         return SingleDocImporter(self.plugin, file_import, file_uri)
 
