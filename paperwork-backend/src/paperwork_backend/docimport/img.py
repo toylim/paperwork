@@ -100,7 +100,10 @@ class SingleImgImporterFactory(object):
         if file_ext in self.plugin.FILE_EXTENSIONS:
             return True
 
-    def make_importer(self, file_import, file_uri):
+    def get_required_data(self, file_uri):
+        return set()
+
+    def make_importer(self, file_import, file_uri, data):
         return SingleImgImporter(self, file_import, file_uri)
 
 

@@ -11,7 +11,7 @@ class FileImport(object):
     what must still be done, what has been done, and what has not been done at
     all.
     """
-    def __init__(self, file_uris_to_import, active_doc_id=None):
+    def __init__(self, file_uris_to_import, active_doc_id=None, data=None):
         self.active_doc_id = active_doc_id
         # those attributes will be updated by importers
         self.ignored_files = list(file_uris_to_import)
@@ -26,12 +26,32 @@ class BaseFileImporter(object):
         self.core = core
         self.file_import = file_import
         self.single_file_importer_factory = single_file_importer_factory
+        self.to_import = list(self._get_importables())
 
     def get_name(self):
         return self.single_file_importer_factory.get_name()
 
     def can_import(self):
-        return len(list(self._get_importables())) > 0
+        return len(self.to_import) > 0
+
+    def get_required_data(self):
+        """
+        Possible requirements:
+        - "password": Document is password-protected. We need the password
+          to import it.
+
+        Returns:
+            {file_uri: {requirement_a, requirement_b, etc}}
+        """
+        out = {}
+        for (orig_url, file_url) in self.to_import:
+            required = self.single_file_importer_factory.get_required_data(
+                file_url
+            )
+            if len(required) <= 0:
+                continue
+            out[file_url] = required
+        return out
 
     @staticmethod
     def _upd_file_import(imported, file_import, orig_uri, file_uri):
@@ -66,20 +86,26 @@ class BaseFileImporter(object):
         for transaction in transactions:
             transaction.commit()
 
-    def get_import_promise(self):
+    def get_import_promise(self, data=None):
         """
         Return a promise with all the steps required to import files
         specified in `file_import` (see constructor), transactions included.
 
         Must be scheduled with 'transaction_manager.transaction_schedule()'.
-        """
-        promise = openpaperwork_core.promise.Promise(self.core)
-        to_import = list(self._get_importables())
 
-        for (orig_uri, file_uri) in to_import:
+        Arguments:
+            data are extra data that may be required
+            (see `get_required_data()`)
+        """
+        if data is None:
+            data = {}
+
+        promise = openpaperwork_core.promise.Promise(self.core)
+
+        for (orig_uri, file_uri) in self.to_import:
             promise = promise.then(
                 self.single_file_importer_factory.make_importer(
-                    self.file_import, file_uri
+                    self.file_import, file_uri, data
                 ).get_promise()
             )
             promise = promise.then(
