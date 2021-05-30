@@ -33,3 +33,9 @@ class Plugin(PluginBase):
 
     def external_app_open_folder(self, folder_url):
         return self.external_app_open_file(folder_url)
+
+    def can_send_as_attachment(self) -> None:
+        return None
+
+    def send_as_attachment(self, uri) -> None:
+        return None

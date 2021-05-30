@@ -1,4 +1,5 @@
 import logging
+from tempfile import NamedTemporaryFile
 
 try:
     import gi
@@ -29,6 +30,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.windows = []
 
         self.button_validate = None
+        self.button_send_email = None
         self.preciew = None
         self.zoom = None
         self.quality = None
@@ -106,6 +108,14 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'work_queue',
                 'defaults': ['openpaperwork_core.work_queue.default'],
             },
+            {
+                'interface': 'external_apps',
+                'defaults': [
+                    'openpaperwork_core.external_apps.dbus',
+                    'openpaperwork_core.external_apps.windows',
+                    'openpaperwork_core.external_apps.xdg',
+                ],
+            },
         ]
 
     def init(self, core):
@@ -127,6 +137,13 @@ class Plugin(openpaperwork_core.PluginBase):
         self.button_validate.connect(
             "clicked", self._on_apply
         )
+        self.button_send_email = self.widget_tree.get_object("exporter_send_email")
+        self.button_send_email.connect(
+            "clicked", self._on_send_email
+        )
+        can_send_as_attachment = core.call_success("can_send_as_attachment")
+        if not can_send_as_attachment:
+            self.button_send_email.set_visible(False)
 
         self.zoom = self.widget_tree.get_object("exporter_zoom_adjustment")
         self.zoom.connect("value-changed", self._on_zoom_changed)
@@ -295,9 +312,11 @@ class Plugin(openpaperwork_core.PluginBase):
         t = paperwork_backend.docexport.ExportDataType.OUTPUT_URL_FILE
         if last_output_type == t:
             self.button_validate.set_sensitive(True)
+            self.button_send_email.set_sensitive(True)
         else:
             self._add_combobox(steps, last_output_type, "")
             self.button_validate.set_sensitive(False)
+            self.button_send_email.set_sensitive(False)
 
     def _rebuild_pipeline_from_ui(self):
         LOGGER.info("Rebuilding pipeline from UI")
@@ -652,6 +671,27 @@ class Plugin(openpaperwork_core.PluginBase):
             ))
         promise = promise.then(lambda *args, **kwargs: None)
         promise = promise.then(Gtk.RecentManager().add_item, selected)
+        promise = promise.then(lambda *args, **kwargs: None)
+        promise = promise.catch(self._on_error)
+
+        # do not use the work queue ; must never be canceled
+        promise.schedule()
+
+    def _on_send_email(self, button):
+        (_, file_extensions) = self.pipeline[-1].get_output_mime()
+        target = NamedTemporaryFile(suffix="."+file_extensions[0])
+        target_file_url = "file://"+target.name
+        target.close()  # we only need the name
+        self.core.call_all("mainwindow_back", side="right")
+
+        promise = openpaperwork_core.promise.Promise(
+            self.core, lambda: self.export_input
+        )
+        for pipe in self.pipeline:
+            promise = promise.then(pipe.get_promise(
+                result='final', target_file_url=target_file_url
+            ))
+        promise = promise.then(lambda *args, **kwargs: self.core.call_success("send_as_attachment", target_file_url))
         promise = promise.then(lambda *args, **kwargs: None)
         promise = promise.catch(self._on_error)
 
