@@ -120,31 +120,31 @@ class Plugin(openpaperwork_core.PluginBase):
         entry.set("Icon", "work.openpaper.Paperwork")
         entry.set("Keywords", "document;scanner;ocr;")
         # PDF and all image formats supported by pillow
-        entry.set("MimeType",
-                  "application/pdf;"
-                  "image/png;"
-                  "image/jpeg;"
-                  "image/bmp;"
-                  "image/gif;"
-                  "image/ico;"
-                  "image/icon;"
-                  "image/jp2;"
-                  "image/jpeg;"
-                  "image/jpeg2000;"
-                  "image/jpg;"
-                  "image/jpx;"
-                  "image/pjpeg;"
-                  "image/png;"
-                  "image/tiff;"
-                  "image/webp;"
-                  "image/x-MS-bmp;"
-                  "image/x-bmp;"
-                  "image/x-portable-bitmap;"
-                  "image/x-portable-graymap;"
-                  "image/x-portable-pixmap;"
-                  "image/x-tga;"
-                  "image/x-png;"
-                  )
+        entry.set(
+            "MimeType",
+
+            "application/pdf;"
+            "image/bmp;"
+            "image/gif;"
+            "image/ico;"
+            "image/icon;"
+            "image/jp2;"
+            "image/jpeg2000;"
+            "image/jpeg;"
+            "image/jpg;"
+            "image/jpx;"
+            "image/pjpeg;"
+            "image/png;"
+            "image/tiff;"
+            "image/webp;"
+            "image/x-bmp;"
+            "image/x-MS-bmp;"
+            "image/x-png;"
+            "image/x-portable-bitmap;"
+            "image/x-portable-graymap;"
+            "image/x-portable-pixmap;"
+            "image/x-tga;"
+        )
         entry.validate()
         entry.write()
         print("Done")
