@@ -13,6 +13,7 @@ class TestLabelGuesser(unittest.TestCase):
         )
 
         self.core = openpaperwork_core.Core(auto_load_dependencies=True)
+        self.core.load("openpaperwork_core.config.fake")
         self.core.load("paperwork_backend.model.fake")
         self.core.load("paperwork_backend.doctracker")
         self.core.load("paperwork_backend.guesswork.label.sklearn")
@@ -44,6 +45,8 @@ class TestLabelGuesser(unittest.TestCase):
         self.core._load_module("fake_module", FakeModule())
 
         self.core.init()
+
+        self.core.call_all("config_put", "label_guessing_min_features", 1)
 
     def tearDown(self):
         self.core.call_all("tests_cleanup")

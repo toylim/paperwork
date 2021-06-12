@@ -1,3 +1,19 @@
+2021/05/24 - 2.0.3:
+- hOCR: fix page_get_text_by_url(): Do not return the hOCR title in the text
+  (it's always "OCR output").
+- Image loading (used for file import): file extension check must be
+  case-insensitive (".jpeg" and ".JPEG" must be both accepted)
+- OCR: Fix: By default, never run OCR on pages that already have text.
+- Take into account Cairo image size limitations (dimensions can't be higher
+  than 32k). Crop images accordingly if required.
+- PDF: work around possible weird replies from LibPoppler regarding
+  line/word boxes (avoid useless background exception)
+- Swedish translations added
+- Backend: openpaperwork_gtk.fs.gio has been removed from the minimum list of
+  required plugins. fs.python is good enough to load the configuration.
+- Backend: model.labels: Call to callbacks "on_all_labels_loaded" has been
+  removed. It was redundant with the call to callbacks "on_label_loading_end"
+
 2021/01/01 - 2.0.2:
 - beacon.sysinfo: report some extra infos to openpaper.work:
   CPU max frequency, number of CPU cores, amount of memory, version of Python.

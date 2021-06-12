@@ -1,11 +1,14 @@
 {
     "app-id": "work.openpaper.Paperwork",
-    "branch": "testing",
+    "branch": "develop",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "3.36",
+    "runtime-version": "40",
     "sdk": "org.gnome.Sdk",
     "command": "paperwork-gtk",
     "copy-icon": true,
+    "sdk-extensions": [
+        "org.freedesktop.Sdk.Extension.openjdk11"
+    ],
     "finish-args": [
         "--share=ipc",
         "--share=network",
@@ -17,47 +20,16 @@
         "--talk-name=org.freedesktop.FileManager1",
         "--talk-name=org.gtk.vfs",
         "--talk-name=org.gtk.vfs.*",
-        "--own-name=work.openpaper.paperwork"
+        "--own-name=work.openpaper.paperwork",
+        "--env=JAVA_HOME=/app/jre",
+        "--env=LIBO_FLATPAK=1"
     ],
     "modules": [
-        "shared-modules/tesseract-4.1.1.json",
-        "shared-modules/sane-backends-1.0.27.json",
-        {
-            "name": "python-setuptools",
-            "buildsystem": "simple",
-            "build-commands": ["python3 setup.py install --prefix=/app --root=/"],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://files.pythonhosted.org/packages/c2/f7/c7b501b783e5a74cf1768bc174ee4fb0a8a6ee5af6afa92274ff964703e0/setuptools-40.8.0.zip",
-                    "sha256": "6e4eec90337e849ade7103723b9a99631c1f0d19990d6e8412dc42f5ae8b304d"
-                }
-            ]
-        },
-        {
-            "name": "python-setuptools-scm",
-            "buildsystem": "simple",
-            "build-commands": ["python3 setup.py install --prefix=/app --root=/"],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://files.pythonhosted.org/packages/54/85/514ba3ca2a022bddd68819f187ae826986051d130ec5b972076e4f58a9f3/setuptools_scm-3.2.0.tar.gz",
-                    "sha256": "52ab47715fa0fc7d8e6cd15168d1a69ba995feb1505131c3e814eb7087b57358"
-                }
-            ]
-        },
-        {
-            "name": "python-setuptools-scm-git-archive",
-            "buildsystem": "simple",
-            "build-commands": ["python3 setup.py install --prefix=/app --root=/"],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://files.pythonhosted.org/packages/7e/2c/0c15b29a1b5940250bfdc4a4f53272e35cd7cf8a34159291b6b4ec9eb291/setuptools_scm_git_archive-1.1.tar.gz",
-                    "sha256": "6026f61089b73fa1b5ee737e95314f41cb512609b393530385ed281d0b46c062"
-                }
-            ]
-        },
+        "flatpak/shared-modules/setuptools-40.8.0.json",
+        "flatpak/shared-modules/libreoffice-7.0.4.2.json",
+        "flatpak/shared-modules/scikit-learn-0.24.0.json",
+        "flatpak/shared-modules/sane-backends-1.0.32.json",
+        "flatpak/shared-modules/tesseract-4.1.1.json",
         {
             "name": "python-distro",
             "buildsystem": "simple",
@@ -106,7 +78,7 @@
                 },
                 {
                     "type": "patch",
-                    "path": "getkey-setup.diff"
+                    "path": "flatpak/getkey-setup.diff"
                 }
             ]
         },
@@ -197,18 +169,6 @@
             ]
         },
         {
-            "name": "python-simplebayes",
-            "buildsystem": "simple",
-            "build-commands": ["python3 setup.py install --prefix=/app --root=/"],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://pypi.python.org/packages/b9/73/764578df72934940d95a8941cbd374b56319562dda72630fc8bfeaefc350/simplebayes-1.5.8.tar.gz",
-                    "sha256": "363418c0ef185ac2158ebbd6d8afb45aa997254fcb809a73ed20a7d5dccf8b85"
-                }
-            ]
-        },
-        {
             "name": "python-whoosh",
             "buildsystem": "simple",
             "build-commands": ["python3 setup.py install --prefix=/app --root=/"],
@@ -238,8 +198,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://poppler.freedesktop.org/poppler-data-0.4.9.tar.gz",
-                    "sha256": "1f9c7e7de9ecd0db6ab287349e31bf815ca108a5a175cf906a90163bdbe32012"
+                    "url": "https://poppler.freedesktop.org/poppler-data-0.4.10.tar.gz",
+                    "sha256": "6e2fcef66ec8c44625f94292ccf8af9f1d918b410d5aa69c274ce67387967b30"
                 }
             ]
         },
@@ -252,8 +212,25 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://poppler.freedesktop.org/poppler-0.74.0.tar.xz",
-                    "sha256": "92e09fd3302567fd36146b36bb707db43ce436e8841219025a82ea9fb0076b2f"
+                    "url": "https://poppler.freedesktop.org/poppler-21.02.0.tar.xz",
+                    "sha256": "5c14759c99891e6e472aced6d5f0ff1dacf85d80cd9026d365c55c653edf792c"
+                }
+            ]
+        },
+        {
+            "name" : "libhandy",
+            "buildsystem" : "meson",
+            "builddir" : true,
+            "config-opts": [
+                "-Dexamples=false",
+                "-Dtests=false"
+            ],
+            "sources" : [
+                {
+                    "type" : "git",
+                    "url" : "https://gitlab.gnome.org/GNOME/libhandy.git",
+                    "tag": "1.2.2",
+                    "commit": "09f36006b26f41a2bb383b0c853e954c5792cfe1"
                 }
             ]
         },
@@ -303,7 +280,7 @@
                 },
                 {
                     "type": "file",
-                    "path": "pypillowfight-Makefile",
+                    "path": "flatpak/pypillowfight-Makefile",
                     "dest-filename": "Makefile"
                 }
             ]
@@ -318,8 +295,8 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://gitlab.gnome.org/World/OpenPaperwork/paperwork.git",
-                    "branch": "testing",
+                    "path": ".",
+                    "branch": "develop",
                     "disable-shallow-clone": true
                 },
                 {

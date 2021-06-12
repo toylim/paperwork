@@ -147,7 +147,7 @@ class TestReadWrite(unittest.TestCase):
             core.call_all('config_backend_load', 'openpaperwork_test')
             self.assertEqual(obs.count, 2)
         finally:
-            core.call_all("fs_rm_rf", core.get_by_name(
+            core.call_success("fs_rm_rf", core.get_by_name(
                 'openpaperwork_core.config.backend.configparser'
             ).base_path, trash=False)
 
@@ -191,7 +191,7 @@ class TestReadWrite(unittest.TestCase):
             self.assertEqual(len(v), 2)
             self.assertEqual(v[1], "test_value_c")
         finally:
-            core.call_all("fs_rm_rf", core.get_by_name(
+            core.call_success("fs_rm_rf", core.get_by_name(
                 'openpaperwork_core.config.backend.configparser'
             ).base_path, trash=False)
 
@@ -244,7 +244,7 @@ class TestReadWrite(unittest.TestCase):
             self.assertEqual(len(v), 2)
             self.assertEqual(v['test_key_b'], "test_value_c")
         finally:
-            core.call_all("fs_rm_rf", core.get_by_name(
+            core.call_success("fs_rm_rf", core.get_by_name(
                 'openpaperwork_core.config.backend.configparser'
             ).base_path, trash=False)
 
@@ -272,6 +272,6 @@ class TestReadWrite(unittest.TestCase):
             v = core.call_one('config_backend_get', 'test_section', 'test_key')
             self.assertEqual(v, datetime.date(year=1985, month=1, day=1))
         finally:
-            core.call_all("fs_rm_rf", core.get_by_name(
+            core.call_success("fs_rm_rf", core.get_by_name(
                 'openpaperwork_core.config.backend.configparser'
             ).base_path, trash=False)

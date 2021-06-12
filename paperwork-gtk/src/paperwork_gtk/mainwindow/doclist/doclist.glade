@@ -17,6 +17,8 @@
     <property name="name">doclist_body</property>
     <property name="visible">True</property>
     <property name="can_focus">False</property>
+    <property name="hexpand">False</property>
+    <property name="vexpand">True</property>
     <property name="orientation">vertical</property>
     <child>
       <object class="GtkOverlay">
@@ -56,9 +58,10 @@
       </packing>
     </child>
   </object>
-  <object class="GtkHeaderBar" id="doclist_header">
+  <object class="HdyHeaderBar" id="doclist_header">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
+    <property name="hexpand">False</property>
     <property name="title" translatable="yes">Documents</property>
     <child>
       <object class="GtkButton" id="doclist_new_doc">
@@ -97,9 +100,10 @@
       </packing>
     </child>
   </object>
-  <object class="GtkHeaderBar" id="doclist_header_selection_multiple">
+  <object class="HdyHeaderBar" id="doclist_header_selection_multiple">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
+    <property name="hexpand">False</property>
     <child>
       <object class="GtkButton" id="doclist_back_to_selection_single">
         <property name="use_action_appearance">False</property>

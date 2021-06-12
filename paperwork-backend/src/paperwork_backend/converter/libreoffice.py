@@ -16,6 +16,7 @@ LIBREOFFICE = [
     r'libreoffice',
     r'soffice.exe',
     r'C:\Program Files\LibreOffice\program\soffice.exe',
+    r'/app/libreoffice/program/soffice.bin',  # Flatpak
 ]
 
 LIBREOFFICE_ARGS = [
@@ -261,21 +262,23 @@ class Plugin(openpaperwork_core.PluginBase):
                 )
                 (stdout, stderr) = popen.communicate()
 
-                self.core.call_success(
-                    "fs_copy",
-                    self.core.call_success("fs_safe", dst_file),
-                    out_pdf_file_url
-                )
+                dst_file_url = self.core.call_success("fs_safe", dst_file)
 
-                if not self.core.call_success("fs_exists", out_pdf_file_url):
+                if not self.core.call_success("fs_exists", dst_file_url):
                     LOGGER.error(
-                        "Failed to convert %s (%s) to %s (PDF)",
-                        doc_file_uri, mime_type, out_pdf_file_url
+                        "Failed to convert %s (%s) to %s|%s (PDF)",
+                        doc_file_uri, mime_type, dst_file_url, out_pdf_file_url
                     )
                     LOGGER.error("Command was: %s", [self.libreoffice] + args)
                     LOGGER.error("LibreOffice stdout: %s", stdout)
                     LOGGER.error("LibreOffice stderr: %s", stderr)
                     return False
+
+                self.core.call_success(
+                    "fs_copy",
+                    dst_file_url,
+                    out_pdf_file_url
+                )
             finally:
                 os.chdir(cwd)
         return True

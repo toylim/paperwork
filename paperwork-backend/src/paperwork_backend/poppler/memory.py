@@ -52,7 +52,7 @@ class Plugin(openpaperwork_core.PluginBase):
         if not POPPLER_AVAILABLE:
             out['poppler'] = openpaperwork_core.deps.POPPLER
 
-    def poppler_open(self, url):
+    def poppler_open(self, url, password=None):
         # Poppler.Document.new_from_data() expects .. a string
         # Poppler.Document.new_from_bytes() only exist starting with 0.82
         with self.core.call_success("fs_open", url, "rb") as fd:
@@ -66,6 +66,6 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all("on_objref_track", data)
         doc = self.core.call_one(
             "mainloop_execute", Poppler.Document.new_from_stream,
-            data, ldata, password=None
+            data, ldata, password=password
         )
         return doc

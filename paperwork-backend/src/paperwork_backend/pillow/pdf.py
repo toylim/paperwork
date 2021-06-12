@@ -71,34 +71,41 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'mainloop',
                 'defaults': ['openpaperwork_gtk.mainloop.glib'],
             },
+            {
+                'interface': 'urls',
+                'defaults': ['openpaperwork_core.urls'],
+            },
         ]
 
     def _check_is_pdf(self, file_url):
-        if (self.FILE_EXTENSION + "#page=") not in file_url.lower():
-            return (None, None)
-        if "#" in file_url:
-            (file_url, page_idx) = file_url.rsplit("#page=", 1)
-            page_idx = int(page_idx) - 1
-        else:
-            page_idx = 0
-        return (file_url, page_idx)
+        (url, args) = self.core.call_success("url_args_split", file_url)
+        if not url.lower().endswith(self.FILE_EXTENSION):
+            return (None, None, None)
+
+        page_idx = int(args.get("page", 1)) - 1
+        password = args.get('password', None)
+        if password is not None:
+            password = bytes.fromhex(password).decode("utf-8")
+
+        return (file_url, page_idx, password)
 
     def url_to_pillow(self, file_url):
-        (file_url, page_idx) = self._check_is_pdf(file_url)
+        (file_url, page_idx, password) = self._check_is_pdf(file_url)
         if file_url is None:
             return None
 
         pillow = self.core.call_one(  # Poppler is not really thread safe
-            "mainloop_execute", self._url_to_pillow, file_url, page_idx
+            "mainloop_execute", self._url_to_pillow,
+            file_url, page_idx, password
         )
         return pillow
 
     def cairo_surface_to_pillow(self, surface):
         return surface2image(self.core, surface)
 
-    def _url_to_pillow(self, file_url, page_idx):
+    def _url_to_pillow(self, file_url, page_idx, password):
         surface = self.core.call_success(
-            "pdf_page_to_cairo_surface", file_url, page_idx
+            "pdf_page_to_cairo_surface", file_url, page_idx, password
         )
 
         img = surface2image(self.core, surface)
@@ -107,8 +114,8 @@ class Plugin(openpaperwork_core.PluginBase):
         return img
 
     def url_to_pillow_promise(self, file_url):
-        (_file_url, page_idx) = self._check_is_pdf(file_url)
-        if _file_url is None:
+        (doc_url, page_idx, password) = self._check_is_pdf(file_url)
+        if doc_url is None:
             return None
 
         return openpaperwork_core.promise.Promise(
@@ -116,5 +123,5 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def pillow_to_url(self, *args, **kwargs):
-        # It could be implemented, but there is no known use-case.
+        # It could be implemented, but there are no known use-cases.
         return None

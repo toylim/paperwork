@@ -47,11 +47,23 @@ DELAY_LONG = 0.3
 LOGGER = logging.getLogger(__name__)
 BLUR_FACTOR = 8
 
+MAX_IMG_DIMENSION = 16 * 1024 - 1
+
 
 class ImgSurface(object):
     # wrapper so it can be weakref
     def __init__(self, surface):
         self.surface = surface
+
+
+def limit_img_size(size):
+    (width, height) = size
+    # Handle Cairo limitation: Dimensions of the image can't exceed 32k
+    if width > MAX_IMG_DIMENSION:
+        width = MAX_IMG_DIMENSION
+    if height > MAX_IMG_DIMENSION:
+        height = MAX_IMG_DIMENSION
+    return (width, height)
 
 
 def pillow_to_surface(core, img, intermediate="pixbuf", quality=90):
@@ -80,7 +92,9 @@ def pillow_to_surface(core, img, intermediate="pixbuf", quality=90):
     if intermediate == "pixbuf":
 
         data = GLib.Bytes.new(img.tobytes())
-        (width, height) = img.size
+        (width, height) = limit_img_size(img.size)
+        if (width, height) != img.size:
+            img = img.crop((0, 0, width, height))
 
         pixbuf = GdkPixbuf.Pixbuf.new_from_bytes(
             data, GdkPixbuf.Colorspace.RGB, False, 8,
@@ -258,7 +272,7 @@ class CairoRenderer(GObject.GObject):
         self.render_img_promise = None
 
     def _set_img_size(self, size):
-        self.size = size
+        self.size = limit_img_size(size)
         self.getting_size = False
         if self.get_size_promise is None:
             # Document has been closed while we looked for its size

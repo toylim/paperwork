@@ -54,7 +54,11 @@ class LabelLoader(object):
                 self.core, self.load_labels
             )
         )
-        promise = promise.then(self.notify_done)
+        promise = promise.then(lambda *args, **kwargs: None)
+        promise = promise.then(
+            self.core.call_all, "on_label_loading_end"
+        )
+
         return promise
 
     def load_labels(self, *args, **kwargs):
@@ -75,12 +79,6 @@ class LabelLoader(object):
         LOGGER.info(
             "%d labels loaded from %d documents",
             len(self.plugin.all_labels), nb_docs
-        )
-
-    def notify_done(self):
-        self.core.call_one(
-            "mainloop_schedule",
-            self.core.call_all, "on_label_loading_end"
         )
 
 
@@ -300,7 +298,6 @@ class Plugin(openpaperwork_core.PluginBase):
     def label_load_all(self, promises: list):
         self.all_labels = {}
         promise = LabelLoader(self).get_promise()
-        promise = promise.then(self.core.call_all, "on_all_labels_loaded")
         # drop the return value of 'call_all'
         promise = promise.then(lambda *args, **kwargs: None)
         promises.append(promise)

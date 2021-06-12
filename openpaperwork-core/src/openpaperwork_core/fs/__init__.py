@@ -58,6 +58,8 @@ class CommonFsPluginBase(openpaperwork_core.PluginBase):
     def fs_join(self, base, url):
         if not base.endswith("/"):
             base += "/"
+        if base.startswith('smb'):
+            return base + url
         return urllib.parse.urljoin(base, url)
 
     def fs_basename(self, url):
@@ -88,3 +90,4 @@ class CommonFsPluginBase(openpaperwork_core.PluginBase):
             content = fd.read()
         with open(dest_url, 'wb') as fd:
             fd.write(content)
+        return True

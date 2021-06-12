@@ -1,0 +1,168 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-09-01 22:01+0200\n"
+"PO-Revision-Date: 2021-02-06 07:20+0000\n"
+"Last-Translator: 玉堂白鹤 <yjwork@qq.com>\n"
+"Language-Team: Chinese (Simplified) <http://translations.openpaper.work/"
+"projects/paperwork/openpaperwork-gtk/zh_Hans/>\n"
+"Language: zh_Hans\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 4.4\n"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/zip.py:56
+msgid "ZIP file"
+msgstr "ZIP 文件"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/zip.py:61
+#, python-format
+msgid ""
+"Build a ZIP file containing all the attachments.\n"
+" If you want, you can then submit a bug report manually on <a href=\"%s"
+"\">Paperwork's bug tracker</a> and attach this ZIP file to the ticket."
+msgstr ""
+"构建包含所有附件的ZIP文件。\n"
+"如果需要，您可以在<a href=\"%s\">Paperwork 追踪系统</a>上手动提交 bug 报告，并将此 ZIP 文件附加到报告。"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:40
+msgid "Creating bug report ..."
+msgstr "创建 bug 报告..."
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:42
+msgid "Sending bug report attachment ..."
+msgstr "发送错误报告附件 ..."
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:161
+msgid "Send automatically"
+msgstr "自动发送"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:162
+msgid "Send the bug report automatically to OpenPaper.work"
+msgstr "将错误报告自动发送 OpenPaper.work"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:262
+msgid "Success"
+msgstr "成功"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:278
+#, python-format
+msgid ""
+"Transfer failed:\n"
+"\n"
+"%s"
+msgstr ""
+"传输失败:\n"
+"\n"
+"%s"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:284
+msgid "FAILED"
+msgstr "失败"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/__init__.py:77
+msgid "Now"
+msgstr "现在"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/widgets/charts/lines.py:417
+msgid "Total: {}"
+msgstr "总计: {}"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/widgets/charts/lines.py:427
+msgid "Total"
+msgstr "总计"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:258
+#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:266
+msgid "App. screenshots"
+msgstr "App. 截屏"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:267
+msgid "Select to generate"
+msgstr "选择生成"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_zip.glade.h:1
+msgid "Please select where to save the ZIP file"
+msgstr "请选择要保存 ZIP 文件的位置"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:1
+msgid "Bug description"
+msgstr "Bug 详情"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:2
+msgid "Anonymous"
+msgstr "匿名"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:3
+msgid "Bug Report Author"
+msgstr "Bug 报告者"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:4
+msgid ""
+"Bug report successfully submitted.\n"
+"\n"
+"You can find below the private link to your bug report.\n"
+"\n"
+"<b>Be careful before sharing it.</b> Bug report attachments (logs, "
+"screenshots, …) do not contain any private information. Still you're "
+"strongly advised to check them all before sharing this link.\n"
+"\n"
+"You can request deletion of your bug report by sending an email to <a href="
+"\"mailto:jflesch@openpaper.work\">jflesch@openpaper.work</a>."
+msgstr ""
+"Bug 报告已成功提交。\n"
+"\n"
+"您可以在下面找到您的 bug 报告的私人链接。\n"
+"\n"
+"<b>分享前请小心。</b>Bug 报告附件（日志、屏幕截图等…）不要包含任何私人信息。强烈建议您在共享此链接之前检查所有链接。\n"
+"\n"
+"您可以通过向<a href=\"mailto:jflesch@openpaper.work\">jflesch@openpaper.work</"
+"a>发送电子邮件请求删除此 bug 报告。"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:3
+msgid "Date"
+msgstr "日期"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:5
+msgid "File"
+msgstr "文件"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:6
+msgid "Size"
+msgstr "大小"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:7
+msgid "Open file"
+msgstr "打开文件"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:8
+msgid "For your privacy, attachments may be partially censored when selected"
+msgstr "为保护您的隐私，选择附件时可能会对其进行部分审查"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:9
+msgid "Attachments to include in the bug report"
+msgstr "要包含在 bug 报告中的附件"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:1
+msgid "Unexpected Error"
+msgstr "意外错误"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:2
+msgid "Report"
+msgstr "报告"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:3
+msgid "An unexpected error occured."
+msgstr "发生意外错误。"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/widgets/progress/progress_button.glade.h:1
+msgid "Show background tasks"
+msgstr "显示后台任务"

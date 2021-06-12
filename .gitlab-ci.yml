@@ -3,12 +3,12 @@ image: registry.gitlab.gnome.org/world/openpaperwork/paperwork/build
 stages:
   # no point in waiting for the tests to end before generating the data files
   # or the development documentation
-  - tests_data_doc
-  - deploy_linux
-  - deploy_windows
+  - tests
+  - data
+  - deploy
 
 check:
-  stage: tests_data_doc
+  stage: tests
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
@@ -16,69 +16,67 @@ check:
     - linux
     - volatile
   script:
-    - sh ./ci/set_apt_proxy.sh
     - make check
 
 
-.apt: &apt
-  before_script:
-    - sh ./ci/set_apt_proxy.sh
-
-
 test:
-  stage: tests_data_doc
+  stage: tests
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
   tags:
     - linux
     - volatile
-  <<: *apt
   script:
+    - echo deb http://deb.debian.org/debian buster-backports main > /etc/apt/sources.list.d/backports.list
+    - apt-get update
     - source ./activate_test_env.sh && make install
     - source ./activate_test_env.sh && paperwork-gtk chkdeps -y && paperwork-cli chkdeps -y
     - source ./activate_test_env.sh && make test
 
 
 generate_data:
-  stage: tests_data_doc
+  stage: data
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
   tags:
     - linux
     - volatile
-  <<: *apt
   script:
+    - echo deb http://deb.debian.org/debian buster-backports main > /etc/apt/sources.list.d/backports.list
+    - apt-get update
     - source ./activate_test_env.sh && make install
     - source ./activate_test_env.sh && paperwork-gtk chkdeps -y && paperwork-cli chkdeps -y
     - source ./activate_test_env.sh && make data upload_data
 
 
 doc_devel:
-  stage: tests_data_doc
+  stage: data
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
   tags:
     - linux
     - volatile
-  <<: *apt
   script:
     - source ./activate_test_env.sh && make doc && make upload_doc
 
 
 linux_flatpak:
-  stage: deploy_linux
+  stage: deploy
+  timeout: 48h
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
   tags:
     - openpaper-flatpak
   script:
-    # not running as root, so we cannot actually install anything
+    # Running in from a gitlab-runner directly in a shell, as the user
+    # 'gitlab-runner'
+    # --> not running as root, so we cannot actually install anything
     # - apt-get update
-    # - apt-get install -y -q rclone flatpak-builder
+    # - apt-get install -y -q rsync flatpak-builder make
     - ./ci/update_flatpak_repo.sh
 
 
@@ -102,6 +100,7 @@ linux_flatpak:
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-ca-certificates
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-python3-setuptools
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-python3-pip
+    - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-libhandy
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-libnotify
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-poppler
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-i686-python-psutil
@@ -123,7 +122,7 @@ linux_flatpak:
 
 
 windows_tests:
-  stage: tests_data_doc
+  stage: tests
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
@@ -146,7 +145,7 @@ windows_tests:
 
 
 windows_exe:
-  stage: deploy_windows
+  stage: deploy
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork

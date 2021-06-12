@@ -1,3 +1,21 @@
+2021/05/24 - 2.0.3:
+- GTK: (may be important for package maintainers):
+  "make data" --> "screenshot.sh": Download the test documents from a Git
+  repository instead of a .tar.gz. See Gitlab issue #961.
+- GTK: Doc/page export: Work around bug in Gnome platform 40 (Flatpak) (caused
+  a full crash of Paperwork ; Segfault)
+- GTK: Doc/page export: Fix use of GtkFileChooserNative so Paperwork can exit
+  correctly after its use.
+- GTK: Doc renaming (date change): Prevent the user from giving an invalid name
+  to a document
+- GTK: Doc/page export: Handle gracefully errors (for instance Permission
+  Denied)
+- GTK: word boxes loading: Add missing progress notification
+- GTK: Import: When importing in an existing document, refresh correctly the
+  GUI is the target document is currently opened.
+- GTK: LaTeX User manual: various fixes suggested by tomf on Weblate
+- Swedish translations added
+
 2021/01/01 - 2.0.2:
 - pageview.boxes: add workaround regarding unexpected Poppler exceptions on
   some PDF documents

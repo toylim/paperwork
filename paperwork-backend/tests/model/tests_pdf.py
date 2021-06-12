@@ -1,4 +1,6 @@
 import os
+import shutil
+import tempfile
 import unittest
 
 import openpaperwork_core
@@ -24,12 +26,12 @@ class TestHocr(unittest.TestCase):
 
         mapping = self.full_doc_url + "/page_map.csv"
         if self.core.call_success("fs_exists", mapping):
-            self.core.call_all("fs_unlink", mapping, trash=False)
+            self.core.call_success("fs_unlink", mapping, trash=False)
 
     def tearDown(self):
         mapping = self.full_doc_url + "/page_map.csv"
         if self.core.call_success("fs_exists", mapping):
-            self.core.call_all("fs_unlink", mapping, trash=False)
+            self.core.call_success("fs_unlink", mapping, trash=False)
 
     def test_is_doc(self):
         self.assertTrue(self.core.call_success("is_doc", self.simple_doc_url))
@@ -120,3 +122,47 @@ class TestHocr(unittest.TestCase):
             lines[1].word_boxes[2].position, ((443, 284), (588, 337))
         )
         self.assertEqual(lines[1].word_boxes[2].content, "Jflesch.")
+
+
+class TestPassword(unittest.TestCase):
+    def setUp(self):
+        self.core = openpaperwork_core.Core(auto_load_dependencies=True)
+        self.core.load("paperwork_backend.model.pdf")
+        self.core.init()
+
+        password_doc_url = self.core.call_success(
+            "fs_safe",
+            os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                "test_password.pdf"
+            )
+        )
+
+        self.tmp_doc_dir = tempfile.mkdtemp()
+        self.tmp_doc_url = openpaperwork_core.fs.CommonFsPluginBase.fs_safe(
+            self.tmp_doc_dir
+        )
+
+        doc_pdf = self.core.call_success(
+            "fs_join", self.tmp_doc_url, "doc.pdf"
+        )
+        passwd_txt = self.core.call_success(
+            "fs_join", self.tmp_doc_url, "passwd.txt"
+        )
+
+        self.core.call_all("fs_copy", password_doc_url, doc_pdf)
+        with self.core.call_success("fs_open", passwd_txt, "w") as fd:
+            fd.write("test1234")
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp_doc_dir)
+
+    def test_open_page(self):
+        boxes = self.core.call_success(
+            "page_get_boxes_by_url", self.tmp_doc_url, 0
+        )
+        self.assertNotEqual(len(boxes), 0)
+        img_url = self.core.call_success(
+            "page_get_img_url", self.tmp_doc_url, 0
+        )
+        self.assertIn("password=", img_url)

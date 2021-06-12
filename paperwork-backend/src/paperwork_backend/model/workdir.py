@@ -115,7 +115,7 @@ class Plugin(openpaperwork_core.PluginBase):
         doc_url = self.doc_id_to_url(doc_id)
         if doc_url is None:
             return
-        self.core.call_all("fs_rm_rf", doc_url, trash=trash)
+        self.core.call_success("fs_rm_rf", doc_url, trash=trash)
 
     def stats_get(self, stats):
         LOGGER.info("Counting documents for statistics...")
@@ -134,7 +134,7 @@ class Plugin(openpaperwork_core.PluginBase):
             "All pages of document %s have been removed. Removing document",
             doc_url
         )
-        self.core.call_all("fs_rm_rf", doc_url)
+        self.core.call_success("fs_rm_rf", doc_url)
 
     def page_move_by_url(
                 self,
@@ -157,13 +157,17 @@ class Plugin(openpaperwork_core.PluginBase):
             "All pages of document %s have been removed. Removing document",
             source_doc_url
         )
-        self.core.call_all("fs_rm_rf", source_doc_url)
+        self.core.call_success("fs_rm_rf", source_doc_url)
 
     def doc_rename_by_url(self, src_doc_url, dst_doc_url):
+        if not self.core.call_success("fs_isdir", src_doc_url):
+            # May happen on integrated documentation PDF files
+            LOGGER.warning("Cannot rename non-directory documents")
+            return
         idx = 0
         dst_url = dst_doc_url
         while self.core.call_success("fs_exists", dst_url) is not None:
             idx += 1
             dst_url = "{}_{}".format(dst_doc_url, idx)
-        self.core.call_all("fs_rename", src_doc_url, dst_url)
+        self.core.call_success("fs_rename", src_doc_url, dst_url)
         return dst_url

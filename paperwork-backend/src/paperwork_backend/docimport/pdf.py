@@ -15,10 +15,11 @@ LOGGER = logging.getLogger(__name__)
 
 
 class SinglePdfImporter(object):
-    def __init__(self, core, file_import, src_file_uri):
+    def __init__(self, core, file_import, src_file_uri, data):
         self.core = core
         self.file_import = file_import
         self.src_file_uri = src_file_uri
+        self.data = data
         self.doc_id = None
         self.doc_url = None
 
@@ -34,8 +35,11 @@ class SinglePdfImporter(object):
 
         LOGGER.info("Importing %s", file_uri)
         (self.doc_id, self.doc_url) = self.core.call_success(
-            "doc_pdf_import", file_uri
+            "doc_pdf_import", file_uri,
+            password=self.data['password'] if 'password' in self.data else None
         )
+        if self.doc_id is None:
+            return False
         self.file_import.new_doc_ids.add(self.doc_id)
         self.file_import.stats[_("PDF")] += 1
         self.file_import.stats[_("Documents")] += 1
@@ -69,8 +73,18 @@ class SinglePdfImporterFactory(object):
         if file_uri.lower().endswith(self.plugin.FILE_EXTENSION):
             return True
 
-    def make_importer(self, file_import, file_uri):
-        return SinglePdfImporter(self.core, file_import, file_uri)
+    def get_required_data(self, file_uri):
+        try:
+            self.core.call_success("poppler_open", file_uri, password=None)
+            LOGGER.info("%s: not password protected", file_uri)
+            return set()
+        except Exception:
+            # XXX(Jflesch): there is no specific exception type ... :/
+            LOGGER.info("%s: password protected", file_uri)
+            return {"password"}
+
+    def make_importer(self, file_import, file_uri, data):
+        return SinglePdfImporter(self.core, file_import, file_uri, data)
 
 
 class Plugin(openpaperwork_core.PluginBase):

@@ -10,6 +10,7 @@ import openpaperwork_core.deps
 LOGGER = logging.getLogger(__name__)
 
 PDF_FILENAME = 'doc.pdf'
+PASSWD_FILENAME = 'passwd.txt'
 
 PDF_RENDER_FACTOR = 4
 
@@ -333,6 +334,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.cache_nb_pages = {}
 
         self.cache_mappings = {}
+        self.cache_passwords = {}
 
     def get_interfaces(self):
         return [
@@ -374,6 +376,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'poppler',
                 'defaults': ['paperwork_backend.poppler.memory'],
             },
+            {
+                'interface': 'urls',
+                'defaults': ['openpaperwork_core.urls'],
+            },
         ]
 
     def _get_pdf_url(self, doc_url):
@@ -383,6 +389,20 @@ class Plugin(openpaperwork_core.PluginBase):
         if self.core.call_success("fs_exists", pdf_url) is None:
             return None
         return pdf_url
+
+    def _get_pdf_password(self, doc_url):
+        password = self.cache_passwords.get(doc_url, None)
+        if password is not None:
+            return password
+
+        passwd_url = self.core.call_success(
+            "fs_join", doc_url, PASSWD_FILENAME
+        )
+        if self.core.call_success("fs_exists", passwd_url):
+            with self.core.call_success("fs_open", passwd_url, "r") as fd:
+                password = fd.read().strip()
+        self.cache_passwords[doc_url] = password
+        return password
 
     def _get_page_mapping(self, doc_url):
         if doc_url in self.cache_mappings:
@@ -395,8 +415,12 @@ class Plugin(openpaperwork_core.PluginBase):
         pdf_url = self._get_pdf_url(doc_url)
         if pdf_url is None:
             return (None, None)
-        LOGGER.info("Opening %s", pdf_url)
-        doc = self.core.call_success("poppler_open", pdf_url)
+
+        password = self._get_pdf_password(doc_url)
+        LOGGER.info("Opening %s (password=%s)", pdf_url, bool(password))
+        doc = self.core.call_success(
+            "poppler_open", pdf_url, password=password
+        )
         return (pdf_url, doc)
 
     def is_doc(self, doc_url):
@@ -411,8 +435,10 @@ class Plugin(openpaperwork_core.PluginBase):
         return self._get_pdf_url(doc_url)
 
     def flush_doc_cache(self, doc_url):
-        cache_key = "hash_{}".format(doc_url)
-        self.cache_hash.pop(cache_key, None)
+        self.cache_hash.pop(doc_url, None)
+        self.cache_passwords.pop(doc_url, None)
+        self.cache_mappings.pop(doc_url, None)
+        self.cache_nb_pages.pop(doc_url, None)
 
     def doc_get_hash_by_url(self, doc_url):
         pdf_url = self._get_pdf_url(doc_url)
@@ -420,11 +446,10 @@ class Plugin(openpaperwork_core.PluginBase):
             return
 
         # cache the hash of doc.pdf to speed up imports
-        cache_key = "hash_{}".format(doc_url)
-        if cache_key not in self.cache_hash:
+        if doc_url not in self.cache_hash:
             h = self.core.call_success("fs_hash", pdf_url)
-            self.cache_hash[cache_key] = h
-        return self.cache_hash[cache_key]
+            self.cache_hash[doc_url] = h
+        return self.cache_hash[doc_url]
 
     def page_internal_get_hash_by_url(self, out: list, doc_url, page_idx):
         pdf_url = self._get_pdf_url(doc_url)
@@ -438,11 +463,10 @@ class Plugin(openpaperwork_core.PluginBase):
         out.append(page_hash)
 
         # cache the hash of doc.pdf to speed up imports
-        cache_key = "hash_{}".format(doc_url)
-        if cache_key not in self.cache_hash:
+        if doc_url not in self.cache_hash:
             h = self.core.call_success("fs_hash", pdf_url)
-            self.cache_hash[cache_key] = h
-        out.append(self.cache_hash[cache_key])
+            self.cache_hash[doc_url] = h
+        out.append(self.cache_hash[doc_url])
 
     def doc_internal_get_mtime_by_url(self, out: list, doc_url):
         pdf_url = self._get_pdf_url(doc_url)
@@ -531,13 +555,32 @@ class Plugin(openpaperwork_core.PluginBase):
                 return None
             else:
                 original_page_idx = page_idx
+
+        password = self._get_pdf_password(doc_url)
+        if password is not None:
+            password = password.encode("utf-8").hex()
+
         # same URL used in browsers
-        return "{}#page={}".format(pdf_url, str(original_page_idx + 1))
+        url = self.core.call_success(
+            "url_args_join", pdf_url,
+            page=str(original_page_idx + 1),
+            password=password
+        )
+        return url
 
     @staticmethod
-    def _custom_split(input_str, input_rects, splitter):
+    def _custom_split(input_str, input_rects, splitter, log_txt):
         # turn text and layout from Poppler into boxes
-        assert(len(input_str) == len(input_rects))
+        # XXX(Jflesch): following assert fails sometimes ? oO
+        # assert(len(input_str) == len(input_rects))
+        if len(input_str) != len(input_rects):
+            LOGGER.warning(
+                "%s: Input strings: %d ; Input rects: %d",
+                log_txt, len(input_str), len(input_rects)
+            )
+            m = min(len(input_str), len(input_rects))
+            input_str = input_str[:m]
+            input_rects = input_rects[:m]
         input_el = zip(input_str, input_rects)
         for (is_split, group) in itertools.groupby(
                     input_el,
@@ -663,11 +706,11 @@ class Plugin(openpaperwork_core.PluginBase):
 
         line_boxes = []
         for (line, line_rects) in self._custom_split(
-                    txt, layout, lambda x: x == "\n"
+                    txt, layout, lambda x: x == "\n", "lines",
                 ):
             words = []
             for (word, word_rects) in self._custom_split(
-                        line, line_rects, lambda x: x.isspace()
+                        line, line_rects, lambda x: x.isspace(), "words"
                     ):
                 word_box = PdfWordBox(word, word_rects)
                 words.append(word_box)
@@ -687,7 +730,7 @@ class Plugin(openpaperwork_core.PluginBase):
             "mainloop_execute", self._page_get_boxes_by_url, doc_url, page_idx
         )
 
-    def doc_pdf_import(self, src_file_uri):
+    def doc_pdf_import(self, src_file_uri, password=None):
         (doc_id, doc_url) = self.core.call_success("storage_get_new_doc")
 
         # just to be safe
@@ -698,9 +741,18 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_success("fs_mkdir_p", doc_url)
         self.core.call_success("fs_copy", src_file_uri, pdf_url)
 
+        if password is not None:
+            passwd_url = self.core.call_success(
+                "fs_join", doc_url, PASSWD_FILENAME
+            )
+            with self.core.call_success("fs_open", passwd_url, "w") as fd:
+                fd.write(password)
+
         try:
             # check the PDF is readable
-            doc = self.core.call_success("poppler_open", pdf_url)
+            doc = self.core.call_success(
+                "poppler_open", pdf_url, password=password
+            )
             exc_info = None
         except Exception as exc:
             doc = None
@@ -712,6 +764,7 @@ class Plugin(openpaperwork_core.PluginBase):
             else:
                 LOGGER.error("Failed to read %s", pdf_url, exc_info=exc_info)
             self.core.call_success("fs_rm_rf", doc_url, trash=False)
+            return (None, None)
 
         return (doc_id, doc_url)
 

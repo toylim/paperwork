@@ -1,6 +1,8 @@
-#!/bin/sh
+#!/usr/bin/bash
 echo $PWD
 git log -1
+
+USER=gitlab-runner
 
 LOCKDIR=/tmp/build.lock.d
 PIDFILE=${LOCKDIR}/pid
@@ -78,10 +80,10 @@ cd flatpak/
 
 rm -f data.tar.gz
 
-download "https://download.openpaper.work/data/paperwork/${branch}_latest/data.tar.gz" data.tar.gz
+download "https://download.openpaper.work/data/paperwork/${branch}_latest/data.tar.gz" ../data.tar.gz
 
 export EXPORT_ARGS="--gpg-sign=E5ACE6FEA7A6DD48"
-export REPO=/home/gitlab-runner/flatpak/paperwork_repo
+export REPO=/home/${USER}/flatpak/paperwork_repo
 
 for arch in x86_64 ; do
 	msg "=== Architecture: ${arch} ==="
@@ -127,42 +129,5 @@ done
 cd ..
 
 chmod -R a+rX ${HOME}/flatpak
-
-if [ -z "$RCLONE_CONFIG_OVHSWIFT_USER" ] ; then
-  echo "Delivery: No rclone credentials provided."
-  exit 0
-fi
-
-echo "Syncing ..."
-
-# we must sync first the objects and the deltas before the references
-# otherwise users might get temporarily an inconsistent content.
-for dest in \
-		paperwork_repo/config \
-		paperwork_repo/objects \
-		paperwork_repo/deltas \
-		paperwork_repo/refs \
-		paperwork_repo/summary \
-		paperwork_repo/summary.sig \
-	; do
-
-	local_path="/home/gitlab-runner/flatpak/${dest}"
-
-	echo "${local_path} --> ${dest} ..."
-
-	action="sync"
-	if [ -f "${local_path}" ] ; then
-		action="copy"
-		dest="$(dirname ${dest})"
-	fi
-
-	if ! rclone --fast-list --config ./ci/rclone.conf ${action} "${local_path}" "ovhswift:paperwork_flatpak/${dest}" ; then
-		echo "rclone failed"
-		exit 1
-	fi
-
-done
-
-
 
 cleanup

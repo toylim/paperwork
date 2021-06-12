@@ -45,6 +45,13 @@ class Plugin(openpaperwork_core.PluginBase):
             out.append(fd.read())
 
     def doc_set_extra_text_by_url(self, doc_url, text):
+        if not self.core.call_success("fs_isdir", doc_url):
+            # Can happen on integrated documentation PDF files
+            LOGGER.warning(
+                "%s is not a directory. Cannot set extra text",
+                doc_url
+            )
+            return
         extra_url = self.core.call_success(
             "fs_join", doc_url, EXTRA_TEXT_FILENAME
         )

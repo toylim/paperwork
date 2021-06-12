@@ -154,10 +154,11 @@ class Plugin(openpaperwork_core.PluginBase):
     def on_page_visibility_changed(self, page, visible):
         ref = (page.doc_id, page.page_idx)
         if not visible:
-            if ref in self.running_promises:
-                promise = self.running_promises.pop(ref)
+            promise = self.running_promises.pop(ref, None)
+            if promise is not None:
                 self.core.call_all("work_queue_cancel", "page_loader", promise)
                 self.nb_to_load -= 1
+                self._upd_progress()
             if ref in self.cache:
                 self.cache.pop(ref)
             return

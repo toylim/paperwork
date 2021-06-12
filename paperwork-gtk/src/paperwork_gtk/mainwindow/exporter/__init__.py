@@ -96,6 +96,13 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_core.i18n.python'],
             },
             {
+                'interface': 'notifications',
+                'defaults': [
+                    'paperwork_gtk.notifications.dialog',
+                    'paperwork_gtk.notifications.notify',
+                ],
+            },
+            {
                 'interface': 'work_queue',
                 'defaults': ['openpaperwork_core.work_queue.default'],
             },
@@ -308,7 +315,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _hide_preview(self):
         if self.tmp_file_url is not None:
-            self.core.call_all("fs_unlink", self.tmp_file_url, trash=False)
+            self.core.call_success("fs_unlink", self.tmp_file_url, trash=False)
             self.tmp_file_url = None
         if self.renderer is not None:
             self.renderer.close()
@@ -577,7 +584,9 @@ class Plugin(openpaperwork_core.PluginBase):
     def _on_pipeline_changed(self, *args, **kwargs):
         self._rebuild_pipeline_from_ui()
         self._expand_pipeline()
-        self._refresh_pipeline_ui()
+        # WORKAROUND(JFlesch): call this method using mainloop_schedule.
+        # Otherwise, in Flatpak, with Gnome 40, it crashes.
+        self.core.call_one("mainloop_schedule", self._refresh_pipeline_ui)
         self._set_quality()
         self._set_page_format()
         self._reload_preview()
@@ -612,6 +621,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
         dialog.connect("response", self._on_dialog_response)
         dialog.run()
+        dialog.hide()
+        dialog.destroy()
 
     def _on_dialog_response(self, dialog, response_id):
         if (response_id != Gtk.ResponseType.ACCEPT and
@@ -619,11 +630,9 @@ class Plugin(openpaperwork_core.PluginBase):
                 response_id != Gtk.ResponseType.YES and
                 response_id != Gtk.ResponseType.APPLY):
             LOGGER.info("User canceled (response_id=%d)", response_id)
-            dialog.destroy()
             return
 
         selected = dialog.get_uris()[0]
-        dialog.destroy()
         self.core.call_all("mainwindow_back", side="right")
 
         # make sure the file extension is set
@@ -644,6 +653,17 @@ class Plugin(openpaperwork_core.PluginBase):
         promise = promise.then(lambda *args, **kwargs: None)
         promise = promise.then(Gtk.RecentManager().add_item, selected)
         promise = promise.then(lambda *args, **kwargs: None)
+        promise = promise.catch(self._on_error)
 
         # do not use the work queue ; must never be canceled
         promise.schedule()
+
+    def _on_error(self, exc):
+        LOGGER.error("Export failed", exc_info=exc)
+        notif = self.core.call_success(
+            "get_notification_builder",
+            _("Export has failed"),
+        )
+        notif.set_message(f"Export has failed: {type(exc)} {exc}")
+        notif.set_icon("dialog-error")
+        notif.show()

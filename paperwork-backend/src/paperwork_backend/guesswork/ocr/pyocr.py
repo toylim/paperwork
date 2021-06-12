@@ -79,7 +79,7 @@ class OcrTransaction(sync.BaseTransaction):
         super().add_obj(doc_id)
 
     def upd_obj(self, doc_id):
-        self._run_ocr_on_modified_pages(doc_id, wordless_only=False)
+        self._run_ocr_on_modified_pages(doc_id, wordless_only=True)
         super().upd_obj(doc_id)
 
     def del_obj(self, doc_id):

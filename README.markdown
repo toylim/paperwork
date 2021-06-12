@@ -24,7 +24,7 @@ In other words, let the machine do most of the work for you.
 ### Search Suggestions
 
 <a href="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/2.0/suggestions.png">
-  <img src="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/2.0/suggestions.png" width="155" height="313" />
+  <img src="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/2.0/suggestions.png" width="325" height="396" />
 </a>
 
 
@@ -38,12 +38,12 @@ In other words, let the machine do most of the work for you.
 ### Settings window
 
 <a href="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/2.0/settings.png">
-  <img src="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/2.0/settings.png" width="443" height="286" />
+  <img src="https://gitlab.gnome.org/World/OpenPaperwork/paperwork-screenshots/raw/master/2.0/settings.png" width="301" height="416" />
 </a>
 
 ### Command line
 
-![Command line](http://storage.sbg.cloud.ovh.net/v1/AUTH_6c4273c748b243c58df3f6942075e0c9/gitlab.gnome.org/paperwork-shell/search.gif)
+![Command line](https://storage.sbg.cloud.ovh.net/v1/AUTH_6c4273c748b243c58df3f6942075e0c9/gitlab.gnome.org/paperwork-shell/search.gif)
 
 ## Main features
 
@@ -116,7 +116,7 @@ It mainly uses:
 
 * [Sane](http://www.sane-project.org/)/[Libinsane](https://gitlab.gnome.org/World/OpenPaperwork/libinsane#readme): To scan the pages
 * [Tesseract](https://github.com/tesseract-ocr)/[Pyocr](https://gitlab.gnome.org/World/OpenPaperwork/pyocr#readme): To extract the words from the pages (OCR)
-* [GTK](http://www.gtk.org/): For the user interface
+* [GTK](https://www.gtk.org/): For the user interface
 * [Whoosh](https://pypi.python.org/pypi/Whoosh/): To index and search documents, and provide keyword suggestions
 * [Scikit-learn](https://scikit-learn.org/): To guess the labels
 * [Pillow](https://pypi.python.org/pypi/Pillow/)/[Libpillowfight](https://gitlab.gnome.org/World/OpenPaperwork/libpillowfight): Image manipulation

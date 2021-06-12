@@ -196,6 +196,10 @@ class PageEditor(object):
             "page_get_img_url", self.doc_url, self.page_idx, write=True
         )
         self.core.call_success("pillow_to_url", img, page_url)
+        # Drop the text so the OCR will be run again
+        self.core.call_all(
+            "page_set_boxes_by_url", self.doc_url, self.page_idx, []
+        )
         self.core.call_success(
             "mainloop_schedule", self.ui.on_edit_end,
             self.doc_url, self.page_idx

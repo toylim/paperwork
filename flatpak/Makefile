@@ -1,4 +1,4 @@
-REPO ?= paperwork_repo
+REPO ?= $(abspath paperwork_repo)
 APP = work.openpaper.Paperwork
 ALL_TARGETS = $(patsubst %.json,%,$(wildcard *.json))
 ALL_BRANCHES = master testing develop
@@ -7,7 +7,7 @@ all: upd_branches
 
 # clean: remove all intermediate files
 clean:
-	rm -rf $(patsubst %,%.app,$(ALL_TARGETS)) $(patsubst %,%.flatpak,$(ALL_TARGETS))
+	rm -rf *.app *.flatpak
 
 # dist-clean: remove *everything* that is not stored in Git
 dist-clean: clean
@@ -15,9 +15,9 @@ dist-clean: clean
 
 # Build a specific branch / tag
 # Will export to the Flatpak repository $(REPO)
-%.app: %.json
+%.app: ../work.openpaper.Paperwork.json
 	@echo flatpak-builder $< --\> $@ \($(REPO) ${EXPORT_ARGS} ${ARCH_ARGS}\)
-	flatpak-builder --repo=$(REPO) -s "Build of Paperwork $(@:%.app=%) `date`" ${EXPORT_ARGS} ${ARCH_ARGS} $@ $<
+	cd ../ && flatpak-builder --repo=$(REPO) -s "Build of Paperwork $(@:%.app=%) `date`" ${EXPORT_ARGS} ${ARCH_ARGS} flatpak/$@ work.openpaper.Paperwork.json
 
 upd_repo:
 	@echo flatpak build-update-repo $(REPO) \($(REPO) ${EXPORT_ARGS} ${ARCH_ARGS}\)

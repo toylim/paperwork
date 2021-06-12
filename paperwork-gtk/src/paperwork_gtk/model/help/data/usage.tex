@@ -882,6 +882,11 @@ In every folder you have:
 		\item paper.$<$X$>$.words (optional): A hOCR file, containing all the words
 		found on the page using the OCR. Some PDF contains crap instead of
 			the real text, so running the OCR on them can sometimes be useful.
+		\item passwd.txt (optional): PDF password, if the PDF is
+			password-protected.
+		\item doc.docx / doc.odt / ... (optional): Original file.
+			Converted into PDF (doc.pdf) so Paperwork can parse
+			and display it more quickly.
 	\end{itemize}
 \end{itemize}
 
@@ -908,11 +913,16 @@ $ find ~/papers
 /home/jflesch/papers/20110726_0000_01/extra.txt
 /home/jflesch/papers/20130106_1309_44
 /home/jflesch/papers/20130106_1309_44/doc.pdf
-/home/jflesch/papers/20110726_0000_01/paper.1.thumb.jpg
+/home/jflesch/papers/20130106_1309_44/paper.1.thumb.jpg
 /home/jflesch/papers/20130106_1309_44/paper.2.edited.jpg
 /home/jflesch/papers/20130106_1309_44/paper.2.words
 /home/jflesch/papers/20130106_1309_44/labels
 /home/jflesch/papers/20130106_1309_44/extra.txt
+/home/jflesch/papers/20130106_1309_44/passwd.txt
+/home/jflesch/papers/20130520_1309_44
+/home/jflesch/papers/20130520_1309_44/doc.pdf
+/home/jflesch/papers/20130520_1309_44/doc.docx
+/home/jflesch/papers/20130520_1309_44/labels
 \end{verbatim}
 
 \subsubsection{hOCR files}

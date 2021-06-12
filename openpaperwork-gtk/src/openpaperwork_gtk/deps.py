@@ -15,6 +15,16 @@ GTK = {
     'ubuntu': 'gir1.2-gtk-3.0',
 }
 
+HDY = {
+    'debian': 'gir1.2-handy-1',
+    'fedora': 'libhandy1',
+    'gentoo': 'gui-libs/libhandy',
+    'linuxmint': 'gir1.2-handy-1',
+    'raspbian': 'gir1.2-handy-1',
+    'suse': 'libhandy-1-0',
+    'ubuntu': 'gir1.2-handy-1',
+}
+
 NOTIFY = {
     'debian': 'gir1.2-notify-0.7',
     'fedora': 'libnotify',

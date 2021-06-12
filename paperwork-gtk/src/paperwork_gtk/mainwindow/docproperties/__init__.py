@@ -3,7 +3,6 @@ import logging
 import openpaperwork_core
 import openpaperwork_core.promise
 
-
 LOGGER = logging.getLogger(__name__)
 
 

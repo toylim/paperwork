@@ -58,3 +58,11 @@ RUN apt-get install -y -q \
 	python3-recommonmark \
 	python3-sphinx \
 	python3-sphinxcontrib.plantuml
+
+# Flatpak build
+RUN apt-get install -y -q \
+	flatpak-builder \
+	rsync \
+	sudo
+
+RUN apt-get -y clean

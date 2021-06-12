@@ -7,7 +7,7 @@ LOGGER = logging.getLogger(__name__)
 
 # TODO(Jflesch): this version shouldn't be common to all applications using
 # Openpaperwork-core
-DATA_VERSION = 1
+DATA_VERSION = 2
 
 
 class Plugin(openpaperwork_core.PluginBase):
