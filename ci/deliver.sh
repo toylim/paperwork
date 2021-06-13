@@ -16,7 +16,7 @@ else
   arch="x86"
 fi
 
-if [ -z "$RCLONE_CONFIG_OVHSWIFT_USER" ] ; then
+if [ -z "$RCLONE_CONFIG_OPENPAPERWORK_ACCESS_KEY_ID" ] ; then
   echo "Delivery: No rclone credentials provided."
   exit 0
 fi
@@ -35,7 +35,7 @@ latest_name="paperwork-${CI_COMMIT_REF_NAME}-latest${exe_suffix}"
 
 echo "rclone: ${out_name}"
 
-if ! rclone --config ./ci/rclone.conf copyto "${binary}" "ovhswift:download_openpaperwork/${os}/${arch}/${out_name}" ; then
+if ! rclone --config ./ci/rclone.conf copyto "${binary}" "openpaperwork:openpaperwork-download/${os}/${arch}/${out_name}" ; then
   echo "rclone failed"
   exit 1
 fi
@@ -43,8 +43,8 @@ fi
 echo "rclone: ${latest_name}"
 
 if ! rclone --config ./ci/rclone.conf copyto \
-    "ovhswift:download_openpaperwork/${os}/${arch}/${out_name}" \
-    "ovhswift:download_openpaperwork/${os}/${arch}/${latest_name}" ; then
+    "openpaperwork:openpaperwork-download/${os}/${arch}/${out_name}" \
+    "openpaperwork:openpaperwork-download/${os}/${arch}/${latest_name}" ; then
   echo "rclone failed"
   exit 1
 fi
