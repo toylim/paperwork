@@ -8,7 +8,7 @@ if ! [ -d "${directory}" ] || [ -z "${destination}" ] ; then
   exit 1
 fi
 
-if [ -z "$RCLONE_CONFIG_OVHSWIFT_USER" ] ; then
+if [ -z "$RCLONE_CONFIG_OPENPAPERWORK_ACCESS_KEY_ID" ] ; then
   echo "Delivery: No rclone credentials provided."
   exit 0
 fi
@@ -25,14 +25,14 @@ latest_name="latest"
 
 if ! rclone --config ./ci/rclone.conf copy \
     "${directory}/" \
-    "ovhswift:documentation/${destination}/${out_name}" ; then
+    "openpaperwork:openpaperwork-doc/${destination}/${out_name}" ; then
   echo "rclone failed"
   exit 1
 fi
 
 if ! rclone --config ./ci/rclone.conf sync \
     "${directory}/" \
-    "ovhswift:documentation/${destination}/latest" ; then
+    "openpaperwork:openpaperwork-doc/${destination}/latest" ; then
   echo "rclone failed"
   exit 1
 fi
