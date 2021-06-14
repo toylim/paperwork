@@ -63,8 +63,8 @@ class Plugin(PluginBase):
     def external_app_open_folder(self, folder_url):
         return self._open_url('ShowFolders', folder_url)
 
-    def can_send_as_attachment(self) -> None:
+    def external_app_can_send_as_attachment(self) -> None:
         return None
 
-    def send_as_attachment(self, uri) -> None:
+    def external_app_send_as_attachment(self, uri) -> None:
         return None

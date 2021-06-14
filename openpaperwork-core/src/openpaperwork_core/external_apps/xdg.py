@@ -33,10 +33,10 @@ class Plugin(PluginBase):
     def external_app_open_folder(self, folder_url):
         return self.external_app_open_file(folder_url)
 
-    def can_send_as_attachment(self) -> bool:
+    def external_app_can_send_as_attachment(self) -> bool:
         return shutil.which("xdg-email") is not None
 
-    def send_as_attachment(self, file_url: str) -> Optional[bool]:
+    def external_app_send_as_attachment(self, file_url: str) -> Optional[bool]:
         if not self.can_send_as_attachment():
             return None
         LOGGER.info("Sending %s as attachment with xdg-email", file_url)

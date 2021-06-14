@@ -141,7 +141,9 @@ class Plugin(openpaperwork_core.PluginBase):
         self.button_send_email.connect(
             "clicked", self._on_send_email
         )
-        can_send_as_attachment = core.call_success("can_send_as_attachment")
+        can_send_as_attachment = core.call_success(
+            "external_app_can_send_as_attachment"
+        )
         if not can_send_as_attachment:
             self.button_send_email.set_visible(False)
 
@@ -691,7 +693,9 @@ class Plugin(openpaperwork_core.PluginBase):
             promise = promise.then(pipe.get_promise(
                 result='final', target_file_url=target_file_url
             ))
-        promise = promise.then(lambda *args, **kwargs: self.core.call_success("send_as_attachment", target_file_url))
+        promise = promise.then(lambda *args, **kwargs: self.core.call_success(
+            "external_app_send_as_attachment", target_file_url
+        ))
         promise = promise.then(lambda *args, **kwargs: None)
         promise = promise.catch(self._on_error)
 
