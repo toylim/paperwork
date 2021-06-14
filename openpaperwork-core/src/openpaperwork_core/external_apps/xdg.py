@@ -37,7 +37,7 @@ class Plugin(PluginBase):
         return shutil.which("xdg-email") is not None
 
     def external_app_send_as_attachment(self, file_url: str) -> Optional[bool]:
-        if not self.can_send_as_attachment():
+        if not self.external_app_can_send_as_attachment():
             return None
         LOGGER.info("Sending %s as attachment with xdg-email", file_url)
         assert(file_url.startswith("file://"))
