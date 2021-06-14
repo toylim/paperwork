@@ -1,5 +1,4 @@
 import logging
-from tempfile import NamedTemporaryFile
 
 try:
     import gi
@@ -80,6 +79,10 @@ class Plugin(openpaperwork_core.PluginBase):
                     'paperwork_backend.docexport.pdf',
                     'paperwork_backend.docexport.pillowfight',
                 ],
+            },
+            {
+                'interface': 'fs',
+                'defaults': ['openpaperwork_gtk.fs.gio'],
             },
             {
                 'interface': 'gtk_mainwindow',
@@ -683,9 +686,10 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _on_send_email(self, button):
         (_, file_extensions) = self.pipeline[-1].get_output_mime()
-        target = NamedTemporaryFile(suffix="." + file_extensions[0])
-        target_file_url = "file://" + target.name
-        target.close()  # we only need the name
+        (target_file_url, fd) = self.core.call_success(
+            "fs_mktemp", suffix="." + file_extensions[0], on_disk=True
+        )
+        fd.close()  # we only need the name
         self.core.call_all("mainwindow_back", side="right")
 
         promise = openpaperwork_core.promise.Promise(

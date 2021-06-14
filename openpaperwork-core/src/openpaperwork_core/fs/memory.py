@@ -262,11 +262,13 @@ class Plugin(CommonFsPluginBase):
                 self, prefix=None, suffix=None, mode='w+b', on_disk=False,
                 **kwargs
             ):
-        assert('/' not in prefix)
-        assert('/' not in suffix)
+        assert(prefix is None or '/' not in prefix)
+        assert(suffix is None or '/' not in suffix)
         if on_disk:
             return
         name = "{}{}{}".format(
-            prefix, next(self.id_gen), suffix
+            prefix if prefix is not None else "",
+            next(self.id_gen),
+            suffix if suffix is not None else ""
         )
         return ("memory://" + name, _MemoryFileAdapter(self, name, mode))
