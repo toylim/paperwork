@@ -42,9 +42,12 @@ class Plugin(PluginBase):
         LOGGER.info("Sending %s as attachment with xdg-email", file_url)
         assert(file_url.startswith("file://"))
         file_path = self.core.call_success("fs_unsafe", file_url)
-        # xdg-email returns immediately, and we are interested in whether is raises an exception
+        # xdg-email returns immediately, and we are interested in whether is
+        # raises an exception
         try:
             subprocess.run(['xdg-email', '--attach', file_path], check=True)
         except subprocess.CalledProcessError as e:
-            raise OSError(f"Failed to run xdg-email to send {file_path} as attachment") from e
+            raise OSError(
+                f"Failed to run xdg-email to send {file_path} as attachment"
+            ) from e
         return True

@@ -137,7 +137,9 @@ class Plugin(openpaperwork_core.PluginBase):
         self.button_validate.connect(
             "clicked", self._on_apply
         )
-        self.button_send_email = self.widget_tree.get_object("exporter_send_email")
+        self.button_send_email = self.widget_tree.get_object(
+            "exporter_send_email"
+        )
         self.button_send_email.connect(
             "clicked", self._on_send_email
         )
@@ -681,8 +683,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _on_send_email(self, button):
         (_, file_extensions) = self.pipeline[-1].get_output_mime()
-        target = NamedTemporaryFile(suffix="."+file_extensions[0])
-        target_file_url = "file://"+target.name
+        target = NamedTemporaryFile(suffix="." + file_extensions[0])
+        target_file_url = "file://" + target.name
         target.close()  # we only need the name
         self.core.call_all("mainwindow_back", side="right")
 
