@@ -67,6 +67,8 @@ class Plugin(openpaperwork_core.PluginBase):
         }
 
     def _is_converted(self, doc_url):
+        if not self.core.call_success("fs_isdir", doc_url):
+            return (None, None)
         for doc_file_url in self.core.call_success("fs_listdir", doc_url):
             doc_filename = self.core.call_success("fs_basename", doc_file_url)
             if "." not in doc_filename:
