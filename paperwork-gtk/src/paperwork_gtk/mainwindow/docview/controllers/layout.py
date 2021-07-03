@@ -29,6 +29,7 @@ class BaseLayoutController(BaseDocViewController):
             self.plugin.page_layout.remove(page)
         self.plugin.pages = []
         self.plugin.widget_to_page = {}
+        self.plugin.page_to_widget = {}
 
     def _update_visibility(self):
         vadj = self.plugin.scroll.get_vadjustment()
@@ -64,11 +65,8 @@ class BaseLayoutController(BaseDocViewController):
         self.core.call_all(
             "doc_open_components", pages, *self.plugin.active_doc
         )
-        for page in pages:
-            widget = self.plugin._build_flow_box_child(page.widget)
-            self.plugin.widget_to_page[widget] = page
-            self.plugin.pages.append(page)
-            self.plugin.page_layout.add(widget)
+        for (visible, page) in pages:
+            self.plugin.docview_add_page_viewer(page, visible)
 
     def doc_reload(self):
         super().doc_reload()

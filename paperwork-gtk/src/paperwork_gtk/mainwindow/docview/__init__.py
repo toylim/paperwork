@@ -31,6 +31,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.page_layout = None
         self.pages = []
         self.widget_to_page = {}
+        self.page_to_widget = {}
         self.nb_columns = self.MAX_PAGES
 
         self.zoom = 0.0
@@ -205,6 +206,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def _build_flow_box_child(self, child):
         widget = Gtk.FlowBoxChild.new()
         widget.set_visible(True)
+        widget.set_property('name', 'docview_page')
         widget.set_property('halign', Gtk.Align.CENTER)
         widget.add(child)
         return widget
@@ -226,6 +228,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         self.pages = []
         self.widget_to_page = {}
+        self.page_to_widget = {}
 
         if changed:
             # WORKAROUND(Jflesch):
@@ -308,3 +311,22 @@ class Plugin(openpaperwork_core.PluginBase):
         self.zoom = zoom
         for controller in self.controllers.values():
             controller.docview_set_zoom(zoom)
+
+    def docview_add_page_viewer(self, page, visible=True):
+        widget = self._build_flow_box_child(page.widget)
+        self.widget_to_page[widget] = page
+        self.page_to_widget[page] = widget
+        self.pages.append(page)
+        if visible:
+            self.page_layout.add(widget)
+
+    def docview_hide_page_viewer(self, page):
+        # Jflesch> Hiding is not enough. We have to remove the widget
+        # otherwise it's still taken into account when computing
+        # the layout (keep in mind that homogenous is set to True)
+        self.page_layout.remove(self.page_to_widget[page])
+
+    def docview_show_page_viewer(self, page):
+        # XXX(Jflesch): We mess up the order of the widgets here. But since
+        # only the scan viewer uses this method at the moment, it's fine.
+        self.page_layout.add(self.page_to_widget[page])

@@ -176,15 +176,15 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doc_id = doc_id
         self.doc_url = doc_url
 
-        nb_pages = self.core.call_success(
-            "doc_get_nb_pages_by_url", doc_url
-        )
+        nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)
         if nb_pages is None:
             nb_pages = 0
         scan_id = self.core.call_success("scan2doc_doc_id_to_scan_id", doc_id)
         self.scan = Scan(self.core, self, doc_id, nb_pages, scan_id)
-        out.append(self.scan)
-        if scan_id is not None:
+        if scan_id is None:
+            out.append((False, self.scan))
+        else:
+            out.append((True, self.scan))
             self.scan.start()
 
     def on_scan2doc_start(self, scan_id, doc_id, doc_url):
@@ -200,6 +200,7 @@ class Plugin(openpaperwork_core.PluginBase):
         if scan_id != self.scan.scan_id:
             return
         self.scan.start()
+        self.core.call_all("docview_show_page_viewer", self.scan)
 
     def on_scan_page_start(self, scan_id, page_nb, scan_params):
         self.scan_sizes[scan_id] = (
@@ -248,6 +249,7 @@ class Plugin(openpaperwork_core.PluginBase):
             return
         if scan_id != self.scan.scan_id:
             return
+        self.core.call_all("docview_hide_page_viewer", self.scan)
         self.scan.stop()
 
     def on_scan2doc_end(self, scan_id, doc_id, doc_url):

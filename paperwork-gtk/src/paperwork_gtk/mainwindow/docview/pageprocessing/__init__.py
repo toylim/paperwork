@@ -156,11 +156,14 @@ class Plugin(openpaperwork_core.PluginBase):
 
         # instantiate PageWrapper objects, and replace the pages in the
         # list 'out' by those wrappers.
-        self.wrappers = [PageWrapper(self, page) for page in out]
+        self.wrappers = [
+            PageWrapper(self, page)
+            for (visible, page) in out
+        ]
         for page_idx in range(0, len(out)):
-            out[page_idx] = self.wrappers[page_idx]
+            out[page_idx] = (out[page_idx][0], self.wrappers[page_idx])
             if page_idx in self.active_pages:
-                out[page_idx].on_page_modification_start()
+                out[page_idx][1].on_page_modification_start()
 
     def on_page_modification_start(self, doc_id, page_idx):
         if doc_id != self.active_doc_id:

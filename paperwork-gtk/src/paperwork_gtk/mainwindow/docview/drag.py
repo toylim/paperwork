@@ -97,10 +97,13 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def doc_open_components(self, out: list, doc_id, doc_url):
         self.active_doc = (doc_id, doc_url)
-        self.pages = out
+        self.pages = [p[1] for p in out]
         if self.enabled:
-            for page in out:
-                self._enable_drag(page.widget, doc_id, doc_url, page.page_idx)
+            for (visible, page) in out:
+                if visible:
+                    self._enable_drag(
+                        page.widget, doc_id, doc_url, page.page_idx
+                    )
 
     def on_layout_change(self, layout_name):
         enabled = (layout_name == 'grid')

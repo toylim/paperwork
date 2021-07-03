@@ -306,7 +306,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.nb_to_load = len(self.pages)
         for page in self.pages:
             page.connect("size_obtained", self._on_page_img_size_obtained)
-            out.append(page)
+            out.append((True, page))
 
         self.core.call_all(
             "on_perfcheck_stop",
