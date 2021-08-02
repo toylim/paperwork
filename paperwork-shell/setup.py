@@ -72,7 +72,7 @@ setuptools.setup(
         "fabulous",
         "openpaperwork-core",
         "paperwork-backend",
-    ] + (["getkey"] if os.name != 'nt' else [])
+    ]
 )
 
 if quiet:

@@ -67,22 +67,6 @@
             ]
         },
         {
-            "name": "python-getkey",
-            "buildsystem": "simple",
-            "build-commands": ["python3 setup.py install --prefix=/app --root=/"],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://files.pythonhosted.org/packages/74/f2/3312ea94369f410967667eeca61d261cdf3037df6ea827078ac7c5321150/getkey-0.6.5.tar.gz",
-                    "sha256": "68c7c702c3b34deacf427f6c0f1fd66c5c2aa12d7801aa32442fc1a71c8ce059"
-                },
-                {
-                    "type": "patch",
-                    "path": "flatpak/getkey-setup.diff"
-                }
-            ]
-        },
-        {
             "name": "python-fabulous",
             "buildsystem": "simple",
             "build-commands": ["python3 setup.py install --prefix=/app --root=/"],
