@@ -1,6 +1,6 @@
 import os
 import random
-import shutil
+import subprocess
 import sys
 
 import fabulous.image
@@ -9,9 +9,6 @@ import fabulous.text
 import openpaperwork_core
 
 from ... import _
-
-if os.name != "nt":
-    import getkey
 
 
 # XXX(Jflesch): crappy workaround for an unmaintained library ...
@@ -54,7 +51,7 @@ class Paperwork(object):
         self.core = core
         self.fonts = fonts
 
-    def show(self):
+    def show(self, file=sys.stdout):
         nb_lines = 0
 
         logo = self.core.call_success(
@@ -65,7 +62,7 @@ class Paperwork(object):
         logo = fabulous.image.Image(logo, width=60)
         logo = logo.reduce(logo.convert())
         for line in logo:
-            print((16 * " ") + line)
+            print(16 * " ", line, file=file, sep="")
             nb_lines += 1
 
         font = "FreeSans"
@@ -77,14 +74,15 @@ class Paperwork(object):
             skew=5, color="#abcdef", font=font, fsize=25, shadow=False
         )
         for line in txt:
-            print(line)
+            print(line, file=file)
             nb_lines += 1
 
-        print("Paperwork")
-        print((8 * " ") + _('Version: ') + self.core.call_success(
-            "app_get_version"
-        ))
-        print((8 * " ") + _("Because sorting documents is a machine's job."))
+        print("Paperwork", file=file)
+        print(8 * " ",
+              _('Version: ') + self.core.call_success("app_get_version"),
+              file=file, sep="")
+        print(8 * " ", _("Because sorting documents is a machine's job."),
+              file=file, sep="")
         nb_lines += 3
         return nb_lines
 
@@ -106,7 +104,7 @@ class Section(object):
         if len(buf) > 0:
             yield " ".join(buf)
 
-    def show(self):
+    def show(self, file=sys.stdout):
         nb_lines = 0
         color = random.choice(COLORS)
         font = random.choice(self.fonts)
@@ -117,16 +115,16 @@ class Section(object):
                 word, skew=0, color=color, font=font, fsize=18, shadow=False
             )
             for line in txt:
-                print(line)
+                print(line, file=file)
                 nb_lines += 1
 
-        print(self.name)
+        print(self.name, file=file)
         nb_lines += 1
         for author in self.authors:
             txt = author[1]
             if author[2] > 0:
                 txt += " ({})".format(author[2])
-            print((8 * " ") + txt)
+            print(8 * " ", txt, file=file, sep="")
             nb_lines += 1
 
         return nb_lines
@@ -175,68 +173,29 @@ class Plugin(openpaperwork_core.PluginBase):
             [Section(k, v, fonts) for (k, v) in sections if len(v) >= 0]
         )
 
-        if os.name == "nt":
-            self._show_all(sections)
+        pager = os.environ.get('PAGER', 'less')
+        try:
+            pager = subprocess.Popen([pager, '-R'], universal_newlines=True,
+                                     stdin=subprocess.PIPE, stdout=sys.stdout)
+        except OSError:
+            # Just output regularly, without a pager.
+            output = sys.stdout
+            pager = None
         else:
-            self._show_page_by_page(sections)
+            output = pager.stdin
 
-    def _show_all(self, sections):
-        for section in sections:
-            for x in range(0, 7):
-                print()
-            section.show()
-        print()
-        print()
-
-    def _show_page_by_page(self, sections):
-        t_height = shutil.get_terminal_size()[1] - 2
-
-        idx = 0
-        while True:
-            nb_lines = t_height
-
-            print()
-            print()
-            nb_lines -= 2
-
-            sys.stdout.write("\033[2J")
-            section = sections[idx]
-
-            nb_lines -= section.show()
-            for x in range(0, nb_lines):
-                print()
-
-            txt = "    "
-            if idx > 0:
-                txt += _("<-- Previous") + "    "
-            if idx < len(sections) - 1:
-                txt += _("Next -->") + "    "
-            txt += _("q: quit")
-            print(txt)
-
-            has_valid_key = False
-            while not has_valid_key:
-                key = getkey.getkey()
-                if key.lower() == 'q':
-                    return
-
-                if (
-                        key == getkey.keys.LEFT or
-                        key == '4' or
-                        key == getkey.keys.BACKSPACE):
-                    idx -= 1
-                    has_valid_key = True
-                elif (
-                        key == getkey.keys.RIGHT or
-                        key == '6' or
-                        key == ' ' or
-                        key == '\n'):
-                    idx += 1
-                    if idx < len(sections):
-                        has_valid_key = True
-
-                idx = max(0, idx)
-                idx = min(len(sections) - 1, idx)
+        try:
+            for section in sections:
+                section.show(file=output)
+                if section != sections[-1]:
+                    for x in range(0, 7):
+                        print(file=output)
+            print(file=output)
+            print(file=output)
+        finally:
+            if pager is not None:
+                pager.stdin.close()
+                pager.wait()
 
     def _get_available_fonts(self):
         all_fonts = fabulous.text.get_font_files()
