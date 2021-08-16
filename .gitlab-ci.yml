@@ -47,13 +47,15 @@ test:
     - apt-get install -y meson
     - apt-get install -y python3-dev
     - apt-get install -y python3-gi
+    - apt-get install -y python3-pil
     - apt-get install -y tox
     - apt-get install -y valac
     - apt-get install -y wget
     - apt-get install -y xvfb
     - apt-get install -y zlib1g-dev
     - source ./activate_test_env.sh && make install
-    - source ./activate_test_env.sh && xvfb-run paperwork-gtk chkdeps -y && paperwork-cli chkdeps -y
+    - source ./activate_test_env.sh && paperwork-gtk chkdeps -y
+    - source ./activate_test_env.sh && paperwork-cli chkdeps -y
     - source ./activate_test_env.sh && make test
 
 
@@ -82,6 +84,7 @@ generate_data:
     - apt-get install -y po4a
     - apt-get install -y python3-dev
     - apt-get install -y python3-gi
+    - apt-get install -y python3-pil
     - apt-get install -y python3-recommonmark
     - apt-get install -y python3-sphinx
     - apt-get install -y python3-sphinxcontrib.plantuml
@@ -97,7 +100,8 @@ generate_data:
     - apt-get install -y xvfb
     - apt-get install -y zlib1g-dev
     - source ./activate_test_env.sh && make install
-    - source ./activate_test_env.sh && xvfb-run paperwork-gtk chkdeps -y && paperwork-cli chkdeps -y
+    - source ./activate_test_env.sh && xvfb-run paperwork-gtk chkdeps -y
+    - source ./activate_test_env.sh && xvfb-run paperwork-cli chkdeps -y
     - source ./activate_test_env.sh && make data upload_data
 
 
@@ -118,11 +122,13 @@ doc_devel:
     - apt-get install -y plantuml
     - apt-get install -y python3-dev
     - apt-get install -y python3-gi
+    - apt-get install -y python3-pil
     - apt-get install -y rclone
     - apt-get install -y valac
     - apt-get install -y wget
     - apt-get install -y zlib1g-dev
-    - source ./activate_test_env.sh && make doc && make upload_doc
+    - source ./activate_test_env.sh && make doc
+    - source ./activate_test_env.sh && make upload_doc
 
 
 linux_flatpak:
