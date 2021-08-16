@@ -36,23 +36,24 @@ test:
     - apt-get update
     - apt-get install -y build-essential
     - apt-get install -y gcc
+    - apt-get install -y gettext
     - apt-get install -y git
     - apt-get install -y gobject-introspection
     - apt-get install -y libcunit1-ncurses-dev
     - apt-get install -y libgirepository1.0-dev
+    - apt-get install -y libjpeg-dev
     - apt-get install -y libsane-dev
     - apt-get install -y make
     - apt-get install -y meson
-    - apt-get install -y valac
-    - apt-get install -y gettext
-    - apt-get install -y libjpeg-dev
     - apt-get install -y python3-dev
     - apt-get install -y python3-gi
     - apt-get install -y tox
+    - apt-get install -y valac
     - apt-get install -y wget
+    - apt-get install -y xvfb
     - apt-get install -y zlib1g-dev
     - source ./activate_test_env.sh && make install
-    - source ./activate_test_env.sh && paperwork-gtk chkdeps -y && paperwork-cli chkdeps -y
+    - source ./activate_test_env.sh && xvfb-run paperwork-gtk chkdeps -y && paperwork-cli chkdeps -y
     - source ./activate_test_env.sh && make test
 
 
@@ -96,7 +97,7 @@ generate_data:
     - apt-get install -y xvfb
     - apt-get install -y zlib1g-dev
     - source ./activate_test_env.sh && make install
-    - source ./activate_test_env.sh && paperwork-gtk chkdeps -y && paperwork-cli chkdeps -y
+    - source ./activate_test_env.sh && xvfb-run paperwork-gtk chkdeps -y && paperwork-cli chkdeps -y
     - source ./activate_test_env.sh && make data upload_data
 
 
