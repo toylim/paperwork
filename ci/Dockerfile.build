@@ -1,4 +1,4 @@
-FROM debian:stable-slim
+FROM debian:buster-slim
 
 # Libinsane and Paperwork build dependencies.
 # Everything else will be installed by `paperwork-shell chkdeps`
