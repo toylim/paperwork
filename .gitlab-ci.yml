@@ -70,10 +70,14 @@ generate_data:
   script:
     - apt-get update
     - apt-get install -y build-essential
+    - apt-get install -y doxygen
     - apt-get install -y gcc
     - apt-get install -y gettext
     - apt-get install -y git
     - apt-get install -y gobject-introspection
+    - apt-get install -y gobject-introspection
+    - apt-get install -y graphviz
+    - apt-get install -y gtk-doc-tools
     - apt-get install -y imagemagick
     - apt-get install -y libcunit1-ncurses-dev
     - apt-get install -y libgirepository1.0-dev
@@ -85,9 +89,7 @@ generate_data:
     - apt-get install -y python3-dev
     - apt-get install -y python3-gi
     - apt-get install -y python3-pil
-    - apt-get install -y python3-recommonmark
-    - apt-get install -y python3-sphinx
-    - apt-get install -y python3-sphinxcontrib.plantuml
+    - apt-get install -y python3-virtualenv
     - apt-get install -y rclone
     - apt-get install -y texlive
     - apt-get install -y texlive-lang-english
@@ -96,6 +98,8 @@ generate_data:
     - apt-get install -y texlive-latex-extra
     - apt-get install -y texlive-latex-recommended
     - apt-get install -y valac
+    - apt-get install -y valgrind
+    - apt-get install -y virtualenv
     - apt-get install -y wget
     - apt-get install -y xvfb
     - apt-get install -y zlib1g-dev
@@ -115,16 +119,32 @@ doc_devel:
     - volatile
   script:
     - apt-get update
+    - apt-get install -y build-essential
+    - apt-get install -y doxygen
     - apt-get install -y gettext
     - apt-get install -y git
+    - apt-get install -y gobject-introspection
+    - apt-get install -y graphviz
+    - apt-get install -y gtk-doc-tools
+    - apt-get install -y libcunit1-ncurses-dev
+    - apt-get install -y libgirepository1.0-dev
+    - apt-get install -y libsane-dev
     - apt-get install -y make
+    - apt-get install -y meson
     - apt-get install -y openjdk-11-jre
+    - apt-get install -y plantuml
     - apt-get install -y plantuml
     - apt-get install -y python3-dev
     - apt-get install -y python3-gi
     - apt-get install -y python3-pil
+    - apt-get install -y python3-recommonmark
+    - apt-get install -y python3-sphinx
+    - apt-get install -y python3-sphinxcontrib.plantuml
+    - apt-get install -y python3-virtualenv
     - apt-get install -y rclone
     - apt-get install -y valac
+    - apt-get install -y valgrind
+    - apt-get install -y virtualenv
     - apt-get install -y wget
     - apt-get install -y zlib1g-dev
     - source ./activate_test_env.sh && make doc
