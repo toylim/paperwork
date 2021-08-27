@@ -66,6 +66,6 @@ There is no GUI here. The GUI is
     package_dir={'': 'src'},
     zip_safe=(os.name != 'nt'),
     install_requires=[
-        "distro",  # chkdeps
+        "distro",  "psutil" # chkdeps
     ]
 )
