@@ -229,8 +229,8 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_gtk.mainloop.glib'],
             },
             {
-                'interface': 'paths',
-                'defaults': ['openpaperwork_core.paths.xdg'],
+                'interface': 'data_dir_handler',
+                'defaults': ['paperwork_backend.datadirhandler'],
             },
             {
                 'interface': 'thread',
@@ -258,7 +258,8 @@ class Plugin(openpaperwork_core.PluginBase):
         super().init(core)
 
         if self.index_dir is None:
-            data_dir = self.core.call_success("paths_get_data_dir")
+            data_dir = self.core.call_success(
+                "data_dir_handler_get_individual_data_dir")
             self.index_dir = self.core.call_success(
                 "fs_join", data_dir, "index"
             )

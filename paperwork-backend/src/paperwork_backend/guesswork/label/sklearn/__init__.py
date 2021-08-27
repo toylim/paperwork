@@ -745,8 +745,8 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_gtk.mainloop.glib'],
             },
             {
-                'interface': 'paths',
-                'defaults': ['openpaperwork_core.paths.xdg'],
+                'interface': 'data_dir_handler',
+                'defaults': ['paperwork_backend.datadirhandler'],
             },
             {
                 'interface': 'transaction_manager',
@@ -761,7 +761,8 @@ class Plugin(openpaperwork_core.PluginBase):
         self.config.register()
 
         if self.bayes_dir is None:
-            data_dir = self.core.call_success("paths_get_data_dir")
+            data_dir = self.core.call_success(
+                "data_dir_handler_get_individual_data_dir")
             self.bayes_dir = self.core.call_success(
                 "fs_join", data_dir, "bayes"
             )

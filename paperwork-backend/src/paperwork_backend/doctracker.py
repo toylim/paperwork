@@ -146,8 +146,8 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_gtk.mainloop.glib'],
             },
             {
-                'interface': 'paths',
-                'defaults': ['openpaperwork_core.paths.xdg'],
+                'interface': 'data_dir_handler',
+                'defaults': ['paperwork_backend.datadirhandler'],
             },
             {
                 'interface': 'thread',
@@ -158,7 +158,8 @@ class Plugin(openpaperwork_core.PluginBase):
     def init(self, core):
         super().init(core)
         if self.paperwork_dir is None:
-            self.paperwork_dir = self.core.call_success("paths_get_data_dir")
+            self.paperwork_dir = self.core.call_success(
+                "data_dir_handler_get_individual_data_dir")
 
         sql_file = self.core.call_success(
             "fs_join", self.paperwork_dir, 'doc_tracking.db'
