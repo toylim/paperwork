@@ -215,8 +215,8 @@ class Plugin(openpaperwork_core.PluginBase):
         with self.core.call_success("fs_open", labels_url, 'r') as file_desc:
             labels = file_desc.readlines()
 
-        labels = [l.strip() for l in labels]
-        labels = [l.split(",", 1) for l in labels if len(l) > 0]
+        labels = [lab.strip() for lab in labels]
+        labels = [lab.split(",", 1) for lab in labels if len(lab) > 0]
         labels = {l: c for (l, c) in labels}
         try:
             labels.pop(label)

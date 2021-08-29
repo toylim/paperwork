@@ -71,7 +71,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         )
         self.all_labels = self.core.call_one(
             "mainloop_execute",
-            lambda all_labels: {l[0] for l in all_labels},
+            lambda all_labels: {label[0] for label in all_labels},
             all_labels
         )
 
@@ -150,7 +150,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             "SELECT label FROM labels WHERE doc_id = ?", (doc_id,)
         )
         db_labels = self.core.call_one("mainloop_execute", list, db_labels)
-        db_labels = {l[0] for l in db_labels}
+        db_labels = {label[0] for label in db_labels}
 
         return {
             'text': db_text,
@@ -219,7 +219,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         )
         all_labels = self.core.call_one(
             "mainloop_execute",
-            lambda all_labels: {l[0] for l in all_labels},
+            lambda all_labels: {label[0] for label in all_labels},
             all_labels
         )
         return all_labels
@@ -454,7 +454,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         labels = self.core.call_one(
             "mainloop_execute",
-            lambda labels: [l[0] for l in labels],
+            lambda labels: [label[0] for label in labels],
             labels
         )
         for label in labels:
