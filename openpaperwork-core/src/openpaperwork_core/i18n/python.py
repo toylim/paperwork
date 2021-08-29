@@ -103,7 +103,10 @@ class Plugin(PluginBase):
             )
         )
 
-    def i18n_sort(self, l):
-        t = [(self.i18n_strip_accents(str(e).lower()), e) for e in l]
+    def i18n_sort(self, string_list):
+        t = [
+            (self.i18n_strip_accents(str(e).lower()), e)
+            for e in string_list
+        ]
         t.sort()
         return [e[1] for e in t]
