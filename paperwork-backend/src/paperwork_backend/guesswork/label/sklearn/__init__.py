@@ -414,11 +414,11 @@ class Corpus(object):
         doc_weights = collections.defaultdict(lambda: 0)
 
         all_labels = cursor.execute("SELECT DISTINCT label FROM labels")
-        all_labels = {l[0] for l in all_labels}
+        all_labels = {label[0] for label in all_labels}
         all_docs = cursor.execute(
             "SELECT doc_id FROM features ORDER BY doc_id DESC"
         )
-        all_docs = [l[0] for l in all_docs]
+        all_docs = [doc[0] for doc in all_docs]
 
         max_doc_backlog = config.get("max_doc_backlog")
 
@@ -433,8 +433,8 @@ class Corpus(object):
             )
 
         # label --> number of doc without this label
-        no_label_counts = {l: 0 for l in all_labels}
-        no_label_docids = {l: [] for l in all_labels}
+        no_label_counts = {label: 0 for label in all_labels}
+        no_label_docids = {label: [] for label in all_labels}
         for doc_id in all_docs:
             if len(no_label_counts) <= 0:
                 break

@@ -53,7 +53,7 @@ class LabelsRenderer(object):
             line += " " + label
         if len(line.strip()) > 0:
             out.append(line)
-        return [l.strip() for l in out]
+        return [line.strip() for line in out]
 
     def get_preview_output(
                 self, doc_id, doc_url, terminal_size=(80, 25),
