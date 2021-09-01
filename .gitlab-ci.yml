@@ -39,6 +39,7 @@ test:
     - apt-get install -y gettext
     - apt-get install -y git
     - apt-get install -y gobject-introspection
+    - apt-get install -y gtk-doc-tools
     - apt-get install -y libcunit1-ncurses-dev
     - apt-get install -y libgirepository1.0-dev
     - apt-get install -y libjpeg-dev
