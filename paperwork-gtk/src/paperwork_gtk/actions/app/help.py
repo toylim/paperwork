@@ -40,6 +40,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def init(self, core):
         super().init(core)
+        if not GIO_AVAILABLE:
+            return
         for (title, file_name) in self.core.call_success("help_get_files"):
             action = Gio.SimpleAction.new('open_help.' + file_name, None)
             action.connect("activate", self.doc_open_help, file_name)
