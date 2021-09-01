@@ -5,7 +5,7 @@ def _(s):
     return gettext.dgettext('openpaperwork_gtk', s)
 
 
-CLI_PLUGINS = [
+DESKTOP_PLUGINS = [
     # plugins that can make sense to use even in the CLI application
     'openpaperwork_gtk.external_apps.gio',
     'openpaperwork_gtk.fs.gio',

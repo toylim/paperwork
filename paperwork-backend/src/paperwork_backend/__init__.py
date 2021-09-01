@@ -1,7 +1,12 @@
 import gettext
 
 import openpaperwork_core
-import openpaperwork_gtk
+
+try:
+    import openpaperwork_gtk
+    OPENPAPERWORK_GTK_AVAILABLE = True
+except (ModuleNotFoundError, ImportError):
+    OPENPAPERWORK_GTK_AVAILABLE = False
 
 
 def _(s):
@@ -12,9 +17,14 @@ DEFAULT_CONFIG_PLUGINS = openpaperwork_core.MINIMUM_CONFIG_PLUGINS + [
     'paperwork_backend.app',
 ]
 
+if OPENPAPERWORK_GTK_AVAILABLE:
+    OPENPAPERWORK_GTK_PLUGINS = openpaperwork_gtk.DESKTOP_PLUGINS
+else:
+    OPENPAPERWORK_GTK_PLUGINS = []
+
 DEFAULT_PLUGINS = (
     openpaperwork_core.RECOMMENDED_PLUGINS +
-    openpaperwork_gtk.CLI_PLUGINS +
+    OPENPAPERWORK_GTK_PLUGINS +
     [
         'openpaperwork_core.beacon.stats',
         'openpaperwork_core.beacon.sysinfo',

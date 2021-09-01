@@ -291,3 +291,45 @@ windows_exe:
     - c:\msys64\usr\bin\bash -lc "make windows_exe"
     - c:\msys64\usr\bin\bash -lc "./ci/deliver.sh dist/paperwork.zip windows .zip"
     - c:\msys64\usr\bin\bash -lc "make uninstall"
+
+
+android:
+  stage: deploy
+  only:
+    - branches@World/OpenPaperwork/paperwork
+    - tags@World/OpenPaperwork/paperwork
+  tags:
+    - linux
+    - volatile
+  script:
+    - apt-get update
+    - apt-get install -y autoconf
+    - apt-get install -y automake
+    - apt-get install -y cmake
+    - apt-get install -y git
+    - apt-get install -y libffi-dev
+    - apt-get install -y libssl-dev
+    - apt-get install -y libtinfo5
+    - apt-get install -y libtool
+    - apt-get install -y openjdk-11-jdk
+    - apt-get install -y pkg-config
+    - apt-get install -y python3-pip
+    - apt-get install -y python3-virtualenv virtualenv
+    - apt-get install -y rclone
+    - apt-get install -y sudo
+    - apt-get install -y unzip
+    - apt-get install -y zip
+    - apt-get install -y zlib1g-dev
+    - useradd -d /home/builder -g users -M -N builder
+    - mkdir -p /home/builder
+    - chown -R builder:users /home/builder .
+    # For some reason, sudo change the current directory ...
+    - pwd > /projectdir.txt
+    - |
+      sudo -H -i -u builder sh -e -x << EOS
+      cd $(< /projectdir.txt)
+      virtualenv -p python3 /home/builder/venv
+      . /home/builder/venv/bin/activate
+      TERM=xterm-256color make android BUILDOZER_ARGS="--profile auto"
+      EOS
+    - ./ci/deliver.sh paperwork-android/bin/paperwork-*.apk android .apk

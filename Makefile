@@ -1,10 +1,16 @@
 # order matters (dependencies)
-ALL_COMPONENTS = \
+GTK_COMPONENTS = \
 	openpaperwork-core \
 	openpaperwork-gtk \
 	paperwork-backend \
 	paperwork-shell \
 	paperwork-gtk
+
+ANDROID_COMPONENTS = \
+	openpaperwork-core \
+	paperwork-backend \
+	paperwork-android
+
 
 build:
 
@@ -17,31 +23,32 @@ openpaperwork-core_install_py:
 	$(MAKE) -C $(@:%_install_py=%) install_py
 
 
-clean: $(ALL_COMPONENTS:%=%_clean)
+clean: $(GTK_COMPONENTS:%=%_clean)
 	rm -rf build dist
 	rm -rf venv
 	rm -f data.tar.gz
 	make -C sub/libinsane clean || true
 	make -C sub/libpillowfight clean || true
 	make -C sub/pyocr clean || true
+	make -C paperwork-android clean || true
 
-install_py: download_data $(ALL_COMPONENTS:%=%_install_py)
+install_py: download_data $(GTK_COMPONENTS:%=%_install_py)
 
 install: install_py
 
-uninstall: $(ALL_COMPONENTS:%=%_uninstall)
+uninstall: $(GTK_COMPONENTS:%=%_uninstall)
 
-uninstall_py: $(ALL_COMPONENTS:%=%_uninstall_py)
+uninstall_py: $(GTK_COMPONENTS:%=%_uninstall_py)
 
-uninstall_c: $(ALL_COMPONENTS:%=%_uninstall_c)
+uninstall_c: $(GTK_COMPONENTS:%=%_uninstall_c)
 
-version: $(ALL_COMPONENTS:%=%_version)
+version: $(GTK_COMPONENTS:%=%_version) $(ANDROID_COMPONENTS:%=%_version)
 
-check: $(ALL_COMPONENTS:%=%_check)
+check: $(GTK_COMPONENTS:%=%_check) $(ANDROID_COMPONENTS:%=%_check)
 
-test: $(ALL_COMPONENTS:%=%_test)
+test: $(GTK_COMPONENTS:%=%_test) $(ANDROID_COMPONENTS:%=%_test)
 
-data: $(ALL_COMPONENTS:%=%_data)
+data: $(GTK_COMPONENTS:%=%_data)
 
 upload_data: data
 	tar -cvzf data.tar.gz \
@@ -56,14 +63,14 @@ data.tar.gz:
 download_data: data.tar.gz
 	tar -xvzf data.tar.gz
 
-doc: $(ALL_COMPONENTS:%=%_doc)
+doc: $(GTK_COMPONENTS:%=%_doc)
 
-upload_doc: $(ALL_COMPONENTS:%=%_upload_doc)
+upload_doc: $(GTK_COMPONENTS:%=%_upload_doc)
 
-release_pypi: version download_data l10n_compile
-	$(MAKE) $(ALL_COMPONENTS:%=%_release_pypi)
+release_pypi: $(GTK_COMPONENTS:%=%_version) download_data l10n_compile
+	$(MAKE) $(GTK_COMPONENTS:%=%_release_pypi)
 
-release: $(ALL_COMPONENTS:%=%_release)
+release: $(GTK_COMPONENTS:%=%_release)
 ifeq (${RELEASE}, )
 	@echo "You must specify a release version (make release RELEASE=1.2.3)"
 	@echo "Also makes sure to update:"
@@ -80,7 +87,7 @@ else
 	@echo "IMPORTANT: Don't forgot to add the latest release on Flathub !"
 endif
 
-linux_exe: $(ALL_COMPONENTS:%=%_linux_exe)
+linux_exe: $(GTK_COMPONENTS:%=%_linux_exe)
 
 libinsane_win64:
 	${MAKE} -C sub/libinsane clean
@@ -100,7 +107,7 @@ windows_exe:
 	cp /mingw64/bin/libsqlite3-0.dll /mingw64/DLLs/sqlite3.dll
 
 	rm -rf $(CURDIR)/build/exe
-	$(MAKE) $(ALL_COMPONENTS:%=%_windows_exe)
+	$(MAKE) $(GTK_COMPONENTS:%=%_windows_exe)
 
 	# a bunch of things are missing
 	mkdir -p $(CURDIR)/build/exe/lib
@@ -119,9 +126,9 @@ windows_exe:
 	mkdir -p dist
 	(cd $(CURDIR)/build/exe ; zip -r ../../dist/paperwork.zip *)
 
-l10n_extract: $(ALL_COMPONENTS:%=%_l10n_extract)
+l10n_extract: $(GTK_COMPONENTS:%=%_l10n_extract)
 
-l10n_compile: $(ALL_COMPONENTS:%=%_l10n_compile)
+l10n_compile: $(GTK_COMPONENTS:%=%_l10n_compile)
 
 help:
 	@echo "make build: run 'python3 ./setup.py build' in all components"
@@ -132,7 +139,7 @@ help:
 	@echo "make uninstall : run 'pip3 uninstall -y (component)' on all components"
 	@echo "make l10n_extract"
 	@echo "make l10n_compile"
-	@echo "Components:" ${ALL_COMPONENTS}
+	@echo "Components:" ${GTK_COMPONENTS}
 
 %_version:
 	echo "Making version file $(@:%_version=%)"
@@ -186,7 +193,7 @@ help:
 	echo "Building Linux exe for $(@:%_linux_exe=%)"
 	$(MAKE) -C $(@:%_linux_exe=%) linux_exe
 
-%_windows_exe: version l10n_compile download_data libinsane_win64 pyocr_win64 libpillowfight_win64
+%_windows_exe: $(GTK_COMPONENTS:%=%_version) l10n_compile download_data libinsane_win64 pyocr_win64 libpillowfight_win64
 	echo "Building Windows exe for $(@:%_windows_exe=%)"
 	$(MAKE) -C $(@:%_windows_exe=%) windows_exe
 
@@ -203,7 +210,14 @@ venv:
 	make -C sub/libinsane build_c
 	virtualenv -p python3 --system-site-packages venv
 
+android: $(ANDROID_COMPONENTS:%=%_version)
+	$(MAKE) -C paperwork-android android
+
+android_run: android
+	$(MAKE) -C paperwork-android android_run
+
+
 .PHONY: help build clean test check install install_py install_c uninstall \
 	uninstall_c uninstall_py release release_pypi libinsane_win64 \
 	pyocr_win64 libpillowfight_win64 doc upload_doc data upload_data \
-	download_data l10n_extract l10n_compile
+	download_data l10n_extract l10n_compile android android_run
