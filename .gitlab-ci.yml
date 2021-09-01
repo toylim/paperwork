@@ -1,5 +1,9 @@
 image: debian:bullseye
 
+variables:
+  GIT_STRATEGY: clone
+  GIT_SUBMODULE_STRATEGY: none
+
 stages:
   # no point in waiting for the tests to end before generating the data files
   # or the development documentation
@@ -39,6 +43,7 @@ test:
     - apt-get install -y gettext
     - apt-get install -y git
     - apt-get install -y gobject-introspection
+    - apt-get install -y gtk-doc-tools
     - apt-get install -y libcunit1-ncurses-dev
     - apt-get install -y libgirepository1.0-dev
     - apt-get install -y libjpeg-dev
