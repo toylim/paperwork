@@ -11,6 +11,11 @@ try:
 except (ImportError, ValueError):
     GI_AVAILABLE = False
 
+    # dummy so chkdeps can still be called
+    class GObject(object):
+        class GObject(object):
+            pass
+
 try:
     from gi.repository import Libinsane
     LIBINSANE_AVAILABLE = True
