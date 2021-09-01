@@ -24,6 +24,12 @@ except (ImportError, ValueError):
 
     # dummy so chkdeps can still be called
     class Libinsane(object):
+        class LogLevel(object):
+            DEBUG = 0
+            INFO = 1
+            WARNING = 2
+            ERROR = 3
+
         class Logger(object):
             pass
 
