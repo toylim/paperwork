@@ -22,6 +22,12 @@ try:
 except (ImportError, ValueError):
     LIBINSANE_AVAILABLE = False
 
+    # dummy so chkdeps can still be called
+    class Libinsane(object):
+        class Logger(object):
+            pass
+
+
 import PIL
 import PIL.Image
 
