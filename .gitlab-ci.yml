@@ -1,5 +1,8 @@
 image: debian:bullseye
 
+variables:
+  GIT_SUBMODULE_STRATEGY: none
+
 stages:
   # no point in waiting for the tests to end before generating the data files
   # or the development documentation
