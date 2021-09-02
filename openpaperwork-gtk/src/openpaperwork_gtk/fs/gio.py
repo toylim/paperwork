@@ -291,6 +291,9 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             ))
 
     def fs_exists(self, url):
+        if not GLIB_AVAILABLE:
+            return None
+
         try:
             f = self.vfs.get_file_for_uri(url)
             if not f.query_exists():

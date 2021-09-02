@@ -7,30 +7,43 @@ if os.name == "nt":
     import webbrowser
     import xml.etree.ElementTree
 
+
+GI_AVAILABLE = False
+GDK_PIXBUF_AVAILABLE = False
+GTK_AVAILABLE = False
+HDY_AVAILABLE = False
+
+
 try:
     import gi
-    gi.require_version('GdkPixbuf', '2.0')
-    from gi.repository import GdkPixbuf
-    GDK_PIXBUF_AVAILABLE = True
+    GI_AVAILABLE = True
 except (ValueError, ImportError):
-    GDK_PIXBUF_AVAILABLE = False
+    pass
 
-try:
-    import gi
-    gi.require_version('Gdk', '3.0')
-    gi.require_version('Gtk', '3.0')
-    from gi.repository import Gdk
-    from gi.repository import Gtk
-    GTK_AVAILABLE = True
-except (ImportError, ValueError):
-    GTK_AVAILABLE = False
+if GI_AVAILABLE:
+    try:
+        gi.require_version('GdkPixbuf', '2.0')
+        from gi.repository import GdkPixbuf
+        GDK_PIXBUF_AVAILABLE = True
+    except (ValueError, ImportError):
+        pass
 
-try:
-    gi.require_version('Handy', '1')
-    from gi.repository import Handy
-    HDY_AVAILABLE = True
-except (ImportError, ValueError):
-    HDY_AVAILABLE = False
+    try:
+        gi.require_version('Gdk', '3.0')
+        gi.require_version('Gtk', '3.0')
+        from gi.repository import Gdk
+        from gi.repository import Gtk
+        GTK_AVAILABLE = True
+    except (ImportError, ValueError):
+        pass
+
+    try:
+        gi.require_version('Handy', '1')
+        from gi.repository import Handy
+        HDY_AVAILABLE = True
+    except (ImportError, ValueError):
+        pass
+
 
 import openpaperwork_core  # noqa: E402
 
