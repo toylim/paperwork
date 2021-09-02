@@ -15,6 +15,11 @@ except (ImportError, ValueError):
 
     # workaround so chkdeps can still be called
     class GObject(object):
+        TYPE_BOOLEAN = 0
+
+        class SignalFlags(object):
+            RUN_LAST = 0
+
         class GObject(object):
             pass
 

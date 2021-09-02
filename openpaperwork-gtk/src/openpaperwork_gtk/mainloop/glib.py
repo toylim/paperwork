@@ -11,8 +11,7 @@ except (ImportError, ValueError):
 
 
 import openpaperwork_core
-
-from .. import deps
+import openpaperwork_core.deps
 
 LOGGER = logging.getLogger(__name__)
 
@@ -44,13 +43,16 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def chkdeps(self, out: dict):
         if not GLIB_AVAILABLE:
-            out['glib'].update(deps.GLIB)
+            out['glib'].update(openpaperwork_core.deps.GLIB)
 
     def _check_mainloop_instantiated(self):
         if self.loop is None:
             self.loop = GLib.MainLoop.new(None, False)  # !running
 
     def mainloop(self, halt_on_uncaught_exception=True, log_uncaught=True):
+        if not GLIB_AVAILABLE:
+            return None
+
         self._check_mainloop_instantiated()
         self.log_uncaught = log_uncaught
         self.halt_on_uncaught_exception = halt_on_uncaught_exception
@@ -140,6 +142,9 @@ class Plugin(openpaperwork_core.PluginBase):
                 pass
 
     def mainloop_schedule(self, func, *args, delay_s=0, **kwargs):
+        if not GLIB_AVAILABLE:
+            return None
+
         assert(hasattr(func, '__call__'))
 
         with self.lock:

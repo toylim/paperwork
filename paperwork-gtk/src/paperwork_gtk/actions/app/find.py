@@ -40,6 +40,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def init(self, core):
         super().init(core)
+        if not GIO_AVAILABLE:
+            return
         action = Gio.SimpleAction.new('app_find', None)
         action.connect("activate", self._focus_on_search_field)
         self.core.call_all("app_actions_add", action)

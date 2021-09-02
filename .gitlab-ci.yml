@@ -64,6 +64,29 @@ test:
     - source ./activate_test_env.sh && make test
 
 
+test_chkdeps:
+  stage: tests
+  only:
+    - branches@World/OpenPaperwork/paperwork
+    - tags@World/OpenPaperwork/paperwork
+  tags:
+    - linux
+    - volatile
+  script:
+    - apt-get update
+    # bare minimum to install Paperwork from sources
+    - apt-get install -y build-essential
+    - apt-get install -y make
+    - apt-get install -y python3
+    - apt-get install -y python3-dev
+    - apt-get install -y python3-pip
+    - apt-get install -y python3-setuptools
+    - apt-get install -y wget
+    - apt-get install -y gettext
+    - make install
+    - paperwork-json chkdeps
+
+
 generate_data:
   stage: data
   only:

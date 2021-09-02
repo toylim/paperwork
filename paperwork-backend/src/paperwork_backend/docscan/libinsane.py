@@ -555,9 +555,13 @@ class Plugin(openpaperwork_core.PluginBase):
 
         LOGGER.info("Initializing Libinsane ...")
         self.libinsane_logger = LibinsaneLogger()
-        Libinsane.register_logger(self.libinsane_logger)
-        self.libinsane = Libinsane.Api.new_safebet()
-        LOGGER.info("Libinsane %s initialized", self.libinsane.get_version())
+        self.libinsane = None
+        if LIBINSANE_AVAILABLE:
+            Libinsane.register_logger(self.libinsane_logger)
+            self.libinsane = Libinsane.Api.new_safebet()
+            LOGGER.info(
+                "Libinsane %s initialized", self.libinsane.get_version()
+            )
 
         self._last_scanner = None
 

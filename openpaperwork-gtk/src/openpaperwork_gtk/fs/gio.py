@@ -11,9 +11,8 @@ try:
 except (ImportError, ValueError):
     GLIB_AVAILABLE = False
 
+import openpaperwork_core.deps
 import openpaperwork_core.fs
-
-from .. import deps
 
 
 LOGGER = logging.getLogger(__name__)
@@ -258,7 +257,9 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
 
     def __init__(self):
         super().__init__()
-        self.vfs = Gio.Vfs.get_default()
+        self.vfs = None
+        if GLIB_AVAILABLE:
+            self.vfs = Gio.Vfs.get_default()
         self.tmp_files = set()
 
     def get_interfaces(self):
@@ -266,7 +267,7 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
 
     def chkdeps(self, out: dict):
         if not GLIB_AVAILABLE:
-            out['glib'].update(deps.GLIB)
+            out['glib'].update(openpaperwork_core.deps.GLIB)
 
     def fs_open(self, uri, mode='r', needs_fileno=False, **kwargs):
         if needs_fileno:
@@ -303,6 +304,9 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             raise IOError(str(exc))
 
     def fs_listdir(self, url):
+        if not GLIB_AVAILABLE:
+            return None
+
         try:
             f = self.vfs.get_file_for_uri(url)
             if not f.query_exists():
@@ -466,6 +470,9 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             raise IOError(str(exc))
 
     def fs_isdir(self, url):
+        if not GLIB_AVAILABLE:
+            return None
+
         try:
             f = self.vfs.get_file_for_uri(url)
             if not f.query_exists():
@@ -493,6 +500,9 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             return None
 
     def fs_mkdir_p(self, url):
+        if not GLIB_AVAILABLE:
+            return None
+
         try:
             f = self.vfs.get_file_for_uri(url)
             if not f.query_exists():

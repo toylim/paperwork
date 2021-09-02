@@ -53,6 +53,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def init(self, core):
         super().init(core)
+        if not GIO_AVAILABLE:
+            return
         self.menu = Gio.Menu()
 
     def on_doclist_initialized(self):

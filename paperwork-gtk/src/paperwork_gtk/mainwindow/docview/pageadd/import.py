@@ -58,6 +58,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def init(self, core):
         super().init(core)
+        if not GTK_AVAILABLE:
+            return
         self.core.call_all(
             "mainloop_schedule", self.core.call_all,
             "pageadd_sources_refresh"

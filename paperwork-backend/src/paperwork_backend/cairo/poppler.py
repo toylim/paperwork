@@ -23,6 +23,9 @@ try:
 except (ImportError, ValueError):
     # dummy so chkdeps can still be called
     class GObject(object):
+        class SignalFlags(object):
+            RUN_LAST = 0
+
         class GObject(object):
             pass
 
