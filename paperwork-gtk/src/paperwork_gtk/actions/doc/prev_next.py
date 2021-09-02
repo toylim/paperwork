@@ -40,6 +40,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def init(self, core):
         super().init(core)
+        if not GIO_AVAILABLE:
+            return
         action = Gio.SimpleAction.new('doc_prev', None)
         action.connect("activate", self._goto, -1)
         self.core.call_all("app_actions_add", action)

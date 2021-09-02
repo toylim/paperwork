@@ -3,25 +3,31 @@ import os
 import openpaperwork_core
 import openpaperwork_core.deps
 
+
+GI_AVAILABLE = False
+GLIB_AVAILABLE = False
+POPPLER_AVAILABLE = False
+
+
 try:
     import gi
     GI_AVAILABLE = True
 except (ImportError, ValueError):
-    GI_AVAILABLE = False
+    pass
 
 if GI_AVAILABLE:
     try:
         from gi.repository import Gio
         GLIB_AVAILABLE = True
     except (ImportError, ValueError):
-        GLIB_AVAILABLE = False
+        pass
 
     try:
         gi.require_version('Poppler', '0.18')
         from gi.repository import Poppler
         POPPLER_AVAILABLE = True
     except (ImportError, ValueError):
-        POPPLER_AVAILABLE = False
+        pass
 
 
 class Plugin(openpaperwork_core.PluginBase):

@@ -42,6 +42,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def init(self, core):
         super().init(core)
+        if not GLIB_AVAILABLE:
+            return
         action = Gio.SimpleAction.new(ACTION_NAME, None)
         action.connect("activate", self._select_all)
         self.core.call_all("app_actions_add", action)

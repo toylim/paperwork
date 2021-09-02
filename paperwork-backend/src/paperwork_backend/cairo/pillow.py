@@ -8,6 +8,9 @@ import openpaperwork_core.promise
 
 CAIRO_AVAILABLE = False
 GDK_AVAILABLE = False
+GI_AVAILABLE = False
+GLIB_AVAILABLE = False
+
 
 try:
     import gi
@@ -21,25 +24,28 @@ try:
 except (ImportError, ValueError):
     pass
 
-if GI_AVAILABLE:
-    try:
+try:
+    if GI_AVAILABLE:
         gi.require_version('Gdk', '3.0')
         gi.require_version('GdkPixbuf', '2.0')
-        from gi.repository import Gdk
-        from gi.repository import GdkPixbuf
-        GDK_AVAILABLE = True
-    except (ImportError, ValueError):
-        pass
+    from gi.repository import Gdk
+    from gi.repository import GdkPixbuf
+    GDK_AVAILABLE = True
+except (ImportError, ValueError):
+    pass
 
-    try:
-        from gi.repository import GLib
-        from gi.repository import GObject
-        GLIB_AVAILABLE = True
-    except (ImportError, ValueError):
-        # dummy so chkdeps can still be called
+try:
+    from gi.repository import GLib
+    from gi.repository import GObject
+    GLIB_AVAILABLE = True
+except (ImportError, ValueError):
+    # dummy so chkdeps can still be called
+    class GObject(object):
+        class SignalFlags(object):
+            RUN_LAST = 0
+
         class GObject(object):
-            class GObject(object):
-                pass
+            pass
 
 
 DELAY_SHORT = 0.01
