@@ -35,7 +35,7 @@
           </object>
         </child>
         <child>
-          <object class="HdyLeaflet" id="box_body">
+          <object class="HdyLeaflet" id="mainwindow_box_body">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="can-swipe-back">True</property>
@@ -76,7 +76,7 @@
     </widgets>
   </object>
   <object class="HdyHeaderGroup">
-    <property name="decorate-all" bind-source="box_body" bind-property="folded" bind-flags="sync-create"/>
+    <property name="decorate-all" bind-source="mainwindow_box_body" bind-property="folded" bind-flags="sync-create"/>
       <headerbars>
         <headerbar name="mainwindow_stack_header_left"/>
         <headerbar name="mainwindow_stack_header_right"/>
@@ -85,7 +85,7 @@
   <object class="HdySwipeGroup" id="swipe_group">
     <swipeables>
       <swipeable name="mainwindow_box_titlebar"/>
-      <swipeable name="box_body"/>
+      <swipeable name="mainwindow_box_body"/>
     </swipeables>
   </object>
 </interface>

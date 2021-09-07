@@ -158,6 +158,11 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         }
 
+        self.widget_tree.get_object("mainwindow_box_titlebar").connect(
+            "notify::folded", self._on_titlebar_fold_change
+        )
+        self._on_titlebar_fold_change()
+
     def chkdeps(self, out: dict):
         if not GLIB_AVAILABLE:
             out['glib'].update(openpaperwork_core.deps.GLIB)
@@ -177,6 +182,15 @@ class Plugin(openpaperwork_core.PluginBase):
         if self.mainwindow is not None:
             self.core.call_all("config_save")
             self.mainwindow.set_visible(False)
+
+    def _on_titlebar_fold_change(self, *args, **kwargs):
+        LOGGER.info("Main window fold has changed")
+        self.core.call_all("on_mainwindow_fold_change")
+
+    def mainwindow_get_folded(self):
+        return self.widget_tree.get_object(
+            "mainwindow_box_titlebar"
+        ).get_folded()
 
     def _on_mainwindow_destroy(self, main_window):
         LOGGER.info("Main window destroy. Quitting")
@@ -208,7 +222,21 @@ class Plugin(openpaperwork_core.PluginBase):
         self.defaults[side].sort(reverse=True)
         return True
 
-    def mainwindow_show(self, side: str, name: str):
+    def mainwindow_show(self, side: str, name: str = None):
+        self.widget_tree.get_object(
+            "mainwindow_box_titlebar"
+        ).set_visible_child(
+            self.stacks[side]['header']
+        )
+        self.widget_tree.get_object(
+            "mainwindow_box_body"
+        ).set_visible_child(
+            self.stacks[side]['body']
+        )
+
+        if name is None:
+            return False
+
         if name in self.navigation_stacks[side]:
             self.navigation_stacks[side].remove(name)
         self.navigation_stacks[side].append(name)

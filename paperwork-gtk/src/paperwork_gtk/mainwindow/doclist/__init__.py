@@ -32,6 +32,8 @@ NB_DOCS_PER_PAGE = 50
 
 
 class Plugin(openpaperwork_core.PluginBase):
+    PRIORITY = -100
+
     def __init__(self):
         super().__init__()
         self.widget_tree = None
@@ -175,11 +177,18 @@ class Plugin(openpaperwork_core.PluginBase):
             "mainloop_schedule", self.core.call_all, "on_doclist_initialized"
         )
 
+        self.on_mainwindow_fold_change()
+
     def chkdeps(self, out: dict):
         if not GLIB_AVAILABLE:
             out['glib'].update(openpaperwork_core.deps.GLIB)
         if not GTK_AVAILABLE:
             out['gtk'].update(openpaperwork_gtk.deps.GTK)
+
+    def on_initialized(self):
+        self.core.call_all(
+            "mainwindow_show", side="left", name="doclist"
+        )
 
     def doclist_add(self, widget, vposition):
         body = self.widget_tree.get_object("doclist_body")
@@ -646,4 +655,10 @@ class Plugin(openpaperwork_core.PluginBase):
             button,
             out_file,
             margins=(100, 50, 100, 200)
+        )
+
+    def on_mainwindow_fold_change(self):
+        folded = self.core.call_success("mainwindow_get_folded")
+        self.widget_tree.get_object("doclist_header").set_show_close_button(
+            folded
         )

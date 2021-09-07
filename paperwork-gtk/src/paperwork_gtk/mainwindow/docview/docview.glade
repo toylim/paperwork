@@ -86,5 +86,24 @@
     <property name="hexpand">True</property>
     <property name="show_close_button">True</property>
     <property name="decoration_layout">:minimize,maximize,close</property>
+
+    <child>
+      <object class="GtkButton" id="docview_back">
+        <property name="use_action_appearance">False</property>
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="receives_default">False</property>
+        <property name="use_underline">True</property>
+        <property name="relief">none</property>
+        <child>
+          <object class="GtkImage">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="icon_name">go-previous-symbolic</property>
+            <property name="icon_size">2</property>
+          </object>
+        </child>
+      </object>
+    </child>
   </object>
 </interface>

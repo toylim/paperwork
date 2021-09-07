@@ -116,6 +116,15 @@ class Plugin(openpaperwork_core.PluginBase):
             self.widget_tree.get_object("docview_header")
         )
 
+        self.on_mainwindow_fold_change()
+
+        self.widget_tree.get_object("docview_back").connect(
+            "clicked",
+            lambda *args, **kwargs: (
+                self.core.call_all("mainwindow_show", "left")
+            )
+        )
+
         self.core.call_all(
             "mainwindow_add", side="right", name="docview", prio=10000,
             header=self.widget_tree.get_object("docview_header"),
@@ -330,3 +339,10 @@ class Plugin(openpaperwork_core.PluginBase):
         # XXX(Jflesch): We mess up the order of the widgets here. But since
         # only the scan viewer uses this method at the moment, it's fine.
         self.page_layout.add(self.page_to_widget[page])
+
+    def on_mainwindow_fold_change(self):
+        folded = self.core.call_success("mainwindow_get_folded")
+        self.widget_tree.get_object("docview_header").set_show_close_button(
+            not folded
+        )
+        self.widget_tree.get_object("docview_back").set_visible(folded)
