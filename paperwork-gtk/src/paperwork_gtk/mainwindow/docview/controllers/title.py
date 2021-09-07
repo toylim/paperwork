@@ -6,6 +6,13 @@ from . import BaseDocViewController
 
 class TitleController(BaseDocViewController):
     def enter(self):
+        folded = self.plugin.core.call_success("mainwindow_get_folded")
+        if folded:
+            self.plugin.widget_tree.get_object(
+                "docview_header"
+            ).set_title("")
+            return
+
         (doc_id, doc_url) = self.plugin.active_doc
         if self.plugin.core.call_success("is_doc", doc_url) is not None:
             doc_date = self.plugin.core.call_success(
@@ -30,6 +37,9 @@ class TitleController(BaseDocViewController):
 
 
 class Plugin(openpaperwork_core.PluginBase):
+    def __init__(self):
+        self.controller = None
+
     def get_interfaces(self):
         return ['gtk_docview_controller']
 
@@ -50,4 +60,11 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def gtk_docview_get_controllers(self, out: dict, docview):
-        out['title'] = TitleController(docview)
+        self.controller = TitleController(docview)
+        out['title'] = self.controller
+
+    def on_mainwindow_fold_change(self):
+        if self.controller is None:
+            return
+        # update the title bar
+        self.controller.enter()
