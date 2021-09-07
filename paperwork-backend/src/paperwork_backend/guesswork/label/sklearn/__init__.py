@@ -703,7 +703,6 @@ class Plugin(openpaperwork_core.PluginBase):
     PRIORITY = 100
 
     def __init__(self):
-        self.bayes_dir = None
         self.bayes = None
         self.config = None
         self.sql = None
@@ -760,17 +759,19 @@ class Plugin(openpaperwork_core.PluginBase):
         self.config = PluginConfig(core)
         self.config.register()
 
-        if self.bayes_dir is None:
-            data_dir = self.core.call_success(
-                "data_dir_handler_get_individual_data_dir")
-            self.bayes_dir = self.core.call_success(
-                "fs_join", data_dir, "bayes"
-            )
+        self._init()
 
-        self.core.call_success("fs_mkdir_p", self.bayes_dir)
+    def _init(self):
+        data_dir = self.core.call_success(
+            "data_dir_handler_get_individual_data_dir")
+        bayes_dir = self.core.call_success(
+            "fs_join", data_dir, "bayes"
+        )
+
+        self.core.call_success("fs_mkdir_p", bayes_dir)
 
         sql_file = self.core.call_success(
-            "fs_join", self.bayes_dir, 'label_guesser.db'
+            "fs_join", bayes_dir, 'label_guesser.db'
         )
         self.sql = sqlite3.connect(
             self.core.call_success("fs_unsafe", sql_file),
@@ -786,6 +787,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 self, guess_labels=not sync, total_expected=total_expected
             )
         )
+
+    def on_data_dir_changed(self):
+        self.sql.close()
+        self._init()
 
     def _load_classifiers(self, vectorizer):
         # Jflesch> This is a very memory-intensive process. The Glib may try

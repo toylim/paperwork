@@ -256,13 +256,15 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def init(self, core):
         super().init(core)
+        self._init()
 
-        if self.index_dir is None:
-            data_dir = self.core.call_success(
-                "data_dir_handler_get_individual_data_dir")
-            self.index_dir = self.core.call_success(
-                "fs_join", data_dir, "index"
-            )
+    def _init(self):
+        data_dir = self.core.call_success(
+            "data_dir_handler_get_individual_data_dir"
+        )
+        self.index_dir = self.core.call_success(
+            "fs_join", data_dir, "index"
+        )
 
         need_index_rewrite = True
         while need_index_rewrite:
@@ -318,6 +320,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 ),
             ],
         }
+
+    def on_data_dir_changed(self):
+        self._close()
+        self._init()
 
     def _close(self):
         LOGGER.info("Closing Whoosh index")

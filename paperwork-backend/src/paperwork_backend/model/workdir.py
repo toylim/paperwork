@@ -40,6 +40,28 @@ class Plugin(openpaperwork_core.PluginBase):
             )
         )
         self.core.call_all("config_register", "workdir", setting)
+        self.core.call_all(
+            "config_add_observer", "workdir", self._on_work_dir_changed
+        )
+
+    def _on_work_dir_changed(self):
+        LOGGER.info("Work directory has changed")
+        self.core.call_all("on_storage_changed")
+
+    def storage_get_id(self):
+        """
+        Returns a string identifying the storage (work directory)
+        currently used.
+
+        Do not assume it's a valid directory path. For instance, this plugin
+        could be replaced by a MariaDB database someday, and so the string
+        would identify the database instead of a directory.
+        """
+        work_dir = self.core.call_success('config_get', 'workdir')
+        if self.core.call_success('fs_exists', work_dir) is None:
+            # we are not the plugin handling this storage (?)
+            return
+        return work_dir
 
     def storage_get_all_docs(self, out: list, only_valid=True):
         """
@@ -47,7 +69,7 @@ class Plugin(openpaperwork_core.PluginBase):
         """
         workdir = self.core.call_success('config_get', 'workdir')
         if self.core.call_success('fs_exists', workdir) is None:
-            # we are not the plugin handling this work directory (?)
+            # we are not the plugin handling this storage (?)
             return
         LOGGER.info("Loading document list from %s", workdir)
         nb = 0

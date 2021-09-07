@@ -7,7 +7,6 @@ OCR plugin needs to know which pages of this document have already been
 OCR-ed and which haven't.
 """
 import logging
-import os
 import sqlite3
 
 import openpaperwork_core
@@ -136,9 +135,7 @@ class PageTracker(object):
 
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
-        self.local_dir = os.path.expanduser("~/.local")
-        self.paperwork_dir = None
-        self.sql_file = None
+        pass
 
     def get_interfaces(self):
         return ['page_tracking']
@@ -174,17 +171,12 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def init(self, core):
-        super().init(core)
-
-        if self.paperwork_dir is None:
-            self.paperwork_dir = self.core.call_success(
-                "data_dir_handler_get_individual_data_dir")
-
-        self.sql_file = self.core.call_success(
-            "fs_join", self.paperwork_dir, 'page_tracking_{}.db'
-        )
-
     def page_tracker_get(self, tracking_id):
-        sql_file = self.sql_file.format(tracking_id)
+        paperwork_dir = self.core.call_success(
+            "data_dir_handler_get_individual_data_dir"
+        )
+        sql_file = self.core.call_success(
+            "fs_join", paperwork_dir,
+            'page_tracking_{}.db'.format(tracking_id)
+        )
         return PageTracker(self.core, sql_file)

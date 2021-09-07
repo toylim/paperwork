@@ -117,7 +117,6 @@ class Plugin(openpaperwork_core.PluginBase):
     PRIORITY = 10000
 
     def __init__(self):
-        self.paperwork_dir = None
         self.sql = None
         self.transaction_factories = []
 
@@ -157,12 +156,14 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def init(self, core):
         super().init(core)
-        if self.paperwork_dir is None:
-            self.paperwork_dir = self.core.call_success(
-                "data_dir_handler_get_individual_data_dir")
+        self._init()
 
+    def _init(self):
+        paperwork_dir = self.core.call_success(
+            "data_dir_handler_get_individual_data_dir"
+        )
         sql_file = self.core.call_success(
-            "fs_join", self.paperwork_dir, 'doc_tracking.db'
+            "fs_join", paperwork_dir, 'doc_tracking.db'
         )
         sql_file = self.core.call_success("fs_unsafe", sql_file)
         self.sql = self.core.call_one(
@@ -170,6 +171,11 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         for query in CREATE_TABLES:
             self.core.call_one("mainloop_execute", self.sql.execute, query)
+
+    def on_data_dir_changed(self):
+        self.sql.close()
+        self.sql = None
+        self._init()
 
     def doc_tracker_register(self, name, transaction_factory):
         self.transaction_factories.append((name, transaction_factory))

@@ -29,10 +29,6 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return [
             {
-                'interface': 'config',
-                'defaults': ['openpaperwork_core.config'],
-            },
-            {
                 'interface': 'fs',
                 'defaults': ['openpaperwork_gtk.fs.gio'],
             },
@@ -40,7 +36,22 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'paths',
                 'defaults': ['openpaperwork_core.paths.xdg'],
             },
+            {
+
+                'interface': 'document_storage',
+                'defaults': ['paperwork_backend.model.workdir'],
+            },
         ]
+
+    def init(self, core):
+        super().init(core)
+        self._delete_old_directories()
+
+    def on_storage_changed(self):
+        LOGGER.info(
+            "Work directory has changed --> data directory has to change too"
+        )
+        self.core.call_all("on_data_dir_changed")
 
     @staticmethod
     def _hash_dir(url):
@@ -67,7 +78,7 @@ class Plugin(openpaperwork_core.PluginBase):
                     self.core.call_success("fs_rm_rf", file)
 
     def data_dir_handler_get_individual_data_dir(self):
-        work_dir = self.core.call_success('config_get', 'workdir')
+        work_dir = self.core.call_success("storage_get_id")
         data_dir = self.core.call_success("paths_get_data_dir")
         encoded_hash = Plugin._hash_dir(work_dir)
         workdir_data_folder = self.core.call_success(
@@ -78,7 +89,3 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         self.core.call_success("fs_mkdir_p", individual_data_dir)
         return individual_data_dir
-
-    def init(self, core):
-        super().init(core)
-        self._delete_old_directories()

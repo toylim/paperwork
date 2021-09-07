@@ -24,23 +24,22 @@ class TestPyocr(unittest.TestCase):
         )
 
         self.core = openpaperwork_core.Core(auto_load_dependencies=True)
+
+        class FakeModule(object):
+            class Plugin(openpaperwork_core.PluginBase):
+                PRIORITY = 999999999999999999999
+
+                def data_dir_handler_get_individual_data_dir(s):
+                    return openpaperwork_core.fs.CommonFsPluginBase.fs_safe(
+                        self.tmp_paperwork_dir
+                    )
+
+        self.core._load_module("fake_module", FakeModule)
         self.core.load("openpaperwork_core.config.fake")
         self.core.load("paperwork_backend.model.fake")
         self.core.load("paperwork_backend.doctracker")
         self.core.load("paperwork_backend.pagetracker")
         self.core.load("paperwork_backend.guesswork.ocr.pyocr")
-
-        self.core.get_by_name(
-            "paperwork_backend.pagetracker"
-        ).paperwork_dir = openpaperwork_core.fs.CommonFsPluginBase.fs_safe(
-            self.tmp_paperwork_dir
-        )
-        self.core.get_by_name(
-            "paperwork_backend.doctracker"
-        ).paperwork_dir = openpaperwork_core.fs.CommonFsPluginBase.fs_safe(
-            self.tmp_paperwork_dir
-        )
-
         self.core.init()
 
         self.model = self.core.get_by_name("paperwork_backend.model.fake")

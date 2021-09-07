@@ -62,6 +62,9 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return []
 
+    def storage_get_id(self):
+        return "file:///home/jflesch/papers"
+
     def storage_get_all_docs(self, out: list, only_valid=True):
         out += [
             (doc['id'], doc['url'])
