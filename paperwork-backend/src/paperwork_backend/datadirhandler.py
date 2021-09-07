@@ -2,7 +2,7 @@
 This plugin handles different working directories by hashing their path
 and adding a part of this hash to the data directory.
 
-If a working directy was not loaded for at least one month, it is
+If a working directly was not loaded for at least one month, it is
 deleted, again.
 """
 import datetime

@@ -57,11 +57,7 @@ class Plugin(openpaperwork_core.PluginBase):
         could be replaced by a MariaDB database someday, and so the string
         would identify the database instead of a directory.
         """
-        work_dir = self.core.call_success('config_get', 'workdir')
-        if self.core.call_success('fs_exists', work_dir) is None:
-            # we are not the plugin handling this storage (?)
-            return
-        return work_dir
+        return self.core.call_success('config_get', 'workdir')
 
     def storage_get_all_docs(self, out: list, only_valid=True):
         """
