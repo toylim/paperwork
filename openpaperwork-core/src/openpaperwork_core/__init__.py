@@ -29,7 +29,6 @@ MINIMUM_CONFIG_PLUGINS = [
 
 
 RECOMMENDED_PLUGINS = [
-    'openpaperwork_core.cmd.chkdeps',
     'openpaperwork_core.external_apps.dbus',
     'openpaperwork_core.external_apps.windows',
     'openpaperwork_core.external_apps.xdg',
@@ -44,6 +43,11 @@ RECOMMENDED_PLUGINS = [
     'openpaperwork_core.thread.pool',
     'openpaperwork_core.work_queue.default',
 ]
+
+if os.name != 'nt':
+    RECOMMENDED_PLUGINS += [
+        'openpaperwork_core.cmd.chkdeps',
+    ]
 
 
 def _(s):

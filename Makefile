@@ -82,38 +82,39 @@ endif
 
 linux_exe: $(ALL_COMPONENTS:%=%_linux_exe)
 
-libinsane_win32:
-	${MAKE} -C sub/libinsane install PREFIX=/mingw32
+libinsane_win64:
+	${MAKE} -C sub/libinsane clean
+	${MAKE} -C sub/libinsane install PREFIX=/mingw64
 
-pyocr_win32:
+pyocr_win64:
 	${MAKE} -C sub/pyocr install
 
-libpillowfight_win32:
+libpillowfight_win64:
 	${MAKE} -C sub/libpillowfight install_py
 
 windows_exe:
 	# dirty hack to make cx_freeze happy
 	# Cx_freeze looks for a file sqlite3.dll whereas in MSYS2, it's called
 	# libsqlite3-0.dll
-	mkdir -p /mingw32/DLLs
-	cp /mingw32/bin/libsqlite3-0.dll /mingw32/DLLs/sqlite3.dll
+	mkdir -p /mingw64/DLLs
+	cp /mingw64/bin/libsqlite3-0.dll /mingw64/DLLs/sqlite3.dll
 
 	rm -rf $(CURDIR)/build/exe
 	$(MAKE) $(ALL_COMPONENTS:%=%_windows_exe)
 
 	# a bunch of things are missing
 	mkdir -p $(CURDIR)/build/exe/lib
-	cp -Ra /mingw32/lib/gdk-pixbuf-2.0 $(CURDIR)/build/exe/lib
+	cp -Ra /mingw64/lib/gdk-pixbuf-2.0 $(CURDIR)/build/exe/lib
 	# 2nd part of the dirty hack to make cx_freeze happy
 	rm -f $(CURDIR)/build/exe/lib/sqlite3.dll
 
 	mkdir -p $(CURDIR)/build/exe/share
-	cp -Ra /mingw32/share/icons $(CURDIR)/build/exe/share
-	cp -Ra /mingw32/share/locale $(CURDIR)/build/exe/share
-	cp -Ra /mingw32/share/themes $(CURDIR)/build/exe/share
-	cp -Ra /mingw32/share/fontconfig $(CURDIR)/build/exe/share
-	cp -Ra /mingw32/share/poppler $(CURDIR)/build/exe/share
-	cp -Ra /mingw32/share/glib-2.0 $(CURDIR)/build/exe/share
+	cp -Ra /mingw64/share/icons $(CURDIR)/build/exe/share
+	cp -Ra /mingw64/share/locale $(CURDIR)/build/exe/share
+	cp -Ra /mingw64/share/themes $(CURDIR)/build/exe/share
+	cp -Ra /mingw64/share/fontconfig $(CURDIR)/build/exe/share
+	cp -Ra /mingw64/share/poppler $(CURDIR)/build/exe/share
+	cp -Ra /mingw64/share/glib-2.0 $(CURDIR)/build/exe/share
 
 	mkdir -p dist
 	(cd $(CURDIR)/build/exe ; zip -r ../../dist/paperwork.zip *)
@@ -185,7 +186,7 @@ help:
 	echo "Building Linux exe for $(@:%_linux_exe=%)"
 	$(MAKE) -C $(@:%_linux_exe=%) linux_exe
 
-%_windows_exe: version l10n_compile download_data libinsane_win32 pyocr_win32 libpillowfight_win32
+%_windows_exe: version l10n_compile download_data libinsane_win64 pyocr_win64 libpillowfight_win64
 	echo "Building Windows exe for $(@:%_windows_exe=%)"
 	$(MAKE) -C $(@:%_windows_exe=%) windows_exe
 
@@ -203,6 +204,6 @@ venv:
 	virtualenv -p python3 --system-site-packages venv
 
 .PHONY: help build clean test check install install_py install_c uninstall \
-	uninstall_c uninstall_py release release_pypi libinsane_win32 \
-	pyocr_win32 libpillowfight_win32 doc upload_doc data upload_data \
+	uninstall_c uninstall_py release release_pypi libinsane_win64 \
+	pyocr_win64 libpillowfight_win64 doc upload_doc data upload_data \
 	download_data l10n_extract l10n_compile

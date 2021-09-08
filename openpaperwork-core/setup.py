@@ -22,12 +22,14 @@ except FileNotFoundError:
     sys.exit(1)
 
 
-install_requires = [
-    "distro",  # chkdeps
-]
-
 if os.name == "nt":
-    install_requires.append("certifi")
+    install_requires = [
+        "certifi",
+    ]
+else:
+    install_requires = [
+        "distro",  # chkdeps
+    ]
 
 
 setup(
@@ -65,7 +67,5 @@ There is no GUI here. The GUI is
     include_package_data=True,
     package_dir={'': 'src'},
     zip_safe=(os.name != 'nt'),
-    install_requires=[
-        "distro",  # chkdeps
-    ]
+    install_requires=install_requires,
 )
