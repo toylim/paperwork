@@ -184,10 +184,6 @@ else:
         common_include_files.append((fullpath, subpath))
 
     common_packages = [
-        # XXX(Jflesch): known bug in cx_freeze
-        'appdirs',
-        'packaging',
-
         "gi",   # always seems to be needed
         "cairo",   # Only needed (for foreign structs) if no "import cairo"s
 
