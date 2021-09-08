@@ -8,14 +8,16 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-01 22:01+0200\n"
-"PO-Revision-Date: 2020-05-03 15:27+0200\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2021-09-09 05:14+0000\n"
+"Last-Translator: Marcel Mente <acc+weblate@eeagle.net>\n"
+"Language-Team: Spanish <http://translations.openpaper.work/projects/"
+"paperwork/paperwork-gtk/es/>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.4\n"
 
 #: paperwork-gtk/src/paperwork_gtk/docimport.py:82
 #, python-format
@@ -352,7 +354,9 @@ msgstr "Documentación"
 #: paperwork-gtk/src/paperwork_gtk/actions/page/delete.py:85
 #, python-brace-format
 msgid "Are you sure you want to delete page {page_idx} of document {doc_id} ?"
-msgstr "¿Está seguro de que desea eliminar la página {page_idx} del documento {doc_id}? "
+msgstr ""
+"¿Está seguro de que desea eliminar la página {page_idx} del documento "
+"{doc_id}?"
 
 #: paperwork-gtk/src/paperwork_gtk/actions/page/redo_ocr.py:62
 #: paperwork-gtk/src/paperwork_gtk/menus/page/redo_ocr.py:50
