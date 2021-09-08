@@ -24,6 +24,7 @@ except FileNotFoundError:
 
 install_requires = [
     "distro",  # chkdeps
+    "psutil"
 ]
 
 if os.name == "nt":
@@ -65,8 +66,5 @@ There is no GUI here. The GUI is
     include_package_data=True,
     package_dir={'': 'src'},
     zip_safe=(os.name != 'nt'),
-    install_requires=[
-        "distro", # chkdeps
-        "psutil"
-    ]
+    install_requires=install_requires,
 )
