@@ -236,9 +236,15 @@ linux_flatpak:
     - git submodule update --recursive --remote
     - c:\msys64\usr\bin\bash -lc "make clean"
     - c:\msys64\usr\bin\bash -lc "make uninstall"
+    - c:\msys64\usr\bin\bash -lc "make -C sub/libinsane uninstall || true"
+    - c:\msys64\usr\bin\bash -lc "make -C sub/libpillowfight uninstall || true"
+    - c:\msys64\usr\bin\bash -lc "make -C sub/pyocr uninstall || true"
     # a 2nd time just to be really sure
     # (that's the problem when can't use containers ..)
     - c:\msys64\usr\bin\bash -lc "make uninstall"
+    - c:\msys64\usr\bin\bash -lc "make -C sub/libinsane uninstall || true"
+    - c:\msys64\usr\bin\bash -lc "make -C sub/libpillowfight uninstall || true"
+    - c:\msys64\usr\bin\bash -lc "make -C sub/pyocr uninstall || true"
 
 
 windows_tests:
