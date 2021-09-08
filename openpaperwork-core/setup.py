@@ -22,13 +22,14 @@ except FileNotFoundError:
     sys.exit(1)
 
 
-install_requires = [
-    "distro",  # chkdeps
-    "psutil"
-]
-
 if os.name == "nt":
-    install_requires.append("certifi")
+    install_requires = [
+        "certifi",
+    ]
+else:
+    install_requires = [
+        "distro",  # chkdeps
+    ]
 
 
 setup(

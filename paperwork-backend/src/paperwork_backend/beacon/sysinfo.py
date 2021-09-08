@@ -1,9 +1,13 @@
-import distro
 import os
 import multiprocessing
 import platform
 import psutil
 import sys
+
+try:
+    import distro
+except (ImportError, ValueError):
+    assert(os.name == "nt")
 
 import openpaperwork_core
 
