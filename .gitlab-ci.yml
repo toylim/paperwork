@@ -231,6 +231,10 @@ linux_flatpak:
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-nsis
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-nsis-nsisunz
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-python-scikit-learn
+    # Workaround for pycountry and Cx_freeze
+    # See https://github.com/marcelotduarte/cx_Freeze/issues/930
+    - c:\msys64\usr\bin\bash -lc "pip3 uninstall -y pycountry"
+    - c:\msys64\usr\bin\bash -lc "pip3 install --no-cache --use-pep517 pycountry"
     - git submodule init
     - git submodule update --recursive --remote
     - c:\msys64\usr\bin\bash -lc "make clean"
