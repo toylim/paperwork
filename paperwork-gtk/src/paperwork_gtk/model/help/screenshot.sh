@@ -118,6 +118,7 @@ wait()
 core.call_all("screenshot_snap_doc_action_menu", "file://${OUT_DIR}/doc_menu_opened.png")
 EOF
 
+set +e
 echo "Cleaning up the mess ..."
- rm -rf "${TMP_DIR}"
+rm -rf "${TMP_DIR}"
 echo "All done !"
