@@ -120,5 +120,6 @@ EOF
 
 set +e
 echo "Cleaning up the mess ..."
+sleep 5
 rm -rf "${TMP_DIR}"
 echo "All done !"
