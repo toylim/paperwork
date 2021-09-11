@@ -1,5 +1,7 @@
 import logging
 
+import jnius
+
 import kivy
 import kivy.core.window
 import kivy.lang.builder
@@ -26,12 +28,26 @@ class PaperworkApp(kivymd.app.MDApp):
 
     def __init__(self, plugin, **kwargs):
         super().__init__(**kwargs)
+
         self.previous = (None, None)
         self.root = None
         self.plugin = plugin
 
+    def set_theme_style(self):
+        python_activity = jnius.autoclass('org.kivy.android.PythonActivity')
+        current_activity = python_activity.mActivity
+        context = current_activity.getApplicationContext()
+        resources = context.getResources()
+        configuration = resources.getConfiguration()
+        ui_mode = (configuration.uiMode & configuration.UI_MODE_NIGHT_MASK)
+        night_mode = (ui_mode == configuration.UI_MODE_NIGHT_YES)
+        self.theme_cls.theme_style = "Dark" if night_mode else "Light"
+
     def build(self):
+        self.set_theme_style()
+
         kivy.core.window.Window.bind(size=self.update_media)
+
         self.root = kivy.lang.builder.Builder.load_file(
             self.plugin.core.call_success(
                 "fs_unsafe",
