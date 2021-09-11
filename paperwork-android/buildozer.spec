@@ -10,7 +10,7 @@ package.name = paperwork
 package.domain = work.openpaper
 
 # (str) Source code where the main.py live
-source.dir = src/paperwork_android
+source.dir = src
 
 # (list) Source files to include (let empty to include all the files)
 source.include_exts = py,png,jpg,kv,atlas
@@ -32,7 +32,7 @@ source.include_exts = py,png,jpg,kv,atlas
 
 # (str) Application versioning (method 2)
 version.regex = version = ['"]([^-]*)-.*['"]
-version.filename = %(source.dir)s/_version.py
+version.filename = %(source.dir)s/paperwork_android/_version.py
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy

@@ -19,13 +19,25 @@ CONFIG_PLUGINS = [
     'openpaperwork_core.logs.print',
     'openpaperwork_core.mainloop.asyncio',
     'openpaperwork_core.uncaught_exception',
+    'paperwork_android.paths',
     'paperwork_backend.app',
-
-    # paperwork_android
-    'paths',
 ]
 
 DEFAULT_PLUGINS = [
+    'openpaperwork_core.fs.memory',
+    'openpaperwork_core.http',
+    'openpaperwork_core.i18n.python',
+    'openpaperwork_core.l10n.python',
+    'openpaperwork_core.perfcheck.log',
+    'openpaperwork_core.resources.setuptools',
+    'openpaperwork_core.thread.pool',
+    'openpaperwork_core.urls',
+    'openpaperwork_core.work_queue.default',
+    'paperwork_android.kivy',
+    'paperwork_android.mainwindow.doclist',
+    'paperwork_android.mainwindow.docview',
+    'paperwork_android.mainwindow.window',
+    'paperwork_android.resources',
 ]
 
 
@@ -44,7 +56,10 @@ def main():
     core.call_all("config_load")
     core.call_all("config_load_plugins", "paperwork-android", DEFAULT_PLUGINS)
 
-    core.call_all("on_initialized")
+    core.call_one(
+        "mainloop_schedule",
+        core.call_all, "on_initialized"
+    )
 
     LOGGER.info("Ready")
     core.call_one("mainloop", halt_on_uncaught_exception=False)
