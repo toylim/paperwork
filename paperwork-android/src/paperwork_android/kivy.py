@@ -69,6 +69,8 @@ class PaperworkApp(kivymd.app.MDApp):
     @paperwork_android.util.async_cb
     async def run(self):
         await self.async_run()
+        LOGGER.info("Kivy app has ended")
+        self.plugin.core.call_all("mainloop_quit_graceful")
 
 
 class Plugin(PluginBase):
