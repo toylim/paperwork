@@ -61,6 +61,8 @@ Instructions can be found in the settings of Paperwork:
 ![Flatpak + Saned instructions: Step 2](flatpak_saned_2.png)
 ![Flatpak + Saned instructions: Step 3](flatpak_saned_3.png)
 
+If after a reboot your scanner is still not found, please see the FAQ below.
+
 
 ## Updating Paperwork
 
@@ -69,6 +71,48 @@ flatpak --user update work.openpaper.Paperwork
 ```
 
 # FAQ
+
+## Even after following the integrated instructions, my scanner is still not found
+
+For some scanners, extra work is required to make them available to Paperwork
+in Flatpak. You must add specific udev rules.
+
+For example, with a Canon Lide 30:
+
+```console
+$ lsusb
+(...)
+Bus 003 Device 008: ID 04a9:220e Canon, Inc. CanoScan N1240U/LiDE 30
+(...)
+```
+
+`04a9` is the vendor ID. `220e` is the product ID.
+The following command will add and enable the required udev rule. You must
+just change the idVendor and the idProduct in it.
+
+```sh
+sudo sh -c "echo 'ATTRS{idVendor}==\"04a9\", ATTRS{idProduct}==\"220e\", MODE=\"0666\"' > /lib/udev/rules.d/10-my-scanner.rules"
+sudo systemctl restart udev
+```
+
+Then, you can either disconnect or reconnect your scanner, or reboot your
+computer.
+
+Beware the udev rule above is quite large and will allow any user on your
+computer to use your scanner.
+
+
+## No text appears when rendering PDF files. What do I do ?
+
+If you run Paperwork from a terminal, you can see the message
+`some font thing has failed` every time you open a PDF file from Paperwork.
+This issue is related to fontconfig cache.
+
+To fix it:
+
+- Stop Paperwork
+- Run: `flatpak run --command=fc-cache work.openpaper.Paperwork -f`
+
 
 ## How do I run paperwork-cli / paperwork-json ?
 
@@ -104,18 +148,6 @@ To get support for all the languages supported by Tesseract (OCR):
 ```sh
 flatpak install --reinstall --user work.openpaper.Paperwork.Locale
 ```
-
-
-## No text appears when rendering PDF files. What do I do ?
-
-If you run Paperwork from a terminal, you can see the message
-`some font thing has failed` every time you open a PDF file from Paperwork.
-This issue is related to fontconfig cache.
-
-To fix it:
-
-- Stop Paperwork
-- Run: `flatpak run --command=fc-cache work.openpaper.Paperwork -f`
 
 
 ## What about i386 and ARM architectures ?
