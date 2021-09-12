@@ -13,6 +13,11 @@ INSTRUCTIONS = {
         "sudo adduser saned plugdev\n"
         "sudo adduser saned scanner\n"
         "sudo adduser saned lp\n"
+        "# reboot\n"
+        "\n"
+        "# If your scanner is still not recognized, please check\n"
+        "# https://gitlab.gnome.org/World/OpenPaperwork/paperwork/-/blob"
+        "/develop/doc/install.flatpak.markdown#faq\n"
     ),
     'Fedora / CentOS / RHEL / …': (
         "sudo dnf install libinsane sane-backends-daemon\n"
