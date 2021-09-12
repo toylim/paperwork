@@ -103,17 +103,19 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_success(
             "gtk_show_dialog_single_entry", self,
             _("PDF password"), "",
-            importer, file_import
+            importer=importer, file_import=file_import
         )
 
     def on_dialog_single_entry_reply(
-            self, origin, reply, password, importer, file_import):
+            self, origin, reply, password, *args, **kwargs):
         if origin != self:
             # Not ours
             return
         if not reply:
             # User cancelled
             return
+        importer = kwargs['importer']
+        file_import = kwargs['importer']
         self._do_import(importer, file_import, data={'password': password})
         return True
 
