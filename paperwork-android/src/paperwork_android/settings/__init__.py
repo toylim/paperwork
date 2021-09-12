@@ -1,6 +1,13 @@
+import logging
+
+import kivy
 import kivy.lang.builder
+import kivymd.uix.list
 
 import openpaperwork_core
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -10,8 +17,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_interfaces(self):
         return [
-            'docview',
-            'kivy_mainwindow_component',
+            'settings_window',
+            'kivy_screen'
         ]
 
     def get_deps(self):
@@ -24,21 +31,30 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'resources',
                 'defaults': ['paperwork_android.resources'],
             },
-            {
-                'interface': 'mainwindow',
-                'defaults': ['paperwork_android.mainwindow.window'],
-            },
         ]
 
-    def kivy_load_mainwindow(self, mainwindow):
+    def kivy_load_screens(self, screen_manager):
         self.root = kivy.lang.builder.Builder.load_file(
             self.core.call_success(
                 "fs_unsafe",
                 self.core.call_success(
                     "resources_get_file",
-                    "paperwork_android.mainwindow.docview", "docview.kv"
+                    "paperwork_android.settings", "settings.kv"
                 )
             )
         )
 
-        mainwindow.add_widget('docview', self.root)
+        # list of (callback, text, subtext)
+        settings = []
+        self.core.call_all("settings_get", settings)
+        LOGGER.info("Got %d settings", len(settings))
+
+        for setting in settings:
+            item = kivymd.uix.list.TwoLineListItem(
+                text=setting[1],
+                secondary_text=setting[2],
+                on_release=setting[0]
+            )
+            self.root.ids.settings_list.add_widget(item)
+
+        screen_manager.add_widget(self.root)

@@ -32,6 +32,7 @@ class PaperworkApp(kivymd.app.MDApp):
         self.previous = (None, None)
         self.root = None
         self.plugin = plugin
+        self.navigation_history = []
 
     def set_theme_style(self):
         python_activity = jnius.autoclass('org.kivy.android.PythonActivity')
@@ -46,7 +47,8 @@ class PaperworkApp(kivymd.app.MDApp):
     def build(self):
         self.set_theme_style()
 
-        kivy.core.window.Window.bind(size=self.update_media)
+        kivy.core.window.Window.bind(on_keyboard=self.on_key_input)
+        kivy.core.window.Window.bind(size=self.on_media_update)
 
         self.root = kivy.lang.builder.Builder.load_file(
             self.plugin.core.call_success(
@@ -61,7 +63,7 @@ class PaperworkApp(kivymd.app.MDApp):
         self.plugin.core.call_all("kivy_load_screens", self.root)
         return self.root
 
-    def update_media(self, win, size):
+    def on_media_update(self, win, size):
         (width, height) = size
         self.media = (
             'XS' if width < 250 else
@@ -81,6 +83,28 @@ class PaperworkApp(kivymd.app.MDApp):
         self.plugin.core.call_all(
             "on_media_changed", str(self.media), str(self.orientation)
         )
+
+    def goto_window(self, window_name):
+        self.root.current = window_name
+
+        if window_name in self.navigation_history:
+            self.navigation_history.remove(window_name)
+        self.navigation_history.append(window_name)
+        LOGGER.info("Navigation history: %s", self.navigation_history)
+
+    def on_key_input(self, window, key, scancode, codepoint, modifier):
+        if key != 27:  # back button
+            return False
+        LOGGER.info(
+            "Back button pressed. Current navigation history: %s",
+            self.navigation_history
+        )
+        self.navigation_history.pop(-1)
+        if len(self.navigation_history) > 0:
+            self.root.current = self.navigation_history[-1]
+        else:
+            self.stop()
+        return True
 
     @paperwork_android.util.async_cb
     async def run(self):
@@ -109,7 +133,7 @@ class Plugin(PluginBase):
 
     def init(self, core):
         super().init(core)
-        kivy.require("2.0.0")
+        kivy.require("1.11.1")
         self.app = PaperworkApp(self)
 
     def on_initialized(self):
@@ -117,3 +141,6 @@ class Plugin(PluginBase):
 
     def kivy_get_app(self):
         return self.app
+
+    def goto_window(self, window):
+        self.app.goto_window(window)

@@ -40,6 +40,8 @@ DEFAULT_PLUGINS = [
     'paperwork_android.mainwindow.doclist',
     'paperwork_android.mainwindow.docview',
     'paperwork_android.mainwindow.window',
+    'paperwork_android.settings',
+    'paperwork_android.settings.workdir',
     'paperwork_android.resources',
 ]
 

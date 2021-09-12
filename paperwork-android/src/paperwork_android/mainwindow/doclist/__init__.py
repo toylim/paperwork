@@ -19,6 +19,10 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return [
             {
+                'interface': 'kivy',
+                'defaults': ['paperwork_android.kivy'],
+            },
+            {
                 'interface': 'resources',
                 'defaults': ['paperwork_android.resources'],
             },

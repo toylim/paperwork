@@ -108,6 +108,7 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
         self.core.call_all("kivy_load_mainwindow", self.root.ids.main_area)
+        self.core.call_all("goto_window", "main_window")
 
     def on_media_changed(self, media, orientation):
         self.root.ids.main_area.on_orientation_changed(orientation)

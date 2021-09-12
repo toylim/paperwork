@@ -15,11 +15,16 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def get_deps(self):
-        return []
+        return [
+            {
+                'interface': 'settings_window',
+                'defaults': ['paperwork_android.settings'],
+            }
+        ]
 
     def app_menu_get_items(self, out: list):
         out.append(("Settings", self._open_settings))
 
     def _open_settings(self):
         LOGGER.info("Opening settings")
-        # TODO
+        self.core.call_all("goto_window", "settings")
