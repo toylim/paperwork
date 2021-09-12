@@ -25,12 +25,12 @@ openpaperwork-core_install_py:
 
 clean: $(GTK_COMPONENTS:%=%_clean)
 	rm -rf build dist
-	rm -rf venv
 	rm -f data.tar.gz
 	make -C sub/libinsane clean || true
 	make -C sub/libpillowfight clean || true
 	make -C sub/pyocr clean || true
 	make -C paperwork-android clean || true
+	rm -rf venv
 
 install_py: download_data $(GTK_COMPONENTS:%=%_install_py)
 
