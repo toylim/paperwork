@@ -93,18 +93,9 @@ class PaperworkApp(kivymd.app.MDApp):
         LOGGER.info("Navigation history: %s", self.navigation_history)
 
     def on_key_input(self, window, key, scancode, codepoint, modifier):
-        if key != 27:  # back button
+        if key not in (27, 1001):  # back button
             return False
-        LOGGER.info(
-            "Back button pressed. Current navigation history: %s",
-            self.navigation_history
-        )
-        self.navigation_history.pop(-1)
-        if len(self.navigation_history) > 0:
-            self.root.current = self.navigation_history[-1]
-        else:
-            self.stop()
-        return True
+        return bool(self.plugin.core.call_success("on_back_key"))
 
     @paperwork_android.util.async_cb
     async def run(self):
@@ -142,5 +133,20 @@ class Plugin(PluginBase):
     def kivy_get_app(self):
         return self.app
 
+    def kivy_get_user_data_dir(self):
+        return self.app.user_data_dir
+
     def goto_window(self, window):
         self.app.goto_window(window)
+
+    def on_back_key(self):
+        LOGGER.info(
+            "Back button pressed. Current navigation history: %s",
+            self.app.navigation_history
+        )
+        self.app.navigation_history.pop(-1)
+        if len(self.app.navigation_history) > 0:
+            self.app.root.current = self.app.navigation_history[-1]
+        else:
+            self.app.stop()
+        return True

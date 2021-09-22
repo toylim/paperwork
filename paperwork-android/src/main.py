@@ -43,6 +43,7 @@ DEFAULT_PLUGINS = [
     'paperwork_android.settings',
     'paperwork_android.settings.workdir',
     'paperwork_android.resources',
+    'paperwork_backend.model.workdir',
 ]
 
 
