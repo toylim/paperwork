@@ -33,7 +33,7 @@ class ProgressWidget(object):
         # A thread updates the widgets every 300ms. We don't update them
         # each time on_progress() is called to not degrade performanes
         self.thread = None
-        self.lock = threading.Lock()
+        self.lock = threading.RLock()
         self.progress_widget_trees = {}
         # self.progresses is only used to transmist new progress updates
         # to the thread
