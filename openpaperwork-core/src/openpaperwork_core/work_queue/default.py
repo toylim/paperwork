@@ -46,7 +46,7 @@ class WorkQueue(object):
         self.insert_number = 0
 
         self.name = name
-        self.lock = threading.Lock()
+        self.lock = threading.RLock()
         self.queue = []
         self.all_tasks = {}
         self.running = False
