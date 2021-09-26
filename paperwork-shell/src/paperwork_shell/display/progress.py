@@ -55,7 +55,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         self.progresses = collections.OrderedDict()
         self.thread = None
-        self.lock = threading.Lock()
+        self.lock = threading.RLock()
         self.interactive = False
         self.enabled = True
 
