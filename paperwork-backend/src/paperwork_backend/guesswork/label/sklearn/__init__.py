@@ -129,15 +129,10 @@ class UpdatableVectorizer(object):
         self.core = core
         self.db_cursor = db_cursor
 
-        vocabulary = self.core.call_one(
-            "mainloop_execute", self.db_cursor.execute,
+        vocabulary = self.db_cursor.execute(
             "SELECT word, feature FROM vocabulary"
         )
-        vocabulary = self.core.call_one(
-            "mainloop_execute",
-            lambda r: {k: v for (k, v) in r},
-            vocabulary
-        )
+        vocabulary = {k: v for (k, v) in vocabulary}
         self.updatable_vocabulary = vocabulary
         self.last_feature_id = max(vocabulary.values(), default=-1)
 
@@ -154,8 +149,7 @@ class UpdatableVectorizer(object):
                 if word in self.updatable_vocabulary:
                     continue
                 self.last_feature_id += 1
-                self.core.call_one(
-                    "mainloop_execute", self.db_cursor.execute,
+                self.db_cursor.execute(
                     "INSERT INTO vocabulary (word, feature)"
                     " SELECT ?, ?"
                     "  WHERE NOT EXISTS("
@@ -221,9 +215,7 @@ class UpdatableVectorizer(object):
         # we work in the main thread so we don't have to load all the feature
         # vectors all at once in memory (we just need their sum)
         LOGGER.info("Garbage collecting unused features ...")
-        (to_drop, total) = self.core.call_one(
-            "mainloop_execute", self._find_unused
-        )
+        (to_drop, total) = self._find_unused()
         if len(to_drop) <= 0:
             LOGGER.info("No features to garbage collect (total=%d)", total)
             return
@@ -232,7 +224,7 @@ class UpdatableVectorizer(object):
             len(to_drop), total
         )
 
-        doc_ids = self.core.call_one("mainloop_execute", self._get_all_doc_ids)
+        doc_ids = self._get_all_doc_ids()
 
         # first we reduce the document feature vectors
         msg = _(
@@ -243,20 +235,16 @@ class UpdatableVectorizer(object):
             self.core.call_all(
                 "on_progress", "label_vector_gc", idx / len(doc_ids), msg
             )
-            doc_vector = self.core.call_one(
-                "mainloop_execute", self.db_cursor.execute,
+            doc_vector = self.db_cursor.execute(
                 "SELECT vector FROM features WHERE doc_id = ? LIMIT 1",
                 (doc_id,)
             )
-            doc_vector = self.core.call_one(
-                "mainloop_execute", lambda v: list(v), doc_vector
-            )
+            doc_vector = list(doc_vector)
             doc_vector = doc_vector[0][0]
 
             to_drop_for_this_doc = [f for f in to_drop if f < len(doc_vector)]
             doc_vector = numpy.delete(doc_vector, to_drop_for_this_doc)
-            self.core.call_one(
-                "mainloop_execute", self.db_cursor.execute,
+            self.db_cursor.execute(
                 "UPDATE features SET vector = ? WHERE doc_id = ?",
                 (doc_vector, doc_id)
             )
@@ -269,12 +257,10 @@ class UpdatableVectorizer(object):
             self.core.call_all(
                 "on_progress", "label_vocabulary_gc", idx / len(to_drop), msg
             )
-            self.core.call_one(
-                "mainloop_execute", self.db_cursor.execute,
+            self.db_cursor.execute(
                 "DELETE FROM vocabulary WHERE feature = ?", (f,)
             )
-            self.core.call_one(
-                "mainloop_execute", self.db_cursor.execute,
+            self.db_cursor.execute(
                 "UPDATE vocabulary SET feature = feature - 1"
                 " WHERE feature >= ?", (f,)
             )
@@ -548,12 +534,11 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             # (see add_obj() -> _set_guessed_labels())
             self.plugin.classifiers_cond.wait()
 
-        self.cursor = self.core.call_one(
-            "mainloop_execute", self.plugin.sql.cursor
+        self.cursor = sqlite3.connect(
+            self.core.call_success("fs_unsafe", self.plugin.sql_file),
+            detect_types=sqlite3.PARSE_DECLTYPES
         )
-        self.core.call_one(
-            "mainloop_execute", self.cursor.execute, "BEGIN TRANSACTION"
-        )
+        self.cursor.execute("BEGIN TRANSACTION")
         self.vectorizer = UpdatableVectorizer(self.core, self.cursor)
 
     def add_obj(self, doc_id):
@@ -595,14 +580,8 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         super().upd_obj(doc_id)
 
     def _del_obj(self, doc_id):
-        self.core.call_one(
-            "mainloop_execute", self.cursor.execute,
-            "DELETE FROM labels WHERE doc_id = ?", (doc_id,)
-        )
-        self.core.call_one(
-            "mainloop_execute", self.cursor.execute,
-            "DELETE FROM features WHERE doc_id = ?", (doc_id,)
-        )
+        self.cursor.execute("DELETE FROM labels WHERE doc_id = ?", (doc_id,))
+        self.cursor.execute("DELETE FROM features WHERE doc_id = ?", (doc_id,))
 
     def del_obj(self, doc_id):
         self._lazyinit_transaction()
@@ -631,8 +610,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             self.core.call_all("doc_get_labels_by_url", doc_labels, doc_url)
         doc_labels = {label[0] for label in doc_labels}
         for doc_label in doc_labels:
-            self.core.call_one(
-                "mainloop_execute", self.cursor.execute,
+            self.cursor.execute(
                 "INSERT INTO labels (doc_id, label)"
                 " VALUES (?, ?)",
                 (doc_id, doc_label)
@@ -643,8 +621,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         doc_txt = "\n\n".join(doc_txt).strip()
 
         vector = self.vectorizer.partial_fit_transform([doc_txt])[0].toarray()
-        self.core.call_one(
-            "mainloop_execute", self.cursor.execute,
+        self.cursor.execute(
             "INSERT INTO features (doc_id, vector) VALUES (?, ?)",
             (doc_id, vector)
         )
@@ -656,10 +633,8 @@ class LabelGuesserTransaction(sync.BaseTransaction):
                 "on_label_guesser_canceled"
             )
             if self.cursor is not None:
-                self.core.call_one(
-                    "mainloop_execute", self.cursor.execute, "ROLLBACK"
-                )
-                self.core.call_one("mainloop_execute", self.cursor.close)
+                self.cursor.execute("ROLLBACK")
+                self.cursor.close()
                 self.cursor = None
             self.notify_done(ID)
 
@@ -700,12 +675,10 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             self.notify_progress(
                 ID, _("Commiting changes for label guessing ...")
             )
-            self.core.call_one(
-                "mainloop_execute", self.cursor.execute, "COMMIT"
-            )
 
-            if self.cursor is not None:
-                self.core.call_one("mainloop_execute", self.cursor.close)
+            self.cursor.execute("COMMIT")
+            self.cursor.close()
+
             self.notify_done(ID)
             self.core.call_success(
                 "mainloop_schedule", self.core.call_all,
@@ -746,6 +719,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.classifiers_cond = threading.Condition(threading.Lock())
 
         self.bayes_dir = None
+        self.sql_file = None
 
         SqliteNumpyArrayHandler.register()
 
@@ -821,11 +795,11 @@ class Plugin(openpaperwork_core.PluginBase):
 
         self.core.call_success("fs_mkdir_p", self.bayes_dir)
 
-        sql_file = self.core.call_success(
+        self.sql_file = self.core.call_success(
             "fs_join", self.bayes_dir, 'label_guesser.db'
         )
         self.sql = sqlite3.connect(
-            self.core.call_success("fs_unsafe", sql_file),
+            self.core.call_success("fs_unsafe", self.sql_file),
             detect_types=sqlite3.PARSE_DECLTYPES
         )
         for query in CREATE_TABLES:
@@ -859,25 +833,22 @@ class Plugin(openpaperwork_core.PluginBase):
     def _reload_label_guessers(self):
         with self.classifiers_cond:
             try:
-                cursor = self.core.call_one(
-                    "mainloop_execute", self.sql.cursor
+                cursor = sqlite3.connect(
+                    self.core.call_success("fs_unsafe", self.sql_file),
+                    detect_types=sqlite3.PARSE_DECLTYPES
                 )
-                self.core.call_one(
-                    "mainloop_execute", cursor.execute, "BEGIN TRANSACTION"
-                )
-                self.vectorizer = UpdatableVectorizer(self.core, cursor)
-                (
-                    self.word_reductor, self.classifiers
-                ) = self._load_classifiers(
-                    cursor, self.vectorizer
-                )
+                try:
+                    cursor.execute("BEGIN TRANSACTION")
+                    self.vectorizer = UpdatableVectorizer(self.core, cursor)
+                    (
+                        self.word_reductor, self.classifiers
+                    ) = self._load_classifiers(
+                        cursor, self.vectorizer
+                    )
+                finally:
+                    cursor.execute("ROLLBACK")
+                    cursor.close()
             finally:
-                self.core.call_one(
-                    "mainloop_execute", cursor.execute, "ROLLBACK"
-                )
-                self.core.call_one(
-                    "mainloop_execute", cursor.close
-                )
                 self.classifiers_cond.notify_all()
 
     def _load_classifiers(self, cursor, vectorizer):
@@ -894,9 +865,7 @@ class Plugin(openpaperwork_core.PluginBase):
         try:
             self.core.call_all("on_progress", "label_classifiers", 0.0, msg)
 
-            corpus = self.core.call_one(
-                "mainloop_execute", Corpus.load, self.config, cursor
-            )
+            corpus = Corpus.load(self.config, cursor)
 
             LOGGER.info("Training classifiers ...")
             start = time.time()
