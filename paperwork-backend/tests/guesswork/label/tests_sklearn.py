@@ -46,6 +46,7 @@ class TestLabelGuesser(unittest.TestCase):
 
         self.core.init()
 
+        self.core.call_all("reload_label_guessers")
         self.core.call_all("config_put", "label_guessing_min_features", 1)
 
     def tearDown(self):
@@ -54,6 +55,8 @@ class TestLabelGuesser(unittest.TestCase):
 
     def test_training(self):
         # ## First training
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
 
         self.fake_storage.docs = [
             {
@@ -92,17 +95,40 @@ class TestLabelGuesser(unittest.TestCase):
         self.core.call_all("doc_transaction_start", transactions)
         transactions.sort(key=lambda transaction: -transaction.priority)
         self.assertGreater(len(transactions), 0)
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
         # XXX(Jflesch): use upd_doc() so it doesn't try to guess labels
         for transaction in transactions:
             transaction.upd_obj("test_doc")
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
         for transaction in transactions:
             transaction.upd_obj("test_doc_2")
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
         for transaction in transactions:
             transaction.upd_obj("test_doc_3")
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
         for transaction in transactions:
             transaction.upd_obj("some_other_old_doc")
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
         for transaction in transactions:
             transaction.commit()
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
 
         self.assertEqual(len(self.fake_storage.docs[2]['labels']), 0)
         self.assertEqual(len(self.fake_storage.docs[3]['labels']), 0)
@@ -159,15 +185,29 @@ class TestLabelGuesser(unittest.TestCase):
         transactions = []
         self.core.call_all("doc_transaction_start", transactions)
         self.assertGreater(len(transactions), 0)
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
         for transaction in transactions:
             transaction.add_obj("new_doc")
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
         for transaction in transactions:
             transaction.add_obj("new_doc_2")
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
         for transaction in transactions:
             transaction.commit()
 
-        self.assertEqual(len(self.fake_storage.docs[4]['labels']), 0)
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
 
+        self.assertEqual(len(self.fake_storage.docs[4]['labels']), 0)
         self.assertEqual(len(self.fake_storage.docs[3]['labels']), 1)
         self.assertEqual(
             list(self.fake_storage.docs[3]['labels'])[0],
@@ -224,10 +264,21 @@ class TestLabelGuesser(unittest.TestCase):
         transactions = []
         self.core.call_all("doc_transaction_start", transactions)
         self.assertGreater(len(transactions), 0)
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
         for transaction in transactions:
             transaction.upd_obj("new_doc_2")
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
         for transaction in transactions:
             transaction.commit()
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
 
         self.assertEqual(len(self.fake_storage.docs[4]['labels']), 0)
         self.assertEqual(len(self.fake_storage.docs[3]['labels']), 1)
@@ -272,12 +323,27 @@ class TestLabelGuesser(unittest.TestCase):
         transactions = []
         self.core.call_all("doc_transaction_start", transactions)
         self.assertGreater(len(transactions), 0)
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
         for transaction in transactions:
             transaction.del_obj("new_doc")
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
         for transaction in transactions:
             transaction.del_obj("new_doc_2")
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
         for transaction in transactions:
             transaction.commit()
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
 
     def test_sync(self):
         self.fake_storage.docs = [
@@ -304,20 +370,6 @@ class TestLabelGuesser(unittest.TestCase):
             },
         ]
 
-        core = self.core
-        mainloop = False
-
-        class FakeModuleToStopMainLoop(object):
-            class Plugin(openpaperwork_core.PluginBase):
-                def on_label_guesser_commit_end(self):
-                    if mainloop:  # avoid double call at next transaction
-                        core.call_all("mainloop_quit_graceful")
-
-        self.core._load_module(
-            "mainloop_stopper", FakeModuleToStopMainLoop()
-        )
-        self.core.init()
-
         promises = []
         self.core.call_all('sync', promises)
         promise = promises[0]
@@ -325,9 +377,8 @@ class TestLabelGuesser(unittest.TestCase):
             promise = promise.then(p)
         promise.schedule()
 
-        mainloop = True
-        self.core.call_one('mainloop')
-        mainloop = False
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
 
         self.fake_storage.docs = [
             {  # old doc
@@ -372,14 +423,29 @@ class TestLabelGuesser(unittest.TestCase):
         transactions = []
         self.core.call_all("doc_transaction_start", transactions)
         self.assertGreater(len(transactions), 0)
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
         for transaction in transactions:
             transaction.add_obj("new_doc")
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
         for transaction in transactions:
             transaction.add_obj("new_doc_2")
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
         for transaction in transactions:
             transaction.commit()
-        self.assertEqual(len(self.fake_storage.docs[4]['labels']), 0)
 
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
+        self.assertEqual(len(self.fake_storage.docs[4]['labels']), 0)
         self.assertEqual(len(self.fake_storage.docs[3]['labels']), 1)
         self.assertEqual(
             list(self.fake_storage.docs[3]['labels'])[0],

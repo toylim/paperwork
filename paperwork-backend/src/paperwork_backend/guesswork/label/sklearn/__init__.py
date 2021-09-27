@@ -11,6 +11,7 @@ import collections
 import gc
 import logging
 import sqlite3
+import threading
 import time
 
 import numpy
@@ -42,7 +43,7 @@ CREATE_TABLES = [
         " PRIMARY KEY (doc_id, label)"
         ")"
     ),
-    (  # see sklearn.feature_extraction.text.CountVectorizer.vocabulary_
+    (  # see sklearn.feature_extraction.text.CountVectorizer.vocabulary
         "CREATE TABLE IF NOT EXISTS vocabulary ("
         " word TEXT NOT NULL,"
         " feature INTEGER NOT NULL,"
@@ -144,7 +145,7 @@ class UpdatableVectorizer(object):
         # A bit hackish: We just need the analyzer, so instantiating a full
         # TfidVectorizer() is probably overkill, but meh.
         tokenizer = sklearn.feature_extraction.text.TfidfVectorizer(
-            ).build_analyzer()
+        ).build_analyzer()
         LOGGER.info(
             "Vocabulary contains %d words before fitting", self.last_feature_id
         )
@@ -519,29 +520,12 @@ class LabelGuesserTransaction(sync.BaseTransaction):
 
         LOGGER.info("Transaction start: Guessing labels: %s", guess_labels)
 
-        # use a dedicated connection to ensure thread-safety regarding
-        # SQL transactions
-        self.cursor = self.core.call_one(
-            "mainloop_execute", plugin.sql.cursor
-        )
-        self.core.call_one(
-            "mainloop_execute", self.cursor.execute, "BEGIN TRANSACTION"
-        )
+        self.cursor = None
+        self.vectorizer = None
+        self.lock_acquired = False
 
         self.nb_changes = 0
         self.need_gc = False
-
-        self.vectorizer = UpdatableVectorizer(self.core, self.cursor)
-
-        # If we load the classifiers, we keep the vectorizer that goes with
-        # them, because the vectorizer must return vectors that have the size
-        # that the classifiers expect. If we would train the vectorizer with
-        # new documents, the vector sizes could increase
-        # Since loading the classifiers is a fairly long operations, we only
-        # do it when we actually need them.
-        self.original_vectorizer = None
-        self.reductor = None
-        self.classifiers = None
 
     def __enter__(self):
         pass
@@ -549,7 +533,32 @@ class LabelGuesserTransaction(sync.BaseTransaction):
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.cancel()
 
+    def _lazyinit_transaction(self):
+        if self.cursor is not None:
+            return
+
+        # prevent reload of classifiers during the transaction
+        assert(not self.lock_acquired)
+        self.plugin.classifiers_cond.acquire()
+        self.lock_acquired = True
+
+        if self.plugin.classifiers is None and self.guess_labels:
+            # Before starting the transaction, we wait for the classifiers
+            # to be loaded, because we may need them
+            # (see add_obj() -> _set_guessed_labels())
+            self.plugin.classifiers_cond.wait()
+
+        self.cursor = self.core.call_one(
+            "mainloop_execute", self.plugin.sql.cursor
+        )
+        self.core.call_one(
+            "mainloop_execute", self.cursor.execute, "BEGIN TRANSACTION"
+        )
+        self.vectorizer = UpdatableVectorizer(self.core, self.cursor)
+
     def add_obj(self, doc_id):
+        self._lazyinit_transaction()
+
         if self.guess_labels:
             # we have a higher priority than index plugins, so it is a good
             # time to update the document labels
@@ -566,17 +575,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
                 )
                 return
 
-            if self.classifiers is None:
-                self.original_vectorizer = self.vectorizer.copy()
-                (self.word_reductor, self.classifiers) = \
-                    self.plugin._load_classifiers(
-                        self.original_vectorizer
-                    )
-
-            self.plugin._set_guessed_labels(
-                doc_url, self.original_vectorizer,
-                self.word_reductor, self.classifiers
-            )
+            self.plugin._set_guessed_labels(doc_url)
 
         self.notify_progress(
             ID, _("Label guesser: added document %s") % doc_id
@@ -586,6 +585,8 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         super().add_obj(doc_id)
 
     def upd_obj(self, doc_id):
+        self._lazyinit_transaction()
+
         self.notify_progress(
             ID, _("Label guesser: updated document %s") % doc_id
         )
@@ -604,6 +605,8 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         )
 
     def del_obj(self, doc_id):
+        self._lazyinit_transaction()
+
         self.notify_progress(
             ID,
             _("Label guesser: deleted document %s") % doc_id
@@ -647,56 +650,74 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         )
 
     def cancel(self):
-        self.core.call_success(
-            "mainloop_schedule", self.core.call_all,
-            "on_label_guesser_canceled"
-        )
-        if self.cursor is not None:
-            self.core.call_one(
-                "mainloop_execute", self.cursor.execute, "ROLLBACK"
+        try:
+            self.core.call_success(
+                "mainloop_schedule", self.core.call_all,
+                "on_label_guesser_canceled"
             )
-            self.core.call_one("mainloop_execute", self.cursor.close)
-            self.cursor = None
-        self.notify_done(ID)
+            if self.cursor is not None:
+                self.core.call_one(
+                    "mainloop_execute", self.cursor.execute, "ROLLBACK"
+                )
+                self.core.call_one("mainloop_execute", self.cursor.close)
+                self.cursor = None
+            self.notify_done(ID)
+
+            if self.plugin.classifiers is None:
+                # classifiers haven't been loaded at all yet. Now
+                # looks like a good time for it (end of initial sync)
+                self.plugin.reload_label_guessers()
+        finally:
+            if self.lock_acquired:
+                self.plugin.classifiers_cond.release()
+                self.lock_acquired = False
 
     def commit(self):
-        LOGGER.info("Committing")
-        self.core.call_success(
-            "mainloop_schedule", self.core.call_all,
-            "on_label_guesser_commit_start"
-        )
-        if self.nb_changes <= 0:
-            self.core.call_one(
-                "mainloop_execute", self.cursor.execute, "ROLLBACK"
+        try:
+            LOGGER.info("Committing")
+            self.core.call_success(
+                "mainloop_schedule", self.core.call_all,
+                "on_label_guesser_commit_start"
             )
-            self.core.call_one("mainloop_execute", self.cursor.close)
-            self.cursor = None
+            if self.nb_changes <= 0:
+                assert(self.cursor is None)
+                self.notify_done(ID)
+                self.core.call_success(
+                    "mainloop_schedule", self.core.call_all,
+                    'on_label_guesser_commit_end'
+                )
+                LOGGER.info("Nothing to do. Training left unchanged.")
+                if self.plugin.classifiers is None:
+                    # classifiers haven't been loaded at all yet. Now
+                    # looks like a good time for it (end of initial sync)
+                    self.plugin.reload_label_guessers()
+                return
+
+            if self.need_gc:
+                self.vectorizer.gc()
+                self.vectorizer = None
+
+            self.notify_progress(
+                ID, _("Commiting changes for label guessing ...")
+            )
+            self.core.call_one(
+                "mainloop_execute", self.cursor.execute, "COMMIT"
+            )
+
+            if self.cursor is not None:
+                self.core.call_one("mainloop_execute", self.cursor.close)
             self.notify_done(ID)
             self.core.call_success(
                 "mainloop_schedule", self.core.call_all,
                 'on_label_guesser_commit_end'
             )
-            LOGGER.info("Nothing to do. Training left unchanged.")
-            return
+            LOGGER.info("Label guessing updated")
 
-        if self.need_gc:
-            self.vectorizer.gc()
-            self.vectorizer = None
-
-        self.notify_progress(
-            ID, _("Commiting changes for label guessing ...")
-        )
-        self.core.call_one("mainloop_execute", self.cursor.execute, "COMMIT")
-
-        if self.cursor is not None:
-            self.core.call_one("mainloop_execute", self.cursor.close)
-        self.cursor = None
-        self.notify_done(ID)
-        self.core.call_success(
-            "mainloop_schedule", self.core.call_all,
-            'on_label_guesser_commit_end'
-        )
-        LOGGER.info("Label guessing updated")
+            self.plugin.reload_label_guessers()
+        finally:
+            if self.lock_acquired:
+                self.plugin.classifiers_cond.release()
+                self.lock_acquired = False
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -705,7 +726,27 @@ class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         self.bayes = None
         self.config = None
+
         self.sql = None
+
+        # If we load the classifiers, we keep the vectorizer that goes with
+        # them, because the vectorizer must return vectors that have the size
+        # that the classifiers expect. If we would train the vectorizer with
+        # new documents, the vector sizes could increase
+        # Since loading the classifiers is a fairly long operations, we only
+        # do it when we actually need them.
+        self.word_reductor = None
+        self.classifiers = None
+        self.vectorizer = None
+
+        # Do NOT use an RLock() here: The transaction locks this mutex
+        # until commit() (or cancel()) is called. However, add_obj(),
+        # del_obj(), upd_obj() and commit() may be called from different
+        # threads.
+        self.classifiers_cond = threading.Condition(threading.Lock())
+
+        self.bayes_dir = None
+
         SqliteNumpyArrayHandler.register()
 
     def get_interfaces(self):
@@ -751,6 +792,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'interface': 'transaction_manager',
                 'defaults': ['paperwork_backend.sync'],
             },
+            {
+                'interface': 'work_queue',
+                'defaults': ['openpaperwork_core.work_queue.default'],
+            },
         ]
 
     def init(self, core):
@@ -759,19 +804,25 @@ class Plugin(openpaperwork_core.PluginBase):
         self.config = PluginConfig(core)
         self.config.register()
 
+        self.core.call_all(
+            "work_queue_create", "label_sklearn", stop_on_quit=True
+        )
+
         self._init()
 
     def _init(self):
         data_dir = self.core.call_success(
             "data_dir_handler_get_individual_data_dir")
-        bayes_dir = self.core.call_success(
-            "fs_join", data_dir, "bayes"
-        )
 
-        self.core.call_success("fs_mkdir_p", bayes_dir)
+        if self.bayes_dir is None:  # may be set by tests
+            self.bayes_dir = self.core.call_success(
+                "fs_join", data_dir, "bayes"
+            )
+
+        self.core.call_success("fs_mkdir_p", self.bayes_dir)
 
         sql_file = self.core.call_success(
-            "fs_join", bayes_dir, 'label_guesser.db'
+            "fs_join", self.bayes_dir, 'label_guesser.db'
         )
         self.sql = sqlite3.connect(
             self.core.call_success("fs_unsafe", sql_file),
@@ -783,16 +834,53 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all(
             "doc_tracker_register",
             "label_guesser",
-            lambda sync, total_expected: LabelGuesserTransaction(
-                self, guess_labels=not sync, total_expected=total_expected
-            )
+            self._build_transaction
+        )
+
+    def _build_transaction(self, sync, total_expected):
+        return LabelGuesserTransaction(
+            self, guess_labels=not sync, total_expected=total_expected
         )
 
     def on_data_dir_changed(self):
         self.sql.close()
         self._init()
 
-    def _load_classifiers(self, vectorizer):
+    def reload_label_guessers(self):
+        self.classifiers = None
+        promise = openpaperwork_core.promise.ThreadedPromise(
+            self.core, self._reload_label_guessers
+        )
+        self.core.call_all("work_queue_cancel_all", "label_sklearn")
+        self.core.call_success(
+            "work_queue_add_promise", "label_sklearn", promise
+        )
+
+    def _reload_label_guessers(self):
+        with self.classifiers_cond:
+            try:
+                cursor = self.core.call_one(
+                    "mainloop_execute", self.sql.cursor
+                )
+                self.core.call_one(
+                    "mainloop_execute", cursor.execute, "BEGIN TRANSACTION"
+                )
+                self.vectorizer = UpdatableVectorizer(self.core, cursor)
+                (
+                    self.word_reductor, self.classifiers
+                ) = self._load_classifiers(
+                    cursor, self.vectorizer
+                )
+            finally:
+                self.core.call_one(
+                    "mainloop_execute", cursor.execute, "ROLLBACK"
+                )
+                self.core.call_one(
+                    "mainloop_execute", cursor.close
+                )
+                self.classifiers_cond.notify_all()
+
+    def _load_classifiers(self, cursor, vectorizer):
         # Jflesch> This is a very memory-intensive process. The Glib may try
         # to allocate memory before the GC runs and AFAIK the Glib
         # is not aware of Python GC, and so won't trigger it if required
@@ -802,10 +890,6 @@ class Plugin(openpaperwork_core.PluginBase):
         gc.collect()
 
         msg = _("Label guessing: Training ...")
-
-        cursor = self.core.call_one(
-            "mainloop_execute", self.sql.cursor
-        )
 
         try:
             self.core.call_all("on_progress", "label_classifiers", 0.0, msg)
@@ -818,7 +902,7 @@ class Plugin(openpaperwork_core.PluginBase):
             start = time.time()
 
             if corpus.get_doc_count() <= 1:
-                return (None, None)
+                return (DummyFeatureReductor(), {})
 
             corpus.standardize_feature_vectors(vectorizer)
             # no need to train on all the words. Only the most used words
@@ -894,7 +978,6 @@ class Plugin(openpaperwork_core.PluginBase):
             return (reductor, classifiers)
         finally:
             self.core.call_all("on_progress", "label_classifiers", 1.0, msg)
-            self.core.call_one("mainloop_execute", cursor.close)
 
     def _guess(self, vectorizer, reductor, classifiers, doc_url):
         LOGGER.info("Guessing labels on %s", doc_url)
@@ -914,7 +997,7 @@ class Plugin(openpaperwork_core.PluginBase):
             if f > 0:
                 nb_features += 1
 
-        if nb_features <= min_features:
+        if nb_features < min_features:
             LOGGER.warning(
                 "Document doesn't contain enough different words"
                 " (%d ; min required is %d). Labels won't be guessed",
@@ -929,8 +1012,12 @@ class Plugin(openpaperwork_core.PluginBase):
             if predicted:
                 yield label
 
-    def _set_guessed_labels(self, doc_url, vectorizer, reductor, classifiers):
-        labels = self._guess(vectorizer, reductor, classifiers, doc_url)
+    def _set_guessed_labels(self, doc_url):
+        # self.classifiers_cond must locked
+        assert(self.classifiers is not None)
+        labels = self._guess(
+            self.vectorizer, self.word_reductor, self.classifiers, doc_url
+        )
         labels = list(labels)
         for label in labels:
             self.core.call_success("doc_add_label_by_url", doc_url, label)
