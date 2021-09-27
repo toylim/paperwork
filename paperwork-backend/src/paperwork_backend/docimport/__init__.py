@@ -80,9 +80,6 @@ class BaseFileImporter(object):
         for doc_id in file_import.upd_doc_ids:
             for transaction in transactions:
                 transaction.upd_obj(doc_id)
-        return transactions
-
-    def _commit_transactions(self, transactions):
         for transaction in transactions:
             transaction.commit()
 
@@ -116,11 +113,6 @@ class BaseFileImporter(object):
         promise = promise.then(
             openpaperwork_core.promise.ThreadedPromise(
                 self.core, self._do_transactions, args=(self.file_import,)
-            )
-        )
-        promise = promise.then(
-            openpaperwork_core.promise.ThreadedPromise(
-                self.core, self._commit_transactions
             )
         )
 
