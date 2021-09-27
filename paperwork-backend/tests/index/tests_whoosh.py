@@ -45,7 +45,7 @@ class TestIndex(unittest.TestCase):
         self.core.call_all('doc_transaction_start', transactions)
         transactions.sort(key=lambda transaction: -transaction.priority)
         for transaction in transactions:
-            transaction.add_obj('test_doc')
+            transaction.add_doc('test_doc')
         for transaction in transactions:
             transaction.commit()
 
@@ -120,7 +120,7 @@ class TestIndex(unittest.TestCase):
         self.core.call_all('doc_transaction_start', transactions)
         transactions.sort(key=lambda transaction: -transaction.priority)
         for transaction in transactions:
-            transaction.add_obj('test_doc')
+            transaction.add_doc('test_doc')
         for transaction in transactions:
             transaction.commit()
 

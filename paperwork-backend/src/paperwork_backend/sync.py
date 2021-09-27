@@ -34,13 +34,13 @@ class BaseTransaction(object):
             "on_progress", upd_type, 1.0
         )
 
-    def add_obj(self, doc_id):
+    def add_doc(self, doc_id):
         self.processed += 1
 
-    def upd_obj(self, doc_id):
+    def upd_doc(self, doc_id):
         self.processed += 1
 
-    def del_obj(self, doc_id):
+    def del_doc(self, doc_id):
         self.processed += 1
 
     def unchanged_obj(self, doc_id):
@@ -119,7 +119,7 @@ class StorageDoc(object):
 class Syncer(object):
     """
     This object allows to compare mtimes progressively. It then calls
-    the methods `add_obj`, `del_obj`, `upd_obj` and `commit` on the given
+    the methods `add_doc`, `del_doc`, `upd_doc` and `commit` on the given
     transaction object.
 
     Useful to handle calls to 'sync' (see interface 'syncable').
@@ -157,24 +157,24 @@ class Syncer(object):
                 if action == "added":
                     for transaction in self.transactions:
                         LOGGER.debug(
-                            "transaction.add_obj<%s>(%s)",
-                            transaction.add_obj, key
+                            "transaction.add_doc<%s>(%s)",
+                            transaction.add_doc, key
                         )
-                        transaction.add_obj(key)
+                        transaction.add_doc(key)
                 elif action == "updated":
                     for transaction in self.transactions:
                         LOGGER.debug(
-                            "transaction.upd_obj<%s>(%s)",
-                            transaction.upd_obj, key
+                            "transaction.upd_doc<%s>(%s)",
+                            transaction.upd_doc, key
                         )
-                        transaction.upd_obj(key)
+                        transaction.upd_doc(key)
                 elif action == "deleted":
                     for transaction in self.transactions:
                         LOGGER.debug(
-                            "transaction.del_obj<%s>(%s)",
-                            transaction.del_obj, key
+                            "transaction.del_doc<%s>(%s)",
+                            transaction.del_doc, key
                         )
-                        transaction.del_obj(key)
+                        transaction.del_doc(key)
                 else:
                     for transaction in self.transactions:
                         LOGGER.debug(
@@ -245,11 +245,11 @@ class Plugin(openpaperwork_core.PluginBase):
                     change = 'del'
                 for transaction in transactions:
                     if change == 'add':
-                        transaction.add_obj(doc_id)
+                        transaction.add_doc(doc_id)
                     elif change == 'upd':
-                        transaction.upd_obj(doc_id)
+                        transaction.upd_doc(doc_id)
                     elif change == 'del':
-                        transaction.del_obj(doc_id)
+                        transaction.del_doc(doc_id)
                     else:
                         raise Exception("Unknown change type: %s" % change)
 

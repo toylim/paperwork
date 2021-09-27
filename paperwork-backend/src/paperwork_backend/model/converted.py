@@ -156,7 +156,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
             try:
                 for transaction in transactions:
-                    transaction.upd_obj(doc_id)
+                    transaction.del_doc(doc_id)
                 for transaction in transactions:
                     transaction.commit()
             except Exception:

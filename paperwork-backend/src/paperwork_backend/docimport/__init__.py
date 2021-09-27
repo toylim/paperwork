@@ -76,10 +76,10 @@ class BaseFileImporter(object):
     def _do_transactions(self, transactions, file_import):
         for doc_id in file_import.new_doc_ids:
             for transaction in transactions:
-                transaction.add_obj(doc_id)
+                transaction.add_doc(doc_id)
         for doc_id in file_import.upd_doc_ids:
             for transaction in transactions:
-                transaction.upd_obj(doc_id)
+                transaction.upd_doc(doc_id)
         for transaction in transactions:
             transaction.commit()
 

@@ -73,17 +73,17 @@ class PillowfightTransaction(sync.BaseTransaction):
                 self._guess_page_borders(doc_id, doc_url, page_idx)
             self.page_tracker.ack_page(doc_id, doc_url, page_idx)
 
-    def add_obj(self, doc_id):
+    def add_doc(self, doc_id):
         self._guess_new_pages_borders(doc_id)
-        super().add_obj(doc_id)
+        super().add_doc(doc_id)
 
-    def upd_obj(self, doc_id):
+    def upd_doc(self, doc_id):
         self._guess_new_pages_borders(doc_id)
-        super().upd_obj(doc_id)
+        super().upd_doc(doc_id)
 
-    def del_obj(self, doc_id):
+    def del_doc(self, doc_id):
         self.page_tracker.delete_doc(doc_id)
-        super().del_obj(doc_id)
+        super().del_doc(doc_id)
 
     def cancel(self):
         self.page_tracker.cancel()

@@ -120,7 +120,7 @@ class TestAce(unittest.TestCase):
         transactions.sort(key=lambda transaction: -transaction.priority)
         self.assertNotEqual(transactions, [])
         for t in transactions:
-            t.upd_obj('some_doc_with_text')
+            t.upd_doc('some_doc_with_text')
         for t in transactions:
             t.commit()
 

@@ -20,12 +20,12 @@ class TestConvertedImport(unittest.TestCase):
         class TestTransaction(paperwork_backend.sync.BaseTransaction):
             priority = 0
 
-            def add_obj(s, doc_id):
-                super().add_obj(doc_id)
+            def add_doc(s, doc_id):
+                super().add_doc(doc_id)
                 self.add_docs.add(doc_id)
 
-            def upd_obj(s, doc_id):
-                super().upd_obj(doc_id)
+            def upd_doc(s, doc_id):
+                super().upd_doc(doc_id)
                 self.upd_docs.add(doc_id)
 
             def commit(s):

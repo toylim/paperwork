@@ -531,7 +531,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         if self.plugin.classifiers is None and self.guess_labels:
             # Before starting the transaction, we wait for the classifiers
             # to be loaded, because we may need them
-            # (see add_obj() -> _set_guessed_labels())
+            # (see add_doc() -> _set_guessed_labels())
             self.plugin.classifiers_cond.wait()
 
         self.cursor = sqlite3.connect(
@@ -541,7 +541,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         self.cursor.execute("BEGIN TRANSACTION")
         self.vectorizer = UpdatableVectorizer(self.core, self.cursor)
 
-    def add_obj(self, doc_id):
+    def add_doc(self, doc_id):
         self._lazyinit_transaction()
 
         if self.guess_labels:
@@ -565,25 +565,25 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         self.notify_progress(
             ID, _("Label guesser: added document %s") % doc_id
         )
-        self._upd_obj(doc_id)
+        self._upd_doc(doc_id)
         self.nb_changes += 1
-        super().add_obj(doc_id)
+        super().add_doc(doc_id)
 
-    def upd_obj(self, doc_id):
+    def upd_doc(self, doc_id):
         self._lazyinit_transaction()
 
         self.notify_progress(
             ID, _("Label guesser: updated document %s") % doc_id
         )
-        self._upd_obj(doc_id)
+        self._upd_doc(doc_id)
         self.nb_changes += 1
-        super().upd_obj(doc_id)
+        super().upd_doc(doc_id)
 
-    def _del_obj(self, doc_id):
+    def _del_doc(self, doc_id):
         self.cursor.execute("DELETE FROM labels WHERE doc_id = ?", (doc_id,))
         self.cursor.execute("DELETE FROM features WHERE doc_id = ?", (doc_id,))
 
-    def del_obj(self, doc_id):
+    def del_doc(self, doc_id):
         self._lazyinit_transaction()
 
         self.notify_progress(
@@ -591,17 +591,17 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             _("Label guesser: deleted document %s") % doc_id
         )
         self.nb_changes += 1
-        self._del_obj(doc_id)
+        self._del_doc(doc_id)
         LOGGER.info(
             "Document %s has been deleted."
             " Feature garbage-collecting will be run",
             doc_id
         )
         self.need_gc = True
-        super().del_obj(doc_id)
+        super().del_doc(doc_id)
 
-    def _upd_obj(self, doc_id):
-        self._del_obj(doc_id)
+    def _upd_doc(self, doc_id):
+        self._del_doc(doc_id)
 
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
 
@@ -713,8 +713,8 @@ class Plugin(openpaperwork_core.PluginBase):
         self.vectorizer = None
 
         # Do NOT use an RLock() here: The transaction locks this mutex
-        # until commit() (or cancel()) is called. However, add_obj(),
-        # del_obj(), upd_obj() and commit() may be called from different
+        # until commit() (or cancel()) is called. However, add_doc(),
+        # del_doc(), upd_doc() and commit() may be called from different
         # threads.
         self.classifiers_cond = threading.Condition(threading.Lock())
 

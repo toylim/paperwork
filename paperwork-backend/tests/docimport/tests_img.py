@@ -24,13 +24,13 @@ class TestImgImport(unittest.TestCase):
         class FakeTransaction(object):
             priority = 0
 
-            def add_obj(s, doc_id):
+            def add_doc(s, doc_id):
                 self.add_docs.append(doc_id)
 
-            def del_obj(s, doc_id):
+            def del_doc(s, doc_id):
                 pass
 
-            def upd_obj(s, doc_id):
+            def upd_doc(s, doc_id):
                 self.upd_docs.append(doc_id)
 
             def unchanged_obj(s, doc_id):

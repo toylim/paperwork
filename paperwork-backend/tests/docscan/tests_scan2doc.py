@@ -19,15 +19,15 @@ class TestScan2Doc(unittest.TestCase):
         class FakeTransaction(object):
             priority = 0
 
-            def add_obj(s, doc_id):
+            def add_doc(s, doc_id):
                 self.assertIsNone(self.transaction_type)
                 self.transaction_type = "add"
 
-            def upd_obj(s, doc_id):
+            def upd_doc(s, doc_id):
                 self.assertIsNone(self.transaction_type)
                 self.transaction_type = "upd"
 
-            def del_obj(s, doc_id):
+            def del_doc(s, doc_id):
                 pass
 
             def unchanged_obj(s, doc_id):

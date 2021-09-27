@@ -26,7 +26,7 @@ class TestPdfImport(unittest.TestCase):
         class FakeTransaction(object):
             priority = 0
 
-            def add_obj(s, doc_id):
+            def add_doc(s, doc_id):
                 self.add_docs.append(doc_id)
 
             def unchanged_obj(s, doc_id):
@@ -201,7 +201,7 @@ class TestRecursivePdfImport(unittest.TestCase):
         class FakeTransaction(object):
             priority = 0
 
-            def add_obj(s, doc_id):
+            def add_doc(s, doc_id):
                 self.add_docs.append(doc_id)
 
             def unchanged_obj(s, doc_id):
@@ -367,7 +367,7 @@ class TestPasswordPdfImport(unittest.TestCase):
         class FakeTransaction(object):
             priority = 0
 
-            def add_obj(s, doc_id):
+            def add_doc(s, doc_id):
                 self.add_docs.append(doc_id)
 
             def unchanged_obj(s, doc_id):

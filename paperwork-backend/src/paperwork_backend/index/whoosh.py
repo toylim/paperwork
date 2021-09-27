@@ -107,16 +107,16 @@ class WhooshTransaction(sync.BaseTransaction):
             last_read=doc_mtime
         )
 
-    def add_obj(self, doc_id):
+    def add_doc(self, doc_id):
         LOGGER.info("Adding document '%s' to index", doc_id)
         self.notify_progress(
             ID, _("Indexing new document %s") % doc_id
         )
         self._update_doc_in_index(doc_id)
         self.modified += 1
-        super().add_obj(doc_id)
+        super().add_doc(doc_id)
 
-    def del_obj(self, doc_id):
+    def del_doc(self, doc_id):
         LOGGER.info("Removing document '%s' from index", doc_id)
         self.notify_progress(
             ID, _("Removing document %s from index") % doc_id
@@ -124,16 +124,16 @@ class WhooshTransaction(sync.BaseTransaction):
         query = whoosh.query.Term("docid", doc_id)
         self.writer.delete_by_query(query)
         self.modified += 1
-        super().del_obj(doc_id)
+        super().del_doc(doc_id)
 
-    def upd_obj(self, doc_id):
+    def upd_doc(self, doc_id):
         LOGGER.info("Updating document '%s' in index", doc_id)
         self.notify_progress(
             ID, _("Indexing updated document %s") % doc_id
         )
         self._update_doc_in_index(doc_id)
         self.modified += 1
-        super().upd_obj(doc_id)
+        super().upd_doc(doc_id)
 
     def unchanged_obj(self, doc_id):
         self.notify_progress(

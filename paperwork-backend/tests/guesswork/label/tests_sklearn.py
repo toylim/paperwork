@@ -101,25 +101,25 @@ class TestLabelGuesser(unittest.TestCase):
 
         # XXX(Jflesch): use upd_doc() so it doesn't try to guess labels
         for transaction in transactions:
-            transaction.upd_obj("test_doc")
+            transaction.upd_doc("test_doc")
 
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
 
         for transaction in transactions:
-            transaction.upd_obj("test_doc_2")
+            transaction.upd_doc("test_doc_2")
 
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
 
         for transaction in transactions:
-            transaction.upd_obj("test_doc_3")
+            transaction.upd_doc("test_doc_3")
 
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
 
         for transaction in transactions:
-            transaction.upd_obj("some_other_old_doc")
+            transaction.upd_doc("some_other_old_doc")
 
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
@@ -190,13 +190,13 @@ class TestLabelGuesser(unittest.TestCase):
         self.core.call_one("mainloop")
 
         for transaction in transactions:
-            transaction.add_obj("new_doc")
+            transaction.add_doc("new_doc")
 
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
 
         for transaction in transactions:
-            transaction.add_obj("new_doc_2")
+            transaction.add_doc("new_doc_2")
 
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
@@ -269,7 +269,7 @@ class TestLabelGuesser(unittest.TestCase):
         self.core.call_one("mainloop")
 
         for transaction in transactions:
-            transaction.upd_obj("new_doc_2")
+            transaction.upd_doc("new_doc_2")
 
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
@@ -328,13 +328,13 @@ class TestLabelGuesser(unittest.TestCase):
         self.core.call_one("mainloop")
 
         for transaction in transactions:
-            transaction.del_obj("new_doc")
+            transaction.del_doc("new_doc")
 
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
 
         for transaction in transactions:
-            transaction.del_obj("new_doc_2")
+            transaction.del_doc("new_doc_2")
 
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
@@ -428,13 +428,13 @@ class TestLabelGuesser(unittest.TestCase):
         self.core.call_one("mainloop")
 
         for transaction in transactions:
-            transaction.add_obj("new_doc")
+            transaction.add_doc("new_doc")
 
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
 
         for transaction in transactions:
-            transaction.add_obj("new_doc_2")
+            transaction.add_doc("new_doc_2")
 
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")

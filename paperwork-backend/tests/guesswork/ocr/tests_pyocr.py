@@ -121,9 +121,9 @@ class TestPyocr(unittest.TestCase):
         self.assertNotEqual(transactions, [])
 
         for t in transactions:
-            t.add_obj('some_doc_with_text')
+            t.add_doc('some_doc_with_text')
         for t in transactions:
-            t.add_obj('some_doc')
+            t.add_doc('some_doc')
         for t in transactions:
             t.commit()
 
@@ -169,7 +169,7 @@ class TestPyocr(unittest.TestCase):
         self.core.call_all("doc_transaction_start", transactions)
         self.assertNotEqual(transactions, [])
         for t in transactions:
-            t.add_obj('some_doc_with_text')
+            t.add_doc('some_doc_with_text')
         for t in transactions:
             t.commit()
 
@@ -203,7 +203,7 @@ class TestPyocr(unittest.TestCase):
         self.core.call_all("doc_transaction_start", transactions)
         self.assertNotEqual(transactions, [])
         for t in transactions:
-            t.upd_obj('some_doc_with_text')
+            t.upd_doc('some_doc_with_text')
         for t in transactions:
             t.commit()
 

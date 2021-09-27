@@ -119,7 +119,7 @@ class TestCropping(unittest.TestCase):
         transactions.sort(key=lambda transaction: -transaction.priority)
         self.assertNotEqual(transactions, [])
         for t in transactions:
-            t.upd_obj('some_doc_with_text')
+            t.upd_doc('some_doc_with_text')
         for t in transactions:
             t.commit()
 
@@ -196,7 +196,7 @@ class TestCropping(unittest.TestCase):
         self.core.call_all("doc_transaction_start", transactions)
         self.assertNotEqual(transactions, [])
         for t in transactions:
-            t.upd_obj('some_doc_with_text')
+            t.upd_doc('some_doc_with_text')
         for t in transactions:
             t.commit()
 
@@ -264,7 +264,7 @@ class TestCropping(unittest.TestCase):
         self.core.call_all("doc_transaction_start", transactions)
         self.assertNotEqual(transactions, [])
         for t in transactions:
-            t.upd_obj('some_doc_with_text')
+            t.upd_doc('some_doc_with_text')
         for t in transactions:
             t.commit()
 

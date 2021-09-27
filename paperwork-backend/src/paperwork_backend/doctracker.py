@@ -64,17 +64,17 @@ class DocTrackerTransaction(sync.BaseTransaction):
             'text': doc_text,
         }
 
-    def add_obj(self, doc_id):
+    def add_doc(self, doc_id):
         self.notify_progress(ID, _("Document %s added") % (doc_id))
-        self._upd_obj(doc_id)
-        super().add_obj(doc_id)
+        self._upd_doc(doc_id)
+        super().add_doc(doc_id)
 
-    def upd_obj(self, doc_id):
+    def upd_doc(self, doc_id):
         self.notify_progress(ID, _("Document %s updated") % (doc_id))
-        self._upd_obj(doc_id)
-        super().upd_obj(doc_id)
+        self._upd_doc(doc_id)
+        super().upd_doc(doc_id)
 
-    def _upd_obj(self, doc_id):
+    def _upd_doc(self, doc_id):
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
         actual = self._get_actual_doc_data(doc_id, doc_url)
 
@@ -85,14 +85,14 @@ class DocTrackerTransaction(sync.BaseTransaction):
             (doc_id, actual['text'], actual['mtime'])
         )
 
-    def del_obj(self, doc_id):
+    def del_doc(self, doc_id):
         self.notify_progress(ID, _("Document %s deleted") % (doc_id))
         self.core.call_one(
             "mainloop_execute", self.sql.execute,
             "DELETE FROM documents WHERE doc_id = ?",
             (doc_id,)
         )
-        super().del_obj(doc_id)
+        super().del_doc(doc_id)
 
     def unchanged_obj(self, doc_id):
         self.notify_progress(

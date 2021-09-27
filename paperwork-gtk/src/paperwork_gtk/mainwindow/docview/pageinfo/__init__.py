@@ -136,15 +136,15 @@ class Plugin(openpaperwork_core.PluginBase):
                 )
                 s.active_doc = True
 
-            def add_obj(s, doc_id):
+            def add_doc(s, doc_id):
                 if self.active_doc[0] == doc_id:
                     s._refresh()
 
-            def upd_obj(s, doc_id):
+            def upd_doc(s, doc_id):
                 if self.active_doc[0] == doc_id:
                     s._refresh()
 
-            def del_obj(s, doc_id):
+            def del_doc(s, doc_id):
                 if self.active_doc[0] == doc_id:
                     s._refresh()
 
