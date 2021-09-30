@@ -134,13 +134,16 @@ class CairoRenderer(GObject.GObject):
         self.hide()
         self.page = None
         self.size = (0, 0)
-        (doc, refcount) = POPPLER_DOCS[self.file_url]
+        (doc, refcount) = POPPLER_DOCS.get(self.file_url, (None, None))
+        if refcount is None:
+            LOGGER.warning("Double close for %s", self.file_url)
+            return
         refcount -= 1
         if refcount > 0:
             POPPLER_DOCS[self.file_url] = (doc, refcount)
             return
-        LOGGER.info("Closing PDF file {}".format(self.file_url))
-        POPPLER_DOCS.pop(self.file_url)
+        LOGGER.info("Closing PDF file %s", self.file_url)
+        POPPLER_DOCS.pop(self.file_url, None)
 
     def _draw(self, cairo_ctx, zoom):
         try:
