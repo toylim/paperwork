@@ -138,7 +138,6 @@ class PdfPageMapping(object):
         self.reverse_mapping = {p: p for p in range(0, self.real_nb_pages)}
         now = datetime.datetime.now().timestamp()
         self.page_mtimes = {p: now for p in range(0, self.real_nb_pages)}
-
         if self.core.call_success("fs_exists", self.map_url) is None:
             self.update_nb_pages()
             return
@@ -797,12 +796,11 @@ class Plugin(openpaperwork_core.PluginBase):
             original_source_page_idx = source_mapping.get_original_page_idx(
                 target_source_page_idx
             )
-            if original_source_page_idx is None:
-                # this page is not handled by us ; still, we must shift
-                # all our pages
-                original_source_page_idx = target_source_page_idx
+            # if original_source_page_idx is None means
+            # this page is not handled by us ; still, we must shift
+            # all our pages
             LOGGER.info(
-                "- Removing page (original=%d, target=%d) from %s",
+                "- Removing page (original=%s, target=%d) from %s",
                 original_source_page_idx, target_source_page_idx,
                 source_doc_url
             )
@@ -816,39 +814,45 @@ class Plugin(openpaperwork_core.PluginBase):
             dest_mapping.make_room_for_target_page(target_dest_page_idx)
 
         if source_doc_url == dest_doc_url:
-            assert(source_mapping == dest_mapping)
-            LOGGER.info(
-                "New mapping: %s: original=p%d --> target=p%d",
-                source_doc_url, original_source_page_idx, target_dest_page_idx
-            )
-            source_mapping.set_mapping(
-                original_source_page_idx, target_dest_page_idx
-            )
-            source_mapping.update_nb_pages()
+            assert(source_mapping is dest_mapping)
+            if original_source_page_idx is not None:
+                LOGGER.info(
+                    "New mapping: %s: original=p%d --> target=p%d",
+                    source_doc_url, original_source_page_idx,
+                    target_dest_page_idx
+                )
+                source_mapping.set_mapping(
+                    original_source_page_idx, target_dest_page_idx
+                )
+
+                source_mapping.update_nb_pages()
         elif source_is_pdf:
-            # export the PDF page as an image file
-            # it relies on other model plugins (interface 'page_img'), but they
-            # can't be declared as dependencies, as we do provide 'page_img'
-            # too. It would make a dependency loop.
+            if original_source_page_idx is not None:
+                # export the PDF page as an image file
+                # it relies on other model plugins (interface 'page_img'), but
+                # they can't be declared as dependencies, as we do provide
+                # 'page_img' too. It would make a dependency loop.
 
-            # we are a low priority plugin: other plugins should
-            # already have made room for our page if required
+                # we are a low priority plugin: other plugins should
+                # already have made room for our page if required
 
-            source_img = "{}#page={}".format(
-                source_pdf_url, str(original_source_page_idx + 1)
-            )
-            LOGGER.info("Generating image from %s", source_img)
-            source_img = self.core.call_success("url_to_pillow", source_img)
+                source_img = "{}#page={}".format(
+                    source_pdf_url, str(original_source_page_idx + 1)
+                )
+                LOGGER.info("Generating image from %s", source_img)
+                source_img = self.core.call_success(
+                    "url_to_pillow", source_img
+                )
 
-            # since PDF are not writable by themselves, we can call
-            # page_get_img_url(write=True). We are sure that our
-            # implementation of this method won't reply
-            dest_img = self.core.call_success(
-                "page_get_img_url", dest_doc_url, target_dest_page_idx,
-                write=True
-            )
-            LOGGER.info("Writting page image back as %s", dest_img)
-            self.core.call_success("pillow_to_url", source_img, dest_img)
+                # since PDF are not writable by themselves, we can call
+                # page_get_img_url(write=True). We are sure that our
+                # implementation of this method won't reply
+                dest_img = self.core.call_success(
+                    "page_get_img_url", dest_doc_url, target_dest_page_idx,
+                    write=True
+                )
+                LOGGER.info("Writting page image back as %s", dest_img)
+                self.core.call_success("pillow_to_url", source_img, dest_img)
 
         if source_is_pdf:
             source_mapping.save()
