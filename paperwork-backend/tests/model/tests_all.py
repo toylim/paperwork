@@ -742,3 +742,72 @@ class TestAll(unittest.TestCase):
         self.assertEqual(doc_b_hashes[3], new_doc_b_hashes[2])
 
         self.assertEqual(doc_b_hashes[1], new_doc_hash)
+
+    def test_img_in_pdf_move(self):
+        # Bug report #245 on openpaper.work
+
+        # JPEG goes at the end of the PDF
+        self.core.call_all(
+            "page_move_by_url",
+            self.doc_b, 1,
+            self.doc_pdf, 4
+        )
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 0
+        ).endswith("20200525_1241_05/doc.pdf#page=1"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 1
+        ).endswith("20200525_1241_05/paper.2.edited.jpg"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 2
+        ).endswith("20200525_1241_05/doc.pdf#page=3"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 3
+        ).endswith("20200525_1241_05/doc.pdf#page=4"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 4
+        ).endswith("20200525_1241_05/paper.5.jpg"))
+
+        # Move the JPEG around
+        self.core.call_all(
+            "page_move_by_url",
+            self.doc_pdf, 4,
+            self.doc_pdf, 3
+        )
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 0
+        ).endswith("20200525_1241_05/doc.pdf#page=1"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 1
+        ).endswith("20200525_1241_05/paper.2.edited.jpg"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 2
+        ).endswith("20200525_1241_05/doc.pdf#page=3"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 3
+        ).endswith("20200525_1241_05/paper.4.jpg"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 4
+        ).endswith("20200525_1241_05/doc.pdf#page=4"))
+
+        # Move the JPEG around again
+        self.core.call_all(
+            "page_move_by_url",
+            self.doc_pdf, 3,
+            self.doc_pdf, 1
+        )
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 0
+        ).endswith("20200525_1241_05/doc.pdf#page=1"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 1
+        ).endswith("20200525_1241_05/paper.2.jpg"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 2
+        ).endswith("20200525_1241_05/paper.3.edited.jpg"))
+        self.assertTrue(self.core.call_success(
+            "page_get_img_url", self.doc_pdf, 3
+        ).endswith("20200525_1241_05/doc.pdf#page=3"))
+        self.assertTrue(self.core.call_success(  # bug #245: returned None here
+            "page_get_img_url", self.doc_pdf, 4
+        ).endswith("20200525_1241_05/doc.pdf#page=4"))
