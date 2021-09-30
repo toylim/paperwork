@@ -53,6 +53,7 @@ test:
     - apt-get install -y python3-dev
     - apt-get install -y python3-gi
     - apt-get install -y python3-pil
+    - apt-get install -y python3-scipy
     - apt-get install -y tox
     - apt-get install -y valac
     - apt-get install -y wget
