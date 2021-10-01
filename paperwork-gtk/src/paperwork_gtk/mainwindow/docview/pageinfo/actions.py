@@ -1,6 +1,13 @@
 import logging
 
+try:
+    from gi.repository import Gio
+    GIO_AVAILABLE = True
+except (ImportError, ValueError):
+    GIO_AVAILABLE = False
+
 import openpaperwork_core
+import openpaperwork_core.deps
 
 
 LOGGER = logging.getLogger(__name__)
@@ -15,6 +22,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_interfaces(self):
         return [
+            'chkdeps',
             'doc_open',
             'page_actions',
         ]
@@ -53,6 +61,7 @@ class Plugin(openpaperwork_core.PluginBase):
             return
 
         self.menu_model = self.widget_tree.get_object("page_menu_model")
+        self.submenus = {}
 
         self.button_edit = self.widget_tree.get_object("page_action_edit")
         self.button_edit.connect(
@@ -68,6 +77,10 @@ class Plugin(openpaperwork_core.PluginBase):
             "on_page_menu_ready"
         )
 
+    def chkdeps(self, out: dict):
+        if not GIO_AVAILABLE:
+            out['glib'].update(openpaperwork_core.deps.GLIB)
+
     def doc_open(self, doc_id, doc_url):
         self.active_doc = (doc_id, doc_url)
 
@@ -82,8 +95,15 @@ class Plugin(openpaperwork_core.PluginBase):
     def page_menu_open(self):
         self.widget_tree.get_object("page_actions_other").clicked()
 
-    def page_menu_append_item(self, item):
-        self.menu_model.append_item(item)
+    def page_menu_append_item(self, item, submenu_name=None):
+        menu = self.menu_model
+        if submenu_name is not None:
+            menu = self.submenus.get(submenu_name, None)
+            if menu is None:
+                menu = Gio.Menu()
+                self.submenus[submenu_name] = menu
+                self.menu_model.append_submenu(submenu_name, menu)
+        menu.append_item(item)
 
     def screenshot_snap_all_doc_widgets(self, out_dir):
         self.core.call_success(
