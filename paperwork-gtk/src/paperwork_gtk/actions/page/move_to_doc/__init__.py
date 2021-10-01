@@ -76,7 +76,7 @@ class Plugin(openpaperwork_core.PluginBase):
             "gtk_load_widget_tree",
             "paperwork_gtk.actions.page.move_to_doc", "move_to_doc.glade"
         )
-        if self.widget_tree is None:
+        if widget_tree is None:
             # init must still work so 'chkdeps' is still available
             LOGGER.error("Failed to load widget tree")
             return
