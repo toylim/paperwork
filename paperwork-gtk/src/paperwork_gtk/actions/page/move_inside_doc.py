@@ -47,11 +47,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['paperwork_gtk.mainwindow.window'],
             },
             {
-                'interface': 'document_storage',
-                'defaults': ['paperwork_backend.model.workdir'],
-            },
-            {
-                'interface': 'page',
+                'interface': 'pages',
                 'defaults': [
                     'paperwork_backend.model.img',
                     'paperwork_backend.model.img_overlay',
@@ -160,10 +156,20 @@ class Plugin(openpaperwork_core.PluginBase):
             self._show_error(_("Page position unchanged"))
             return True
 
-        self.core.call_all(
+        promise = openpaperwork_core.promise.Promise(self.core)
+        promise = promise.then(
+            self.core.call_all,
             "page_move_by_url",
             active_doc[1], active_page_idx,
             active_doc[1], new_position
         )
-
-        self.core.call_all("doc_reload", *active_doc)
+        promise = promise.then(lambda *args, **kwargs: None)
+        promise = promise.then(
+            self.core.call_all, "doc_reload", *active_doc
+        )
+        promise = promise.then(lambda *args, **kwargs: None)
+        promise = promise.then(self.core.call_success(
+            "transaction_simple_promise",
+            [('upd', active_doc[0])]
+        ))
+        self.core.call_success("transaction_schedule", promise)
