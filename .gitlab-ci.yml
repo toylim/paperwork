@@ -103,7 +103,6 @@ generate_data:
     - apt-get install -y gettext
     - apt-get install -y git
     - apt-get install -y gobject-introspection
-    - apt-get install -y gobject-introspection
     - apt-get install -y graphviz
     - apt-get install -y gtk-doc-tools
     - apt-get install -y imagemagick
