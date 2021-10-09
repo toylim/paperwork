@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2021-10-09 12:56+0200\n"
-"PO-Revision-Date: 2020-08-24 19:01+0000\n"
+"POT-Creation-Date: 2021-01-03 10:47+0100\n"
+"PO-Revision-Date: 2021-10-09 10:57+0000\n"
 "Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
 "Language-Team: Occitan <http://translations.openpaper.work/projects/"
 "paperwork/paperwork-help-documents/oc/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.1.1\n"
+"X-Generator: Weblate 4.4\n"
 
 #. type: Plain text
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/intro.tex:11
@@ -151,6 +151,8 @@ msgid ""
 "This document will automatically disappear from your document list as soon "
 "as you have created or imported your first document."
 msgstr ""
+"Aqueste document dispareirà automaticament de vòstra lista de documents tre "
+"qu’auretz creat o importat vòstre primièr document."
 
 #. type: section{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/intro.tex:108
@@ -163,6 +165,8 @@ msgid ""
 "If you need more help, there is a comprehensive manual you can find in the "
 "help section of Paperwork."
 msgstr ""
+"Se vos fa mestièr un pauc mai d’ajuda, i a un manual mai complèt integrat a "
+"Paperwork."
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/intro.tex:119
@@ -170,6 +174,8 @@ msgid ""
 "We hope that you'll enjoy this piece of software. If you like it please tell "
 "us, and if you don't please tell us why!"
 msgstr ""
+"Esperam que vos agradarà aqueste logicial. S’es lo cas, digatz-nos-lo, "
+"autrament, digatz-nos cossí lo melhorar !"
 
 #. type: hypersetup{#1}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:20
@@ -252,6 +258,8 @@ msgid ""
 "In Paperwork, a document is a set of pages. On disk, it can either be a set "
 "of JPEG files or a PDF file."
 msgstr ""
+"Dins Paperwork, un document es un ensem de paginas. Sul disc, pòt èsser un "
+"jòc de fichièrs JPEG o un fichièr PDF."
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:74
@@ -277,6 +285,8 @@ msgstr "Pagina"
 msgid ""
 "In Paperwork, a page is just an image and the word positions on this image."
 msgstr ""
+"Dins Paperwork, una pagina es just un imatge e las posicions dels mots sus "
+"aqueste imatge."
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:88
@@ -294,6 +304,8 @@ msgid ""
 "Pages can also be the pages from a PDF file. In that case, by default, "
 "Paperwork just stores a copy of the PDF file."
 msgstr ""
+"Las paginas pòdon tanben èsser de paginas d’un fichièr PDF. Dins aqueste "
+"cas, per defaut, Paperwork enregistra simplament una còpia del fichièr PDF."
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:95
@@ -324,7 +336,7 @@ msgstr ""
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:110
 msgid "Just type in a few keywords, and you will get your documents back."
-msgstr ""
+msgstr "Picatz sonque d’unes mots claus e traparetz vòstres documents."
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:128
@@ -356,7 +368,7 @@ msgstr "Paramètres"
 #. type: subsection{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:139
 msgid "Accessing the settings"
-msgstr ""
+msgstr "Accès als paramètres"
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:166
