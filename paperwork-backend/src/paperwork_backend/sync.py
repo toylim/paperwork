@@ -55,7 +55,7 @@ class BaseTransaction(object):
         self._current_doc_pages = -1
         self.processed += 1
 
-    def unchanged_obj(self, doc_id):
+    def unchanged_doc(self, doc_id):
         self.processed += 1
 
     def cancel(self):
@@ -191,10 +191,10 @@ class Syncer(object):
                 else:
                     for transaction in self.transactions:
                         LOGGER.debug(
-                            "transaction.unchanged_obj<%s>(%s)",
-                            transaction.unchanged_obj, key
+                            "transaction.unchanged_doc<%s>(%s)",
+                            transaction.unchanged_doc, key
                         )
-                        transaction.unchanged_obj(key)
+                        transaction.unchanged_doc(key)
 
             LOGGER.info("Sync: Committing ...")
             for transaction in self.transactions:

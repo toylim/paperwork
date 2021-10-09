@@ -135,11 +135,11 @@ class WhooshTransaction(sync.BaseTransaction):
         self.modified += 1
         super().upd_doc(doc_id)
 
-    def unchanged_obj(self, doc_id):
+    def unchanged_doc(self, doc_id):
         self.notify_progress(
             ID, _("Examining document %s: unchanged") % (doc_id)
         )
-        super().unchanged_obj(doc_id)
+        super().unchanged_doc(doc_id)
 
     def cancel(self):
         if self.writer is None:
