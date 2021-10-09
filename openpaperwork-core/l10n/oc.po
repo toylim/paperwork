@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-01 22:01+0200\n"
+"POT-Creation-Date: 2021-10-09 12:56+0200\n"
 "PO-Revision-Date: 2020-09-02 17:30+0000\n"
 "Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
 "Language-Team: Occitan <http://translations.openpaper.work/projects/"
@@ -19,49 +19,38 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
 "X-Generator: Weblate 4.1.1\n"
 
-#: openpaperwork-core/src/openpaperwork_core/logs/archives.py:123
-#: openpaperwork-core/src/openpaperwork_core/logs/archives.py:134
-msgid "Log file"
-msgstr "Fichièr d'istoric"
+#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:38
+msgid "Today"
+msgstr "Uèi"
 
-#: openpaperwork-core/src/openpaperwork_core/cmd/util.py:10
-msgid "Y/n"
-msgstr "O/n"
+#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:39
+msgid "Yesterday"
+msgstr "Ièr"
 
-#: openpaperwork-core/src/openpaperwork_core/cmd/util.py:13
-msgid "y/N"
-msgstr "o/N"
+#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:41
+#, python-format
+msgid "%3.1f bytes"
+msgstr "%3.1f octets"
 
-#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:50
-msgid "Manage Paperwork configuration"
-msgstr "Gerir la configuracion de Paperwork"
+#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:42
+#, python-format
+msgid "%3.1f KiB"
+msgstr "%3.1f Kio"
 
-#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:54
-#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:49
-msgid "sub-command"
-msgstr "jos-comanda"
+#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:43
+#, python-format
+msgid "%3.1f MiB"
+msgstr "%3.1f MiO"
 
-#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:58
-msgid "Get a value from Paperwork's configuration"
-msgstr "Obténer una valor a partir de la configuracion de Paperwork"
+#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:44
+#, python-format
+msgid "%3.1f GiB"
+msgstr "%3.1f Gio"
 
-#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:63
-msgid "Set a value in Paperwork's configuration"
-msgstr "Definir una valor dins la configuracion de Paperwork"
-
-#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:66
-msgid "See 'config list_type'"
-msgstr "Veire « config list_type »"
-
-#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:70
-msgid "Show Paperwork's configuration"
-msgstr "Mostrar la configuracion de Paperwork"
-
-#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:75
-msgid "Show value types you can use from command line"
-msgstr ""
-"Mostrar los tipes de valors que podètz utilizar a partir de la linha de "
-"comanda"
+#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:45
+#, python-format
+msgid "%3.1f TiB"
+msgstr "%3.1f Tio"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:52
 msgid "Check that all required dependencies are installed"
@@ -95,6 +84,37 @@ msgstr "Sabi pas cossí installar aquestas dependéncias. Desconsolat."
 #: openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:122
 msgid "Nothing to do."
 msgstr "Res a far."
+
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:58
+msgid "Manage Paperwork configuration"
+msgstr "Gerir la configuracion de Paperwork"
+
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:62
+#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:49
+msgid "sub-command"
+msgstr "jos-comanda"
+
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:66
+msgid "Get a value from Paperwork's configuration"
+msgstr "Obténer una valor a partir de la configuracion de Paperwork"
+
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:71
+msgid "Set a value in Paperwork's configuration"
+msgstr "Definir una valor dins la configuracion de Paperwork"
+
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:74
+msgid "See 'config list_type'"
+msgstr "Veire « config list_type »"
+
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:78
+msgid "Show Paperwork's configuration"
+msgstr "Mostrar la configuracion de Paperwork"
+
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:83
+msgid "Show value types you can use from command line"
+msgstr ""
+"Mostrar los tipes de valors que podètz utilizar a partir de la linha de "
+"comanda"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:45
 #, python-format
@@ -195,39 +215,31 @@ msgstr "Nom modul"
 msgid "Interface"
 msgstr "Interfàcia"
 
+#: openpaperwork-core/src/openpaperwork_core/cmd/util.py:10
+msgid "Y/n"
+msgstr "O/n"
+
+#: openpaperwork-core/src/openpaperwork_core/cmd/util.py:13
+msgid "y/N"
+msgstr "o/N"
+
+#: openpaperwork-core/src/openpaperwork_core/logs/archives.py:134
+#: openpaperwork-core/src/openpaperwork_core/logs/archives.py:145
+msgid "Log file"
+msgstr "Fichièr d'istoric"
+
 #: openpaperwork-core/src/openpaperwork_core/config/backend/configparser.py:333
 msgid "App. config."
 msgstr "Config. de l'ap."
 
-#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:31
-msgid "Today"
-msgstr "Uèi"
+#: openpaperwork-core/src/openpaperwork_core/beacon/stats.py:126
+msgid "App. & system info."
+msgstr ""
 
-#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:32
-msgid "Yesterday"
-msgstr "Ièr"
+#: openpaperwork-core/src/openpaperwork_core/beacon/stats.py:127
+msgid "Select to generate"
+msgstr ""
 
-#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:34
-#, python-format
-msgid "%3.1f bytes"
-msgstr "%3.1f octets"
-
-#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:35
-#, python-format
-msgid "%3.1f KiB"
-msgstr "%3.1f Kio"
-
-#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:36
-#, python-format
-msgid "%3.1f MiB"
-msgstr "%3.1f MiO"
-
-#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:37
-#, python-format
-msgid "%3.1f GiB"
-msgstr "%3.1f Gio"
-
-#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:38
-#, python-format
-msgid "%3.1f TiB"
-msgstr "%3.1f Tio"
+#: openpaperwork-core/src/openpaperwork_core/beacon/stats.py:149
+msgid "Collecting statistics ..."
+msgstr ""
