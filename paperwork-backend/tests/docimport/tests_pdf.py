@@ -29,7 +29,7 @@ class TestPdfImport(unittest.TestCase):
             def add_doc(s, doc_id):
                 self.add_docs.append(doc_id)
 
-            def unchanged_obj(s, doc_id):
+            def unchanged_doc(s, doc_id):
                 pass
 
             def commit(s):
@@ -204,7 +204,7 @@ class TestRecursivePdfImport(unittest.TestCase):
             def add_doc(s, doc_id):
                 self.add_docs.append(doc_id)
 
-            def unchanged_obj(s, doc_id):
+            def unchanged_doc(s, doc_id):
                 pass
 
             def commit(s):
@@ -370,7 +370,7 @@ class TestPasswordPdfImport(unittest.TestCase):
             def add_doc(s, doc_id):
                 self.add_docs.append(doc_id)
 
-            def unchanged_obj(s, doc_id):
+            def unchanged_doc(s, doc_id):
                 pass
 
             def commit(s):

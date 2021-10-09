@@ -30,7 +30,7 @@ class TestScan2Doc(unittest.TestCase):
             def del_doc(s, doc_id):
                 pass
 
-            def unchanged_obj(s, doc_id):
+            def unchanged_doc(s, doc_id):
                 pass
 
             def commit(s):

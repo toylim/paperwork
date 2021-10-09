@@ -33,45 +33,48 @@ class OcrTransaction(sync.BaseTransaction):
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.cancel()
 
-    def _run_ocr_on_page(self, doc_id, doc_url, page_idx, wordless_only=False):
+    def _run_ocr_on_page(
+            self, doc_id, doc_url, page_idx, page_nb, total_pages,
+            wordless_only=False):
         if wordless_only:
             has_text = self.core.call_success(
                 "page_has_text_by_url", doc_url, page_idx
             )
             if has_text:
                 # there is already some text on this page
-                LOGGER.info(
-                    "Page %s p%d has already some text. No OCR run",
-                    doc_id, page_idx
-                )
                 self.notify_progress(
                     ID,
                     _(
-                        "Document {doc_id} p{page_idx}"
-                        " has already some text. No OCR run"
-                    ).format(doc_id=doc_id, page_idx=(page_idx + 1))
+                        "Document {doc_id} p{page_idx} has already some text."
+                        " No OCR run"
+                    ).format(doc_id=doc_id, page_idx=(page_idx + 1)),
+                    page_nb=page_nb, total_pages=total_pages
                 )
                 return
 
         self.notify_progress(
             ID,
-            _("Running OCR on document {doc_id} page {page_idx}").format(
+            _("Running OCR on document {doc_id} p{page_idx}").format(
                 doc_id=doc_id, page_idx=(page_idx + 1)
-            )
+            ),
+            page_nb=page_nb, total_pages=total_pages
         )
         self.plugin.ocr_page_by_url(doc_url, page_idx)
 
     def _run_ocr_on_modified_pages(self, doc_id, wordless_only=False):
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
 
-        modified_pages = self.page_tracker.find_changes(doc_id, doc_url)
+        modified_pages = list(self.page_tracker.find_changes(doc_id, doc_url))
 
-        for (change, page_idx) in modified_pages:
+        for (page_nb, (change, page_idx)) in enumerate(modified_pages):
             # Run OCR on modified pages, but only if we are not synchronizing
             # with the work directory (--> if the user just added or modified
             # a document)
             if not self.sync and (change == 'new' or change == 'upd'):
-                self._run_ocr_on_page(doc_id, doc_url, page_idx, wordless_only)
+                self._run_ocr_on_page(
+                    doc_id, doc_url, page_idx, page_nb, len(modified_pages),
+                    wordless_only
+                )
             self.page_tracker.ack_page(doc_id, doc_url, page_idx)
 
     def add_doc(self, doc_id):

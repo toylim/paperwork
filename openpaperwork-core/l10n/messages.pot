@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-01 22:01+0200\n"
+"POT-Creation-Date: 2021-10-09 12:56+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,46 +17,37 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: openpaperwork-core/src/openpaperwork_core/logs/archives.py:123
-#: openpaperwork-core/src/openpaperwork_core/logs/archives.py:134
-msgid "Log file"
+#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:38
+msgid "Today"
 msgstr ""
 
-#: openpaperwork-core/src/openpaperwork_core/cmd/util.py:10
-msgid "Y/n"
+#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:39
+msgid "Yesterday"
 msgstr ""
 
-#: openpaperwork-core/src/openpaperwork_core/cmd/util.py:13
-msgid "y/N"
+#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:41
+#, python-format
+msgid "%3.1f bytes"
 msgstr ""
 
-#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:50
-msgid "Manage Paperwork configuration"
+#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:42
+#, python-format
+msgid "%3.1f KiB"
 msgstr ""
 
-#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:54
-#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:49
-msgid "sub-command"
+#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:43
+#, python-format
+msgid "%3.1f MiB"
 msgstr ""
 
-#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:58
-msgid "Get a value from Paperwork's configuration"
+#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:44
+#, python-format
+msgid "%3.1f GiB"
 msgstr ""
 
-#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:63
-msgid "Set a value in Paperwork's configuration"
-msgstr ""
-
-#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:66
-msgid "See 'config list_type'"
-msgstr ""
-
-#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:70
-msgid "Show Paperwork's configuration"
-msgstr ""
-
-#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:75
-msgid "Show value types you can use from command line"
+#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:45
+#, python-format
+msgid "%3.1f TiB"
 msgstr ""
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:52
@@ -90,6 +81,35 @@ msgstr ""
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:122
 msgid "Nothing to do."
+msgstr ""
+
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:58
+msgid "Manage Paperwork configuration"
+msgstr ""
+
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:62
+#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:49
+msgid "sub-command"
+msgstr ""
+
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:66
+msgid "Get a value from Paperwork's configuration"
+msgstr ""
+
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:71
+msgid "Set a value in Paperwork's configuration"
+msgstr ""
+
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:74
+msgid "See 'config list_type'"
+msgstr ""
+
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:78
+msgid "Show Paperwork's configuration"
+msgstr ""
+
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:83
+msgid "Show value types you can use from command line"
 msgstr ""
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:45
@@ -187,39 +207,31 @@ msgstr ""
 msgid "Interface"
 msgstr ""
 
+#: openpaperwork-core/src/openpaperwork_core/cmd/util.py:10
+msgid "Y/n"
+msgstr ""
+
+#: openpaperwork-core/src/openpaperwork_core/cmd/util.py:13
+msgid "y/N"
+msgstr ""
+
+#: openpaperwork-core/src/openpaperwork_core/logs/archives.py:134
+#: openpaperwork-core/src/openpaperwork_core/logs/archives.py:145
+msgid "Log file"
+msgstr ""
+
 #: openpaperwork-core/src/openpaperwork_core/config/backend/configparser.py:333
 msgid "App. config."
 msgstr ""
 
-#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:31
-msgid "Today"
+#: openpaperwork-core/src/openpaperwork_core/beacon/stats.py:126
+msgid "App. & system info."
 msgstr ""
 
-#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:32
-msgid "Yesterday"
+#: openpaperwork-core/src/openpaperwork_core/beacon/stats.py:127
+msgid "Select to generate"
 msgstr ""
 
-#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:34
-#, python-format
-msgid "%3.1f bytes"
-msgstr ""
-
-#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:35
-#, python-format
-msgid "%3.1f KiB"
-msgstr ""
-
-#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:36
-#, python-format
-msgid "%3.1f MiB"
-msgstr ""
-
-#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:37
-#, python-format
-msgid "%3.1f GiB"
-msgstr ""
-
-#: openpaperwork-core/src/openpaperwork_core/i18n/python.py:38
-#, python-format
-msgid "%3.1f TiB"
+#: openpaperwork-core/src/openpaperwork_core/beacon/stats.py:149
+msgid "Collecting statistics ..."
 msgstr ""

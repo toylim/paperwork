@@ -36,7 +36,8 @@ class PillowfightTransaction(sync.BaseTransaction):
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.cancel()
 
-    def _guess_page_borders(self, doc_id, doc_url, page_idx):
+    def _guess_page_borders(
+            self, doc_id, doc_url, page_idx, page_nb, total_pages):
         paper_size = self.core.call_success(
             "page_get_paper_size_by_url", doc_url, page_idx
         )
@@ -45,32 +46,37 @@ class PillowfightTransaction(sync.BaseTransaction):
             # are usually already well-cropped. Also the page borders won't
             # appear in the document, so libpillowfight algorithm can only
             # fail.
-            LOGGER.info(
-                "Paper size for new page %d (document %s) is known."
-                " --> Assuming we don't need to crop automatically the page",
-                page_idx, doc_id
+            self.notify_progress(
+                ID,
+                _("Document {doc_id} p{page_idx} already cropped").format(
+                    doc_id=doc_id, page_idx=(page_idx + 1)
+                ),
+                page_nb=page_nb, total_pages=total_pages
             )
             return
 
         self.notify_progress(
             ID, _(
                 "Guessing page borders of"
-                " document {doc_id} page {page_idx}"
-            ).format(doc_id=doc_id, page_idx=(page_idx + 1))
+                " document {doc_id} p{page_idx}"
+            ).format(doc_id=doc_id, page_idx=(page_idx + 1)),
+            page_nb=page_nb, total_pages=total_pages
         )
         self.plugin.crop_page_borders_by_url(doc_url, page_idx)
 
     def _guess_new_pages_borders(self, doc_id):
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
 
-        modified_pages = self.page_tracker.find_changes(doc_id, doc_url)
+        modified_pages = list(self.page_tracker.find_changes(doc_id, doc_url))
 
-        for (change, page_idx) in modified_pages:
+        for (page_nb, (change, page_idx)) in enumerate(modified_pages):
             # Guess page borders on new pages, but only if we are
             # not synchronizing with the work directory
             # (when syncing we don't modify the documents, ever)
             if not self.sync and change == 'new':
-                self._guess_page_borders(doc_id, doc_url, page_idx)
+                self._guess_page_borders(
+                    doc_id, doc_url, page_idx, page_nb, len(modified_pages)
+                )
             self.page_tracker.ack_page(doc_id, doc_url, page_idx)
 
     def add_doc(self, doc_id):

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-01 22:01+0200\n"
+"POT-Creation-Date: 2021-10-09 12:56+0200\n"
 "PO-Revision-Date: 2020-05-03 15:37+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -66,14 +66,6 @@ msgstr ""
 msgid "Now"
 msgstr ""
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/widgets/charts/lines.py:417
-msgid "Total: {}"
-msgstr ""
-
-#: openpaperwork-gtk/src/openpaperwork_gtk/widgets/charts/lines.py:427
-msgid "Total"
-msgstr ""
-
 #: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:258
 #: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:266
 msgid "App. screenshots"
@@ -83,8 +75,48 @@ msgstr ""
 msgid "Select to generate"
 msgstr ""
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_zip.glade.h:1
-msgid "Please select where to save the ZIP file"
+#: openpaperwork-gtk/src/openpaperwork_gtk/widgets/charts/lines.py:417
+msgid "Total: {}"
+msgstr ""
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/widgets/charts/lines.py:427
+msgid "Total"
+msgstr ""
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:1
+msgid "Unexpected Error"
+msgstr ""
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:2
+msgid "Report"
+msgstr ""
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:3
+msgid "An unexpected error occured."
+msgstr ""
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:3
+msgid "Date"
+msgstr ""
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:5
+msgid "File"
+msgstr ""
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:6
+msgid "Size"
+msgstr ""
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:7
+msgid "Open file"
+msgstr ""
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:8
+msgid "For your privacy, attachments may be partially censored when selected"
+msgstr ""
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:9
+msgid "Attachments to include in the bug report"
 msgstr ""
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:1
@@ -113,40 +145,8 @@ msgid ""
 "\"mailto:jflesch@openpaper.work\">jflesch@openpaper.work</a>."
 msgstr ""
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:3
-msgid "Date"
-msgstr ""
-
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:5
-msgid "File"
-msgstr ""
-
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:6
-msgid "Size"
-msgstr ""
-
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:7
-msgid "Open file"
-msgstr ""
-
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:8
-msgid "For your privacy, attachments may be partially censored when selected"
-msgstr ""
-
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:9
-msgid "Attachments to include in the bug report"
-msgstr ""
-
-#: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:1
-msgid "Unexpected Error"
-msgstr ""
-
-#: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:2
-msgid "Report"
-msgstr ""
-
-#: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:3
-msgid "An unexpected error occured."
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_zip.glade.h:1
+msgid "Please select where to save the ZIP file"
 msgstr ""
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/widgets/progress/progress_button.glade.h:1

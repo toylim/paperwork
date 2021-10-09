@@ -33,7 +33,7 @@ class TestImgImport(unittest.TestCase):
             def upd_doc(s, doc_id):
                 self.upd_docs.append(doc_id)
 
-            def unchanged_obj(s, doc_id):
+            def unchanged_doc(s, doc_id):
                 pass
 
             def commit(s):
