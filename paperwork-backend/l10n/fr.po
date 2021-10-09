@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-10-09 12:59+0200\n"
-"PO-Revision-Date: 2020-10-13 19:49+0000\n"
-"Last-Translator: LAZIC Anna <0.0.0.0.0.ffff.255.255.255.255@gmail.com>\n"
+"PO-Revision-Date: 2021-10-10 11:38+0000\n"
+"Last-Translator: Jerome Flesch <jflesch@openpaper.work>\n"
 "Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-backend/fr/>\n"
 "Language: fr\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.1.1\n"
+"X-Generator: Weblate 4.4\n"
 
 #: paperwork-backend/src/paperwork_backend/i18n/scanner.py:38
 msgid "centrally aligned"
@@ -71,34 +71,36 @@ msgstr "Rotation dans le sens anti-horaire"
 #: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:231
 msgid "Label guesser: Garbage-collecting unused document features ..."
 msgstr ""
+"Devineur de labels : Suppression des caractéristiques de documents qui ne "
+"sont plus utilisées ..."
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:254
 msgid "Label guesser: Garbage-collecting unused words ..."
-msgstr ""
+msgstr "Devineur de labels : Suppression des mots non-utilisés ..."
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:566
 #, python-format
 msgid "Label guesser: added document %s"
-msgstr ""
+msgstr "Devineur de labels : document %s ajouté"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:576
 #, python-format
 msgid "Label guesser: updated document %s"
-msgstr ""
+msgstr "Devineur de labels : document %s mis à jour"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:591
 #, python-format
 msgid "Label guesser: deleted document %s"
-msgstr ""
+msgstr "Devineur de labels : document %s effacé"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:676
 msgid "Commiting changes for label guessing ..."
-msgstr ""
+msgstr "Enregistrement des changements pour le devinage de labels ..."
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:863
 #: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:919
 msgid "Label guessing: Training ..."
-msgstr ""
+msgstr "Devineur de labels : entrainement ..."
 
 #: paperwork-backend/src/paperwork_backend/guesswork/orientation/pyocr.py:43
 #, python-brace-format
@@ -106,21 +108,23 @@ msgid ""
 "Document {doc_id} p{page_idx} has already some text. Not guessing page "
 "orientation."
 msgstr ""
+"La p{page_idx} du document {doc_id} a déjà du texte. Pas de tentative de "
+"deviner l'orientation de la page."
 
 #: paperwork-backend/src/paperwork_backend/guesswork/orientation/pyocr.py:53
 #, python-brace-format
 msgid "Guessing orientation of document {doc_id} p{page_idx}"
-msgstr ""
+msgstr "Entrain de deviner l'orientation de la p{page_idx} du document {doc_id}"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/color/libpillowfight.py:48
 #, python-brace-format
 msgid "Document {doc_id} p{page_idx} already correctly colorized"
-msgstr ""
+msgstr "La p{page_idx} du document {doc_id} est déjà correctement colorisée"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/color/libpillowfight.py:64
 #, python-brace-format
 msgid "Adjusting colors of document {doc_id} p{page_idx}"
-msgstr ""
+msgstr "Ajustement des couleurs de la p{page_idx} du document {doc_id}"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/ocr/pyocr.py:48
 #, python-brace-format
