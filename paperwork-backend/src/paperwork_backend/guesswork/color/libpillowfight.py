@@ -42,6 +42,16 @@ class PillowfightTransaction(sync.BaseTransaction):
         )
         if paper_size is not None:
             # probably a PDF --> no need to adjust colors
+            self.notify_progress(
+                ID,
+                _(
+                    "Document {doc_id} p{page_idx} already correctly"
+                    " colorized"
+                ).format(
+                    doc_id=doc_id, page_idx=(page_idx + 1)
+                ),
+                page_nb=page_nb, total_pages=total_pages
+            )
             LOGGER.info(
                 "Paper size for new page %d (document %s) is known."
                 " --> Assuming we don't need to adjust colors",
@@ -51,7 +61,7 @@ class PillowfightTransaction(sync.BaseTransaction):
 
         self.notify_progress(
             ID,
-            _("Adjusting colors of document {doc_id} page {page_idx}").format(
+            _("Adjusting colors of document {doc_id} p{page_idx}").format(
                 doc_id=doc_id, page_idx=(page_idx + 1)
             ),
             page_nb=page_nb, total_pages=total_pages

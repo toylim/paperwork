@@ -46,17 +46,19 @@ class PillowfightTransaction(sync.BaseTransaction):
             # are usually already well-cropped. Also the page borders won't
             # appear in the document, so libpillowfight algorithm can only
             # fail.
-            LOGGER.info(
-                "Paper size for new page %d (document %s) is known."
-                " --> Assuming we don't need to crop automatically the page",
-                page_idx, doc_id
+            self.notify_progress(
+                ID,
+                _("Document {doc_id} p{page_idx} already cropped").format(
+                    doc_id=doc_id, page_idx=(page_idx + 1)
+                ),
+                page_nb=page_nb, total_pages=total_pages
             )
             return
 
         self.notify_progress(
             ID, _(
                 "Guessing page borders of"
-                " document {doc_id} page {page_idx}"
+                " document {doc_id} p{page_idx}"
             ).format(doc_id=doc_id, page_idx=(page_idx + 1)),
             page_nb=page_nb, total_pages=total_pages
         )

@@ -42,15 +42,11 @@ class OcrTransaction(sync.BaseTransaction):
             )
             if has_text:
                 # there is already some text on this page
-                LOGGER.info(
-                    "Page %s p%d has already some text. No OCR run",
-                    doc_id, page_idx
-                )
                 self.notify_progress(
                     ID,
                     _(
-                        "Document {doc_id} p{page_idx}"
-                        " has already some text. No OCR run"
+                        "Document {doc_id} p{page_idx} has already some text."
+                        " No OCR run"
                     ).format(doc_id=doc_id, page_idx=(page_idx + 1)),
                     page_nb=page_nb, total_pages=total_pages
                 )
@@ -58,7 +54,7 @@ class OcrTransaction(sync.BaseTransaction):
 
         self.notify_progress(
             ID,
-            _("Running OCR on document {doc_id} page {page_idx}").format(
+            _("Running OCR on document {doc_id} p{page_idx}").format(
                 doc_id=doc_id, page_idx=(page_idx + 1)
             ),
             page_nb=page_nb, total_pages=total_pages
