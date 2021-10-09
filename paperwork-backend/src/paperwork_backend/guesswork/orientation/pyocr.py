@@ -50,7 +50,7 @@ class OrientationTransaction(sync.BaseTransaction):
         self.notify_progress(
             ID,
             _(
-                "Guessing orientation on"
+                "Guessing orientation of"
                 " document {doc_id} p{page_idx}"
             ).format(doc_id=doc_id, page_idx=(page_idx + 1)),
             page_nb=page_nb, total_pages=total_pages
