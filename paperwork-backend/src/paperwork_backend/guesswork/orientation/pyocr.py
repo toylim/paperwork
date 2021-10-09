@@ -32,22 +32,24 @@ class OrientationTransaction(sync.BaseTransaction):
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.cancel()
 
-    def _guess_page_orientation(self, doc_id, doc_url, page_idx):
+    def _guess_page_orientation(
+            self, doc_id, doc_url, page_idx, page_nb, total_pages):
         self.notify_progress(
             ID,
             _(
                 "Guessing orientation on"
                 " document {doc_id} page {page_idx}"
-            ).format(doc_id=doc_id, page_idx=(page_idx + 1))
+            ).format(doc_id=doc_id, page_idx=(page_idx + 1)),
+            page_nb=page_nb, total_pages=total_pages
         )
         self.plugin.guess_page_orientation_by_url(doc_url, page_idx)
 
     def _guess_new_page_orientations(self, doc_id):
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
 
-        modified_pages = self.page_tracker.find_changes(doc_id, doc_url)
+        modified_pages = list(self.page_tracker.find_changes(doc_id, doc_url))
 
-        for (change, page_idx) in modified_pages:
+        for (page_nb, (change, page_idx)) in enumerate(modified_pages):
             # Guess page orientation on new pages, but only if we are
             # not synchronizing with the work directory
             if not self.sync and change == 'new':
@@ -59,7 +61,9 @@ class OrientationTransaction(sync.BaseTransaction):
                         doc_id, page_idx
                     )
                 else:
-                    self._guess_page_orientation(doc_id, doc_url, page_idx)
+                    self._guess_page_orientation(
+                        doc_id, doc_url, page_idx, page_nb, len(modified_pages)
+                    )
             self.page_tracker.ack_page(doc_id, doc_url, page_idx)
 
     def add_doc(self, doc_id):

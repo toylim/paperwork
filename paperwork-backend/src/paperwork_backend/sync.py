@@ -14,14 +14,20 @@ class BaseTransaction(object):
         self.core = core
         self.processed = 0
         self.total = total_expected
+        self._current_doc = None
+        self._current_doc_pages = -1
 
-    def notify_progress(self, upd_type, description):
+    def notify_progress(
+            self, upd_type, description, page_nb=-1, total_pages=-1):
         if self.total <= self.processed:
             self.total = self.processed + 1
         if self.total <= 0:
             progression = 0
         else:
             progression = self.processed / self.total
+
+        if page_nb >= 0 and total_pages > 0:
+            progression += (page_nb / total_pages / self.total)
 
         self.core.call_one(
             "mainloop_schedule", self.core.call_all,
@@ -35,22 +41,29 @@ class BaseTransaction(object):
         )
 
     def add_doc(self, doc_id):
+        self._current_doc = doc_id
+        self._current_doc_pages = -1
         self.processed += 1
 
     def upd_doc(self, doc_id):
+        self._current_doc = doc_id
+        self._current_doc_pages = -1
         self.processed += 1
 
     def del_doc(self, doc_id):
+        self._current_doc = doc_id
+        self._current_doc_pages = -1
         self.processed += 1
 
     def unchanged_obj(self, doc_id):
         self.processed += 1
 
     def cancel(self):
-        pass
+        self._current_doc = None
+        self._current_doc_pages = -1
 
     def commit(self):
-        pass
+        self._current_doc = None
 
 
 def diff_lists(list_old, list_new):
