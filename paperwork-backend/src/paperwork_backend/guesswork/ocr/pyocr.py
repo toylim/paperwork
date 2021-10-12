@@ -64,8 +64,8 @@ class OcrTransaction(sync.BaseTransaction):
     def _run_ocr_on_modified_pages(self, doc_id, wordless_only=False):
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
 
+        need_end_notification = False
         modified_pages = list(self.page_tracker.find_changes(doc_id, doc_url))
-
         for (page_nb, (change, page_idx)) in enumerate(modified_pages):
             # Run OCR on modified pages, but only if we are not synchronizing
             # with the work directory (--> if the user just added or modified
@@ -75,7 +75,14 @@ class OcrTransaction(sync.BaseTransaction):
                     doc_id, doc_url, page_idx, page_nb, len(modified_pages),
                     wordless_only
                 )
+                need_end_notification = True
             self.page_tracker.ack_page(doc_id, doc_url, page_idx)
+
+        if need_end_notification:
+            self.notify_progress(
+                ID, _("Running OCR"),
+                page_nb=len(modified_pages), total_pages=len(modified_pages)
+            )
 
     def add_doc(self, doc_id):
         self._run_ocr_on_modified_pages(doc_id, wordless_only=True)
