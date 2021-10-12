@@ -71,8 +71,8 @@ class PillowfightTransaction(sync.BaseTransaction):
     def _adjust_new_pages_colors(self, doc_id):
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
 
+        need_end_notification = False
         modified_pages = list(self.page_tracker.find_changes(doc_id, doc_url))
-
         for (page_nb, (change, page_idx)) in enumerate(modified_pages):
             # Adjust page colors on new pages, but only if we are
             # not synchronizing with the work directory
@@ -80,7 +80,14 @@ class PillowfightTransaction(sync.BaseTransaction):
                 self._adjust_page_colors(
                     doc_id, doc_url, page_idx, page_nb, len(modified_pages)
                 )
+                need_end_notification = True
             self.page_tracker.ack_page(doc_id, doc_url, page_idx)
+
+        if need_end_notification:
+            self.notify_progress(
+                ID, _("Adjusting colors of document"),
+                page_nb=len(modified_pages), total_pages=len(modified_pages)
+            )
 
     def add_doc(self, doc_id):
         self._adjust_new_pages_colors(doc_id)

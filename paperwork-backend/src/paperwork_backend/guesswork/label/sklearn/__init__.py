@@ -528,6 +528,10 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         self.plugin.classifiers_cond.acquire()
         self.lock_acquired = True
 
+        if not self.plugin.classifiers_loaded and self.guess_labels:
+            # classifiers haven't been loaded at all yet. Now
+            # looks like a good time for it (end of initial sync)
+            self.plugin.reload_label_guessers()
         if self.plugin.classifiers is None and self.guess_labels:
             # Before starting the transaction, we wait for the classifiers
             # to be loaded, because we may need them
@@ -638,7 +642,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
                 self.cursor = None
             self.notify_done(ID)
 
-            if self.plugin.classifiers is None:
+            if not self.plugin.classifiers_loaded:
                 # classifiers haven't been loaded at all yet. Now
                 # looks like a good time for it (end of initial sync)
                 self.plugin.reload_label_guessers()
@@ -711,6 +715,10 @@ class Plugin(openpaperwork_core.PluginBase):
         self.word_reductor = None
         self.classifiers = None
         self.vectorizer = None
+
+        # indicates whether the classifiers have been / are
+        # been loaded
+        self.classifiers_loaded = False
 
         # Do NOT use an RLock() here: The transaction locks this mutex
         # until commit() (or cancel()) is called. However, add_doc(),
@@ -822,6 +830,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def reload_label_guessers(self):
         self.classifiers = None
+        self.classifiers_loaded = True
         promise = openpaperwork_core.promise.ThreadedPromise(
             self.core, self._reload_label_guessers
         )

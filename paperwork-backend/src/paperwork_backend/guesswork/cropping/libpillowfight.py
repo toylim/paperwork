@@ -67,8 +67,8 @@ class PillowfightTransaction(sync.BaseTransaction):
     def _guess_new_pages_borders(self, doc_id):
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
 
+        need_end_notification = False
         modified_pages = list(self.page_tracker.find_changes(doc_id, doc_url))
-
         for (page_nb, (change, page_idx)) in enumerate(modified_pages):
             # Guess page borders on new pages, but only if we are
             # not synchronizing with the work directory
@@ -77,7 +77,14 @@ class PillowfightTransaction(sync.BaseTransaction):
                 self._guess_page_borders(
                     doc_id, doc_url, page_idx, page_nb, len(modified_pages)
                 )
+                need_end_notification = True
             self.page_tracker.ack_page(doc_id, doc_url, page_idx)
+
+        if need_end_notification:
+            self.notify_progress(
+                ID, _("Guessing page borders"),
+                page_nb=len(modified_pages), total_pages=len(modified_pages)
+            )
 
     def add_doc(self, doc_id):
         self._guess_new_pages_borders(doc_id)

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-09 12:59+0200\n"
+"POT-Creation-Date: 2021-10-12 14:52+0200\n"
 "PO-Revision-Date: 2020-09-02 17:30+0000\n"
 "Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
 "Language-Team: Occitan <http://translations.openpaper.work/projects/"
@@ -75,27 +75,27 @@ msgstr ""
 msgid "Label guesser: Garbage-collecting unused words ..."
 msgstr ""
 
-#: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:566
+#: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:570
 #, python-format
 msgid "Label guesser: added document %s"
 msgstr ""
 
-#: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:576
+#: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:580
 #, python-format
 msgid "Label guesser: updated document %s"
 msgstr ""
 
-#: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:591
+#: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:595
 #, python-format
 msgid "Label guesser: deleted document %s"
 msgstr ""
 
-#: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:676
+#: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:680
 msgid "Commiting changes for label guessing ..."
 msgstr ""
 
-#: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:863
-#: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:919
+#: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:872
+#: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:928
 msgid "Label guessing: Training ..."
 msgstr ""
 
@@ -111,6 +111,10 @@ msgstr ""
 msgid "Guessing orientation of document {doc_id} p{page_idx}"
 msgstr ""
 
+#: paperwork-backend/src/paperwork_backend/guesswork/orientation/pyocr.py:77
+msgid "Guessing page orientation"
+msgstr ""
+
 #: paperwork-backend/src/paperwork_backend/guesswork/color/libpillowfight.py:48
 #, python-brace-format
 msgid "Document {doc_id} p{page_idx} already correctly colorized"
@@ -119,6 +123,10 @@ msgstr ""
 #: paperwork-backend/src/paperwork_backend/guesswork/color/libpillowfight.py:64
 #, python-brace-format
 msgid "Adjusting colors of document {doc_id} p{page_idx}"
+msgstr ""
+
+#: paperwork-backend/src/paperwork_backend/guesswork/color/libpillowfight.py:88
+msgid "Adjusting colors of document"
 msgstr ""
 
 #: paperwork-backend/src/paperwork_backend/guesswork/ocr/pyocr.py:48
@@ -131,6 +139,10 @@ msgstr ""
 #: paperwork-backend/src/paperwork_backend/guesswork/ocr/pyocr.py:57
 #, python-brace-format
 msgid "Running OCR on document {doc_id} p{page_idx}"
+msgstr ""
+
+#: paperwork-backend/src/paperwork_backend/guesswork/ocr/pyocr.py:83
+msgid "Running OCR"
 msgstr ""
 
 #: paperwork-backend/src/paperwork_backend/guesswork/cropping/calibration.py:45
@@ -147,6 +159,10 @@ msgstr ""
 #: paperwork-backend/src/paperwork_backend/guesswork/cropping/libpillowfight.py:60
 #, python-brace-format
 msgid "Guessing page borders of document {doc_id} p{page_idx}"
+msgstr ""
+
+#: paperwork-backend/src/paperwork_backend/guesswork/cropping/libpillowfight.py:85
+msgid "Guessing page borders"
 msgstr ""
 
 #: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:233
