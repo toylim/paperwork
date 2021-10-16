@@ -15,6 +15,8 @@
         "rm /app/etc/sane.d/dll.conf",
         "rm /app/etc/sane.d/net.conf",
         "echo 127.0.0.1 > /app/etc/sane.d/net.conf",
-        "echo net > /app/etc/sane.d/dll.conf"
+        "echo net > /app/etc/sane.d/dll.conf",
+        "echo escl > /app/etc/sane.d/dll.conf",
+        "echo airscan > /app/etc/sane.d/dll.conf"
     ]
 }
