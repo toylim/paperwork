@@ -187,6 +187,7 @@ will never delete your documents.
 
 ```
 flatpak --user remove work.openpaper.Paperwork
+flatpak --user remote-delete paperwork-origin
 flatpak --user install https://builder.openpaper.work/paperwork_master.flatpakref
 ```
 
