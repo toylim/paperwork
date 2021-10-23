@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-10-09 12:56+0200\n"
-"PO-Revision-Date: 2020-09-02 17:30+0000\n"
+"PO-Revision-Date: 2021-10-23 15:04+0000\n"
 "Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
 "Language-Team: Occitan <http://translations.openpaper.work/projects/"
 "paperwork/openpaperwork-core/oc/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.1.1\n"
+"X-Generator: Weblate 4.4\n"
 
 #: openpaperwork-core/src/openpaperwork_core/i18n/python.py:38
 msgid "Today"
@@ -234,12 +234,12 @@ msgstr "Config. de l'ap."
 
 #: openpaperwork-core/src/openpaperwork_core/beacon/stats.py:126
 msgid "App. & system info."
-msgstr ""
+msgstr "Aplicacion e info sustèma"
 
 #: openpaperwork-core/src/openpaperwork_core/beacon/stats.py:127
 msgid "Select to generate"
-msgstr ""
+msgstr "Seleccionar per generar"
 
 #: openpaperwork-core/src/openpaperwork_core/beacon/stats.py:149
 msgid "Collecting statistics ..."
-msgstr ""
+msgstr "Reculhida d’estatisticas..."
