@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-10-09 12:56+0200\n"
-"PO-Revision-Date: 2020-10-10 20:04+0000\n"
-"Last-Translator: LAZIC Anna <0.0.0.0.0.ffff.255.255.255.255@gmail.com>\n"
+"PO-Revision-Date: 2021-10-25 05:49+0000\n"
+"Last-Translator: Andreas Forster <aforster2311@gmail.com>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "openpaperwork-core/de/>\n"
 "Language: de\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.1.1\n"
+"X-Generator: Weblate 4.4\n"
 
 #: openpaperwork-core/src/openpaperwork_core/i18n/python.py:38
 msgid "Today"
@@ -235,12 +235,12 @@ msgstr "App. Konfiguration."
 
 #: openpaperwork-core/src/openpaperwork_core/beacon/stats.py:126
 msgid "App. & system info."
-msgstr ""
+msgstr "App. & System info."
 
 #: openpaperwork-core/src/openpaperwork_core/beacon/stats.py:127
 msgid "Select to generate"
-msgstr ""
+msgstr "Wähle zum Erzeugen"
 
 #: openpaperwork-core/src/openpaperwork_core/beacon/stats.py:149
 msgid "Collecting statistics ..."
-msgstr ""
+msgstr "Sammle Statistiken ..."
