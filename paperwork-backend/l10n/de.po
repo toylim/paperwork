@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-10-12 14:52+0200\n"
-"PO-Revision-Date: 2020-10-10 21:04+0000\n"
-"Last-Translator: Jerome Flesch <jflesch@openpaper.work>\n"
+"PO-Revision-Date: 2021-10-24 07:40+0000\n"
+"Last-Translator: Andreas Forster <aforster2311@gmail.com>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-backend/de/>\n"
 "Language: de\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.1.1\n"
+"X-Generator: Weblate 4.4\n"
 
 #: paperwork-backend/src/paperwork_backend/i18n/scanner.py:38
 msgid "centrally aligned"
@@ -69,35 +69,35 @@ msgstr "Drehen gegen Uhrzeigersinn"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:231
 msgid "Label guesser: Garbage-collecting unused document features ..."
-msgstr ""
+msgstr "Label guesser: Garbage-collecting ungenutzer Dokumenten-Features ..."
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:254
 msgid "Label guesser: Garbage-collecting unused words ..."
-msgstr ""
+msgstr "Label guesser: Garbage-collecting ungenutzter Wörter ..."
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:570
 #, python-format
 msgid "Label guesser: added document %s"
-msgstr ""
+msgstr "Label guesser: Document %s hinzugefügt"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:580
 #, python-format
 msgid "Label guesser: updated document %s"
-msgstr ""
+msgstr "Label guesser: Document %s aktualisiert"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:595
 #, python-format
 msgid "Label guesser: deleted document %s"
-msgstr ""
+msgstr "Label guesser: Document %s gelöscht"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:680
 msgid "Commiting changes for label guessing ..."
-msgstr ""
+msgstr "Speichere Änderungen für label guessing ..."
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:872
 #: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:928
 msgid "Label guessing: Training ..."
-msgstr ""
+msgstr "Label guessing: Training ..."
 
 #: paperwork-backend/src/paperwork_backend/guesswork/orientation/pyocr.py:43
 #, python-brace-format
@@ -105,29 +105,31 @@ msgid ""
 "Document {doc_id} p{page_idx} has already some text. Not guessing page "
 "orientation."
 msgstr ""
+"Dokument {doc_id} S{page_idx} hat bereits Text. Überspringe Ausrichtungs-"
+"Bestimmung."
 
 #: paperwork-backend/src/paperwork_backend/guesswork/orientation/pyocr.py:53
 #, python-brace-format
 msgid "Guessing orientation of document {doc_id} p{page_idx}"
-msgstr ""
+msgstr "Schätze Textrichtung von Dokument {doc_id} Seite {page_idx}"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/orientation/pyocr.py:77
 msgid "Guessing page orientation"
-msgstr ""
+msgstr "Schätze Textrichtung"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/color/libpillowfight.py:48
 #, python-brace-format
 msgid "Document {doc_id} p{page_idx} already correctly colorized"
-msgstr ""
+msgstr "Dokument {doc_id} S{page_idx} wurde bereits farbkorrigiert"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/color/libpillowfight.py:64
 #, python-brace-format
 msgid "Adjusting colors of document {doc_id} p{page_idx}"
-msgstr ""
+msgstr "Passe die Farben auf Dokument {doc_id} Seite {page_idx} an"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/color/libpillowfight.py:88
 msgid "Adjusting colors of document"
-msgstr ""
+msgstr "Passe die Farben des Dokuments an"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/ocr/pyocr.py:48
 #, python-brace-format
@@ -138,31 +140,33 @@ msgstr ""
 #: paperwork-backend/src/paperwork_backend/guesswork/ocr/pyocr.py:57
 #, python-brace-format
 msgid "Running OCR on document {doc_id} p{page_idx}"
-msgstr ""
+msgstr "Führe OCR auf Dokument {doc_id} Seite {page_idx} aus"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/ocr/pyocr.py:83
 msgid "Running OCR"
-msgstr ""
+msgstr "Führe OCR aus"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/cropping/calibration.py:45
 #: paperwork-backend/src/paperwork_backend/guesswork/cropping/libpillowfight.py:51
 #, python-brace-format
 msgid "Document {doc_id} p{page_idx} already cropped"
-msgstr ""
+msgstr "Dokument {doc_id} S{page_idx} wurde bereits zugeschnitten"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/cropping/calibration.py:55
 #, python-brace-format
 msgid "Using calibration to crop page borders of document {doc_id} p{page_idx}"
 msgstr ""
+"Nutze Kalibrierung um den Rand des Dokuments {doc_id} Seite {page_idx} zu "
+"schneiden"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/cropping/libpillowfight.py:60
 #, python-brace-format
 msgid "Guessing page borders of document {doc_id} p{page_idx}"
-msgstr ""
+msgstr "Schätze Seitenrand von Dokument {doc_id} Seite {page_idx}"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/cropping/libpillowfight.py:85
 msgid "Guessing page borders"
-msgstr ""
+msgstr "Schätze Seitenränder"
 
 #: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:233
 msgid "Starting scan ..."
@@ -225,7 +229,7 @@ msgstr "Speichere Änderungen"
 #: paperwork-backend/src/paperwork_backend/chkworkdir/empty_doc.py:44
 #, python-format
 msgid "Checking doc %s"
-msgstr ""
+msgstr "Prüfe %s"
 
 #: paperwork-backend/src/paperwork_backend/chkworkdir/label_color.py:87
 #, python-format
@@ -233,31 +237,33 @@ msgid ""
 "Document %s has label \"%s\" with color=%s while document %s has label \"%s"
 "\" with color=%s"
 msgstr ""
+"Dokument %s hat das Label \"%s\" (%s) während Dokument %s Label \"%s\" (%s) "
+"hat"
 
 #: paperwork-backend/src/paperwork_backend/chkworkdir/label_color.py:106
 #, python-format
 msgid "Set label color %s on label \"%s\" of document %s"
-msgstr ""
+msgstr "Setze Labelfarbe %s auf Label \"%s\" des Dokuments %s"
 
 #: paperwork-backend/src/paperwork_backend/chkworkdir/label_color.py:130
 #, python-format
 msgid "Fixing label on doc %s"
-msgstr ""
+msgstr "Korrigiere Label auf Dokument %s"
 
 #: paperwork-backend/src/paperwork_backend/chkworkdir/empty_doc.py:59
 #, python-format
 msgid "Document %s is empty"
-msgstr ""
+msgstr "Dokument %s ist leer"
 
 #: paperwork-backend/src/paperwork_backend/chkworkdir/empty_doc.py:60
 #, python-format
 msgid "Delete document %s"
-msgstr ""
+msgstr "Lösche Dokument %s"
 
 #: paperwork-backend/src/paperwork_backend/chkworkdir/empty_doc.py:74
 #, python-format
 msgid "Deleting empty doc %s"
-msgstr ""
+msgstr "Lösche das leere Dokument %s"
 
 #: paperwork-backend/src/paperwork_backend/index/whoosh.py:113
 #, python-format
@@ -299,7 +305,7 @@ msgstr "Importiere PDF"
 
 #: paperwork-backend/src/paperwork_backend/docimport/pdf.py:65
 msgid "Import PDFs recursively"
-msgstr ""
+msgstr "Importiere PDFs rekursiv"
 
 #: paperwork-backend/src/paperwork_backend/docimport/pdf.py:121
 msgid "PDF folder"
@@ -319,107 +325,107 @@ msgstr "Hänge das Bild an das aktuelle Dokument an"
 
 #: paperwork-backend/src/paperwork_backend/docimport/img.py:88
 msgid "Find the images recursively and import them to the current document"
-msgstr ""
+msgstr "Suche Bilder rekursiv und importiere sie in das aktuelle Dokument"
 
 #: paperwork-backend/src/paperwork_backend/docimport/converted.py:67
 msgid "Import office document"
-msgstr ""
+msgstr "Importiere Office-Datei"
 
 #: paperwork-backend/src/paperwork_backend/docimport/converted.py:71
 msgid "Import office documents recursively"
-msgstr ""
+msgstr "Importiere Office-Dateien rekursiv"
 
 #: paperwork-backend/src/paperwork_backend/docimport/converted.py:139
 msgid "Office document folder"
-msgstr ""
+msgstr "Office-Dateien Verzeichnis"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:60
 msgid "Microsoft Word template (.dot)"
-msgstr ""
+msgstr "Microsoft Word Vorlage (.dot)"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:68
 msgid "Microsoft Excel template (.xlt)"
-msgstr ""
+msgstr "Microsoft Excel Vorlage (.xlt)"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:76
 msgid "Microsoft PowerPoint template (.ppt)"
-msgstr ""
+msgstr "Microsoft PowerPoint Vorlage (.ppt)"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:80
 msgid "OpenOffice/LibreOffice Chart (.odc)"
-msgstr ""
+msgstr "OpenOffice/LibreOffice Bild (.odc)"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:84
 msgid "OpenOffice/LibreOffice Database (.odb)"
-msgstr ""
+msgstr "OpenOffice/LibreOffice Datenbank (.odb)"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:88
 msgid "OpenOffice/LibreOffice Formula (.odf)"
-msgstr ""
+msgstr "OpenOffice/LibreOffice Formel (.odf)"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:92
 msgid "OpenOffice/LibreOffice Graphics (.odg)"
-msgstr ""
+msgstr "OpenOffice/LibreOffice Zeichnung (.odg)"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:96
 msgid "OpenOffice/LibreOffice Graphics template (.otg)"
-msgstr ""
+msgstr "OpenOffice/LibreOffice Zeichnung Vorlage (.otg)"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:100
 msgid "OpenOffice/LibreOffice Image template (.odi)"
-msgstr ""
+msgstr "OpenOffice/LibreOffice Bild Vorlage (.odi)"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:104
 msgid "OpenOffice/LibreOffice Presentation (.odp)"
-msgstr ""
+msgstr "OpenOffice/LibreOffice Präsentation (.odp)"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:108
 msgid "OpenOffice/LibreOffice Presentation template (.otp)"
-msgstr ""
+msgstr "OpenOffice/LibreOffice Präsentation Vorlage (.otp)"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:112
 msgid "OpenOffice/LibreOffice Spreadsheet (.ods)"
-msgstr ""
+msgstr "OpenOffice/LibreOffice Tabellendokument (.ods)"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:116
 msgid "OpenOffice/LibreOffice Spreadsheet template (.ots)"
-msgstr ""
+msgstr "OpenOffice/LibreOffice Tabellendokument Vorlage (.ots)"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:120
 msgid "OpenOffice/LibreOffice Text (.odt)"
-msgstr ""
+msgstr "OpenOffice/LibreOffice Text (.odt)"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:124
 msgid "OpenOffice/LibreOffice Text master (.odm)"
-msgstr ""
+msgstr "OpenOffice/LibreOffice Globaldokument (.odm)"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:128
 msgid "OpenOffice/LibreOffice Text template (.ott)"
-msgstr ""
+msgstr "OpenOffice/LibreOffice Text Vorlage (.ott)"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:132
 msgid "OpenOffice/LibreOffice Text web (.oth)"
-msgstr ""
+msgstr "OpenOffice/LibreOffice Text web (.oth)"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:144
 msgid "Microsoft PowerPoint slide (.sldx)"
-msgstr ""
+msgstr "Microsoft PowerPoint Folie (.sldx)"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:150
 msgid "Microsoft PowerPoint slideshow (.ppsx)"
-msgstr ""
+msgstr "Microsoft PowerPoint Präsentation (.ppsx)"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:156
 msgid "Microsoft PowerPoint presentation template (.potx)"
-msgstr ""
+msgstr "Microsoft PowerPoint Präsentation Vorlage (.potx)"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:168
 msgid "Microsoft Excel template (.xltx)"
-msgstr ""
+msgstr "Microsoft Excel Vorlage (.xltx)"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:180
 msgid "Microsoft Word template (.dotx)"
-msgstr ""
+msgstr "Microsoft Word Vorlage (.dotx)"
 
 #: paperwork-backend/src/paperwork_backend/authors/translators.py:23
 msgid "[]"
@@ -432,11 +438,11 @@ msgstr "Lade Dokumentenlabels {}"
 #: paperwork-backend/src/paperwork_backend/model/converted.py:111
 #, python-format
 msgid "Converting document %s to PDF ..."
-msgstr ""
+msgstr "Konvertiere Dokument %s nach PDF ..."
 
 #: paperwork-backend/src/paperwork_backend/model/converted.py:186
 msgid "Checking converted documents"
-msgstr ""
+msgstr "Prüfe konvertierte Dokumente"
 
 #: paperwork-backend/src/paperwork_backend/docexport/pdf.py:100
 msgid "Original PDF(s)"
