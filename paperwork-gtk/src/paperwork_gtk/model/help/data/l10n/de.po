@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-10-09 12:56+0200\n"
-"PO-Revision-Date: 2021-09-08 19:27+0000\n"
-"Last-Translator: Marcel Mente <acc+weblate@eeagle.net>\n"
+"PO-Revision-Date: 2021-10-25 05:49+0000\n"
+"Last-Translator: Andreas Forster <aforster2311@gmail.com>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-help-documents/de/>\n"
 "Language: de\n"
@@ -137,13 +137,6 @@ msgstr "Labels und zusätzliche Schlüsselworte"
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/intro.tex:84
-#, fuzzy
-#| msgid ""
-#| "You answered an important email and you want to keep track of it? The "
-#| "paper you scanned was so unreadable that Paperwork failed to recognize "
-#| "some impor- tant keywords? Add keywords to your paper so you won't miss "
-#| "anything! All the keywords you add will be searchable, as if they were "
-#| "directly written on the paper you scanned."
 msgid ""
 "You answered an important email and you want to keep track of it? The paper "
 "you scanned was so unreadable that Paperwork failed to recognize some "
@@ -696,22 +689,18 @@ msgstr "Flatpak"
 
 #. type: verbatim
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:279
-#, fuzzy, no-wrap
-#| msgid ""
-#| "# <langs> is a list of 2-letters language codes separated ';'\n"
-#| "# ex: en;fr;de\n"
-#| "flatpak config --user --set languages \"<langs>\"\n"
-#| "flatpak update"
+#, no-wrap
 msgid ""
 "# <langs> is a list of 2-letters language codes separated ';'\n"
 "# ex: en;fr;de\n"
 "flatpak config --user --set languages \"<langs>\"\n"
 "flatpak update --user"
 msgstr ""
-"# <langs> ist eine Liste von zweibuchstabigen Ländercodes getrennt durch ';'\n"
+"# <langs> ist eine Liste von zweibuchstabigen Ländercodes getrennt durch ';'"
+"\n"
 "# Beispiel: en;fr;de\n"
 "flatpak config --user --set languages \"<langs>\"\n"
-"flatpak update"
+"flatpak update --user"
 
 #. type: paragraph{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:283
@@ -1956,10 +1945,8 @@ msgstr "Innere Struktur des Arbeitsverzeichnisses"
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:852
-#, fuzzy
-#| msgid "workdir|rootdir = \\textasciitilde /papers (by default)"
 msgid "workdir$|$rootdir = \\textasciitilde /papers (by default)"
-msgstr "workdir|rootdir = \\textasciitilde /papers (by default)"
+msgstr "workdir$|$rootdir = \\textasciitilde /papers (by default)"
 
 #. type: subsubsection{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:854
@@ -2069,6 +2056,7 @@ msgstr ""
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:892
 msgid "passwd.txt (optional): PDF password, if the PDF is password-protected."
 msgstr ""
+"passwd.txt (optional): PDF Passwort, falls das PDF passwortgeschützt ist."
 
 #. type: itemize
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:892
@@ -2076,6 +2064,8 @@ msgid ""
 "doc.docx / doc.odt / ... (optional): Original file.  Converted into PDF (doc."
 "pdf) so Paperwork can parse and display it more quickly."
 msgstr ""
+"doc.docx / doc.odt / ... (optional): Originaldatei. Konvertiert nach PDF (doc"
+".pdf) damit Paperwork sie schneller verarbeiten und anzeigen kann."
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:894
@@ -2084,34 +2074,7 @@ msgstr "Im folgenden ein Beispiel für eine Arbeitsverzeichnisorganisation:"
 
 #. type: verbatim
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:926
-#, fuzzy, no-wrap
-#| msgid ""
-#| "$ find ~/papers\n"
-#| "/home/jflesch/papers\n"
-#| "/home/jflesch/papers/20130505_1518_00\n"
-#| "/home/jflesch/papers/20130505_1518_00/paper.1.jpg\n"
-#| "/home/jflesch/papers/20130505_1518_00/paper.1.thumb.jpg\n"
-#| "/home/jflesch/papers/20130505_1518_00/paper.1.words\n"
-#| "/home/jflesch/papers/20130505_1518_00/paper.2.jpg\n"
-#| "/home/jflesch/papers/20130505_1518_00/paper.2.edited.jpg\n"
-#| "/home/jflesch/papers/20130505_1518_00/paper.2.words\n"
-#| "/home/jflesch/papers/20130505_1518_00/paper.3.jpg\n"
-#| "/home/jflesch/papers/20130505_1518_00/paper.3.words\n"
-#| "/home/jflesch/papers/20130505_1518_00/labels\n"
-#| "/home/jflesch/papers/20110726_0000_01f\n"
-#| "/home/jflesch/papers/20110726_0000_01/paper.1.jpg\n"
-#| "/home/jflesch/papers/20110726_0000_01/paper.1.thumb.jpg\n"
-#| "/home/jflesch/papers/20110726_0000_01/paper.1.words\n"
-#| "/home/jflesch/papers/20110726_0000_01/paper.2.jpg\n"
-#| "/home/jflesch/papers/20110726_0000_01/paper.2.words\n"
-#| "/home/jflesch/papers/20110726_0000_01/extra.txt\n"
-#| "/home/jflesch/papers/20130106_1309_44\n"
-#| "/home/jflesch/papers/20130106_1309_44/doc.pdf\n"
-#| "/home/jflesch/papers/20110726_0000_01/paper.1.thumb.jpg\n"
-#| "/home/jflesch/papers/20130106_1309_44/paper.2.edited.jpg\n"
-#| "/home/jflesch/papers/20130106_1309_44/paper.2.words\n"
-#| "/home/jflesch/papers/20130106_1309_44/labels\n"
-#| "/home/jflesch/papers/20130106_1309_44/extra.txt"
+#, no-wrap
 msgid ""
 "$ find ~/papers\n"
 "/home/jflesch/papers\n"
@@ -2166,11 +2129,16 @@ msgstr ""
 "/home/jflesch/papers/20110726_0000_01/extra.txt\n"
 "/home/jflesch/papers/20130106_1309_44\n"
 "/home/jflesch/papers/20130106_1309_44/doc.pdf\n"
-"/home/jflesch/papers/20110726_0000_01/paper.1.thumb.jpg\n"
+"/home/jflesch/papers/20130106_1309_44/paper.1.thumb.jpg\n"
 "/home/jflesch/papers/20130106_1309_44/paper.2.edited.jpg\n"
 "/home/jflesch/papers/20130106_1309_44/paper.2.words\n"
 "/home/jflesch/papers/20130106_1309_44/labels\n"
-"/home/jflesch/papers/20130106_1309_44/extra.txt"
+"/home/jflesch/papers/20130106_1309_44/extra.txt\n"
+"/home/jflesch/papers/20130106_1309_44/passwd.txt\n"
+"/home/jflesch/papers/20130520_1309_44\n"
+"/home/jflesch/papers/20130520_1309_44/doc.pdf\n"
+"/home/jflesch/papers/20130520_1309_44/doc.docx\n"
+"/home/jflesch/papers/20130520_1309_44/labels"
 
 #. type: subsubsection{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:929

@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-10-09 12:56+0200\n"
-"PO-Revision-Date: 2021-01-05 17:31+0000\n"
-"Last-Translator: Tom F <tom@mb.tu-ilmenau.de>\n"
+"PO-Revision-Date: 2021-10-25 05:49+0000\n"
+"Last-Translator: Andreas Forster <aforster2311@gmail.com>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-gtk/de/>\n"
 "Language: de\n"
@@ -30,10 +30,12 @@ msgstr "Installiere alles nur für den aktuellen Benutzer"
 #: paperwork-gtk/src/paperwork_gtk/cmd/import.py:35
 msgid "Run Paperwork and import files passed as arguments into a new document"
 msgstr ""
+"Führe Paperwork aus und importiere die als Argument übergebenen Dateien in "
+"ein neues Dokument"
 
 #: paperwork-gtk/src/paperwork_gtk/cmd/import.py:39
 msgid "URLs or paths of files to import"
-msgstr ""
+msgstr "URLs oder Pfade zu Dateien für den Import"
 
 #: paperwork-gtk/src/paperwork_gtk/main.py:199
 msgid "command"
@@ -47,7 +49,7 @@ msgstr ""
 
 #: paperwork-gtk/src/paperwork_gtk/docimport.py:105
 msgid "PDF password"
-msgstr ""
+msgstr "PDF Passwort"
 
 #: paperwork-gtk/src/paperwork_gtk/docimport.py:123
 msgid "No new document to import found"
@@ -151,16 +153,16 @@ msgstr "Seite löschen"
 
 #: paperwork-gtk/src/paperwork_gtk/menus/page/move_inside_doc.py:50
 msgid "Another position"
-msgstr ""
+msgstr "an andere Position"
 
 #: paperwork-gtk/src/paperwork_gtk/menus/page/move_inside_doc.py:53
 #: paperwork-gtk/src/paperwork_gtk/menus/page/move_to_doc.py:53
 msgid "Move page to"
-msgstr ""
+msgstr "Verschiebe Seite"
 
 #: paperwork-gtk/src/paperwork_gtk/menus/page/move_to_doc.py:50
 msgid "Another document"
-msgstr ""
+msgstr "in ein anderes Dokument"
 
 #: paperwork-gtk/src/paperwork_gtk/menus/page/copy_text.py:50
 msgid "Copy selected text"
@@ -250,21 +252,21 @@ msgstr ""
 #: paperwork-gtk/src/paperwork_gtk/actions/page/move_inside_doc.py:116
 #, python-format
 msgid "Move the page %d to what position ?"
-msgstr ""
+msgstr "An welche Position soll die Seite %d verschoben werden?"
 
 #: paperwork-gtk/src/paperwork_gtk/actions/page/move_inside_doc.py:135
 #, python-format
 msgid "Invalid page position: %s"
-msgstr ""
+msgstr "Ungültige Seitenposition: %s"
 
 #: paperwork-gtk/src/paperwork_gtk/actions/page/move_inside_doc.py:147
 #, python-format
 msgid "Invalid page position: %d. Out of document bounds (1-%d)."
-msgstr ""
+msgstr "Ungültige Seitenposition: %d. Ausserhalb des Dokuments (1-%d)."
 
 #: paperwork-gtk/src/paperwork_gtk/actions/page/move_inside_doc.py:156
 msgid "Page position unchanged"
-msgstr ""
+msgstr "Seitenposition unverändert"
 
 #: paperwork-gtk/src/paperwork_gtk/actions/page/redo_ocr.py:100
 #: paperwork-gtk/src/paperwork_gtk/actions/doc/redo_ocr.py:105
@@ -304,7 +306,7 @@ msgstr "Alle Dateien"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/__init__.py:715
 msgid "Export has failed"
-msgstr ""
+msgstr "Export fehlgeschlagen"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:81
 msgid "Keyword(s)"
@@ -312,7 +314,7 @@ msgstr "Suchbegriff(e)"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:102
 msgid "No labels"
-msgstr ""
+msgstr "Keine Labels"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:142
 msgid "Label"
@@ -524,7 +526,7 @@ msgstr "Anleitung"
 
 #: paperwork-gtk/src/paperwork_gtk/about/about.glade.h:1
 msgid "©2021"
-msgstr ""
+msgstr "©2021"
 
 #: paperwork-gtk/src/paperwork_gtk/about/about.glade.h:2
 msgid "Sorting documents is a machine's job."
@@ -532,7 +534,7 @@ msgstr "Dokumente zu sortieren ist die Arbeit einer Maschine."
 
 #: paperwork-gtk/src/paperwork_gtk/actions/page/move_to_doc/move_to_doc.glade.h:1
 msgid "Select target document"
-msgstr ""
+msgstr "Wähle Zieldokument"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/exporter.glade.h:1
 msgid "Export Steps"
@@ -552,7 +554,7 @@ msgstr "Exporteinstellungen"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/exporter.glade.h:5
 msgid "Send by email"
-msgstr ""
+msgstr "Per Email senden"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/exporter.glade.h:6
 msgid "Preview"

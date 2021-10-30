@@ -329,7 +329,8 @@ class Corpus(object):
             assert(required_padding >= 0)
             if required_padding > 0:
                 doc_vector = scipy.sparse.hstack([
-                    doc_vector, numpy.zeros((required_padding,))
+                    scipy.sparse.csr_matrix(doc_vector),
+                    numpy.zeros((required_padding,))
                 ])
             else:
                 doc_vector = scipy.sparse.csr_matrix(doc_vector)
