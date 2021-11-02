@@ -82,14 +82,11 @@
   <provides>
     <binary>paperwork</binary>
     <python3>paperwork</python3>
+    <mediatype>application/pdf</mediatype>
+    <mediatype>image/jpeg</mediatype>
+    <mediatype>image/png</mediatype>
+    <mediatype>image/x-ms-bmp</mediatype>
   </provides>
-
-  <mimetypes>
-    <mimetype>application/pdf</mimetype>
-    <mimetype>image/jpeg</mimetype>
-    <mimetype>image/png</mimetype>
-    <mimetype>image/x-ms-bmp</mimetype>
-  </mimetypes>
 
   <project_license>GPL-3.0+</project_license>
   <developer_name>Openpaper.work</developer_name>
