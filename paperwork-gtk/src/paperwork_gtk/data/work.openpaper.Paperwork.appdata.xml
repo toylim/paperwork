@@ -136,5 +136,12 @@
     </screenshot>
   </screenshots>
 
+  <translation type="gettext">paperwork</translation>
+  <translation type="gettext">paperwork_backend</translation>
+  <translation type="gettext">paperwork_gtk</translation>
+  <translation type="gettext">openpaperwork_core</translation>
+  <translation type="gettext">openpaperwork_gtk</translation>
+  <translation type="gettext">paperwork_shell</translation>
+
   <update_contact>jflesch@openpaper.work</update_contact>
 </component>
