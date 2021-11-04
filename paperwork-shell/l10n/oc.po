@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-10-09 12:56+0200\n"
-"PO-Revision-Date: 2021-10-27 22:23+0000\n"
+"PO-Revision-Date: 2021-11-05 20:32+0000\n"
 "Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
 "Language-Team: Occitan <http://translations.openpaper.work/projects/"
 "paperwork/paperwork-shell/oc/>\n"
@@ -245,38 +245,40 @@ msgstr "Verificar e reglar l’integritat del repertòri de trabalh"
 
 #: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:45
 msgid "Don't ask to fix things, just fix them"
-msgstr ""
+msgstr "Demandetz pas de reparar las causas, reparatz-la vosautres"
 
 #: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:63
 msgid "Checking work directory ..."
-msgstr ""
+msgstr "Verificacion del repertòri de trabalh..."
 
 #: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:70
 msgid "No problem found"
-msgstr ""
+msgstr "Cap de problèma pas trobat"
 
 #: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:77
 #, python-format
 msgid "%d problems found:"
-msgstr ""
+msgstr "%d problèmas trobats :"
 
 #: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:92
 msgid "- Problem: "
-msgstr ""
+msgstr "- Problèma : "
 
 #: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:96
 msgid "- Possible solution: "
-msgstr ""
+msgstr "- Solucion possibla : "
 
 #: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:102
 msgid ""
 "Do you want to fix those problems automatically using the indicated "
 "solutions ?"
 msgstr ""
+"Volètz reglar aqueles problèmas automaticament en utilizant las solucions "
+"indicadas ?"
 
 #: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:111
 msgid "All fixed !"
-msgstr ""
+msgstr "Tot reglat !"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:57
 msgid ""
@@ -414,11 +416,11 @@ msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/cmd/import.py:122
 msgid "Please select the way you want:"
-msgstr ""
+msgstr "Volgatz causir lo biais que volètz :"
 
 #: paperwork-shell/src/paperwork_shell/cmd/import.py:140
 msgid "Loading labels ..."
-msgstr ""
+msgstr "Cargament de las etiquetas..."
 
 #: paperwork-shell/src/paperwork_shell/cmd/import.py:157
 #, python-format
