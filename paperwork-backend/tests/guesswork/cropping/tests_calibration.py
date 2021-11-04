@@ -79,6 +79,10 @@ class TestCropping(unittest.TestCase):
                     ("file:///paper.0.jpeg", 0),
                     ("file:///paper.1.jpeg", 1),
                 ],
+                "page_boxes": [
+                    [],
+                    [],
+                ],
             },
         ]
 
@@ -110,6 +114,10 @@ class TestCropping(unittest.TestCase):
                     ("file:///paper.0.jpeg", 0),
                     ("file:///paper.1.jpeg", 1),
                     ("file:///paper.2.jpeg", 2),
+                ],
+                "page_boxes": [
+                    [],
+                    [],
                 ],
             },
         ]
@@ -149,7 +157,11 @@ class TestCropping(unittest.TestCase):
                 "page_paper_sizes": [
                     ("file:///paper.0.jpeg", (256, 256)),
                     ("file:///paper.1.jpeg", (256, 256)),
-                ]
+                ],
+                "page_boxes": [
+                    [],
+                    [],
+                ],
             },
         ]
 
@@ -186,7 +198,11 @@ class TestCropping(unittest.TestCase):
                     ("file:///paper.0.jpeg", (256, 256)),
                     ("file:///paper.1.jpeg", (256, 256)),
                     ("file:///paper.2.jpeg", (256, 256)),
-                ]
+                ],
+                "page_boxes": [
+                    [],
+                    [],
+                ],
             },
         ]
 
@@ -223,6 +239,10 @@ class TestCropping(unittest.TestCase):
                     ("file:///paper.0.jpeg", 0),
                     ("file:///paper.1.jpeg", 1),
                 ],
+                "page_boxes": [
+                    [],
+                    [],
+                ],
             },
         ]
 
@@ -254,6 +274,10 @@ class TestCropping(unittest.TestCase):
                     ("file:///paper.0.jpeg", 0),
                     ("file:///paper.1.jpeg", 1),
                     ("file:///paper.2.jpeg", 2),
+                ],
+                "page_boxes": [
+                    [],
+                    [],
                 ],
             },
         ]
