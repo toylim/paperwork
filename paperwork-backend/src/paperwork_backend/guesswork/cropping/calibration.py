@@ -49,6 +49,19 @@ class CalibrationTransaction(sync.BaseTransaction):
             )
             return
 
+        if self.core.call_success(
+                    "page_has_text_by_url", doc_url, page_idx
+                ):
+            self.notify_progress(
+                ID,
+                _(
+                    "Document {doc_id} p{page_idx} has already some text."
+                    " Not cropping."
+                ).format(doc_id=doc_id, page_idx=(page_idx + 1)),
+                page_nb=page_nb, total_pages=total_pages
+            )
+            return
+
         self.notify_progress(
             ID,
             _(
