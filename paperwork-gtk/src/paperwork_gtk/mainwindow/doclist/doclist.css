@@ -15,6 +15,19 @@
   background-color: shade(@theme_bg_color, 0.88);
 }
 
+.suggestions_box {
+  padding: 0px 12px 4px 12px;
+}
+
+.suggestions_label {
+  margin: 5px;
+}
+
+.suggestions_list {
+  border: 1px solid shade(@theme_bg_color, 0.88);
+  background-color: shade(@theme_bg_color, 0.88);
+}
+
 .date_label {
   color: mix(@theme_bg_color, @theme_fg_color, 0.70);
   font-size: 11pt;

@@ -30,8 +30,10 @@
         <property name="height_request">75</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="margin_left">15</property>
         <property name="orientation">vertical</property>
+        <style>
+          <class name="suggestions_box"/>
+        </style>
         <child>
           <object class="GtkBox">
             <property name="visible">True</property>
@@ -40,12 +42,11 @@
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">5</property>
-                <property name="margin_right">5</property>
-                <property name="margin_top">5</property>
-                <property name="margin_bottom">5</property>
                 <property name="label" translatable="yes">Did you mean ?</property>
                 <property name="xalign">0</property>
+                <style>
+                  <class name="suggestions_label"/>
+                </style>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -89,6 +90,9 @@
                 <property name="headers_visible">False</property>
                 <property name="search_column">0</property>
                 <property name="activate_on_single_click">True</property>
+                <style>
+                  <class name="suggestions_list"/>
+                </style>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection"/>
                 </child>
