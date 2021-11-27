@@ -287,6 +287,24 @@ class LabelEditor(object):
         self._refresh_list()
 
     def _on_delete(self, button, original_label):
+        self.core.call_all(
+            "gtk_show_dialog_yes_no",
+            self,
+            _(
+                "Are you sure you want to remove label '%s'"
+                " from ALL documents ?"
+            ) % (original_label,),
+            original_label,
+        )
+
+    def on_dialog_yes_no_reply(self, origin, response, *args, **kwargs):
+        if origin is not self:
+            return
+        if not response:
+            LOGGER.info("Label delete canceled")
+            return
+        (original_label,) = args
+        LOGGER.info("Will delete label %s on all documents", original_label)
         self.deleted_labels.add(original_label)
         self._refresh_list()
 
@@ -530,6 +548,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_gtk.colors'],
             },
             {
+                'interface': 'gtk_dialog_yes_no',
+                'defaults': ['openpaperwork_gtk.dialogs.yes_no'],
+            },
+            {
                 'interface': 'gtk_doc_properties',
                 'defaults': ['paperwork_gtk.docproperties'],
             },
@@ -567,6 +589,10 @@ class Plugin(openpaperwork_core.PluginBase):
         editor = LabelEditor(self)
         self.editors.append(editor)
         out.append(editor.widget_tree.get_object("listbox_global"))
+
+    def on_dialog_yes_no_reply(self, origin, response, *args, **kwargs):
+        for editor in self.editors:
+            editor.on_dialog_yes_no_reply(origin, response, *args, **kwargs)
 
     def doc_properties_components_set_active_doc(self, doc_id, doc_url):
         for editor in self.editors:
