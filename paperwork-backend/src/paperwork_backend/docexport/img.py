@@ -148,9 +148,9 @@ class PageToImageExportPipe(AbstractExportPipe):
             out_files = []
             for (doc_set, (doc, (page, img_boxes))) in list_img_boxes:
                 out = target_file_url
-                if page.data != 0:
+                if len(out_files) != 0:
                     out = target_file_url.rsplit(".", 1)
-                    out = "{}_{}.{}".format(out[0], page.data, out[1])
+                    out = "{}_{}.{}".format(out[0], len(out_files), out[1])
 
                 self.core.call_success(
                     "pillow_to_url", img_boxes.data[0], out,
