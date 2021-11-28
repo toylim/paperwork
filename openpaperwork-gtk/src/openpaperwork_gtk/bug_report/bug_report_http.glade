@@ -73,7 +73,7 @@
               <object class="GtkEntry" id="bug_report_http_author">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="placeholder_text" translatable="yes">Anonymous</property>
+                <property name="placeholder_text" translatable="yes">Required if you agree to be contacted regarding this bug report</property>
                 <property name="input_hints">GTK_INPUT_HINT_NO_SPELLCHECK | GTK_INPUT_HINT_NONE</property>
               </object>
             </child>
@@ -84,7 +84,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="margin_bottom">10</property>
-            <property name="label" translatable="yes">Bug Report Author</property>
+            <property name="label" translatable="yes">Your email address</property>
             <attributes>
               <attribute name="weight" value="bold"/>
               <attribute name="size" value="12000"/>
