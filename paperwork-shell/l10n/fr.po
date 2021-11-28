@@ -10,7 +10,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-28 21:34+0100\n"
 "PO-Revision-Date: 2021-11-29 21:07+0000\n"
-"Last-Translator: Jerome Flesch <jflesch@openpaper.work>\n"
+"Last-Translator: LAZIC Anna <0.0.0.0.0.ffff.255.255.255.255@gmail.com>\n"
 "Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-shell/fr/>\n"
 "Language: fr\n"
@@ -247,8 +247,7 @@ msgstr "Chargement de toutes les étiquettes… "
 #, python-format
 msgid "Are you sure you want to delete label '%s' from all documents ?"
 msgstr ""
-"Êtes-vous sûr que vous voulez effacer l'étiquette '%s' de tous les "
-"documents ?"
+"Êtes-vous sûr de vouloir effacer l'étiquette '%s' de tous les documents ?"
 
 #: paperwork-shell/src/paperwork_shell/cmd/scan.py:51
 msgid "Scan pages"
