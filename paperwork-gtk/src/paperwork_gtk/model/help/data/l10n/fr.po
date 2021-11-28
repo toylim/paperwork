@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-10-09 12:56+0200\n"
-"PO-Revision-Date: 2020-07-27 10:09+0000\n"
-"Last-Translator: Weblate Admin <jflesch@openpaper.work>\n"
+"PO-Revision-Date: 2021-11-29 21:07+0000\n"
+"Last-Translator: Jerome Flesch <jflesch@openpaper.work>\n"
 "Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-help-documents/fr/>\n"
 "Language: fr\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.1.1\n"
+"X-Generator: Weblate 4.9\n"
 
 #. type: Plain text
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/intro.tex:11
@@ -130,17 +130,10 @@ msgstr ""
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/intro.tex:72
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:113
 msgid "Labels and additional keywords"
-msgstr "Labels et mot-clés additionels"
+msgstr "Étiquettes et mot-clés additionnels"
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/intro.tex:84
-#, fuzzy
-#| msgid ""
-#| "You answered an important email and you want to keep track of it? The "
-#| "paper you scanned was so unreadable that Paperwork failed to recognize "
-#| "some impor- tant keywords? Add keywords to your paper so you won't miss "
-#| "anything! All the keywords you add will be searchable, as if they were "
-#| "directly written on the paper you scanned."
 msgid ""
 "You answered an important email and you want to keep track of it? The paper "
 "you scanned was so unreadable that Paperwork failed to recognize some "
@@ -148,7 +141,7 @@ msgid ""
 "All the keywords you add will be searchable, as if they were directly "
 "written on the paper you scanned."
 msgstr ""
-"Vous avez répondu à un email important et vous souhaitez en garder une "
+"Vous avez répondu à un e-mail important et vous souhaitez en garder une "
 "trace ? Le papier que vous avez scanné était si illisible que Paperwork n'a "
 "pas pu le relire ? Ajoutez vous-même des mots-clés à vos papiers pour que "
 "vous puissiez les retrouver ! Tous les mots que vous ajouterez pourrons être "
@@ -164,9 +157,10 @@ msgid ""
 "them on new documents."
 msgstr ""
 "Vous souhaitez trier un peu vos documents ? Vous pouvez aussi leur ajouter "
-"des labels. Pour plus de lisibilité, chaque label a sa propre couleur. Avec "
-"le temps, Paperwork va apprendre quels labels vont sur quels documents, et "
-"il les placera automatiquement pour vous sur chaque nouveau document."
+"des étiquettes. Pour plus de lisibilité, chaque étiquette a sa propre "
+"couleur. Avec le temps, Paperwork va apprendre quelles étiquettes vont sur "
+"quels documents, et il les placera automatiquement pour vous sur chaque "
+"nouveau document."
 
 #. type: section{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/intro.tex:92
