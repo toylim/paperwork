@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-28 21:34+0100\n"
-"PO-Revision-Date: 2021-11-24 11:15+0000\n"
+"PO-Revision-Date: 2021-11-29 21:07+0000\n"
 "Last-Translator: Jerome Flesch <jflesch@openpaper.work>\n"
 "Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-gtk/fr/>\n"
@@ -260,12 +260,13 @@ msgstr "L'export a échoué"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:247
 msgid "Renaming label"
-msgstr "Renommer le label"
+msgstr "Renommer l'étiquette"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:294
 #, python-format
 msgid "Are you sure you want to delete label '%s' from ALL documents ?"
 msgstr ""
+"Êtes-vous sûr de vouloir supprimer l'étiquette '%s' de tous les documents ?"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:396
 #, python-brace-format
@@ -284,7 +285,7 @@ msgstr "Mot(s)-clé(s)"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:102
 msgid "No labels"
-msgstr "Pas de label"
+msgstr "Pas d'étiquette"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/search/advanced.py:142
 msgid "Label"
@@ -755,7 +756,7 @@ msgstr "Sélectionnez le document cible"
 #, python-format
 msgid "Are you sure you want to remove label '%s' from ALL documents ?"
 msgstr ""
-"Êtes-vous sûre de vouloir retirer le label '%s' de TOUS vos documents ?"
+"Êtes-vous sûre de vouloir retirer l'étiquette '%s' de TOUS vos documents ?"
 
 #~ msgid "©2020"
 #~ msgstr "©2020"
