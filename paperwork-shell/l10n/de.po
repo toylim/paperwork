@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-28 21:34+0100\n"
-"PO-Revision-Date: 2021-10-31 17:18+0000\n"
-"Last-Translator: Tom F <tom@mb.tu-ilmenau.de>\n"
+"PO-Revision-Date: 2021-11-29 21:07+0000\n"
+"Last-Translator: LAZIC Anna <0.0.0.0.0.ffff.255.255.255.255@gmail.com>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-shell/de/>\n"
 "Language: de\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.4\n"
+"X-Generator: Weblate 4.9\n"
 
 #: paperwork-shell/src/paperwork_shell/display/progress.py:39
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:175
@@ -236,7 +236,7 @@ msgstr "zu löschendes Label"
 
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:85
 msgid "Label to delete from *all* documents"
-msgstr ""
+msgstr "Das Label %s von *allen* Dokumenten löschen"
 
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:90
 msgid "Loading all labels ... "
