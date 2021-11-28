@@ -80,7 +80,7 @@ msgstr "Seite drucken"
 
 #: paperwork-gtk/src/paperwork_gtk/menus/docs/redo_ocr.py:51
 msgid "Redo OCR"
-msgstr ""
+msgstr "Wiederhole OCR"
 
 #: paperwork-gtk/src/paperwork_gtk/menus/docs/export.py:51
 msgid "Export"
@@ -748,6 +748,11 @@ msgstr ""
 #: paperwork-gtk/src/paperwork_gtk/actions/page/move_to_doc/move_to_doc.glade.h:1
 msgid "Select target document"
 msgstr "Wähle Zieldokument"
+
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:294
+#, python-format
+msgid "Are you sure you want to remove label '%s' from ALL documents ?"
+msgstr ""
 
 #~ msgid "©2020"
 #~ msgstr "©2020"
