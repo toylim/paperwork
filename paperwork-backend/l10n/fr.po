@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-28 20:29+0100\n"
-"PO-Revision-Date: 2021-11-28 20:34+0000\n"
+"PO-Revision-Date: 2021-11-29 21:07+0000\n"
 "Last-Translator: Jerome Flesch <jflesch@openpaper.work>\n"
 "Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-backend/fr/>\n"
@@ -166,18 +166,18 @@ msgid ""
 "Document %s has label \"%s\" with color=%s while document %s has label \"%s"
 "\" with color=%s"
 msgstr ""
-"Document %s a le label \"%s\" avec la couleur %s tandis que le document %s a "
-"le label \"%s\" avec la couleur %s"
+"Document %s a l'étiquette \"%s\" avec la couleur %s tandis que le document "
+"%s a l'étiquette \"%s\" avec la couleur %s"
 
 #: paperwork-backend/src/paperwork_backend/chkworkdir/label_color.py:106
 #, python-format
 msgid "Set label color %s on label \"%s\" of document %s"
-msgstr "Mise de la couleur %s sur le label \"%s\" du document %s"
+msgstr "Mise de la couleur %s sur l'étiquette \"%s\" du document %s"
 
 #: paperwork-backend/src/paperwork_backend/chkworkdir/label_color.py:130
 #, python-format
 msgid "Fixing label on doc %s"
-msgstr "Correction du label sur le document %s"
+msgstr "Correction de l'étiquette sur le document %s"
 
 #: paperwork-backend/src/paperwork_backend/chkworkdir/empty_doc.py:59
 #, python-format
@@ -455,36 +455,36 @@ msgstr "Détection des bords de la page"
 #: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:231
 msgid "Label guesser: Garbage-collecting unused document features ..."
 msgstr ""
-"Devineur de labels : Suppression des caractéristiques de documents qui ne "
+"Devineur d'étiquettes : Suppression des caractéristiques de documents qui ne "
 "sont plus utilisées ..."
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:254
 msgid "Label guesser: Garbage-collecting unused words ..."
-msgstr "Devineur de labels : Suppression des mots non-utilisés ..."
+msgstr "Devineur d'étiquettes : Suppression des mots non-utilisés ..."
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:571
 #, python-format
 msgid "Label guesser: added document %s"
-msgstr "Devineur de labels : document %s ajouté"
+msgstr "Devineur d'étiquettes : document %s ajouté"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:581
 #, python-format
 msgid "Label guesser: updated document %s"
-msgstr "Devineur de labels : document %s mis à jour"
+msgstr "Devineur d'étiquettes : document %s mis à jour"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:596
 #, python-format
 msgid "Label guesser: deleted document %s"
-msgstr "Devineur de labels : document %s effacé"
+msgstr "Devineur d'étiquettes : document %s effacé"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:681
 msgid "Commiting changes for label guessing ..."
-msgstr "Enregistrement des changements pour le devinage de labels ..."
+msgstr "Enregistrement des changements pour le devinage d'étiquettes ..."
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:873
 #: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:929
 msgid "Label guessing: Training ..."
-msgstr "Devineur de labels : entrainement ..."
+msgstr "Devineur d'étiquettes : entraînement ..."
 
 #: paperwork-backend/src/paperwork_backend/guesswork/ocr/pyocr.py:48
 #, python-brace-format
