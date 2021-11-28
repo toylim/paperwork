@@ -74,6 +74,9 @@ flatpak --user update work.openpaper.Paperwork
 
 ## Even after following the integrated instructions, my scanner is still not found
 
+Important: Paperwork in Flatpak uses Saned to access scanners, and Saned
+doesn't give access to network scanners, only local scanners.
+
 For some scanners, extra work is required to make them available to Paperwork
 in Flatpak. You must add specific udev rules.
 
