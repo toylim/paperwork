@@ -1,3 +1,17 @@
+2021/XX/XX - 2.1.0:
+- Support for all document types supported by LibreOffice (requires LibreOffice
+  to be installed)
+- Support for password-protected PDF files
+- Label guessing: replace simplebayes by sklearn (GaussianNB): require more
+  resources but much more accurate
+- Version data files: If the version changes, rebuild them all
+- Fix page export: img: do not use page number in file names
+- Cropping by scanner calibration: Never crop pages that already have text
+  (fix issue where cropping was applied when changing document date / ID)
+- API: rename transaction methods: add_obj() --> add_doc(),
+  upd_obj() --> upd_doc(), del_obj() --> del_doc(),
+  unchanged_obj() --> unchanged_doc()
+
 2021/05/24 - 2.0.3:
 - hOCR: fix page_get_text_by_url(): Do not return the hOCR title in the text
   (it's always "OCR output").

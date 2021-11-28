@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-09 12:56+0200\n"
+"POT-Creation-Date: 2021-11-28 20:29+0100\n"
 "PO-Revision-Date: 2021-10-31 17:18+0000\n"
 "Last-Translator: Tom F <tom@mb.tu-ilmenau.de>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
@@ -33,6 +33,10 @@ msgstr ""
 "Erstelle eine ZIP Datei mit allen Anhängen.\n"
 "Die ZIP Datei kann als Anhang für einen Fehlerbericht im <a href=\"%s\">Bug "
 "Tracker von Paperwork</a> verwendet werden."
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/__init__.py:77
+msgid "Now"
+msgstr "Jetzt"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:40
 msgid "Creating bug report ..."
@@ -69,9 +73,13 @@ msgstr ""
 msgid "FAILED"
 msgstr "FEHLGESCHLAGEN"
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/__init__.py:77
-msgid "Now"
-msgstr "Jetzt"
+#: openpaperwork-gtk/src/openpaperwork_gtk/widgets/charts/lines.py:417
+msgid "Total: {}"
+msgstr "Gesamt: {}"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/widgets/charts/lines.py:427
+msgid "Total"
+msgstr "Gesamt"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:258
 #: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:266
@@ -81,26 +89,6 @@ msgstr "Bildschirmfotos"
 #: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:267
 msgid "Select to generate"
 msgstr "Wähle zum Erzeugen"
-
-#: openpaperwork-gtk/src/openpaperwork_gtk/widgets/charts/lines.py:417
-msgid "Total: {}"
-msgstr "Gesamt: {}"
-
-#: openpaperwork-gtk/src/openpaperwork_gtk/widgets/charts/lines.py:427
-msgid "Total"
-msgstr "Gesamt"
-
-#: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:1
-msgid "Unexpected Error"
-msgstr "Unerwarteter Fehler"
-
-#: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:2
-msgid "Report"
-msgstr "Bericht"
-
-#: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:3
-msgid "An unexpected error occured."
-msgstr "Ein unerwarteter Fehler ist aufgetreten."
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:3
 msgid "Date"
@@ -131,12 +119,12 @@ msgid "Bug description"
 msgstr "Fehlerbeschreibung"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:2
-msgid "Anonymous"
-msgstr "Anonym"
+msgid "Required if you agree to be contacted regarding this bug report"
+msgstr ""
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:3
-msgid "Bug Report Author"
-msgstr "Fehlerbericht Author"
+msgid "Your email address"
+msgstr ""
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:4
 msgid ""
@@ -167,6 +155,24 @@ msgstr ""
 msgid "Please select where to save the ZIP file"
 msgstr "Bitte wähle einen Ablageort für die ZIP Datei aus"
 
+#: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:1
+msgid "Unexpected Error"
+msgstr "Unerwarteter Fehler"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:2
+msgid "Report"
+msgstr "Bericht"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:3
+msgid "An unexpected error occured."
+msgstr "Ein unerwarteter Fehler ist aufgetreten."
+
 #: openpaperwork-gtk/src/openpaperwork_gtk/widgets/progress/progress_button.glade.h:1
 msgid "Show background tasks"
 msgstr "Zeige Hintergrundaktivitäten"
+
+#~ msgid "Anonymous"
+#~ msgstr "Anonym"
+
+#~ msgid "Bug Report Author"
+#~ msgstr "Fehlerbericht Author"

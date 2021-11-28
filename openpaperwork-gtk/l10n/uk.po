@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-09 12:56+0200\n"
+"POT-Creation-Date: 2021-11-28 20:29+0100\n"
 "PO-Revision-Date: 2020-05-03 15:37+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -28,6 +28,10 @@ msgid ""
 "Build a ZIP file containing all the attachments.\n"
 " If you want, you can then submit a bug report manually on <a href=\"%s"
 "\">Paperwork's bug tracker</a> and attach this ZIP file to the ticket."
+msgstr ""
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/__init__.py:77
+msgid "Now"
 msgstr ""
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:40
@@ -62,8 +66,12 @@ msgstr ""
 msgid "FAILED"
 msgstr ""
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/__init__.py:77
-msgid "Now"
+#: openpaperwork-gtk/src/openpaperwork_gtk/widgets/charts/lines.py:417
+msgid "Total: {}"
+msgstr ""
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/widgets/charts/lines.py:427
+msgid "Total"
 msgstr ""
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:258
@@ -73,26 +81,6 @@ msgstr ""
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:267
 msgid "Select to generate"
-msgstr ""
-
-#: openpaperwork-gtk/src/openpaperwork_gtk/widgets/charts/lines.py:417
-msgid "Total: {}"
-msgstr ""
-
-#: openpaperwork-gtk/src/openpaperwork_gtk/widgets/charts/lines.py:427
-msgid "Total"
-msgstr ""
-
-#: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:1
-msgid "Unexpected Error"
-msgstr ""
-
-#: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:2
-msgid "Report"
-msgstr ""
-
-#: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:3
-msgid "An unexpected error occured."
 msgstr ""
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:3
@@ -124,11 +112,11 @@ msgid "Bug description"
 msgstr ""
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:2
-msgid "Anonymous"
+msgid "Required if you agree to be contacted regarding this bug report"
 msgstr ""
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:3
-msgid "Bug Report Author"
+msgid "Your email address"
 msgstr ""
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:4
@@ -147,6 +135,18 @@ msgstr ""
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_zip.glade.h:1
 msgid "Please select where to save the ZIP file"
+msgstr ""
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:1
+msgid "Unexpected Error"
+msgstr ""
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:2
+msgid "Report"
+msgstr ""
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:3
+msgid "An unexpected error occured."
 msgstr ""
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/widgets/progress/progress_button.glade.h:1

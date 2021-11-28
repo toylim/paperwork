@@ -43,9 +43,9 @@ class Plugin(PluginBase):
 
     def init(self, core):
         super().init(core)
-        self.flatpak = (os.name == 'posix') and self.core.call_success(
+        self.flatpak = (os.name == 'posix') and bool(self.core.call_success(
             "fs_isdir", "file:///app"
-        ) is not None
+        ))
         LOGGER.info("Flatpak environment: %s", self.flatpak)
         self.tmp_dir = self.core.call_success(
             "fs_join",

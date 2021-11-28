@@ -1,3 +1,6 @@
+2021/XX/XX - 2.1.0:
+- Bug report: Clarify the use of the author field
+
 2021/05/24 - 2.0.3:
 - Swedish translations added
 - Add LICENSE file in pypi package
