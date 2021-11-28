@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-28 20:29+0100\n"
+"POT-Creation-Date: 2021-11-28 21:34+0100\n"
 "PO-Revision-Date: 2020-05-03 15:37+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -219,7 +219,7 @@ msgid "Label to remove"
 msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:85
-msgid "Label to remove on *all* documents"
+msgid "Label to delete from *all* documents"
 msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:90

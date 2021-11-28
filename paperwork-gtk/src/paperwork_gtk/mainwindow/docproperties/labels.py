@@ -291,7 +291,7 @@ class LabelEditor(object):
             "gtk_show_dialog_yes_no",
             self,
             _(
-                "Are you sure you want to remove label '%s'"
+                "Are you sure you want to delete label '%s'"
                 " from ALL documents ?"
             ) % (original_label,),
             original_label,

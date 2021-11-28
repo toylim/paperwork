@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-28 20:29+0100\n"
+"POT-Creation-Date: 2021-11-28 21:34+0100\n"
 "PO-Revision-Date: 2021-09-09 05:14+0000\n"
 "Last-Translator: Marcel Mente <acc+weblate@eeagle.net>\n"
 "Language-Team: Spanish <http://translations.openpaper.work/projects/"
@@ -260,7 +260,7 @@ msgstr "Cambiar el nombre de la etiqueta"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:294
 #, python-format
-msgid "Are you sure you want to remove label '%s' from ALL documents ?"
+msgid "Are you sure you want to delete label '%s' from ALL documents ?"
 msgstr ""
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:396
