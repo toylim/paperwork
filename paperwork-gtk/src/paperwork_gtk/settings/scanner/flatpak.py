@@ -55,13 +55,10 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def init(self, core):
-        super().init(core)
-
-        if self.core.call_success("is_in_flatpak") is None:
-            return
-
     def settings_scanner_get_extra_widget(self):
+        if not self.core.call_success("is_in_flatpak"):
+            return None
+
         widget_tree = self.core.call_success(
             "gtk_load_widget_tree", "paperwork_gtk.settings.scanner",
             "flatpak.glade"
