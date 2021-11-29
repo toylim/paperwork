@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-28 20:29+0100\n"
+"POT-Creation-Date: 2021-11-28 21:34+0100\n"
 "PO-Revision-Date: 2021-11-24 11:15+0000\n"
 "Last-Translator: Jerome Flesch <jflesch@openpaper.work>\n"
 "Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
@@ -81,7 +81,7 @@ msgstr "Imprimer la page"
 
 #: paperwork-gtk/src/paperwork_gtk/menus/docs/redo_ocr.py:51
 msgid "Redo OCR"
-msgstr ""
+msgstr "Refaire la ROC"
 
 #: paperwork-gtk/src/paperwork_gtk/menus/docs/export.py:51
 msgid "Export"
@@ -264,7 +264,7 @@ msgstr "Renommer le label"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:294
 #, python-format
-msgid "Are you sure you want to remove label '%s' from ALL documents ?"
+msgid "Are you sure you want to delete label '%s' from ALL documents ?"
 msgstr ""
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:396
@@ -750,6 +750,12 @@ msgstr ""
 #: paperwork-gtk/src/paperwork_gtk/actions/page/move_to_doc/move_to_doc.glade.h:1
 msgid "Select target document"
 msgstr "Sélectionnez le document cible"
+
+#: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:294
+#, python-format
+msgid "Are you sure you want to remove label '%s' from ALL documents ?"
+msgstr ""
+"Êtes-vous sûre de vouloir retirer le label '%s' de TOUS vos documents ?"
 
 #~ msgid "©2020"
 #~ msgstr "©2020"

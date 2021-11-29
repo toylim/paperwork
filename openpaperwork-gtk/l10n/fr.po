@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-28 20:29+0100\n"
-"PO-Revision-Date: 2021-11-16 17:11+0000\n"
+"PO-Revision-Date: 2021-11-28 20:35+0000\n"
 "Last-Translator: Jerome Flesch <jflesch@openpaper.work>\n"
 "Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
 "openpaperwork-gtk/fr/>\n"
@@ -124,11 +124,11 @@ msgstr "Description du bogue"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:2
 msgid "Required if you agree to be contacted regarding this bug report"
-msgstr ""
+msgstr "Requis si vous acceptez d'être contacté au sujet de ce rapport de bug"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:3
 msgid "Your email address"
-msgstr ""
+msgstr "Votre adresse email"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:4
 msgid ""

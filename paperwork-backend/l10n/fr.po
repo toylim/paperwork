@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-28 20:29+0100\n"
-"PO-Revision-Date: 2021-11-15 17:15+0000\n"
+"PO-Revision-Date: 2021-11-28 20:34+0000\n"
 "Last-Translator: Jerome Flesch <jflesch@openpaper.work>\n"
 "Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-backend/fr/>\n"
@@ -433,6 +433,8 @@ msgstr "Document {doc_id} p{page_idx} déjà découpée"
 #, python-brace-format
 msgid "Document {doc_id} p{page_idx} has already some text. Not cropping."
 msgstr ""
+"La page p{page_idx} du document {doc_id} a déjà du texte. Ne sera pas "
+"découpée."
 
 #: paperwork-backend/src/paperwork_backend/guesswork/cropping/calibration.py:68
 #, python-brace-format

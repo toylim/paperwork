@@ -82,7 +82,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         p = subcmd_parser.add_parser('delete')
         p.add_argument(
-            'label_name', help=_("Label to remove on *all* documents")
+            'label_name', help=_("Label to delete from *all* documents")
         )
 
     def _load_all_labels(self):

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-28 20:29+0100\n"
+"POT-Creation-Date: 2021-11-28 21:34+0100\n"
 "PO-Revision-Date: 2021-11-16 17:11+0000\n"
 "Last-Translator: Jerome Flesch <jflesch@openpaper.work>\n"
 "Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
@@ -236,8 +236,8 @@ msgid "Label to remove"
 msgstr "Étiquette à retirer"
 
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:85
-msgid "Label to remove on *all* documents"
-msgstr "Étiquette à retirer sur *tous* les documents"
+msgid "Label to delete from *all* documents"
+msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:90
 msgid "Loading all labels ... "
@@ -556,6 +556,9 @@ msgstr "Effacer la/les page(s) {page_indexes} du document {doc_id} ?"
 #: paperwork-shell/src/paperwork_shell/main.py:68
 msgid "command"
 msgstr "commande"
+
+#~ msgid "Label to remove on *all* documents"
+#~ msgstr "Étiquette à retirer sur *tous* les documents"
 
 #, python-format
 #~ msgid "Found many ways to import file(s) %s:"
