@@ -7,6 +7,66 @@ In this document, it is assumed you are already familiar with the basics of
 Git.
 
 
+### Paperwork system-wide
+
+Those instructions are useful if you just want to install Paperwork and don't
+plan on contributing.
+
+
+#### Installation
+
+```sh
+sudo apt install \
+       python3-virtualenv virtualenv python3-dev \
+       gettext \
+       git \
+       make \
+       meson \
+       build-essential \
+       libsane-dev \
+       libgirepository1.0-dev gobject-introspection \
+       python3-gi \
+       valac \
+       gtk-doc-tools
+
+cd /tmp
+git clone git@gitlab.gnome.org:World/OpenPaperwork/paperwork.git
+cd paperwork
+# switch to the stable branch ('master')
+# other possible branches are 'testing' and 'develop'
+git checkout master
+sudo make install
+
+cd -
+rm -rf paperwork
+
+# Install missing dependencies
+paperwork-gtk chkdeps
+
+# Add icon to menus (you may have to log out and log back in to see them)
+sudo paperwork-gtk install
+```
+
+Later, if you want to update Paperwork, uninstall it (see below) and reinstall
+it (see above).
+
+
+#### Uninstallation
+
+```sh
+cd /tmp
+git clone git@gitlab.gnome.org:World/OpenPaperwork/paperwork.git
+cd paperwork
+sudo make uninstall
+
+cd -
+rm -rf paperwork
+```
+
+Uninstallation never deletes your work directory nor your documents.
+Uninstallation doesn't delete Paperwork icons.
+
+
 ## Paperwork in a Virtualenv
 
 This is the recommended approach for development. If you intend to work on
