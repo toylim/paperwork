@@ -1,14 +1,15 @@
 2021/XX/XX - 2.1.0:
 - Responsive UI (thanks to Mathieu Jourdan)
+- Add support for password-protected PDF files
 - Export: add a button sendig the document by mail instead of exporting to disk
   (thanks to Guillaume Girol)
 - Add confirmation when deleting label from all documents
 - Add option to redo ocr on many documents in one shot
 - Add option to move a page from one document to another (drag'n'drop
   isn't obvious to all users)
-- GTK: page menu: add an option to move pages inside a document
+- Page menu: add an option to move pages inside a document
   (drag'n'drop isn't obvious to all users)
-- Add support for password-protected PDF files
+- Mouse middle button can now be used to scroll in a document (auto-scrolling)
 - Add dependency on Libhandy
 
 2021/05/24 - 2.0.3:
