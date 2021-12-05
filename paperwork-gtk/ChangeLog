@@ -1,4 +1,4 @@
-2021/XX/XX - 2.1.0:
+2021/12/05 - 2.1.0:
 - Responsive UI (thanks to Mathieu Jourdan)
 - Add support for password-protected PDF files
 - Export: add a button sendig the document by mail instead of exporting to disk

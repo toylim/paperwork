@@ -1,4 +1,4 @@
-2021/XX/XX - 2.1.0:
+2021/12/05 - 2.1.0:
 - Use system pager to paginate shell About page (thanks to Elliott Sales de
   Andrade)
 - doc import: add support for password-protected PDF files
