@@ -6,6 +6,8 @@ ALL_COMPONENTS = \
 	paperwork-shell \
 	paperwork-gtk
 
+RELEASE ?=
+
 build:
 
 openpaperwork-core_install_py:
@@ -61,14 +63,14 @@ doc: $(ALL_COMPONENTS:%=%_doc)
 upload_doc: $(ALL_COMPONENTS:%=%_upload_doc)
 
 release_pypi: version download_data l10n_compile
-	$(MAKE) $(ALL_COMPONENTS:%=%_release_pypi)
+	$(MAKE) $(ALL_COMPONENTS:%=%_release_pypi) RELEASE=${RELEASE}
 
 release: $(ALL_COMPONENTS:%=%_release)
 ifeq (${RELEASE}, )
 	@echo "You must specify a release version (make release RELEASE=1.2.3)"
 	@echo "Also makes sure to update:"
 	@echo "- AUTHORS.ui.json"
-	@echo "- AUTHORS.patrons.json (from Patreon, all patrons >= 10)"
+	exit 1
 else
 	@echo "Will release: ${RELEASE}"
 	git tag -a ${RELEASE} -m ${RELEASE}
@@ -176,7 +178,7 @@ help:
 
 %_release:
 	echo "Releasing $(@:%_release=%)"
-	$(MAKE) -C $(@:%_release=%) release
+	$(MAKE) -C $(@:%_release=%) release RELEASE=$(RELEASE)
 
 %_release_pypi:
 	echo "Releasing $(@:%_release_pypi=%)"

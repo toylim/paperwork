@@ -50,6 +50,7 @@ windows_exe:
 release:
 ifeq (${RELEASE}, )
 	@echo "You must specify a release version (make release RELEASE=1.2.3)"
+	exit 1
 else
 	@echo "Will release: ${RELEASE}"
 	@echo "Checking release is in ChangeLog ..."
