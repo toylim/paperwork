@@ -68,7 +68,6 @@ ifeq (${RELEASE}, )
 	@echo "You must specify a release version (make release RELEASE=1.2.3)"
 	@echo "Also makes sure to update:"
 	@echo "- AUTHORS.ui.json"
-	@echo "- AUTHORS.patrons.json (from Patreon, all patrons >= 10)"
 else
 	@echo "Will release: ${RELEASE}"
 	git tag -a ${RELEASE} -m ${RELEASE}
