@@ -1,7 +1,11 @@
 import os
 import tempfile
 
-import fabulous.image
+try:
+    import fabulous.image
+    FABULOUS_AVAILABLE = True
+except (ValueError, ImportError):
+    FABULOUS_AVAILABLE = False
 
 import openpaperwork_core
 
@@ -122,12 +126,16 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def doc_renderer_get(self, out):
+        if not FABULOUS_AVAILABLE:
+            return
         r = FabulousRenderer(self)
         if len(out) > 0:
             r.parent = out[-1]
         out.append(r)
 
     def img_render(self, img, terminal_width=80):
+        if not FABULOUS_AVAILABLE:
+            return
         with tempfile.NamedTemporaryFile(
                     prefix='paperwork-shell', suffix='.jpeg',
                     delete=False

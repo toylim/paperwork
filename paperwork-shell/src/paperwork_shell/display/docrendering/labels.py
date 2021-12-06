@@ -1,4 +1,8 @@
-import fabulous.color
+try:
+    import fabulous.color
+    FABULOUS_AVAILABLE = True
+except (ValueError, ImportError):
+    FABULOUS_AVAILABLE = False
 
 import openpaperwork_core
 
@@ -64,6 +68,8 @@ class LabelsRenderer(object):
             out = self.parent.get_preview_output(
                 doc_id, doc_url, terminal_size, page_idx
             )
+        if not FABULOUS_AVAILABLE:
+            return out
         if page_idx != 0:
             return out
 
@@ -78,6 +84,8 @@ class LabelsRenderer(object):
             out = self.parent.get_doc_output(
                 doc_id, doc_url, terminal_size
             )
+        if not FABULOUS_AVAILABLE:
+            return out
 
         labels = self._get_labels(doc_url)
         labels = color_labels(self.core, labels)
@@ -128,8 +136,11 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def print_labels(self, labels, separator='\n'):
-        labels = color_labels(self.core, labels)
-        labels = [label for (l_label, label) in labels]
+        if FABULOUS_AVAILABLE:
+            labels = color_labels(self.core, labels)
+            labels = [label for (l_label, label) in labels]
+        else:
+            labels = [label for (label, color) in labels]
         labels = separator.join(labels)
         print(labels)
 
