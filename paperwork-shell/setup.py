@@ -22,6 +22,14 @@ except FileNotFoundError:
     sys.exit(1)
 
 
+install_requires = [
+    "openpaperwork-core",
+    "paperwork-backend",
+]
+if os.name != "nt":
+    install_requires.append("fabulous")
+
+
 setuptools.setup(
     name="paperwork-shell",
     version=version,
@@ -68,11 +76,7 @@ setuptools.setup(
         ],
     },
     zip_safe=True,
-    install_requires=[
-        "fabulous",
-        "openpaperwork-core",
-        "paperwork-backend",
-    ]
+    install_requires=install_requires,
 )
 
 if quiet:

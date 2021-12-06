@@ -160,19 +160,32 @@ class Plugin(PluginBase):
                 self.progress_condition.notify_all()
 
     def _wait(self):
+        # WORKAROUND(Jflesch): sometimes, for some reason, we never get the
+        # notification for the end of boxes loading
+        MAX_TIME = 30  # seconds
+
+        start = time.time()
+        time_diff = 0
+
         # wait a little, in case the call to _wait() came slightly before
         # the background task creation.
         print("Waiting for all background tasks to end")
         time.sleep(3.0)
         with self.progress_condition:
-            while len(self.progresses) > 0 or self.nb_windows_to_realize > 0:
-                while (len(self.progresses) > 0 or
-                        self.nb_windows_to_realize > 0):
+            while ((len(self.progresses) > 0 or
+                    self.nb_windows_to_realize > 0) and
+                    time_diff <= MAX_TIME):
+                while ((len(self.progresses) > 0 or
+                        self.nb_windows_to_realize > 0) and
+                        time_diff <= MAX_TIME):
                     print("Waiting for all background tasks to end")
                     print("Remaining background tasks:")
                     for (upd_type, progress) in self.progresses.items():
                         print("  {}: {}%".format(upd_type, int(progress)))
                     self.progress_condition.wait(1.0)
+                    time_diff = time.time() - start
+                if time_diff > MAX_TIME:
+                    break
                 # wait again a little ; sometime background tasks are
                 # sequentially removed and added
                 self.progress_condition.release()
@@ -180,4 +193,7 @@ class Plugin(PluginBase):
                     time.sleep(3)
                 finally:
                     self.progress_condition.acquire()
-        print("All background tasks have ended")
+        if time_diff <= MAX_TIME:
+            print("All background tasks have ended")
+        else:
+            print("TIMEOUT")
