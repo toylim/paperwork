@@ -268,7 +268,7 @@
                 {
                     "type": "git",
                     "path": ".",
-                    "branch": "master",
+                    "branch": "testing",
                     "disable-shallow-clone": true
                 },
                 {
