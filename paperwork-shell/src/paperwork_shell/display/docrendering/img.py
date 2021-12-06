@@ -3,15 +3,13 @@ import tempfile
 
 try:
     import fabulous.image
+    # XXX(Jflesch): crappy workaround for an unmaintained library ...
+    fabulous.image.basestring = str
     FABULOUS_AVAILABLE = True
 except (ValueError, ImportError):
     FABULOUS_AVAILABLE = False
 
 import openpaperwork_core
-
-
-# XXX(Jflesch): crappy workaround for an unmaintained library ...
-fabulous.image.basestring = str
 
 
 class FabulousRenderer(object):
