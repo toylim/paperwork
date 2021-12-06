@@ -90,7 +90,6 @@ Main features are:
         "openpaperwork-gtk",
         "pycountry",
         "pyocr >= 0.3.0",
-        "python-dateutil",
         "python-Levenshtein",
         "pyxdg >= 0.25",
         "paperwork-backend>={}".format(version),
