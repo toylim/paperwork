@@ -2,7 +2,7 @@
     "app-id": "work.openpaper.Paperwork",
     "branch": "testing",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "40",
+    "runtime-version": "41",
     "sdk": "org.gnome.Sdk",
     "command": "paperwork-gtk",
     "copy-icon": true,
@@ -25,8 +25,8 @@
         "--env=LIBO_FLATPAK=1"
     ],
     "modules": [
-        "flatpak/shared-modules/setuptools-40.8.0.json",
-        "flatpak/shared-modules/libreoffice-7.0.4.2.json",
+        "flatpak/shared-modules/setuptools-59.5.0.json",
+        "flatpak/shared-modules/libreoffice-7.2.3.2.json",
         "flatpak/shared-modules/scikit-learn-0.24.0.json",
         "flatpak/shared-modules/sane-backends-1.0.32.json",
         "flatpak/shared-modules/tesseract-4.1.1.json",
@@ -170,8 +170,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://poppler.freedesktop.org/poppler-data-0.4.10.tar.gz",
-                    "sha256": "6e2fcef66ec8c44625f94292ccf8af9f1d918b410d5aa69c274ce67387967b30"
+                    "url": "https://poppler.freedesktop.org/poppler-data-0.4.11.tar.gz",
+                    "sha256": "2cec05cd1bb03af98a8b06a1e22f6e6e1a65b1e2f3816cb3069bb0874825f08c"
                 }
             ]
         },
@@ -179,13 +179,16 @@
             "name": "poppler",
             "buildsystem": "cmake-ninja",
             "config-opts": [
+                "-DENABLE_QT5=OFF",
+                "-DENABLE_QT6=OFF",
+                "-DENABLE_BOOST=OFF",
                 "-DENABLE_LIBOPENJPEG:STRING=none"
             ],
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://poppler.freedesktop.org/poppler-21.02.0.tar.xz",
-                    "sha256": "5c14759c99891e6e472aced6d5f0ff1dacf85d80cd9026d365c55c653edf792c"
+                    "url": "https://poppler.freedesktop.org/poppler-21.12.0.tar.xz",
+                    "sha256": "acb840c2c1ec07d07e53c57c4b3a1ff3e3ee2d888d44e1e9f2f01aaf16814de7"
                 }
             ]
         },
@@ -220,11 +223,16 @@
         },
         {
             "name": "python-pyocr",
-            "make-install-args": ["PIP_ARGS=--prefix=/app --root=/"],
-            "no-autogen": true,
+            "buildsystem": "simple",
+            "build-options": {
+                "env": {
+                    "ENABLE_SETUPTOOLS_SCM": "0"
+                }
+            },
+            "build-commands": ["python3 ./setup.py install --prefix=/app --root=/"],
             "ensure-writable": [
-                    "/lib/python*/site-packages/easy-install.pth",
-                    "/lib/python*/site-packages/setuptools.pth"
+                "/lib/python*/site-packages/easy-install.pth",
+                "/lib/python*/site-packages/setuptools.pth"
             ],
             "sources": [
                 {
@@ -277,5 +285,6 @@
                 }
             ]
         }
+
     ]
 }
