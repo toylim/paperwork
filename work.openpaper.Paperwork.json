@@ -179,6 +179,9 @@
             "name": "poppler",
             "buildsystem": "cmake-ninja",
             "config-opts": [
+                "-DENABLE_QT5=OFF",
+                "-DENABLE_QT6=OFF",
+                "-DENABLE_BOOST=OFF",
                 "-DENABLE_LIBOPENJPEG:STRING=none"
             ],
             "sources": [
@@ -221,7 +224,12 @@
         {
             "name": "python-pyocr",
             "buildsystem": "simple",
-            "build-commands": ["ENABLE_SETUTOOLS_SCM=0 python3 ./setup.py install --prefix=/app --root=/"],
+            "build-options": {
+                "env": {
+                    "ENABLE_SETUPTOOLS_SCM": "0"
+                }
+            },
+            "build-commands": ["python3 ./setup.py install --prefix=/app --root=/"],
             "ensure-writable": [
                 "/lib/python*/site-packages/easy-install.pth",
                 "/lib/python*/site-packages/setuptools.pth"
