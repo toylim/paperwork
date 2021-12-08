@@ -130,5 +130,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def gesture_enable_autoscrolling(self, scrollview):
         LOGGER.info("Enabling autoscrolling on %s", scrollview)
-        # we need to keep a ref on it
-        return AutoScrollingHandler(self.core, scrollview)
+        try:
+            return AutoScrollingHandler(self.core, scrollview)
+        except TypeError as exc:
+            # may happen with Wayland
+            LOGGER.error("Failed to switch mouse cursor", exc_info=exc)
+            return None
