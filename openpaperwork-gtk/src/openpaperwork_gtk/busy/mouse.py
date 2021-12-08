@@ -63,8 +63,15 @@ class Plugin(openpaperwork_core.PluginBase):
 
         if self.refcount > 0:
             LOGGER.info("Mouse cursor --> busy")
-            display = self.windows[-1].get_display()
-            cursor = Gdk.Cursor.new_for_display(display, Gdk.CursorType.WATCH)
+            try:
+                display = self.windows[-1].get_display()
+                cursor = Gdk.Cursor.new_for_display(
+                    display, Gdk.CursorType.WATCH
+                )
+            except TypeError as exc:
+                # may happen with Wayland
+                LOGGER.error("Failed to switch mouse cursor", exc_info=exc)
+                return
         else:
             LOGGER.info("Mouse cursor --> idle")
             cursor = None
