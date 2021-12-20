@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-10-09 12:56+0200\n"
-"PO-Revision-Date: 2021-10-25 05:49+0000\n"
-"Last-Translator: Andreas Forster <aforster2311@gmail.com>\n"
+"PO-Revision-Date: 2021-12-21 19:24+0000\n"
+"Last-Translator: Tom F <tom@mb.tu-ilmenau.de>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-help-documents/de/>\n"
 "Language: de\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.4\n"
+"X-Generator: Weblate 4.9\n"
 
 #. type: Plain text
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/intro.tex:11
@@ -54,7 +54,7 @@ msgstr ""
 "Paperwork wird dir helfen, dieser Papierflut Herr zu werden, indem es lose "
 "Zettel in durchsuchbare Dateien verwandelt. Ganz einfach: Dokument scannen "
 "und vergessen. Du suchst ein bestimmtes Schreiben? Einfach ein paar "
-"Schlüsselworte eintippen und tada!"
+"Schlüsselworte eintippen und tada"
 
 #. type: section{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/intro.tex:28
