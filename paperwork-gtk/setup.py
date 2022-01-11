@@ -191,6 +191,7 @@ else:
         # XXX(Jflesch): bug ?
         "pyocr",
         "pyocr.libtesseract",
+        "setuptools",
 
         "openpaperwork_core",
         "openpaperwork_gtk",
