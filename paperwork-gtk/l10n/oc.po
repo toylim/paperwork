@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-30 11:53+0100\n"
-"PO-Revision-Date: 2021-10-27 22:23+0000\n"
+"PO-Revision-Date: 2022-01-05 18:30+0000\n"
 "Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
 "Language-Team: Occitan <http://translations.openpaper.work/projects/"
 "paperwork/paperwork-gtk/oc/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.4\n"
+"X-Generator: Weblate 4.9\n"
 
 #: paperwork-gtk/src/paperwork_gtk/cmd/install.py:40
 msgid "Install Paperwork icons and shortcuts"
@@ -194,7 +194,7 @@ msgstr "Exportar"
 
 #: paperwork-gtk/src/paperwork_gtk/menus/docs/redo_ocr.py:51
 msgid "Redo OCR"
-msgstr ""
+msgstr "Refar la ROC"
 
 #: paperwork-gtk/src/paperwork_gtk/menus/app/open_settings.py:43
 #: paperwork-gtk/src/paperwork_gtk/settings/settings.glade.h:1
@@ -404,6 +404,7 @@ msgstr "Renomenar l'etiqueta"
 #, python-format
 msgid "Are you sure you want to delete label '%s' from ALL documents ?"
 msgstr ""
+"Volètz vertadièrament suprimir l’etiqueta « %s » de totes los documents ?"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/docproperties/labels.py:396
 #, python-brace-format

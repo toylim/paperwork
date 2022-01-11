@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-30 11:53+0100\n"
-"PO-Revision-Date: 2021-11-05 20:32+0000\n"
+"PO-Revision-Date: 2022-01-05 18:30+0000\n"
 "Last-Translator: Quentin PAGÈS <quentinantonin@free.fr>\n"
 "Language-Team: Occitan <http://translations.openpaper.work/projects/"
 "paperwork/paperwork-shell/oc/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.4\n"
+"X-Generator: Weblate 4.9\n"
 
 #: paperwork-shell/src/paperwork_shell/cmd/sync.py:57
 msgid "Synchronize the index(es) with the content of the work directory"
@@ -376,7 +376,7 @@ msgstr "Etiqueta de tirar"
 
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:85
 msgid "Label to delete from *all* documents"
-msgstr ""
+msgstr "Etiqueta de suprimir de *totes* los documents"
 
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:90
 msgid "Loading all labels ... "
@@ -412,7 +412,7 @@ msgstr "Sap pas cossí importar lo(s) fichièr(s) %s"
 #: paperwork-shell/src/paperwork_shell/cmd/import.py:121
 #, python-format
 msgid "Found many ways to import file(s) %s."
-msgstr ""
+msgstr "Mai d’un biais d’importar los fichièrs %s son estats trobats."
 
 #: paperwork-shell/src/paperwork_shell/cmd/import.py:122
 msgid "Please select the way you want:"

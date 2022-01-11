@@ -608,6 +608,9 @@ class Plugin(openpaperwork_core.PluginBase):
             if not mapping.has_original_page_idx(page_idx):
                 continue
             page = pdf.get_page(page_idx)
+            # some PDF are really badly damaged
+            if page is None:
+                continue
             txt = page.get_text()
             txt = txt.strip()
             if txt == "":
