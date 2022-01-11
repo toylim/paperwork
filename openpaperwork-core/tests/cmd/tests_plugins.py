@@ -79,7 +79,7 @@ class TestConfig(unittest.TestCase):
             "openpaperwork_core.config.backend.configparser",
             MockConfigBackendModule()
         )
-        self.core.load("openpaperwork_core.cmd.config")
+        self.core.load("openpaperwork_core.cmd.plugins")
         self.core.init()
 
         setting = self.core.call_success(
@@ -88,14 +88,25 @@ class TestConfig(unittest.TestCase):
         )
         self.core.call_all("config_register", "workdir", setting)
 
-    def test_get_put(self):
+    def test_add_remove_list_plugin(self):
         self.core.get_by_name(
             'openpaperwork_core.config.backend.configparser'
         ).returns = {
-            'config_backend_put': [None],
+            'config_backend_load': [None],
+            'config_backend_load_plugins': [None],
+            'config_backend_add_plugin': [None],
+            'config_backend_list_active_plugins': [
+                ['plugin_a', 'plugin_b', 'plugin_c'],
+                ['plugin_a', 'plugin_c']
+            ],
+            'config_backend_remove_plugin': [None],
             'config_backend_save': [None],
-            'config_backend_get': ['file:///pouet/path']
         }
+
+        self.core.call_all('config_load')
+        self.core.call_all(
+            'config_load_plugins', 'paperwork-shell', default_plugins=['pouet']
+        )
 
         parser = argparse.ArgumentParser()
         cmd_parser = parser.add_subparsers(
@@ -104,7 +115,7 @@ class TestConfig(unittest.TestCase):
         self.core.call_all("cmd_complete_argparse", cmd_parser)
 
         args = parser.parse_args(
-            ['config', 'put', 'workdir', 'str', 'file:///pouet/path']
+            ['plugins', 'add', 'plugin_c', '--no_auto']
         )
         self.core.call_all("cmd_set_interactive", False)
         r = self.core.call_success("cmd_run", args)
@@ -114,30 +125,106 @@ class TestConfig(unittest.TestCase):
                 'openpaperwork_core.config.backend.configparser'
             ).calls,
             [
+                ('config_backend_load', ('openpaperwork_core',), {}),
                 (
-                    'config_backend_put',
-                    ('Global', "WorkDirectory", "file:///pouet/path"),
-                    {}
+                    'config_backend_load_plugins',
+                    ('paperwork-shell', ['pouet']), {}
+                ),
+                (
+                    'config_backend_add_plugin',
+                    ('paperwork-shell', 'plugin_c'), {}
                 ),
                 ('config_backend_save', (), {}),
             ]
         )
 
-        args = parser.parse_args(['config', 'get', 'workdir'])
+        args = parser.parse_args(['plugins', 'list'])
         r = self.core.call_success("cmd_run", args)
-        self.assertEqual(r, {"workdir": "file:///pouet/path"})
+        self.assertEqual(sorted(r), ['plugin_a', 'plugin_b', 'plugin_c'])
         self.assertEqual(
             self.core.get_by_name(
                 'openpaperwork_core.config.backend.configparser'
             ).calls,
             [
+                ('config_backend_load', ('openpaperwork_core',), {}),
                 (
-                    'config_backend_put',
-                    ('Global', "WorkDirectory", "file:///pouet/path"),
-                    {}
+                    'config_backend_load_plugins',
+                    ('paperwork-shell', ['pouet']), {}
+                ),
+                (
+                    'config_backend_add_plugin',
+                    ('paperwork-shell', 'plugin_c'), {}
                 ),
                 ('config_backend_save', (), {}),
-                # it uses the cache for the get
-                # --> no call to config_backend_get
+                (
+                    'config_backend_list_active_plugins',
+                    ('paperwork-shell',), {}
+                )
+            ]
+        )
+
+        args = parser.parse_args(
+            ['plugins', 'remove', 'plugin_b', '--no_auto']
+        )
+        r = self.core.call_success("cmd_run", args)
+        self.assertTrue(r)
+        self.assertEqual(
+            self.core.get_by_name(
+                'openpaperwork_core.config.backend.configparser'
+            ).calls,
+            [
+                ('config_backend_load', ('openpaperwork_core',), {}),
+                (
+                    'config_backend_load_plugins',
+                    ('paperwork-shell', ['pouet']), {}
+                ),
+                (
+                    'config_backend_add_plugin',
+                    ('paperwork-shell', 'plugin_c'), {}
+                ),
+                ('config_backend_save', (), {}),
+                (
+                    'config_backend_list_active_plugins',
+                    ('paperwork-shell',), {}
+                ),
+                (
+                    'config_backend_remove_plugin',
+                    ('paperwork-shell', 'plugin_b'), {}
+                ),
+                ('config_backend_save', (), {}),
+            ]
+        )
+
+        args = parser.parse_args(['plugins', 'list'])
+        r = self.core.call_success("cmd_run", args)
+        self.assertEqual(sorted(r), ['plugin_a', 'plugin_c'])
+        self.assertEqual(
+            self.core.get_by_name(
+                'openpaperwork_core.config.backend.configparser'
+            ).calls,
+            [
+                ('config_backend_load', ('openpaperwork_core',), {}),
+                (
+                    'config_backend_load_plugins',
+                    ('paperwork-shell', ['pouet']), {}
+                ),
+                (
+                    'config_backend_add_plugin',
+                    ('paperwork-shell', 'plugin_c'), {}
+                ),
+                ('config_backend_save', (), {}),
+                (
+                    'config_backend_list_active_plugins',
+                    ('paperwork-shell',), {}
+                ),
+                (
+                    'config_backend_remove_plugin',
+                    ('paperwork-shell', 'plugin_b'), {}
+                ),
+                ('config_backend_save', (), {}),
+                (
+                    'config_backend_list_active_plugins',
+                    ('paperwork-shell',), {}
+                )
             ]
         )
