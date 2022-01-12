@@ -39,7 +39,7 @@ test: install
 linux_exe:
 
 windows_exe:
-	${PYTHON} /mingw32/bin/pip3-script.py install .
+	${PYTHON} /mingw64/bin/pip3-script.py install .
 	# ugly, but "import pkg_resources" doesn't work in frozen environments
 	# and I don't want to have to patch the build machine to fix it every
 	# time.
