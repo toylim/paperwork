@@ -287,6 +287,9 @@ windows_exe:
     - c:\msys64\usr\bin\wget -q https://github.com/rclone/rclone/releases/download/v1.53.3/rclone-v1.53.3-windows-386.zip
     - c:\msys64\usr\bin\unzip rclone-v1.53.3-windows-386.zip
     - c:\msys64\usr\bin\cp rclone-v1.53.3-windows-386/rclone.exe /usr/bin
+    # work around cx_freeze + pycountry issues
+    - pip3 uninstall pycountry
+    - pip3 install --no-cache --use-pep517 pycountry==20.7.3
     # Build
     - c:\msys64\usr\bin\bash -lc "make windows_exe"
     - c:\msys64\usr\bin\bash -lc "./ci/deliver.sh dist/paperwork.zip windows .zip"
