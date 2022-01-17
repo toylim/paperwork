@@ -451,3 +451,159 @@ class TestLabelGuesser(unittest.TestCase):
             list(self.fake_storage.docs[3]['labels'])[0],
             ("some_label", "#123412341234")
         )
+
+    def test_training_no_text_at_all(self):
+        # ## First training
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
+        self.fake_storage.docs = [
+            {
+                'id': 'test_doc',
+                'url': 'file:///somewhere/test_doc',
+                'mtime': 123,
+                'text': '',
+                'labels': {("some_label", "#123412341234")},
+            },
+            {
+                'id': 'test_doc_2',
+                'url': 'file:///somewhere/test_doc_2',
+                'mtime': 123,
+                'text': '',
+                'labels': {("some_label", "#123412341234")},
+            },
+            {
+                'id': 'test_doc_3',
+                'url': 'file:///somewhere/test_doc_3',
+                'mtime': 123,
+                'text': '',
+                'labels': set(),
+            },
+            {
+                'id': 'some_other_old_doc',
+                'url': 'file:///somewhere/new_doc_2',
+                'mtime': 123,
+                'text': '',
+                'labels': set(),
+            },
+        ]
+
+        # make a transaction to indicate that those documents are now in
+        # the storage --> it will update the training of bayesian filters.
+        transactions = []
+        self.core.call_all("doc_transaction_start", transactions)
+        transactions.sort(key=lambda transaction: -transaction.priority)
+        self.assertGreater(len(transactions), 0)
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
+        # XXX(Jflesch): use upd_doc() so it doesn't try to guess labels
+        for transaction in transactions:
+            transaction.upd_doc("test_doc")
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
+        for transaction in transactions:
+            transaction.upd_doc("test_doc_2")
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
+        for transaction in transactions:
+            transaction.upd_doc("test_doc_3")
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
+        for transaction in transactions:
+            transaction.upd_doc("some_other_old_doc")
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
+        for transaction in transactions:
+            transaction.commit()
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
+        self.assertEqual(len(self.fake_storage.docs[2]['labels']), 0)
+        self.assertEqual(len(self.fake_storage.docs[3]['labels']), 0)
+
+        # ## New docs
+
+        self.fake_storage.docs = [
+            {  # old doc
+                'id': 'test_doc',
+                'url': 'file:///somewhere/test_doc',
+                'mtime': 123,
+                'text': '',
+                'labels': {("some_label", "#123412341234")},
+            },
+            {  # old doc
+                'id': 'test_doc_2',
+                'url': 'file:///somewhere/test_doc_2',
+                'mtime': 123,
+                'text': '',
+                'labels': {("some_label", "#123412341234")},
+            },
+            {  # old doc
+                'id': 'test_doc_3',
+                'url': 'file:///somewhere/test_doc_3',
+                'mtime': 123,
+                'text': '',
+                'labels': set(),
+            },
+            {  # new doc on which we will guess the labels
+                'id': 'new_doc',
+                'url': 'file:///somewhere/new_doc',
+                'mtime': 123,
+                'text': '',
+                'labels': set(),
+            },
+            {  # new doc on which we will guess the labels
+                'id': 'new_doc_2',
+                'url': 'file:///somewhere/new_doc_2',
+                'mtime': 123,
+                'text': '',
+                'labels': set(),
+            },
+            {
+                'id': 'some_other_old_doc',
+                'url': 'file:///somewhere/new_doc_2',
+                'mtime': 123,
+                'text': '',
+                'labels': set(),
+            },
+        ]
+
+        # make a transaction to make the plugin label_guesser add labels
+        # on them.
+        transactions = []
+        self.core.call_all("doc_transaction_start", transactions)
+        self.assertGreater(len(transactions), 0)
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
+        for transaction in transactions:
+            transaction.add_doc("new_doc")
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
+        for transaction in transactions:
+            transaction.add_doc("new_doc_2")
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
+        for transaction in transactions:
+            transaction.commit()
+
+        self.core.call_all("mainloop_quit_graceful")
+        self.core.call_one("mainloop")
+
+        # guessed labels don't actually matter, it must just not crash
