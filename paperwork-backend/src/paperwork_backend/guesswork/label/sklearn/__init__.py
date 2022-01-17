@@ -132,7 +132,10 @@ class UpdatableVectorizer(object):
         vocabulary = self.db_cursor.execute(
             "SELECT word, feature FROM vocabulary"
         )
-        vocabulary = {k: v for (k, v) in vocabulary}
+        vocabulary = {k.strip(): v for (k, v) in vocabulary}
+        if "" in vocabulary:
+            vocabulary.pop("")
+
         self.updatable_vocabulary = vocabulary
         self.last_feature_id = max(vocabulary.values(), default=-1)
 
@@ -155,9 +158,9 @@ class UpdatableVectorizer(object):
                     "  WHERE NOT EXISTS("
                     "   SELECT 1 FROM vocabulary WHERE word = ?"
                     "  )",
-                    (word, self.last_feature_id, word)
+                    (word.strip(), self.last_feature_id, word)
                 )
-                self.updatable_vocabulary[word] = self.last_feature_id
+                self.updatable_vocabulary[word.strip()] = self.last_feature_id
         LOGGER.info(
             "Vocabulary contains %d words after fitting", self.last_feature_id
         )
@@ -167,12 +170,16 @@ class UpdatableVectorizer(object):
     def transform(self, corpus):
         # IMPORTANT: we must use use_idf=False here because we want the values
         # in each feature vector to be independant from other vectors.
-        vectorizer = sklearn.feature_extraction.text.TfidfVectorizer(
-            use_idf=False, vocabulary=self.updatable_vocabulary
-        )
-        features = vectorizer.fit_transform(corpus)
-        LOGGER.info("%s features extracted", features.shape)
-        return features
+        try:
+            vectorizer = sklearn.feature_extraction.text.TfidfVectorizer(
+                use_idf=False, vocabulary=self.updatable_vocabulary
+            )
+            features = vectorizer.fit_transform(corpus)
+            LOGGER.info("%s features extracted", features.shape)
+            return features
+        except ValueError as exc:
+            LOGGER.warning("Failed to extract features", exc_info=exc)
+            return scipy.sparse.csr_matrix((0, 0))
 
     def _find_unused(self):
         doc_features = self.db_cursor.execute(
@@ -452,11 +459,15 @@ class Corpus(object):
                 (doc_id,)
             )
             for vector in vectors:
-                all_features[doc_id] = vector[0]
+                vector = vector[0]
+                if vector is None:
+                    continue
+                all_features[doc_id] = vector
 
         all_features = [
             [weight, doc_id, all_features[doc_id]]
             for (doc_id, weight) in doc_weights.items()
+            if doc_id in all_features
         ]
         all_features.sort(reverse=True)
         doc_ids = [
@@ -625,7 +636,12 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         self.core.call_all("doc_get_text_by_url", doc_txt, doc_url)
         doc_txt = "\n\n".join(doc_txt).strip()
 
-        vector = self.vectorizer.partial_fit_transform([doc_txt])[0].toarray()
+        vector = self.vectorizer.partial_fit_transform([doc_txt])
+        if vector.shape[0] <= 0 or vector.shape[1] <= 0:
+            vector = numpy.array([])
+        else:
+            vector = vector[0].toarray()
+
         self.cursor.execute(
             "INSERT INTO features (doc_id, vector) VALUES (?, ?)",
             (doc_id, vector)
