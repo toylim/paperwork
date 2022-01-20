@@ -55,3 +55,28 @@ class AbstractTestThread(unittest.TestCase):
         self.assertTrue(out['task_b_done'])
 
         self.core.call_all("on_mainloop_quit")
+
+    def test_mainloop_restart(self):
+        # mainloop can be stopped and started again many times
+        out = {}
+        sem = threading.Semaphore(value=0)
+
+        def task_a():
+            out['task_a_done'] = True
+            sem.release()
+
+        out['task_a_done'] = False
+        self.core.call_all("on_mainloop_start")
+        self.core.call_one("thread_start", task_a)
+        for _ in range(0, 1):
+            sem.acquire()
+        self.assertTrue(out['task_a_done'])
+        self.core.call_all("on_mainloop_quit")
+
+        out['task_a_done'] = False
+        self.core.call_all("on_mainloop_start")
+        self.core.call_one("thread_start", task_a)
+        for _ in range(0, 1):
+            sem.acquire()
+        self.assertTrue(out['task_a_done'])
+        self.core.call_all("on_mainloop_quit")
