@@ -14,14 +14,14 @@ class Thread(threading.Thread):
     def __init__(self, plugin, thread_id):
         super().__init__(name="paperwork_thread_{}".format(thread_id))
         self.daemon = True
-        self.plugin = plugin
+        self.task_queue = plugin.queue
         self.core = plugin.core
         self.running = True
 
     def run(self):
         LOGGER.info("Thread %s ready", self.name)
         while True:
-            task = self.plugin.queue.get()
+            task = self.task_queue.get()
             if task is None:
                 break
             task.do()
@@ -32,6 +32,7 @@ class Plugin(PluginBase):
     def __init__(self):
         super().__init__()
         self.queue = queue.Queue()
+        self.pool = None
 
     def get_interfaces(self):
         return ['thread']
@@ -44,21 +45,25 @@ class Plugin(PluginBase):
             },
         ]
 
-    def init(self, core):
-        super().init(core)
-        self.pool = [
-            Thread(self, x)
-            for x in range(0, max(4, multiprocessing.cpu_count()))
-        ]
-
     def on_mainloop_start(self):
-        for t in self.pool:
-            t.start()
+        if self.pool is None:
+            self.pool = [
+                Thread(self, x)
+                for x in range(0, max(4, multiprocessing.cpu_count()))
+            ]
+            for t in self.pool:
+                t.start()
 
     def on_mainloop_quit(self):
-        for t in self.pool:
-            self.queue.put(None)
+        if self.pool is not None:
+            for t in self.pool:
+                self.queue.put(None)
+            # in case the mainloop is restarted later:
+            self.queue = queue.Queue()
+            self.pool = None
 
     def thread_start(self, func, *args, **kwargs):
+        if self.pool is None:
+            self.on_mainloop_start()
         task = Task(self.core, func, args, kwargs)
         self.queue.put(task)
