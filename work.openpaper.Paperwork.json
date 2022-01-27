@@ -18,8 +18,8 @@
         "--persist=.python-eggs",
         "--talk-name=org.freedesktop.Notifications",
         "--talk-name=org.freedesktop.FileManager1",
-        "--talk-name=org.gtk.vfs",
         "--talk-name=org.gtk.vfs.*",
+        "--filesystem=xdg-run/gvfsd",
         "--own-name=work.openpaper.paperwork",
         "--env=JAVA_HOME=/app/jre",
         "--env=LIBO_FLATPAK=1"
