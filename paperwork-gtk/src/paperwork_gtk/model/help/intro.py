@@ -1,6 +1,10 @@
+import logging
+
 import openpaperwork_core
 import paperwork_backend.sync
 
+
+LOGGER = logging.getLogger(__name__)
 
 DOC_ID = "help_intro"
 
@@ -39,6 +43,16 @@ class Plugin(openpaperwork_core.PluginBase):
             return
 
         self.doc_url = self.core.call_success("doc_id_to_url", DOC_ID)
+        if (self.doc_url is None or
+                not self.core.call_success("fs_exists", self.doc_url)):
+            LOGGER.error(
+                "Introduction document %s not found."
+                " Was Paperwork packaged correctly ?",
+                DOC_ID
+            )
+            self.doc_url = None
+            return
+
         out.append((DOC_ID, self.doc_url))
 
         if not self.opened:
