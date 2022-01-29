@@ -290,7 +290,7 @@ msgstr "OCR en %s"
 #: paperwork-gtk/src/paperwork_gtk/actions/doc/delete.py:78
 #, python-format
 msgid "Are you sure you want to delete document %s ?"
-msgstr "¿Está seguro de que quiere eliminar %d documentos?"
+msgstr "¿Está seguro de que quiere eliminar documentos %s?"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/exporter/__init__.py:405
 #, python-format
