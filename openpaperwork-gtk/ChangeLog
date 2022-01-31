@@ -1,3 +1,6 @@
+2022/01/31 - 2.1.1:
+- Fix: take into account that Cursor.new_for_display() may fail with Wayland
+
 2021/12/05 - 2.1.0:
 - Bug report: Clarify the use of the author field
 
