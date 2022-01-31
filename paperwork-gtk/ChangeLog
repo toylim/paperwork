@@ -1,3 +1,10 @@
+2022/01/31 - 2.1.1:
+- drop unused dependency on dateutil
+- Doc deletion: Fix broken spanish translation: Wrong Python formatter has
+  been used
+- model.help.intro: Handle gracefully the case where the package maintainer
+  forgot to include the introduction documents
+
 2021/12/05 - 2.1.0:
 - Responsive UI (thanks to Mathieu Jourdan)
 - Add support for password-protected PDF files

@@ -1,3 +1,7 @@
+2022/01/31 - 2.1.1:
+- guesswork.label.sklearn: Fix: Handle gracefully documents without text
+- model.pdf: take into account some PDF may be really really damaged
+
 2021/12/05 - 2.1.0:
 - Support for all document types supported by LibreOffice (requires LibreOffice
   to be installed)

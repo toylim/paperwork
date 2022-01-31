@@ -1,3 +1,9 @@
+2022/01/31 - 2.1.1:
+- Fix tests of plugins cmd.config and cmd.plugins
+- thread.pool: Fix: take into account that the main loop can started and
+  stopped many times in a Paperwork instance lifetime (broke some
+  paperwork-shell commands in some cases)
+
 2021/12/05 - 2.1.0:
 - Bug report censoring: Take into account that some strings in the logs may be URL-encoded
 - Version data files: If the version changes, rebuild them all
