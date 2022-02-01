@@ -225,9 +225,11 @@ class GtkPageEditorUI(paperwork_backend.pageedit.AbstractPageEditorUI):
         self._disconnect_draw()
 
     def save(self):
-        promise = openpaperwork_core.promise.Promise(
-            self.core, self.core.call_all, args=("on_busy",)
+        self.core.call_all("on_busy")
+        self.plugin.widget_tree.get_object("pageeditor_back").set_sensitive(
+            False
         )
+        promise = openpaperwork_core.promise.Promise(self.core)
         promise = promise.then(lambda *args, **kwargs: None)
         promise = promise.then(self.editor.on_save())
         promise = promise.then(self.core.call_all, "on_idle")
@@ -348,6 +350,7 @@ class Plugin(openpaperwork_core.PluginBase):
             return
 
         self.ui = GtkPageEditorUI(self)
+        self.widget_tree.get_object("pageeditor_back").set_sensitive(True)
 
         promise = openpaperwork_core.promise.Promise(
             self.core, self.core.call_all, args=("on_busy",)
