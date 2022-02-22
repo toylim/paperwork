@@ -552,7 +552,8 @@ class LabelGuesserTransaction(sync.BaseTransaction):
 
         self.cursor = sqlite3.connect(
             self.core.call_success("fs_unsafe", self.plugin.sql_file),
-            detect_types=sqlite3.PARSE_DECLTYPES
+            detect_types=sqlite3.PARSE_DECLTYPES,
+            timeout=30
         )
         self.cursor.execute("BEGIN TRANSACTION")
         self.vectorizer = UpdatableVectorizer(self.core, self.cursor)
@@ -825,7 +826,8 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         self.sql = sqlite3.connect(
             self.core.call_success("fs_unsafe", self.sql_file),
-            detect_types=sqlite3.PARSE_DECLTYPES
+            detect_types=sqlite3.PARSE_DECLTYPES,
+            timeout=30
         )
         for query in CREATE_TABLES:
             self.sql.execute(query)
@@ -861,7 +863,8 @@ class Plugin(openpaperwork_core.PluginBase):
             try:
                 cursor = sqlite3.connect(
                     self.core.call_success("fs_unsafe", self.sql_file),
-                    detect_types=sqlite3.PARSE_DECLTYPES
+                    detect_types=sqlite3.PARSE_DECLTYPES,
+                    timeout=30
                 )
                 try:
                     cursor.execute("BEGIN TRANSACTION")
