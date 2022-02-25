@@ -80,7 +80,22 @@ flatpak --user update work.openpaper.Paperwork
 ## Even after following the integrated instructions, my scanner is still not found
 
 For some scanners, extra work is required to make them available to Paperwork
-in Flatpak. You must add specific udev rules.
+in Flatpak. It usually comes down to a permission problem: the Saned daemon
+doesn't have the permissions to access your scanner.
+
+
+### Debian or Ubuntu
+
+The simplest solution is to run Saned as the very same user as you.
+
+```sh
+sudo sh -c "echo RUN_AS_USER=$(whoami) > /etc/default/saned"
+sudo reboot
+```
+
+### Other distributions
+
+You must add specific udev rules.
 
 For example, with a Canon Lide 30:
 
