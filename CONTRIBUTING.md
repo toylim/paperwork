@@ -102,7 +102,7 @@ Paperwork depends on various libraries:
 
 Paperwork is divided in many Python packages:
 
-* openpaperwork-core [[doc]](https://doc.openpaper.work/openpaperwork_core/latest/index.html)). It contains:
+* openpaperwork-core [[doc]](https://doc.openpaper.work/openpaperwork_core/latest/index.html). It contains:
   - The core itself. The core is the piece
     of code that manages the plugins. It's designed to be as minimal as possible.
   - Various plugins who could be useful in pretty much any other application,
