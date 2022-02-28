@@ -27,7 +27,7 @@ Sometimes [IRC](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Con
 
 # Code contribution
 
-[OpenPaperwork-core documentation](https://doc.openpaper.work/openpaperwork_core/latest/)
+[OpenPaperwork-core documentation](https://doc.openpaper.work/openpaperwork_core/latest/index.html)
 
 Rules are:
 

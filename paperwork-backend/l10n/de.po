@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-30 11:53+0100\n"
-"PO-Revision-Date: 2021-12-21 19:22+0000\n"
+"PO-Revision-Date: 2022-02-27 09:32+0000\n"
 "Last-Translator: Tom F <tom@mb.tu-ilmenau.de>\n"
 "Language-Team: German <http://translations.openpaper.work/projects/paperwork/"
 "paperwork-backend/de/>\n"
@@ -97,7 +97,7 @@ msgstr "Speichere Änderungen für label guessing ..."
 #: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:873
 #: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:929
 msgid "Label guessing: Training ..."
-msgstr "Label guessing: Training ..."
+msgstr "Schlagwort-Schätzer: Training ..."
 
 #: paperwork-backend/src/paperwork_backend/guesswork/orientation/pyocr.py:43
 #, python-brace-format
@@ -155,7 +155,9 @@ msgstr "Dokument {doc_id} S{page_idx} wurde bereits zugeschnitten"
 #: paperwork-backend/src/paperwork_backend/guesswork/cropping/calibration.py:58
 #, python-brace-format
 msgid "Document {doc_id} p{page_idx} has already some text. Not cropping."
-msgstr "Dokument {doc_id} p{page_idx} enthält bereits Text. Nicht zuschneiden."
+msgstr ""
+"Dokument {doc_id} Seite {page_idx} enthält bereits Text. Wird nicht "
+"beschnitten."
 
 #: paperwork-backend/src/paperwork_backend/guesswork/cropping/calibration.py:68
 #, python-brace-format
@@ -398,7 +400,7 @@ msgstr "OpenOffice/LibreOffice Tabellendokument Vorlage (.ots)"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:120
 msgid "OpenOffice/LibreOffice Text (.odt)"
-msgstr "OpenOffice/LibreOffice Text (.odt)"
+msgstr "OpenOffice/LibreOffice Textdatei (.odt)"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:124
 msgid "OpenOffice/LibreOffice Text master (.odm)"
@@ -410,7 +412,7 @@ msgstr "OpenOffice/LibreOffice Text Vorlage (.ott)"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:132
 msgid "OpenOffice/LibreOffice Text web (.oth)"
-msgstr "OpenOffice/LibreOffice Text web (.oth)"
+msgstr "OpenOffice/LibreOffice HTML-Vorlage (.oth)"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:144
 msgid "Microsoft PowerPoint slide (.sldx)"
