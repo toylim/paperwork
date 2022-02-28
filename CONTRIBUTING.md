@@ -27,8 +27,6 @@ Sometimes [IRC](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/Con
 
 # Code contribution
 
-[OpenPaperwork-core documentation](https://doc.openpaper.work/openpaperwork_core/latest/index.html)
-
 Rules are:
 
 * All commits go to the branch `develop`. I (Jflesch) will cherry-pick them in the branches `master` (stable) or `testing` (release) if required.
@@ -104,8 +102,8 @@ Paperwork depends on various libraries:
 
 Paperwork is divided in many Python packages:
 
-* openpaperwork-core:
-  - The [core](https://doc.openpaper.work/openpaperwork_core/latest) is the piece
+* openpaperwork-core [[doc]](https://doc.openpaper.work/openpaperwork_core/latest/index.html)). It contains:
+  - The core itself. The core is the piece
     of code that manages the plugins. It's designed to be as minimal as possible.
   - Various plugins who could be useful in pretty much any other application,
    GUI or not (for instance, [Pythoness](https://framagit.org/OpenPaperwork/pythoness)).
@@ -113,7 +111,7 @@ Paperwork is divided in many Python packages:
   - Various plugins who could be useful in pretty much any Gnome/GTK application
     (for instance, [Pythoness](https://framagit.org/OpenPaperwork/pythoness)).
 * paperwork-backend:
-  - Plugins for Paperwork independant from any type of frontends (plugins to manage the
+  - Plugins for Paperwork independent from any type of frontends (plugins to manage the
     work directory, provide various features, access scanners, etc)
 * paperwork-gtk:
   - Plugins and bootstrap module that compose the GTK user interface of Paperwork
