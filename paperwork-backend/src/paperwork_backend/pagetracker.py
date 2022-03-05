@@ -36,7 +36,7 @@ class PageTracker(object):
         self.core = core
         sql_file = self.core.call_success("fs_unsafe", sql_file)
         self.sql = self.core.call_one(
-            "mainloop_execute", sqlite3.connect, sql_file, timeout=30
+            "mainloop_execute", sqlite3.connect, sql_file, timeout=60
         )
         for query in CREATE_TABLES:
             self.core.call_one("mainloop_execute", self.sql.execute, query)
