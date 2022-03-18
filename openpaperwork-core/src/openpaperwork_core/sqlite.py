@@ -1,3 +1,4 @@
+import os
 import sqlite3
 
 from . import PluginBase
@@ -24,7 +25,13 @@ class Plugin(PluginBase):
         db_path = self.core.call_success("fs_unsafe", db_url)
         if 'timeout' not in kwargs:
             kwargs['timeout'] = 60
-        return sqlite3.connect(db_path, *args, **kwargs)
+        sql = sqlite3.connect(db_path, *args, **kwargs)
+        sql.execute("pragma journal_mode = wal;")
+        sql.execute("pragma synchronous = normal;")
+        sql.execute("pragma temp_store = memory;")
+        if os.name == "posix":
+            sql.execute("pragma mmap_size = 30000000000;")
+        return sql
 
     def sqlite_execute(self, cb, *args, **kwargs):
         return self.core.call_one("mainloop_execute", cb, *args, **kwargs)
