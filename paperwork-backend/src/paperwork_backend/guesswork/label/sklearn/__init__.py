@@ -545,10 +545,10 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             # (see add_doc() -> _set_guessed_labels())
             self.plugin.classifiers_cond.wait()
 
-        self.cursor = sqlite3.connect(
-            self.core.call_success("fs_unsafe", self.plugin.sql_url),
+        self.cursor = self.plugin.core.call_success(
+            "sqlite_open",
+            self.plugin.sql_url,
             detect_types=sqlite3.PARSE_DECLTYPES,
-            timeout=60
         )
         self.cursor.execute("BEGIN TRANSACTION")
         self.vectorizer = UpdatableVectorizer(self.core, self.cursor)
@@ -651,7 +651,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             )
             if self.cursor is not None:
                 self.cursor.execute("ROLLBACK")
-                self.cursor.close()
+                self.core.call_success("sqlite_close", self.cursor)
                 self.cursor = None
             self.notify_done(ID)
 
@@ -694,7 +694,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             )
 
             self.cursor.execute("COMMIT")
-            self.cursor.close()
+            self.core.call_success("sqlite_close", self.cursor)
 
             self.notify_done(ID)
             self.core.call_success(
