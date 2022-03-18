@@ -1,8 +1,10 @@
+import logging
 import os
 import sqlite3
 
 from . import PluginBase
 
+LOGGER = logging.getLogger(__name__)
 
 # Beware that we use Sqlite, but sqlite python module is not thread-safe
 # --> all the calls to sqlite module functions must happen on the main loop,
@@ -22,6 +24,7 @@ class Plugin(PluginBase):
         ]
 
     def sqlite_open(self, db_url, *args, **kwargs):
+        LOGGER.info("Opening DB %s ...", db_url)
         db_path = self.core.call_success("fs_unsafe", db_url)
         if 'timeout' not in kwargs:
             kwargs['timeout'] = 60
@@ -39,6 +42,9 @@ class Plugin(PluginBase):
     def sqlite_schedule(self, cb, *args, **kwargs):
         return self.core.call_one("mainloop_schedule", cb, *args, **kwargs)
 
-    def sqlite_close(self, db):
+    def sqlite_close(self, db, optimize=True):
+        if optimize:
+            LOGGER.info("Optimizing database ...")
+            db.execute("pragma optimize;")
         db.close()
         return True

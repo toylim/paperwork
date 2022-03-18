@@ -11,11 +11,6 @@ import logging
 import openpaperwork_core
 
 
-# Beware that we use Sqlite, but sqlite python module is not thread-safe
-# --> all the calls to sqlite module functions must happen on the main loop,
-# even those in the transactions (which are run in a thread)
-
-
 LOGGER = logging.getLogger(__name__)
 
 CREATE_TABLES = [
@@ -46,19 +41,25 @@ class PageTracker(object):
         )
 
     def _close(self):
+        LOGGER.info("Closing page tracker db ...")
         self.core.call_one(
             "sqlite_execute",
             self.core.call_success,
             "sqlite_close", self.sql
         )
+        self.sql = None
 
     def cancel(self):
+        if self.sql is None:
+            return
         self.core.call_one(
             "sqlite_execute", self.sql.execute, "ROLLBACK"
         )
         self._close()
 
     def commit(self):
+        if self.sql is None:
+            return
         self.core.call_one("sqlite_execute", self.sql.execute, "COMMIT")
         self._close()
 

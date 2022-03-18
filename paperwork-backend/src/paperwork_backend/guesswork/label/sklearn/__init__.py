@@ -651,7 +651,9 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             )
             if self.cursor is not None:
                 self.cursor.execute("ROLLBACK")
-                self.core.call_success("sqlite_close", self.cursor)
+                self.core.call_success(
+                    "sqlite_close", self.cursor, optimize=False
+                )
                 self.cursor = None
             self.notify_done(ID)
 
@@ -694,7 +696,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             )
 
             self.cursor.execute("COMMIT")
-            self.cursor.close()
+            self.core.call_success("sqlite_close", self.cursor)
 
             self.notify_done(ID)
             self.core.call_success(
@@ -823,6 +825,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.sql_url = self.core.call_success(
             "fs_join", self.bayes_dir, 'label_guesser.db'
         )
+        LOGGER.info("Opening guesswork.label.sklearn database")
         self.sql = self.core.call_one(
             "sqlite_execute",
             self.core.call_success,
@@ -846,12 +849,16 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def on_data_dir_changed(self):
+        self.on_quit()
+        self._init()
+
+    def on_quit(self):
+        LOGGER.info("Closing guesswork.label.sklearn database")
         self.core.call_one(
             "sqlite_execute",
             self.core.call_success,
             "sqlite_close", self.sql
         )
-        self._init()
 
     def reload_label_guessers(self):
         self.classifiers = None
@@ -882,7 +889,7 @@ class Plugin(openpaperwork_core.PluginBase):
                     )
                 finally:
                     cursor.execute("ROLLBACK")
-                    cursor.close()
+                    self.core.call_one("sqlite_close", cursor, optimize=False)
             finally:
                 self.classifiers_cond.notify_all()
 
