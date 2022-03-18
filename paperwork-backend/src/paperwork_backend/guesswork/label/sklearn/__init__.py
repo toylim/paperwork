@@ -694,7 +694,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             )
 
             self.cursor.execute("COMMIT")
-            self.core.call_success("sqlite_close", self.cursor)
+            self.cursor.close()
 
             self.notify_done(ID)
             self.core.call_success(
