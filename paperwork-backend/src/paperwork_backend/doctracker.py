@@ -5,11 +5,13 @@ directory.
 """
 
 import datetime
+import logging
 
 import openpaperwork_core
 
 from . import (_, sync)
 
+LOGGER = logging.getLogger(__name__)
 
 CREATE_TABLES = [
     (
@@ -168,13 +170,17 @@ class Plugin(openpaperwork_core.PluginBase):
         for query in CREATE_TABLES:
             self.core.call_one("sqlite_execute", self.sql.execute, query)
 
-    def on_data_dir_changed(self):
+    def on_quit(self):
+        LOGGER.info("Closing doc tracker db ...")
         self.core.call_one(
             "sqlite_execute",
             self.core.call_success,
-            "sqlite_close"
+            "sqlite_close", self.sql
         )
         self.sql = None
+
+    def on_data_dir_changed(self):
+        self.on_quit()
         self._init()
 
     def doc_tracker_register(self, name, transaction_factory):
