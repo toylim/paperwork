@@ -172,7 +172,8 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_one(
             "sqlite_execute",
             self.core.call_success,
-            "sqlite_close"
+            "sqlite_close",
+            self.sql
         )
         self.sql = None
         self._init()
