@@ -142,7 +142,6 @@ class Plugin(PluginBase):
         if self.has_quit:
             return
         print("Quitting")
-        self.core.call_one("mainloop_execute", self.core.call_all, "on_quit")
         self.core.call_one(
             "mainloop_execute", self.core.call_all, "mainloop_quit_graceful"
         )
