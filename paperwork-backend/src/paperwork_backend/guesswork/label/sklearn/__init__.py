@@ -25,11 +25,6 @@ import openpaperwork_core.promise
 from .... import (_, sync)
 
 
-# Beware that we use Sqlite, but sqlite python module is not thread-safe
-# --> all the calls to sqlite module functions must happen on the main loop,
-# even those in the transactions (which are run in a thread)
-
-
 LOGGER = logging.getLogger(__name__)
 ID = "label_guesser"
 CREATE_TABLES = [
@@ -551,7 +546,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             self.plugin.classifiers_cond.wait()
 
         self.cursor = sqlite3.connect(
-            self.core.call_success("fs_unsafe", self.plugin.sql_file),
+            self.core.call_success("fs_unsafe", self.plugin.sql_url),
             detect_types=sqlite3.PARSE_DECLTYPES,
             timeout=60
         )
@@ -651,7 +646,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
     def cancel(self):
         try:
             self.core.call_success(
-                "mainloop_schedule", self.core.call_all,
+                "sqlite_schedule", self.core.call_all,
                 "on_label_guesser_canceled"
             )
             if self.cursor is not None:
@@ -673,14 +668,14 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         try:
             LOGGER.info("Committing")
             self.core.call_success(
-                "mainloop_schedule", self.core.call_all,
+                "sqlite_schedule", self.core.call_all,
                 "on_label_guesser_commit_start"
             )
             if self.nb_changes <= 0:
                 assert(self.cursor is None)
                 self.notify_done(ID)
                 self.core.call_success(
-                    "mainloop_schedule", self.core.call_all,
+                    "sqlite_schedule", self.core.call_all,
                     'on_label_guesser_commit_end'
                 )
                 LOGGER.info("Nothing to do. Training left unchanged.")
@@ -703,7 +698,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
 
             self.notify_done(ID)
             self.core.call_success(
-                "mainloop_schedule", self.core.call_all,
+                "sqlite_schedule", self.core.call_all,
                 'on_label_guesser_commit_end'
             )
             LOGGER.info("Label guessing updated")
@@ -745,7 +740,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.classifiers_cond = threading.Condition(threading.Lock())
 
         self.bayes_dir = None
-        self.sql_file = None
+        self.sql_url = None
 
         SqliteNumpyArrayHandler.register()
 
@@ -781,12 +776,12 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_gtk.fs.gio'],
             },
             {
-                'interface': 'mainloop',
-                'defaults': ['openpaperwork_gtk.mainloop.glib'],
-            },
-            {
                 'interface': 'data_dir_handler',
                 'defaults': ['paperwork_backend.datadirhandler'],
+            },
+            {
+                'interface': 'sqlite',
+                'defaults': ['openpaperwork_core.sqlite'],
             },
             {
                 'interface': 'transaction_manager',
@@ -821,11 +816,14 @@ class Plugin(openpaperwork_core.PluginBase):
 
         self.core.call_success("fs_mkdir_p", self.bayes_dir)
 
-        self.sql_file = self.core.call_success(
+        self.sql_url = self.core.call_success(
             "fs_join", self.bayes_dir, 'label_guesser.db'
         )
-        self.sql = sqlite3.connect(
-            self.core.call_success("fs_unsafe", self.sql_file),
+        self.sql = self.core.call_one(
+            "sqlite_execute",
+            self.core.call_success,
+            "sqlite_open",
+            self.sql_url,
             detect_types=sqlite3.PARSE_DECLTYPES,
             timeout=60
         )
@@ -844,7 +842,11 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def on_data_dir_changed(self):
-        self.sql.close()
+        self.core.call_one(
+            "sqlite_execute",
+            self.core.call_success,
+            "sqlite_close", self.sql
+        )
         self._init()
 
     def reload_label_guessers(self):
@@ -861,10 +863,10 @@ class Plugin(openpaperwork_core.PluginBase):
     def _reload_label_guessers(self):
         with self.classifiers_cond:
             try:
-                cursor = sqlite3.connect(
-                    self.core.call_success("fs_unsafe", self.sql_file),
+                cursor = self.core.call_one(
+                    "sqlite_open",
+                    self.sql_url,
                     detect_types=sqlite3.PARSE_DECLTYPES,
-                    timeout=60
                 )
                 try:
                     cursor.execute("BEGIN TRANSACTION")
@@ -1021,4 +1023,4 @@ class Plugin(openpaperwork_core.PluginBase):
             self.core.call_success("doc_add_label_by_url", doc_url, label)
 
     def tests_cleanup(self):
-        self.sql.close()
+        self.core.call_success("sqlite_close", self.sql)
