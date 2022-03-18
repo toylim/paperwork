@@ -8,14 +8,16 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-30 11:53+0100\n"
-"PO-Revision-Date: 2020-05-03 15:37+0200\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2022-03-19 11:45+0000\n"
+"Last-Translator: Víctor Fancelli Capdevila <vfc@uber.space>\n"
+"Language-Team: Spanish <http://translations.openpaper.work/projects/"
+"paperwork/paperwork-backend/es/>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ASCII\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.9\n"
 
 #: paperwork-backend/src/paperwork_backend/i18n/scanner.py:38
 msgid "centrally aligned"
@@ -192,7 +194,7 @@ msgstr ""
 
 #: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:753
 msgid "Select to generate"
-msgstr ""
+msgstr "Selecciona para generar"
 
 #: paperwork-backend/src/paperwork_backend/doctracker.py:68
 #, python-format
@@ -293,7 +295,7 @@ msgstr ""
 #: paperwork-backend/src/paperwork_backend/docimport/img.py:61
 #: paperwork-backend/src/paperwork_backend/docimport/converted.py:41
 msgid "Documents"
-msgstr ""
+msgstr "Documentos"
 
 #: paperwork-backend/src/paperwork_backend/docimport/pdf.py:61
 msgid "Import PDF"
@@ -471,11 +473,11 @@ msgstr ""
 
 #: paperwork-backend/src/paperwork_backend/docexport/img.py:184
 msgid "Black & White"
-msgstr ""
+msgstr "Blanco y Negro"
 
 #: paperwork-backend/src/paperwork_backend/docexport/img.py:195
 msgid "Grayscale"
-msgstr ""
+msgstr "Escala de Grises"
 
 #: paperwork-backend/src/paperwork_backend/docexport/pillowfight.py:31
 msgid "Soft simplification"
