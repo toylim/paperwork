@@ -5,16 +5,11 @@ directory.
 """
 
 import datetime
-import sqlite3
 
 import openpaperwork_core
 
 from . import (_, sync)
 
-
-# Beware that we use Sqlite, but sqlite python module is not thread-safe
-# --> all the calls to sqlite module functions must happen on the main loop,
-# even those in the transactions (which are run in a thread)
 
 CREATE_TABLES = [
     (
@@ -35,11 +30,11 @@ class DocTrackerTransaction(sync.BaseTransaction):
         self.priority = -10000
 
         self.sql = self.core.call_one(
-            "mainloop_execute", sql.cursor
+            "sqlite_execute", sql.cursor
         )
 
         self.core.call_one(
-            "mainloop_execute", self.sql.execute, "BEGIN TRANSACTION"
+            "sqlite_execute", self.sql.execute, "BEGIN TRANSACTION"
         )
 
     def _get_actual_doc_data(self, doc_id, doc_url):
@@ -79,7 +74,7 @@ class DocTrackerTransaction(sync.BaseTransaction):
         actual = self._get_actual_doc_data(doc_id, doc_url)
 
         self.core.call_one(
-            "mainloop_execute", self.sql.execute,
+            "sqlite_execute", self.sql.execute,
             "INSERT OR REPLACE INTO documents (doc_id, text, mtime)"
             " VALUES (?, ?, ?)",
             (doc_id, actual['text'], actual['mtime'])
@@ -88,7 +83,7 @@ class DocTrackerTransaction(sync.BaseTransaction):
     def del_doc(self, doc_id):
         self.notify_progress(ID, _("Document %s deleted") % (doc_id))
         self.core.call_one(
-            "mainloop_execute", self.sql.execute,
+            "sqlite_execute", self.sql.execute,
             "DELETE FROM documents WHERE doc_id = ?",
             (doc_id,)
         )
@@ -102,14 +97,14 @@ class DocTrackerTransaction(sync.BaseTransaction):
 
     def cancel(self):
         self.notify_progress(ID, _("Rolling back changes"))
-        self.core.call_one("mainloop_execute", self.sql.execute, "ROLLBACK")
-        self.core.call_one("mainloop_execute", self.sql.close)
+        self.core.call_one("sqlite_execute", self.sql.execute, "ROLLBACK")
+        self.core.call_one("sqlite_execute", self.sql.close)
         self.notify_done(ID)
 
     def commit(self):
         self.notify_progress(ID, _("Committing changes"))
-        self.core.call_one("mainloop_execute", self.sql.execute, "COMMIT")
-        self.core.call_one("mainloop_execute", self.sql.close)
+        self.core.call_one("sqlite_execute", self.sql.execute, "COMMIT")
+        self.core.call_one("sqlite_execute", self.sql.close)
         self.notify_done(ID)
 
 
@@ -141,12 +136,12 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_gtk.fs.gio']
             },
             {
-                'interface': 'mainloop',
-                'defaults': ['openpaperwork_gtk.mainloop.glib'],
-            },
-            {
                 'interface': 'data_dir_handler',
                 'defaults': ['paperwork_backend.datadirhandler'],
+            },
+            {
+                'interface': 'sqlite',
+                'defaults': ['openpaperwork_core.sqlite'],
             },
             {
                 'interface': 'thread',
@@ -165,15 +160,20 @@ class Plugin(openpaperwork_core.PluginBase):
         sql_file = self.core.call_success(
             "fs_join", paperwork_dir, 'doc_tracking.db'
         )
-        sql_file = self.core.call_success("fs_unsafe", sql_file)
         self.sql = self.core.call_one(
-            "mainloop_execute", sqlite3.connect, sql_file, timeout=60
+            "sqlite_execute",
+            self.core.call_success,
+            "sqlite_open", sql_file
         )
         for query in CREATE_TABLES:
-            self.core.call_one("mainloop_execute", self.sql.execute, query)
+            self.core.call_one("sqlite_execute", self.sql.execute, query)
 
     def on_data_dir_changed(self):
-        self.sql.close()
+        self.core.call_one(
+            "sqlite_execute",
+            self.core.call_success,
+            "sqlite_close"
+        )
         self.sql = None
         self._init()
 
@@ -182,11 +182,11 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def doc_tracker_get_all_doc_ids(self):
         doc_ids = self.core.call_one(
-            "mainloop_execute", self.sql.execute,
+            "sqlite_execute", self.sql.execute,
             "SELECT doc_id FROM documents"
         )
         doc_ids = self.core.call_one(
-            "mainloop_execute", list, doc_ids
+            "sqlite_execute", list, doc_ids
         )
         return {doc_id[0] for doc_id in doc_ids}
 
@@ -199,12 +199,12 @@ class Plugin(openpaperwork_core.PluginBase):
         from the database (for instance, for label guesser untraining)
         """
         text = self.core.call_one(
-            "mainloop_execute", self.sql.execute,
+            "sqlite_execute", self.sql.execute,
             "SELECT text FROM documents WHERE doc_id = ? LIMIT 1",
             (doc_id,)
         )
         text = self.core.call_one(
-            "mainloop_execute", list, text
+            "sqlite_execute", list, text
         )
         if len(text) <= 0:
             return None

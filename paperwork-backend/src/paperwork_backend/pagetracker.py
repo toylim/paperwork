@@ -7,7 +7,6 @@ OCR plugin needs to know which pages of this document have already been
 OCR-ed and which haven't.
 """
 import logging
-import sqlite3
 
 import openpaperwork_core
 
@@ -32,30 +31,35 @@ CREATE_TABLES = [
 
 
 class PageTracker(object):
-    def __init__(self, core, sql_file):
+    def __init__(self, core, sql_url):
         self.core = core
-        sql_file = self.core.call_success("fs_unsafe", sql_file)
         self.sql = self.core.call_one(
-            "mainloop_execute", sqlite3.connect, sql_file, timeout=60
+            "sqlite_execute",
+            self.core.call_success,
+            "sqlite_open", sql_url
         )
         for query in CREATE_TABLES:
-            self.core.call_one("mainloop_execute", self.sql.execute, query)
+            self.core.call_one("sqlite_execute", self.sql.execute, query)
 
         self.core.call_one(
-            "mainloop_execute", self.sql.execute, "BEGIN TRANSACTION"
+            "sqlite_execute", self.sql.execute, "BEGIN TRANSACTION"
         )
 
     def _close(self):
-        self.core.call_one("mainloop_execute", self.sql.close)
+        self.core.call_one(
+            "sqlite_execute",
+            self.core.call_success,
+            "sqlite_close", self.sql
+        )
 
     def cancel(self):
         self.core.call_one(
-            "mainloop_execute", self.sql.execute, "ROLLBACK"
+            "sqlite_execute", self.sql.execute, "ROLLBACK"
         )
         self._close()
 
     def commit(self):
-        self.core.call_one("mainloop_execute", self.sql.execute, "COMMIT")
+        self.core.call_one("sqlite_execute", self.sql.execute, "COMMIT")
         self._close()
 
     def find_changes(self, doc_id, doc_url):
@@ -68,13 +72,13 @@ class PageTracker(object):
         out = []
 
         db_pages = self.core.call_one(
-            "mainloop_execute", self.sql.execute,
+            "sqlite_execute", self.sql.execute,
             "SELECT page, hash FROM pages"
             " WHERE doc_id = ?",
             (doc_id,)
         )
         db_pages = self.core.call_one(
-            "mainloop_execute",
+            "sqlite_execute",
             lambda pages: {r[0]: int(r[1], 16) for r in pages}, db_pages
         )
         db_hashes = set(db_pages.values())
@@ -102,7 +106,7 @@ class PageTracker(object):
 
         for (db_page_idx, h) in db_pages.items():
             self.core.call_one(
-                "mainloop_execute", self.sql.execute,
+                "sqlite_execute", self.sql.execute,
                 "DELETE FROM pages"
                 " WHERE doc_id = ? AND page = ?",
                 (doc_id, db_page_idx)
@@ -118,7 +122,7 @@ class PageTracker(object):
             "page_get_hash_by_url", doc_url, page_idx
         )
         self.core.call_one(
-            "mainloop_execute", self.sql.execute,
+            "sqlite_execute", self.sql.execute,
             "INSERT OR REPLACE"
             " INTO pages (doc_id, page, hash)"
             " VALUES (?, ?, ?)",
@@ -127,7 +131,7 @@ class PageTracker(object):
 
     def delete_doc(self, doc_id):
         self.core.call_one(
-            "mainloop_execute", self.sql.execute,
+            "sqlite_execute", self.sql.execute,
             "DELETE FROM pages WHERE doc_id = ?",
             (doc_id,)
         )
@@ -143,16 +147,16 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return [
             {
+                'interface': 'data_dir_handler',
+                'defaults': ['paperwork_backend.datadirhandler'],
+            },
+            {
                 'interface': 'data_versioning',
                 'defaults': ['openpaperwork_core.data_versioning'],
             },
             {
                 'interface': 'fs',
                 'defaults': ['openpaperwork_gtk.fs.gio']
-            },
-            {
-                'interface': 'mainloop',
-                'defaults': ['openpaperwork_gtk.mainloop.glib'],
             },
             {
                 'interface': 'page_boxes',
@@ -166,8 +170,8 @@ class Plugin(openpaperwork_core.PluginBase):
                 ],
             },
             {
-                'interface': 'data_dir_handler',
-                'defaults': ['paperwork_backend.datadirhandler'],
+                'interface': 'sqlite',
+                'defaults': ['openpaperwork_core.sqlite'],
             },
         ]
 
