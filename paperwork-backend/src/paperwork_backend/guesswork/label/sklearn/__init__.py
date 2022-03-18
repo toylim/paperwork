@@ -646,7 +646,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
     def cancel(self):
         try:
             self.core.call_success(
-                "sqlite_schedule", self.core.call_all,
+                "mainloop_schedule", self.core.call_all,
                 "on_label_guesser_canceled"
             )
             if self.cursor is not None:
@@ -668,14 +668,14 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         try:
             LOGGER.info("Committing")
             self.core.call_success(
-                "sqlite_schedule", self.core.call_all,
+                "mainloop_schedule", self.core.call_all,
                 "on_label_guesser_commit_start"
             )
             if self.nb_changes <= 0:
                 assert(self.cursor is None)
                 self.notify_done(ID)
                 self.core.call_success(
-                    "sqlite_schedule", self.core.call_all,
+                    "mainloop_schedule", self.core.call_all,
                     'on_label_guesser_commit_end'
                 )
                 LOGGER.info("Nothing to do. Training left unchanged.")
@@ -698,7 +698,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
 
             self.notify_done(ID)
             self.core.call_success(
-                "sqlite_schedule", self.core.call_all,
+                "mainloop_schedule", self.core.call_all,
                 'on_label_guesser_commit_end'
             )
             LOGGER.info("Label guessing updated")
@@ -756,6 +756,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_core.config'],
             },
             {
+                'interface': 'data_dir_handler',
+                'defaults': ['paperwork_backend.datadirhandler'],
+            },
+            {
                 'interface': 'data_versioning',
                 'defaults': ['openpaperwork_core.data_versioning'],
             },
@@ -776,8 +780,8 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_gtk.fs.gio'],
             },
             {
-                'interface': 'data_dir_handler',
-                'defaults': ['paperwork_backend.datadirhandler'],
+                'interface': 'mainloop',
+                'defaults': ['openpaperwork_gtk.mainloop.glib'],
             },
             {
                 'interface': 'sqlite',
