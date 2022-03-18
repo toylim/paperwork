@@ -8,13 +8,16 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-30 11:53+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2022-03-19 11:45+0000\n"
+"Last-Translator: Víctor Fancelli Capdevila <vfc@uber.space>\n"
+"Language-Team: Catalan <http://translations.openpaper.work/projects/"
+"paperwork/paperwork-shell/ca/>\n"
 "Language: ca\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.9\n"
 
 #: paperwork-shell/src/paperwork_shell/cmd/sync.py:57
 msgid "Synchronize the index(es) with the content of the work directory"
@@ -31,15 +34,15 @@ msgstr ""
 #: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:118
 #: paperwork-shell/src/paperwork_shell/cmd/edit.py:184
 msgid "All done !"
-msgstr ""
+msgstr "Fet!"
 
 #: paperwork-shell/src/paperwork_shell/cmd/scan.py:51
 msgid "Scan pages"
-msgstr ""
+msgstr "Escanejant les pàgines"
 
 #: paperwork-shell/src/paperwork_shell/cmd/scan.py:55
 msgid "Document to which the scanned pages must be added"
-msgstr ""
+msgstr "Document al que s'han d'afegir les pàgines"
 
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:55
 msgid "Manage scanner configuration"
@@ -48,7 +51,7 @@ msgstr ""
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:58
 #: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:48
 msgid "sub-command"
-msgstr ""
+msgstr "sub-commanda"
 
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:62
 msgid "List all scanners and their possible settings"
@@ -60,11 +63,11 @@ msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:72
 msgid "Define which scanner and which settings to use"
-msgstr ""
+msgstr "Defineix quin escàner i quina configuració s'han d'utilitzar"
 
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:75
 msgid "Scanner to use"
-msgstr ""
+msgstr "Escàner que s'ha d'utilitzar"
 
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:80
 msgid ""
@@ -78,12 +81,12 @@ msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:91
 msgid "Examining scanner {} ..."
-msgstr ""
+msgstr "Examinant l'escàner {}..."
 
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:133
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:155
 msgid "ID:"
-msgstr ""
+msgstr "ID:"
 
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:135
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:156
@@ -92,11 +95,11 @@ msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:137
 msgid "Resolutions:"
-msgstr ""
+msgstr "Resolució:"
 
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:157
 msgid "Resolution:"
-msgstr ""
+msgstr "Resolució:"
 
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:185
 msgid "Source {} not found on device. Using another source"
@@ -112,15 +115,15 @@ msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/cmd/about/__init__.py:82
 msgid "Version: "
-msgstr ""
+msgstr "Versió: "
 
 #: paperwork-shell/src/paperwork_shell/cmd/about/__init__.py:84
 msgid "Because sorting documents is a machine's job."
-msgstr ""
+msgstr "Perquè hauríem de deixar la paperassa a les màquines."
 
 #: paperwork-shell/src/paperwork_shell/cmd/about/__init__.py:158
 msgid "About Paperwork"
-msgstr ""
+msgstr "Sobre el Paperwork"
 
 #: paperwork-shell/src/paperwork_shell/cmd/reset.py:70
 msgid "Reset a page to its original content"
@@ -367,7 +370,7 @@ msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/cmd/import.py:67
 msgid "Import file(s)"
-msgstr ""
+msgstr "Importa fitxers"
 
 #: paperwork-shell/src/paperwork_shell/cmd/import.py:72
 msgid "Target document for import"
@@ -375,7 +378,7 @@ msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/cmd/import.py:76
 msgid "PDF password"
-msgstr ""
+msgstr "Contrasenya del PDF"
 
 #: paperwork-shell/src/paperwork_shell/cmd/import.py:80
 msgid "Files to import"
@@ -511,7 +514,7 @@ msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/main.py:68
 msgid "command"
-msgstr ""
+msgstr "comanda"
 
 #: paperwork-shell/src/paperwork_shell/display/scan.py:86
 msgid "Scanning page {} (expected size: {}x{}) ..."
