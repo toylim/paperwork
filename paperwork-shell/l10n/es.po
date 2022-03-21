@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-30 11:53+0100\n"
-"PO-Revision-Date: 2022-03-18 07:43+0000\n"
+"PO-Revision-Date: 2022-03-22 11:49+0000\n"
 "Last-Translator: Víctor Fancelli Capdevila <vfc@uber.space>\n"
 "Language-Team: Spanish <http://translations.openpaper.work/projects/"
 "paperwork/paperwork-shell/es/>\n"
@@ -21,12 +21,12 @@ msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/cmd/sync.py:57
 msgid "Synchronize the index(es) with the content of the work directory"
-msgstr ""
+msgstr "Sincroniza el/los indice/s con el contenido del directorio de trabajo"
 
 #: paperwork-shell/src/paperwork_shell/cmd/sync.py:68
 #: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:112
 msgid "Synchronizing with work directory ..."
-msgstr ""
+msgstr "Sincronizando con el directorio de trabajo..."
 
 #: paperwork-shell/src/paperwork_shell/cmd/sync.py:79
 #: paperwork-shell/src/paperwork_shell/cmd/reset.py:132
@@ -34,7 +34,7 @@ msgstr ""
 #: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:118
 #: paperwork-shell/src/paperwork_shell/cmd/edit.py:184
 msgid "All done !"
-msgstr ""
+msgstr "¡Terminado!"
 
 #: paperwork-shell/src/paperwork_shell/cmd/scan.py:51
 msgid "Scan pages"
