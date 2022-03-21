@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: 2021-10-09 12:56+0200\n"
-"PO-Revision-Date: 2022-03-19 12:45+0000\n"
+"PO-Revision-Date: 2022-03-22 11:49+0000\n"
 "Last-Translator: Víctor Fancelli Capdevila <vfc@uber.space>\n"
 "Language-Team: Catalan <http://translations.openpaper.work/projects/"
 "paperwork/paperwork-help-documents/ca/>\n"
@@ -152,6 +152,10 @@ msgid ""
 "will learn which labels go on which documents and will automatically apply "
 "them on new documents."
 msgstr ""
+"Voleu organitzar encara més els vostres documents? Podeu afegir-hi "
+"etiquetes. Cada etiqueta té el seu propi color. Amb el temps, el Paperwork "
+"aprendrà quines etiquetes van amb quins documents i les aplicarà "
+"automàticament."
 
 #. type: section{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/intro.tex:92
@@ -165,6 +169,9 @@ msgid ""
 "of the main features of Paperwork. You can start using it by adding your "
 "first own paper."
 msgstr ""
+"Cliqueu el botó +, el botó d'escanejar i ja està! Ja coneixeu els elements "
+"bàsics del Paperwork. Podeu començar a utilitzar-lo afegint el vostre primer "
+"document."
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/intro.tex:105
@@ -186,6 +193,8 @@ msgid ""
 "If you need more help, there is a comprehensive manual you can find in the "
 "help section of Paperwork."
 msgstr ""
+"Si necessiteu més ajuda, hi ha un manual més detallat que podeu trobar a la "
+"secció d'ajuda del Paperwork."
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/intro.tex:119
@@ -193,6 +202,8 @@ msgid ""
 "We hope that you'll enjoy this piece of software. If you like it please tell "
 "us, and if you don't please tell us why!"
 msgstr ""
+"Esperem que us agradi aquest programa. Si us agrada, digueu-nos-ho i si no "
+"us agrada, digueu-nos perquè!"
 
 #. type: hypersetup{#1}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:20
@@ -219,6 +230,11 @@ msgid ""
 "them back later is worrisome, at best. For most organized people, naming and "
 "sorting them is as tedious as watching paint dry."
 msgstr ""
+"La majoria de documents personals són ben ordinaris i recurrents: nòmines, "
+"lloguers, factures de la llum, etc. Per a molta gent poc organitzada, haver-"
+"los de trobar passat un temps és, com a mínim una molèstia. Per la gent "
+"organitzada, posar nom i ordenar els documents és tan avorrit com mirar com "
+"s'asseca la pintura."
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:45
@@ -227,6 +243,10 @@ msgid ""
 "job.  Humans should do as little as possible while machines do most of the "
 "work.  The end goal here is \"scan \\& forget\"."
 msgstr ""
+"L'idea darrere del Paperwork és que la gestió de paperassa és una feina "
+"perfecta per a ordinadors. Els humans hauríem de fer el mínim indispensable "
+"i deixar que les màquines facin tota la resta. Al capdavall, el que volem és "
+"«escanejar i oblidar»."
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:49
@@ -273,6 +293,8 @@ msgid ""
 "In Paperwork, a document is a set of pages. On disk, it can either be a set "
 "of JPEG files or a PDF file."
 msgstr ""
+"Al Paperwork, un document és un conjunt de pàgines. Al disc dur, pot ser un "
+"conjunt de fitxers JPEG o PDF."
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:74
@@ -280,6 +302,8 @@ msgid ""
 "Documents are identified only by a date. It can either be the date you "
 "imported them (default) or some date of your choosing."
 msgstr ""
+"Els documents només queden identificats amb una data. Tant pot ser la data "
+"en la qual s'han importat (per defecte) com una data que trieu vosaltres."
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:77
@@ -297,6 +321,8 @@ msgstr "Pàgina"
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:82
 msgid "In Paperwork, a page is just an image and the word positions on this image."
 msgstr ""
+"Al Paperwork, una pàgina és senzillament una imatge i la posició de les "
+"paraules en aquesta imatge."
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:88
@@ -307,6 +333,12 @@ msgid ""
 "for each page. So the text extracted from images is stored in hOCR files "
 "beside the JPEG files."
 msgstr ""
+"Les imatges poden venir d'un escàner o bé d'un fitxer. En aquests casos, es "
+"desen com a imatges JPEG i s'extreu el text mitjançant l'ORC (Optical "
+"Character Recognition, el reconeixement òptic de caràcters). L'ORC pot ser "
+"un procés bastant llarg: pot trigar fins a alguns minuts per cada pàgina. "
+"Per això, el text que s'extreu es guarda en fitxers hORC al costat dels "
+"fitxers JPEG."
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:91
@@ -314,6 +346,8 @@ msgid ""
 "Pages can also be the pages from a PDF file. In that case, by default, "
 "Paperwork just stores a copy of the PDF file."
 msgstr ""
+"Les pàgines també poden ser les pàgines d'un PDF. En aquest cas, per "
+"defecte, el Paperwork només guarda una còpia del document en format PDF."
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:95
@@ -321,6 +355,8 @@ msgid ""
 "Paperwork does not track whether a page is recto or verso.  Paperwork does "
 "not track the paper size corresponding to a page (A4, Letter, etc)."
 msgstr ""
+"Al Paperwork li és igual si és la part del davant o del darrera d'un "
+"document. Tampoc li importa la mida d'una pàgina (A4, legal, carta, etc.)"
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:98
@@ -328,11 +364,13 @@ msgid ""
 "Pages are displayed on the right side of the main window (blue part on the "
 "screenshot above)."
 msgstr ""
+"Les pàgines es mostren a la part dreta de la finestra (la part blava a la "
+"captura de pantalla de dalt)."
 
 #. type: subsection{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:101
 msgid "Indexation and Keywords"
-msgstr ""
+msgstr "Indexació i Paraules clau"
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:108
@@ -345,6 +383,8 @@ msgstr ""
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:110
 msgid "Just type in a few keywords, and you will get your documents back."
 msgstr ""
+"Només us caldrà teclejar algunes paraules per poder recuperar els vostres "
+"documents."
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:128
@@ -353,6 +393,9 @@ msgid ""
 "find them back. Also OCR is not a perfectly realiable process and may not "
 "work."
 msgstr ""
+"Per desgràcia, a vegades els documents no contenen les paraules que "
+"necessitaríem per recuperar-los. A més, l'OCR no sempre és un procés fiable "
+"i, a vegades, pot no funcionar."
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:131
@@ -367,6 +410,8 @@ msgid ""
 "Labels are displayed beside documents. Additional keywords are almost never "
 "displayed."
 msgstr ""
+"Les etiquetes es mostren al costat dels documents. Les paraules clau "
+"addicionals gairebé mai es mostren."
 
 #. type: section{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:137
@@ -385,6 +430,9 @@ msgid ""
 "stored.  It can be a standard folder, a folder synchronized across multiple "
 "computers or on a network share."
 msgstr ""
+"La carpeta de treball és la carpeta on guardeu tota la paperassa. Pot ser "
+"una carpeta normal, una carpeta sincronitzada entre diferents dispositius o "
+"una carpeta compartida en una xarxa."
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:169
