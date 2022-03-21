@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-30 11:53+0100\n"
-"PO-Revision-Date: 2022-03-19 08:45+0000\n"
+"PO-Revision-Date: 2022-03-22 11:50+0000\n"
 "Last-Translator: Víctor Fancelli Capdevila <vfc@uber.space>\n"
 "Language-Team: Spanish <http://translations.openpaper.work/projects/"
 "paperwork/openpaperwork-gtk/es/>\n"
@@ -21,7 +21,7 @@ msgstr ""
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/zip.py:56
 msgid "ZIP file"
-msgstr ""
+msgstr "archivo ZIP"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/zip.py:61
 #, python-format
@@ -30,10 +30,13 @@ msgid ""
 " If you want, you can then submit a bug report manually on <a href=\"%s"
 "\">Paperwork's bug tracker</a> and attach this ZIP file to the ticket."
 msgstr ""
+"Construye un archivo ZIP con todos los anexos.\n"
+"Si quiere, puede remitir un informe de bugs manualmente en <a href=\"%s\""
+">Seguidor de bugs de Paperwork</a> y anexar este archivo ZIP al formulario"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:40
 msgid "Creating bug report ..."
-msgstr ""
+msgstr "Creando informe de bugs"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:42
 msgid "Sending bug report attachment ..."
