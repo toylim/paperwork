@@ -41,13 +41,19 @@ class AutoScrollingHandler(object):
         self.mouse_start_position = (0, 0)  # relative to the screen
         self.mouse_position = (0, 0)  # relative to the screen
 
-        display = scrollview.get_display()
         self.cursors = {
             'inactive': None,
-            'active': Gdk.Cursor.new_for_display(
-                display, Gdk.CursorType.TCROSS
-            ),
+            'active': None,
         }
+
+        try:
+            display = scrollview.get_display()
+            self.cursors['active'] = Gdk.Cursor.new_for_display(
+                display, Gdk.CursorType.TCROSS
+            )
+        except TypeError:
+            # may not work with pure-Wayland systems
+            pass
 
         self.scrollview = scrollview
         scrollview.add_events(
