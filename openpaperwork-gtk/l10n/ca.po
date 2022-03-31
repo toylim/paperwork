@@ -8,17 +8,20 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-30 11:53+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2022-03-19 08:45+0000\n"
+"Last-Translator: Víctor Fancelli Capdevila <vfc@uber.space>\n"
+"Language-Team: Catalan <http://translations.openpaper.work/projects/"
+"paperwork/openpaperwork-gtk/ca/>\n"
 "Language: ca\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.9\n"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/zip.py:56
 msgid "ZIP file"
-msgstr ""
+msgstr "Fitxer ZIP"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/zip.py:61
 #, python-format
@@ -27,26 +30,30 @@ msgid ""
 " If you want, you can then submit a bug report manually on <a href=\"%s"
 "\">Paperwork's bug tracker</a> and attach this ZIP file to the ticket."
 msgstr ""
+"Genera un fitxer ZIP amb tots els adjunts.\n"
+"Si voleu, podeu enviar l'informe d'errors manualment al <a href=\"%s\"> "
+"Sistema de seguiment d'errors del Paperwork</a> i adjuntar aquest ZIP a la "
+"vostra incidència."
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:40
 msgid "Creating bug report ..."
-msgstr ""
+msgstr "Creant l'informe d'errors..."
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:42
 msgid "Sending bug report attachment ..."
-msgstr ""
+msgstr "Enviant l'informe d'errors..."
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:161
 msgid "Send automatically"
-msgstr ""
+msgstr "Envia automàticament"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:162
 msgid "Send the bug report automatically to OpenPaper.work"
-msgstr ""
+msgstr "Envia automàticament l'informe d'errors a OpenPaper.work"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:262
 msgid "Success"
-msgstr ""
+msgstr "Èxit"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:278
 #, python-format
@@ -55,79 +62,85 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"Ha fallat la transferència:\n"
+"\n"
+"%s"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:284
 msgid "FAILED"
-msgstr ""
+msgstr "HA FALLAT"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/__init__.py:77
 msgid "Now"
-msgstr ""
+msgstr "Ara"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:258
 #: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:266
 msgid "App. screenshots"
-msgstr ""
+msgstr "Captura de pantalla"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:267
 msgid "Select to generate"
-msgstr ""
+msgstr "Selecciona per generar"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/widgets/charts/lines.py:417
 msgid "Total: {}"
-msgstr ""
+msgstr "Total: {}"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/widgets/charts/lines.py:427
 msgid "Total"
-msgstr ""
+msgstr "Total"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:1
 msgid "Unexpected Error"
-msgstr ""
+msgstr "Error inesperat"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:2
 msgid "Report"
-msgstr ""
+msgstr "Informa"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:3
 msgid "An unexpected error occured."
-msgstr ""
+msgstr "Ha aparegut un error inesperat."
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:3
 msgid "Date"
-msgstr ""
+msgstr "Data"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:5
 msgid "File"
-msgstr ""
+msgstr "Fitxer"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:6
 msgid "Size"
-msgstr ""
+msgstr "Mida"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:7
 msgid "Open file"
-msgstr ""
+msgstr "Obre el fitxer"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:8
 msgid "For your privacy, attachments may be partially censored when selected"
 msgstr ""
+"Per respectar la vostra privacitat, els adjunts que seleccioneu poden "
+"censurar-se parcialment"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:9
 msgid "Attachments to include in the bug report"
-msgstr ""
+msgstr "Fitxer adjunts que s'ha d'incloure a l'informe d'errors"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:1
 msgid "Bug description"
-msgstr ""
+msgstr "Descripció de l'error"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:2
 msgid "Required if you agree to be contacted regarding this bug report"
 msgstr ""
+"Necessari si accepteu ser contactats en relació a aquest informe d'errors"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:3
 msgid "Your email address"
-msgstr ""
+msgstr "El teu correu electrònic"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:4
 msgid ""
@@ -142,11 +155,23 @@ msgid ""
 "You can request deletion of your bug report by sending an email to <a href="
 "\"mailto:jflesch@openpaper.work\">jflesch@openpaper.work</a>."
 msgstr ""
+"L'enviament de l'informe d'errors ha estat un èxit.\n"
+"\n"
+"A sota, teniu l'enllaç privat al vostre informe.\n"
+"\n"
+"<b>Aneu amb molt de compte al compartir-lo.</b> Els adjunts de l'informe ("
+"registres, captures de pantalla... ) no haurien de tenir cap informació "
+"privada. Es recomana, i és molt important, revisar-ho tot abans d'enviar "
+"aquest enllaç.\n"
+"\n"
+"Podeu demanar eliminar el vostre informe d'errors enviant un correu "
+"electrònic a <a href=\"mailto:jflesch@openpaper.work\">jflesch@openpaper."
+"work</a>."
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_zip.glade.h:1
 msgid "Please select where to save the ZIP file"
-msgstr ""
+msgstr "Si us plau, selecciona on s'ha de desar el fitxer ZIP"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/widgets/progress/progress_button.glade.h:1
 msgid "Show background tasks"
-msgstr ""
+msgstr "Mostra les tasques en segon pla"

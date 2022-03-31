@@ -8,13 +8,16 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-30 11:53+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2022-03-19 11:45+0000\n"
+"Last-Translator: Víctor Fancelli Capdevila <vfc@uber.space>\n"
+"Language-Team: Catalan <http://translations.openpaper.work/projects/"
+"paperwork/paperwork-backend/ca/>\n"
 "Language: ca\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.9\n"
 
 #: paperwork-backend/src/paperwork_backend/i18n/scanner.py:38
 msgid "centrally aligned"
@@ -38,15 +41,15 @@ msgstr ""
 
 #: paperwork-backend/src/paperwork_backend/i18n/pycountry.py:9
 msgid "English"
-msgstr ""
+msgstr "Anglès"
 
 #: paperwork-backend/src/paperwork_backend/i18n/pycountry.py:10
 msgid "French"
-msgstr ""
+msgstr "Francès"
 
 #: paperwork-backend/src/paperwork_backend/i18n/pycountry.py:11
 msgid "German"
-msgstr ""
+msgstr "Alemany"
 
 #: paperwork-backend/src/paperwork_backend/pageedit/pageeditor.py:80
 msgid "Color equalization"
@@ -58,11 +61,11 @@ msgstr ""
 
 #: paperwork-backend/src/paperwork_backend/pageedit/pageeditor.py:103
 msgid "Clockwise Rotation"
-msgstr ""
+msgstr "Gira en sentit horari"
 
 #: paperwork-backend/src/paperwork_backend/pageedit/pageeditor.py:112
 msgid "Counterclockwise Rotation"
-msgstr ""
+msgstr "Gira en sentit anti-horari"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:231
 msgid "Label guesser: Garbage-collecting unused document features ..."
@@ -94,7 +97,7 @@ msgstr ""
 #: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:873
 #: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:929
 msgid "Label guessing: Training ..."
-msgstr ""
+msgstr "Endevinador d'etiquetes: Entrenant..."
 
 #: paperwork-backend/src/paperwork_backend/guesswork/orientation/pyocr.py:43
 #, python-brace-format
@@ -107,10 +110,11 @@ msgstr ""
 #, python-brace-format
 msgid "Guessing orientation of document {doc_id} p{page_idx}"
 msgstr ""
+"Endevinant la orientació de les pàgines del document {doc_id} p{page_idx}"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/orientation/pyocr.py:77
 msgid "Guessing page orientation"
-msgstr ""
+msgstr "Endevinant la orientació de les pàgines"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/color/libpillowfight.py:48
 #, python-brace-format
@@ -138,7 +142,7 @@ msgstr ""
 
 #: paperwork-backend/src/paperwork_backend/guesswork/ocr/pyocr.py:83
 msgid "Running OCR"
-msgstr ""
+msgstr "Passant l'ORC"
 
 #: paperwork-backend/src/paperwork_backend/guesswork/cropping/calibration.py:45
 #: paperwork-backend/src/paperwork_backend/guesswork/cropping/libpillowfight.py:51
@@ -163,70 +167,70 @@ msgstr ""
 
 #: paperwork-backend/src/paperwork_backend/guesswork/cropping/libpillowfight.py:85
 msgid "Guessing page borders"
-msgstr ""
+msgstr "Endevinant els marges de la pàgina"
 
 #: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:233
 msgid "Starting scan ..."
-msgstr ""
+msgstr "Començant l'escaneig..."
 
 #: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:241
 #: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:293
 #: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:304
 #, python-format
 msgid "Scanning page %d ..."
-msgstr ""
+msgstr "Escanejant la pàgina %d..."
 
 #: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:457
 #, python-format
 msgid "Examining %s"
-msgstr ""
+msgstr "Examinant %s"
 
 #: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:538
 msgid "Getting scanner list ..."
-msgstr ""
+msgstr "Aconseguint la llista d'escàners..."
 
 #: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:752
 msgid "Scanner info."
-msgstr ""
+msgstr "Informació de l'escàner."
 
 #: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:753
 msgid "Select to generate"
-msgstr ""
+msgstr "Selecciona per generar"
 
 #: paperwork-backend/src/paperwork_backend/doctracker.py:68
 #, python-format
 msgid "Document %s added"
-msgstr ""
+msgstr "Document %s afegit"
 
 #: paperwork-backend/src/paperwork_backend/doctracker.py:73
 #, python-format
 msgid "Document %s updated"
-msgstr ""
+msgstr "Document %s actualitzat"
 
 #: paperwork-backend/src/paperwork_backend/doctracker.py:89
 #, python-format
 msgid "Document %s deleted"
-msgstr ""
+msgstr "Document %s esborrat"
 
 #: paperwork-backend/src/paperwork_backend/doctracker.py:99
 #: paperwork-backend/src/paperwork_backend/index/whoosh.py:140
 #, python-format
 msgid "Examining document %s: unchanged"
-msgstr ""
+msgstr "Examinant el document %s: sense canvis"
 
 #: paperwork-backend/src/paperwork_backend/doctracker.py:104
 msgid "Rolling back changes"
-msgstr ""
+msgstr "Desfés els canvis"
 
 #: paperwork-backend/src/paperwork_backend/doctracker.py:110
 msgid "Committing changes"
-msgstr ""
+msgstr "Desant els canvis"
 
 #: paperwork-backend/src/paperwork_backend/chkworkdir/label_color.py:55
 #: paperwork-backend/src/paperwork_backend/chkworkdir/empty_doc.py:44
 #, python-format
 msgid "Checking doc %s"
-msgstr ""
+msgstr "Examinant el document %s"
 
 #: paperwork-backend/src/paperwork_backend/chkworkdir/label_color.py:87
 #, python-format
@@ -248,22 +252,22 @@ msgstr ""
 #: paperwork-backend/src/paperwork_backend/chkworkdir/empty_doc.py:59
 #, python-format
 msgid "Document %s is empty"
-msgstr ""
+msgstr "El document %s és buit"
 
 #: paperwork-backend/src/paperwork_backend/chkworkdir/empty_doc.py:60
 #, python-format
 msgid "Delete document %s"
-msgstr ""
+msgstr "Elimina el document %s"
 
 #: paperwork-backend/src/paperwork_backend/chkworkdir/empty_doc.py:74
 #, python-format
 msgid "Deleting empty doc %s"
-msgstr ""
+msgstr "Eliminant el document buit %s"
 
 #: paperwork-backend/src/paperwork_backend/index/whoosh.py:113
 #, python-format
 msgid "Indexing new document %s"
-msgstr ""
+msgstr "Indexant el nou document %s"
 
 #: paperwork-backend/src/paperwork_backend/index/whoosh.py:122
 #, python-format
@@ -292,7 +296,7 @@ msgstr ""
 #: paperwork-backend/src/paperwork_backend/docimport/img.py:61
 #: paperwork-backend/src/paperwork_backend/docimport/converted.py:41
 msgid "Documents"
-msgstr ""
+msgstr "Documents"
 
 #: paperwork-backend/src/paperwork_backend/docimport/pdf.py:61
 msgid "Import PDF"
@@ -308,7 +312,7 @@ msgstr ""
 
 #: paperwork-backend/src/paperwork_backend/docimport/img.py:58
 msgid "Images"
-msgstr ""
+msgstr "Imatges"
 
 #: paperwork-backend/src/paperwork_backend/docimport/img.py:64
 msgid "Pages"
@@ -470,11 +474,11 @@ msgstr ""
 
 #: paperwork-backend/src/paperwork_backend/docexport/img.py:184
 msgid "Black & White"
-msgstr ""
+msgstr "Blanc i negre"
 
 #: paperwork-backend/src/paperwork_backend/docexport/img.py:195
 msgid "Grayscale"
-msgstr ""
+msgstr "Escala de Grisos"
 
 #: paperwork-backend/src/paperwork_backend/docexport/pillowfight.py:31
 msgid "Soft simplification"

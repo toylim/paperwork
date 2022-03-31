@@ -8,18 +8,20 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-30 11:53+0100\n"
-"PO-Revision-Date: 2020-05-03 15:37+0200\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2022-03-22 11:50+0000\n"
+"Last-Translator: Víctor Fancelli Capdevila <vfc@uber.space>\n"
+"Language-Team: Spanish <http://translations.openpaper.work/projects/"
+"paperwork/openpaperwork-gtk/es/>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.9\n"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/zip.py:56
 msgid "ZIP file"
-msgstr ""
+msgstr "archivo ZIP"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/zip.py:61
 #, python-format
@@ -28,10 +30,13 @@ msgid ""
 " If you want, you can then submit a bug report manually on <a href=\"%s"
 "\">Paperwork's bug tracker</a> and attach this ZIP file to the ticket."
 msgstr ""
+"Construye un archivo ZIP con todos los anexos.\n"
+"Si quiere, puede remitir un informe de bugs manualmente en <a href=\"%s\""
+">Seguidor de bugs de Paperwork</a> y anexar este archivo ZIP al formulario"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:40
 msgid "Creating bug report ..."
-msgstr ""
+msgstr "Creando informe de bugs"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:42
 msgid "Sending bug report attachment ..."
@@ -59,64 +64,66 @@ msgstr ""
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:284
 msgid "FAILED"
-msgstr ""
+msgstr "HA FALLADO"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/__init__.py:77
 msgid "Now"
-msgstr ""
+msgstr "Ahora"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:258
 #: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:266
 msgid "App. screenshots"
-msgstr ""
+msgstr "Captura de pantalla"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:267
 msgid "Select to generate"
-msgstr ""
+msgstr "Selecciona para generar"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/widgets/charts/lines.py:417
 msgid "Total: {}"
-msgstr ""
+msgstr "Total: {}"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/widgets/charts/lines.py:427
 msgid "Total"
-msgstr ""
+msgstr "Total"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:1
 msgid "Unexpected Error"
-msgstr ""
+msgstr "Error inesperado"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:2
 msgid "Report"
-msgstr ""
+msgstr "Informa"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:3
 msgid "An unexpected error occured."
-msgstr ""
+msgstr "Apareció un error inesperado."
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:3
 msgid "Date"
-msgstr ""
+msgstr "Fecha"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:5
 msgid "File"
-msgstr ""
+msgstr "Fichero"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:6
 msgid "Size"
-msgstr ""
+msgstr "Tamaño"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:7
 msgid "Open file"
-msgstr ""
+msgstr "Abre el fichero"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:8
 msgid "For your privacy, attachments may be partially censored when selected"
 msgstr ""
+"Para respetar tu privacidad, los archivos adjuntos que selecciones pueden "
+"ser censurados"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:9
 msgid "Attachments to include in the bug report"
-msgstr ""
+msgstr "Fichero a adjuntar en el informe"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:1
 msgid "Bug description"
