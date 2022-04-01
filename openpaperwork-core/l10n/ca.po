@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-30 11:53+0100\n"
-"PO-Revision-Date: 2022-03-19 11:45+0000\n"
+"PO-Revision-Date: 2022-04-02 09:11+0000\n"
 "Last-Translator: Víctor Fancelli Capdevila <vfc@uber.space>\n"
 "Language-Team: Catalan <http://translations.openpaper.work/projects/"
 "paperwork/openpaperwork-core/ca/>\n"
@@ -54,7 +54,7 @@ msgstr "%3.1f tiB"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:52
 msgid "Check that all required dependencies are installed"
-msgstr ""
+msgstr "Comproveu que totes les dependències estiguin instal·lades"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:73
 msgid "Missing dependencies:"
@@ -96,11 +96,11 @@ msgstr "sub-commanda"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/config.py:66
 msgid "Get a value from Paperwork's configuration"
-msgstr ""
+msgstr "Obté un valor de la configuració del Paperwork"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/config.py:71
 msgid "Set a value in Paperwork's configuration"
-msgstr ""
+msgstr "Estableix un valor a la configuració del Paperwork"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/config.py:74
 msgid "See 'config list_type'"
@@ -112,7 +112,7 @@ msgstr "Mostra la configuració del Paperwork"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/config.py:83
 msgid "Show value types you can use from command line"
-msgstr ""
+msgstr "Mostra les variables possibles per a la línia de comandes"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:45
 #, python-format
@@ -132,7 +132,7 @@ msgstr "Afegeix un complement al %s"
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:66
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:77
 msgid "Do not correct dependencies automatically"
-msgstr ""
+msgstr "No corregeixis automàticament les dependències"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:71
 #, python-format
@@ -142,6 +142,8 @@ msgstr "Elimina el complement de %s"
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:82
 msgid "Clean up your mess by reseting the plugin list to its default value"
 msgstr ""
+"Neteja el guirigall que heu creat restablint els valors inicials de la "
+"llista de complements"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:89
 msgid "Show information regarding a plugin (must be enabled)"
@@ -158,6 +160,8 @@ msgid ""
 "Adding plugin '{plugin_name}' to satisfy dependency of '{other_plugin_name}' "
 "on interface '{interface}'"
 msgstr ""
+"Afegint el complement «{plugin_name}» per satisfer la depèndencia de "
+"«{other_plugin_name}» a la interfície «{interface}»"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:162
 msgid "Plugin {} added"
@@ -167,6 +171,8 @@ msgstr "Complement {} afegit"
 #, python-brace-format
 msgid "Removing plugin '{plugin_name}' due to missing dependency '{interface}'"
 msgstr ""
+"Eliminant el complement «{plugin_name}» perquè falten les dependències "
+"«{interface}»"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:201
 msgid "Plugin {} removed"
@@ -197,7 +203,7 @@ msgstr "Depèn de:"
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:309
 #, python-format
 msgid "suggested: %s"
-msgstr ""
+msgstr "recomanat: %s"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:317
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:330
@@ -220,15 +226,15 @@ msgstr "s/N"
 #: openpaperwork-core/src/openpaperwork_core/logs/archives.py:134
 #: openpaperwork-core/src/openpaperwork_core/logs/archives.py:145
 msgid "Log file"
-msgstr ""
+msgstr "Fitxer de registre"
 
 #: openpaperwork-core/src/openpaperwork_core/config/backend/configparser.py:333
 msgid "App. config."
-msgstr ""
+msgstr "Conf. de l'App"
 
 #: openpaperwork-core/src/openpaperwork_core/beacon/stats.py:126
 msgid "App. & system info."
-msgstr ""
+msgstr "Info. del Sistema & l'App"
 
 #: openpaperwork-core/src/openpaperwork_core/beacon/stats.py:127
 msgid "Select to generate"
@@ -236,4 +242,4 @@ msgstr "Selecciona per generar"
 
 #: openpaperwork-core/src/openpaperwork_core/beacon/stats.py:149
 msgid "Collecting statistics ..."
-msgstr ""
+msgstr "Recollint les estadístiques…"
