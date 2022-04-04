@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: 2021-10-09 12:56+0200\n"
-"PO-Revision-Date: 2022-04-03 12:08+0000\n"
+"PO-Revision-Date: 2022-04-05 13:32+0000\n"
 "Last-Translator: Víctor Fancelli Capdevila <vfc@uber.space>\n"
 "Language-Team: Catalan <http://translations.openpaper.work/projects/"
 "paperwork/paperwork-help-documents/ca/>\n"
@@ -884,7 +884,7 @@ msgid ""
 "the button \"Scan from ...\"."
 msgstr ""
 "Una vegada hagueu seleccionat quin escàner i quin origen de la pàgina voleu "
-"fer servir, només haureu de clicar al botó «Escaneja des de...»"
+"fer servir, només haureu de clicar al botó «Escaneja des de...»."
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:377
@@ -1048,6 +1048,9 @@ msgid ""
 "ignored. Folder is browsed recursively (all the folders inside the folder "
 "are also examined)."
 msgstr ""
+"Si seleccionau una carpeta a importar, el Paperwork buscarà aquí PDFs per "
+"importar. Els PDFs que ja hagin estat importats s'ignoraran. La carpetà serà "
+"examinada recursivament (també buscarà a les carpetes dins de la carpeta)."
 
 #. type: section{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:448
@@ -1091,6 +1094,8 @@ msgid ""
 "The label is actually added once you close document properties. Paperwork "
 "will then update its index accordingly."
 msgstr ""
+"L'etiqueta s'afegirà quan tanqueu les propietats del document. El Paperwork "
+"aleshores actualitzarà l'índex."
 
 #. type: subsection{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:484
@@ -1182,7 +1187,7 @@ msgstr ""
 #. type: subsection{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:526
 msgid "Automatic label guessing"
-msgstr ""
+msgstr "Endevinador automàtic d'etiquetes"
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:531
@@ -1215,12 +1220,12 @@ msgstr ""
 #. type: section{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:544
 msgid "Searching"
-msgstr ""
+msgstr "Cercant"
 
 #. type: subsection{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:546
 msgid "Simple search"
-msgstr ""
+msgstr "Cerca senzilla"
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:553
@@ -1263,22 +1268,23 @@ msgstr ""
 #. type: section{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:585
 msgid "Viewing"
-msgstr ""
+msgstr "Mostrant"
 
 #. type: subsection{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:591
 msgid "Zoom level"
-msgstr ""
+msgstr "Nivell de zoom"
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:597
 msgid "You can change the scale at which pages are displayed using this control."
 msgstr ""
+"Podeu canviar l'escala en la que es mostren els documents amb aquest panell."
 
 #. type: subsection{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:600
 msgid "View pages as grid"
-msgstr ""
+msgstr "Mostra les pàgines com a graella"
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:608
@@ -1291,7 +1297,7 @@ msgstr ""
 #. type: subsection{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:611
 msgid "View pages as list"
-msgstr ""
+msgstr "Mostra les pàgines com a llista"
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:619
