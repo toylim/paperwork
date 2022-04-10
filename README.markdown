@@ -96,11 +96,6 @@ If you installed it manually (for development), you can follow the same process 
 [GNU/Linux](doc/uninstall.linux.markdown)
 
 
-## Donate
-
-[Help us help you ! ;-)](https://www.patreon.com/openpaper)
-
-
 ## Contact/Help
 
 * [Extra documentation / FAQ / Tips / Wiki](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/wikis/)

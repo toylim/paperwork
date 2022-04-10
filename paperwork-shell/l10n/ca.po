@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-30 11:53+0100\n"
-"PO-Revision-Date: 2022-03-22 11:50+0000\n"
+"PO-Revision-Date: 2022-04-03 12:08+0000\n"
 "Last-Translator: Víctor Fancelli Capdevila <vfc@uber.space>\n"
 "Language-Team: Catalan <http://translations.openpaper.work/projects/"
 "paperwork/paperwork-shell/ca/>\n"
@@ -21,7 +21,7 @@ msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/cmd/sync.py:57
 msgid "Synchronize the index(es) with the content of the work directory"
-msgstr ""
+msgstr "Sincronitza els índex amb el contingut de la carpeta de treball"
 
 #: paperwork-shell/src/paperwork_shell/cmd/sync.py:68
 #: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:112
@@ -74,6 +74,8 @@ msgid ""
 "Default source on the scanner to use (if not specified, one will be selected "
 "randomly)"
 msgstr ""
+"Font de l'escàner a utilitzar per defecte (si no està especificada, se'n "
+"seleccionarà una aleatòriament)"
 
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:86
 msgid "Default resolution (dpi ; default=300)"
@@ -103,11 +105,11 @@ msgstr "Resolució:"
 
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:185
 msgid "Source {} not found on device. Using another source"
-msgstr ""
+msgstr "No s'ha trobat la font {} al dispositiu. Intenteu una altra font"
 
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:205
 msgid "Default source:"
-msgstr ""
+msgstr "Font per defecte:"
 
 #: paperwork-shell/src/paperwork_shell/cmd/scanner.py:219
 msgid "Resolution {} not available. Adjusted to {}."
@@ -127,20 +129,20 @@ msgstr "Sobre el Paperwork"
 
 #: paperwork-shell/src/paperwork_shell/cmd/reset.py:70
 msgid "Reset a page to its original content"
-msgstr ""
+msgstr "Restableix el contingut original d'una pàgina"
 
 #: paperwork-shell/src/paperwork_shell/cmd/reset.py:108
 msgid "Reseting document {} page {} ..."
-msgstr ""
+msgstr "Restablint el document {}, concretament la pàgina {}..."
 
 #: paperwork-shell/src/paperwork_shell/cmd/reset.py:112
 #: paperwork-shell/src/paperwork_shell/cmd/edit.py:126
 msgid "Original:"
-msgstr ""
+msgstr "Original:"
 
 #: paperwork-shell/src/paperwork_shell/cmd/reset.py:118
 msgid "Reseted:"
-msgstr ""
+msgstr "Restablert:"
 
 #: paperwork-shell/src/paperwork_shell/cmd/reset.py:123
 #: paperwork-shell/src/paperwork_shell/cmd/edit.py:175
@@ -160,7 +162,7 @@ msgstr "Fet"
 
 #: paperwork-shell/src/paperwork_shell/cmd/ocr.py:50
 msgid "OCR document or pages"
-msgstr ""
+msgstr "Passant l'OCR per una o totes les pàgines d'un document"
 
 #: paperwork-shell/src/paperwork_shell/cmd/ocr.py:55
 msgid "Document on which OCR must be run"
@@ -171,148 +173,161 @@ msgid ""
 "Pages to OCR (single integer, range or comma-separated list, default: all "
 "pages)"
 msgstr ""
+"Pàgines on s'ha de passar l'ORC (nombre, interval, llista separada per "
+"comes, per defecte: totes les pàgines)"
 
 #: paperwork-shell/src/paperwork_shell/cmd/ocr.py:91
 #, python-brace-format
 msgid "Running OCR on document {doc_id} page {page_idx} ..."
-msgstr ""
+msgstr "Passant l'OCR a la pàgina {page_idx} del document {doc_id}..."
 
 #: paperwork-shell/src/paperwork_shell/cmd/delete.py:62
 msgid "Delete a document or a page"
-msgstr ""
+msgstr "Elimina una pàgina o un document"
 
 #: paperwork-shell/src/paperwork_shell/cmd/delete.py:67
 msgid ""
 "Pages to delete (single integer, range or comma-separated list, default: all "
 "pages)"
 msgstr ""
+"Pàgines a eliminar (nombre, interval, llista separada per comes, per defecte:"
+" totes les pàgines)"
 
 #: paperwork-shell/src/paperwork_shell/cmd/delete.py:74
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:68
 msgid "Target documents"
-msgstr ""
+msgstr "Documents objectiu"
 
 #: paperwork-shell/src/paperwork_shell/cmd/delete.py:90
 #, python-brace-format
 msgid "Deleting document {doc_id} ..."
-msgstr ""
+msgstr "Eliminant el document {doc_id}..."
 
 #: paperwork-shell/src/paperwork_shell/cmd/delete.py:91
 #, python-brace-format
 msgid "Deleting page {page_idx} of document {doc_id} ..."
-msgstr ""
+msgstr "Eliminant la pàgina {page_idx} del document {doc_id}..."
 
 #: paperwork-shell/src/paperwork_shell/cmd/delete.py:97
 #, python-format
 msgid "Delete document %s ?"
-msgstr ""
+msgstr "Voleu eliminar el document %s?"
 
 #: paperwork-shell/src/paperwork_shell/cmd/delete.py:103
 #, python-brace-format
 msgid "Delete page(s) {page_indexes} of document {doc_id} ?"
-msgstr ""
+msgstr "Voleu eliminar les pàgines {page_indexes} del document {doc_id}?"
 
 #: paperwork-shell/src/paperwork_shell/cmd/show.py:51
 msgid "Show the content of a document"
-msgstr ""
+msgstr "Mostra el contingut d'un document"
 
 #: paperwork-shell/src/paperwork_shell/cmd/show.py:81
 #: paperwork-shell/src/paperwork_shell/cmd/search.py:93
 #, python-format
 msgid "Document id: %s"
-msgstr ""
+msgstr "ID del document: %s"
 
 #: paperwork-shell/src/paperwork_shell/cmd/show.py:87
 #: paperwork-shell/src/paperwork_shell/cmd/search.py:98
 #, python-format
 msgid "Document date: %s"
-msgstr ""
+msgstr "Data del document: %s"
 
 #: paperwork-shell/src/paperwork_shell/cmd/show.py:99
 #, python-format
 msgid "Page %d"
-msgstr ""
+msgstr "Pàgina %d"
 
 #: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:41
 msgid "Check and fix work directory integrity"
-msgstr ""
+msgstr "Comprova i repara la integritat de la carpeta de treball"
 
 #: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:45
 msgid "Don't ask to fix things, just fix them"
-msgstr ""
+msgstr "No em preguntis si s'han d'arreglar les coses: repara-les i prou"
 
 #: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:63
 msgid "Checking work directory ..."
-msgstr ""
+msgstr "Comprovant la carpeta de treball…"
 
 #: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:70
 msgid "No problem found"
-msgstr ""
+msgstr "No s'ha trobat cap problema"
 
 #: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:77
 #, python-format
 msgid "%d problems found:"
-msgstr ""
+msgstr "Hi ha hagut algun problema, concretament %d"
 
 #: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:92
 msgid "- Problem: "
-msgstr ""
+msgstr "- Problema: "
 
 #: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:96
 msgid "- Possible solution: "
-msgstr ""
+msgstr "- Possible solució: "
 
 #: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:102
 msgid ""
 "Do you want to fix those problems automatically using the indicated "
 "solutions ?"
 msgstr ""
+"Voleu solucionar aquests problemes automàticament amb les solucions "
+"proposades?"
 
 #: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:111
 msgid "All fixed !"
-msgstr ""
+msgstr "Tot arreglat!"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:57
 msgid ""
 "Export a document, a page, or a set of pages. Example: paperwork-cli export "
 "20150303_2314_39 -p 2 -f img_boxes -f grayscale -f jpeg -o ~/tmp/pouet.jpg"
 msgstr ""
+"Exporta un document, una pàgina o un conjunt de pàgines. Per exemple: "
+"paperwork-cli export 20150303_2314_39 -p 2 -f img_boxes -f grayscale -f jpeg "
+"-o ~/tmp/pouet.jpg"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:63
 msgid "Document to export"
-msgstr ""
+msgstr "Document a exportar"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:67
 msgid ""
 "Pages to export (single integer, range or comma-separated list, default: all "
 "pages)"
-msgstr ""
+msgstr "Pàgines a exportar"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:76
 msgid ""
 "Export filters. Specify this option once for each filter to apply (ex: '-f "
 "grayscale -f jpeg')."
 msgstr ""
+"Exporta els filtres. Especifiqueu la bandera per cada filtre (per exemple: '-"
+"f grayscale -f jpeg')."
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:83
 msgid ""
 "Output file/directory. If not specified, will list the filters that could be "
 "chained after those already specified."
 msgstr ""
+"Document/Carpeta de sortida. Si no s'especifica, mostrarà els filtres que es "
+"podrien encadenar després dels que han estat especificats."
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:119
 #, python-format
 msgid "Unknown filters: %s"
-msgstr ""
+msgstr "Filtres desconeguts: %s"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:141
 #, python-format
 msgid "Current filters: %s"
-msgstr ""
+msgstr "Filtres actuals: %s"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:144
 msgid "Next possible filters:"
-msgstr ""
+msgstr "Pròxims possibles filtres:"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:149
 #, python-brace-format
@@ -320,61 +335,63 @@ msgid ""
 "'{filter_name}' is an output filter. No other filter can be added after "
 "'{filter_name}'."
 msgstr ""
+"«{filter_name}» és un filtre de sortida. No es poden afegir més filtres "
+"després de «{filter_name}»."
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:153
 msgid "No possible filters found"
-msgstr ""
+msgstr "No s'han trobat filtres possibles"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:170
 #, python-format
 msgid "Exporting to %s ... "
-msgstr ""
+msgstr "Exportant a %s... "
 
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:58
 msgid "Commands to manage labels"
-msgstr ""
+msgstr "Ordres per gestionar les etiquetes"
 
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:61
 msgid "label command"
-msgstr ""
+msgstr "Ordres de les etiquetes"
 
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:72
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:80
 msgid "Target document"
-msgstr ""
+msgstr "Document de sortida"
 
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:73
 msgid "Label to add"
-msgstr ""
+msgstr "Etiqueta a afegir"
 
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:76
 msgid "Label color (ex: '#aa22cc')"
-msgstr ""
+msgstr "Color de l'etiqueta (per ex. \"#aa22cc\")"
 
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:81
 msgid "Label to remove"
-msgstr ""
+msgstr "Etiqueta a eliminar"
 
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:85
 msgid "Label to delete from *all* documents"
-msgstr ""
+msgstr "Etiqueta que s'ha d'eliminar de *tots* els documents"
 
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:90
 msgid "Loading all labels ... "
-msgstr ""
+msgstr "Carregant les etiquetes... "
 
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:178
 #, python-format
 msgid "Are you sure you want to delete label '%s' from all documents ?"
-msgstr ""
+msgstr "Segur que voleu eliminar l'etiqueta «%s» de tots els documents?"
 
 #: paperwork-shell/src/paperwork_shell/cmd/import.py:67
 msgid "Import file(s)"
-msgstr "Importa fitxers"
+msgstr "Importa els fitxers"
 
 #: paperwork-shell/src/paperwork_shell/cmd/import.py:72
 msgid "Target document for import"
-msgstr ""
+msgstr "Document de sortida per les importacions"
 
 #: paperwork-shell/src/paperwork_shell/cmd/import.py:76
 msgid "PDF password"
@@ -382,135 +399,136 @@ msgstr "Contrasenya del PDF"
 
 #: paperwork-shell/src/paperwork_shell/cmd/import.py:80
 msgid "Files to import"
-msgstr ""
+msgstr "Fitxers a importar"
 
 #: paperwork-shell/src/paperwork_shell/cmd/import.py:108
 #, python-format
 msgid "Don't know how to import file(s) %s"
-msgstr ""
+msgstr "No sé com importar els fitxers següents: %s"
 
 #: paperwork-shell/src/paperwork_shell/cmd/import.py:121
 #, python-format
 msgid "Found many ways to import file(s) %s."
-msgstr ""
+msgstr "S'han trobat vàries maneres d'importar els fitxers %s."
 
 #: paperwork-shell/src/paperwork_shell/cmd/import.py:122
 msgid "Please select the way you want:"
-msgstr ""
+msgstr "Seleccioneu la manera com ho voleu importar:"
 
 #: paperwork-shell/src/paperwork_shell/cmd/import.py:140
 msgid "Loading labels ..."
-msgstr ""
+msgstr "Carregant les etiquetes..."
 
 #: paperwork-shell/src/paperwork_shell/cmd/import.py:157
 #, python-format
 msgid "Importing %s ..."
-msgstr ""
+msgstr "Important %s..."
 
 #: paperwork-shell/src/paperwork_shell/cmd/import.py:166
 msgid "Import result:"
-msgstr ""
+msgstr "Resultat de la importació:"
 
 #: paperwork-shell/src/paperwork_shell/cmd/import.py:167
 #, python-format
 msgid "- Imported files: %s"
-msgstr ""
+msgstr "- Fitxers importats: %s"
 
 #: paperwork-shell/src/paperwork_shell/cmd/import.py:168
 #, python-format
 msgid "- Non-imported files: %s"
-msgstr ""
+msgstr "- Fitxers no importats: %s"
 
 #: paperwork-shell/src/paperwork_shell/cmd/import.py:169
 #, python-format
 msgid "- New documents: %s"
-msgstr ""
+msgstr "- Documents nous: %s"
 
 #: paperwork-shell/src/paperwork_shell/cmd/import.py:170
 #, python-format
 msgid "- Updated documents: %s"
-msgstr ""
+msgstr "- Documents actualitzats: %s"
 
 #: paperwork-shell/src/paperwork_shell/cmd/edit.py:95
 msgid "Edit page"
-msgstr ""
+msgstr "Edita la pàgina"
 
 #: paperwork-shell/src/paperwork_shell/cmd/edit.py:99
 msgid "List of image modifiers (comma separated, possible values: {})"
 msgstr ""
+"Llista dels modificadors d'imatge (separats per comes, valors possibles: {})"
 
 #: paperwork-shell/src/paperwork_shell/cmd/edit.py:122
 msgid "Modifying document {} page {} ..."
-msgstr ""
+msgstr "Modificant el document {}, concretament la pàgina {}..."
 
 #: paperwork-shell/src/paperwork_shell/cmd/edit.py:147
 msgid "Generating in high quality and saving ..."
-msgstr ""
+msgstr "Generant la còpia en alta qualitat i desant-la..."
 
 #: paperwork-shell/src/paperwork_shell/cmd/search.py:63
 msgid "Search keywords in documents"
-msgstr ""
+msgstr "Cerca paraules clau als documents"
 
 #: paperwork-shell/src/paperwork_shell/cmd/search.py:67
 msgid "Maximum number of results (default: 50)"
-msgstr ""
+msgstr "Nombre de resultats a mostrar (per defecte: 50)"
 
 #: paperwork-shell/src/paperwork_shell/cmd/search.py:71
 msgid "Search keywords (none means all documents)"
-msgstr ""
+msgstr "Cerca les paraules clau (cap significa tots els documents)"
 
 #: paperwork-shell/src/paperwork_shell/cmd/move.py:58
 msgid "Move a page"
-msgstr ""
+msgstr "Mou una pàgina"
 
 #: paperwork-shell/src/paperwork_shell/cmd/move.py:62
 msgid "Source document"
-msgstr ""
+msgstr "Document d'entrada"
 
 #: paperwork-shell/src/paperwork_shell/cmd/move.py:66
 msgid "Page to move"
-msgstr ""
+msgstr "Pàgina que s'ha de moure"
 
 #: paperwork-shell/src/paperwork_shell/cmd/move.py:70
 msgid "Destination document"
-msgstr ""
+msgstr "Document de sortida"
 
 #: paperwork-shell/src/paperwork_shell/cmd/move.py:74
 msgid "Target page number"
-msgstr ""
+msgstr "Nombre de la pàgina del document de sortida"
 
 #: paperwork-shell/src/paperwork_shell/cmd/rename.py:50
 msgid "Change a document identifier"
-msgstr ""
+msgstr "Canvia l'identificador d'un document"
 
 #: paperwork-shell/src/paperwork_shell/cmd/rename.py:54
 msgid "Document to rename"
-msgstr ""
+msgstr "Document al qual s'ha de canviar el nom"
 
 #: paperwork-shell/src/paperwork_shell/cmd/rename.py:58
 msgid "New name for the document"
-msgstr ""
+msgstr "Nou nom que rebrà el document"
 
 #: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:43
 msgid "Manage additional text attached to documents"
-msgstr ""
+msgstr "Gestioneu el text addicional dels documents"
 
 #: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:52
 msgid "Get a document additional text"
-msgstr ""
+msgstr "Obtingueu el text addicional d'un document"
 
 #: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:57
 msgid "Set a document additional text"
-msgstr ""
+msgstr "Establiu el text addicional d'un document"
 
 #: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:79
 #: paperwork-shell/src/paperwork_shell/display/docrendering/extra_text.py:32
 msgid "Additional text:"
-msgstr ""
+msgstr "Text addicional:"
 
 #: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:82
 msgid "No additional text"
-msgstr ""
+msgstr "Sense text addicional"
 
 #: paperwork-shell/src/paperwork_shell/main.py:68
 msgid "command"
@@ -518,16 +536,16 @@ msgstr "comanda"
 
 #: paperwork-shell/src/paperwork_shell/display/scan.py:86
 msgid "Scanning page {} (expected size: {}x{}) ..."
-msgstr ""
+msgstr "Escanejant la pàgina {} (mida esperada: {}x{})..."
 
 #: paperwork-shell/src/paperwork_shell/display/scan.py:127
 msgid "Page {} scanned (actual size: {}x{})"
-msgstr ""
+msgstr "Pàgina {} escanejada (mida actual:{}x{})"
 
 #: paperwork-shell/src/paperwork_shell/display/scan.py:135
 msgid "End of paper feed"
-msgstr ""
+msgstr "Fi de la safata de paper"
 
 #: paperwork-shell/src/paperwork_shell/display/scan.py:151
 msgid "Page {} in document {} created"
-msgstr ""
+msgstr "S'ha creat la pàgina {} al document {}"
