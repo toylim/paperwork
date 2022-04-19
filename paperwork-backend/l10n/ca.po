@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-30 11:53+0100\n"
-"PO-Revision-Date: 2022-04-03 12:08+0000\n"
+"PO-Revision-Date: 2022-04-05 13:32+0000\n"
 "Last-Translator: Víctor Fancelli Capdevila <vfc@uber.space>\n"
 "Language-Team: Catalan <http://translations.openpaper.work/projects/"
 "paperwork/paperwork-backend/ca/>\n"
@@ -293,7 +293,7 @@ msgstr "Indexant el document actualitzat %s"
 
 #: paperwork-backend/src/paperwork_backend/index/whoosh.py:163
 msgid "Committing changes in the index ..."
-msgstr ""
+msgstr "Desant els canvis a l'índex..."
 
 #: paperwork-backend/src/paperwork_backend/docimport/pdf.py:33
 #: paperwork-backend/src/paperwork_backend/docimport/converted.py:33
@@ -340,15 +340,15 @@ msgstr "Troba les imatges de manera recursiva i importa-les al document actual"
 
 #: paperwork-backend/src/paperwork_backend/docimport/converted.py:67
 msgid "Import office document"
-msgstr ""
+msgstr "Importa un document de l'oficina"
 
 #: paperwork-backend/src/paperwork_backend/docimport/converted.py:71
 msgid "Import office documents recursively"
-msgstr ""
+msgstr "Importa documents de l'oficina recursivament"
 
 #: paperwork-backend/src/paperwork_backend/docimport/converted.py:139
 msgid "Office document folder"
-msgstr ""
+msgstr "Carpeta dels documents de l'oficina"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:60
 msgid "Microsoft Word template (.dot)"
@@ -420,15 +420,15 @@ msgstr "Text web de l'OpenOffice/LibreOffice (.oth)"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:144
 msgid "Microsoft PowerPoint slide (.sldx)"
-msgstr ""
+msgstr "Diapositiva del Microsoft PowerPoint (.sldx)"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:150
 msgid "Microsoft PowerPoint slideshow (.ppsx)"
-msgstr ""
+msgstr "Presentació del Microsoft PowerPoint (.ppsx)"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:156
 msgid "Microsoft PowerPoint presentation template (.potx)"
-msgstr ""
+msgstr "Plantilla de presentació del Microsoft PowerPoint (.potx)"
 
 #: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:168
 msgid "Microsoft Excel template (.xltx)"
@@ -453,7 +453,7 @@ msgstr "Convertint el document %s en PDF..."
 
 #: paperwork-backend/src/paperwork_backend/model/converted.py:186
 msgid "Checking converted documents"
-msgstr ""
+msgstr "Controlant els documents convertits"
 
 #: paperwork-backend/src/paperwork_backend/docexport/pdf.py:100
 msgid "Original PDF(s)"
@@ -470,7 +470,7 @@ msgstr "Processant una pàgina darrere l'altra"
 #: paperwork-backend/src/paperwork_backend/docexport/img.py:41
 #, python-brace-format
 msgid "Exporting {doc_id} p{page_idx} ..."
-msgstr ""
+msgstr "Exportant la pàgina {page_idx} del document {doc_id}..."
 
 #: paperwork-backend/src/paperwork_backend/docexport/img.py:86
 msgid "Exporting ..."
@@ -478,11 +478,11 @@ msgstr "Exportant..."
 
 #: paperwork-backend/src/paperwork_backend/docexport/img.py:121
 msgid "Split page(s) into image(s) and text(s)"
-msgstr ""
+msgstr "Separant text i imatges de les pàgines"
 
 #: paperwork-backend/src/paperwork_backend/docexport/img.py:171
 msgid "Image file ({})"
-msgstr ""
+msgstr "Fitxer de la imatge ({})"
 
 #: paperwork-backend/src/paperwork_backend/docexport/img.py:184
 msgid "Black & White"
@@ -494,12 +494,12 @@ msgstr "Escala de Grisos"
 
 #: paperwork-backend/src/paperwork_backend/docexport/pillowfight.py:31
 msgid "Soft simplification"
-msgstr ""
+msgstr "Simplificació suau"
 
 #: paperwork-backend/src/paperwork_backend/docexport/pillowfight.py:50
 msgid "Hard simplification"
-msgstr ""
+msgstr "Simplificació forta"
 
 #: paperwork-backend/src/paperwork_backend/docexport/pillowfight.py:52
 msgid "Extreme simplification"
-msgstr ""
+msgstr "Simplificació extrema"
