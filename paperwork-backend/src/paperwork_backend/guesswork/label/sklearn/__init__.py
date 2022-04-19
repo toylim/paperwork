@@ -182,6 +182,8 @@ class UpdatableVectorizer(object):
         )
         sum_features = None
         for (doc_vector,) in doc_features:
+            if doc_vector is None:
+                continue
             required_padding = (
                 self.last_feature_id + 1 - doc_vector.shape[0]
             )
