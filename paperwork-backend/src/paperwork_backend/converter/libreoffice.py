@@ -260,7 +260,8 @@ class Plugin(openpaperwork_core.PluginBase):
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE
                 )
-                (stdout, stderr) = popen.communicate()
+                with popen:
+                    (stdout, stderr) = popen.communicate()
 
                 dst_file_url = self.core.call_success("fs_safe", dst_file)
 

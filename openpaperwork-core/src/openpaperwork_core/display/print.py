@@ -48,8 +48,9 @@ class Plugin(openpaperwork_core.PluginBase):
             # that handles correctly our ANSI colors
             process = subprocess.Popen(('less', '-R'), stdin=subprocess.PIPE)
             # TODO(Jflesch): Charset. For now we assume the system is UTF-8
-            try:
-                process.stdin.write(output.encode("utf-8"))
-                process.communicate()
-            except BrokenPipeError:
-                pass
+            with process:
+                try:
+                    process.stdin.write(output.encode("utf-8"))
+                    process.communicate()
+                except BrokenPipeError:
+                    pass
