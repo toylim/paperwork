@@ -30,6 +30,11 @@ class NBox(object):
         self.next = None
         self.index = index
 
+    def __lt__(self, other):
+        if self.index < other.index:
+            return True
+        return (self.box.position < other.box.position)
+
 
 class Plugin(openpaperwork_core.PluginBase):
     """
