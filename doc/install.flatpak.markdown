@@ -14,7 +14,8 @@ Its drawback:
 - Using Flatpak, Paperwork comes directly from its developers. It has not been
   reviewed by your distribution maintainers. It may not include some changes
   that your distribution maintainers would have added.
-
+- Scanners are harder to setup
+- Accessing files outside of your home directory requires some extra manipulations
 
 # Quick start
 
