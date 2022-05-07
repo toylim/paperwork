@@ -67,7 +67,10 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         width /= scale
         height /= scale
-        return img.resize((int(width), int(height)), PIL.Image.ANTIALIAS)
+        return img.resize(
+            (int(width), int(height)),
+            getattr(PIL.Image, 'Resampling', PIL.Image).LANCZOS
+        )
 
     def thumbnail_get_page(self, doc_url, page_idx):
         thumbnail_url = self.core.call_success(
