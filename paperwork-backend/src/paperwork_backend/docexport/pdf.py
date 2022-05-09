@@ -274,7 +274,10 @@ class PagesToPdfUrlExportPipe(AbstractExportPipe):
                     int(self.quality * img_size[0]),
                     int(self.quality * img_size[1])
                 )
-                img = img.resize(img_size, PIL.Image.ANTIALIAS)
+                img = img.resize(
+                    img_size,
+                    getattr(PIL.Image, 'Resampling', PIL.Image).LANCZOS
+                )
                 self.core.call_one("mainloop_execute", creator.paint_img, img)
                 self.core.call_one("mainloop_execute", creator.next_page)
 
