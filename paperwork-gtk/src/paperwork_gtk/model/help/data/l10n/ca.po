@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: 2021-10-09 12:56+0200\n"
-"PO-Revision-Date: 2022-04-05 13:32+0000\n"
+"PO-Revision-Date: 2022-05-08 09:41+0000\n"
 "Last-Translator: Víctor Fancelli Capdevila <vfc@uber.space>\n"
 "Language-Team: Catalan <http://translations.openpaper.work/projects/"
 "paperwork/paperwork-help-documents/ca/>\n"
@@ -1064,6 +1064,9 @@ msgid ""
 "least one document. Otherwise, when you will restart Paperwork, labels "
 "without documents will disappear."
 msgstr ""
+"Només hi ha una restricció: Cada etiqueta ha d'estar aplicada com a mínim a "
+"un document. Les etiquetes que no s'apliquin a cap document desapareixeran "
+"quan reinicieu el Paperwork."
 
 #. type: subsection{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:467
@@ -1109,6 +1112,9 @@ msgid ""
 "of each label color, you have a button. This button allows you to add or "
 "remove labels on the current document."
 msgstr ""
+"Quan obriu les propietats del document, apareixerà la llista d'etiquetes. A "
+"l'esquerre del color de cada etiqueta hi ha un botó, que us permet afegir o "
+"eliminar etiquetes del document."
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:491
@@ -1116,6 +1122,8 @@ msgid ""
 "The changes are actually written on disk once you close the document "
 "properties. Paperwork will update its index accordinly."
 msgstr ""
+"Els canvis s'escriuen al disc dur quan tanqueu les propietats del document. "
+"Aleshores el Paperwork actualitzarà els índexs."
 
 #. type: subsection{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:494
@@ -1160,7 +1168,7 @@ msgstr ""
 #. type: subsection{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:514
 msgid "Deleting a label"
-msgstr ""
+msgstr "Eliminant l'etiqueta"
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:517
@@ -1183,6 +1191,8 @@ msgid ""
 "Beware: Once you have closed document properties, there is no way to put "
 "back the deleted label."
 msgstr ""
+"Atenció: Una vegada hagueu tancat el document, no es podrà tornar a posar "
+"l'etiqueta eliminada."
 
 #. type: subsection{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:526
@@ -1233,6 +1243,8 @@ msgid ""
 "You simply enter keywords in the search field. In a few seconds, you will "
 "get all the documents containing those keywords."
 msgstr ""
+"Només heu d'escriure les paraules clau al camp de cerca. En uns segons, "
+"apareixeran els documents que tinguin aquestes paraules clau."
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:557
@@ -1323,7 +1335,7 @@ msgstr ""
 #. type: section{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:631
 msgid "Moving pages"
-msgstr ""
+msgstr "Moure les pàgines"
 
 #. type: subsection{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:633
@@ -1388,12 +1400,14 @@ msgstr ""
 #. type: section{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:664
 msgid "Editing a page"
-msgstr ""
+msgstr "Editar una pàgina"
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:670
 msgid "Paperwork includes a very simple image editor. It provides 4 functions:"
 msgstr ""
+"El Paperwork inclou un editor d'imatge molt senzill. Permet realitzar 4 "
+"accions:"
 
 #. type: itemize
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:679
@@ -1403,12 +1417,12 @@ msgstr "Retallant"
 #. type: itemize
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:679
 msgid "Rotating the page by 90\\degree (can be rotated multiple times)"
-msgstr ""
+msgstr "Girar la pàgina 90º (es pot girar vàries vegades)"
 
 #. type: itemize
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:679
 msgid "Rotating the page by -90\\degree (can be rotated multiple times)"
-msgstr ""
+msgstr "Girar la pàgina -90º (es pot girar vàries vegades)"
 
 #. type: itemize
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:679
@@ -1440,7 +1454,7 @@ msgstr ""
 #. type: section{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:691
 msgid "Deleting"
-msgstr ""
+msgstr "Eliminar"
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:694
@@ -1465,7 +1479,7 @@ msgstr ""
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:703
 msgid "You can export both documents or single pages."
-msgstr ""
+msgstr "Podeu exportar tan documents com pàgines individuals."
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:707
@@ -1478,7 +1492,7 @@ msgstr ""
 #. type: section{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:710
 msgid "Printing"
-msgstr ""
+msgstr "Imprimir"
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:712
@@ -1500,7 +1514,7 @@ msgstr ""
 #. type: section{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:720
 msgid "Synchronisation between multiple computers"
-msgstr ""
+msgstr "Sincronització entre ordinadors"
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:726
@@ -1543,7 +1557,7 @@ msgstr ""
 #. type: subsection{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:744
 msgid "File Synchronization applications"
-msgstr ""
+msgstr "Aplicacions de sincronització de fitxers"
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:750
@@ -1561,6 +1575,9 @@ msgid ""
 "(DropBox, OneDrive, etc), they can access all your documents. Paperwork does "
 "not encrypt them."
 msgstr ""
+"Atenció: Si trieu allotjar els vostres documents en el servidor d'algú altre "
+"(DropBox, OneDrive, etc.), aquest podrà accedir als vostres documents, "
+"perquè el Paperwork no els encripta."
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:758
@@ -1569,6 +1586,10 @@ msgid ""
 "to install, Nextcloud let you host your files yourself. There are other "
 "self-hosted alternatives that exist: SparkleShare, Syncthing, etc."
 msgstr ""
+"El Paperwork és verificat diàriament amb Nextcloud. Tot i que no és el més "
+"senzill d'instal·lar, Nextcloud us permet auto-allotjar els vostres fitxers. "
+"També hi ha altres alternatives d'auto-allotjament: SparkleShare, Syncthing, "
+"etc."
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:761
@@ -1576,11 +1597,13 @@ msgid ""
 "Using DropBox or OneDrive can make sense if you're sharing "
 "not-so-confidential documents with others (associations, etc)."
 msgstr ""
+"Utilitzat DropBox o OneDrive pot tenir sentit si compartiu documents no "
+"massa confidencials amb altres (associacions, etc.)."
 
 #. type: subsubsection{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:764
 msgid "Shared folder"
-msgstr ""
+msgstr "Carpeta compartida"
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:769
@@ -1601,18 +1624,19 @@ msgstr ""
 #. type: section{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:775
 msgid "Encryption"
-msgstr ""
+msgstr "Encriptació"
 
 #. type: subsection{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:777
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:1024
 msgid "GNU/Linux"
-msgstr ""
+msgstr "GNU/Linux"
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:779
 msgid "GNU/Linux distributions include many tools to encrypt whole directories."
 msgstr ""
+"Les distribucions GNU/LInux inclouen moltes eines per encriptar carpetes."
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:789
@@ -1620,6 +1644,8 @@ msgid ""
 "With Paperwork, there are 2 directories that should be encrypted to protect "
 "your privacy:"
 msgstr ""
+"Amb el Paperwork hi ha dues carpetes que s'haurien d'encriptar per protegir "
+"la vostra privadesa:"
 
 #. type: itemize
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:789
@@ -1627,6 +1653,8 @@ msgid ""
 "Your work directory (by default \\textasciitilde /papers, can be changed in "
 "the settings)"
 msgstr ""
+"La vostra carpeta de treball (per defecte: \\textasciitilde /papers, però es "
+"pot canviar a la configuració)"
 
 #. type: itemize
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:789

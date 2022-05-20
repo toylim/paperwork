@@ -25,6 +25,7 @@ GUI_PLUGINS = [
     'openpaperwork_gtk.resources',
     'openpaperwork_gtk.screenshots',
     'openpaperwork_gtk.uncaught_exception',
+    'openpaperwork_gtk.wait_for_background_tasks',
     'openpaperwork_gtk.widgets.calendar',
     'openpaperwork_gtk.widgets.progress',
 ]
