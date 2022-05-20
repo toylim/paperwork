@@ -35,7 +35,7 @@ class ProgressWidget(object):
         self.thread = None
         self.lock = threading.RLock()
         self.progress_widget_trees = {}
-        # self.progresses is only used to transmist new progress updates
+        # self.progresses is only used to transmit new progress updates
         # to the thread
         self.progresses = {}
         self.button_widget_tree = None
