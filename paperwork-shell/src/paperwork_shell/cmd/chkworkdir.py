@@ -70,9 +70,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 print(_("No problem found"))
             return problems
 
-        if not args.yes:
-            if not self.interactive:
-                return problems
+        if self.interactive:
             print("")
             print(_("%d problems found:") % len(problems))
             for problem in problems:
@@ -98,14 +96,19 @@ class Plugin(openpaperwork_core.PluginBase):
                 )
                 print("")
 
+        if not args.yes:
+            if not self.interactive:
+                return problems
             msg = _(
                 "Do you want to fix those problems automatically"
                 " using the indicated solutions ?"
             )
             r = openpaperwork_core.cmd.util.ask_confirmation(msg, default='n')
             if r != 'y':
+                print("OK, nothing changed.")
                 return problems
 
+        print(_("Fixing ..."))
         self.core.call_all("fix_work_dir", problems)
         if self.interactive:
             print(_("All fixed !"))
