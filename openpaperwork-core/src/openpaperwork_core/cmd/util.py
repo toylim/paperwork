@@ -15,7 +15,7 @@ def ask_confirmation(question, default='y'):
 
     sys.stdout.write(" [{}] ".format(yesno))
 
-    reply = input()
+    reply = input().strip()
     if reply == "":
         reply = default
     else:
