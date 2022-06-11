@@ -5,3 +5,8 @@
 #docview_box {
   margin-top: 10px;
 }
+
+#docview_page_layout flowboxchild:selected {
+	padding: 7px;
+	border-radius: 7px;
+}

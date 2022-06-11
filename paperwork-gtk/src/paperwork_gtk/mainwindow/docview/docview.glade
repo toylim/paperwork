@@ -39,6 +39,7 @@
 
                 <child>
                   <object class="GtkFlowBox" id="docview_page_layout">
+                    <property name="name">docview_page_layout</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="row_spacing">10</property>
