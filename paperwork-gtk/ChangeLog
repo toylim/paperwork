@@ -1,3 +1,11 @@
+2022/xx/xx - 2.1.2:
+- page editor: when clicking apply, make it obvious the user may have to wait.
+  Sometimes Paperwork has already jobs queued and cannot apply the changes
+  immediately --> user has to wait
+- mainwindow.pageview.boxes: Fix crash: in some rare cases, we may have 2 word
+  boxes with the same coordinates --> when sorting the boxes by position, we
+  may have to implement __lt__ on NBox.
+
 2022/01/31 - 2.1.1:
 - drop unused dependency on dateutil
 - Doc deletion: Fix broken spanish translation: Wrong Python formatter has

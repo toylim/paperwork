@@ -732,8 +732,22 @@ class Plugin(openpaperwork_core.PluginBase):
             "mainloop_execute", self._page_get_boxes_by_url, doc_url, page_idx
         )
 
-    def doc_pdf_import(self, src_file_uri, password=None):
-        (doc_id, doc_url) = self.core.call_success("storage_get_new_doc")
+    def doc_pdf_import(self, src_file_uri, password=None, target_doc_id=None):
+        doc_id = None
+        doc_url = None
+
+        if target_doc_id is not None:
+            doc_id = target_doc_id
+            doc_url = self.core.call_success(
+                "doc_id_to_url", doc_id, existing=False
+            )
+            if doc_url is None:
+                doc_id = None
+            elif self.core.call_success("fs_exists", doc_url):
+                doc_id = None
+
+        if doc_id is None:
+            (doc_id, doc_url) = self.core.call_success("storage_get_new_doc")
 
         # just to be safe
         self.cache_mappings.pop(doc_url, None)

@@ -297,6 +297,10 @@ class Plugin(openpaperwork_core.PluginBase):
     def on_page_shown(self, page_idx):
         self.active_page_idx = page_idx
 
+        page = self.pages[page_idx]
+        widget = self.page_to_widget[page]
+        self.page_layout.select_child(widget)
+
     def doc_goto_previous_page(self):
         self.doc_goto_page(self.active_page_idx - 1)
 
@@ -310,6 +314,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.requested_page_idx = page_idx
         for controller in self.controllers.values():
             controller.doc_goto_page(page_idx)
+        self.core.call_all("on_page_shown", page_idx)
 
     def docview_set_layout(self, name):
         self.layout_name = name

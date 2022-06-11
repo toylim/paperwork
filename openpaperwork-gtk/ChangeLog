@@ -1,3 +1,10 @@
+2022/xx/xx - 2.1.2:
+- autoscrolling: take into account that Gdk.Cursor.new_for_display() may fail
+  on some systems (wayland-only systems)
+- Core-GTK: Add a plugin showing a dialog when the app is closed and any
+  running background task is still running. Hopefully, it will help for issue
+  #1034 ("sqlite: database is locked")
+
 2022/01/31 - 2.1.1:
 - Fix: take into account that Cursor.new_for_display() may fail with Wayland
 
