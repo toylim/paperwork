@@ -1,10 +1,3 @@
-"""
-Rendering cache: actually used to keep a copy of the rendered page at the
-expected size, and only recompute it when the zoom level changes.
-Otherwise we overuse Poppler and some PDF may be slow to render correctly
-(those with full-page images in it for instance)
-"""
-
 import logging
 
 import openpaperwork_core
@@ -34,9 +27,10 @@ except (ImportError, ValueError):
 
 
 LOGGER = logging.getLogger(__name__)
+BLUR_FACTOR = 8
 
 
-class CacheRenderer(GObject.GObject):
+class BlurRenderer(GObject.GObject):
     __gsignals__ = {
         'getting_size': (GObject.SignalFlags.RUN_LAST, None, ()),
         'size_obtained': (GObject.SignalFlags.RUN_LAST, None, ()),
@@ -50,6 +44,7 @@ class CacheRenderer(GObject.GObject):
         self.core = core
         self.work_queue_name = work_queue_name
         self.wrapped_renderer = wrapped_renderer
+        self.blurry = False
 
         wrapped_renderer.connect(
             "getting_size", self._on_wrapped_getting_size
@@ -61,10 +56,8 @@ class CacheRenderer(GObject.GObject):
             "img_obtained", self._on_wrapped_img_obtained
         )
 
-        self.rendering = None
-
     def __str__(self):
-        return f"CacheRenderer({self.wrapped_renderer})"
+        return f"BlurRenderer({self.wrapped_renderer})"
 
     def _on_wrapped_getting_size(self, wrapped_renderer):
         self.emit('getting_size')
@@ -73,7 +66,6 @@ class CacheRenderer(GObject.GObject):
         self.emit('size_obtained')
 
     def _on_wrapped_img_obtained(self, wrapped_renderer):
-        self.rendering = None
         self.emit('img_obtained')
 
     @property
@@ -81,7 +73,6 @@ class CacheRenderer(GObject.GObject):
         return self.wrapped_renderer.size
 
     def _set_zoom(self, z):
-        self.rendering = None
         self.wrapped_renderer.zoom = z
 
     def _get_zoom(self):
@@ -99,45 +90,47 @@ class CacheRenderer(GObject.GObject):
         self.wrapped_renderer.hide()
 
     def close(self):
-        self.rendering = None
         self.wrapped_renderer.close()
 
     def draw(self, cairo_ctx):
-        if self.rendering is None:
-            LOGGER.info("Cache miss. Rendering")
-            renderer = self.wrapped_renderer
-            rendering_w = int(renderer.size[0] * renderer.zoom)
-            rendering_h = int(renderer.size[1] * renderer.zoom)
-            rendering = cairo.ImageSurface(
-                cairo.FORMAT_ARGB32,
-                rendering_w, rendering_h
-            )
-            rendering_ctx = cairo.Context(rendering)
-            renderer.draw(rendering_ctx)
-            self.rendering = rendering
+        renderer = self.wrapped_renderer
+
+        if not self.blurry:
+            return renderer.draw(cairo_ctx)
+
+        zoom = self.zoom / BLUR_FACTOR
+        reduced_surface = cairo.ImageSurface(
+            cairo.FORMAT_ARGB32,
+            int(renderer.size[0] * zoom),
+            int(renderer.size[1] * zoom),
+        )
+        ctx = cairo.Context(reduced_surface)
+        ctx.scale(1 / BLUR_FACTOR, 1 / BLUR_FACTOR)
+        renderer.draw(ctx)
 
         cairo_ctx.save()
         try:
-            cairo_ctx.set_source_surface(self.rendering)
+            cairo_ctx.scale(BLUR_FACTOR, BLUR_FACTOR)
+            cairo_ctx.set_source_surface(reduced_surface)
             cairo_ctx.paint()
         finally:
-            cairo_ctx.restore()
+            cairo_ctx.save()
 
     def blur(self):
-        self.rendering = None
+        self.blurry = True
         self.wrapped_renderer.blur()
 
     def unblur(self):
-        self.rendering = None
+        self.blurry = False
         self.wrapped_renderer.unblur()
 
 
 if GLIB_AVAILABLE:
-    GObject.type_register(CacheRenderer)
+    GObject.type_register(BlurRenderer)
 
 
 class Plugin(openpaperwork_core.PluginBase):
-    PRIORITY = 10000
+    PRIORITY = 2000
 
     def get_interfaces(self):
         return [
@@ -161,18 +154,18 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def cairo_renderer_by_url(
             self, work_queue_name, file_url,
-            cache=True, **kwargs):
-        if not cache:
+            blur=True, **kwargs):
+        if not blur:
             return None
 
         wrapped_renderer = self.core.call_success(
             "cairo_renderer_by_url",
-            work_queue_name, file_url, cache=False, **kwargs
+            work_queue_name, file_url, blur=False, **kwargs
         )
         if wrapped_renderer is None:
             LOGGER.error("Unable to get renderer for '%s' !?", file_url)
             return None
 
-        return CacheRenderer(
+        return BlurRenderer(
             self.core, work_queue_name, wrapped_renderer
         )

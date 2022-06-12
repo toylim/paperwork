@@ -33,7 +33,6 @@ except (ImportError, ValueError):
 LOGGER = logging.getLogger(__name__)
 DELAY = 0.01
 POPPLER_DOCS = {}
-BLUR_FACTOR = 8
 
 
 class ImgSurface(object):
@@ -62,7 +61,6 @@ class CairoRenderer(GObject.GObject):
         self.password = password
 
         self.visible = False
-        self.blurry = False
         self.size = (0, 0)
         self.zoom = 1.0
 
@@ -188,33 +186,14 @@ class CairoRenderer(GObject.GObject):
             self.file_url, self.page_idx
         )
         self.core.call_all("on_perfcheck_start", task)
-        if not self.blurry:
-            self._draw(cairo_ctx, self.zoom)
-        else:
-            zoom = self.zoom / BLUR_FACTOR
-            reduced_surface = ImgSurface(cairo.ImageSurface(
-                cairo.FORMAT_ARGB32,
-                int(self.size[0] * zoom),
-                int(self.size[1] * zoom)
-            ))
-            ctx = cairo.Context(reduced_surface.surface)
-            self._draw(ctx, zoom)
-
-            cairo_ctx.save()
-            try:
-                cairo_ctx.scale(BLUR_FACTOR, BLUR_FACTOR)
-                cairo_ctx.set_source_surface(reduced_surface.surface)
-                cairo_ctx.paint()
-            finally:
-                cairo_ctx.restore()
-
+        self._draw(cairo_ctx, self.zoom)
         self.core.call_all("on_perfcheck_stop", task, size=self.size)
 
     def blur(self):
-        self.blurry = True
+        pass
 
     def unblur(self):
-        self.blurry = False
+        pass
 
 
 if GLIB_AVAILABLE:
