@@ -174,10 +174,6 @@ class CairoRenderer(GObject.GObject):
         self.cairo_surface = None
         self.visible = False
 
-        # very often, the image is much bigger than what we actually display
-        # --> keep a copy of the reduced image in memory
-        self.cache = (-1.0, None)
-
         promise = openpaperwork_core.promise.Promise(
             self.core, self.emit, args=("getting_size",)
         )
@@ -260,7 +256,6 @@ class CairoRenderer(GObject.GObject):
         if self.cairo_surface is not None:
             self.cairo_surface.surface.finish()
             self.cairo_surface = None
-            self.cache = (-1.0, None)
         self.render_job_in_queue = False
         self.core.call_all(
             "work_queue_cancel", self.work_queue_name, self.render_img_promise
@@ -291,30 +286,13 @@ class CairoRenderer(GObject.GObject):
             surface.surface.finish()
             return
         self.cairo_surface = surface
-        self.cache = (-1.0, None)
         self.emit("img_obtained")
-
-    def _upd_cache(self):
-        (cache_zoom, cache_img) = self.cache
-        if cache_zoom == self.zoom:
-            return
-
-        img = ImgSurface(cairo.ImageSurface(
-            cairo.FORMAT_RGB24,
-            int(self.size[0] * self.zoom),
-            int(self.size[1] * self.zoom),
-        ))
-        cairo_ctx = cairo.Context(img.surface)
-        cairo_ctx.scale(self.zoom, self.zoom)
-        cairo_ctx.set_source_surface(self.cairo_surface.surface)
-        cairo_ctx.paint()
-
-        self.cache = (self.zoom, img)
 
     def _draw(self, cairo_ctx):
         cairo_ctx.save()
         try:
-            cairo_ctx.set_source_surface(self.cache[1].surface)
+            cairo_ctx.scale(self.zoom, self.zoom)
+            cairo_ctx.set_source_surface(self.cairo_surface.surface)
             cairo_ctx.paint()
 
             size = self.size
@@ -341,7 +319,6 @@ class CairoRenderer(GObject.GObject):
             finally:
                 cairo_ctx.restore()
         else:
-            self._upd_cache()
             self._draw(cairo_ctx)
 
     def blur(self):
