@@ -417,5 +417,5 @@ class Plugin(openpaperwork_core.PluginBase):
         pil_img = self.core.call_success("url_to_pillow", file_url)
         return self.pillow_to_surface(pil_img)
 
-    def cairo_renderer_by_url(self, work_queue_name, file_url):
+    def cairo_renderer_by_url(self, work_queue_name, file_url, **kwargs):
         return CairoRenderer(self.core, work_queue_name, file_url)

@@ -354,7 +354,7 @@ class Plugin(openpaperwork_core.PluginBase):
             args=(file_url, page_idx, password)
         )
 
-    def cairo_renderer_by_url(self, work_queue_name, file_url):
+    def cairo_renderer_by_url(self, work_queue_name, file_url, **kwargs):
         (file_url, page_idx, password) = self._check_is_pdf(file_url)
         if file_url is None:
             return None

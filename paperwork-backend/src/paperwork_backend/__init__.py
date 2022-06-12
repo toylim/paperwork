@@ -30,6 +30,7 @@ DEFAULT_PLUGINS = (
         'paperwork_backend.authors',
         'paperwork_backend.authors.translators',
         'paperwork_backend.beacon.update',
+        'paperwork_backend.cairo.cache',
         'paperwork_backend.cairo.pillow',
         'paperwork_backend.cairo.poppler',
         'paperwork_backend.chkworkdir.empty_doc',
