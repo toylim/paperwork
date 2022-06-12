@@ -25,7 +25,7 @@ class CropImgEditor(AbstractImgEditor):
             # for the scan borders on the full-size image.
             smaller_img = img.resize(
                 (int(img.size[0] / 2), int(img.size[1] / 2)),
-                PIL.Image.ANTIALIAS
+                getattr(PIL.Image, 'Resampling', PIL.Image).LANCZOS
             )
             frame = pillowfight.find_scan_borders(smaller_img)
 

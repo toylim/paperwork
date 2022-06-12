@@ -107,8 +107,9 @@ class TestPageEdit(unittest.TestCase):
         self.assertEqual(self.ui_calls[1][0], 'hide_frame_selector')
 
         # ACE
+        bilinear = getattr(PIL.Image, 'Resampling', PIL.Image).BILINEAR
         avg_color = self.ui_calls[0][1].resize(
-            (1, 1), resample=PIL.Image.BILINEAR
+            (1, 1), resample=bilinear
         ).tobytes()
         self.pillowed = []
         self.ui_calls = []
@@ -120,7 +121,7 @@ class TestPageEdit(unittest.TestCase):
         self.assertEqual(self.ui_calls[0][0], 'show_preview')
         self.assertEqual(self.ui_calls[0][1].size, (100, 200))
         avg_color2 = self.ui_calls[0][1].resize(
-            (1, 1), resample=PIL.Image.BILINEAR
+            (1, 1), resample=bilinear
         ).tobytes()
         self.assertNotEqual(avg_color, avg_color2)
         self.assertEqual(self.ui_calls[1][0], 'hide_frame_selector')

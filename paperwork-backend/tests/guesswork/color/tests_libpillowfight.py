@@ -62,7 +62,10 @@ class TestAce(unittest.TestCase):
         shutil.rmtree(self.tmp_paperwork_dir)
 
     def _compute_average_color(self, img):
-        img = img.resize((1, 1), PIL.Image.ANTIALIAS)
+        img = img.resize(
+            (1, 1),
+            getattr(PIL.Image, 'Resampling', PIL.Image).LANCZOS
+        )
         return img.getpixel((0, 0))
 
     def test_transaction(self):

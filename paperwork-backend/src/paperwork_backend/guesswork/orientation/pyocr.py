@@ -198,10 +198,11 @@ class Plugin(openpaperwork_core.PluginBase):
             if angle == 0:
                 return 0
 
+            transform_enum = getattr(PIL.Image, 'Transform', PIL.Image)
             t_angle = {
-                90: PIL.Image.ROTATE_90,
-                180: PIL.Image.ROTATE_180,
-                270: PIL.Image.ROTATE_270,
+                90: transform_enum.ROTATE_90,
+                180: transform_enum.ROTATE_180,
+                270: transform_enum.ROTATE_270,
             }[angle]
             img = img.transpose(t_angle)
 
