@@ -36,10 +36,7 @@ class SinglePdfImporter(object):
         LOGGER.info("Importing %s", file_uri)
         (self.doc_id, self.doc_url) = self.core.call_success(
             "doc_pdf_import", file_uri,
-            password=(
-                self.data['password'] if 'password' in self.data
-                else None
-            ),
+            password=self.data.get('password'),
             target_doc_id=self.file_import.active_doc_id
         )
         if self.doc_id is None:
