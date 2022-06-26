@@ -22,7 +22,6 @@ check:
   script:
     - apt-get update
     - apt-get install -y flake8
-    - apt-get install -y git
     - apt-get install -y make
     - apt-get install -y pycodestyle
     - apt-get install -y python3-flake8
@@ -78,14 +77,13 @@ test_chkdeps:
     - apt-get update
     # bare minimum to install Paperwork from sources
     - apt-get install -y build-essential
-    - apt-get install -y gettext
-    - apt-get install -y git
     - apt-get install -y make
     - apt-get install -y python3
     - apt-get install -y python3-dev
     - apt-get install -y python3-pip
     - apt-get install -y python3-setuptools
     - apt-get install -y wget
+    - apt-get install -y gettext
     - make install
     - paperwork-json chkdeps
 
