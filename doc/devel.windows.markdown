@@ -43,6 +43,30 @@ Tesseract. This directory can be stored in a .zip file and deploy wherever you
 want.
 
 
+## GDB
+
+```sh
+pacman -Sy mingw-w64-x86_64-gdb
+git clone https://gitlab.gnome.org/World/OpenPaperwork/paperwork.git
+cd paperwork
+make install
+gdb python3 --args python3 paperwork-gtk/src/paperwork_gtk/main.py
+```
+
+In GDB:
+
+```
+source c:\msys64\mingw64\share\gdb\python3\python_gdb.py
+r
+```
+
+To get all the C stacktraces:
+
+```
+thread apply all bt
+```
+
+
 ## Adding Tesseract
 
 [PyOCR](https://gitlab.gnome.org/World/OpenPaperwork/pyocr) has 2 ways to call

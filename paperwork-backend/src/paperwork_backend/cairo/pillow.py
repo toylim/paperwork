@@ -300,8 +300,8 @@ class CairoRenderer(GObject.GObject):
             cairo_ctx.set_line_width(1)
             cairo_ctx.rectangle(
                 0, 0,
-                (size[0] * self.zoom) - 1,
-                (size[1] * self.zoom) - 1
+                size[0] - 1,
+                size[1] - 1
             )
             cairo_ctx.stroke()
         finally:
