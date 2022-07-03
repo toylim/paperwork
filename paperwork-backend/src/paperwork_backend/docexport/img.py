@@ -215,7 +215,7 @@ class Plugin(AbstractExportPipePlugin):
                 core, "png", "PNG", ("png",), "image/png", False
             ),
             PageToImageExportPipe(
-                core, "tiff", "TIFF", ("tiff",), "image/tiff", False
+                core, "tiff", "TIFF", ("tiff", "tif"), "image/tiff", False
             ),
         ]
 
