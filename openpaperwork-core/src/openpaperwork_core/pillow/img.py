@@ -19,6 +19,7 @@ class Plugin(PluginBase):
         "jpeg",
         "jpg",
         "png",
+        "tif",
         "tiff",
     ]
 

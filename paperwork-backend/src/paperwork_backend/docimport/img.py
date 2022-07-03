@@ -122,6 +122,7 @@ class Plugin(openpaperwork_core.PluginBase):
         "jpeg",
         "jpg",
         "png",
+        "tif",
         "tiff",
     ]
 
