@@ -58,6 +58,9 @@ class DocPropertiesEditor(object):
             "mainwindow_show", side="left", name="docproperties_" + self.name
         )
 
+    def hide(self):
+        self.core.call_all("mainwindow_back", side="left")
+
     def _build_doc_properties(self, multiple_docs):
         components = []
         self.core.call_all(
@@ -113,12 +116,12 @@ class DocPropertiesEditor(object):
         promise = promise.then(self._upd_index, upd)
         promise.schedule()
 
-        self.core.call_all("mainwindow_back", side="left")
+        self.core.call_all("close_doc_properties")
 
     def _cancel(self, *args, **kwargs):
         LOGGER.info("Changes cancelled by the user")
         self.core.call_all("doc_properties_components_cancel_changes")
-        self.core.call_all("mainwindow_back", side="left")
+        self.core.call_all("close_doc_properties")
 
     def _upd_index(self, upd):
         total = len(upd.new_docs) + len(upd.upd_docs) + len(upd.del_docs)
@@ -189,19 +192,32 @@ class Plugin(openpaperwork_core.PluginBase):
             ),
         }
 
+        self.active_editor = None
+
     def doc_open(self, doc_id, doc_url):
-        for e in self.editors.values():
-            e.doc_open(doc_id, doc_url)
+        if self.active_editor is None:
+            return
+        e = self.active_editor
+        e.doc_open(doc_id, doc_url)
 
     def open_doc_properties(self, doc_id, doc_url):
-        for e in self.editors.values():
-            e.doc_open(doc_id, doc_url)
-        self.editors['single_doc'].show()
+        assert(self.active_editor is None)
+        e = self.editors['single_doc']
+        self.active_editor = e
+        e.doc_open(doc_id, doc_url)
+        e.show()
 
     def open_docs_properties(self, docs):
-        for e in self.editors.values():
-            e.docs_open(docs)
-        self.editors['multiple_docs'].show()
+        assert(self.active_editor is None)
+        e = self.editors['multiple_docs']
+        self.active_editor = e
+        e.docs_open(docs)
+        e.show()
+
+    def close_doc_properties(self):
+        assert(self.active_editor is not None)
+        self.active_editor.hide()
+        self.active_editor = None
 
     def docproperties_scroll_to_last(self):
         for e in self.editors.values():
