@@ -1,3 +1,4 @@
+import array
 import io
 import logging
 
@@ -7,16 +8,8 @@ import openpaperwork_core.promise
 
 
 CAIRO_AVAILABLE = False
-GDK_AVAILABLE = False
-GI_AVAILABLE = False
 GLIB_AVAILABLE = False
 
-
-try:
-    import gi
-    GI_AVAILABLE = True
-except (ImportError, ValueError):
-    pass
 
 try:
     import cairo
@@ -25,17 +18,6 @@ except (ImportError, ValueError):
     pass
 
 try:
-    if GI_AVAILABLE:
-        gi.require_version('Gdk', '3.0')
-        gi.require_version('GdkPixbuf', '2.0')
-    from gi.repository import Gdk
-    from gi.repository import GdkPixbuf
-    GDK_AVAILABLE = True
-except (ImportError, ValueError):
-    pass
-
-try:
-    from gi.repository import GLib
     from gi.repository import GObject
     GLIB_AVAILABLE = True
 except (ImportError, ValueError):
@@ -75,45 +57,17 @@ def pillow_to_surface(core, img, intermediate="pixbuf", quality=90):
     """
     Convert a PIL image into a Cairo surface
     """
-    # TODO(Jflesch): Python 3 problem
-    # cairo.ImageSurface.create_for_data() raises NotImplementedYet ...
-
-    # img.putalpha(256)
-    # (width, height) = img.size
-    # imgd = img.tobytes('raw', 'BGRA')
-    # imga = array.array('B', imgd)
-    # stride = width * 4
-    #  return cairo.ImageSurface.create_for_data(
-    #      imga, cairo.FORMAT_ARGB32, width, height, stride)
-
-    # So we fall back to those methods:
-
-    if intermediate == "pixbuf" and (
-                not hasattr(GdkPixbuf.Pixbuf, 'new_from_bytes') or
-                img.getbands() != ('R', 'G', 'B')
-            ):
-        intermediate = "png"
-
-    if intermediate == "pixbuf":
-
-        data = GLib.Bytes.new(img.tobytes())
-        (width, height) = limit_img_size(img.size)
-        if (width, height) != img.size:
-            img = img.crop((0, 0, width, height))
-
-        pixbuf = GdkPixbuf.Pixbuf.new_from_bytes(
-            data, GdkPixbuf.Colorspace.RGB, False, 8,
-            width, height, width * 3
-        )
-        img_surface = ImgSurface(cairo.ImageSurface(
-            cairo.FORMAT_RGB24, width, height
+    if intermediate != "jpeg":
+        img.putalpha(256)
+        (width, height) = img.size
+        imgd = img.tobytes('raw', 'BGRA')
+        imga = array.array('B', imgd)
+        stride = width * 4
+        return ImgSurface(cairo.ImageSurface.create_for_data(
+            imga, cairo.FORMAT_ARGB32, width, height, stride
         ))
-        ctx = cairo.Context(img_surface.surface)
-        Gdk.cairo_set_source_pixbuf(ctx, pixbuf, 0.0, 0.0)
-        ctx.rectangle(0, 0, width, height)
-        ctx.fill()
 
-    elif intermediate == "jpeg":
+    else:
 
         if not hasattr(cairo.ImageSurface, 'set_mime_data'):
             LOGGER.warning(
@@ -355,10 +309,6 @@ class Plugin(openpaperwork_core.PluginBase):
     def chkdeps(self, out: dict):
         if not CAIRO_AVAILABLE:
             out['cairo'].update(openpaperwork_core.deps.CAIRO)
-        if not GDK_AVAILABLE:
-            out['gdk'].update(openpaperwork_core.deps.GDK)
-        if not GI_AVAILABLE:
-            out['gi'].update(openpaperwork_core.deps.GI)
         if not GLIB_AVAILABLE:
             out['glib'].update(openpaperwork_core.deps.GLIB)
 
