@@ -3,18 +3,7 @@
 binary="$1"
 os="$2"
 exe_suffix="$3"
-
-if [ "${os}" = "linux" ] ; then
-  arch="amd64"
-else
-  arch="x86"
-fi
-
-if [ "${os}" = "linux" ] ; then
-  arch="amd64"
-else
-  arch="x86"
-fi
+arch="amd64"
 
 if [ -z "$RCLONE_CONFIG_OPENPAPERWORK_ACCESS_KEY_ID" ] ; then
   echo "Delivery: No rclone credentials provided."
