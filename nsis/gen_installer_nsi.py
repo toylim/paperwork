@@ -10,7 +10,7 @@ import sys
 
 
 DEFAULT_DOWNLOAD_URI = (
-    "https://download.openpaper.work/windows/x86/paperwork-master-latest.zip"
+    "https://download.openpaper.work/windows/amd64/paperwork-master-latest.zip"
 )
 
 ALL_LANGUAGES = [
@@ -224,6 +224,8 @@ HEADER = """
 !define PRODUCT_UNINST_KEY "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 
+!include x64.nsh
+
 !addplugindir ".\dll"
 
 ; MUI 1.67 compatible ------
@@ -268,7 +270,7 @@ HEADER = """
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 OutFile "paperwork_installer.exe"
-InstallDir "$PROGRAMFILES\\Paperwork"
+InstallDir "$PROGRAMFILES64\\Paperwork"
 ShowInstDetails hide
 ShowUnInstDetails hide
 BrandingText "OpenPaper.work"
@@ -414,6 +416,7 @@ Section Uninstall
   RMDir "$SMPROGRAMS\\Paperwork"
   RMDir ""
 
+  SetRegView 64
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
   SetAutoClose true
 SectionEnd

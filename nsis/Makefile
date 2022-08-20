@@ -26,19 +26,19 @@ out.nsi: gen_installer_nsi.py
 
 paperwork_stable_installer.exe: dll/INetC.dll dll/nsisunz.dll
 	rm -f out.nsi
-	$(MAKE) out.nsi RELEASE=stable DOWNLOAD_URI=https://download.openpaper.work/windows/x86/paperwork-master-latest.zip
+	$(MAKE) out.nsi RELEASE=stable DOWNLOAD_URI=https://download.openpaper.work/windows/amd64/paperwork-master-latest.zip
 	makensis ./out.nsi
 	mv -f paperwork_installer.exe paperwork_stable_installer.exe
 
 paperwork_testing_installer.exe: dll/INetC.dll dll/nsisunz.dll
 	rm -f out.nsi
-	$(MAKE) out.nsi RELEASE=testing DOWNLOAD_URI=https://download.openpaper.work/windows/x86/paperwork-testing-latest.zip
+	$(MAKE) out.nsi RELEASE=testing DOWNLOAD_URI=https://download.openpaper.work/windows/amd64/paperwork-testing-latest.zip
 	makensis ./out.nsi
 	mv -f paperwork_installer.exe paperwork_testing_installer.exe
 
 paperwork_develop_installer.exe: dll/INetC.dll dll/nsisunz.dll
 	rm -f out.nsi
-	$(MAKE) out.nsi RELEASE=develop DOWNLOAD_URI=https://download.openpaper.work/windows/x86/paperwork-develop-latest.zip
+	$(MAKE) out.nsi RELEASE=develop DOWNLOAD_URI=https://download.openpaper.work/windows/amd64/paperwork-develop-latest.zip
 	makensis ./out.nsi
 	mv -f paperwork_installer.exe paperwork_develop_installer.exe
 
