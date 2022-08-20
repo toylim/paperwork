@@ -50,4 +50,18 @@ clean:
 	rm -f paperwork_testing_installer.exe
 	rm -f paperwork_develop_installer.exe
 
-.PHONY = all
+upload:
+	rclone --config ../ci/rclone.conf \
+		copyto \
+		paperwork_stable_installer.exe \
+		openpaperwork:openpaperwork-download/windows/installer/paperwork_stable_installer.exe
+	rclone --config ../ci/rclone.conf \
+		copyto \
+		paperwork_testing_installer.exe \
+		openpaperwork:openpaperwork-download/windows/installer/paperwork_testing_installer.exe
+	rclone --config ../ci/rclone.conf \
+		copyto \
+		paperwork_develop_installer.exe \
+		openpaperwork:openpaperwork-download/windows/installer/paperwork_develop_installer.exe
+
+.PHONY: all clean upload
