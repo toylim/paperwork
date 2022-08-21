@@ -271,6 +271,36 @@ class TestReadWrite(unittest.TestCase):
             core.call_all('config_backend_load', 'openpaperwork_test')
             v = core.call_one('config_backend_get', 'test_section', 'test_key')
             self.assertEqual(v, datetime.date(year=1985, month=1, day=1))
+            self.assertTrue(isinstance(v, datetime.date))
+        finally:
+            core.call_success("fs_rm_rf", core.get_by_name(
+                'openpaperwork_core.config.backend.configparser'
+            ).base_path, trash=False)
+
+    def test_getset_bool(self):
+        core = openpaperwork_core.Core(auto_load_dependencies=True)
+
+        core.load('openpaperwork_core.config.backend.configparser')
+
+        core.get_by_name(
+            'openpaperwork_core.config.backend.configparser'
+        ).base_path = "file://" + tempfile.mkdtemp(
+            prefix='openpaperwork_core_config_tests'
+        )
+
+        try:
+            core.init()
+
+            core.call_all(
+                'config_backend_put', 'test_section', 'test_key',
+                True
+            )
+            core.call_all('config_backend_save', 'openpaperwork_test')
+
+            core.call_all('config_backend_load', 'openpaperwork_test')
+            v = core.call_one('config_backend_get', 'test_section', 'test_key')
+            self.assertTrue(v)
+            self.assertTrue(isinstance(v, bool))
         finally:
             core.call_success("fs_rm_rf", core.get_by_name(
                 'openpaperwork_core.config.backend.configparser'

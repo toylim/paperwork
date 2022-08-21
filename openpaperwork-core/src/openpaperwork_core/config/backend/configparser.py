@@ -29,6 +29,9 @@ class ConfigBool(object):
     def __str__(self):
         return str(self.value)
 
+    def get_value(self):
+        return self.value
+
 
 class ConfigDate(object):
     DATE_FORMAT = "%Y-%m-%d"
@@ -48,6 +51,9 @@ class ConfigDate(object):
 
     def __str__(self):
         return self.value.strftime(self.DATE_FORMAT)
+
+    def get_value(self):
+        return self.value
 
 
 class ConfigList(object):
@@ -99,6 +105,14 @@ class ConfigList(object):
             ))
         return self.SEPARATOR.join(out)
 
+    def get_value(self):
+        return [
+            e.get_value()
+            if hasattr(e, 'get_value')
+            else e
+            for e in self.elements
+        ]
+
 
 class ConfigDict(object):
     SEPARATOR_ITEMS = ";"
@@ -142,6 +156,14 @@ class ConfigDict(object):
                 _TYPE_TO_STR[type(v)], _TYPE_SEPARATOR, str(v)
             ))
         return self.SEPARATOR_ITEMS.join(out)
+
+    def get_value(self):
+        return {
+            k: v.get_value()
+            if hasattr(v, 'get_value')
+            else v
+            for (k, v) in self.elements.items()
+        }
 
 
 _TYPE_TO_STR = {
@@ -307,6 +329,8 @@ class Plugin(PluginBase):
             value = self.config[section][key]
             (t, value) = value.split(_TYPE_SEPARATOR, 1)
             r = _STR_TO_TYPE[t](value)
+            if hasattr(r, 'get_value'):
+                r = r.get_value()
             LOGGER.debug("Configuration: %s:%s --> %s", section, key, str(r))
             return r
         except KeyError:
