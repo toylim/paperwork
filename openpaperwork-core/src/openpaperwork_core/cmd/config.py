@@ -13,6 +13,7 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with Paperwork.  If not, see <http://www.gnu.org/licenses/>.
+import datetime
 import logging
 
 from .. import (_, PluginBase)
@@ -34,6 +35,12 @@ CMD_VALUE_TYPES = {
     'int': int,
     'float': float,
     'bool': bool_from_str,
+}
+
+DATE_FORMAT = "%Y-%m-%d"
+
+TO_JSON = {
+    datetime.date: lambda x: x.strftime(DATE_FORMAT)
 }
 
 
@@ -125,7 +132,10 @@ class Plugin(PluginBase):
         out = {}
         opts.sort()
         for opt in opts:
-            out[opt] = self.core.call_success("config_get", opt)
+            v = self.core.call_success("config_get", opt)
+            if type(v) in TO_JSON:
+                v = TO_JSON[type(v)](v)
+            out[opt] = v
             if self.interactive:
                 self.core.call_all("print", "{} = {}\n".format(opt, out[opt]))
         if self.interactive:

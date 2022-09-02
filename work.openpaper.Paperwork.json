@@ -14,7 +14,7 @@
         "--share=network",
         "--socket=fallback-x11",
         "--socket=wayland",
-        "--filesystem=home",
+        "--filesystem=host",
         "--persist=.python-eggs",
         "--talk-name=org.freedesktop.Notifications",
         "--talk-name=org.freedesktop.FileManager1",
