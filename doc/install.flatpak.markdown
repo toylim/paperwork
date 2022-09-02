@@ -123,25 +123,6 @@ Beware the udev rule above is quite large and will allow any user on your
 computer to use your scanner.
 
 
-## How to allow Paperwork to access files outside of your home directory ?
-
-When running with Flatpak, Paperwork runs in a container. By default, the only
-directory outside of the container that Paperwork can access is your home
-directory.
-
-You can allow access to other directories with the following command:
-
-```sh
-flatpak override --user work.openpaper.Paperwork --filesystem=<directory>
-```
-
-For example:
-
-```sh
-flatpak override --user work.openpaper.Paperwork --filesystem=/media/paul/raid
-```
-
-
 ## No text appears when rendering PDF files. What do I do ?
 
 If you run Paperwork from a terminal, you can see the message
