@@ -114,6 +114,7 @@ class Plugin(openpaperwork_core.PluginBase):
             ))
             promise = promise.then(self._get_scanner_info, dev_id, dev_name)
             promise = promise.then(lambda scanner: scanner.close())
+            promise = promise.then(lambda *args, **kwargs: None)
         self.core.call_success("scan_schedule", promise)
 
     def _list_scanners(self):
