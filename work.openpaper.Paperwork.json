@@ -2,7 +2,7 @@
     "app-id": "work.openpaper.Paperwork",
     "branch": "develop",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "41",
+    "runtime-version": "42",
     "sdk": "org.gnome.Sdk",
     "command": "paperwork-gtk",
     "copy-icon": true,
@@ -189,23 +189,6 @@
                     "type": "archive",
                     "url": "https://poppler.freedesktop.org/poppler-21.12.0.tar.xz",
                     "sha256": "acb840c2c1ec07d07e53c57c4b3a1ff3e3ee2d888d44e1e9f2f01aaf16814de7"
-                }
-            ]
-        },
-        {
-            "name" : "libhandy",
-            "buildsystem" : "meson",
-            "builddir" : true,
-            "config-opts": [
-                "-Dexamples=false",
-                "-Dtests=false"
-            ],
-            "sources" : [
-                {
-                    "type" : "git",
-                    "url" : "https://gitlab.gnome.org/GNOME/libhandy.git",
-                    "tag": "1.2.2",
-                    "commit": "09f36006b26f41a2bb383b0c853e954c5792cfe1"
                 }
             ]
         },
