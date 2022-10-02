@@ -13,11 +13,15 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with Paperwork.  If not, see <http://www.gnu.org/licenses/>.
+import logging
+
 import openpaperwork_core
 import openpaperwork_core.promise
 
 from .. import _
 
+
+LOGGER = logging.getLogger(__name__)
 
 DEFAULT_RESOLUTION = 300
 
@@ -104,18 +108,30 @@ class Plugin(openpaperwork_core.PluginBase):
         self.out.append(dev_out)
         return dev
 
+    def _on_get_scanner_error(self, exception, scanner_dev_id):
+        LOGGER.error(
+            "Error while looking for options of %s",
+            scanner_dev_id, exc_info=exception
+        )
+
     def _get_scanners_info(self, devs):
-        promise = openpaperwork_core.promise.Promise(self.core)
         for dev in devs:
+            # Schedule the promises to examine each scanner separately,
+            # so if one failed (for instance on Windows when a scanner is
+            # not actually connected), the others can still run.
             dev_id = dev[0]
             dev_name = dev[1]
+            promise = openpaperwork_core.promise.Promise(
+                self.core, hide_caught_exceptions=True
+            )
             promise = promise.then(self.core.call_success(
                 "scan_get_scanner_promise", dev_id
             ))
+            promise.catch(self._on_get_scanner_error, dev_id)
             promise = promise.then(self._get_scanner_info, dev_id, dev_name)
             promise = promise.then(lambda scanner: scanner.close())
             promise = promise.then(lambda *args, **kwargs: None)
-        self.core.call_success("scan_schedule", promise)
+            self.core.call_success("scan_schedule", promise)
 
     def _list_scanners(self):
         self.out = []
