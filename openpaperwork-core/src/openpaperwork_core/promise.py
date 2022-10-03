@@ -54,6 +54,8 @@ class BasePromise(object):
                 self.core, callback, args, kwargs, parent=self
             )
             last_promise = next_promise
+        if not next_promise.hide_caught_exceptions:
+            next_promise.hide_caught_exceptions = self.hide_caught_exceptions
         self._then.append(next_promise)
         return last_promise
 

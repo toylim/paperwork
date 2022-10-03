@@ -639,78 +639,73 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_success("work_queue_add_promise", "scanner", promise)
         return True
 
+    def scan_list_scanners(self, *args, **kwargs):
+        with LOCK:
+            if len(self.devices_cache) > 0:
+                return self.devices_cache
+
+            LOGGER.info("Looking for scan devices ...")
+            devs = self.libinsane.list_devices(
+                Libinsane.DeviceLocations.ANY
+            )
+            devs = [
+                # (id, human readable name)
+                # prefix the IDs with 'libinsane:' so we know it comes from
+                # our plugin and not another scan plugin
+                (
+                    'libinsane:' + dev.get_dev_id(),
+                    "{} {}".format(
+                        dev.get_dev_vendor(), dev.get_dev_model()
+                    ),
+                    dev.get_dev_vendor(),
+                    dev.get_dev_model(),
+                )
+                for dev in devs
+            ]
+            devs.sort(key=lambda s: s[1])
+            LOGGER.info("%d devices found: %s", len(devs), devs)
+            self.devices_cache = devs
+            return devs
+
     def scan_list_scanners_promise(self):
         """
         Return a promise for listing scanners.
         Must be started with "scan_schedule()", not "promise.schedule()" !
         """
-        def list_scanners(*args, **kwargs):
-            with LOCK:
-                if len(self.devices_cache) > 0:
-                    return self.devices_cache
-
-                LOGGER.info("Looking for scan devices ...")
-                devs = self.libinsane.list_devices(
-                    Libinsane.DeviceLocations.ANY
-                )
-                devs = [
-                    # (id, human readable name)
-                    # prefix the IDs with 'libinsane:' so we know it comes from
-                    # our plugin and not another scan plugin
-                    (
-                        'libinsane:' + dev.get_dev_id(),
-                        "{} {}".format(
-                            dev.get_dev_vendor(), dev.get_dev_model()
-                        ),
-                        dev.get_dev_vendor(),
-                        dev.get_dev_model(),
-                    )
-                    for dev in devs
-                ]
-                devs.sort(key=lambda s: s[1])
-                LOGGER.info("%d devices found: %s", len(devs), devs)
-                return devs
-
-        def set_cache(devs):
-            self.devices_cache = devs
-            return devs
-
-        promise = openpaperwork_core.promise.ThreadedPromise(
-            self.core, list_scanners
+        return openpaperwork_core.promise.ThreadedPromise(
+            self.core, self.scan_list_scanners
         )
-        promise = promise.then(set_cache)
-        return promise
+
+    def scan_get_scanner(self, scanner_dev_id=None):
+        if self._last_scanner is not None:
+            self._last_scanner.close()
+            self._last_scanner = None
+
+        if scanner_dev_id is None:
+            scanner_dev_id = self.core.call_success(
+                "config_get", "scanner_dev_id"
+            )
+        if scanner_dev_id is None:
+            return None
+
+        if not scanner_dev_id.startswith("libinsane:"):
+            return None
+        scanner_dev_id = scanner_dev_id[len("libinsane:"):]
+
+        with LOCK:
+            LOGGER.info("Accessing scanner '%s' ...", scanner_dev_id)
+            scanner = self.libinsane.get_device(scanner_dev_id)
+            LOGGER.info("Scanner '%s' opened", scanner.get_name())
+            self._last_scanner = Scanner(self.core, scanner)
+            return self._last_scanner
 
     def scan_get_scanner_promise(self, scanner_dev_id=None):
         """
         Return a promise getting a scanner instance.
         Must be started with "scan_schedule()", not "promise.schedule()" !
         """
-        def get_scanner(scanner_dev_id):
-            if self._last_scanner is not None:
-                self._last_scanner.close()
-                self._last_scanner = None
-
-            if scanner_dev_id is None:
-                scanner_dev_id = self.core.call_success(
-                    "config_get", "scanner_dev_id"
-                )
-            if scanner_dev_id is None:
-                return None
-
-            if not scanner_dev_id.startswith("libinsane:"):
-                return None
-            scanner_dev_id = scanner_dev_id[len("libinsane:"):]
-
-            with LOCK:
-                LOGGER.info("Accessing scanner '%s' ...", scanner_dev_id)
-                scanner = self.libinsane.get_device(scanner_dev_id)
-                LOGGER.info("Scanner '%s' opened", scanner.get_name())
-                self._last_scanner = Scanner(self.core, scanner)
-                return self._last_scanner
-
         return openpaperwork_core.promise.ThreadedPromise(
-            self.core, get_scanner, args=(scanner_dev_id,)
+            self.core, self.scan_get_scanner, args=(scanner_dev_id,)
         )
 
     def scan_promise(self, *args, source_id=None, **kwargs):
@@ -729,7 +724,9 @@ class Plugin(openpaperwork_core.PluginBase):
             raise Exception("No source defined")
         scan_id = next(SCAN_ID_GENERATOR)
 
-        promise = self.scan_get_scanner_promise(scanner_dev_id)
+        promise = self.core.call_success(
+            "scan_get_scanner_promise", scanner_dev_id
+        )
         promise = promise.then(
             openpaperwork_core.promise.ThreadedPromise(
                 self.core, Scanner.get_source, args=(source_id,)
