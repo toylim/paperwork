@@ -54,5 +54,7 @@ A bunch of plugins for Paperwork related to GLib and GTK.
     package_dir={'': 'src'},
     include_package_data=True,
     zip_safe=(os.name != 'nt'),
-    install_requires=[]
+    install_requires=[
+        "openpaperwork-core",
+    ],
 )
