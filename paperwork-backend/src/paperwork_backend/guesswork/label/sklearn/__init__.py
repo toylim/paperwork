@@ -556,8 +556,6 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         self.vectorizer = UpdatableVectorizer(self.core, self.cursor)
 
     def add_doc(self, doc_id):
-        self._lazyinit_transaction()
-
         if self.guess_labels:
             # we have a higher priority than index plugins, so it is a good
             # time to update the document labels
@@ -574,7 +572,11 @@ class LabelGuesserTransaction(sync.BaseTransaction):
                 )
                 return
 
+            self._lazyinit_transaction()
             self.plugin._set_guessed_labels(doc_url)
+
+        else:
+            self._lazyinit_transaction()
 
         self.notify_progress(
             ID, _("Label guesser: added document %s") % doc_id
