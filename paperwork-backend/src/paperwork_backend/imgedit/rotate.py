@@ -15,7 +15,7 @@ class RotationImgEditor(AbstractImgEditor):
         # Pillow operates counter-clockwise, we operate clockwise.
         if self.angle == 0:
             return img
-        transform_enum = getattr(PIL.Image, 'Transform', PIL.Image)
+        transform_enum = getattr(PIL.Image, 'Transpose', PIL.Image)
         angle = {
             90: transform_enum.ROTATE_90,
             180: transform_enum.ROTATE_180,
