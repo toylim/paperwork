@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import sys
 import threading
 
 import openpaperwork_core
@@ -132,6 +133,7 @@ class Plugin(openpaperwork_core.PluginBase):
             try:
                 func(*args, **kwargs)
             except Exception as exc:
+                exc_info = sys.exc_info()
                 if self.halt_on_uncaught_exception:
                     LOGGER.error(
                         "Main loop: Uncaught exception (%s) ! Quitting",
@@ -144,6 +146,10 @@ class Plugin(openpaperwork_core.PluginBase):
                         "Main loop: Uncaught exception (%s) !",
                         func, exc_info=exc
                     )
+                self.core.call_all(
+                    "mainloop_schedule",
+                    self.core.call_all, "on_uncaught_exception", exc_info
+                )
             finally:
                 self.task_count -= 1
 
