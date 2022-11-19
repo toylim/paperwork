@@ -223,7 +223,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def doc_open(self, doc_id, doc_url):
         self.doc_close()
 
-        changed = self.core.call_success(
+        self.core.call_success(
             "mainwindow_show", side="right", name="docview"
         )
 
@@ -239,29 +239,6 @@ class Plugin(openpaperwork_core.PluginBase):
         self.widget_to_page = {}
         self.page_to_widget = {}
 
-        if changed:
-            # WORKAROUND(Jflesch):
-            # This delay is used to work around what looks like a GTK bug.
-            # Delay here must be slightly longer than the GtkStack animation
-            # from the main window.
-            # To reproduce:
-            # - disable this delay (you can leave the mainloop_schedule())
-            # - start Paperwork
-            # - it should start by showing the welcome page
-            # - open a *one-page* document
-            # Expected:
-            # - the one-page document is visible
-            # Result:
-            # - the document doesn't appear
-            # - resizing the main window makes the document appear
-            self.core.call_success(
-                "mainloop_schedule", self._doc_open, doc_id, doc_url,
-                delay_s=0.350
-            )
-        else:
-            self._doc_open(doc_id, doc_url)
-
-    def _doc_open(self, doc_id, doc_url):
         self.controllers = {}
         self.core.call_all(
             "gtk_docview_get_controllers", self.controllers, self

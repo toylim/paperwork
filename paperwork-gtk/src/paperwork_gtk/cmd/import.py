@@ -58,6 +58,4 @@ class Plugin(openpaperwork_core.PluginBase):
         LOGGER.info("Ready")
         self.core.call_one("mainloop", halt_on_uncaught_exception=False)
         LOGGER.info("Quitting")
-        self.core.call_all("config_save")
-        self.core.call_all("on_quit")
         return True
