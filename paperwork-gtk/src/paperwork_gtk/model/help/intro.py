@@ -65,10 +65,6 @@ class Plugin(openpaperwork_core.PluginBase):
                 "mainloop_schedule", self.core.call_all,
                 "docview_set_layout", "paged"
             )
-            self.core.call_success(
-                "mainloop_schedule", self.core.call_all,
-                "doc_goto_page", 0
-            )
 
     def labels_get_all(self, out: set):
         if self.doc_url is not None:
