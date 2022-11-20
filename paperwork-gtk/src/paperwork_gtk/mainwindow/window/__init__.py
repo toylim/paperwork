@@ -2,8 +2,7 @@ import collections
 import logging
 
 try:
-    from gi.repository import Gio
-    from gi.repository import GLib
+    from gi.repository import GLib  # noqa: F401
     GLIB_AVAILABLE = True
 except (ImportError, ValueError):
     GLIB_AVAILABLE = False
@@ -97,7 +96,7 @@ class Plugin(openpaperwork_core.PluginBase):
             if self.mainwindow is not None:
                 self.mainwindow.present()
             else:
-                LOGGER.warn("Activated a second time but self.mainwindow is None")
+                LOGGER.warn("Activated a second time but mainwindow is None")
 
     # called when paperwork is launched with files to import as argument.
     # when a second instance of paperwork is run, this is called in the main
@@ -108,13 +107,18 @@ class Plugin(openpaperwork_core.PluginBase):
             "mainloop_schedule",
             self.core.call_all, "gtk_doc_import", uris
         )
-        # either start paperwork if we are the main instance, or focus it if this signal is raised remotely
+        # either start paperwork if we are the main instance, or focus it if
+        # this signal is raised remotely
         self._on_activate(app)
 
     def init(self, core):
         super().init(core)
-        
+
         self.core = core
+
+        if not GTK_AVAILABLE:
+            LOGGER.warning("not initializing main window without Gtk")
+            return None
 
         app = Gtk.Application.get_default()
         app.connect("activate", self._on_activate)
@@ -386,7 +390,7 @@ class Plugin(openpaperwork_core.PluginBase):
            - shortcut_keys: see gtk_accelerator_parse()
            - action_name: GAction that must be triggered
         """
-        if self.mainwindow is None:
+        if self.mainwindow is None or not GTK_AVAILABLE:
             return
         LOGGER.info("Keyboard shortcut: %s --> %s", shortcut_keys, action_name)
         Gtk.Application.get_default().set_accels_for_action(

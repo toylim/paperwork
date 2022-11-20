@@ -2,18 +2,23 @@ import argparse
 import logging
 import sys
 
-import openpaperwork_core
-import openpaperwork_gtk
+try:
+    import gi
+    gi.require_version('Gtk', '3.0')  # noqa: E402
 
-import paperwork_backend
+    from gi.repository import Gtk, Gio, GLib  # noqa: E402
+    HAS_GTK_GLIB = True
+except (ImportError, ValueError):
+    HAS_GTK_GLIB = False
+
+import openpaperwork_core  # noqa: E402
+import openpaperwork_gtk  # noqa: E402
+
+import paperwork_backend  # noqa: E402
 
 # this import must be non-relative due to cx_freeze running this .py
 # as an independant Python script
-from paperwork_gtk import _
-
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gio, GLib
+from paperwork_gtk import _  # noqa: E402
 
 
 LOGGER = logging.getLogger(__name__)
@@ -170,6 +175,18 @@ DEFAULT_GUI_PLUGINS = (
 )
 
 
+# mimicks Gtk.Application when Gtk is not available
+class FakeApplication:
+    def activate(self):
+        LOGGER.warn("cannot show main window without gtk and glib")
+
+    def open(self, _files, _hint):
+        LOGGER.warn("cannot open files without gtk and glib")
+
+    def quit(self):
+        pass
+
+
 # this function is always called inside this process
 def main_main(app, _args, in_args):
     # To load the plugins, we need first to load the configuration plugin
@@ -194,10 +211,12 @@ def main_main(app, _args, in_args):
     if len(in_args) <= 0:
         if app.get_is_remote():
             LOGGER.info("passing control to main paperwork instance")
-        # if paperwork is already running, focus it, otherwise remain in this process
+        # if paperwork is already running, focus it, otherwise remain in this
+        # process
         app.activate()
     else:
-        # we remain in this process and call the plugin requested by the command line
+        # we remain in this process and call the plugin requested by the
+        # command line
         parser = argparse.ArgumentParser()
         cmd_parser = parser.add_subparsers(
             help=_('command'), dest='command', required=True
@@ -218,18 +237,24 @@ def main_main(app, _args, in_args):
 # setup GApplication stuff so that running paperwork-gtk import when paperwork
 # is already running imports inside the already running instance
 def application_wrapper(in_args):
-    if hasattr(GLib, 'set_application_name'):
-        GLib.set_application_name("Paperwork")
-    GLib.set_prgname("work.openpaper.Paperwork")
+    if HAS_GTK_GLIB:
+        if hasattr(GLib, 'set_application_name'):
+            GLib.set_application_name("Paperwork")
+        GLib.set_prgname("work.openpaper.Paperwork")
 
-    app = Gtk.Application(
-        application_id="work.openpaper.Paperwork",
-        flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE | Gio.ApplicationFlags.HANDLES_OPEN
-    )
-    app.connect("handle-local-options", main_main, in_args)
-    Gtk.Application.set_default(app)
-    app.register()
-    app.run(in_args)
+        app = Gtk.Application(
+            application_id="work.openpaper.Paperwork",
+            flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE |
+            Gio.ApplicationFlags.HANDLES_OPEN
+        )
+        app.connect("handle-local-options", main_main, in_args)
+        Gtk.Application.set_default(app)
+        app.register()
+        app.run(in_args)
+    else:
+        # for chkdeps
+        main_main(FakeApplication(), None, in_args)
+
 
 def main():
     application_wrapper(sys.argv[1:])
