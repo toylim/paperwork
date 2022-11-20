@@ -1,7 +1,12 @@
 import logging
 
+try:
+    from gi.repository import Gtk, Gio
+    HAS_GTK_GLIB = True
+except (ImportError, ValueError):
+    HAS_GTK_GLIB = False
+
 import openpaperwork_core
-from gi.repository import Gtk, Gio
 
 from .. import _
 
@@ -42,6 +47,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def cmd_run(self, args):
         if args.command != 'import':
+            return None
+        if not HAS_GTK_GLIB:
+            LOGGER.error("Cannot import file without gtk and glib")
             return None
 
         self.core.call_all("on_initialized")
