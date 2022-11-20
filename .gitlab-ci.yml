@@ -16,6 +16,7 @@ check:
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
+    - merge_requests
   tags:
     - linux
     - volatile
@@ -33,6 +34,7 @@ test:
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
+    - merge_requests
   tags:
     - linux
     - volatile
@@ -70,6 +72,7 @@ test_chkdeps:
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
+    - merge_requests
   tags:
     - linux
     - volatile
@@ -256,6 +259,7 @@ windows_tests:
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
+    - merge_requests
   tags:
     - windows
     - msys2
