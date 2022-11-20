@@ -11,6 +11,10 @@ import paperwork_backend
 # as an independant Python script
 from paperwork_gtk import _
 
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk, Gio, GLib
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -166,7 +170,8 @@ DEFAULT_GUI_PLUGINS = (
 )
 
 
-def main_main(in_args):
+# this function is always called inside this process
+def main_main(app, _args, in_args):
     # To load the plugins, we need first to load the configuration plugin
     # to get the list of plugins to load.
     # The configuration plugin may write traces using logging, so we better
@@ -187,17 +192,12 @@ def main_main(in_args):
     core.call_all("config_load_plugins", "paperwork-gtk", DEFAULT_GUI_PLUGINS)
 
     if len(in_args) <= 0:
-
-        core.call_all("on_initialized")
-
-        LOGGER.info("Ready")
-        core.call_one("mainloop", halt_on_uncaught_exception=False)
-        LOGGER.info("Quitting")
-        core.call_all("config_save")
-        core.call_all("on_quit")
-
+        if app.get_is_remote():
+            LOGGER.info("passing control to main paperwork instance")
+        # if paperwork is already running, focus it, otherwise remain in this process
+        app.activate()
     else:
-
+        # we remain in this process and call the plugin requested by the command line
         parser = argparse.ArgumentParser()
         cmd_parser = parser.add_subparsers(
             help=_('command'), dest='command', required=True
@@ -209,11 +209,30 @@ def main_main(in_args):
         core.call_all("cmd_set_interactive", True)
 
         core.call_all("cmd_run", args)
-        core.call_all("on_quit")
 
+    # necessary so that paperwork-gtk install terminates
+    app.quit()
+    return 0
+
+
+# setup GApplication stuff so that running paperwork-gtk import when paperwork
+# is already running imports inside the already running instance
+def application_wrapper(in_args):
+    if hasattr(GLib, 'set_application_name'):
+        GLib.set_application_name("Paperwork")
+    GLib.set_prgname("work.openpaper.Paperwork")
+
+    app = Gtk.Application(
+        application_id="work.openpaper.Paperwork",
+        flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE | Gio.ApplicationFlags.HANDLES_OPEN
+    )
+    app.connect("handle-local-options", main_main, in_args)
+    Gtk.Application.set_default(app)
+    app.register()
+    app.run(in_args)
 
 def main():
-    main_main(sys.argv[1:])
+    application_wrapper(sys.argv[1:])
 
 
 if __name__ == "__main__":

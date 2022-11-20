@@ -1,6 +1,7 @@
 import logging
 
 import openpaperwork_core
+from gi.repository import Gtk, Gio
 
 from .. import _
 
@@ -44,18 +45,22 @@ class Plugin(openpaperwork_core.PluginBase):
             return None
 
         self.core.call_all("on_initialized")
+        app = Gtk.Application.get_default()
 
         # when no file is specified, we still start the GUI, because the
         # desktop file always calls paperwork-gtk import (see install.py for
         # the rationale).
         if args.files:
             files = [self.core.call_success("fs_safe", f) for f in args.files]
-            LOGGER.info("Scheduling import for files %s", " ".join(files))
-            self.core.call_one(
-                "mainloop_schedule",
-                self.core.call_all, "gtk_doc_import", files
-            )
-        LOGGER.info("Ready")
-        self.core.call_one("mainloop", halt_on_uncaught_exception=False)
-        LOGGER.info("Quitting")
+            giofiles = [Gio.File.new_for_uri(f) for f in files]
+            LOGGER.info("Will import files %s", " ".join(files))
+            if app.get_is_remote():
+                LOGGER.info("Passing control to main paperwork instance")
+            # open the files, possibly in another process
+            app.open(giofiles, "")
+        else:
+            # possibly in another process
+            if app.get_is_remote():
+                LOGGER.info("Passing control to main paperwork instance")
+            app.activate()
         return True

@@ -32,6 +32,8 @@ class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
         self.widget_tree = None
+        self.core = None
+        self.activated = False
         self.stacks = None
         self.components = collections.defaultdict(dict)
         self.navigation_stacks = {'left': [], 'right': []}
@@ -77,8 +79,46 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
+    # called when paperwork is launched without a file to import as argument.
+    # when a second instance of paperwork is run, this is called in the main
+    # instance instead.
+    def _on_activate(self, _app):
+        if not self.activated:
+            self.activated = True
+            self.core.call_all("on_initialized")
+
+            LOGGER.info("Ready")
+            self.core.call_one("mainloop", halt_on_uncaught_exception=False)
+            LOGGER.info("Quitting")
+            self.core.call_all("config_save")
+            self.core.call_all("on_quit")
+        else:
+            # a second instance was activated, we are the main one
+            if self.mainwindow is not None:
+                self.mainwindow.present()
+            else:
+                LOGGER.warn("Activated a second time but self.mainwindow is None")
+
+    # called when paperwork is launched with files to import as argument.
+    # when a second instance of paperwork is run, this is called in the main
+    # instance instead.
+    def _on_open(self, app, files, _count, _hint):
+        uris = [file.get_uri() for file in files]
+        self.core.call_one(
+            "mainloop_schedule",
+            self.core.call_all, "gtk_doc_import", uris
+        )
+        # either start paperwork if we are the main instance, or focus it if this signal is raised remotely
+        self._on_activate(app)
+
     def init(self, core):
         super().init(core)
+        
+        self.core = core
+
+        app = Gtk.Application.get_default()
+        app.connect("activate", self._on_activate)
+        app.connect("open", self._on_open)
 
         self.core.call_success(
             "gtk_load_css",
@@ -127,17 +167,9 @@ class Plugin(openpaperwork_core.PluginBase):
             # Will fail when generating data for the first time.
             LOGGER.warning("Failed to load main window icon", exc_info=exc)
 
-        if hasattr(GLib, 'set_application_name'):
-            GLib.set_application_name("Paperwork")
-        GLib.set_prgname("work.openpaper.Paperwork")
-
-        app = Gtk.Application(
-            application_id=None,
-            flags=Gio.ApplicationFlags.FLAGS_NONE
-        )
-        app.register(None)
-        Gtk.Application.set_default(app)
-        self.mainwindow.set_application(app)
+        # when remote, this segfaults...
+        if not app.get_is_remote():
+            self.mainwindow.set_application(app)
 
         self.stacks = {
             "left": {
@@ -357,6 +389,6 @@ class Plugin(openpaperwork_core.PluginBase):
         if self.mainwindow is None:
             return
         LOGGER.info("Keyboard shortcut: %s --> %s", shortcut_keys, action_name)
-        self.mainwindow.get_application().set_accels_for_action(
+        Gtk.Application.get_default().set_accels_for_action(
             action_name, (shortcut_keys, None)
         )
