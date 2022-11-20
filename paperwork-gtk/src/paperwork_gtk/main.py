@@ -2,6 +2,11 @@ import argparse
 import logging
 import sys
 
+import gi
+gi.require_version('Gtk', '3.0')  # noqa: E402
+
+from gi.repository import Gtk, Gio, GLib
+
 import openpaperwork_core
 import openpaperwork_gtk
 
@@ -10,10 +15,6 @@ import paperwork_backend
 # this import must be non-relative due to cx_freeze running this .py
 # as an independant Python script
 from paperwork_gtk import _
-
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gio, GLib
 
 
 LOGGER = logging.getLogger(__name__)
@@ -194,10 +195,12 @@ def main_main(app, _args, in_args):
     if len(in_args) <= 0:
         if app.get_is_remote():
             LOGGER.info("passing control to main paperwork instance")
-        # if paperwork is already running, focus it, otherwise remain in this process
+        # if paperwork is already running, focus it, otherwise remain in this
+        # process
         app.activate()
     else:
-        # we remain in this process and call the plugin requested by the command line
+        # we remain in this process and call the plugin requested by the
+        # command line
         parser = argparse.ArgumentParser()
         cmd_parser = parser.add_subparsers(
             help=_('command'), dest='command', required=True
@@ -224,12 +227,14 @@ def application_wrapper(in_args):
 
     app = Gtk.Application(
         application_id="work.openpaper.Paperwork",
-        flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE | Gio.ApplicationFlags.HANDLES_OPEN
+        flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE |
+        Gio.ApplicationFlags.HANDLES_OPEN
     )
     app.connect("handle-local-options", main_main, in_args)
     Gtk.Application.set_default(app)
     app.register()
     app.run(in_args)
+
 
 def main():
     application_wrapper(sys.argv[1:])

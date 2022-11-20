@@ -97,7 +97,7 @@ class Plugin(openpaperwork_core.PluginBase):
             if self.mainwindow is not None:
                 self.mainwindow.present()
             else:
-                LOGGER.warn("Activated a second time but self.mainwindow is None")
+                LOGGER.warn("Activated a second time but mainwindow is None")
 
     # called when paperwork is launched with files to import as argument.
     # when a second instance of paperwork is run, this is called in the main
@@ -108,12 +108,13 @@ class Plugin(openpaperwork_core.PluginBase):
             "mainloop_schedule",
             self.core.call_all, "gtk_doc_import", uris
         )
-        # either start paperwork if we are the main instance, or focus it if this signal is raised remotely
+        # either start paperwork if we are the main instance, or focus it if
+        # this signal is raised remotely
         self._on_activate(app)
 
     def init(self, core):
         super().init(core)
-        
+
         self.core = core
 
         app = Gtk.Application.get_default()
