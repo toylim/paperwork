@@ -1,7 +1,7 @@
 import logging
 
 try:
-    from gi.repository import Gtk, Gio
+    from gi.repository import Gio
     HAS_GTK_GLIB = True
 except (ImportError, ValueError):
     HAS_GTK_GLIB = False
@@ -25,6 +25,10 @@ class Plugin(openpaperwork_core.PluginBase):
             {
                 'interface': 'gtk_doc_import',
                 'defaults': ['paperwork_gtk.docimport'],
+            },
+            {
+                'interface': 'gtk_init',
+                'defaults': ['openpaperwork_gtk.gtk_init'],
             },
             {
                 'interface': 'mainloop',
@@ -51,9 +55,10 @@ class Plugin(openpaperwork_core.PluginBase):
         if not HAS_GTK_GLIB:
             LOGGER.error("Cannot import file without gtk and glib")
             return None
+        self.core.call_all("gtk_init", self._cmd_run, args)
 
-        self.core.call_all("on_initialized")
-        app = Gtk.Application.get_default()
+    def _cmd_run(self, args):
+        app = self.core.call_success("gtk_get_app")
 
         # when no file is specified, we still start the GUI, because the
         # desktop file always calls paperwork-gtk import (see install.py for
@@ -71,4 +76,4 @@ class Plugin(openpaperwork_core.PluginBase):
             if app.get_is_remote():
                 LOGGER.info("Passing control to main paperwork instance")
             app.activate()
-        return True
+        return 0

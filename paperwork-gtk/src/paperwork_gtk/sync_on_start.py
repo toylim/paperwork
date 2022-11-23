@@ -37,7 +37,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         self.core.call_all("config_register", "sync_on_start", setting)
 
-    def on_initialized(self):
+    def on_gtk_initialized(self):
         r = self.core.call_success("config_get", "sync_on_start")
         if r:
             LOGGER.info("Starting synchronization ...")

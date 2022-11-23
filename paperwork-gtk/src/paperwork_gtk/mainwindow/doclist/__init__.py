@@ -185,7 +185,7 @@ class Plugin(openpaperwork_core.PluginBase):
         if not GTK_AVAILABLE:
             out['gtk'].update(openpaperwork_gtk.deps.GTK)
 
-    def on_initialized(self):
+    def on_gtk_initialized(self):
         self.core.call_all(
             "mainwindow_show", side="left", name="doclist"
         )

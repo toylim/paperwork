@@ -32,7 +32,6 @@ class Plugin(openpaperwork_core.PluginBase):
         super().__init__()
         self.widget_tree = None
         self.core = None
-        self.activated = False
         self.stacks = None
         self.components = collections.defaultdict(dict)
         self.navigation_stacks = {'left': [], 'right': []}
@@ -65,6 +64,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_gtk.resources'],
             },
             {
+                'interface': 'gtk_init',
+                'defaults': ['openpaperwork_gtk.gtk_init'],
+            },
+            {
                 'interface': 'icon',
                 'defaults': ['paperwork_gtk.icon'],
             },
@@ -78,39 +81,6 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    # called when paperwork is launched without a file to import as argument.
-    # when a second instance of paperwork is run, this is called in the main
-    # instance instead.
-    def _on_activate(self, _app):
-        if not self.activated:
-            self.activated = True
-            self.core.call_all("on_initialized")
-
-            LOGGER.info("Ready")
-            self.core.call_one("mainloop", halt_on_uncaught_exception=False)
-            LOGGER.info("Quitting")
-            self.core.call_all("config_save")
-            self.core.call_all("on_quit")
-        else:
-            # a second instance was activated, we are the main one
-            if self.mainwindow is not None:
-                self.mainwindow.present()
-            else:
-                LOGGER.warn("Activated a second time but mainwindow is None")
-
-    # called when paperwork is launched with files to import as argument.
-    # when a second instance of paperwork is run, this is called in the main
-    # instance instead.
-    def _on_open(self, app, files, _count, _hint):
-        uris = [file.get_uri() for file in files]
-        self.core.call_one(
-            "mainloop_schedule",
-            self.core.call_all, "gtk_doc_import", uris
-        )
-        # either start paperwork if we are the main instance, or focus it if
-        # this signal is raised remotely
-        self._on_activate(app)
-
     def init(self, core):
         super().init(core)
 
@@ -119,10 +89,6 @@ class Plugin(openpaperwork_core.PluginBase):
         if not GTK_AVAILABLE:
             LOGGER.warning("not initializing main window without Gtk")
             return None
-
-        app = Gtk.Application.get_default()
-        app.connect("activate", self._on_activate)
-        app.connect("open", self._on_open)
 
         self.core.call_success(
             "gtk_load_css",
@@ -171,10 +137,6 @@ class Plugin(openpaperwork_core.PluginBase):
             # Will fail when generating data for the first time.
             LOGGER.warning("Failed to load main window icon", exc_info=exc)
 
-        # when remote, this segfaults...
-        if not app.get_is_remote():
-            self.mainwindow.set_application(app)
-
         self.stacks = {
             "left": {
                 "header": self.widget_tree.get_object(
@@ -205,7 +167,12 @@ class Plugin(openpaperwork_core.PluginBase):
         if not GTK_AVAILABLE:
             out['gtk'].update(openpaperwork_gtk.deps.GTK)
 
-    def on_initialized(self):
+    def on_gtk_initialized(self):
+        app = self.core.call_success("gtk_get_app")
+        # when remote, this segfaults...
+        if not app.get_is_remote():
+            self.mainwindow.set_application(app)
+
         for side in self.defaults.keys():
             self.mainwindow_show_default(side)
 
@@ -332,6 +299,12 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def mainwindow_focus(self):
         self.mainwindow.grab_focus()
+
+    def mainwindow_present(self):
+        if self.mainwindow is not None:
+            self.mainwindow.present()
+        else:
+            LOGGER.warn("Activated a second time but mainwindow is None")
 
     def _draw_overlay(self, img, area, color):
         overlay = PIL.Image.new('RGBA', img.size, color + (0,))

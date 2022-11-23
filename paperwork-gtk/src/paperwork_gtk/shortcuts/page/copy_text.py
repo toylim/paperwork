@@ -25,6 +25,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def init(self, core):
         super().init(core)
+
+    def on_gtk_initialized(self):
         self.core.call_all(
             "app_shortcut_add",
             _("Page"), _("Copy selected text to clipboard"),
