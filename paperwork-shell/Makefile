@@ -63,7 +63,7 @@ clean:
 
 # PIP_ARGS is used by Flatpak build
 install_py: ${VERSION_FILE} l10n_compile
-	${PYTHON} ./setup.py install ${PIP_ARGS}
+	${PYTHON} -m pip install ${PIP_ARGS} .
 
 install_c:
 
