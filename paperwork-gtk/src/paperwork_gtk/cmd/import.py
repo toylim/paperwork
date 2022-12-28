@@ -57,7 +57,7 @@ class Plugin(openpaperwork_core.PluginBase):
             return None
         self.core.call_all("gtk_init", self._cmd_run, args)
 
-    def _cmd_run(self, args):
+    def _cmd_run(self, app, options, args):
         app = self.core.call_success("gtk_get_app")
 
         # when no file is specified, we still start the GUI, because the
