@@ -1,4 +1,4 @@
-2022/xx/xx - 2.1.2:
+2022/01/08 - 2.1.2:
 - dependencies: fix: depends on openpaperwork-core
 - autoscrolling: take into account that Gdk.Cursor.new_for_display() may fail
   on some systems (wayland-only systems)

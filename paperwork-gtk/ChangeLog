@@ -1,4 +1,4 @@
-2022/xx/xx - 2.1.2:
+2022/01/08 - 2.1.2:
 - Optim: mainwindow.docproperties: optim reload doc properties only if the doc properties are actually visible (it was a huge CPU waste) (thanks to pie@#openpaperwork)
 - Fix: docview: make sure the currently-active page is always the currently-highlighted one
 - Fix: docview: remove an obsolete workaround preventing 'doc_goto_page()' to work correctly right after a call to 'doc_open()'

@@ -1,4 +1,4 @@
-2022/xx/xx - 2.1.2:
+2022/01/08 - 2.1.2:
 - Cairo renderers (Image/PDF): optimisation: add a cache
 - Cairo image renderer: optimisation: cairo.ImageSurface.create_for_data() has been implemented and can now be used
 - Cairo renderers: cleanup: Move the blurring code to a dedicated plugin
