@@ -1,5 +1,7 @@
-2022/xx/xx - 2.1.2:
+2022/01/08 - 2.1.2:
 - Fine-tune sqlite settings
+- Fix: TIFF images can have the file extension ".tiff" but ".tif" too
+- Fix: Report *all* uncaught exceptions
 
 2022/01/31 - 2.1.1:
 - Fix tests of plugins cmd.config and cmd.plugins
