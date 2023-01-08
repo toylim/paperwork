@@ -1,7 +1,14 @@
-2022/xx/xx - 2.1.2:
+2022/01/08 - 2.1.2:
+- Cairo renderers (Image/PDF): optimisation: add a cache
+- Cairo image renderer: optimisation: cairo.ImageSurface.create_for_data() has been implemented and can now be used
+- Cairo renderers: cleanup: Move the blurring code to a dedicated plugin
+- autoselect_scanner: workaround: instead of looking for scanners when Paperwork starts, look for a scanner if and only if we failed to find the scanner currently defined in Paperwork's configuration. With some Sane backends, it's much safer to not try listing devices when starting.
+- Fix: TIFF files may have the extension .tiff but also .tif
+- ignore files at the root of the work directory
 - libreoffice converter: fix file descriptor leak
 - guesswork.label.sklearn: fix weird crash based on user logs
   (original cause is still unclear)
+- fix test failure with recent pillow (thanks to Guillaume Girol)
 
 2022/01/31 - 2.1.1:
 - guesswork.label.sklearn: Fix: Handle gracefully documents without text
