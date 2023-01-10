@@ -17,9 +17,6 @@ check:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
     - merge_requests
-  tags:
-    - linux
-    - volatile
   script:
     - apt-get update
     - apt-get install -y
@@ -36,9 +33,6 @@ test:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
     - merge_requests
-  tags:
-    - linux
-    - volatile
   script:
     - apt-get update
     - apt-get install -y
@@ -75,9 +69,6 @@ test_chkdeps:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
     - merge_requests
-  tags:
-    - linux
-    - volatile
   script:
     - apt-get update
     # bare minimum to install Paperwork from sources
@@ -99,9 +90,6 @@ generate_data:
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
-  tags:
-    - linux
-    - volatile
   script:
     - echo deb http://deb.debian.org/debian buster-backports main > /etc/apt/sources.list.d/backports.list
     - apt-get update
@@ -150,9 +138,6 @@ doc_devel:
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
-  tags:
-    - linux
-    - volatile
   script:
     - apt-get update
     - apt-get install -y
@@ -210,9 +195,6 @@ linux_appimage:
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
-  tags:
-    - linux
-    - volatile
   script:
     - apt-get update
     # Libinsane build dependencies
