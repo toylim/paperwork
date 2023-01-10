@@ -1,4 +1,4 @@
-image: debian:bullseye
+image: $CI_REGISTRY_IMAGE/build:latest
 
 variables:
   GIT_STRATEGY: clone
@@ -7,9 +7,22 @@ variables:
 stages:
   # no point in waiting for the tests to end before generating the data files
   # or the development documentation
+  - build_img
   - tests
   - data
   - deploy
+
+build_img:
+  stage: build_img
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_PIPELINE_SOURCE == "web"
+  tags:
+    - docker
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $CI_REGISTRY_IMAGE/build:latest ci
+    - docker push $CI_REGISTRY_IMAGE/build:latest
 
 check:
   stage: tests
@@ -18,12 +31,6 @@ check:
     - tags@World/OpenPaperwork/paperwork
     - merge_requests
   script:
-    - apt-get update
-    - apt-get install -y
-        flake8
-        make
-        pycodestyle
-        python3-flake8
     - make check
 
 
@@ -34,29 +41,6 @@ test:
     - tags@World/OpenPaperwork/paperwork
     - merge_requests
   script:
-    - apt-get update
-    - apt-get install -y
-        build-essential
-        gcc
-        gettext
-        git
-        gobject-introspection
-        gtk-doc-tools
-        libcunit1-ncurses-dev
-        libgirepository1.0-dev
-        libjpeg-dev
-        libsane-dev
-        make
-        meson
-        python3-dev
-        python3-gi
-        python3-pil
-        python3-scipy
-        tox
-        valac
-        wget
-        xvfb
-        zlib1g-dev
     - source ./activate_test_env.sh && make install
     - source ./activate_test_env.sh && paperwork-gtk chkdeps -y
     - source ./activate_test_env.sh && paperwork-cli chkdeps -y
@@ -64,6 +48,7 @@ test:
 
 
 test_chkdeps:
+  image: debian:bullseye
   stage: tests
   only:
     - branches@World/OpenPaperwork/paperwork
@@ -91,42 +76,6 @@ generate_data:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
   script:
-    - echo deb http://deb.debian.org/debian buster-backports main > /etc/apt/sources.list.d/backports.list
-    - apt-get update
-    - apt-get install -y
-        build-essential
-        doxygen
-        gcc
-        gettext
-        git
-        gobject-introspection
-        graphviz
-        gtk-doc-tools
-        imagemagick
-        libcunit1-ncurses-dev
-        libgirepository1.0-dev
-        libjpeg-dev
-        libsane-dev
-        make
-        meson
-        po4a
-        python3-dev
-        python3-gi
-        python3-pil
-        python3-virtualenv
-        rclone
-        texlive
-        texlive-lang-english
-        texlive-lang-french
-        texlive-lang-german
-        texlive-latex-extra
-        texlive-latex-recommended
-        valac
-        valgrind
-        virtualenv
-        wget
-        xvfb
-        zlib1g-dev
     - source ./activate_test_env.sh && make install
     - source ./activate_test_env.sh && xvfb-run paperwork-gtk chkdeps -y
     - source ./activate_test_env.sh && xvfb-run paperwork-cli chkdeps -y
@@ -139,36 +88,6 @@ doc_devel:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
   script:
-    - apt-get update
-    - apt-get install -y
-        build-essential
-        doxygen
-        gettext
-        git
-        gobject-introspection
-        graphviz
-        gtk-doc-tools
-        libcunit1-ncurses-dev
-        libgirepository1.0-dev
-        libsane-dev
-        make
-        meson
-        openjdk-11-jre
-        plantuml
-        plantuml
-        python3-dev
-        python3-gi
-        python3-pil
-        python3-recommonmark
-        python3-sphinx
-        python3-sphinxcontrib.plantuml
-        python3-virtualenv
-        rclone
-        valac
-        valgrind
-        virtualenv
-        wget
-        zlib1g-dev
     - source ./activate_test_env.sh && make doc
     - source ./activate_test_env.sh && make upload_doc
 
@@ -196,55 +115,6 @@ linux_appimage:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
   script:
-    - apt-get update
-    # Libinsane build dependencies
-    # WORKAROUND(Jflesch): manpages is required to install some of the
-    # openjdk-jre and openjdk-jre is required for plantuml, which is required
-    # to generate documentation
-    - mkdir -p /usr/share/man/man1
-    - apt-get install -y -q
-        build-essential
-        cmake
-        gobject-introspection
-        libcunit1-ncurses-dev
-        libgirepository1.0-dev
-        libsane-dev
-        make
-        meson
-        valac
-        valgrind
-    - apt-get install --no-install-recommends -y -q
-        doxygen
-        graphviz
-        gtk-doc-tools
-        plantuml
-    # Paperwork non-Python dependencies
-    - apt-get install -y -q
-        ca-certificates
-        gettext
-        git
-        python3-pefile
-        python3-dev
-        python3-pip
-        python3-pkg-resources
-        python3-setuptools
-        python3-wheel
-        rclone
-        wget
-    # AppImage dependencies
-    - apt-get install -y -q
-        binutils
-        coreutils
-        desktop-file-utils
-        fakeroot
-        fuse3
-        libgdk-pixbuf2.0-dev
-        patchelf
-        python3-importlib-metadata
-        squashfs-tools
-        strace
-        util-linux
-        zsync
     - pip3 install appimage-builder
     # Build
     - make linux_exe
