@@ -22,10 +22,11 @@ check:
     - volatile
   script:
     - apt-get update
-    - apt-get install -y flake8
-    - apt-get install -y make
-    - apt-get install -y pycodestyle
-    - apt-get install -y python3-flake8
+    - apt-get install -y
+        flake8
+        make
+        pycodestyle
+        python3-flake8
     - make check
 
 
@@ -40,27 +41,28 @@ test:
     - volatile
   script:
     - apt-get update
-    - apt-get install -y build-essential
-    - apt-get install -y gcc
-    - apt-get install -y gettext
-    - apt-get install -y git
-    - apt-get install -y gobject-introspection
-    - apt-get install -y gtk-doc-tools
-    - apt-get install -y libcunit1-ncurses-dev
-    - apt-get install -y libgirepository1.0-dev
-    - apt-get install -y libjpeg-dev
-    - apt-get install -y libsane-dev
-    - apt-get install -y make
-    - apt-get install -y meson
-    - apt-get install -y python3-dev
-    - apt-get install -y python3-gi
-    - apt-get install -y python3-pil
-    - apt-get install -y python3-scipy
-    - apt-get install -y tox
-    - apt-get install -y valac
-    - apt-get install -y wget
-    - apt-get install -y xvfb
-    - apt-get install -y zlib1g-dev
+    - apt-get install -y
+        build-essential
+        gcc
+        gettext
+        git
+        gobject-introspection
+        gtk-doc-tools
+        libcunit1-ncurses-dev
+        libgirepository1.0-dev
+        libjpeg-dev
+        libsane-dev
+        make
+        meson
+        python3-dev
+        python3-gi
+        python3-pil
+        python3-scipy
+        tox
+        valac
+        wget
+        xvfb
+        zlib1g-dev
     - source ./activate_test_env.sh && make install
     - source ./activate_test_env.sh && paperwork-gtk chkdeps -y
     - source ./activate_test_env.sh && paperwork-cli chkdeps -y
@@ -79,14 +81,15 @@ test_chkdeps:
   script:
     - apt-get update
     # bare minimum to install Paperwork from sources
-    - apt-get install -y build-essential
-    - apt-get install -y make
-    - apt-get install -y python3
-    - apt-get install -y python3-dev
-    - apt-get install -y python3-pip
-    - apt-get install -y python3-setuptools
-    - apt-get install -y wget
-    - apt-get install -y gettext
+    - apt-get install -y
+        build-essential
+        gettext
+        make
+        python3
+        python3-dev
+        python3-pip
+        python3-setuptools
+        wget
     - make install
     - paperwork-json chkdeps
 
@@ -102,39 +105,40 @@ generate_data:
   script:
     - echo deb http://deb.debian.org/debian buster-backports main > /etc/apt/sources.list.d/backports.list
     - apt-get update
-    - apt-get install -y build-essential
-    - apt-get install -y doxygen
-    - apt-get install -y gcc
-    - apt-get install -y gettext
-    - apt-get install -y git
-    - apt-get install -y gobject-introspection
-    - apt-get install -y graphviz
-    - apt-get install -y gtk-doc-tools
-    - apt-get install -y imagemagick
-    - apt-get install -y libcunit1-ncurses-dev
-    - apt-get install -y libgirepository1.0-dev
-    - apt-get install -y libjpeg-dev
-    - apt-get install -y libsane-dev
-    - apt-get install -y make
-    - apt-get install -y meson
-    - apt-get install -y po4a
-    - apt-get install -y python3-dev
-    - apt-get install -y python3-gi
-    - apt-get install -y python3-pil
-    - apt-get install -y python3-virtualenv
-    - apt-get install -y rclone
-    - apt-get install -y texlive
-    - apt-get install -y texlive-lang-english
-    - apt-get install -y texlive-lang-french
-    - apt-get install -y texlive-lang-german
-    - apt-get install -y texlive-latex-extra
-    - apt-get install -y texlive-latex-recommended
-    - apt-get install -y valac
-    - apt-get install -y valgrind
-    - apt-get install -y virtualenv
-    - apt-get install -y wget
-    - apt-get install -y xvfb
-    - apt-get install -y zlib1g-dev
+    - apt-get install -y
+        build-essential
+        doxygen
+        gcc
+        gettext
+        git
+        gobject-introspection
+        graphviz
+        gtk-doc-tools
+        imagemagick
+        libcunit1-ncurses-dev
+        libgirepository1.0-dev
+        libjpeg-dev
+        libsane-dev
+        make
+        meson
+        po4a
+        python3-dev
+        python3-gi
+        python3-pil
+        python3-virtualenv
+        rclone
+        texlive
+        texlive-lang-english
+        texlive-lang-french
+        texlive-lang-german
+        texlive-latex-extra
+        texlive-latex-recommended
+        valac
+        valgrind
+        virtualenv
+        wget
+        xvfb
+        zlib1g-dev
     - source ./activate_test_env.sh && make install
     - source ./activate_test_env.sh && xvfb-run paperwork-gtk chkdeps -y
     - source ./activate_test_env.sh && xvfb-run paperwork-cli chkdeps -y
@@ -151,34 +155,35 @@ doc_devel:
     - volatile
   script:
     - apt-get update
-    - apt-get install -y build-essential
-    - apt-get install -y doxygen
-    - apt-get install -y gettext
-    - apt-get install -y git
-    - apt-get install -y gobject-introspection
-    - apt-get install -y graphviz
-    - apt-get install -y gtk-doc-tools
-    - apt-get install -y libcunit1-ncurses-dev
-    - apt-get install -y libgirepository1.0-dev
-    - apt-get install -y libsane-dev
-    - apt-get install -y make
-    - apt-get install -y meson
-    - apt-get install -y openjdk-11-jre
-    - apt-get install -y plantuml
-    - apt-get install -y plantuml
-    - apt-get install -y python3-dev
-    - apt-get install -y python3-gi
-    - apt-get install -y python3-pil
-    - apt-get install -y python3-recommonmark
-    - apt-get install -y python3-sphinx
-    - apt-get install -y python3-sphinxcontrib.plantuml
-    - apt-get install -y python3-virtualenv
-    - apt-get install -y rclone
-    - apt-get install -y valac
-    - apt-get install -y valgrind
-    - apt-get install -y virtualenv
-    - apt-get install -y wget
-    - apt-get install -y zlib1g-dev
+    - apt-get install -y
+        build-essential
+        doxygen
+        gettext
+        git
+        gobject-introspection
+        graphviz
+        gtk-doc-tools
+        libcunit1-ncurses-dev
+        libgirepository1.0-dev
+        libsane-dev
+        make
+        meson
+        openjdk-11-jre
+        plantuml
+        plantuml
+        python3-dev
+        python3-gi
+        python3-pil
+        python3-recommonmark
+        python3-sphinx
+        python3-sphinxcontrib.plantuml
+        python3-virtualenv
+        rclone
+        valac
+        valgrind
+        virtualenv
+        wget
+        zlib1g-dev
     - source ./activate_test_env.sh && make doc
     - source ./activate_test_env.sh && make upload_doc
 
@@ -235,20 +240,13 @@ linux_appimage:
     - apt-get install -y -q
         ca-certificates
         gettext
-        gir1.2-gdkpixbuf-2.0
-        gir1.2-gtk-3.0
         git
-        libgdk-pixbuf2.0-0
-        libgdk-pixbuf2.0-dev
-        libgtk-3-0
-        makeself
-        python3-cairo python3-gi-cairo
         python3-pefile
-        python3-pil python3-dev
+        python3-dev
         python3-pip
         python3-pkg-resources
-        python3-pkg-resources python3-wheel
         python3-setuptools
+        python3-wheel
         rclone
         wget
     # AppImage dependencies
