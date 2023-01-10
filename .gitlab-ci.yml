@@ -119,7 +119,7 @@ linux_appimage:
     # Build
     - make linux_exe
     - ./ci/deliver.sh paperwork-gtk/Paperwork-gtk-latest-x86_64.AppImage linux .appimage paperwork-gtk
-    - ./ci/deliver.sh paperwork-cli/Paperwork-cli-latest-x86_64.AppImage linux .appimage paperwork-cli
+    - ./ci/deliver.sh paperwork-shell/Paperwork-cli-latest-x86_64.AppImage linux .appimage paperwork-cli
     - ./ci/deliver.sh paperwork-shell/Paperwork-json-latest-x86_64.AppImage linux .appimage paperwork-json
   artifacts:
     expire_in: 2 days

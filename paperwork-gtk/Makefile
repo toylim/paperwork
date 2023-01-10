@@ -82,6 +82,7 @@ clean:
 	rm -f ${VERSION_FILE}
 	rm -rf build dist src/*.egg-info
 	rm -rf AppDir appimage-build
+	rm -f *.AppImage
 	$(MAKE) -C src/paperwork_gtk/model/help clean
 	$(MAKE) -C src/paperwork_gtk/icon clean
 
