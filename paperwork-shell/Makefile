@@ -64,6 +64,7 @@ release_pypi:
 clean:
 	rm -f ${VERSION_FILE}
 	rm -rf AppDir appimage-build
+	rm -f *.AppImage
 	rm -rf build dist *.egg-info
 
 # PIP_ARGS is used by Flatpak build
