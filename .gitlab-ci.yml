@@ -199,6 +199,85 @@ linux_flatpak:
     # - apt-get install -y -q rsync flatpak-builder make
     - ./ci/update_flatpak_repo.sh
 
+linux_appimage:
+  stage: deploy
+  timeout: 2h
+  only:
+    - branches@World/OpenPaperwork/paperwork
+    - tags@World/OpenPaperwork/paperwork
+  tags:
+    - linux
+    - volatile
+  script:
+    - apt-get update
+    # Libinsane build dependencies
+    # WORKAROUND(Jflesch): manpages is required to install some of the
+    # openjdk-jre and openjdk-jre is required for plantuml, which is required
+    # to generate documentation
+    - mkdir -p /usr/share/man/man1
+    - apt-get install -y -q
+        build-essential
+        cmake
+        gobject-introspection
+        libcunit1-ncurses-dev
+        libgirepository1.0-dev
+        libsane-dev
+        make
+        meson
+        valac
+        valgrind
+    - apt-get install --no-install-recommends -y -q
+        doxygen
+        graphviz
+        gtk-doc-tools
+        plantuml
+    # Paperwork non-Python dependencies
+    - apt-get install -y -q
+        ca-certificates
+        gettext
+        gir1.2-gdkpixbuf-2.0
+        gir1.2-gtk-3.0
+        git
+        libgdk-pixbuf2.0-0
+        libgdk-pixbuf2.0-dev
+        libgtk-3-0
+        makeself
+        python3-cairo python3-gi-cairo
+        python3-pefile
+        python3-pil python3-dev
+        python3-pip
+        python3-pkg-resources
+        python3-pkg-resources python3-wheel
+        python3-setuptools
+        rclone
+        wget
+    # AppImage dependencies
+    - apt-get install -y -q
+        binutils
+        coreutils
+        desktop-file-utils
+        fakeroot
+        fuse3
+        libgdk-pixbuf2.0-dev
+        patchelf
+        python3-importlib-metadata
+        squashfs-tools
+        strace
+        util-linux
+        zsync
+    - pip3 install appimage-builder
+    # Build
+    - make linux_exe
+    - ./ci/deliver.sh paperwork-gtk/Paperwork-gtk-latest-x86_64.AppImage linux .appimage paperwork-gtk
+    - ./ci/deliver.sh paperwork-cli/Paperwork-cli-latest-x86_64.AppImage linux .appimage paperwork-cli
+    - ./ci/deliver.sh paperwork-shell/Paperwork-json-latest-x86_64.AppImage linux .appimage paperwork-json
+  artifacts:
+    expire_in: 2 days
+    paths:
+      - paperwork-gtk/Paperwork-gtk-latest-x86_64.AppImage
+      - paperwork-shell/Paperwork-cli-latest-x86_64.AppImage
+      - paperwork-shell/Paperwork-json-latest-x86_64.AppImage
+
 
 .windows: &windows
   variables:

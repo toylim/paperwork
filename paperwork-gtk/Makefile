@@ -58,6 +58,7 @@ windows_exe:
 	(cd $(CURDIR)/src && find . -name '*.ico' -exec cp --parents \{\} $(CURDIR)/../build/exe/data \; )
 
 linux_exe:
+	appimage-builder --skip-tests --recipe AppImageBuilder.yml
 
 release:
 ifeq (${RELEASE}, )
@@ -80,6 +81,7 @@ release_pypi:
 clean:
 	rm -f ${VERSION_FILE}
 	rm -rf build dist src/*.egg-info
+	rm -rf AppDir appimage-build
 	$(MAKE) -C src/paperwork_gtk/model/help clean
 	$(MAKE) -C src/paperwork_gtk/icon clean
 
