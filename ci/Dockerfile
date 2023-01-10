@@ -78,3 +78,5 @@ RUN apt-get install --no-install-recommends -y -q \
         gtk-doc-tools \
         plantuml \
         && apt-get clean
+
+RUN pip3 install -U setuptools
