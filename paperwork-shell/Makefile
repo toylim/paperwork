@@ -32,6 +32,10 @@ test: install
 	python3 -m unittest discover --verbose -s tests
 
 linux_exe:
+	rm -rf AppDir appimage-build
+	appimage-builder --skip-tests --recipe AppImageBuilder.cli.yml
+	rm -rf AppDir appimage-build
+	appimage-builder --skip-tests --recipe AppImageBuilder.json.yml
 
 windows_exe:
 	${PYTHON} /mingw64/bin/pip3-script.py install .
@@ -59,6 +63,7 @@ release_pypi:
 
 clean:
 	rm -f ${VERSION_FILE}
+	rm -rf AppDir appimage-build
 	rm -rf build dist *.egg-info
 
 # PIP_ARGS is used by Flatpak build

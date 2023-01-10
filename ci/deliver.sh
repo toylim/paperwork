@@ -3,6 +3,7 @@
 binary="$1"
 os="$2"
 exe_suffix="$3"
+name="$4"
 arch="amd64"
 
 if [ -z "$RCLONE_CONFIG_OPENPAPERWORK_ACCESS_KEY_ID" ] ; then
@@ -15,11 +16,15 @@ if ! which rclone; then
   exit 1
 fi
 
-echo "Delivering: ${binary} (${CI_COMMIT_REF_NAME} - ${CI_COMMIT_SHORT_SHA})"
-echo "Destination: ${os}/${arch} (${exe_suffix})"
+if [ -z "$name" ] ; then
+  name=paperwork
+fi
 
-out_name="paperwork-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}${exe_suffix}"
-latest_name="paperwork-${CI_COMMIT_REF_NAME}-latest${exe_suffix}"
+echo "Delivering: ${binary} (${CI_COMMIT_REF_NAME} - ${CI_COMMIT_SHORT_SHA})"
+echo "Destination: ${os}/${arch} (${name} ${exe_suffix})"
+
+out_name="${name}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}${exe_suffix}"
+latest_name="${name}-${CI_COMMIT_REF_NAME}-latest${exe_suffix}"
 
 
 echo "rclone: ${out_name}"

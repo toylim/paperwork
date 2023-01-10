@@ -84,3 +84,8 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+# Appimage
+AppDir/
+appimage-build/
+*.AppImage*
