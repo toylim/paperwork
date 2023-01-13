@@ -140,15 +140,15 @@ class BasePromise(object):
             self.core.call_success("mainloop_get_thread_id")
         )
         event = threading.Event()
-        out = [None]
+        out = None
 
         def wakeup(r=None):
-            out[0] = r
-            event.set()
+            nonlocal out
+            out = r
 
         self.then(event.set)
         event.wait()
-        return out[0]
+        return out
 
 
 class Promise(BasePromise):

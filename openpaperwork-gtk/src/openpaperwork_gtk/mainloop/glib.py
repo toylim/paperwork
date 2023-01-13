@@ -208,23 +208,25 @@ class Plugin(openpaperwork_core.PluginBase):
             return func(*args, **kwargs)
 
         event = threading.Event()
-        out = [None]
-        exc = [None]
+        out = None
+        exc = None
 
         def get_result():
+            nonlocal out
+            nonlocal exc
             try:
-                out[0] = func(*args, **kwargs)
+                out = func(*args, **kwargs)
             except Exception as e:
                 LOGGER.warning(
                     "mainloop_execute exception (func=%s, args=%s, kwargs=%s)",
                     func, args, kwargs, exc_info=e
                 )
-                exc[0] = e
+                exc = e
             event.set()
 
         self.mainloop_schedule(get_result)
         event.wait()
 
-        if exc[0] is not None:
-            raise exc[0]
-        return out[0]
+        if exc is not None:
+            raise exc
+        return out
