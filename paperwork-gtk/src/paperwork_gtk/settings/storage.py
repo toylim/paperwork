@@ -70,6 +70,20 @@ class Plugin(openpaperwork_core.PluginBase):
     def on_gtk_window_closed(self, window):
         self.windows.remove(window)
 
+    def _show_workdir_info(self, *args, **kwargs):
+        widget_tree = self.core.call_success(
+            "gtk_load_widget_tree", "paperwork_gtk.settings", "storage.glade"
+        )
+        dialog = widget_tree.get_object("workdir_info_dialog")
+        dialog.set_transient_for(self.windows[-1])
+        dialog.set_modal(True)
+        dialog.connect("response", self._on_workdir_info_dialog_closed)
+        dialog.connect("destroy", self._on_workdir_info_dialog_closed)
+        dialog.set_visible(True)
+
+    def _on_workdir_info_dialog_closed(self, dialog, *args, **kwargs):
+        dialog.set_visible(False)
+
     def complete_settings(self, global_widget_tree):
         widget_tree = self.core.call_success(
             "gtk_load_widget_tree", "paperwork_gtk.settings", "storage.glade"
@@ -80,9 +94,13 @@ class Plugin(openpaperwork_core.PluginBase):
         workdir_button.set_label(basename)
         workdir_button.connect("clicked", self._on_button_clicked, widget_tree)
 
+        workdir_info_button = widget_tree.get_object("button_workdir_info")
+        workdir_info_button.connect("clicked", self._show_workdir_info)
+
         self.core.call_success(
             "add_setting_to_dialog", global_widget_tree, _("Storage"),
-            [widget_tree.get_object("workdir")]
+            [widget_tree.get_object("workdir")],
+            extra_widget=workdir_info_button,
         )
 
     def _on_button_clicked(self, button, widget_tree):
@@ -100,10 +118,10 @@ class Plugin(openpaperwork_core.PluginBase):
         workdir = self.core.call_success("config_get", "workdir")
         if self.core.call_success("fs_exists", workdir):
             dialog.set_uri(workdir)
-        dialog.connect("response", self._on_dialog_response, widget_tree)
+        dialog.connect("response", self._on_file_dialog_response, widget_tree)
         dialog.show_all()
 
-    def _on_dialog_response(self, dialog, response_id, widget_tree):
+    def _on_file_dialog_response(self, dialog, response_id, widget_tree):
         if (response_id != Gtk.ResponseType.ACCEPT and
                 response_id != Gtk.ResponseType.OK and
                 response_id != Gtk.ResponseType.YES and
@@ -124,6 +142,27 @@ class Plugin(openpaperwork_core.PluginBase):
 
         basename = self.core.call_success("fs_basename", workdir)
         widget_tree.get_object("work_dir_chooser_button").set_label(basename)
+
+        # Basic check of work directory content to avoid common mistake.
+        # We do not prevent the user from selecting the folder. We just
+        # warn them.
+        workdir_content = self.core.call_success("fs_listdir", workdir)
+        show_info_dialog = False
+        for file_url in workdir_content:
+            file_name = self.core.call_success("fs_basename", file_url)
+            if file_name[0] == ".":
+                continue
+            if "." in file_name:
+                # assume it's a file ; anyway, it doesn't have the usual
+                # name format that Paperwork folders have
+                LOGGER.warning(
+                    "Suspect file name found in work directory: %s",
+                    file_name
+                )
+                show_info_dialog = True
+                break
+        if show_info_dialog:
+            self._show_workdir_info()
 
     def config_save(self):
         workdir = self.core.call_success("config_get", "workdir")
