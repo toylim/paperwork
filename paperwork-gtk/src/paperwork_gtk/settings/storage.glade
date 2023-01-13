@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 -->
+<!-- Generated with glade 3.38.2 -->
 <interface domain="paperwork_gtk">
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkImage" id="image_button">
     <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon_name">folder-symbolic</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">folder-symbolic</property>
   </object>
   <object class="GtkBox" id="workdir">
     <property name="visible">True</property>
-    <property name="can_focus">False</property>
+    <property name="can-focus">False</property>
     <property name="spacing">16</property>
     <property name="homogeneous">True</property>
     <child>
       <object class="GtkLabel" id="setting_section_name">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="label" translatable="yes">Work directory</property>
         <property name="xalign">0</property>
         <style>
@@ -32,10 +32,10 @@
       <object class="GtkButton" id="work_dir_chooser_button">
         <property name="label">some_work_directory</property>
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="receives_default">False</property>
+        <property name="can-focus">False</property>
+        <property name="receives-default">False</property>
         <property name="image">image_button</property>
-        <property name="always_show_image">True</property>
+        <property name="always-show-image">True</property>
       </object>
       <packing>
         <property name="expand">False</property>
@@ -43,5 +43,92 @@
         <property name="position">1</property>
       </packing>
     </child>
+  </object>
+  <object class="GtkImage" id="image_workdir_info">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">preferences-system-details-symbolic</property>
+  </object>
+  <object class="GtkButton" id="button_workdir_info">
+    <property name="visible">True</property>
+    <property name="can-focus">True</property>
+    <property name="receives-default">True</property>
+    <property name="image">image_workdir_info</property>
+  </object>
+  <object class="GtkDialog" id="workdir_info_dialog">
+    <property name="can-focus">False</property>
+    <property name="title" translatable="yes">Work directory</property>
+    <property name="default-width">500</property>
+    <property name="default-height">300</property>
+    <property name="type-hint">dialog</property>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <child>
+              <object class="GtkButton" id="buttonOk">
+                <property name="label">gtk-close</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="shadow-type">in</property>
+            <child>
+              <object class="GtkViewport">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="label" translatable="yes">&lt;b&gt;Do not use an already existing directory !&lt;/b&gt;
+(unless it comes from another Paperwork instance)
+
+Paperwork uses a custom file structure to store documents. Unless the directory you specify has the exact file structure expected by Paperwork, it won't work !
+
+If you want to build a new work directory from existing documents, please use the import feature instead.
+
+&lt;a href="https://gitlab.gnome.org/World/OpenPaperwork/paperwork/-/wikis/Work-directory-organization"&gt;[More information]&lt;/a&gt;</property>
+                    <property name="use-markup">True</property>
+                    <property name="wrap">True</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="0">buttonOk</action-widget>
+    </action-widgets>
   </object>
 </interface>
