@@ -9,9 +9,7 @@ except (ImportError, ValueError):
     GLIB_AVAILABLE = False
 
 try:
-    import gi
-    gi.require_version('Gtk', '3.0')
-    from gi.repository import Gtk
+    from . import doc_box
     GTK_AVAILABLE = True
 except (ImportError, ValueError):
     GTK_AVAILABLE = False
@@ -46,7 +44,6 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doc_visibles = 0
         self.row_to_doc = {}
         self.docid_to_row = {}
-        self.docid_to_widget_tree = {}
 
         self.last_date = datetime.datetime(year=1, month=1, day=1)
 
@@ -222,7 +219,6 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doc_visibles = 0
         self.row_to_doc = {}
         self.docid_to_row = {}
-        self.docid_to_widget_tree = {}
 
     def _add_date_box(self, name, txt):
         widget_tree = self.core.call_success(
@@ -240,66 +236,46 @@ class Plugin(openpaperwork_core.PluginBase):
             self.core.call_all("doc_selection_remove", doc_id, doc_url)
 
     def _add_doc_box(self, doc_id, doc_url, box="doc_box.glade", new=False):
-        widget_tree = self.core.call_success(
-            "gtk_load_widget_tree",
-            "paperwork_gtk.mainwindow.doclist", box
-        )
-
-        doc_box = widget_tree.get_object("doc_box")
+        row = doc_box.DocBox()
 
         flowlayout = self.core.call_success(
             "gtk_widget_flowlayout_new", spacing=(3, 3)
         )
         flowlayout.set_visible(True)
-        doc_box.pack_start(flowlayout, expand=True, fill=True, padding=0)
-        doc_box.reorder_child(flowlayout, 1)
+        row.box.pack_start(flowlayout, expand=True, fill=True, padding=0)
+        row.box.reorder_child(flowlayout, 1)
 
         self.core.call_all(
-            "on_doc_box_creation", doc_id, widget_tree, flowlayout
+            "on_doc_box_creation", doc_id, row, flowlayout
         )
 
-        doc_actions = widget_tree.get_object("doc_actions")
+        doc_actions = row.main_actions
         if new:
             doc_actions.set_visible(False)
         else:
-            widget_tree.get_object("doc_actions_menu").set_menu_model(
-                self.doc_actions
-            )
+            row.action_menu.set_menu_model(self.doc_actions)
 
         for action in self.main_actions:
-            button = self.core.call_success(
-                "gtk_load_widget_tree",
-                "paperwork_gtk.mainwindow.doclist", "main_action.glade"
+            action = doc_box.DocMainAction(
+                action['txt'], action['icon_name'], action['callback']
             )
-            button.get_object("doc_main_action_image").set_from_icon_name(
-                action['icon_name'], Gtk.IconSize.MENU
-            )
-            button.get_object("doc_main_action").set_tooltip_text(
-                action['txt']
-            )
-            button.get_object("doc_main_action").connect(
-                "clicked", lambda _: action['callback']()
-            )
-            widget_tree.get_object("doc_actions").pack_start(
-                button.get_object("doc_main_action"),
-                expand=True, fill=True, padding=0
+            row.main_actions.pack_start(
+                action, expand=True, fill=True, padding=0
             )
 
-        widget_tree.get_object("doc_box_selector").set_visible(
+        row.selector.set_visible(
             self.selection_multiple
         )
-        widget_tree.get_object("doc_box_selector").set_active(
+        row.selector.set_active(
             self.core.call_success("doc_selection_in", doc_id, doc_url)
             is not None
         )
-        widget_tree.get_object("doc_box_selector").connect(
+        row.selector.connect(
             "toggled", self._toggle_doc, doc_id, doc_url
         )
 
-        row = widget_tree.get_object("doc_listbox")
         self.row_to_doc[row] = (doc_id, doc_url)
         self.docid_to_row[doc_id] = row
-        self.docid_to_widget_tree[doc_id] = widget_tree
         self.doclist.insert(row, -1)
 
     def doclist_extend(self, nb_docs):
@@ -397,15 +373,15 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doclist.select_row(row)
 
         if (self.previous_doc[0] is not None and
-                self.previous_doc[0] in self.docid_to_widget_tree):
-            widget_tree = self.docid_to_widget_tree[self.previous_doc[0]]
-            widget_tree.get_object("doc_actions").set_visible(False)
+                self.previous_doc[0] in self.docid_to_row):
+            row = self.docid_to_row[self.previous_doc[0]]
+            row.main_actions.set_visible(False)
 
         if ((not self.selection_multiple) and
                 self.core.call_success("is_doc", doc_url) is not None and
-                doc_id in self.docid_to_widget_tree):
-            widget_tree = self.docid_to_widget_tree[doc_id]
-            widget_tree.get_object("doc_actions").set_visible(True)
+                doc_id in self.docid_to_row):
+            row = self.docid_to_row[doc_id]
+            row.main_actions.set_visible(True)
 
         self.previous_doc = self.active_doc
 
@@ -538,9 +514,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
         if self.active_doc[0] is None:
             return
-        widget_tree = self.docid_to_widget_tree[self.active_doc[0]]
+        row = self.docid_to_row[self.active_doc[0]]
         self.core.call_success(
-            "screenshot_snap_widget", widget_tree.get_object("doc_actions"),
+            "screenshot_snap_widget", row.main_actions,
             self.core.call_success(
                 "fs_join", out_dir, "doc_properties_button.png"
             ),
@@ -548,8 +524,8 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def _set_all_selector_visibility(self, visible):
-        for widget_tree in self.docid_to_widget_tree.values():
-            checkbox = widget_tree.get_object("doc_box_selector")
+        for row in self.docid_to_row.values():
+            checkbox = row.selector
             checkbox.set_visible(visible)
 
     def gtk_switch_to_doc_selection_single(self):
@@ -575,8 +551,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
         self._toggling = True
         try:
-            for widget_tree in self.docid_to_widget_tree.values():
-                checkbox = widget_tree.get_object("doc_box_selector")
+            for row in self.docid_to_row.values():
+                checkbox = row.selector
                 checkbox.set_active(False)
         finally:
             self._toggling = False
@@ -588,10 +564,10 @@ class Plugin(openpaperwork_core.PluginBase):
             return
         self._toggling = True
         try:
-            widget_tree = self.docid_to_widget_tree.get(doc_id, None)
-            if widget_tree is None:
+            row = self.docid_to_row.get(doc_id, None)
+            if row is None:
                 return
-            checkbox = widget_tree.get_object("doc_box_selector")
+            checkbox = row.selector
             if not checkbox.get_active():
                 checkbox.set_active(True)
         finally:
@@ -604,10 +580,10 @@ class Plugin(openpaperwork_core.PluginBase):
             return
         self._toggling = True
         try:
-            widget_tree = self.docid_to_widget_tree.get(doc_id, None)
-            if widget_tree is None:
+            row = self.docid_to_row.get(doc_id, None)
+            if row is None:
                 return
-            checkbox = widget_tree.get_object("doc_box_selector")
+            checkbox = row.selector
             if checkbox.get_active():
                 checkbox.set_active(False)
         finally:
@@ -639,16 +615,16 @@ class Plugin(openpaperwork_core.PluginBase):
         if self.active_doc[0] is None:
             return
         doc_id = self.active_doc[0]
-        widget_tree = self.docid_to_widget_tree[doc_id]
-        button = widget_tree.get_object("doc_actions_menu")
+        row = self.docid_to_row[doc_id]
+        button = row.action_menu
         button.clicked()
 
     def screenshot_snap_doc_action_menu(self, out_file):
         if self.active_doc[0] is None:
             return
         doc_id = self.active_doc[0]
-        widget_tree = self.docid_to_widget_tree[doc_id]
-        button = widget_tree.get_object("doc_actions_menu")
+        row = self.docid_to_row[doc_id]
+        button = row.main_actions
 
         self.core.call_success(
             "screenshot_snap_widget",

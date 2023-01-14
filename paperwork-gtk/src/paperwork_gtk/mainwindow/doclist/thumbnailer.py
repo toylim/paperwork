@@ -119,7 +119,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all("work_queue_cancel_all", "thumbnailer")
 
     def on_doc_box_creation(self, doc_id, gtk_row, gtk_custom_flowlayout):
-        gtk_img = gtk_row.get_object("doc_thumbnail")
+        gtk_img = gtk_row.thumbnail
         gtk_img.set_size_request(PLACEHOLDER_WIDTH, PLACEHOLDER_HEIGHT)
         gtk_img.set_visible(True)
 
