@@ -280,14 +280,14 @@ class Plugin(PluginBase):
     def config_backend_add_plugin(self, opt_name, module_name):
         LOGGER.info("Adding plugin '%s' to configuration", module_name)
         modules = self.config_backend_list_active_plugins(opt_name)
-        modules.elements.append(module_name)
+        modules.append(module_name)
         self.config_backend_put("plugins", opt_name, modules)
 
     def config_backend_remove_plugin(self, opt_name, module_name):
         LOGGER.info("Removing plugin '%s' from configuration", module_name)
         modules = self.config_backend_list_active_plugins(opt_name)
         try:
-            modules.elements.remove(module_name)
+            modules.remove(module_name)
         except ValueError:
             LOGGER.warning("Plugin '%s' not found", module_name)
         self.config_backend_put("plugins", opt_name, modules)
