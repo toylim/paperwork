@@ -1,4 +1,5 @@
 import argparse
+import os
 import tempfile
 import unittest
 
@@ -7,7 +8,8 @@ import openpaperwork_core
 
 class TestConfig(unittest.TestCase):
     def setUp(self):
-        self.config_path = tempfile.NamedTemporaryFile()
+        self.config_path = tempfile.NamedTemporaryFile(delete=False)
+        self.config_path.close()
 
         self.core = openpaperwork_core.Core(auto_load_dependencies=True)
         self.core.load("openpaperwork_core.cmd.plugins")
@@ -25,7 +27,7 @@ class TestConfig(unittest.TestCase):
         self.core.call_all("config_register", "workdir", setting)
 
     def tearDown(self):
-        self.config_path.close()
+        os.unlink(self.config_path.name)
 
     def test_add_remove_list_plugin(self):
         self.core.call_all('config_load')
