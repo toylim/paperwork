@@ -150,5 +150,6 @@ class DocMainAction(Gtk.Button):
         self.set_tooltip_text(text)
         self.img.set_from_icon_name(icon_name, Gtk.IconSize.MENU)
 
+    @Gtk.Template.Callback("on_clicked")
     def on_clicked(self, button):
         self.callback()
