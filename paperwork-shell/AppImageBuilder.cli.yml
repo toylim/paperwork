@@ -49,6 +49,7 @@ AppDir:
     - bash
     - coreutils
     - dash
+    - gir1.2-pango-1.0
     - gobject-introspection
     - libexpat1
     - libgirepository1.0-dev
