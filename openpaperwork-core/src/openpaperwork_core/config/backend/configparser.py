@@ -193,6 +193,8 @@ _TYPE_SEPARATOR = ":"
 
 
 class Plugin(PluginBase):
+    TEST_FILE_URL = None  # unit tests only
+
     def __init__(self):
         self.config = configparser.RawConfigParser()
         self.base_path = None
@@ -223,6 +225,8 @@ class Plugin(PluginBase):
             self.base_path = self.core.call_success("paths_get_config_dir")
 
     def _get_filepath(self):
+        if self.TEST_FILE_URL is not None:
+            return self.TEST_FILE_URL
         return self.core.call_success(
             "fs_join", self.base_path, self.application_name + ".conf"
         )
