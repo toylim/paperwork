@@ -40,6 +40,10 @@ class Plugin(PluginBase):
                 'defaults': ['openpaperwork_core.mainloop.asyncio'],
             },
             {
+                'interface': 'pillow_error',
+                'defaults': ['openpaperwork_core.pillow'],
+            },
+            {
                 'interface': 'thread',
                 'defaults': ['openpaperwork_core.thread.simple'],
             },
@@ -53,14 +57,20 @@ class Plugin(PluginBase):
             return None
 
         task = "url_to_img_size({})".format(file_url)
+        size = (0, 0)
         self.core.call_all("on_perfcheck_start", task)
-
-        with self.core.call_success("fs_open", file_url, mode='rb') as fd:
-            img = PIL.Image.open(fd)
-            size = img.size
-
-        self.core.call_all("on_perfcheck_stop", task, size=size)
-        return size
+        try:
+            with self.core.call_success("fs_open", file_url, mode='rb') as fd:
+                img = PIL.Image.open(fd)
+                size = img.size
+            return size
+        except PIL.Image.DecompressionBombError as exc:
+            LOGGER.warning("Image %s is too big", file_url, exc_info=exc)
+            return self.core.call_success(
+                "pillow_get_error", "too_big"
+            ).size
+        finally:
+            self.core.call_all("on_perfcheck_stop", task, size=size)
 
     def url_to_img_size_promise(self, file_url):
         if not self._check_is_img(file_url):
@@ -75,16 +85,22 @@ class Plugin(PluginBase):
             return None
 
         task = "url_to_pillow({})".format(file_url)
+        size = (0, 0)
         self.core.call_all("on_perfcheck_start", task)
-
-        with self.core.call_success("fs_open", file_url, mode='rb') as fd:
-            img = PIL.Image.open(fd)
-            img.load()
-            self.core.call_all("on_objref_track", img)
-            size = img.size
-
-        self.core.call_all("on_perfcheck_stop", task, size=size)
-        return img
+        try:
+            with self.core.call_success("fs_open", file_url, mode='rb') as fd:
+                img = PIL.Image.open(fd)
+                img.load()
+                self.core.call_all("on_objref_track", img)
+                size = img.size
+            return img
+        except PIL.Image.DecompressionBombError as exc:
+            LOGGER.warning("Image %s is too big", file_url, exc_info=exc)
+            return self.core.call_success(
+                "pillow_get_error", "too_big"
+            )
+        finally:
+            self.core.call_all("on_perfcheck_stop", task, size=size)
 
     def url_to_pillow_promise(self, file_url):
         return promise.ThreadedPromise(

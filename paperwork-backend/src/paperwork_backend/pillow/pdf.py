@@ -35,7 +35,11 @@ def surface2image(core, surface):
     img_io = io.BytesIO()
     surface.surface.write_to_png(img_io)
     img_io.seek(0)
-    img = PIL.Image.open(img_io)
+    try:
+        img = PIL.Image.open(img_io)
+    except PIL.Image.DecompressionBombError as exc:
+        LOGGER.warning("Cairo surface is too big", exc_info=exc)
+        return core.call_success("pillow_get_error", "too_big")
     core.call_all("on_objref_track", img)
     img.load()
 
