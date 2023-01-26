@@ -76,6 +76,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_gtk.mainloop.glib'],
             },
             {
+                'interface': 'pillow_util',
+                'defaults': ['openpaperwork_core.pillow.util'],
+            },
+            {
                 'interface': 'urls',
                 'defaults': ['openpaperwork_core.urls'],
             },
