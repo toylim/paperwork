@@ -40,8 +40,8 @@ class Plugin(PluginBase):
                 'defaults': ['openpaperwork_core.mainloop.asyncio'],
             },
             {
-                'interface': 'pillow_error',
-                'defaults': ['openpaperwork_core.pillow'],
+                'interface': 'pillow_util',
+                'defaults': ['openpaperwork_core.pillow.util'],
             },
             {
                 'interface': 'thread',
