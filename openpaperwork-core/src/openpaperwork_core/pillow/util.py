@@ -1,9 +1,14 @@
+import logging
+
 import PIL
 import PIL.Image
 import PIL.ImageDraw
 import PIL.ImageFont
 
 from .. import PluginBase
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 class Plugin(PluginBase):
@@ -16,18 +21,17 @@ class Plugin(PluginBase):
 
     def pillow_get_error(self, error_id):
         msg = self.ID_TO_MSG[error_id]
+        font = PIL.ImageFont.load_default()
+
         longest_line = max(((len(line), line) for line in msg.split("\n")))
         longest_line = longest_line[1]
-
-        font = PIL.ImageFont.load_default()
-        size_func = getattr(
-            font, 'getbbox',
-            getattr(
-                font, 'getsize',
-                lambda txt: (400, 400)
-            )
-        )
-        size = size_func(longest_line)
+        if hasattr(font, 'getbbox'):
+            size = font.getbbox(longest_line)
+            size = (size[2], size[3])
+        elif hasattr(font, 'getsize'):
+            size = font.getsize(longest_line)
+        else:
+            size = (100, 100)
         size = (size[0], size[1] * (1 + (2 * msg.count("\n"))))
 
         img = PIL.Image.new("RGB", size, (255, 255, 255))
