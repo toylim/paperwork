@@ -611,8 +611,15 @@ class Plugin(openpaperwork_core.PluginBase):
             # some PDF are really badly damaged
             if page is None:
                 continue
-            txt = page.get_text()
-            txt = txt.strip()
+            try:
+                txt = page.get_text()
+                txt = txt.strip()
+            except UnicodeDecodeError as exc:
+                LOGGER.warning(
+                    "%s p%d: UnicodeDecodeError: Assuming page has no text",
+                    doc_url, page_idx, exc_info=exc
+                )
+                continue
             if txt == "":
                 continue
             out.append(txt)
@@ -641,7 +648,14 @@ class Plugin(openpaperwork_core.PluginBase):
         if page is None:
             return None
 
-        return len(page.get_text().strip()) > 0
+        try:
+            return len(page.get_text().strip()) > 0
+        except UnicodeDecodeError as exc:
+            LOGGER.warning(
+                "%s p%d: UnicodeDecodeError: Assuming page has no text",
+                doc_url, page_idx, exc_info=exc
+            )
+            return False
 
     def page_has_text_by_url(self, doc_url, page_idx):
         pdf_url = self._get_pdf_url(doc_url)
@@ -669,7 +683,14 @@ class Plugin(openpaperwork_core.PluginBase):
         if page is None:
             return None
 
-        return page.get_text().strip()
+        try:
+            return page.get_text().strip()
+        except UnicodeDecodeError as exc:
+            LOGGER.warning(
+                "%s p%d: UnicodeDecodeError: Assuming page has no text",
+                doc_url, page_idx, exc_info=exc
+            )
+            return False
 
     def page_get_text_by_url(self, doc_url, page_idx):
         pdf_url = self._get_pdf_url(doc_url)
@@ -697,8 +718,15 @@ class Plugin(openpaperwork_core.PluginBase):
         if pdf_page is None:
             return
 
-        txt = pdf_page.get_text()
-        if txt.strip() == "":
+        try:
+            txt = pdf_page.get_text()
+            if txt.strip() == "":
+                return None
+        except UnicodeDecodeError as exc:
+            LOGGER.warning(
+                "%s p%d: UnicodeDecodeError: Assuming page has no text",
+                doc_url, page_idx, exc_info=exc
+            )
             return None
 
         layout = pdf_page.get_text_layout()
