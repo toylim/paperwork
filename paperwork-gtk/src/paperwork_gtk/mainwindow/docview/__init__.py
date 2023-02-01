@@ -30,6 +30,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.scroll = None
         self.page_layout = None
         self.pages = []
+        self.nb_visible_pages = 0
         self.widget_to_page = {}
         self.page_to_widget = {}
         self.nb_columns = self.MAX_PAGES
@@ -238,6 +239,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.pages = []
         self.widget_to_page = {}
         self.page_to_widget = {}
+        self.nb_visible_pages = 0
 
         self.controllers = {}
         self.core.call_all(
@@ -285,9 +287,14 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doc_goto_page(self.active_page_idx + 1)
 
     def doc_goto_page(self, page_idx):
-        LOGGER.info("Going to page %d", page_idx)
+        LOGGER.info(
+            "Going to page %d (nb pages=%d)",
+            page_idx, self.nb_visible_pages
+        )
         if page_idx < 0:
             page_idx = 0
+        if page_idx >= self.nb_visible_pages:
+            page_idx = self.nb_visible_pages - 1
         self.requested_page_idx = page_idx
         for controller in self.controllers.values():
             controller.doc_goto_page(page_idx)
@@ -309,6 +316,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.page_to_widget[page] = widget
         self.pages.append(page)
         if visible:
+            self.nb_visible_pages += 1
             self.page_layout.add(widget)
 
     def docview_hide_page_viewer(self, page):
@@ -316,11 +324,13 @@ class Plugin(openpaperwork_core.PluginBase):
         # otherwise it's still taken into account when computing
         # the layout (keep in mind that homogenous is set to True)
         self.page_layout.remove(self.page_to_widget[page])
+        self.nb_visible_pages -= 1
 
     def docview_show_page_viewer(self, page):
         # XXX(Jflesch): We mess up the order of the widgets here. But since
         # only the scan viewer uses this method at the moment, it's fine.
         self.page_layout.add(self.page_to_widget[page])
+        self.nb_visible_pages += 1
 
     def on_mainwindow_fold_change(self):
         folded = self.core.call_success("mainwindow_get_folded")
