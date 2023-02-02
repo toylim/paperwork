@@ -83,6 +83,8 @@ linux_flatpak:
   tags:
     - openpaper-flatpak
   script:
+    # workaround error 'fatal: transport 'file' not allowed'
+    - git config --global --add protocol.file.allow always
     # Running in from a gitlab-runner directly in a shell, as the user
     # 'gitlab-runner'
     # --> not running as root, so we cannot actually install anything
