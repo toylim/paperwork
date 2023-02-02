@@ -26,20 +26,12 @@ build_img:
 
 check:
   stage: tests
-  only:
-    - branches@World/OpenPaperwork/paperwork
-    - tags@World/OpenPaperwork/paperwork
-    - merge_requests
   script:
     - make check
 
 
 test:
   stage: tests
-  only:
-    - branches@World/OpenPaperwork/paperwork
-    - tags@World/OpenPaperwork/paperwork
-    - merge_requests
   script:
     - source ./activate_test_env.sh && make install
     - source ./activate_test_env.sh && paperwork-gtk chkdeps -y
@@ -50,10 +42,6 @@ test:
 test_chkdeps:
   image: debian:bullseye
   stage: tests
-  only:
-    - branches@World/OpenPaperwork/paperwork
-    - tags@World/OpenPaperwork/paperwork
-    - merge_requests
   script:
     - apt-get update
     # bare minimum to install Paperwork from sources
@@ -72,9 +60,6 @@ test_chkdeps:
 
 generate_data:
   stage: data
-  only:
-    - branches@World/OpenPaperwork/paperwork
-    - tags@World/OpenPaperwork/paperwork
   script:
     - source ./activate_test_env.sh && make install
     - source ./activate_test_env.sh && xvfb-run paperwork-gtk chkdeps -y
@@ -84,9 +69,6 @@ generate_data:
 
 doc_devel:
   stage: data
-  only:
-    - branches@World/OpenPaperwork/paperwork
-    - tags@World/OpenPaperwork/paperwork
   script:
     - source ./activate_test_env.sh && make doc
     - source ./activate_test_env.sh && make upload_doc
@@ -111,9 +93,6 @@ linux_flatpak:
 linux_appimage:
   stage: deploy
   timeout: 2h
-  only:
-    - branches@World/OpenPaperwork/paperwork
-    - tags@World/OpenPaperwork/paperwork
   script:
     - pip3 install appimage-builder
     # Build
