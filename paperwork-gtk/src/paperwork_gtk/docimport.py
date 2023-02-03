@@ -115,7 +115,7 @@ class Plugin(openpaperwork_core.PluginBase):
             # User cancelled
             return
         importer = kwargs['importer']
-        file_import = kwargs['importer']
+        file_import = kwargs['file_import']
         self._do_import(importer, file_import, data={'password': password})
         return True
 

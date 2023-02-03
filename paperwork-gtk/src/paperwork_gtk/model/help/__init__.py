@@ -188,5 +188,13 @@ class Plugin(openpaperwork_core.PluginBase):
             return None
         return True
 
+    def doc_is_readonly_by_url(self, doc_url):
+        print("#####")
+        print(doc_url)
+        print(self.doc_urls_to_names)
+        if doc_url in self.doc_urls_to_names:
+            return True
+        return None
+
     def help_labels_get_all(self, out: set):
         out.add(self.label)
