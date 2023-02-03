@@ -52,6 +52,8 @@ class PageEditor(object):
         self.page_idx = page_idx
 
         if doc_url is not None:
+            if self.core.call_success("doc_is_readonly_by_url", doc_url):
+                raise Exception("Doc %s is read-only, can't edit", doc_url)
             page_url = self.core.call_success(
                 "page_get_img_url", doc_url, page_idx, write=False
             )
