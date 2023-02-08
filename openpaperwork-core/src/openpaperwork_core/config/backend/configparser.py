@@ -331,6 +331,8 @@ class Plugin(PluginBase):
     def config_backend_get(self, section, key, default=None):
         try:
             value = self.config[section][key]
+            if value.strip() == "":
+                return None
             (t, value) = value.split(_TYPE_SEPARATOR, 1)
             r = _STR_TO_TYPE[t](value)
             if hasattr(r, 'get_value'):
