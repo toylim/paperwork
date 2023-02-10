@@ -74,7 +74,7 @@ class Plugin(openpaperwork_core.PluginBase):
             "gtk_load_widget_tree",
             "paperwork_gtk.mainwindow.docview.pageadd", "source_box.glade"
         )
-        source_long_txt = _("Import image or PDF file(s)")
+        source_long_txt = _("Import document or image file(s)")
         source_short_txt = _("Import file(s)")
         img = "insert-image-symbolic"
 

@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2021-10-09 12:56+0200\n"
+"POT-Creation-Date: 2023-02-10 18:54+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1741,7 +1741,7 @@ msgstr ""
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:956
 msgid ""
 "There is also an IRC channel for live discussions: "
-"\\href{https://webchat.freenode.net/}{Freenode}, channel \\#openpaperwork"
+"\\href{https://web.libera.chat/}{Liberachat}, channel \\#paperwork"
 msgstr ""
 
 #. type: document
