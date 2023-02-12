@@ -64,7 +64,7 @@ class Page(GObject.GObject):
         LOGGER.info(
             "URL for %s p%d: %s", self.doc_url, self.page_idx, page_img_url
         )
-        assert(page_img_url is not None)
+        assert page_img_url is not None
 
         self.renderer = self.core.call_success(
             "cairo_renderer_by_url", "page_loader", page_img_url
@@ -105,7 +105,7 @@ class Page(GObject.GObject):
         self.emit('size_obtained')
 
     def _on_renderer_img(self, renderer):
-        assert(self.visible)
+        assert self.visible
         self.refresh()
         self.core.call_all("on_page_img_obtained", self)
         self.emit('img_obtained')

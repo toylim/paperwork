@@ -154,7 +154,7 @@ class Drawer(object):
                 self.request_redraw()
             self.active_handle = active_handle
         else:
-            assert(self.set_frame_cb is not None)
+            assert self.set_frame_cb is not None
             factor = self._get_factor()
             frame = self.get_frame_cb()
             if frame is not None:

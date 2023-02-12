@@ -40,7 +40,7 @@ class Plugin(PluginBase):
         if not self.external_app_can_send_as_attachment():
             return None
         LOGGER.info("Sending %s as attachment with xdg-email", file_url)
-        assert(file_url.startswith("file://"))
+        assert file_url.startswith("file://")
         file_path = self.core.call_success("fs_unsafe", file_url)
         # xdg-email returns immediately, and we are interested in whether is
         # raises an exception

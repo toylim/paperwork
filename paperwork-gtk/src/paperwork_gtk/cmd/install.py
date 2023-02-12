@@ -48,7 +48,7 @@ class Plugin(openpaperwork_core.PluginBase):
         p.add_argument("--data_base_dir", default="/usr/share")
 
     def _install(self, icondir, datadir):
-        assert(PKG_RESOURCES_AVAILABLE)
+        assert PKG_RESOURCES_AVAILABLE
         png_src_icon_pattern = "paperwork_{}.png"
         png_dst_icon_pattern = os.path.join(
             icondir, "hicolor", "{size}x{size}", "apps",

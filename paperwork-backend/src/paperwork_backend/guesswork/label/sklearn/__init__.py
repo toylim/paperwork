@@ -330,7 +330,7 @@ class Corpus(object):
             required_padding = (
                 vectorizer.last_feature_id + 1 - doc_vector.shape[0]
             )
-            assert(required_padding >= 0)
+            assert required_padding >= 0
             if required_padding > 0:
                 doc_vector = scipy.sparse.hstack([
                     scipy.sparse.csr_matrix(doc_vector),
@@ -392,7 +392,7 @@ class Corpus(object):
     def _add_doc_ids(max_doc_backlog, doc_weights, doc_ids):
         # Assumes doc_ids are in reverse order (most recent first)
         # Also assumes most recent documents are the most useful
-        assert(len(doc_ids) <= max_doc_backlog)
+        assert len(doc_ids) <= max_doc_backlog
         weigth = max_doc_backlog + 1
         for doc_id in doc_ids:
             doc_weights[doc_id] += weigth
@@ -533,7 +533,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
             return
 
         # prevent reload of classifiers during the transaction
-        assert(not self.lock_acquired)
+        assert not self.lock_acquired
         self.plugin.classifiers_cond.acquire()
         self.lock_acquired = True
 
@@ -678,7 +678,7 @@ class LabelGuesserTransaction(sync.BaseTransaction):
                 "on_label_guesser_commit_start"
             )
             if self.nb_changes <= 0:
-                assert(self.cursor is None)
+                assert self.cursor is None
                 self.notify_done(ID)
                 self.core.call_success(
                     "mainloop_schedule", self.core.call_all,
@@ -1029,7 +1029,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _set_guessed_labels(self, doc_url):
         # self.classifiers_cond must locked
-        assert(self.classifiers is not None)
+        assert self.classifiers is not None
         labels = self._guess(
             self.vectorizer, self.word_reductor, self.classifiers, doc_url
         )

@@ -8,7 +8,7 @@ class AbstractTestCallback(unittest.TestCase):
         """
         Must be overloaded by subclasses
         """
-        assert()
+        assert False
 
     def setUp(self):
         self.core = Core(auto_load_dependencies=True)
@@ -35,7 +35,7 @@ class AbstractTestPromise(unittest.TestCase):
         """
         Must be overloaded by subclasses
         """
-        assert()
+        assert False
 
     def setUp(self):
         self.core = Core(auto_load_dependencies=True)

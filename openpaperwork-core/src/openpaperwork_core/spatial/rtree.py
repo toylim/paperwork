@@ -57,7 +57,7 @@ class Node(object):
         s = self
         while True:
             depth += 1
-            assert(depth < 512)
+            assert depth < 512
             if s.leaf:
                 box = (
                     (
@@ -86,7 +86,7 @@ class Node(object):
             s = s.parent
 
     def is_full(self):
-        assert(self.leaf)
+        assert self.leaf
         return len(self.children) >= NB_CHILDREN_PER_NODES
 
     @staticmethod
@@ -96,7 +96,7 @@ class Node(object):
         (see Guttman Quadratic Split algorithm)
         """
 
-        assert(len(boxes) >= 2)
+        assert len(boxes) >= 2
 
         if len(boxes) == 2:  # minor optim
             return tuple(boxes)
@@ -124,11 +124,11 @@ class Node(object):
                 if waste > max_waste or r is None:
                     r = (a, b)
 
-        assert(r is not None)
+        assert r is not None
         return r
 
     def split(self):
-        assert(self.leaf)
+        assert self.leaf
 
         our_children = self.children
         picked = []
@@ -154,7 +154,7 @@ class Node(object):
         self.leaf = False
 
     def insert_box(self, box):
-        assert(self.leaf)
+        assert self.leaf
         self.children.append(box)
         self.recompute_box()
 

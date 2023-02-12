@@ -132,7 +132,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 self, gtk_widget, out_file_url, margins=(20, 20, 20, 20),
                 highlight=(0.67, 0.80, 0.93)
             ):
-        assert(out_file_url.endswith(".png"))
+        assert out_file_url.endswith(".png")
 
         if not gtk_widget.is_drawable() or not gtk_widget.get_visible():
             LOGGER.warning(

@@ -65,7 +65,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.active_page_idx = page_idx
 
     def _open_exporter(self, *args, **kwargs):
-        assert(self.active_doc is not None)
+        assert self.active_doc is not None
         self.core.call_all(
             "gtk_open_exporter", *self.active_doc, self.active_page_idx
         )

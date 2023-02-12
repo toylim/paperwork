@@ -25,7 +25,7 @@ class Scroller(object):
 
     def _goto_on_allocate(self, *args, **kwargs):
         alloc = self.widget.get_allocation()
-        assert(alloc.y >= 0)
+        assert alloc.y >= 0
         self.controller.last_value = alloc.y
         self.controller.plugin.scroll.get_vadjustment().set_value(alloc.y)
         if self.allocate_handler_id is not None:

@@ -51,7 +51,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.active_doc = None
 
     def _open_properties(self, *args, **kwargs):
-        assert(self.active_doc is not None)
+        assert self.active_doc is not None
         active = self.active_doc
 
         LOGGER.info("Opening properties of document %s", active[0])

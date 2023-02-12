@@ -60,7 +60,7 @@ class WorkQueue(object):
 
         with self.lock:
             heapq.heappush(self.queue, task)
-            assert(
+            assert (
                 promise not in self.all_tasks or
                 not self.all_tasks[promise].active
             )

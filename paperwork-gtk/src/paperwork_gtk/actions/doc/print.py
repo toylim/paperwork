@@ -61,5 +61,5 @@ class Plugin(openpaperwork_core.PluginBase):
         self.active_doc = None
 
     def _print(self, *args, **kwargs):
-        assert(self.active_doc is not None)
+        assert self.active_doc is not None
         self.core.call_all("doc_print", *self.active_doc)

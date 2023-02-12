@@ -8,7 +8,7 @@ class AbstractImgEditor(object):
             preview -- indicates if we intend to use the result as a preview
                 or as final result
         """
-        assert()
+        assert False
 
     def transform_frame(self, img_size, frame):
         """

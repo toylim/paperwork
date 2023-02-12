@@ -42,8 +42,8 @@ class BasePromise(object):
 
     def then(self, callback, *args, **kwargs):
         if isinstance(callback, BasePromise):
-            assert(args is None or len(args) <= 0)
-            assert(kwargs is None or len(kwargs) <= 0)
+            assert args is None or len(args) <= 0
+            assert kwargs is None or len(kwargs) <= 0
             last_promise = callback
             while callback.parent is not None:
                 callback = callback.parent
@@ -134,7 +134,7 @@ class BasePromise(object):
         self.core.call_one("mainloop_schedule", s._do, args)
 
     def wait(self):
-        assert(
+        assert (
             # must never be called from main loop.
             threading.current_thread().ident !=
             self.core.call_success("mainloop_get_thread_id")

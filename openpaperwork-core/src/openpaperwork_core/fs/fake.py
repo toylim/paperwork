@@ -132,7 +132,7 @@ class Plugin(CommonFsPluginBase):
 
     @staticmethod
     def _get_path(url):
-        assert(url.lower().startswith("file:///"))
+        assert url.lower().startswith("file:///")
         url = url[len('file:///'):]
         return url.split('/')
 
@@ -144,7 +144,7 @@ class Plugin(CommonFsPluginBase):
             f = f[p]
         if path[-1] in f:
             f = f[path[-1]]
-            assert(isinstance(f, str) or isinstance(f, bytes))
+            assert isinstance(f, str) or isinstance(f, bytes)
         elif 'b' in mode:
             f = b""
         else:
@@ -168,7 +168,7 @@ class Plugin(CommonFsPluginBase):
                 f = f[p]
             except KeyError:
                 return None
-        assert(isinstance(f, dict))
+        assert isinstance(f, dict)
         return [url + "/" + k for k in f.keys()]
 
     def fs_rename(self, old_url, new_url):
@@ -195,7 +195,7 @@ class Plugin(CommonFsPluginBase):
             if p not in f:
                 return None
             f = f[p]
-        assert(isinstance(f, dict))
+        assert isinstance(f, dict)
         filename = url.split("/")[-1]
         if filename in f:
             f.pop(filename)

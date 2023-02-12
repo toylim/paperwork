@@ -146,7 +146,7 @@ class Plugin(openpaperwork_core.PluginBase):
             out['gtk'] = openpaperwork_gtk.deps.GTK
 
     def gtk_widget_label_new(self, label_txt, label_color, highlight=False):
-        assert(CAIRO_AVAILABLE)
-        assert(GI_AVAILABLE)
-        assert(GTK_AVAILABLE)
+        assert CAIRO_AVAILABLE
+        assert GI_AVAILABLE
+        assert GTK_AVAILABLE
         return LabelWidget(self.core, label_txt, label_color, highlight)

@@ -80,11 +80,11 @@ class PdfDocUrlToPdfUrlExportPipe(AbstractExportPipe):
                     out = target_file_url.rsplit(".", 1)
                     out = "{}_{}.{}".format(out[0], idx, out[1])
 
-                assert(not doc.expanded)
+                assert not doc.expanded
                 pdf_url = self.core.call_success(
                     "doc_get_pdf_url_by_url", doc.data[1]
                 )
-                assert(pdf_url is not None)
+                assert pdf_url is not None
                 self.core.call_success("fs_copy", pdf_url, out)
                 out_files.append(out)
             return out_files

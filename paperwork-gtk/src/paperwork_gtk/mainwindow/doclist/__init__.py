@@ -393,7 +393,7 @@ class Plugin(openpaperwork_core.PluginBase):
             return
 
         row = self._show_doc_id(doc_id)
-        assert(row is not None)
+        assert row is not None
         self.doclist.select_row(row)
 
         if (self.previous_doc[0] is not None and
