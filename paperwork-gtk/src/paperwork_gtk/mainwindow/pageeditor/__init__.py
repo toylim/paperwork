@@ -59,7 +59,7 @@ class GtkPageEditorUI(paperwork_backend.pageedit.AbstractPageEditorUI):
         self.zoom.connect("value-changed", self._on_zoom_changed)
 
     def add_modifier_toggles(self):
-        assert(self.editor is not None)
+        assert self.editor is not None
 
         toolbox = self.plugin.widget_tree.get_object("pageeditor_tools")
         zoom_box = self.plugin.widget_tree.get_object("pageeditor_zoom_box")

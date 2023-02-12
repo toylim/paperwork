@@ -201,21 +201,21 @@ class Plugin(openpaperwork_core.PluginBase):
         e.doc_open(doc_id, doc_url)
 
     def open_doc_properties(self, doc_id, doc_url):
-        assert(self.active_editor is None)
+        assert self.active_editor is None
         e = self.editors['single_doc']
         self.active_editor = e
         e.doc_open(doc_id, doc_url)
         e.show()
 
     def open_docs_properties(self, docs):
-        assert(self.active_editor is None)
+        assert self.active_editor is None
         e = self.editors['multiple_docs']
         self.active_editor = e
         e.docs_open(docs)
         e.show()
 
     def close_doc_properties(self):
-        assert(self.active_editor is not None)
+        assert self.active_editor is not None
         self.active_editor.hide()
         self.active_editor = None
 

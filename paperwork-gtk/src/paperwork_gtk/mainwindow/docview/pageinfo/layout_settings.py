@@ -121,7 +121,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.layout_icon.set_from_icon_name(icon, Gtk.IconSize.SMALL_TOOLBAR)
 
     def _on_layout_change(self, widget):
-        assert(widget in self.layout_buttons)
+        assert widget in self.layout_buttons
         layout = self.layout_buttons[widget]['layout']
         self.core.call_all("docview_set_layout", layout)
 

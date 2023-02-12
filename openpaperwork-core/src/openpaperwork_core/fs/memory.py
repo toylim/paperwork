@@ -262,8 +262,8 @@ class Plugin(CommonFsPluginBase):
                 self, prefix=None, suffix=None, mode='w+b', on_disk=False,
                 **kwargs
             ):
-        assert(prefix is None or '/' not in prefix)
-        assert(suffix is None or '/' not in suffix)
+        assert prefix is None or '/' not in prefix
+        assert suffix is None or '/' not in suffix
         if on_disk:
             return
         name = "{}{}{}".format(

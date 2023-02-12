@@ -122,7 +122,7 @@ class Plugin(openpaperwork_core.PluginBase):
             (src_doc_id, src_page_idx) = self._parse_paperwork_uri(src_uri)
 
         src_doc_url = self.core.call_success("doc_id_to_url", src_doc_id)
-        assert(src_doc_url is not None)
+        assert src_doc_url is not None
 
         if src_doc_id == dst_doc_id and src_page_idx < dst_page_idx:
             dst_page_idx -= 1

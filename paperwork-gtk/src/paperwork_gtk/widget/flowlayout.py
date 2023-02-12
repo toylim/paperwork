@@ -295,6 +295,6 @@ class Plugin(openpaperwork_core.PluginBase):
             out['gtk'].update(openpaperwork_gtk.deps.GTK)
 
     def gtk_widget_flowlayout_new(self, spacing=(0, 0)):
-        assert(GLIB_AVAILABLE)
-        assert(GTK_AVAILABLE)
+        assert GLIB_AVAILABLE
+        assert GTK_AVAILABLE
         return CustomFlowLayout(self.core, spacing)

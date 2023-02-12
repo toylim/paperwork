@@ -74,7 +74,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         renderers = []
         self.core.call_all("doc_renderer_get", renderers)
-        assert(len(renderers) > 0)
+        assert len(renderers) > 0
         renderer = renderers[-1]
 
         if self.interactive:

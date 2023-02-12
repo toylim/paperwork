@@ -128,7 +128,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def complete_scanner_settings(
             self, settings_widget_tree, parent_widget_tree,
             list_scanner_promise):
-        assert(self.widget_tree is not None)
+        assert self.widget_tree is not None
 
         def set_sensitive():
             dev_id = self.core.call_success("config_get", "scanner_dev_id")

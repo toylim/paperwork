@@ -70,7 +70,7 @@ class LibinsaneLogger(GObject.GObject, Libinsane.Logger):
 
 def raw_to_img(params, img_bytes):
     fmt = params.get_format()
-    assert(fmt == Libinsane.ImgFormat.RAW_RGB_24)
+    assert fmt == Libinsane.ImgFormat.RAW_RGB_24
     (w, h) = (
         params.get_width(),
         int(len(img_bytes) / 3 / params.get_width())
@@ -253,7 +253,7 @@ class Source(object):
                     "on_scan_page_start", scan_id, page_nb, scan_params
                 )
 
-                assert(
+                assert (
                     scan_params.get_format()
                     == Libinsane.ImgFormat.RAW_RGB_24
                 )

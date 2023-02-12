@@ -167,7 +167,7 @@ class Plugin(openpaperwork_core.PluginBase):
             if doc['url'] == doc_url:
                 if page_idx >= len(doc['page_boxes']):
                     missing = page_idx + 1 - len(doc['page_boxes'])
-                    assert(missing >= 1)
+                    assert missing >= 1
                     doc['page_boxes'] += ([None] * missing)
                 doc['page_boxes'][page_idx] = boxes
 

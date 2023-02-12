@@ -47,7 +47,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     @staticmethod
     def _color(color):
-        assert(FABULOUS_AVAILABLE)
+        assert FABULOUS_AVAILABLE
         color = "#%1X%1X%1X" % (
             int(color[0] * 0xF),
             int(color[1] * 0xF),

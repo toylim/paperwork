@@ -5,7 +5,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 def _shift_pages(core, page_filename_fmt, doc_url, start_page_idx, offset):
-    assert(offset != 0)
+    assert offset != 0
 
     total_pages = core.call_success("doc_get_nb_pages_by_url", doc_url)
     if total_pages is None:
@@ -52,7 +52,7 @@ def move_page_file(
             dest_doc_url, dest_page_idx
         ):
     if core.call_success("fs_exists", dest_doc_url) is None:
-        assert(dest_page_idx == 0)
+        assert dest_page_idx == 0
         core.call_success("fs_mkdir_p", dest_doc_url)
 
     LOGGER.info(

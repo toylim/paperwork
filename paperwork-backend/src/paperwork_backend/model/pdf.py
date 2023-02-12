@@ -571,7 +571,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def _custom_split(input_str, input_rects, splitter, log_txt):
         # turn text and layout from Poppler into boxes
         # XXX(Jflesch): following assert fails sometimes ? oO
-        # assert(len(input_str) == len(input_rects))
+        # assert len(input_str) == len(input_rects)
         if len(input_str) != len(input_rects):
             LOGGER.warning(
                 "%s: Input strings: %d ; Input rects: %d",
@@ -592,7 +592,7 @@ class Plugin(openpaperwork_core.PluginBase):
             for (letter, rect) in group:
                 letters += letter
                 rects.append(rect)
-            yield(letters, rects)
+            yield (letters, rects)
 
     def _doc_get_text_by_url(self, out: list, doc_url):
         task = "pdf_get_text_by_url({})".format(doc_url)
@@ -907,7 +907,7 @@ class Plugin(openpaperwork_core.PluginBase):
             dest_mapping.make_room_for_target_page(target_dest_page_idx)
 
         if source_doc_url == dest_doc_url:
-            assert(source_mapping is dest_mapping)
+            assert source_mapping is dest_mapping
             if original_source_page_idx is not None:
                 LOGGER.info(
                     "New mapping: %s: original=p%d --> target=p%d",

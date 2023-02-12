@@ -53,7 +53,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _set_mouse_cursor(self, offset):
         self.refcount += offset
-        assert(self.refcount >= 0)
+        assert self.refcount >= 0
 
         if len(self.windows) <= 0:
             LOGGER.warning(

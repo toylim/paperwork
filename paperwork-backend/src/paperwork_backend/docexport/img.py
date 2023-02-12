@@ -46,7 +46,7 @@ class ExportDataPage(ExportData):
         page_url = (self.core.call_success(
             "page_get_img_url", self.doc_url, self.page_idx
         ))
-        assert(page_url is not None)
+        assert page_url is not None
         img = self.core.call_success("url_to_pillow", page_url)
         boxes = self.core.call_success(
             "page_get_boxes_by_url", self.doc_url, self.page_idx
@@ -75,7 +75,7 @@ class DocToPillowBoxesExportPipe(AbstractExportPipe):
 
     def get_promise(self, result='final', target_file_url=None):
         def to_img_and_boxes(input_data):
-            assert(input_data.dtype == ExportDataType.DOCUMENT_SET)
+            assert input_data.dtype == ExportDataType.DOCUMENT_SET
 
             docs = input_data.iter(ExportDataType.DOCUMENT)
             docs = list(docs)
@@ -88,13 +88,13 @@ class DocToPillowBoxesExportPipe(AbstractExportPipe):
 
             total_pages = 0
             for (doc_set, doc) in docs:
-                assert(doc.expanded)
+                assert doc.expanded
                 total_pages += len(doc.get_children())
 
             nb_pages = 0
             last_page = None
             for (doc_set, doc) in docs:
-                assert(doc.expanded)
+                assert doc.expanded
 
                 # replace the document page list by objects that will
                 # generate their children (img+boxes) on-the-fly.

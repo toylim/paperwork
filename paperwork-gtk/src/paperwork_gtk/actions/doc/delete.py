@@ -71,7 +71,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.active_doc = (None, None)
 
     def _delete(self, action, parameter):
-        assert(self.active_doc is not None)
+        assert self.active_doc is not None
         active = self.active_doc
 
         LOGGER.info("Asking confirmation before deleting doc %s", active[0])

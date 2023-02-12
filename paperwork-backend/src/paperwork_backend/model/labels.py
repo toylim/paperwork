@@ -173,7 +173,7 @@ class Plugin(openpaperwork_core.PluginBase):
             return (1, 1, 1)  # white
 
     def doc_add_label_by_url(self, doc_url, label, color=None):
-        assert("," not in label)
+        assert "," not in label
         current = set()
         self.doc_get_labels_by_url(current, doc_url)
         current = {k: v for (k, v) in current}

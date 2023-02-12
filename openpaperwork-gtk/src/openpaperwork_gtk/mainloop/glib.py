@@ -133,7 +133,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def mainloop_unref(self, obj):
         with self.lock:
             self.task_count -= 1
-            assert(self.task_count >= 0)
+            assert self.task_count >= 0
             try:
                 s = str(obj)
                 self.active_tasks[s] -= 1
@@ -146,7 +146,7 @@ class Plugin(openpaperwork_core.PluginBase):
         if not GLIB_AVAILABLE:
             return None
 
-        assert(hasattr(func, '__call__'))
+        assert hasattr(func, '__call__')
 
         with self.lock:
             self._check_mainloop_instantiated()

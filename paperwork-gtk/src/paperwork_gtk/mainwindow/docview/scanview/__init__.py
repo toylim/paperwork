@@ -243,7 +243,7 @@ class Plugin(openpaperwork_core.PluginBase):
         nb_pages = self.core.call_success(
             "doc_get_nb_pages_by_url", self.doc_url
         )
-        assert(nb_pages is not None)
+        assert nb_pages is not None
 
         LOGGER.info("Displaying new page %d", nb_pages - 1)
         self.core.call_all("doc_goto_page", nb_pages - 1)

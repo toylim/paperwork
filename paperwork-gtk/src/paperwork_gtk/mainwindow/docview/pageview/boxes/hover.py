@@ -29,8 +29,8 @@ class PageHoverHandler(object):
         self.boxes = spatial_index
 
     def connect(self):
-        assert(self.realize_handler_id is None)
-        assert(self.motion_handler_id is None)
+        assert self.realize_handler_id is None
+        assert self.motion_handler_id is None
         self.realize_handler_id = self.page.widget.connect(
             "realize", self.on_realize
         )
@@ -40,8 +40,8 @@ class PageHoverHandler(object):
         self.on_realize()
 
     def disconnect(self):
-        assert(self.realize_handler_id is not None)
-        assert(self.motion_handler_id is not None)
+        assert self.realize_handler_id is not None
+        assert self.motion_handler_id is not None
         self.page.widget.disconnect(self.realize_handler_id)
         self.page.widget.disconnect(self.motion_handler_id)
         self.realize_handler_id = None
@@ -128,7 +128,7 @@ class Plugin(openpaperwork_core.PluginBase):
         h = PageHoverHandler(self.core, page)
         self.handlers[page.widget] = h
 
-        assert(page.widget in self.handlers)
+        assert page.widget in self.handlers
         h = self.handlers[page.widget]
         h.set_boxes(boxes, spatial_index)
         if page.get_visible():

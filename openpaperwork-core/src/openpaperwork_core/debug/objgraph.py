@@ -21,7 +21,7 @@ class Plugin(PluginBase):
         return ['memleak_detector']
 
     def on_objref_track(self, obj):
-        assert(obj is not None)
+        assert obj is not None
         self.objs.append((str(type(obj)), weakref.ref(obj)))
 
     def on_objref_graph(self):

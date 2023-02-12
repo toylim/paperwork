@@ -93,7 +93,7 @@ class Plugin(openpaperwork_core.PluginBase):
             data.set_uris([img_url])
             return
 
-        assert()
+        assert False
 
     def doc_open_components(self, out: list, doc_id, doc_url):
         self.active_doc = (doc_id, doc_url)

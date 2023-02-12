@@ -59,7 +59,7 @@ class Plugin(openpaperwork_core.PluginBase):
             # Skip Tesseract data file for page orientation guessing
             if lang != 'osd'
         ]
-        all_langs.sort(key=lambda l: l[1])
+        all_langs.sort(key=lambda lang: lang[1])
 
         LOGGER.info("OCR languages: %s", all_langs)
         LOGGER.info("Active OCR languages: %s", active_langs)

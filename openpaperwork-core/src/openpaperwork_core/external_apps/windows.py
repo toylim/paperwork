@@ -26,7 +26,7 @@ class Plugin(PluginBase):
             return None
         # os.startfile() is Windows-only.
         LOGGER.info("Opening %s with os.startfile()", file_url)
-        assert(file_url.startswith("file://"))
+        assert file_url.startswith("file://")
         file_path = self.core.call_success("fs_safe", file_url)
         os.startfile(file_path)
         return True
