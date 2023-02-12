@@ -138,7 +138,7 @@ class Plugin(openpaperwork_core.PluginBase):
         page_url = self.core.call_success(
             "page_get_img_url", doc_url, page_idx
         )
-        assert(page_url is not None)
+        assert page_url is not None
         img = self.core.call_success("url_to_pillow", page_url)
         img = self.core.call_success("thumbnail_from_img", img)
 

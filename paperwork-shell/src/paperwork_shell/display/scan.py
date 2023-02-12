@@ -36,7 +36,7 @@ class AppendableImage(object):
         self.height = 0
 
     def append(self, chunk):
-        assert(self.img.size[0] == chunk.size[0])
+        assert self.img.size[0] == chunk.size[0]
         self.img.paste(chunk, (0, self.height))
         self.height += chunk.size[1]
 

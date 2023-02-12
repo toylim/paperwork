@@ -11,7 +11,7 @@ class AbstractTestSafe(unittest.TestCase):
         """
         must be subclassed
         """
-        assert()
+        assert False
 
     def setUp(self):
         self.core = openpaperwork_core.Core(auto_load_dependencies=True)
@@ -40,7 +40,7 @@ class AbstractTestUnsafe(unittest.TestCase):
         """
         must be subclassed
         """
-        assert()
+        assert False
 
     def setUp(self):
         self.core = openpaperwork_core.Core(auto_load_dependencies=True)
@@ -74,7 +74,7 @@ class AbstractTestOpen(unittest.TestCase):
         """
         must be subclassed
         """
-        assert()
+        assert False
 
     def setUp(self):
         self.core = openpaperwork_core.Core(auto_load_dependencies=True)
@@ -145,7 +145,7 @@ class AbstractTestExists(unittest.TestCase):
         """
         must be subclassed
         """
-        assert()
+        assert False
 
     def setUp(self):
         self.core = openpaperwork_core.Core(auto_load_dependencies=True)
@@ -172,7 +172,7 @@ class AbstractTestListDir(unittest.TestCase):
         """
         must be subclassed
         """
-        assert()
+        assert False
 
     def setUp(self):
         self.core = openpaperwork_core.Core(auto_load_dependencies=True)
@@ -220,7 +220,7 @@ class AbstractTestRename(unittest.TestCase):
         """
         must be subclassed
         """
-        assert()
+        assert False
 
     def setUp(self):
         self.core = openpaperwork_core.Core(auto_load_dependencies=True)
@@ -261,7 +261,7 @@ class AbstractTestUnlink(unittest.TestCase):
         """
         must be subclassed
         """
-        assert()
+        assert False
 
     def setUp(self):
         self.core = openpaperwork_core.Core(auto_load_dependencies=True)
@@ -290,7 +290,7 @@ class AbstractTestGetMtime(unittest.TestCase):
         """
         must be subclassed
         """
-        assert()
+        assert False
 
     def setUp(self):
         self.core = openpaperwork_core.Core(auto_load_dependencies=True)
@@ -327,7 +327,7 @@ class AbstractTestGetsize(unittest.TestCase):
         """
         must be subclassed
         """
-        assert()
+        assert False
 
     def setUp(self):
         self.core = openpaperwork_core.Core(auto_load_dependencies=True)
@@ -354,7 +354,7 @@ class AbstractTestIsdir(unittest.TestCase):
         """
         must be subclassed
         """
-        assert()
+        assert False
 
     def setUp(self):
         self.core = openpaperwork_core.Core(auto_load_dependencies=True)
@@ -391,7 +391,7 @@ class AbstractTestCopy(unittest.TestCase):
         """
         must be subclassed
         """
-        assert()
+        assert False
 
     def setUp(self):
         self.core = openpaperwork_core.Core(auto_load_dependencies=True)
@@ -436,7 +436,7 @@ class AbstractTestMkdirP(unittest.TestCase):
         """
         must be subclassed
         """
-        assert()
+        assert False
 
     def setUp(self):
         self.core = openpaperwork_core.Core(auto_load_dependencies=True)
@@ -463,7 +463,7 @@ class AbstractTestBasename(unittest.TestCase):
         """
         must be subclassed
         """
-        assert()
+        assert False
 
     def setUp(self):
         self.core = openpaperwork_core.Core(auto_load_dependencies=True)
@@ -484,7 +484,7 @@ class AbstractTestTemp(unittest.TestCase):
         """
         must be subclassed
         """
-        assert()
+        assert False
 
     def setUp(self):
         self.core = openpaperwork_core.Core(auto_load_dependencies=True)

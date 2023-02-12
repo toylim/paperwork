@@ -189,7 +189,7 @@ class Plugin(openpaperwork_core.PluginBase):
         h = PageSelectionHandler(self.core, self, page)
         self.handlers[page.widget] = h
 
-        assert(page.widget in self.handlers)
+        assert page.widget in self.handlers
         h = self.handlers[page.widget]
         h.set_boxes(boxes, spatial_index)
         if page.get_visible():

@@ -34,7 +34,7 @@ class Sender(object):
         self.current_step = 0
 
     def _notify_progress(self, *args, **kwargs):
-        assert(self.current_step <= self.nb_steps)
+        assert self.current_step <= self.nb_steps
 
         if self.current_step == 0:
             txt = _("Creating bug report ...")

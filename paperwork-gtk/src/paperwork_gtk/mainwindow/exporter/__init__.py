@@ -257,7 +257,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 # there is a choice (or none at all), nothing to do
                 return
             pipe = pipes[0]
-            assert(pipe.name not in (p.name for p in self.pipeline))
+            assert pipe.name not in (p.name for p in self.pipeline)
             self.pipeline.append(pipe)
             LOGGER.info("Pipeline expanded: %s", [
                 p.name for p in self.pipeline

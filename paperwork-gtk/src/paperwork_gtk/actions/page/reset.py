@@ -72,7 +72,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.active_page_idx = page_idx
 
     def _reset(self, *args, **kwargs):
-        assert(self.active_doc is not None)
+        assert self.active_doc is not None
 
         (doc_id, doc_url) = self.active_doc
         page_idx = self.active_page_idx

@@ -86,7 +86,7 @@ class _GioFileAdapter(io.RawIOBase):
             size = self.size
             if size <= 0:
                 return b""
-        assert(size > 0)
+        assert size > 0
         return self.gin.read_bytes(size).get_data()
 
     def readall(self):
@@ -329,7 +329,7 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
         try:
             old = self.vfs.get_file_for_uri(old_url)
             new = self.vfs.get_file_for_uri(new_url)
-            assert(not old.equal(new))
+            assert not old.equal(new)
             if not old.query_exists():
                 return None
             old.move(new, Gio.FileCopyFlags.NONE)

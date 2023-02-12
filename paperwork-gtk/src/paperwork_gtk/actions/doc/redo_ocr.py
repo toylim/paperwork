@@ -80,7 +80,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.action.set_enabled(enabled is not None)
 
     def _redo_ocr(self, action, parameter):
-        assert(self.active_doc is not None)
+        assert self.active_doc is not None
         (doc_id, doc_url) = self.active_doc
 
         nb_pages = self.core.call_success("doc_get_nb_pages_by_url", doc_url)

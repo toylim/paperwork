@@ -113,7 +113,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.active_page_idx = page_idx
 
     def _start_move_to_doc(self, *args, **kwargs):
-        assert(self.active_doc is not None)
+        assert self.active_doc is not None
         if self.active_page_idx < 0:
             return
         LOGGER.info("Starting 'move to doc' process")

@@ -272,4 +272,4 @@ class Plugin(openpaperwork_core.PluginBase):
             return self._set_scanner(args)
         elif args.subcommand == 'get':
             return self._get_scanner()
-        assert()
+        assert False

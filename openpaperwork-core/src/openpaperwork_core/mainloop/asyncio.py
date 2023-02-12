@@ -123,7 +123,7 @@ class Plugin(openpaperwork_core.PluginBase):
         Request that the main loop executes the callback `func`.
         Will return immediately.
         """
-        assert(hasattr(func, '__call__'))
+        assert hasattr(func, '__call__')
 
         self._check_mainloop_instantiated()
 

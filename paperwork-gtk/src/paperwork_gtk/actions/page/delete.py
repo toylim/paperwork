@@ -74,7 +74,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.active_page_idx = page_idx
 
     def _delete(self, *args, **kwargs):
-        assert(self.active_doc is not None)
+        assert self.active_doc is not None
 
         LOGGER.info(
             "Asking confirmation before deleting page %d of document %s",

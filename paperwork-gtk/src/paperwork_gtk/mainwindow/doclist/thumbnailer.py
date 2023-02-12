@@ -145,7 +145,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def _update_progress(self):
-        assert(self.nb_to_load > 0)
+        assert self.nb_to_load > 0
         if self.nb_loaded > self.nb_to_load:
             self.nb_loaded = 0
             self.nb_to_load = 0

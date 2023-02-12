@@ -9,7 +9,7 @@ class AbstractTestThread(unittest.TestCase):
         """
         Must be overloaded by subclasses
         """
-        assert()
+        assert False
 
     def setUp(self):
         class DummyMainloop(object):

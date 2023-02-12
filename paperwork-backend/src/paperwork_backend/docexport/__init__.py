@@ -69,7 +69,7 @@ class ExportData(object):
                 yield (self, s)
 
     def get_children(self):
-        assert(self.expanded)
+        assert self.expanded
         return self._children
 
     def set_children(self, children):
@@ -160,7 +160,7 @@ class AbstractExportPipe(object):
           return either an ExportData (if it must be chained to another pipe)
           or a list of str (list of paths)
         """
-        assert()  # must be implemented by subclasses
+        assert False  # must be implemented by subclasses
 
     def get_estimated_size_factor(self, input_data):
         """
@@ -177,7 +177,7 @@ class AbstractExportPipe(object):
         Allow to define an output quality (between 0 and 100).
         Check `can_change_quality` before calling this method.
         """
-        assert(self.can_change_quality)
+        assert self.can_change_quality
         self.quality = quality
 
     def set_page_format(self, page_format):
@@ -188,7 +188,7 @@ class AbstractExportPipe(object):
         Arguments:
          page_format: tuple (width, height), in points (1 point == 1/72.0 inch)
         """
-        assert(self.can_change_page_format)
+        assert self.can_change_page_format
         self.page_format = page_format
 
     def get_output_mime(self):
@@ -200,7 +200,7 @@ class AbstractExportPipe(object):
         return None
 
     def __str__(self):
-        assert()  # must be implemented by subclasses
+        assert False  # must be implemented by subclasses
 
 
 class ExportDataTransformedImgBoxes(ExportData):
@@ -236,11 +236,11 @@ class AbstractSimpleTransformExportPipe(AbstractExportPipe):
 
     def transform(self, img):
         # sub-classes must implement it
-        assert()
+        assert False
 
     def get_promise(self, result='final', target_file_url=None):
         def do(input_data):
-            assert(input_data.dtype == ExportDataType.DOCUMENT_SET)
+            assert input_data.dtype == ExportDataType.DOCUMENT_SET
 
             docs = input_data.iter(ExportDataType.DOCUMENT)
             docs = list(docs)
@@ -248,7 +248,7 @@ class AbstractSimpleTransformExportPipe(AbstractExportPipe):
             # replace the document page list by objects that will
             # generate their children (img+boxes) on-the-fly.
             for (doc_set, doc) in docs:
-                assert(doc.expanded)
+                assert doc.expanded
                 doc.set_children([
                     ExportDataTransformedImgBoxes(self, page)
                     for page in doc.get_children()

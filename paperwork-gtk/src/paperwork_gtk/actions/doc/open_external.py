@@ -64,6 +64,6 @@ class Plugin(openpaperwork_core.PluginBase):
         self.active_doc = None
 
     def _open_external(self, action, parameter):
-        assert(self.active_doc is not None)
+        assert self.active_doc is not None
         (doc_id, doc_url) = self.active_doc
         self.core.call_success("external_app_open_folder", doc_url)

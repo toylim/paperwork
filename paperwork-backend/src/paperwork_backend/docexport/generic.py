@@ -27,8 +27,8 @@ class DocSetToDoc(AbstractExportPipe):
 
     def get_promise(self, result='final', target_file_url=None):
         def do(input_data):
-            assert(input_data.dtype == ExportDataType.DOCUMENT_SET)
-            assert(not input_data.expanded)
+            assert input_data.dtype == ExportDataType.DOCUMENT_SET
+            assert not input_data.expanded
 
             docs = input_data.data
             if result == 'preview':
@@ -43,7 +43,7 @@ class DocSetToDoc(AbstractExportPipe):
         return openpaperwork_core.promise.Promise(self.core, do)
 
     def get_estimated_size_factor(self, input_data):
-        assert(input_data.dtype == ExportDataType.DOCUMENT_SET)
+        assert input_data.dtype == ExportDataType.DOCUMENT_SET
         return len(input_data.data)
 
     def __str__(self):
@@ -65,11 +65,11 @@ class DocToPage(AbstractExportPipe):
 
     def get_promise(self, result='final', target_file_url=None):
         def do(input_data):
-            assert(input_data.dtype == ExportDataType.DOCUMENT_SET)
+            assert input_data.dtype == ExportDataType.DOCUMENT_SET
 
             docs = input_data.iter(ExportDataType.DOCUMENT)
             for (doc_set, doc) in docs:
-                assert(not doc.expanded)
+                assert not doc.expanded
                 nb_pages = self.core.call_success(
                     "doc_get_nb_pages_by_url", doc.data[1]
                 )
@@ -85,7 +85,7 @@ class DocToPage(AbstractExportPipe):
 
     def get_estimated_size_factor(self, input_data):
         # average number of pages per document
-        assert(input_data.dtype == ExportDataType.DOCUMENT_SET)
+        assert input_data.dtype == ExportDataType.DOCUMENT_SET
         nb_pages = 0
         nb_docs = len(input_data.data)
         for (doc_id, doc_url) in input_data.data:

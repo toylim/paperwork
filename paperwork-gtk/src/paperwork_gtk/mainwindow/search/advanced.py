@@ -45,15 +45,15 @@ class SearchElement(object):
         return self.widget
 
     def get_search_string(self):
-        assert()
+        assert False
 
     @staticmethod
     def get_from_search(dialog, text):
-        assert()
+        assert False
 
     @staticmethod
     def get_name():
-        assert()
+        assert False
 
     def on_model_updated(self):
         pass
@@ -378,7 +378,7 @@ class SearchLine(object):
                 combobox.set_active(active_idx)
                 return
             active_idx += 1
-        assert()
+        assert False
 
     def select_operator(self, operator):
         self._select_value(self.combobox_operator, operator.upper())
@@ -455,7 +455,7 @@ class SearchLine(object):
                 "Loaded from search: %s --> %s", search_txt, str(se)
             )
             return sl
-        assert()
+        assert False
 
     def on_model_updated(self):
         if self.element:

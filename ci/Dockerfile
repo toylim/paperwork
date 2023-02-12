@@ -1,4 +1,4 @@
-FROM debian:bullseye
+FROM debian:sid
 
 RUN mkdir -p /usr/share/man/man1
 RUN apt-get update \
@@ -43,7 +43,6 @@ RUN apt-get update \
         python3-pkg-resources \
         python3-recommonmark \
         python3-scipy \
-        python3-setuptools \
         python3-sphinx \
         python3-sphinxcontrib.plantuml \
         python3-virtualenv \
@@ -79,4 +78,3 @@ RUN apt-get install --no-install-recommends -y -q \
         plantuml \
         && apt-get clean
 
-RUN pip3 install -U setuptools

@@ -111,8 +111,8 @@ class Plugin(openpaperwork_core.PluginBase):
         dialog.show_all()
 
     def _start_move_inside_doc(self, *args, **kwargs):
-        assert(self.active_doc is not None)
-        assert(self.active_page_idx is not None)
+        assert self.active_doc is not None
+        assert self.active_page_idx is not None
         msg = _("Move the page %d to what position ?") % (
             self.active_page_idx + 1
         )
