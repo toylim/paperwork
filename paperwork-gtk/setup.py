@@ -86,13 +86,14 @@ Main features are:
     "zip_safe": (os.name != 'nt'),
     "install_requires": [
         "distro",
-        "openpaperwork-core",
-        "openpaperwork-gtk",
         "pycountry",
         "pyocr >= 0.3.0",
         "python-Levenshtein",
         "pyxdg >= 0.25",
-        "paperwork-backend>={}".format(version),
+
+        "openpaperwork-core",
+        "openpaperwork-gtk",
+        "paperwork-backend",
 
         # paperwork-chkdeps take care of all the dependencies that can't be
         # handled here. For instance:

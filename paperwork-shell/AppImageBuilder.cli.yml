@@ -17,7 +17,7 @@ script:
   - make -C ../sub/libinsane clean
   - unset DESTDIR && make install PREFIX="$(pwd)/AppDir/usr" -C ../sub/libinsane
   # We install PyOCR from pypi because it's much easier
-  - pip3 install --system --ignore-installed --prefix=/usr --root=AppDir
+  - pip3 install --ignore-installed --prefix=/usr --root=AppDir
     ../sub/libpillowfight
     ../openpaperwork-core
     ../openpaperwork-gtk
@@ -42,14 +42,13 @@ AppDir:
     - amd64
     allow_unauthenticated: true
     sources:
-    - sourceline: deb http://deb.debian.org/debian/ bullseye main contrib non-free
-    - sourceline: deb http://security.debian.org/debian-security bullseye-security main contrib non-free
-    - sourceline: deb http://deb.debian.org/debian/ bullseye-updates main contrib non-free
+    - sourceline: deb http://deb.debian.org/debian/ sid main contrib non-free
     include:
     - bash
     - coreutils
     - dash
     - gir1.2-pango-1.0
+    - gir1.2-poppler-0.18
     - gobject-introspection
     - libexpat1
     - libgirepository1.0-dev
@@ -61,9 +60,12 @@ AppDir:
     - python3-gi-cairo
     - python3-pip
     - python3-pkg-resources
+    - shared-mime-info
     - zlib1g
   files:
-    include: []
+    include:
+    - usr/lib/mime/**/*
+    - usr/share/mime/**/*
     exclude:
     - usr/share/man
     - usr/share/doc/*/README.*
@@ -74,7 +76,7 @@ AppDir:
   runtime:
     env:
       PYTHONHOME: '${APPDIR}/usr'
-      PYTHONPATH: '${APPDIR}/usr/lib/python3.9/site-packages'
+      PYTHONPATH: '${APPDIR}/usr/lib/python3.11/site-packages'
   test:
     fedora-30:
       image: appimagecrafters/tests-env:fedora-30
