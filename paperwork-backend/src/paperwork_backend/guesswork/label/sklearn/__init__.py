@@ -245,6 +245,9 @@ class UpdatableVectorizer(object):
             )
             doc_vector = list(doc_vector)
             doc_vector = doc_vector[0][0]
+            if doc_vector is None:
+                # may happen according to bug report #478
+                doc_vector = numpy.array([])
 
             to_drop_for_this_doc = [f for f in to_drop if f < len(doc_vector)]
             doc_vector = numpy.delete(doc_vector, to_drop_for_this_doc)
