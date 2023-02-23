@@ -53,6 +53,7 @@ AppDir:
     - gobject-introspection
     - libexpat1
     - libgirepository1.0-dev
+    - librsvg2-common  # for libpixbufloader-svg.so
     - libsane
     - libwayland-cursor0  # missing Debian dependency for GTK ?
     - libwayland-egl1  # missing Debian dependency for GTK ?

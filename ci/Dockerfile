@@ -23,6 +23,7 @@ RUN apt-get update \
         libcunit1-ncurses-dev \
         libgdk-pixbuf2.0-dev \
         libgirepository1.0-dev \
+        libgtk-3-dev \
         libjpeg-dev \
         libsane-dev \
         make \
