@@ -242,8 +242,7 @@ class Plugin(openpaperwork_core.PluginBase):
             "gtk_widget_flowlayout_new", spacing=(3, 3)
         )
         flowlayout.set_visible(True)
-        row.box.pack_start(flowlayout, expand=True, fill=True, padding=0)
-        row.box.reorder_child(flowlayout, 1)
+        row.layout_bin.add(flowlayout)
 
         self.core.call_all(
             "on_doc_box_creation", doc_id, row, flowlayout

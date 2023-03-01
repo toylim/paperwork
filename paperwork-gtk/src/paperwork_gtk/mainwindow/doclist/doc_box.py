@@ -56,6 +56,15 @@ DOC_BOX_XML = """
         </child>
 
         <child>
+          <object class="GtkViewport" id="layout_bin">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+          </object>
+          <packing>
+            <property name="pack_type">start</property>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+          </packing>
         </child>
 
         <child>
@@ -112,6 +121,7 @@ class DocBox(Gtk.ListBoxRow):
     thumbnail = Gtk.Template.Child("doc_thumbnail")
     main_actions = Gtk.Template.Child("doc_actions")
     action_menu = Gtk.Template.Child("doc_actions_menu")
+    layout_bin = Gtk.Template.Child("layout_bin")
 
 
 DOC_MAIN_ACTION_XML = """
