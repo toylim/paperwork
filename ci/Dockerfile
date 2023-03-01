@@ -25,6 +25,7 @@ RUN apt-get update \
         libgirepository1.0-dev \
         libgtk-3-dev \
         libjpeg-dev \
+        libreoffice \
         libsane-dev \
         make \
         meson \
