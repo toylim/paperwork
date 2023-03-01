@@ -41,7 +41,8 @@ class Plugin(openpaperwork_core.PluginBase):
         self._scrollbar_last_value = -1
 
         self.docs = []
-        self.doc_visibles = 0
+        self.row_visibles = []
+        self.doc_loaded = 0
         self.row_to_doc = {}
         self.docid_to_row = {}
 
@@ -152,6 +153,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doclist.connect("row-activated", self._on_row_activated)
         self.doclist.connect("drag-motion", self._on_drag_motion)
         self.doclist.connect("drag-leave", self._on_drag_leave)
+        self.doclist.connect("size-allocate", self._notify_box_visibility)
 
         self.widget_tree.get_object("doclist_new_doc").connect(
             "clicked", self._on_new_doc
@@ -200,25 +202,24 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all("doc_open", *new_doc)
         self.doclist_show(self.docs, show_new=True)
 
-    def _doclist_clear(self):
-        start = time.time()
+    def doclist_clear(self):
+        self.core.call_all("on_doc_list_clear")
 
+        start = time.time()
         for child in self.doclist.get_children():
             self.doclist.remove(child)
-
         stop = time.time()
 
         LOGGER.info(
             "%d documents cleared in %dms",
-            self.doc_visibles, (stop - start) * 1000
+            self.doc_loaded, (stop - start) * 1000
         )
 
-    def doclist_clear(self):
-        self._doclist_clear()
         self.last_date = datetime.datetime(year=1, month=1, day=1)
-        self.doc_visibles = 0
+        self.doc_loaded = 0
         self.row_to_doc = {}
         self.docid_to_row = {}
+        self.row_visibles = []
 
     def _add_date_box(self, name, txt):
         widget_tree = self.core.call_success(
@@ -273,6 +274,8 @@ class Plugin(openpaperwork_core.PluginBase):
             "toggled", self._toggle_doc, doc_id, doc_url
         )
 
+        row.connect("size-allocate", self._notify_box_visibility)
+
         self.row_to_doc[row] = (doc_id, doc_url)
         self.docid_to_row[doc_id] = row
         self.doclist.insert(row, -1)
@@ -283,11 +286,11 @@ class Plugin(openpaperwork_core.PluginBase):
         show_month = True
 
         docs = self.docs[
-            self.doc_visibles:self.doc_visibles + nb_docs
+            self.doc_loaded:self.doc_loaded + nb_docs
         ]
         LOGGER.info(
             "Adding %d documents to the document list (%d-%d)",
-            len(docs), self.doc_visibles, self.doc_visibles + nb_docs
+            len(docs), self.doc_loaded, self.doc_loaded + nb_docs
         )
 
         for (doc_id, doc_url) in docs:
@@ -315,7 +318,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
             self._add_doc_box(doc_id, doc_url)
 
-        self.doc_visibles = min(len(self.docs), self.doc_visibles + nb_docs)
+        self.doc_loaded = min(len(self.docs), self.doc_loaded + nb_docs)
 
         stop = time.time()
 
@@ -401,9 +404,36 @@ class Plugin(openpaperwork_core.PluginBase):
 
         handler_id = row.connect("size-allocate", scroll_to_row)
 
+    def _notify_box_visibility(self, *args, **kwargs):
+        lower = int(self.vadj.get_value())
+        upper = int(lower + self.vadj.get_page_size())
+
+        row_visibles = []
+        prow = None
+        for y in range(lower, upper):
+            row = self.doclist.get_row_at_y(y)
+            if row is None or prow is row:
+                continue
+            prow = row
+            row_visibles.append(row)
+
+        if self.row_visibles == row_visibles:
+            return
+        self.row_visibles = row_visibles
+
+        self.core.call_all("on_doc_list_visibility_changed")
+        for row in row_visibles:
+            doc = self.row_to_doc.get(row)
+            if doc is None:
+                continue
+            (doc_id, doc_url) = doc
+            layout = row.layout_bin.get_child()
+            self.core.call_all("on_doc_box_visible", doc_id, row, layout)
+
     def _on_scrollbar_value_changed(self, vadj):
         lower = vadj.get_lower()
         upper = vadj.get_upper() - lower
+
         value = (
             vadj.get_value() +
             vadj.get_page_size() -
@@ -411,14 +441,17 @@ class Plugin(openpaperwork_core.PluginBase):
         ) / upper
 
         if value < 0.95:
+            self._notify_box_visibility()
             return
 
         if self._scrollbar_last_value == vadj.get_value():
             # Previous extend call hasn't been taken into account yet
+            self._notify_box_visibility()
             return
 
         self.doclist_extend(NB_DOCS_PER_PAGE)
         self._scrollbar_last_value = vadj.get_value()
+        self._notify_box_visibility()
 
     def _doc_open(self, doc_id, doc_url):
         if self.active_doc[0] == doc_id:

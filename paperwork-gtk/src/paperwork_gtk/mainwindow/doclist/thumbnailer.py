@@ -44,7 +44,7 @@ class ThumbnailTask(object):
 
         promise = openpaperwork_core.promise.Promise(
             self.core,
-            LOGGER.debug, args=("Thumbnailing of document %s", self.doc_id,)
+            LOGGER.info, args=("Thumbnailing of document %s", self.doc_id,)
         )
         promise = promise.then(lambda *args: None)  # drop logger return value
         promise = promise.then(
@@ -65,6 +65,9 @@ class Plugin(openpaperwork_core.PluginBase):
         self.nb_loaded = 0
         self.nb_to_load = 0
         self._progress_str = None
+
+        self.processing_docs = set()
+        self.processed_docs = set()
 
     def get_interfaces(self):
         return [
@@ -118,34 +121,51 @@ class Plugin(openpaperwork_core.PluginBase):
     def doclist_show(self, docs):
         self.core.call_all("work_queue_cancel_all", "thumbnailer")
 
+    def on_doc_list_clear(self):
+        self.processed_docs = set()
+        self.on_doc_list_visibility_changed()
+
+    def on_doc_list_visibility_changed(self):
+        self.core.call_all("work_queue_cancel_all", "thumbnailer")
+        self.processing_docs = set()
+        self.nb_to_load = 0
+
     def on_doc_box_creation(self, doc_id, gtk_row, gtk_custom_flowlayout):
         gtk_img = gtk_row.thumbnail
         gtk_img.set_size_request(PLACEHOLDER_WIDTH, PLACEHOLDER_HEIGHT)
         gtk_img.set_visible(True)
 
-        self.nb_to_load += 1
+    def on_doc_box_visible(self, doc_id, gtk_row, gtk_custom_flowlayout):
+        if doc_id in self.processing_docs:
+            return
+        if doc_id in self.processed_docs:
+            return
 
-        task = ThumbnailTask(self, doc_id, gtk_img)
-        promise = task.get_promise()
+        self.nb_to_load += 1
+        self.processing_docs.add(doc_id)
+
+        task = ThumbnailTask(self, doc_id, gtk_row.thumbnail)
+        # Gives back a bit of CPU time to GTK so the GUI remains
+        # usable
+        promise = openpaperwork_core.promise.DelayPromise(
+            self.core, DELAY
+        )
+        promise = promise.then(task.get_promise())
 
         def _when_loaded():
             self.nb_loaded += 1
+            if doc_id in self.processing_docs:
+                self.processing_docs.remove(doc_id)
+                self.processed_docs.add(doc_id)
             self._update_progress()
 
         promise = promise.then(_when_loaded)
-
-        # Gives back a bit of CPU time to GTK so the GUI remains
-        # usable
-        promise = promise.then(openpaperwork_core.promise.DelayPromise(
-            self.core, DELAY
-        ))
 
         self.core.call_success(
             "work_queue_add_promise", "thumbnailer", promise
         )
 
     def _update_progress(self):
-        assert self.nb_to_load > 0
         if self.nb_loaded > self.nb_to_load:
             self.nb_loaded = 0
             self.nb_to_load = 0

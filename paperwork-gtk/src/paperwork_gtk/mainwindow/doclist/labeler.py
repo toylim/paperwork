@@ -56,7 +56,7 @@ class LabelingTask(object):
     def get_promise(self):
         promise = openpaperwork_core.promise.Promise(
             self.core,
-            LOGGER.debug, args=("Loading labels of document %s", self.doc_id,)
+            LOGGER.info, args=("Loading labels of document %s", self.doc_id,)
         )
         promise = promise.then(lambda *args: None)  # drop logger return value
 
@@ -79,6 +79,9 @@ class Plugin(openpaperwork_core.PluginBase):
         self.default_thumbnail = None
         self.running = False
         self.tasks = {}
+
+        self.processing_docs = set()
+        self.processed_docs = set()
 
     def get_interfaces(self):
         return [
@@ -125,16 +128,39 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all("work_queue_cancel_all", "labeler")
         self.task = {}
 
-    def on_doc_box_creation(self, doc_id, gtk_row, gtk_custom_flowlayout):
+    def on_doc_list_clear(self):
+        self.processed_docs = set()
+        self.on_doc_list_visibility_changed()
+
+    def on_doc_list_visibility_changed(self):
+        self.core.call_all("work_queue_cancel_all", "labeler")
+        self.processing_docs = set()
+        self.nb_to_load = 0
+
+    def on_doc_box_visible(self, doc_id, gtk_row, gtk_custom_flowlayout):
+        if doc_id in self.processing_docs:
+            return
+        if doc_id in self.processed_docs:
+            return
+
+        self.processing_docs.add(doc_id)
+
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
         if doc_url is None:
             return
 
         task = LabelingTask(self, doc_id, doc_url, gtk_custom_flowlayout)
         self.tasks[doc_url] = task
-        self.core.call_success(
-            "work_queue_add_promise", "labeler", task.get_promise()
-        )
+
+        def _when_loaded():
+            if doc_id in self.processing_docs:
+                self.processing_docs.remove(doc_id)
+                self.processed_docs.add(doc_id)
+
+        promise = task.get_promise()
+        promise = promise.then(_when_loaded)
+
+        self.core.call_success("work_queue_add_promise", "labeler", promise)
 
     def _refresh_doc(self, doc_url):
         if doc_url not in self.tasks:
