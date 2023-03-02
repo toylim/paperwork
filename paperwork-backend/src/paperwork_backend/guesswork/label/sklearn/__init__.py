@@ -10,6 +10,8 @@ It stores data in 2 ways:
 import collections
 import gc
 import logging
+import os
+import pickle
 import sqlite3
 import threading
 import time
@@ -589,6 +591,9 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         super().add_doc(doc_id)
 
     def upd_doc(self, doc_id):
+        if os.path.exists(self.plugin.model_path):
+            os.unlink(self.plugin.model_path)
+
         self._lazyinit_transaction()
 
         self.notify_progress(
@@ -603,6 +608,9 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         self.cursor.execute("DELETE FROM features WHERE doc_id = ?", (doc_id,))
 
     def del_doc(self, doc_id):
+        if os.path.exists(self.plugin.model_path):
+            os.unlink(self.plugin.model_path)
+
         self._lazyinit_transaction()
 
         self.notify_progress(
@@ -750,6 +758,10 @@ class Plugin(openpaperwork_core.PluginBase):
 
         self.bayes_dir = None
         self.sql_url = None
+        # We pickle the trained model. But pickle and Gio don't work well
+        # together --> therefore we work directly with a path here instead of
+        # an URL and with `os` instead `self.core.call_xxx("fs_xxx")`
+        self.model_path = None
 
         SqliteNumpyArrayHandler.register()
 
@@ -820,7 +832,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _init(self):
         data_dir = self.core.call_success(
-            "data_dir_handler_get_individual_data_dir")
+            "data_dir_handler_get_individual_data_dir"
+        )
 
         if self.bayes_dir is None:  # may be set by tests
             self.bayes_dir = self.core.call_success(
@@ -831,6 +844,11 @@ class Plugin(openpaperwork_core.PluginBase):
 
         self.sql_url = self.core.call_success(
             "fs_join", self.bayes_dir, 'label_guesser.db'
+        )
+        self.model_path = self.core.call_success(
+            "fs_unsafe", self.core.call_success(
+                "fs_join", self.bayes_dir, "model.pickle"
+            )
         )
         LOGGER.info("Opening guesswork.label.sklearn database")
         self.sql = self.core.call_one(
@@ -892,7 +910,7 @@ class Plugin(openpaperwork_core.PluginBase):
                     (
                         self.word_reductor, self.classifiers
                     ) = self._load_classifiers(
-                        cursor, self.vectorizer
+                        self.model_path, cursor, self.vectorizer
                     )
                 finally:
                     cursor.execute("ROLLBACK")
@@ -900,7 +918,15 @@ class Plugin(openpaperwork_core.PluginBase):
             finally:
                 self.classifiers_cond.notify_all()
 
-    def _load_classifiers(self, cursor, vectorizer):
+    def _load_classifiers(self, model_path, cursor, vectorizer):
+        if os.path.exists(model_path):
+            with open(model_path, "rb") as fd:
+                LOGGER.info("Pre-trained model available. Using it")
+                (reductor, classifiers) = pickle.load(fd)
+            return (reductor, classifiers)
+
+        LOGGER.info("Pre-trained model not available. Re-training one")
+
         # Jflesch> This is a very memory-intensive process. The Glib may try
         # to allocate memory before the GC runs and AFAIK the Glib
         # is not aware of Python GC, and so won't trigger it if required
@@ -993,6 +1019,8 @@ class Plugin(openpaperwork_core.PluginBase):
             # --> free as much memory as possible now
             gc.collect()
 
+            with open(model_path, "wb") as fd:
+                pickle.dump((reductor, classifiers), fd)
             return (reductor, classifiers)
         finally:
             self.core.call_all("on_progress", "label_classifiers", 1.0, msg)
