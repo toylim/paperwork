@@ -45,6 +45,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doc_loaded = 0
         self.row_to_doc = {}
         self.docid_to_row = {}
+        self.min_doc_box_height = 1
 
         self.last_date = datetime.datetime(year=1, month=1, day=1)
 
@@ -203,6 +204,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doclist_show(self.docs, show_new=True)
 
     def doclist_clear(self):
+        self.min_doc_box_height = 1
         self.core.call_all("on_doc_list_clear")
 
         start = time.time()
@@ -274,7 +276,7 @@ class Plugin(openpaperwork_core.PluginBase):
             "toggled", self._toggle_doc, doc_id, doc_url
         )
 
-        row.connect("size-allocate", self._notify_box_visibility)
+        row.connect("size-allocate", self._on_doc_box_size_allocate)
 
         self.row_to_doc[row] = (doc_id, doc_url)
         self.docid_to_row[doc_id] = row
@@ -404,13 +406,23 @@ class Plugin(openpaperwork_core.PluginBase):
 
         handler_id = row.connect("size-allocate", scroll_to_row)
 
+    def _on_doc_box_size_allocate(self, box, allocation):
+        h = allocation.height
+        if h <= 0:
+            return
+        if self.min_doc_box_height <= 1:
+            self.min_doc_box_height = h
+        else:
+            self.min_doc_box_height = min(self.min_doc_box_height, h)
+        self._notify_box_visibility()
+
     def _notify_box_visibility(self, *args, **kwargs):
         lower = int(self.vadj.get_value())
         upper = int(lower + self.vadj.get_page_size())
 
         row_visibles = []
         prow = None
-        for y in range(lower, upper):
+        for y in range(lower, upper, self.min_doc_box_height):
             row = self.doclist.get_row_at_y(y)
             if row is None or prow is row:
                 continue
