@@ -561,9 +561,6 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         self.vectorizer = UpdatableVectorizer(self.core, self.cursor)
 
     def add_doc(self, doc_id):
-        if os.path.exists(self.plugin.model_path):
-            os.unlink(self.plugin.model_path)
-
         if self.guess_labels:
             # we have a higher priority than index plugins, so it is a good
             # time to update the document labels
@@ -594,9 +591,6 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         super().add_doc(doc_id)
 
     def upd_doc(self, doc_id):
-        if os.path.exists(self.plugin.model_path):
-            os.unlink(self.plugin.model_path)
-
         self._lazyinit_transaction()
 
         self.notify_progress(
@@ -611,9 +605,6 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         self.cursor.execute("DELETE FROM features WHERE doc_id = ?", (doc_id,))
 
     def del_doc(self, doc_id):
-        if os.path.exists(self.plugin.model_path):
-            os.unlink(self.plugin.model_path)
-
         self._lazyinit_transaction()
 
         self.notify_progress(
@@ -687,6 +678,10 @@ class LabelGuesserTransaction(sync.BaseTransaction):
     def commit(self):
         try:
             LOGGER.info("Committing")
+
+            if self.nb_changes > 0 and os.path.exists(self.plugin.model_path):
+                os.unlink(self.plugin.model_path)
+
             self.core.call_success(
                 "mainloop_schedule", self.core.call_all,
                 "on_label_guesser_commit_start"
