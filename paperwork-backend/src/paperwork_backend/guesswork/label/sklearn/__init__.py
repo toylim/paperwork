@@ -561,6 +561,9 @@ class LabelGuesserTransaction(sync.BaseTransaction):
         self.vectorizer = UpdatableVectorizer(self.core, self.cursor)
 
     def add_doc(self, doc_id):
+        if os.path.exists(self.plugin.model_path):
+            os.unlink(self.plugin.model_path)
+
         if self.guess_labels:
             # we have a higher priority than index plugins, so it is a good
             # time to update the document labels
