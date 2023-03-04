@@ -8,16 +8,16 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-30 11:53+0100\n"
-"PO-Revision-Date: 2022-03-19 11:45+0000\n"
-"Last-Translator: Víctor Fancelli Capdevila <vfc@uber.space>\n"
-"Language-Team: Spanish <http://translations.openpaper.work/projects/"
+"PO-Revision-Date: 2023-02-24 02:42+0000\n"
+"Last-Translator: andres felipe santamaria <ingenierosantamaria@gmail.com>\n"
+"Language-Team: Spanish <https://translations.openpaper.work/projects/"
 "paperwork/paperwork-gtk/es/>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.9\n"
+"X-Generator: Weblate 4.15.2\n"
 
 #: paperwork-gtk/src/paperwork_gtk/cmd/install.py:40
 msgid "Install Paperwork icons and shortcuts"
@@ -365,7 +365,7 @@ msgstr "Importar imagen o archivos PDF"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:78
 msgid "Import file(s)"
-msgstr "Importando archivo(s)"
+msgstr "Importar archivo(s)"
 
 #: paperwork-gtk/src/paperwork_gtk/mainwindow/docview/pageadd/import.py:122
 msgid "All supported file formats"

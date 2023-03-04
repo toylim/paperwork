@@ -1,6 +1,6 @@
 ## Contributing
 
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) carefully before submitting any
+Please read [CONTRIBUTING.md](https://gitlab.gnome.org/World/OpenPaperwork/paperwork/-/wikis/Contributing) carefully before submitting any
 merge request.
 
 In this document, it is assumed you are already familiar with the basics of
