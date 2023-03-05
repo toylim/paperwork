@@ -56,12 +56,13 @@ class TestSync(unittest.TestCase):
         shutil.rmtree(self.tmp_out_dir)
 
     def test_export_doc(self):
+        self.core.call_all("cmd_set_interactive", False)
+
         parser = argparse.ArgumentParser()
         cmd_parser = parser.add_subparsers(
             help='command', dest='command', required=True
         )
         self.core.call_all("cmd_complete_argparse", cmd_parser)
-        self.core.call_all("cmd_set_interactive", False)
 
         args = parser.parse_args([
             'export', '20190830_1916_32'  # img doc
@@ -158,12 +159,13 @@ class TestSync(unittest.TestCase):
         )
 
     def test_export_page(self):
+        self.core.call_all("cmd_set_interactive", False)
+
         parser = argparse.ArgumentParser()
         cmd_parser = parser.add_subparsers(
             help='command', dest='command', required=True
         )
         self.core.call_all("cmd_complete_argparse", cmd_parser)
-        self.core.call_all("cmd_set_interactive", False)
 
         args = parser.parse_args([
             'export', '20190830_1916_32',  # img doc
@@ -189,9 +191,7 @@ class TestSync(unittest.TestCase):
             '-f', 'doc_to_pages',
         ])
         r = self.core.call_success("cmd_run", args)
-        self.assertEqual(sorted(r), [
-            'img_boxes',
-        ])
+        self.assertFalse(r)
 
         args = parser.parse_args([
             'export', '20190830_1916_32',
@@ -254,6 +254,50 @@ class TestSync(unittest.TestCase):
         r = self.core.call_success("cmd_run", args)
         self.assertTrue(r)
         self.assertTrue(
+            os.path.exists(
+                os.path.join(
+                    self.tmp_out_dir, 'out.pdf'
+                )
+            )
+        )
+
+    def test_export_invalid_pipeline(self):
+        self.core.call_all("cmd_set_interactive", False)
+
+        parser = argparse.ArgumentParser()
+        cmd_parser = parser.add_subparsers(
+            help='command', dest='command', required=True
+        )
+        self.core.call_all("cmd_complete_argparse", cmd_parser)
+
+        args = parser.parse_args([
+            'export', '20190830_1916_32',
+            '-f', 'img_boxes',
+            '-f', 'grayscale',
+            '-f', 'generated_pdf',
+            '-o', os.path.join(self.tmp_out_dir, 'out.pdf')
+        ])
+        # must not crash
+        r = self.core.call_success("cmd_run", args)
+        self.assertFalse(r)
+        self.assertFalse(
+            os.path.exists(
+                os.path.join(
+                    self.tmp_out_dir, 'out.pdf'
+                )
+            )
+        )
+
+        args = parser.parse_args([
+            'export', '20190830_1916_32',
+            '-f', 'img_boxes',
+            '-f', 'unmodified_pdf',
+            '-o', os.path.join(self.tmp_out_dir, 'out.pdf')
+        ])
+        # must not crash
+        r = self.core.call_success("cmd_run", args)
+        self.assertFalse(r)
+        self.assertFalse(
             os.path.exists(
                 os.path.join(
                     self.tmp_out_dir, 'out.pdf'
