@@ -213,8 +213,3 @@ class Plugin(openpaperwork_core.PluginBase):
         if len(ocr_tools) <= 0:
             return []
         return ocr_tools[0].get_available_languages()
-
-    def ocr_set_lang(self, lang):
-        return self.core.call_success(
-            "config_set", "ocr_langs", lang
-        )
