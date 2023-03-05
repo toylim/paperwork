@@ -107,7 +107,19 @@ class Plugin(PluginBase):
             self.core, self.url_to_pillow, args=(file_url,)
         )
 
-    def pillow_to_url(self, img, file_url, format='JPEG', quality=0.75):
+    def pillow_to_url(self, img, file_url, format=None, quality=0.75):
+        expected_format = file_url.rsplit(".", 1)[-1].upper()
+        if expected_format == "JPG":
+            expected_format = "JPEG"
+        if expected_format == "TIF":
+            expected_format = "TIFF"
+        if format is None:
+            format = expected_format
+        if format != expected_format:
+            LOGGER.warning(
+                "File %s written with format %s. Expected %s",
+                file_url, format, expected_format
+            )
         if format != 'PNG':
             img = img.convert("RGB")
         with self.core.call_success("fs_open", file_url, mode='wb') as fd:
