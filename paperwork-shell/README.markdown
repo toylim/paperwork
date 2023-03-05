@@ -382,3 +382,8 @@ For instances:
   to turn the input document or page(s) into a bunch of images and text boxes.
 - Only a PDF document can be used as input for the component `unmodified_pdf`
   and no other components can precede it.
+
+
+## Shell scripts
+
+You can have a look at [some examples of Bash scripts](../scripts).
