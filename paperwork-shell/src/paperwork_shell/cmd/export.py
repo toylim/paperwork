@@ -167,10 +167,12 @@ class Plugin(openpaperwork_core.PluginBase):
                 pipe.get_promise(result='final', target_file_url=out)
             )
 
-        sys.stdout.write(_("Exporting to %s ... ") % out)
-        sys.stdout.flush()
+        if self.interactive:
+            sys.stdout.write(_("Exporting to %s ... ") % out)
+            sys.stdout.flush()
         self.core.call_one("mainloop_schedule", promise.schedule)
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
-        sys.stdout.write(_("Done") + "\n")
+        if self.interactive:
+            sys.stdout.write(_("Done") + "\n")
         return self.core.call_success("fs_exists", out) is not None
