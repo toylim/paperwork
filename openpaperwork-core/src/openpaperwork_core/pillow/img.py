@@ -121,6 +121,9 @@ class Plugin(PluginBase):
                 file_url, format, expected_format
             )
         if format != 'PNG':
+            # drop the alpha channel if there is one
             img = img.convert("RGB")
         with self.core.call_success("fs_open", file_url, mode='wb') as fd:
-            return img.save(fd, format=format, quality=int(quality * 100))
+            return img.save(
+                fd, format=format, optimize=True, quality=int(quality * 100)
+            )
