@@ -35,12 +35,17 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return [
             {
+                "interface": "document_storage",
+                "defaults": ["paperwork_backend.model.workdir"],
+            },
+            {
                 "interface": "fs",
                 "defaults": ["openpaperwork_gtk.fs.gio"],
             },
             {
                 "interface": "export_pipes",
                 "defaults": [
+                    'paperwork_backend.docexport.generic',
                     'paperwork_backend.docexport.img',
                     'paperwork_backend.docexport.pdf',
                     'paperwork_backend.docexport.pillowfight',
@@ -94,6 +99,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
         doc_id = args.doc_id
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
+        if doc_url is None:
+            sys.stderr.write(f"Document {doc_id} doesn't exist\n")
+            return False
         pages = util.parse_page_list(args)
         filters = args.filters if args.filters is not None else []
         out = args.out
@@ -116,8 +124,10 @@ class Plugin(openpaperwork_core.PluginBase):
                 for f in filters_str
             ]
             if None in filters:
-                print(_("Unknown filters: %s") % filters_str)
-                sys.exit(1)
+                sys.stderr.write(
+                    (_("Unknown filters: %s") % filters_str) + "\n"
+                )
+                return False
             output_type = filters[-1].output_type
 
         # If no output is provided
@@ -136,6 +146,7 @@ class Plugin(openpaperwork_core.PluginBase):
                     "export_get_pipes_by_doc_url", next_pipes, doc_url
                 )
             next_pipes = [pipe.name for pipe in next_pipes]
+            next_pipes.sort()
             if self.interactive:
                 print(
                     _("Current filters: %s") % [pipe.name for pipe in filters]
