@@ -305,6 +305,6 @@ class AbstractExportPipePlugin(openpaperwork_core.PluginBase):
         for pipe in self.pipes:
             if pipe.input_type != ExportDataType.PAGE:
                 continue
-            if not pipe.can_export_doc(doc_url, page_nb):
+            if not pipe.can_export_page(doc_url, page_nb):
                 continue
             out.append(pipe)

@@ -35,12 +35,17 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return [
             {
+                "interface": "document_storage",
+                "defaults": ["paperwork_backend.model.workdir"],
+            },
+            {
                 "interface": "fs",
                 "defaults": ["openpaperwork_gtk.fs.gio"],
             },
             {
                 "interface": "export_pipes",
                 "defaults": [
+                    'paperwork_backend.docexport.generic',
                     'paperwork_backend.docexport.img',
                     'paperwork_backend.docexport.pdf',
                     'paperwork_backend.docexport.pillowfight',
@@ -86,6 +91,86 @@ class Plugin(openpaperwork_core.PluginBase):
             )
         )
 
+    def _print_possible_pipes(self, next_pipes):
+        next_pipes = [pipe.name for pipe in next_pipes]
+        next_pipes.sort()
+        if self.interactive:
+            sys.stderr.write(_("Next possible filters are:") + "\n")
+            for pipe in next_pipes:
+                sys.stderr.write(f"- {pipe}\n")
+        return next_pipes
+
+    @staticmethod
+    def _data_type_to_str(dtype):
+        if dtype == paperwork_backend.docexport.ExportDataType.DOCUMENT_SET:
+            return _("a document list")
+        elif dtype == paperwork_backend.docexport.ExportDataType.DOCUMENT:
+            return _("a document")
+        elif dtype == paperwork_backend.docexport.ExportDataType.PAGE:
+            return _("pages")
+        elif dtype == paperwork_backend.docexport.ExportDataType.IMG_BOXES:
+            return _("Images and text boxes")
+        return f"Unknown: {dtype}"
+
+    def _check_pipeline(self, doc_url, pages, filters):
+        filters = list(filters)
+
+        next_pipes = []
+        if pages is not None and len(pages) > 0:
+            self.core.call_all(
+                "export_get_pipes_by_page", next_pipes, doc_url, pages[0]
+            )
+        else:
+            self.core.call_all(
+                "export_get_pipes_by_doc_url", next_pipes, doc_url
+            )
+        if len(filters) <= 0:
+            if self.interactive:
+                sys.stderr.write(_("Need at least one filter.") + "\n")
+            return self._print_possible_pipes(next_pipes)
+        if not filters[0] in next_pipes:
+            sys.stderr.write(
+                _("First filter cannot be '{}'").format(
+                    filters[0].name
+                ) + "\n"
+            )
+            self._print_possible_pipes(next_pipes)
+            return False
+
+        output_type = None
+        while len(filters) > 0:
+            f = filters.pop(0)
+            if output_type is not None and f.input_type != output_type:
+                sys.stderr.write(
+                    _(
+                        "Filter mismatch:"
+                        " {0} expects {1} as input. Got {2} instead"
+                    ).format(
+                        f.name,
+                        self._data_type_to_str(f.input_type),
+                        self._data_type_to_str(output_type),
+                    ) + "\n"
+                )
+                return False
+            output_type = f.output_type
+
+        expected_output_type = (
+            paperwork_backend.docexport.ExportDataType.OUTPUT_URL_FILE
+        )
+        if output_type != expected_output_type:
+            if self.interactive:
+                sys.stderr.write(
+                    _("Last filter will output {}.").format(
+                        self._data_type_to_str(output_type)
+                    ) + "\n"
+                )
+            next_pipes = []
+            self.core.call_all(
+                "export_get_pipes_by_input", next_pipes, output_type
+            )
+            return self._print_possible_pipes(next_pipes)
+        return None
+
     def cmd_run(self, args):
         if args.command != 'export':
             return None
@@ -94,6 +179,9 @@ class Plugin(openpaperwork_core.PluginBase):
 
         doc_id = args.doc_id
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
+        if doc_url is None:
+            sys.stderr.write(f"Document {doc_id} doesn't exist\n")
+            return False
         pages = util.parse_page_list(args)
         filters = args.filters if args.filters is not None else []
         out = args.out
@@ -107,51 +195,36 @@ class Plugin(openpaperwork_core.PluginBase):
                 doc_id, doc_url, pages
             )
 
-        if len(filters) <= 0:
-            output_type = None
-        else:
-            filters_str = [x[0] for x in filters]
-            filters = [
-                self.core.call_success('export_get_pipe_by_name', f)
-                for f in filters_str
-            ]
-            if None in filters:
-                print(_("Unknown filters: %s") % filters_str)
-                sys.exit(1)
-            output_type = filters[-1].output_type
+        filters_str = [f[0] for f in filters]
+        filters = []
+        for f in filters_str:
+            p = self.core.call_success('export_get_pipe_by_name', f)
+            if p is None:
+                sys.stderr.write(
+                    (_("Unknown filters: %s") % f) + "\n"
+                )
+                if len(filters) <= 0:
+                    sys.stderr.write(
+                        _(
+                            "Run the command without any filter to have a list"
+                            " of possible filters to start with."
+                        ) + "\n"
+                    )
+                return False
+            filters.append(p)
 
-        # If no output is provided
+        r = self._check_pipeline(doc_url, pages, filters)
+        if r is not None:
+            return r
+
         if out is None or out == "":
-            next_pipes = []
-            if output_type is not None:
-                self.core.call_all(
-                    "export_get_pipes_by_input", next_pipes, output_type
-                )
-            elif pages is not None and len(pages) > 0:
-                self.core.call_all(
-                    "export_get_pipes_by_page", next_pipes, doc_url, pages[0]
-                )
-            else:
-                self.core.call_all(
-                    "export_get_pipes_by_doc_url", next_pipes, doc_url
-                )
-            next_pipes = [pipe.name for pipe in next_pipes]
-            if self.interactive:
-                print(
-                    _("Current filters: %s") % [pipe.name for pipe in filters]
-                )
-                if len(next_pipes) > 0:
-                    print(_("Next possible filters:"))
-                    for pipe in next_pipes:
-                        print("- " + pipe)
-                elif len(filters) > 0:
-                    print(_(
-                        "'{filter_name}' is an output filter."
-                        " No other filter can be added after '{filter_name}'."
-                    ).format(filter_name=filters[-1].name))
-                else:
-                    print(_("No possible filters found"))
-            return next_pipes
+            sys.stderr.write(
+                _(
+                    "Filter list is complete,"
+                    " but no output file specified (-o)"
+                ) + "\n"
+            )
+            return []
 
         # else try to export
         out = self.core.call_success("fs_safe", out)
@@ -167,10 +240,15 @@ class Plugin(openpaperwork_core.PluginBase):
                 pipe.get_promise(result='final', target_file_url=out)
             )
 
-        sys.stdout.write(_("Exporting to %s ... ") % out)
-        sys.stdout.flush()
+        if self.interactive:
+            sys.stdout.write(_("Exporting to %s ... ") % out)
+            sys.stdout.flush()
         self.core.call_one("mainloop_schedule", promise.schedule)
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
-        sys.stdout.write(_("Done") + "\n")
-        return self.core.call_success("fs_exists", out) is not None
+        if self.interactive:
+            sys.stdout.write(_("Done") + "\n")
+        r = (self.core.call_success("fs_exists", out) is not None)
+        if not r:
+            sys.stderr.write(_("Export failed !") + "\n")
+        return r
