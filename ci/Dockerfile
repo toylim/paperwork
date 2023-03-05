@@ -43,6 +43,7 @@ RUN apt-get update \
         python3-pil \
         python3-pip \
         python3-pkg-resources \
+        python3-pytest \
         python3-recommonmark \
         python3-scipy \
         python3-sphinx \

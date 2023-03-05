@@ -82,8 +82,15 @@ class TestLibinsane(unittest.TestCase):
     # We need Sane test backend for this test
     @unittest.skipUnless(os.name == 'posix', reason="Linux only")
     # Test is broken on ARM 32bits for some reason
-    @unittest.skip(platform.machine() == "aarch64" and platform.architecture()[0] == "32bit")
-    @unittest.skip(platform.machine() == "armhf")
+    @unittest.skipUnless(
+        platform.machine() != "aarch64"
+        and platform.architecture()[0] != "32bit",
+        reason="not running on ARM64 or 32bits systems",
+    )
+    @unittest.skipUnless(
+        platform.machine() != "armhf",
+        reason="not running on ARM32",
+    )
     def test_scan(self):
         TEST_DEV_ID = "libinsane:sane:test:0"
 
@@ -142,8 +149,15 @@ class TestLibinsane(unittest.TestCase):
     # We need Sane test backend for this test
     @unittest.skipUnless(os.name == 'posix', reason="Linux only")
     # Test is broken on ARM 32bits for some reason
-    @unittest.skip(platform.machine() == "aarch64" and platform.architecture()[0] == "32bit")
-    @unittest.skip(platform.machine() == "armhf")
+    @unittest.skipUnless(
+        platform.machine() != "aarch64"
+        and platform.architecture()[0] != "32bit",
+        reason="not running on ARM64 or 32bits systems",
+    )
+    @unittest.skipUnless(
+        platform.machine() != "armhf",
+        reason="not running on ARM32",
+    )
     def test_scan_default(self):
         TEST_DEV_ID = "libinsane:sane:test:0"
 

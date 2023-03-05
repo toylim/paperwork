@@ -29,7 +29,7 @@ check:
 	flake8 src/paperwork_shell
 
 test: install
-	python3 -m unittest discover -f --verbose -s tests
+	python3 -m pytest -xv tests/
 
 linux_exe:
 	rm -rf AppDir appimage-build
