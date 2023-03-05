@@ -33,7 +33,7 @@ check:
 	flake8 src/openpaperwork_core
 
 test: install
-	python3 -m unittest discover --verbose -s tests
+	python3 -m unittest discover -f --verbose -s tests
 
 linux_exe:
 

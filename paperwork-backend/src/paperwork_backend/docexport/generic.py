@@ -104,8 +104,8 @@ class Plugin(AbstractExportPipePlugin):
             {
                 'interface': 'pages',
                 'defaults': [
-                    'paperwork_backend.model.img'
-                    'paperwork_backend.model.pdf'
+                    'paperwork_backend.model.img',
+                    'paperwork_backend.model.pdf',
                 ],
             },
         ]
