@@ -60,6 +60,7 @@ def pillow_to_surface(core, img, intermediate="pixbuf", quality=90):
     if intermediate != "jpeg":
         img.putalpha(256)
         (width, height) = img.size
+        img = img.convert("RGBA")
         imgd = img.tobytes('raw', 'BGRA')
         imga = array.array('B', imgd)
         stride = width * 4
