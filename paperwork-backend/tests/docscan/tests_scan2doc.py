@@ -65,7 +65,7 @@ class TestScan2Doc(unittest.TestCase):
                     if "exist" not in file_url:
                         return None
                     r = [
-                        (file_url + "/paper.{}.jpg".format(x))
+                        (file_url + "/paper.{}.png".format(x))
                         for x in range(1, 10)
                     ]
                     return r
@@ -97,7 +97,7 @@ class TestScan2Doc(unittest.TestCase):
 
         self.assertTrue(len(self.results) > 0)
         self.assertEqual(self.transaction_type, "add")
-        self.assertEqual(self.pillowed, ['file:///new_doc/paper.1.jpg'])
+        self.assertEqual(self.pillowed, ['file:///new_doc/paper.1.png'])
 
     def test_scan2doc_upd(self):
         def at_the_end(args):
@@ -118,5 +118,5 @@ class TestScan2Doc(unittest.TestCase):
         self.assertTrue(len(self.results) > 0)
         self.assertEqual(self.transaction_type, "upd")
         self.assertEqual(self.pillowed, [
-            'file:///some_existing_doc/paper.10.jpg'
+            'file:///some_existing_doc/paper.10.png'
         ])

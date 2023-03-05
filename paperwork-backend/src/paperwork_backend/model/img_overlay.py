@@ -14,10 +14,13 @@ from . import util
 
 LOGGER = logging.getLogger(__name__)
 
-PAGE_FILENAME_FMT = "paper.{}.edited.jpg"
-PAGE_FILENAME_REGEX = re.compile(r"paper\.(\d+)\.edited.jpg")
-PAGE_FILE_FORMAT = 'JPEG'
-PAGE_QUALITY = 90
+PAGE_FILENAME_PNG_FMT = "paper.{}.edited.png"
+PAGE_FILENAME_JPG_FMT = "paper.{}.edited.jpg"
+PAGE_FILENAME_FMTS = [
+    PAGE_FILENAME_PNG_FMT,
+    PAGE_FILENAME_JPG_FMT,
+]
+PAGE_FILENAME_REGEX = re.compile(r"paper\.(\d+)\.edited.(jpg|png)")
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -33,37 +36,54 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_deps(self):
         return [
             {
+                'interface': 'config',
+                'defaults': ['openpaperwork_core.config'],
+            },
+            {
                 'interface': 'fs',
                 'defaults': ['openpaperwork_gtk.fs.gio'],
             },
         ]
 
+    def init(self, core):
+        self.core = core
+        setting = self.core.call_success(
+            "config_build_simple", "model",
+            "img_overlay_format", lambda: "PNG"
+        )
+        self.core.call_all(
+            "config_register", "model_img_overlay_format", setting
+        )
+
     def doc_internal_get_mtime_by_url(self, out: list, doc_url):
         mtime = util.get_doc_mtime(self.core, doc_url, PAGE_FILENAME_REGEX)
-        if mtime is None:
-            return
-        out.append(mtime)
+        if mtime is not None:
+            out.append(mtime)
 
     def page_internal_get_mtime_by_url(self, out: list, doc_url, page_idx):
-        mtime = util.get_page_mtime(
-            self.core, doc_url, page_idx, PAGE_FILENAME_FMT
-        )
-        if mtime is None:
-            return
-        out.append(mtime)
+        for filename_fmt in PAGE_FILENAME_FMTS:
+            mtime = util.get_page_mtime(
+                self.core, doc_url, page_idx, filename_fmt
+            )
+            if mtime is not None:
+                out.append(mtime)
+                break
 
     def page_internal_get_hash_by_url(self, out: list, doc_url, page_idx):
-        h = util.get_page_hash(self.core, doc_url, page_idx, PAGE_FILENAME_FMT)
-        if h is None:
-            return
-        out.append(h)
+        for filename_fmt in PAGE_FILENAME_FMTS:
+            h = util.get_page_hash(
+                self.core, doc_url, page_idx, filename_fmt)
+            if h is not None:
+                out.append(h)
+                break
 
     def page_get_img_url(self, doc_url, page_idx, write=False):
-        page_url = self.core.call_success(
-            "fs_join", doc_url, PAGE_FILENAME_FMT.format(page_idx + 1)
-        )
-        if self.core.call_success("fs_exists", page_url) is not None:
-            return page_url
+        for filename_fmt in PAGE_FILENAME_FMTS:
+            page_url = self.core.call_success(
+                "fs_join", doc_url, filename_fmt.format(page_idx + 1)
+            )
+            if self.core.call_success("fs_exists", page_url) is not None:
+                return page_url
 
         if not write:
             return None
@@ -76,26 +96,41 @@ class Plugin(openpaperwork_core.PluginBase):
                 ) is not None:
             # has already an original page (or even an edited one)
             # --> return our URL
-            return page_url
+            img_fmt = self.core.call_success(
+                "config_get", "model_img_overlay_format"
+            )
+            if img_fmt == "PNG":
+                filename_fmt = PAGE_FILENAME_PNG_FMT
+            else:
+                filename_fmt = PAGE_FILENAME_JPG_FMT
+            return self.core.call_success(
+                "fs_join", doc_url, filename_fmt.format(page_idx + 1)
+            )
 
         # let the caller write an original page (see model.img)
         return None
 
     def page_delete_by_url(self, doc_url, page_idx):
-        return util.delete_page_file(
-            self.core, PAGE_FILENAME_FMT, doc_url, page_idx
-        )
+        r = None
+        for filename_fmt in PAGE_FILENAME_FMTS:
+            r = util.delete_page_file(
+                self.core, filename_fmt, doc_url, page_idx
+            ) or r
+        return r
 
     def page_move_by_url(
                 self,
                 source_doc_url, source_page_idx,
                 dest_doc_url, dest_page_idx
             ):
-        return util.move_page_file(
-            self.core, PAGE_FILENAME_FMT,
-            source_doc_url, source_page_idx,
-            dest_doc_url, dest_page_idx
-        )
+        r = None
+        for filename_fmt in PAGE_FILENAME_FMTS:
+            r = util.move_page_file(
+                self.core, filename_fmt,
+                source_doc_url, source_page_idx,
+                dest_doc_url, dest_page_idx
+            ) or r
+        return r
 
     def page_reset_by_url(self, doc_url, page_idx):
         """
@@ -103,8 +138,9 @@ class Plugin(openpaperwork_core.PluginBase):
         delete the edited image so the original one takes over again
         (see model.img).
         """
-        page_url = self.core.call_success(
-            "fs_join", doc_url, PAGE_FILENAME_FMT.format(page_idx + 1)
-        )
-        if self.core.call_success("fs_exists", page_url):
-            self.core.call_success("fs_unlink", page_url, trash=False)
+        for filename_fmt in PAGE_FILENAME_FMTS:
+            page_url = self.core.call_success(
+                "fs_join", doc_url, filename_fmt.format(page_idx + 1)
+            )
+            if self.core.call_success("fs_exists", page_url):
+                self.core.call_success("fs_unlink", page_url, trash=False)
