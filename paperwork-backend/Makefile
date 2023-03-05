@@ -34,7 +34,7 @@ check:
 	flake8 src/paperwork_backend
 
 test: install
-	python3 -m unittest discover --verbose -s tests
+	python3 -m unittest discover -f --verbose -s tests
 
 linux_exe:
 

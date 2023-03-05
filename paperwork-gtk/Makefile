@@ -34,7 +34,7 @@ check:
 	flake8 --exclude=_version.py src/paperwork_gtk
 
 test: install
-	python3 -m unittest discover --verbose -s tests
+	python3 -m unittest discover -f --verbose -s tests
 
 windows_exe:
 	${PYTHON} /mingw64/bin/pip3-script.py install .
