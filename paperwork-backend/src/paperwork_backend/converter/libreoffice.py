@@ -14,6 +14,7 @@ LOGGER = logging.getLogger(__name__)
 
 LIBREOFFICE = [
     r'libreoffice',
+    r'soffice',
     r'soffice.exe',
     r'C:\Program Files\LibreOffice\program\soffice.exe',
     r'/app/libreoffice/program/soffice.bin',  # Flatpak
