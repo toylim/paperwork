@@ -1,5 +1,5 @@
 # image: $CI_REGISTRY_IMAGE/build:latest
-image: registry.gitlab.gnome.org/World/OpenPaperwork/paperwork/build:latest
+image: registry.gitlab.gnome.org/world/openpaperwork/paperwork/build:latest
 
 variables:
   GIT_STRATEGY: clone
