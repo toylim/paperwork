@@ -178,7 +178,6 @@ windows_tests:
   only:
     - branches@World/OpenPaperwork/paperwork
     - tags@World/OpenPaperwork/paperwork
-    - merge_requests
   tags:
     - windows
     - msys2
