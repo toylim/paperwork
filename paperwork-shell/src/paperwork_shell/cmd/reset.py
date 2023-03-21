@@ -15,7 +15,8 @@
 #    along with Paperwork.  If not, see <http://www.gnu.org/licenses/>.
 import logging
 import shutil
-import sys
+
+import rich.text
 
 import openpaperwork_core
 
@@ -29,7 +30,6 @@ LOGGER = logging.getLogger(__name__)
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
-        self.interactive = False
 
     def get_interfaces(self):
         return ['shell']
@@ -62,9 +62,6 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def cmd_set_interactive(self, interactive):
-        self.interactive = interactive
-
     def cmd_complete_argparse(self, parser):
         reset_parser = parser.add_parser(
             'reset', help=_("Reset a page to its original content")
@@ -73,10 +70,7 @@ class Plugin(openpaperwork_core.PluginBase):
         reset_parser.add_argument('--pages', '-p', type=str, required=True)
         reset_parser.add_argument('doc_id')
 
-    def show_page(self, doc_url, page_idx):
-        if not self.interactive:
-            return
-
+    def show_page(self, console, doc_url, page_idx):
         page_url = self.core.call_success(
             "page_get_img_url", doc_url, page_idx
         )
@@ -89,10 +83,10 @@ class Plugin(openpaperwork_core.PluginBase):
         if img is None:
             return
         for line in img:
-            print(line)
-        print()
+            console.print(rich.text.Text(line))
+        console.print()
 
-    def cmd_run(self, args):
+    def cmd_run(self, console, args):
         if args.command != 'reset':
             return None
 
@@ -103,32 +97,25 @@ class Plugin(openpaperwork_core.PluginBase):
 
         for page_idx in pages:
             out.append((doc_id, page_idx))
-            if self.interactive:
-                print(
-                    _("Reseting document {} page {} ...").format(
-                        doc_id, page_idx
-                    )
+            console.print(
+                _("Reseting document {} page {} ...").format(
+                    doc_id, page_idx
                 )
-                print(_("Original:"))
-                self.show_page(doc_url, page_idx)
+            )
+            console.print(_("Original:"))
+            self.show_page(doc_url, page_idx)
 
             self.core.call_all("page_reset_by_url", doc_url, page_idx)
 
-            if self.interactive:
-                print(_("Reseted:"))
-                self.show_page(doc_url, page_idx)
-                print("")
-
-        if self.interactive:
-            sys.stdout.write(_("Committing ...") + " ")
-            sys.stdout.flush()
+            console.print(_("Reseted:"))
+            self.show_page(doc_url, page_idx)
+            console.print("")
 
         self.core.call_success("transaction_simple", (("upd", doc_id),))
         self.core.call_success("mainloop_quit_graceful")
         self.core.call_success("mainloop")
 
-        if self.interactive:
-            print(_("Done"))
-            print(_("All done !"))
+        console.print(_("Done"))
+        console.print(_("All done !"))
 
         return out

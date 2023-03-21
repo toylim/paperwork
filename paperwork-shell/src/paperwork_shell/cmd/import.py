@@ -16,6 +16,8 @@
 import logging
 import sys
 
+import rich.text
+
 import openpaperwork_core
 import openpaperwork_core.promise
 
@@ -30,7 +32,6 @@ LOGGER = logging.getLogger(__name__)
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
-        self.interactive = False
 
     def get_interfaces(self):
         return ['shell']
@@ -57,9 +58,6 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['paperwork_backend.sync'],
             },
         ]
-
-    def cmd_set_interactive(self, interactive):
-        self.interactive = interactive
 
     def cmd_complete_argparse(self, parser):
         p = parser.add_parser(
@@ -89,7 +87,7 @@ class Plugin(openpaperwork_core.PluginBase):
             "stats": dict(file_import.stats)
         }
 
-    def cmd_run(self, args):
+    def cmd_run(self, console, args):
         if args.command != 'import':
             return None
 
@@ -103,10 +101,9 @@ class Plugin(openpaperwork_core.PluginBase):
         choice = 0
 
         if len(importers) <= 0:
-            if self.interactive:
-                print(
-                    _("Don't know how to import file(s) %s") % args.files
-                )
+            console.print(
+                _("Don't know how to import file(s) %s") % args.files
+            )
             LOGGER.warning("Don't know how to import file(s) %s", args.files)
             return self._file_import_to_dict(file_import)
 
@@ -118,12 +115,16 @@ class Plugin(openpaperwork_core.PluginBase):
                     " must be used", args.files
                 )
                 return self._file_import_to_dict(file_import)
-            print(_("Found many ways to import file(s) %s.") % args.files)
-            print(_("Please select the way you want:"))
+            console.print(
+                _("Found many ways to import file(s) %s.") % args.files
+            )
+            console.print(
+                _("Please select the way you want:")
+            )
             choice = -1
             while choice not in range(0, len(importers)):
                 for (idx, importer) in enumerate(importers):
-                    print("  {} - {}".format(idx + 1, importer.get_name()))
+                    console.print(f"  {idx + 1} - {importer.get_name()}")
                 sys.stdout.write("? ")
                 sys.stdout.flush()
                 choice = int(input()) - 1
@@ -131,13 +132,12 @@ class Plugin(openpaperwork_core.PluginBase):
         importer = importers[choice]
         del importers
 
-        if self.interactive:
-            # We must load the labels before importing. Because the label
-            # guesser may want to add labels on documents, and therefore
-            # we need to know their color
-            # TODO(Jflesch): That's slow and overkill. There should be a better
-            # way (maybe storing the labels in ~/.local/share/paperwork2 ?)
-            print(_("Loading labels ..."))
+        # We must load the labels before importing. Because the label
+        # guesser may want to add labels on documents, and therefore
+        # we need to know their color
+        # TODO(Jflesch): That's slow and overkill. There should be a better
+        # way (maybe storing the labels in ~/.local/share/paperwork2 ?)
+        console.print(_("Loading labels ..."))
         promises = []
         self.core.call_all("label_load_all", promises)
         promise = promises[0]
@@ -153,22 +153,28 @@ class Plugin(openpaperwork_core.PluginBase):
 
         promise = importer.get_import_promise(data)
 
-        if self.interactive:
-            print(_("Importing %s ...") % args.files)
+        console.print(_("Importing %s ...") % args.files)
         self.core.call_success(
             "mainloop_schedule", self.core.call_success,
             "transaction_schedule", promise
         )
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_success("mainloop")
-        if self.interactive:
-            print(_("Done"))
-            print(_("Import result:"))
-            print(_("- Imported files: %s") % file_import.imported_files)
-            print(_("- Non-imported files: %s") % file_import.ignored_files)
-            print(_("- New documents: %s") % file_import.new_doc_ids)
-            print(_("- Updated documents: %s") % file_import.upd_doc_ids)
-            for (k, v) in file_import.stats.items():
-                print("- {}: {}".format(k, v))
+        console.print(rich.text.Text(_("Done")))
+        console.print(rich.text.Text(_("Import result:")))
+        console.print(rich.text.Text(
+            _("- Imported files: %s") % file_import.imported_files
+        ))
+        console.print(rich.text.Text(
+            _("- Non-imported files: %s") % file_import.ignored_files
+        ))
+        console.print(rich.text.Text(
+            _("- New documents: %s") % file_import.new_doc_ids
+        ))
+        console.print(rich.text.Text(
+            _("- Updated documents: %s") % file_import.upd_doc_ids
+        ))
+        for (k, v) in file_import.stats.items():
+            console.print(rich.text.Text(f"- {k}: {v}"))
 
         return self._file_import_to_dict(file_import)

@@ -43,8 +43,8 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def cmd_set_interactive(self, interactive):
-        self.interactive = interactive
+    def cmd_set_interactive(self, console):
+        self.interactive = console is not None
 
     def cmd_complete_argparse(self, parser):
         p = parser.add_parser('show', help=_(
@@ -56,7 +56,7 @@ class Plugin(openpaperwork_core.PluginBase):
             help="Pages to show: 1,4 or 1-10 (default: all)"
         )
 
-    def cmd_run(self, args):
+    def cmd_run(self, console, args):
         if args.command != 'show':
             return None
 

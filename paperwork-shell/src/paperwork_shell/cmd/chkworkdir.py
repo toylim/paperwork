@@ -17,7 +17,6 @@ from .. import _
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
-        self.interactive = False
 
     def get_interfaces(self):
         return ['shell']
@@ -32,9 +31,6 @@ class Plugin(openpaperwork_core.PluginBase):
                 ],
             },
         ]
-
-    def cmd_set_interactive(self, interactive):
-        self.interactive = interactive
 
     def cmd_complete_argparse(self, parser):
         p = parser.add_parser(
@@ -55,46 +51,43 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         return fabulous.color.bg256(color, "  ") + " "
 
-    def cmd_run(self, args):
+    def cmd_run(self, console, args):
         if args.command != 'chkworkdir':
             return None
 
-        if self.interactive:
-            print(_("Checking work directory ..."))
+        console.print(_("Checking work directory ..."))
 
         problems = []
         self.core.call_all("check_work_dir", problems)
 
         if len(problems) <= 0:
-            if self.interactive:
-                print(_("No problem found"))
+            console.print(_("No problem found"))
             return problems
 
-        if self.interactive:
-            print("")
-            print(_("%d problems found:") % len(problems))
-            for problem in problems:
-                problem_color = (
-                    ""
-                    if "problem_color" not in problem
-                    else self._color(problem['problem_color'])
-                )
-                solution_color = (
-                    ""
-                    if "solution_color" not in problem
-                    else self._color(problem['solution_color'])
-                )
+        console.print()
+        console.print(_("%d problems found:") % len(problems))
+        for problem in problems:
+            problem_color = (
+                ""
+                if "problem_color" not in problem
+                else self._color(problem['problem_color'])
+            )
+            solution_color = (
+                ""
+                if "solution_color" not in problem
+                else self._color(problem['solution_color'])
+            )
 
-                print("[{}]".format(problem['problem']))
-                print(
-                    _("- Problem: ") + problem_color +
-                    problem['human_description']['problem']
-                )
-                print(
-                    _("- Possible solution: ") + solution_color +
-                    problem['human_description']['solution']
-                )
-                print("")
+            console.print("[{}]".format(problem['problem']))
+            console.print(
+                _("- Problem: ") + problem_color +
+                problem['human_description']['problem']
+            )
+            console.print(
+                _("- Possible solution: ") + solution_color +
+                problem['human_description']['solution']
+            )
+            console.print()
 
         if not args.yes:
             if not self.interactive:
@@ -108,16 +101,16 @@ class Plugin(openpaperwork_core.PluginBase):
                 print("OK, nothing changed.")
                 return problems
 
-        print(_("Fixing ..."))
+        console.print(_("Fixing ..."))
         self.core.call_all("fix_work_dir", problems)
         if self.interactive:
-            print(_("All fixed !"))
-            print(_("Synchronizing with work directory ..."))
+            console.print(_("All fixed !"))
+            console.print(_("Synchronizing with work directory ..."))
 
         self.core.call_all("transaction_sync_all")
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
         if self.interactive:
-            print(_("All done !"))
+            console.print(_("All done !"))
 
         return problems

@@ -23,10 +23,6 @@ LOGGER = logging.getLogger(__name__)
 
 
 class Plugin(PluginBase):
-    def __init__(self):
-        super().__init__()
-        self.interactive = True
-
     def get_interfaces(self):
         return ['shell']
 
@@ -91,26 +87,29 @@ class Plugin(PluginBase):
         )
         p.add_argument('plugin_name')
 
-    def cmd_set_interactive(self, interactive):
-        self.interactive = interactive
-
-    def cmd_run(self, args):
+    def cmd_run(self, console, args):
         if args.command != 'plugins':
             return None
         elif args.subcommand == "list":
-            return self._cmd_list_plugins()
+            return self._cmd_list_plugins(console)
         elif args.subcommand == "add":
-            return self._cmd_add_plugin(args.plugin_name, not args.no_auto)
+            return self._cmd_add_plugin(
+                console, args.plugin_name, not args.no_auto
+            )
         elif args.subcommand == "remove":
-            return self._cmd_remove_plugin(args.plugin_name, not args.no_auto)
+            return self._cmd_remove_plugin(
+                console, args.plugin_name, not args.no_auto
+            )
         elif args.subcommand == "reset":
-            return self._cmd_reset_plugins()
+            return self._cmd_reset_plugins(console)
         elif args.subcommand == "show":
-            return self._cmd_show_plugin(args.plugin_name)
+            return self._cmd_show_plugin(console, args.plugin_name)
         else:
             return None
 
-    def _cmd_add_plugin(self, plugin_name, auto=True, added=set(), save=True):
+    def _cmd_add_plugin(
+                self, console, plugin_name, auto=True, added=set(), save=True
+            ):
         added.add(plugin_name)
 
         if auto:
@@ -121,10 +120,9 @@ class Plugin(PluginBase):
             try:
                 module = importlib.import_module(plugin_name)
             except ModuleNotFoundError:
-                if self.interactive:
-                    print(_("Error: Plugin '%s' not found") % plugin_name)
-                else:
-                    LOGGER.error("Plugin '%s' not found", plugin_name)
+                console.print(
+                    _("Error: Plugin '%s' not found") % plugin_name
+                )
                 return False
             plugin = module.Plugin()
             deps = plugin.get_deps()
@@ -138,7 +136,7 @@ class Plugin(PluginBase):
                 for default in dep['defaults']:
                     if default in added:
                         continue
-                    print(
+                    console.print(
                         _(
                             "Adding plugin '{plugin_name}' to satisfy"
                             " dependency of '{other_plugin_name}' on interface"
@@ -158,12 +156,11 @@ class Plugin(PluginBase):
         self.core.call_all("config_add_plugin", plugin_name)
         if save:
             self.core.call_all("config_save")
-        if self.interactive:
-            print(_("Plugin {} added").format(plugin_name))
+        console.print(_("Plugin {} added").format(plugin_name))
         return True
 
     def _cmd_remove_plugin(
-            self, plugin_name, auto=True, removed=set(), save=True):
+            self, console, plugin_name, auto=True, removed=set(), save=True):
         removed.add(plugin_name)
 
         if auto:
@@ -178,16 +175,15 @@ class Plugin(PluginBase):
                     actives = dep['actives']
                     actives = actives.difference(removed)
                     if len(actives) <= 0:
-                        if self.interactive:
-                            print(
-                                _(
-                                    "Removing plugin '{plugin_name}' due to"
-                                    " missing dependency '{interface}'"
-                                ).format(
-                                    plugin_name=other_plugin,
-                                    interface=dep['interface']
-                                )
+                        console.print(
+                            _(
+                                "Removing plugin '{plugin_name}' due to"
+                                " missing dependency '{interface}'"
+                            ).format(
+                                plugin_name=other_plugin,
+                                interface=dep['interface']
                             )
+                        )
                         self._cmd_remove_plugin(
                             other_plugin, auto=auto, removed=removed,
                             save=False
@@ -197,33 +193,29 @@ class Plugin(PluginBase):
         self.core.call_all("config_remove_plugin", plugin_name)
         if save:
             self.core.call_all("config_save")
-        if self.interactive:
-            print(_("Plugin {} removed").format(plugin_name))
+        console.print(_("Plugin {} removed").format(plugin_name))
         return True
 
-    def _cmd_list_plugins(self):
+    def _cmd_list_plugins(self, console):
         plugins = self.core.call_success("config_list_plugins")
-        if self.interactive:
-            self.core.call_all("print", "  " + _("Active plugins:") + "\n")
-            for plugin in plugins:
-                self.core.call_all("print", plugin + "\n")
-            self.core.call_all("print_flush")
+        console.print("  " + _("Active plugins:"))
+        for plugin in plugins:
+            console.print(plugin)
         return list(plugins)
 
-    def _cmd_reset_plugins(self):
+    def _cmd_reset_plugins(self, console):
         self.core.call_success("config_reset_plugins")
         self.core.call_all("config_save")
-        if self.interactive:
-            print("Plugin list reseted")
+        console.print("Plugin list reseted")
         return True
 
-    def _print_columns(self, columns):
+    def _print_columns(self, console, columns):
         out = ""
         for (column_size, string) in columns:
             out += "| "
             out += ("{:" + str(column_size) + "}").format(string)
         out = out[1:]
-        self.core.call_all("print", out + "\n")
+        console.print(out)
 
     def _get_printable_deps(
             self, plugin_name,
@@ -285,59 +277,53 @@ class Plugin(PluginBase):
                     plugin_name, requirements, depth + 1, already_printed):
                 yield line
 
-    def _cmd_show_plugin(self, plugin_name):
+    def _cmd_show_plugin(self, console, plugin_name):
         try:
             plugin = self.core.get_by_name(plugin_name)
         except KeyError:
-            if self.interactive:
-                print(_("Plugin '%s' not enabled.") % plugin_name)
+            console.print(_("Plugin '%s' not enabled.") % plugin_name)
             return {}
 
-        if self.interactive:
-            self.core.call_all(
-                "print", (_("Plugin '%s':") % plugin_name) + "\n"
-            )
-            self.core.call_all("print", "* " + _("Implements:") + "\n")
-            for interf in plugin.get_interfaces():
-                self.core.call_all("print", "  + " + interf + "\n")
-            self.core.call_all("print", "* " + _("Depends on:") + "\n")
-            for dep in plugin.get_deps():
-                self.core.call_all("print", "  + " + dep['interface'] + "\n")
-                for default in dep['defaults']:
-                    self.core.call_all(
-                        "print",
-                        "    - " + (_("suggested: %s") % default) + "\n"
-                    )
+        console.print(_("Plugin '%s':") % plugin_name)
+        console.print("* " + _("Implements:"))
+        for interf in plugin.get_interfaces():
+            console.print("  + " + interf)
+        console.print("* " + _("Depends on:"))
+        for dep in plugin.get_deps():
+            console.print("  + " + dep['interface'])
+            for default in dep['defaults']:
+                console.print("    - " + (_("suggested: %s") % default))
 
-            self.core.call_all("print", "\n")
+        console.print()
 
-            deps = list(self._get_printable_deps(plugin_name))
+        deps = list(self._get_printable_deps(plugin_name))
 
-            column_headers = (
-                _("Plugin name"),
-                _("Interface"),
-            )
+        column_headers = (
+            _("Plugin name"),
+            _("Interface"),
+        )
 
-            column_sizes = [len(c) + 1 for c in column_headers]
-            for d in deps:
-                for (idx, column_value) in enumerate(d):
-                    column_sizes[idx] = max(
-                        column_sizes[idx], len(column_value) + 1
-                    )
-            total = sum(column_sizes) + (2 * len(column_sizes))
+        column_sizes = [len(c) + 1 for c in column_headers]
+        for d in deps:
+            for (idx, column_value) in enumerate(d):
+                column_sizes[idx] = max(
+                    column_sizes[idx], len(column_value) + 1
+                )
+        total = sum(column_sizes) + (2 * len(column_sizes))
 
-            self._print_columns((
+        self._print_columns(
+            console,
+            (
                 (column_sizes[0], _("Plugin name")),
                 (column_sizes[1], _("Interface")),
-            ))
-            self.core.call_all("print", ("-" * total) + "\n")
-            for d in deps:
-                self._print_columns([
-                    (column_sizes[idx], column_value)
-                    for (idx, column_value) in enumerate(d)
-                ])
-
-            self.core.call_all("print_flush")
+            )
+        )
+        console.print("-" * total)
+        for d in deps:
+            self._print_columns([
+                (column_sizes[idx], column_value)
+                for (idx, column_value) in enumerate(d)
+            ])
 
         return {
             'interface': plugin.get_interfaces(),

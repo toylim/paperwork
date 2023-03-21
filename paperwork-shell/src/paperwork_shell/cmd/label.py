@@ -50,8 +50,8 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def cmd_set_interactive(self, interactive):
-        self.interactive = interactive
+    def cmd_set_interactive(self, console):
+        self.interactive = console is not None
 
     def cmd_complete_argparse(self, parser):
         label_parser = parser.add_parser(
@@ -85,10 +85,8 @@ class Plugin(openpaperwork_core.PluginBase):
             'label_name', help=_("Label to delete from *all* documents")
         )
 
-    def _load_all_labels(self):
-        if self.interactive:
-            sys.stdout.write(_("Loading all labels ... "))
-            sys.stdout.flush()
+    def _load_all_labels(self, console):
+        console.print(_("Loading all labels ... "))
         promises = []
         self.core.call_all("label_load_all", promises)
         promise = promises[0]
@@ -97,15 +95,14 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_one("mainloop_schedule", promise.schedule)
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
-        if self.interactive:
-            sys.stdout.write(_("Done") + "\n")
+        console.print(_("Done"))
 
-    def _upd_doc(self, doc_id):
+    def _upd_doc(self, console, doc_id):
         self.core.call_success("transaction_simple", (("upd", doc_id),))
         self.core.call_success("mainloop_quit_graceful")
         self.core.call_success("mainloop")
 
-    def _show(self, doc_ids):
+    def _show(self, console, doc_ids):
         out = {}
         for doc_id in doc_ids:
             doc_url = self.core.call_success("doc_id_to_url", doc_id)
@@ -120,12 +117,12 @@ class Plugin(openpaperwork_core.PluginBase):
                 self.core.call_all("print_labels", labels, separator=" ")
         return out
 
-    def cmd_run(self, args):
+    def cmd_run(self, console, args):
         if args.command != 'label':
             return None
 
         if args.sub_command == 'list':
-            self._load_all_labels()
+            self._load_all_labels(console)
 
             labels = set()
             self.core.call_all("labels_get_all", labels)
@@ -139,7 +136,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         elif args.sub_command == 'show':
 
-            return self._show(args.doc_ids)
+            return self._show(console, args.doc_ids)
 
         elif args.sub_command == "add":
 
@@ -149,15 +146,15 @@ class Plugin(openpaperwork_core.PluginBase):
                 color = self.core.call_success("label_color_to_rgb", color)
                 color = self.core.call_success("label_color_from_rgb", color)
 
-            self._load_all_labels()
+            self._load_all_labels(console)
             doc_url = self.core.call_success("doc_id_to_url", args.doc_id)
             self.core.call_success(
                 "doc_add_label_by_url", doc_url, args.label_name, color
             )
 
-            self._upd_doc(args.doc_id)
+            self._upd_doc(console, args.doc_id)
 
-            return self._show([args.doc_id])
+            return self._show(console, [args.doc_id])
 
         elif args.sub_command == "remove":
 
@@ -165,8 +162,8 @@ class Plugin(openpaperwork_core.PluginBase):
             self.core.call_all(
                 "doc_remove_label_by_url", doc_url, args.label_name
             )
-            self._upd_doc(args.doc_id)
-            return self._show([args.doc_id])
+            self._upd_doc(console, args.doc_id)
+            return self._show(console, [args.doc_id])
 
         elif args.sub_command == "delete":
 

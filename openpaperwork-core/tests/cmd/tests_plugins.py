@@ -4,6 +4,7 @@ import tempfile
 import unittest
 
 import openpaperwork_core
+import openpaperwork_core.cmd
 
 
 class TestConfig(unittest.TestCase):
@@ -45,21 +46,29 @@ class TestConfig(unittest.TestCase):
         args = parser.parse_args(
             ['plugins', 'add', 'plugin_a', '--no_auto']
         )
-        r = self.core.call_success("cmd_run", args)
+        r = self.core.call_success(
+            "cmd_run", openpaperwork_core.cmd.DummyConsole(), args
+        )
         self.assertTrue(r)
         args = parser.parse_args(
             ['plugins', 'add', 'plugin_b', '--no_auto']
         )
-        r = self.core.call_success("cmd_run", args)
+        r = self.core.call_success(
+            "cmd_run", openpaperwork_core.cmd.DummyConsole(), args
+        )
         self.assertTrue(r)
         args = parser.parse_args(
             ['plugins', 'add', 'plugin_c', '--no_auto']
         )
-        r = self.core.call_success("cmd_run", args)
+        r = self.core.call_success(
+            "cmd_run", openpaperwork_core.cmd.DummyConsole(), args
+        )
         self.assertTrue(r)
 
         args = parser.parse_args(['plugins', 'list'])
-        r = self.core.call_success("cmd_run", args)
+        r = self.core.call_success(
+            "cmd_run", openpaperwork_core.cmd.DummyConsole(), args
+        )
         self.assertEqual(
             sorted(r), ['plugin_a', 'plugin_b', 'plugin_c', 'pouet']
         )
@@ -67,9 +76,13 @@ class TestConfig(unittest.TestCase):
         args = parser.parse_args(
             ['plugins', 'remove', 'plugin_b', '--no_auto']
         )
-        r = self.core.call_success("cmd_run", args)
+        r = self.core.call_success(
+            "cmd_run", openpaperwork_core.cmd.DummyConsole(), args
+        )
         self.assertTrue(r)
 
         args = parser.parse_args(['plugins', 'list'])
-        r = self.core.call_success("cmd_run", args)
+        r = self.core.call_success(
+            "cmd_run", openpaperwork_core.cmd.DummyConsole(), args
+        )
         self.assertEqual(sorted(r), ['plugin_a', 'plugin_c', 'pouet'])

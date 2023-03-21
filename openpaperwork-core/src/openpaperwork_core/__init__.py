@@ -22,7 +22,6 @@ MINIMUM_CONFIG_PLUGINS = [
     'openpaperwork_core.frozen',
     'openpaperwork_core.fs.python',
     'openpaperwork_core.logs.archives',
-    'openpaperwork_core.logs.print',
     'openpaperwork_core.mainloop.asyncio',
     'openpaperwork_core.paths.xdg',
     'openpaperwork_core.uncaught_exception',

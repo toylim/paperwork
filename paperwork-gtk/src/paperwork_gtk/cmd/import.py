@@ -49,7 +49,7 @@ class Plugin(openpaperwork_core.PluginBase):
             "URLs or paths of files to import"
         ))
 
-    def cmd_run(self, args):
+    def cmd_run(self, console, args):
         if args.command != 'import':
             return None
         if not HAS_GTK_GLIB:

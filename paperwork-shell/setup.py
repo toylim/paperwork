@@ -25,6 +25,8 @@ except FileNotFoundError:
 install_requires = [
     "openpaperwork-core",
     "paperwork-backend",
+
+    "rich",
 ]
 if os.name != "nt":
     install_requires.append("fabulous")

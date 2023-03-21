@@ -285,13 +285,13 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def cmd_set_interactive(self, interactive):
-        self.interactive = interactive
+    def cmd_set_interactive(self, console):
+        self.interactive = console is not None
 
     def cmd_complete_argparse(self, parser):
         parser.add_parser('compute_sklearn_label_guessing_backlog')
 
-    def cmd_run(self, args):
+    def cmd_run(self, console, args):
         if args.command != 'compute_sklearn_label_guessing_backlog':
             return None
 
@@ -299,8 +299,8 @@ class Plugin(openpaperwork_core.PluginBase):
         corpus.load_all()
 
         for backlog in (1, 10, 25, 50, 75, 100, 150, 200, 250, 300, 500, 2500):
-            print()
-            print("Backlog {}:".format(backlog))
+            console.print()
+            console.print("Backlog {}:".format(backlog))
             corpus.reset()
             if not corpus.fit(backlog):
                 return {}
@@ -309,7 +309,9 @@ class Plugin(openpaperwork_core.PluginBase):
             stop = time.time()
             corpus.compute_scores()
             accuracy = corpus.compute_accuracy()
-            print("Backlog: {} ; Accuracy: {} ; Training time: {}s".format(
-                backlog, accuracy, int(stop - start)
-            ))
+            console.print(
+                "Backlog: {} ; Accuracy: {} ; Training time: {}s".format(
+                    backlog, accuracy, int(stop - start)
+                )
+            )
         return {}

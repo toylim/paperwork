@@ -17,6 +17,7 @@ import shutil
 
 import PIL
 import PIL.Image
+import rich.text
 
 import openpaperwork_core
 
@@ -56,6 +57,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.doc_url = None
         self.doc_renderer = None
         self.page_hashes = {}
+        self.console = None
 
     def get_deps(self):
         return [
@@ -77,12 +79,15 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
+    def cmd_set_interactive(self, console):
+        self.console = console
+
     def on_scan_feed_start(self, scan_id):
-        self.core.call_all("shell_show_progress", False)
+        pass
 
     def on_scan_page_start(self, scan_id, page_nb, scan_params):
-        print()
-        print(
+        self.console.print()
+        self.console.print(
             _("Scanning page {} (expected size: {}x{}) ...").format(
                 page_nb + 1, scan_params.get_width(), scan_params.get_height()
             )
@@ -118,12 +123,12 @@ class Plugin(openpaperwork_core.PluginBase):
                 "img_render", img, terminal_width=self.terminal_size[0]
             )
             for line in img:
-                print(line)
+                self.console.print(rich.text.Text(line))
             self.last_line_displayed = current_usable_line
 
     def on_scan_page_end(self, scan_id, page_nb, img):
         img_size = img.size
-        print(
+        self.console.print(
             _("Page {} scanned (actual size: {}x{})").format(
                 page_nb + 1, img_size[0], img_size[1]
             )
@@ -131,8 +136,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def on_scan_feed_end(self, scan_id):
         self.core.call_all("shell_show_progress", True)
-        print()
-        print(_("End of paper feed"))
+        self.console.print()
+        self.console.print(_("End of paper feed"))
 
     def on_scan2doc_start(self, scan_id, doc_id, doc_url):
         self.doc_id = doc_id
@@ -148,7 +153,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def on_scan2doc_page_scanned(self, scan_id, doc_id, doc_url, page_idx):
-        print(_("Page {} in document {} created").format(
+        self.console.print(_("Page {} in document {} created").format(
             page_idx, doc_id
         ))
         self.page_hashes[page_idx] = self._compute_page_hash(
@@ -176,10 +181,10 @@ class Plugin(openpaperwork_core.PluginBase):
             lines = self.doc_renderer.get_preview_output(
                 self.doc_id, self.doc_url, self.terminal_size, page_idx
             )
-            print()
+            self.console.print()
             for line in lines:
-                print(line)
-            print()
+                self.console.print(line)
+            self.console.print()
 
     def on_progress(self, upd_type, progress, description=None):
         self._show_last_page()

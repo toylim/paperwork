@@ -21,7 +21,6 @@ from .. import _
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
-        self.interactive = False
 
     def get_interfaces(self):
         return ['shell']
@@ -50,9 +49,6 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def cmd_set_interactive(self, interactive):
-        self.interactive = interactive
-
     def cmd_complete_argparse(self, parser):
         p = parser.add_parser(
             'move', help=_("Move a page")
@@ -74,7 +70,7 @@ class Plugin(openpaperwork_core.PluginBase):
             help=_("Target page number")
         )
 
-    def cmd_run(self, args):
+    def cmd_run(self, console, args):
         if args.command != 'move':
             return None
 

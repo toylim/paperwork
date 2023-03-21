@@ -262,7 +262,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def cmd_complete_argparse(self, parser):
         parser.add_parser('test_sklearn_gaussian_with_hashes')
 
-    def cmd_run(self, args):
+    def cmd_run(self, console, args):
         if args.command != 'test_sklearn_gaussian_with_hashes':
             return None
 
@@ -277,6 +277,8 @@ class Plugin(openpaperwork_core.PluginBase):
             corpus.compute_scores()
             accuracy = corpus.compute_accuracy()
 
-            print("n_features=2**{} --> accuracy={}".format(two_pow, accuracy))
+            console.print("n_features=2**{} --> accuracy={}".format(
+                two_pow, accuracy
+            ))
 
         return True

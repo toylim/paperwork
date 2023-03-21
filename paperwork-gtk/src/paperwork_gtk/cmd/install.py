@@ -22,18 +22,11 @@ ICON_SIZES = [
 
 
 class Plugin(openpaperwork_core.PluginBase):
-    def __init__(self):
-        super().__init__()
-        self.interactive = False
-
     def get_interfaces(self):
         return ['shell']
 
     def get_deps(self):
         return []
-
-    def cmd_set_interface(self, interactive):
-        self.interactive = interactive
 
     def cmd_complete_argparse(self, parser):
         p = parser.add_parser('install', help=_(
@@ -47,7 +40,7 @@ class Plugin(openpaperwork_core.PluginBase):
         p.add_argument("--icon_base_dir", default="/usr/share/icons")
         p.add_argument("--data_base_dir", default="/usr/share")
 
-    def _install(self, icondir, datadir):
+    def _install(self, console, icondir, datadir):
         assert PKG_RESOURCES_AVAILABLE
         png_src_icon_pattern = "paperwork_{}.png"
         png_dst_icon_pattern = os.path.join(
@@ -98,11 +91,11 @@ class Plugin(openpaperwork_core.PluginBase):
             )
 
         for (src, dst) in to_copy:
-            print("Installing {} ...".format(dst))
+            console.print("Installing {} ...".format(dst))
             os.makedirs(os.path.dirname(dst), exist_ok=True)
             shutil.copyfile(src, dst)
 
-        print("Generating {} ...".format(desktop_path))
+        console.print("Generating {} ...".format(desktop_path))
         entry = xdg.DesktopEntry.DesktopEntry(desktop_path)
         entry.set("GenericName", "Personal Document Manager")
         entry.set("Type", "Application")
@@ -147,9 +140,9 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         entry.validate()
         entry.write()
-        print("Done")
+        console.print("Done")
 
-    def cmd_run(self, args):
+    def cmd_run(self, console, args):
         if args.command != 'install':
             return None
 
@@ -159,5 +152,5 @@ class Plugin(openpaperwork_core.PluginBase):
             icon_base_dir = xdg.IconTheme.icondirs[0]
             data_base_dir = xdg.BaseDirectory.xdg_data_dirs[0]
 
-        self._install(icon_base_dir, data_base_dir)
+        self._install(console, icon_base_dir, data_base_dir)
         return True
