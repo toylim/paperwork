@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-30 11:53+0100\n"
+"POT-Creation-Date: 2023-03-28 17:53+0200\n"
 "PO-Revision-Date: 2021-11-16 17:11+0000\n"
 "Last-Translator: Jerome Flesch <jflesch@openpaper.work>\n"
 "Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
@@ -19,6 +19,27 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
 "X-Generator: Weblate 4.9\n"
+
+#: openpaperwork-core/src/openpaperwork_core/beacon/stats.py:126
+msgid "App. & system info."
+msgstr "App. & info. système"
+
+#: openpaperwork-core/src/openpaperwork_core/beacon/stats.py:127
+msgid "Select to generate"
+msgstr "Sélectionnez pour générer"
+
+#: openpaperwork-core/src/openpaperwork_core/beacon/stats.py:149
+msgid "Collecting statistics ..."
+msgstr "Collecte de statistiques en cours …"
+
+#: openpaperwork-core/src/openpaperwork_core/config/backend/configparser.py:363
+msgid "App. config."
+msgstr "Config. de l'app."
+
+#: openpaperwork-core/src/openpaperwork_core/logs/archives.py:134
+#: openpaperwork-core/src/openpaperwork_core/logs/archives.py:145
+msgid "Log file"
+msgstr "Traces"
 
 #: openpaperwork-core/src/openpaperwork_core/i18n/python.py:38
 msgid "Today"
@@ -53,6 +74,14 @@ msgstr "%3.1f Gio"
 msgid "%3.1f TiB"
 msgstr "%3.1f Tio"
 
+#: openpaperwork-core/src/openpaperwork_core/cmd/util.py:10
+msgid "Y/n"
+msgstr "O/n"
+
+#: openpaperwork-core/src/openpaperwork_core/cmd/util.py:13
+msgid "y/N"
+msgstr "o/N"
+
 #: openpaperwork-core/src/openpaperwork_core/cmd/chkdeps.py:52
 msgid "Check that all required dependencies are installed"
 msgstr "Vérifie que toutes les dépendances requises sont installées"
@@ -86,41 +115,15 @@ msgstr "Je ne sais pas comment installer ces dépendances. Désolé."
 msgid "Nothing to do."
 msgstr "Rien à faire."
 
-#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:58
-msgid "Manage Paperwork configuration"
-msgstr "Gérer la configuration de Paperwork"
-
-#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:62
-#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:49
-msgid "sub-command"
-msgstr "sous-commande"
-
-#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:66
-msgid "Get a value from Paperwork's configuration"
-msgstr "Renvoi une valeur depuis la configuration de Paperwork"
-
-#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:71
-msgid "Set a value in Paperwork's configuration"
-msgstr "Défini une valeur dans la configuration de Paperwork"
-
-#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:74
-msgid "See 'config list_type'"
-msgstr "Voir 'config list_type'"
-
-#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:78
-msgid "Show Paperwork's configuration"
-msgstr "Affiche la configuration de Paperwork"
-
-#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:83
-msgid "Show value types you can use from command line"
-msgstr ""
-"Affiche les types de valeurs que vous pouvez utiliser depuis la ligne de "
-"commande"
-
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:45
 #, python-format
 msgid "Manage %s plugins"
 msgstr "Gérer les plugins de %s"
+
+#: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:49
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:69
+msgid "sub-command"
+msgstr "sous-commande"
 
 #: openpaperwork-core/src/openpaperwork_core/cmd/plugins.py:54
 #, python-format
@@ -216,31 +219,28 @@ msgstr "Nom du plugin"
 msgid "Interface"
 msgstr "Interface"
 
-#: openpaperwork-core/src/openpaperwork_core/cmd/util.py:10
-msgid "Y/n"
-msgstr "O/n"
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:65
+msgid "Manage Paperwork configuration"
+msgstr "Gérer la configuration de Paperwork"
 
-#: openpaperwork-core/src/openpaperwork_core/cmd/util.py:13
-msgid "y/N"
-msgstr "o/N"
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:73
+msgid "Get a value from Paperwork's configuration"
+msgstr "Renvoi une valeur depuis la configuration de Paperwork"
 
-#: openpaperwork-core/src/openpaperwork_core/logs/archives.py:134
-#: openpaperwork-core/src/openpaperwork_core/logs/archives.py:145
-msgid "Log file"
-msgstr "Traces"
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:78
+msgid "Set a value in Paperwork's configuration"
+msgstr "Défini une valeur dans la configuration de Paperwork"
 
-#: openpaperwork-core/src/openpaperwork_core/config/backend/configparser.py:333
-msgid "App. config."
-msgstr "Config. de l'app."
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:81
+msgid "See 'config list_type'"
+msgstr "Voir 'config list_type'"
 
-#: openpaperwork-core/src/openpaperwork_core/beacon/stats.py:126
-msgid "App. & system info."
-msgstr "App. & info. système"
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:85
+msgid "Show Paperwork's configuration"
+msgstr "Affiche la configuration de Paperwork"
 
-#: openpaperwork-core/src/openpaperwork_core/beacon/stats.py:127
-msgid "Select to generate"
-msgstr "Sélectionnez pour générer"
-
-#: openpaperwork-core/src/openpaperwork_core/beacon/stats.py:149
-msgid "Collecting statistics ..."
-msgstr "Collecte de statistiques en cours …"
+#: openpaperwork-core/src/openpaperwork_core/cmd/config.py:90
+msgid "Show value types you can use from command line"
+msgstr ""
+"Affiche les types de valeurs que vous pouvez utiliser depuis la ligne de "
+"commande"

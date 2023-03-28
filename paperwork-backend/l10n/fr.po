@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-30 11:53+0100\n"
+"POT-Creation-Date: 2023-03-28 17:53+0200\n"
 "PO-Revision-Date: 2021-11-29 21:07+0000\n"
 "Last-Translator: Jerome Flesch <jflesch@openpaper.work>\n"
 "Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
@@ -19,166 +19,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
 "X-Generator: Weblate 4.9\n"
-
-#: paperwork-backend/src/paperwork_backend/i18n/scanner.py:38
-msgid "centrally aligned"
-msgstr "centré"
-
-#: paperwork-backend/src/paperwork_backend/i18n/scanner.py:39
-msgid "Feeder"
-msgstr "Bac d'alimentation"
-
-#: paperwork-backend/src/paperwork_backend/i18n/scanner.py:40
-msgid "Flatbed"
-msgstr "Plateau"
-
-#: paperwork-backend/src/paperwork_backend/i18n/scanner.py:41
-msgid "left aligned"
-msgstr "aligné à gauche"
-
-#: paperwork-backend/src/paperwork_backend/i18n/scanner.py:42
-msgid "right aligned"
-msgstr "aligné à droite"
-
-#: paperwork-backend/src/paperwork_backend/i18n/pycountry.py:9
-msgid "English"
-msgstr "Anglais"
-
-#: paperwork-backend/src/paperwork_backend/i18n/pycountry.py:10
-msgid "French"
-msgstr "Français"
-
-#: paperwork-backend/src/paperwork_backend/i18n/pycountry.py:11
-msgid "German"
-msgstr "Allemand"
-
-#: paperwork-backend/src/paperwork_backend/pageedit/pageeditor.py:80
-msgid "Color equalization"
-msgstr "Égalisation des couleurs"
-
-#: paperwork-backend/src/paperwork_backend/pageedit/pageeditor.py:92
-msgid "Cropping"
-msgstr "Recadrage"
-
-#: paperwork-backend/src/paperwork_backend/pageedit/pageeditor.py:103
-msgid "Clockwise Rotation"
-msgstr "Rotation dans le sens horaire"
-
-#: paperwork-backend/src/paperwork_backend/pageedit/pageeditor.py:112
-msgid "Counterclockwise Rotation"
-msgstr "Rotation dans le sens anti-horaire"
-
-#: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:231
-msgid "Label guesser: Garbage-collecting unused document features ..."
-msgstr ""
-"Devineur d'étiquettes : Suppression des caractéristiques de documents qui ne "
-"sont plus utilisées ..."
-
-#: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:254
-msgid "Label guesser: Garbage-collecting unused words ..."
-msgstr "Devineur d'étiquettes : Suppression des mots non-utilisés ..."
-
-#: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:571
-#, python-format
-msgid "Label guesser: added document %s"
-msgstr "Devineur d'étiquettes : document %s ajouté"
-
-#: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:581
-#, python-format
-msgid "Label guesser: updated document %s"
-msgstr "Devineur d'étiquettes : document %s mis à jour"
-
-#: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:596
-#, python-format
-msgid "Label guesser: deleted document %s"
-msgstr "Devineur d'étiquettes : document %s effacé"
-
-#: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:681
-msgid "Commiting changes for label guessing ..."
-msgstr "Enregistrement des changements pour le devinage d'étiquettes ..."
-
-#: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:873
-#: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:929
-msgid "Label guessing: Training ..."
-msgstr "Devineur d'étiquettes : entraînement ..."
-
-#: paperwork-backend/src/paperwork_backend/guesswork/orientation/pyocr.py:43
-#, python-brace-format
-msgid ""
-"Document {doc_id} p{page_idx} has already some text. Not guessing page "
-"orientation."
-msgstr ""
-"La p{page_idx} du document {doc_id} a déjà du texte. Pas de tentative de "
-"deviner l'orientation de la page."
-
-#: paperwork-backend/src/paperwork_backend/guesswork/orientation/pyocr.py:53
-#, python-brace-format
-msgid "Guessing orientation of document {doc_id} p{page_idx}"
-msgstr ""
-"Entrain de deviner l'orientation de la p{page_idx} du document {doc_id}"
-
-#: paperwork-backend/src/paperwork_backend/guesswork/orientation/pyocr.py:77
-msgid "Guessing page orientation"
-msgstr "Détection de l'orientation de la page"
-
-#: paperwork-backend/src/paperwork_backend/guesswork/color/libpillowfight.py:48
-#, python-brace-format
-msgid "Document {doc_id} p{page_idx} already correctly colorized"
-msgstr "La p{page_idx} du document {doc_id} est déjà correctement colorisée"
-
-#: paperwork-backend/src/paperwork_backend/guesswork/color/libpillowfight.py:64
-#, python-brace-format
-msgid "Adjusting colors of document {doc_id} p{page_idx}"
-msgstr "Ajustement des couleurs de la p{page_idx} du document {doc_id}"
-
-#: paperwork-backend/src/paperwork_backend/guesswork/color/libpillowfight.py:88
-msgid "Adjusting colors of document"
-msgstr "Ajustement des couleurs du document"
-
-#: paperwork-backend/src/paperwork_backend/guesswork/ocr/pyocr.py:48
-#, python-brace-format
-msgid "Document {doc_id} p{page_idx} has already some text. No OCR run"
-msgstr ""
-"Le document {doc_id} p{page_idx} a déjà du texte associé. La ROC ne sera pas "
-"effectuée"
-
-#: paperwork-backend/src/paperwork_backend/guesswork/ocr/pyocr.py:57
-#, python-brace-format
-msgid "Running OCR on document {doc_id} p{page_idx}"
-msgstr "Exécution de la ROC sur le document {doc_id} p{page_idx}"
-
-#: paperwork-backend/src/paperwork_backend/guesswork/ocr/pyocr.py:83
-msgid "Running OCR"
-msgstr "Exécution de la ROC"
-
-#: paperwork-backend/src/paperwork_backend/guesswork/cropping/calibration.py:45
-#: paperwork-backend/src/paperwork_backend/guesswork/cropping/libpillowfight.py:51
-#, python-brace-format
-msgid "Document {doc_id} p{page_idx} already cropped"
-msgstr "Document {doc_id} p{page_idx} déjà découpée"
-
-#: paperwork-backend/src/paperwork_backend/guesswork/cropping/calibration.py:58
-#, python-brace-format
-msgid "Document {doc_id} p{page_idx} has already some text. Not cropping."
-msgstr ""
-"La page p{page_idx} du document {doc_id} a déjà du texte. Ne sera pas "
-"découpée."
-
-#: paperwork-backend/src/paperwork_backend/guesswork/cropping/calibration.py:68
-#, python-brace-format
-msgid "Using calibration to crop page borders of document {doc_id} p{page_idx}"
-msgstr ""
-"Utilisation de la calibration pour découper les bords de la page {doc_id} "
-"p{page_idx}"
-
-#: paperwork-backend/src/paperwork_backend/guesswork/cropping/libpillowfight.py:60
-#, python-brace-format
-msgid "Guessing page borders of document {doc_id} p{page_idx}"
-msgstr "Détection des bords de la page de {doc_id} p{page_idx}"
-
-#: paperwork-backend/src/paperwork_backend/guesswork/cropping/libpillowfight.py:85
-msgid "Guessing page borders"
-msgstr "Détection des bords de la page"
 
 #: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:233
 msgid "Starting scan ..."
@@ -200,54 +40,160 @@ msgstr "Examen de %s"
 msgid "Getting scanner list ..."
 msgstr "Récupération de la liste des scanners…"
 
-#: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:752
+#: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:749
 msgid "Scanner info."
 msgstr "Info. du scanner"
 
-#: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:753
+#: paperwork-backend/src/paperwork_backend/docscan/libinsane.py:750
 msgid "Select to generate"
 msgstr "Sélectionnez pour générer"
 
-#: paperwork-backend/src/paperwork_backend/doctracker.py:68
+#: paperwork-backend/src/paperwork_backend/guesswork/color/libpillowfight.py:48
+#, python-brace-format
+msgid "Document {doc_id} p{page_idx} already correctly colorized"
+msgstr "La p{page_idx} du document {doc_id} est déjà correctement colorisée"
+
+#: paperwork-backend/src/paperwork_backend/guesswork/color/libpillowfight.py:64
+#, python-brace-format
+msgid "Adjusting colors of document {doc_id} p{page_idx}"
+msgstr "Ajustement des couleurs de la p{page_idx} du document {doc_id}"
+
+#: paperwork-backend/src/paperwork_backend/guesswork/color/libpillowfight.py:88
+msgid "Adjusting colors of document"
+msgstr "Ajustement des couleurs du document"
+
+#: paperwork-backend/src/paperwork_backend/guesswork/orientation/pyocr.py:43
+#, python-brace-format
+msgid ""
+"Document {doc_id} p{page_idx} has already some text. Not guessing page "
+"orientation."
+msgstr ""
+"La p{page_idx} du document {doc_id} a déjà du texte. Pas de tentative de "
+"deviner l'orientation de la page."
+
+#: paperwork-backend/src/paperwork_backend/guesswork/orientation/pyocr.py:53
+#, python-brace-format
+msgid "Guessing orientation of document {doc_id} p{page_idx}"
+msgstr ""
+"Entrain de deviner l'orientation de la p{page_idx} du document {doc_id}"
+
+#: paperwork-backend/src/paperwork_backend/guesswork/orientation/pyocr.py:77
+msgid "Guessing page orientation"
+msgstr "Détection de l'orientation de la page"
+
+#: paperwork-backend/src/paperwork_backend/guesswork/ocr/pyocr.py:48
+#, python-brace-format
+msgid "Document {doc_id} p{page_idx} has already some text. No OCR run"
+msgstr ""
+"Le document {doc_id} p{page_idx} a déjà du texte associé. La ROC ne sera pas "
+"effectuée"
+
+#: paperwork-backend/src/paperwork_backend/guesswork/ocr/pyocr.py:57
+#, python-brace-format
+msgid "Running OCR on document {doc_id} p{page_idx}"
+msgstr "Exécution de la ROC sur le document {doc_id} p{page_idx}"
+
+#: paperwork-backend/src/paperwork_backend/guesswork/ocr/pyocr.py:83
+msgid "Running OCR"
+msgstr "Exécution de la ROC"
+
+#: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:235
+msgid "Label guesser: Garbage-collecting unused document features ..."
+msgstr ""
+"Devineur d'étiquettes : Suppression des caractéristiques de documents qui ne "
+"sont plus utilisées ..."
+
+#: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:261
+msgid "Label guesser: Garbage-collecting unused words ..."
+msgstr "Devineur d'étiquettes : Suppression des mots non-utilisés ..."
+
+#: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:585
 #, python-format
-msgid "Document %s added"
-msgstr "Document %s ajouté"
+msgid "Label guesser: added document %s"
+msgstr "Devineur d'étiquettes : document %s ajouté"
 
-#: paperwork-backend/src/paperwork_backend/doctracker.py:73
+#: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:595
 #, python-format
-msgid "Document %s updated"
-msgstr "Document %s mis à jour"
+msgid "Label guesser: updated document %s"
+msgstr "Devineur d'étiquettes : document %s mis à jour"
 
-#: paperwork-backend/src/paperwork_backend/doctracker.py:89
+#: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:610
 #, python-format
-msgid "Document %s deleted"
-msgstr "Document %s supprimé"
+msgid "Label guesser: deleted document %s"
+msgstr "Devineur d'étiquettes : document %s effacé"
 
-#: paperwork-backend/src/paperwork_backend/doctracker.py:99
-#: paperwork-backend/src/paperwork_backend/index/whoosh.py:140
-#, python-format
-msgid "Examining document %s: unchanged"
-msgstr "Examen du document %s : inchangé"
+#: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:702
+msgid "Commiting changes for label guessing ..."
+msgstr "Enregistrement des changements pour le devinage d'étiquettes ..."
 
-#: paperwork-backend/src/paperwork_backend/doctracker.py:104
-msgid "Rolling back changes"
-msgstr "Annulation des modifications"
+#: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:912
+#: paperwork-backend/src/paperwork_backend/guesswork/label/sklearn/__init__.py:968
+msgid "Label guessing: Training ..."
+msgstr "Devineur d'étiquettes : entraînement ..."
 
-#: paperwork-backend/src/paperwork_backend/doctracker.py:110
-msgid "Committing changes"
-msgstr "Enregistrement des modifications"
+#: paperwork-backend/src/paperwork_backend/guesswork/cropping/libpillowfight.py:51
+#: paperwork-backend/src/paperwork_backend/guesswork/cropping/calibration.py:45
+#, python-brace-format
+msgid "Document {doc_id} p{page_idx} already cropped"
+msgstr "Document {doc_id} p{page_idx} déjà découpée"
 
+#: paperwork-backend/src/paperwork_backend/guesswork/cropping/libpillowfight.py:60
+#, python-brace-format
+msgid "Guessing page borders of document {doc_id} p{page_idx}"
+msgstr "Détection des bords de la page de {doc_id} p{page_idx}"
+
+#: paperwork-backend/src/paperwork_backend/guesswork/cropping/libpillowfight.py:85
+msgid "Guessing page borders"
+msgstr "Détection des bords de la page"
+
+#: paperwork-backend/src/paperwork_backend/guesswork/cropping/calibration.py:58
+#, python-brace-format
+msgid "Document {doc_id} p{page_idx} has already some text. Not cropping."
+msgstr ""
+"La page p{page_idx} du document {doc_id} a déjà du texte. Ne sera pas "
+"découpée."
+
+#: paperwork-backend/src/paperwork_backend/guesswork/cropping/calibration.py:68
+#, python-brace-format
+msgid "Using calibration to crop page borders of document {doc_id} p{page_idx}"
+msgstr ""
+"Utilisation de la calibration pour découper les bords de la page {doc_id} "
+"p{page_idx}"
+
+#: paperwork-backend/src/paperwork_backend/chkworkdir/file_at_workdir_root.py:40
 #: paperwork-backend/src/paperwork_backend/chkworkdir/label_color.py:55
 #: paperwork-backend/src/paperwork_backend/chkworkdir/empty_doc.py:44
 #, python-format
 msgid "Checking doc %s"
 msgstr "Vérification du document %s"
 
+#: paperwork-backend/src/paperwork_backend/chkworkdir/file_at_workdir_root.py:51
+#: paperwork-backend/src/paperwork_backend/chkworkdir/file_at_workdir_root.py:68
+#, python-format
+msgid "Document %s is not a directory"
+msgstr ""
+
+#: paperwork-backend/src/paperwork_backend/chkworkdir/file_at_workdir_root.py:55
+#, python-format
+msgid "Turn %s into <YYYMMDD_hhmm_ss>/doc.pdf"
+msgstr ""
+
+#: paperwork-backend/src/paperwork_backend/chkworkdir/file_at_workdir_root.py:71
+#: paperwork-backend/src/paperwork_backend/chkworkdir/empty_doc.py:60
+#, python-format
+msgid "Delete document %s"
+msgstr "Effacer le document %s"
+
+#: paperwork-backend/src/paperwork_backend/chkworkdir/file_at_workdir_root.py:88
+#, python-format
+msgid "Fixing %s"
+msgstr ""
+
 #: paperwork-backend/src/paperwork_backend/chkworkdir/label_color.py:87
 #, python-format
 msgid ""
-"Document %s has label \"%s\" with color=%s while document %s has label \"%s"
-"\" with color=%s"
+"Document %s has label \"%s\" with color=%s while document %s has label "
+"\"%s\" with color=%s"
 msgstr ""
 "Document %s a l'étiquette \"%s\" avec la couleur %s tandis que le document "
 "%s a l'étiquette \"%s\" avec la couleur %s"
@@ -267,207 +213,34 @@ msgstr "Correction de l'étiquette sur le document %s"
 msgid "Document %s is empty"
 msgstr "Le document %s est vide"
 
-#: paperwork-backend/src/paperwork_backend/chkworkdir/empty_doc.py:60
-#, python-format
-msgid "Delete document %s"
-msgstr "Effacer le document %s"
-
 #: paperwork-backend/src/paperwork_backend/chkworkdir/empty_doc.py:74
 #, python-format
 msgid "Deleting empty doc %s"
 msgstr "Effacement du document vide %s"
 
-#: paperwork-backend/src/paperwork_backend/index/whoosh.py:113
-#, python-format
-msgid "Indexing new document %s"
-msgstr "Indexation du nouveau document %s"
+#: paperwork-backend/src/paperwork_backend/docexport/pillowfight.py:31
+msgid "Soft simplification"
+msgstr "Simplification douce"
 
-#: paperwork-backend/src/paperwork_backend/index/whoosh.py:122
-#, python-format
-msgid "Removing document %s from index"
-msgstr "Suppression du document %s de l'index"
+#: paperwork-backend/src/paperwork_backend/docexport/pillowfight.py:50
+msgid "Hard simplification"
+msgstr "Simplification forte"
 
-#: paperwork-backend/src/paperwork_backend/index/whoosh.py:132
-#, python-format
-msgid "Indexing updated document %s"
-msgstr "Indexation de la mise à jour du document %s"
+#: paperwork-backend/src/paperwork_backend/docexport/pillowfight.py:52
+msgid "Extreme simplification"
+msgstr "Simplification extrême"
 
-#: paperwork-backend/src/paperwork_backend/index/whoosh.py:163
-msgid "Committing changes in the index ..."
-msgstr "Enregistrement des modifications dans l'index…"
-
-#: paperwork-backend/src/paperwork_backend/docimport/pdf.py:33
-#: paperwork-backend/src/paperwork_backend/docimport/converted.py:33
-msgid "Already imported"
-msgstr "Déjà importé"
-
-#: paperwork-backend/src/paperwork_backend/docimport/pdf.py:44
-msgid "PDF"
-msgstr "PDF"
-
-#: paperwork-backend/src/paperwork_backend/docimport/pdf.py:45
-#: paperwork-backend/src/paperwork_backend/docimport/img.py:61
-#: paperwork-backend/src/paperwork_backend/docimport/converted.py:41
-msgid "Documents"
-msgstr "Documents"
-
-#: paperwork-backend/src/paperwork_backend/docimport/pdf.py:61
-msgid "Import PDF"
-msgstr "Importer un PDF"
-
-#: paperwork-backend/src/paperwork_backend/docimport/pdf.py:65
-msgid "Import PDFs recursively"
-msgstr "Importer les PDFs récursivement"
-
-#: paperwork-backend/src/paperwork_backend/docimport/pdf.py:121
-msgid "PDF folder"
-msgstr "Répertoire de PDFs"
-
-#: paperwork-backend/src/paperwork_backend/docimport/img.py:58
-msgid "Images"
-msgstr "Images"
-
-#: paperwork-backend/src/paperwork_backend/docimport/img.py:64
-msgid "Pages"
-msgstr "Pages"
-
-#: paperwork-backend/src/paperwork_backend/docimport/img.py:83
-msgid "Append the image to the current document"
-msgstr "Ajouter l'image au document actuel"
-
-#: paperwork-backend/src/paperwork_backend/docimport/img.py:88
-msgid "Find the images recursively and import them to the current document"
-msgstr ""
-"Trouver les images récursivement et les importer dans le document actif"
-
-#: paperwork-backend/src/paperwork_backend/docimport/converted.py:67
-msgid "Import office document"
-msgstr "Importer les documents Office/LibreOffice"
-
-#: paperwork-backend/src/paperwork_backend/docimport/converted.py:71
-msgid "Import office documents recursively"
-msgstr "Import les documents Office/Libreoffice récursivement"
-
-#: paperwork-backend/src/paperwork_backend/docimport/converted.py:139
-msgid "Office document folder"
-msgstr "Dossier de documents Office/LibreOffice"
-
-#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:60
-msgid "Microsoft Word template (.dot)"
-msgstr "Modèle de document Microsoft Word (.dot)"
-
-#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:68
-msgid "Microsoft Excel template (.xlt)"
-msgstr "Modèle de document Microsoft Excel (.xlt)"
-
-#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:76
-msgid "Microsoft PowerPoint template (.ppt)"
-msgstr "Modèle de document Microsoft PowerPoint (.ppt)"
-
-#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:80
-msgid "OpenOffice/LibreOffice Chart (.odc)"
-msgstr "Graphique LibreOffice (.odc)"
-
-#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:84
-msgid "OpenOffice/LibreOffice Database (.odb)"
-msgstr "Base de données LibreOffice (.odb)"
-
-#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:88
-msgid "OpenOffice/LibreOffice Formula (.odf)"
-msgstr "Formule LibreOffice (.odf)"
-
-#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:92
-msgid "OpenOffice/LibreOffice Graphics (.odg)"
-msgstr "Graphique LibreOffice (.odg)"
-
-#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:96
-msgid "OpenOffice/LibreOffice Graphics template (.otg)"
-msgstr "Modèle de document graphique LibreOffice (.otg)"
-
-#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:100
-msgid "OpenOffice/LibreOffice Image template (.odi)"
-msgstr "Modèle d'image LibreOffice (.odi)"
-
-#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:104
-msgid "OpenOffice/LibreOffice Presentation (.odp)"
-msgstr "Présentation LibreOffice (.odp)"
-
-#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:108
-msgid "OpenOffice/LibreOffice Presentation template (.otp)"
-msgstr "Modèle de présentation LibreOffice (.otp)"
-
-#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:112
-msgid "OpenOffice/LibreOffice Spreadsheet (.ods)"
-msgstr "Tableau LibreOffice (.ods)"
-
-#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:116
-msgid "OpenOffice/LibreOffice Spreadsheet template (.ots)"
-msgstr "Modèle de tableau LibreOffice (.ots)"
-
-#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:120
-msgid "OpenOffice/LibreOffice Text (.odt)"
-msgstr "Texte LibreOffice (.odt)"
-
-#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:124
-msgid "OpenOffice/LibreOffice Text master (.odm)"
-msgstr "Document texte maître LibreOffice (.odm)"
-
-#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:128
-msgid "OpenOffice/LibreOffice Text template (.ott)"
-msgstr "Modèle de texte LibreOffice (.ott)"
-
-#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:132
-msgid "OpenOffice/LibreOffice Text web (.oth)"
-msgstr "Texte web LibreOffice (.oth)"
-
-#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:144
-msgid "Microsoft PowerPoint slide (.sldx)"
-msgstr "Diapositive Microsoft PowerPoint (.sldx)"
-
-#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:150
-msgid "Microsoft PowerPoint slideshow (.ppsx)"
-msgstr "Présentation Microsoft PowerPoint (.ppsx)"
-
-#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:156
-msgid "Microsoft PowerPoint presentation template (.potx)"
-msgstr "Modèle de présentation Microsoft PowerPoint (.potx)"
-
-#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:168
-msgid "Microsoft Excel template (.xltx)"
-msgstr "Modèle de tableau Microsoft Excel (.xltx)"
-
-#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:180
-msgid "Microsoft Word template (.dotx)"
-msgstr "Modèle de document Microsoft Word (.dotx)"
-
-#: paperwork-backend/src/paperwork_backend/authors/translators.py:23
-msgid "[]"
-msgstr "[\"Flesch Jérôme\"]"
-
-#: paperwork-backend/src/paperwork_backend/model/labels.py:72
-msgid "Loading labels of document {}"
-msgstr "Chargement des étiquettes du document {}"
-
-#: paperwork-backend/src/paperwork_backend/model/converted.py:111
-#, python-format
-msgid "Converting document %s to PDF ..."
-msgstr "Conversion du document %s en PDF …"
-
-#: paperwork-backend/src/paperwork_backend/model/converted.py:186
-msgid "Checking converted documents"
-msgstr "Vérification des documents convertis"
+#: paperwork-backend/src/paperwork_backend/docexport/generic.py:98
+msgid "Page by page processing"
+msgstr "Traitement page par page"
 
 #: paperwork-backend/src/paperwork_backend/docexport/pdf.py:100
 msgid "Original PDF(s)"
 msgstr "PDF(s) d'origine"
 
-#: paperwork-backend/src/paperwork_backend/docexport/pdf.py:293
+#: paperwork-backend/src/paperwork_backend/docexport/pdf.py:296
 msgid "Generated PDF(s)"
 msgstr "PDF(s) généré(s)"
-
-#: paperwork-backend/src/paperwork_backend/docexport/generic.py:98
-msgid "Page by page processing"
-msgstr "Traitement page par page"
 
 #: paperwork-backend/src/paperwork_backend/docexport/img.py:41
 #, python-brace-format
@@ -494,17 +267,262 @@ msgstr "Noir et blanc"
 msgid "Grayscale"
 msgstr "Niveaux de gris"
 
-#: paperwork-backend/src/paperwork_backend/docexport/pillowfight.py:31
-msgid "Soft simplification"
-msgstr "Simplification douce"
+#: paperwork-backend/src/paperwork_backend/i18n/pycountry.py:9
+msgid "English"
+msgstr "Anglais"
 
-#: paperwork-backend/src/paperwork_backend/docexport/pillowfight.py:50
-msgid "Hard simplification"
-msgstr "Simplification forte"
+#: paperwork-backend/src/paperwork_backend/i18n/pycountry.py:10
+msgid "French"
+msgstr "Français"
 
-#: paperwork-backend/src/paperwork_backend/docexport/pillowfight.py:52
-msgid "Extreme simplification"
-msgstr "Simplification extrême"
+#: paperwork-backend/src/paperwork_backend/i18n/pycountry.py:11
+msgid "German"
+msgstr "Allemand"
+
+#: paperwork-backend/src/paperwork_backend/i18n/scanner.py:38
+msgid "centrally aligned"
+msgstr "centré"
+
+#: paperwork-backend/src/paperwork_backend/i18n/scanner.py:39
+msgid "Feeder"
+msgstr "Bac d'alimentation"
+
+#: paperwork-backend/src/paperwork_backend/i18n/scanner.py:40
+msgid "Flatbed"
+msgstr "Plateau"
+
+#: paperwork-backend/src/paperwork_backend/i18n/scanner.py:41
+msgid "left aligned"
+msgstr "aligné à gauche"
+
+#: paperwork-backend/src/paperwork_backend/i18n/scanner.py:42
+msgid "right aligned"
+msgstr "aligné à droite"
+
+#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:61
+msgid "Microsoft Word template (.dot)"
+msgstr "Modèle de document Microsoft Word (.dot)"
+
+#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:69
+msgid "Microsoft Excel template (.xlt)"
+msgstr "Modèle de document Microsoft Excel (.xlt)"
+
+#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:77
+msgid "Microsoft PowerPoint template (.ppt)"
+msgstr "Modèle de document Microsoft PowerPoint (.ppt)"
+
+#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:81
+msgid "OpenOffice/LibreOffice Chart (.odc)"
+msgstr "Graphique LibreOffice (.odc)"
+
+#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:85
+msgid "OpenOffice/LibreOffice Database (.odb)"
+msgstr "Base de données LibreOffice (.odb)"
+
+#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:89
+msgid "OpenOffice/LibreOffice Formula (.odf)"
+msgstr "Formule LibreOffice (.odf)"
+
+#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:93
+msgid "OpenOffice/LibreOffice Graphics (.odg)"
+msgstr "Graphique LibreOffice (.odg)"
+
+#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:97
+msgid "OpenOffice/LibreOffice Graphics template (.otg)"
+msgstr "Modèle de document graphique LibreOffice (.otg)"
+
+#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:101
+msgid "OpenOffice/LibreOffice Image template (.odi)"
+msgstr "Modèle d'image LibreOffice (.odi)"
+
+#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:105
+msgid "OpenOffice/LibreOffice Presentation (.odp)"
+msgstr "Présentation LibreOffice (.odp)"
+
+#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:109
+msgid "OpenOffice/LibreOffice Presentation template (.otp)"
+msgstr "Modèle de présentation LibreOffice (.otp)"
+
+#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:113
+msgid "OpenOffice/LibreOffice Spreadsheet (.ods)"
+msgstr "Tableau LibreOffice (.ods)"
+
+#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:117
+msgid "OpenOffice/LibreOffice Spreadsheet template (.ots)"
+msgstr "Modèle de tableau LibreOffice (.ots)"
+
+#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:121
+msgid "OpenOffice/LibreOffice Text (.odt)"
+msgstr "Texte LibreOffice (.odt)"
+
+#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:125
+msgid "OpenOffice/LibreOffice Text master (.odm)"
+msgstr "Document texte maître LibreOffice (.odm)"
+
+#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:129
+msgid "OpenOffice/LibreOffice Text template (.ott)"
+msgstr "Modèle de texte LibreOffice (.ott)"
+
+#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:133
+msgid "OpenOffice/LibreOffice Text web (.oth)"
+msgstr "Texte web LibreOffice (.oth)"
+
+#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:145
+msgid "Microsoft PowerPoint slide (.sldx)"
+msgstr "Diapositive Microsoft PowerPoint (.sldx)"
+
+#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:151
+msgid "Microsoft PowerPoint slideshow (.ppsx)"
+msgstr "Présentation Microsoft PowerPoint (.ppsx)"
+
+#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:157
+msgid "Microsoft PowerPoint presentation template (.potx)"
+msgstr "Modèle de présentation Microsoft PowerPoint (.potx)"
+
+#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:169
+msgid "Microsoft Excel template (.xltx)"
+msgstr "Modèle de tableau Microsoft Excel (.xltx)"
+
+#: paperwork-backend/src/paperwork_backend/converter/libreoffice.py:181
+msgid "Microsoft Word template (.dotx)"
+msgstr "Modèle de document Microsoft Word (.dotx)"
+
+#: paperwork-backend/src/paperwork_backend/pageedit/pageeditor.py:82
+msgid "Color equalization"
+msgstr "Égalisation des couleurs"
+
+#: paperwork-backend/src/paperwork_backend/pageedit/pageeditor.py:94
+msgid "Cropping"
+msgstr "Recadrage"
+
+#: paperwork-backend/src/paperwork_backend/pageedit/pageeditor.py:105
+msgid "Clockwise Rotation"
+msgstr "Rotation dans le sens horaire"
+
+#: paperwork-backend/src/paperwork_backend/pageedit/pageeditor.py:114
+msgid "Counterclockwise Rotation"
+msgstr "Rotation dans le sens anti-horaire"
+
+#: paperwork-backend/src/paperwork_backend/docimport/converted.py:33
+#: paperwork-backend/src/paperwork_backend/docimport/pdf.py:33
+msgid "Already imported"
+msgstr "Déjà importé"
+
+#: paperwork-backend/src/paperwork_backend/docimport/converted.py:41
+#: paperwork-backend/src/paperwork_backend/docimport/pdf.py:46
+#: paperwork-backend/src/paperwork_backend/docimport/img.py:68
+msgid "Documents"
+msgstr "Documents"
+
+#: paperwork-backend/src/paperwork_backend/docimport/converted.py:67
+msgid "Import office document"
+msgstr "Importer les documents Office/LibreOffice"
+
+#: paperwork-backend/src/paperwork_backend/docimport/converted.py:71
+msgid "Import office documents recursively"
+msgstr "Import les documents Office/Libreoffice récursivement"
+
+#: paperwork-backend/src/paperwork_backend/docimport/converted.py:139
+msgid "Office document folder"
+msgstr "Dossier de documents Office/LibreOffice"
+
+#: paperwork-backend/src/paperwork_backend/docimport/pdf.py:45
+msgid "PDF"
+msgstr "PDF"
+
+#: paperwork-backend/src/paperwork_backend/docimport/pdf.py:62
+msgid "Import PDF"
+msgstr "Importer un PDF"
+
+#: paperwork-backend/src/paperwork_backend/docimport/pdf.py:66
+msgid "Import PDFs recursively"
+msgstr "Importer les PDFs récursivement"
+
+#: paperwork-backend/src/paperwork_backend/docimport/pdf.py:122
+msgid "PDF folder"
+msgstr "Répertoire de PDFs"
+
+#: paperwork-backend/src/paperwork_backend/docimport/img.py:65
+msgid "Images"
+msgstr "Images"
+
+#: paperwork-backend/src/paperwork_backend/docimport/img.py:71
+msgid "Pages"
+msgstr "Pages"
+
+#: paperwork-backend/src/paperwork_backend/docimport/img.py:90
+msgid "Append the image to the current document"
+msgstr "Ajouter l'image au document actuel"
+
+#: paperwork-backend/src/paperwork_backend/docimport/img.py:95
+msgid "Find the images recursively and import them to the current document"
+msgstr ""
+"Trouver les images récursivement et les importer dans le document actif"
+
+#: paperwork-backend/src/paperwork_backend/authors/translators.py:23
+msgid "[]"
+msgstr "[\"Flesch Jérôme\"]"
+
+#: paperwork-backend/src/paperwork_backend/doctracker.py:65
+#, python-format
+msgid "Document %s added"
+msgstr "Document %s ajouté"
+
+#: paperwork-backend/src/paperwork_backend/doctracker.py:70
+#, python-format
+msgid "Document %s updated"
+msgstr "Document %s mis à jour"
+
+#: paperwork-backend/src/paperwork_backend/doctracker.py:86
+#, python-format
+msgid "Document %s deleted"
+msgstr "Document %s supprimé"
+
+#: paperwork-backend/src/paperwork_backend/doctracker.py:96
+#: paperwork-backend/src/paperwork_backend/index/whoosh.py:140
+#, python-format
+msgid "Examining document %s: unchanged"
+msgstr "Examen du document %s : inchangé"
+
+#: paperwork-backend/src/paperwork_backend/doctracker.py:101
+msgid "Rolling back changes"
+msgstr "Annulation des modifications"
+
+#: paperwork-backend/src/paperwork_backend/doctracker.py:107
+msgid "Committing changes"
+msgstr "Enregistrement des modifications"
+
+#: paperwork-backend/src/paperwork_backend/model/labels.py:72
+msgid "Loading labels of document {}"
+msgstr "Chargement des étiquettes du document {}"
+
+#: paperwork-backend/src/paperwork_backend/model/converted.py:111
+#, python-format
+msgid "Converting document %s to PDF ..."
+msgstr "Conversion du document %s en PDF …"
+
+#: paperwork-backend/src/paperwork_backend/model/converted.py:186
+msgid "Checking converted documents"
+msgstr "Vérification des documents convertis"
+
+#: paperwork-backend/src/paperwork_backend/index/whoosh.py:113
+#, python-format
+msgid "Indexing new document %s"
+msgstr "Indexation du nouveau document %s"
+
+#: paperwork-backend/src/paperwork_backend/index/whoosh.py:122
+#, python-format
+msgid "Removing document %s from index"
+msgstr "Suppression du document %s de l'index"
+
+#: paperwork-backend/src/paperwork_backend/index/whoosh.py:132
+#, python-format
+msgid "Indexing updated document %s"
+msgstr "Indexation de la mise à jour du document %s"
+
+#: paperwork-backend/src/paperwork_backend/index/whoosh.py:163
+msgid "Committing changes in the index ..."
+msgstr "Enregistrement des modifications dans l'index…"
 
 #~ msgid "App. & system info."
 #~ msgstr "Info. app. & système"

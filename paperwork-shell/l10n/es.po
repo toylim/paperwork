@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-30 11:53+0100\n"
+"POT-Creation-Date: 2023-03-28 17:53+0200\n"
 "PO-Revision-Date: 2020-05-03 15:37+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -17,197 +17,40 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: paperwork-shell/src/paperwork_shell/cmd/sync.py:57
-msgid "Synchronize the index(es) with the content of the work directory"
+#: paperwork-shell/src/paperwork_shell/display/docrendering/extra_text.py:32
+#: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:79
+msgid "Additional text:"
 msgstr ""
 
-#: paperwork-shell/src/paperwork_shell/cmd/sync.py:68
-#: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:112
-msgid "Synchronizing with work directory ..."
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/sync.py:79
-#: paperwork-shell/src/paperwork_shell/cmd/reset.py:132
-#: paperwork-shell/src/paperwork_shell/cmd/ocr.py:107
-#: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:118
-#: paperwork-shell/src/paperwork_shell/cmd/edit.py:184
-msgid "All done !"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/scan.py:51
-msgid "Scan pages"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/scan.py:55
-msgid "Document to which the scanned pages must be added"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:55
-msgid "Manage scanner configuration"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:58
-#: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:48
-msgid "sub-command"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:62
-msgid "List all scanners and their possible settings"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:67
-msgid "Show the currently selected scanner and its settings"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:72
-msgid "Define which scanner and which settings to use"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:75
-msgid "Scanner to use"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:80
-msgid ""
-"Default source on the scanner to use (if not specified, one will be selected "
-"randomly)"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:86
-msgid "Default resolution (dpi ; default=300)"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:91
-msgid "Examining scanner {} ..."
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:133
-#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:155
-msgid "ID:"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:135
-#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:156
-msgid "Source:"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:137
-msgid "Resolutions:"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:157
-msgid "Resolution:"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:185
-msgid "Source {} not found on device. Using another source"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:205
-msgid "Default source:"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:219
-msgid "Resolution {} not available. Adjusted to {}."
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/about/__init__.py:82
-msgid "Version: "
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/about/__init__.py:84
-msgid "Because sorting documents is a machine's job."
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/about/__init__.py:158
-msgid "About Paperwork"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/reset.py:70
-msgid "Reset a page to its original content"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/reset.py:108
-msgid "Reseting document {} page {} ..."
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/reset.py:112
-#: paperwork-shell/src/paperwork_shell/cmd/edit.py:126
-msgid "Original:"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/reset.py:118
-msgid "Reseted:"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/reset.py:123
-#: paperwork-shell/src/paperwork_shell/cmd/edit.py:175
-msgid "Committing ..."
-msgstr ""
-
+#: paperwork-shell/src/paperwork_shell/display/progress.py:39
+#: paperwork-shell/src/paperwork_shell/cmd/edit.py:183
+#: paperwork-shell/src/paperwork_shell/cmd/import.py:165
 #: paperwork-shell/src/paperwork_shell/cmd/reset.py:131
 #: paperwork-shell/src/paperwork_shell/cmd/ocr.py:102
-#: paperwork-shell/src/paperwork_shell/cmd/export.py:175
 #: paperwork-shell/src/paperwork_shell/cmd/label.py:101
-#: paperwork-shell/src/paperwork_shell/cmd/import.py:165
-#: paperwork-shell/src/paperwork_shell/cmd/edit.py:183
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:250
 #: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:89
-#: paperwork-shell/src/paperwork_shell/display/progress.py:39
 msgid "Done"
 msgstr ""
 
-#: paperwork-shell/src/paperwork_shell/cmd/ocr.py:50
-msgid "OCR document or pages"
+#: paperwork-shell/src/paperwork_shell/display/scan.py:86
+msgid "Scanning page {} (expected size: {}x{}) ..."
 msgstr ""
 
-#: paperwork-shell/src/paperwork_shell/cmd/ocr.py:55
-msgid "Document on which OCR must be run"
+#: paperwork-shell/src/paperwork_shell/display/scan.py:127
+msgid "Page {} scanned (actual size: {}x{})"
 msgstr ""
 
-#: paperwork-shell/src/paperwork_shell/cmd/ocr.py:60
-msgid ""
-"Pages to OCR (single integer, range or comma-separated list, default: all "
-"pages)"
+#: paperwork-shell/src/paperwork_shell/display/scan.py:135
+msgid "End of paper feed"
 msgstr ""
 
-#: paperwork-shell/src/paperwork_shell/cmd/ocr.py:91
-#, python-brace-format
-msgid "Running OCR on document {doc_id} page {page_idx} ..."
+#: paperwork-shell/src/paperwork_shell/display/scan.py:151
+msgid "Page {} in document {} created"
 msgstr ""
 
-#: paperwork-shell/src/paperwork_shell/cmd/delete.py:62
-msgid "Delete a document or a page"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/delete.py:67
-msgid ""
-"Pages to delete (single integer, range or comma-separated list, default: all "
-"pages)"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/delete.py:74
-#: paperwork-shell/src/paperwork_shell/cmd/label.py:68
-msgid "Target documents"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/delete.py:90
-#, python-brace-format
-msgid "Deleting document {doc_id} ..."
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/delete.py:91
-#, python-brace-format
-msgid "Deleting page {page_idx} of document {doc_id} ..."
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/delete.py:97
-#, python-format
-msgid "Delete document %s ?"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/delete.py:103
-#, python-brace-format
-msgid "Delete page(s) {page_indexes} of document {doc_id} ?"
+#: paperwork-shell/src/paperwork_shell/main.py:68
+msgid "command"
 msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/cmd/show.py:51
@@ -231,139 +74,38 @@ msgstr ""
 msgid "Page %d"
 msgstr ""
 
-#: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:41
-msgid "Check and fix work directory integrity"
+#: paperwork-shell/src/paperwork_shell/cmd/edit.py:95
+msgid "Edit page"
 msgstr ""
 
-#: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:45
-msgid "Don't ask to fix things, just fix them"
+#: paperwork-shell/src/paperwork_shell/cmd/edit.py:99
+msgid "List of image modifiers (comma separated, possible values: {})"
 msgstr ""
 
-#: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:63
-msgid "Checking work directory ..."
+#: paperwork-shell/src/paperwork_shell/cmd/edit.py:122
+msgid "Modifying document {} page {} ..."
 msgstr ""
 
-#: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:70
-msgid "No problem found"
+#: paperwork-shell/src/paperwork_shell/cmd/edit.py:126
+#: paperwork-shell/src/paperwork_shell/cmd/reset.py:112
+msgid "Original:"
 msgstr ""
 
-#: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:77
-#, python-format
-msgid "%d problems found:"
+#: paperwork-shell/src/paperwork_shell/cmd/edit.py:147
+msgid "Generating in high quality and saving ..."
 msgstr ""
 
-#: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:92
-msgid "- Problem: "
+#: paperwork-shell/src/paperwork_shell/cmd/edit.py:175
+#: paperwork-shell/src/paperwork_shell/cmd/reset.py:123
+msgid "Committing ..."
 msgstr ""
 
-#: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:96
-msgid "- Possible solution: "
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:102
-msgid ""
-"Do you want to fix those problems automatically using the indicated "
-"solutions ?"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:111
-msgid "All fixed !"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/export.py:57
-msgid ""
-"Export a document, a page, or a set of pages. Example: paperwork-cli export "
-"20150303_2314_39 -p 2 -f img_boxes -f grayscale -f jpeg -o ~/tmp/pouet.jpg"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/export.py:63
-msgid "Document to export"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/export.py:67
-msgid ""
-"Pages to export (single integer, range or comma-separated list, default: all "
-"pages)"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/export.py:76
-msgid ""
-"Export filters. Specify this option once for each filter to apply (ex: '-f "
-"grayscale -f jpeg')."
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/export.py:83
-msgid ""
-"Output file/directory. If not specified, will list the filters that could be "
-"chained after those already specified."
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/export.py:119
-#, python-format
-msgid "Unknown filters: %s"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/export.py:141
-#, python-format
-msgid "Current filters: %s"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/export.py:144
-msgid "Next possible filters:"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/export.py:149
-#, python-brace-format
-msgid ""
-"'{filter_name}' is an output filter. No other filter can be added after "
-"'{filter_name}'."
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/export.py:153
-msgid "No possible filters found"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/export.py:170
-#, python-format
-msgid "Exporting to %s ... "
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/label.py:58
-msgid "Commands to manage labels"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/label.py:61
-msgid "label command"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/label.py:72
-#: paperwork-shell/src/paperwork_shell/cmd/label.py:80
-msgid "Target document"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/label.py:73
-msgid "Label to add"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/label.py:76
-msgid "Label color (ex: '#aa22cc')"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/label.py:81
-msgid "Label to remove"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/label.py:85
-msgid "Label to delete from *all* documents"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/label.py:90
-msgid "Loading all labels ... "
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/label.py:178
-#, python-format
-msgid "Are you sure you want to delete label '%s' from all documents ?"
+#: paperwork-shell/src/paperwork_shell/cmd/edit.py:184
+#: paperwork-shell/src/paperwork_shell/cmd/reset.py:132
+#: paperwork-shell/src/paperwork_shell/cmd/ocr.py:107
+#: paperwork-shell/src/paperwork_shell/cmd/sync.py:79
+#: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:121
+msgid "All done !"
 msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/cmd/import.py:67
@@ -429,32 +171,16 @@ msgstr ""
 msgid "- Updated documents: %s"
 msgstr ""
 
-#: paperwork-shell/src/paperwork_shell/cmd/edit.py:95
-msgid "Edit page"
+#: paperwork-shell/src/paperwork_shell/cmd/reset.py:70
+msgid "Reset a page to its original content"
 msgstr ""
 
-#: paperwork-shell/src/paperwork_shell/cmd/edit.py:99
-msgid "List of image modifiers (comma separated, possible values: {})"
+#: paperwork-shell/src/paperwork_shell/cmd/reset.py:108
+msgid "Reseting document {} page {} ..."
 msgstr ""
 
-#: paperwork-shell/src/paperwork_shell/cmd/edit.py:122
-msgid "Modifying document {} page {} ..."
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/edit.py:147
-msgid "Generating in high quality and saving ..."
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/search.py:63
-msgid "Search keywords in documents"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/search.py:67
-msgid "Maximum number of results (default: 50)"
-msgstr ""
-
-#: paperwork-shell/src/paperwork_shell/cmd/search.py:71
-msgid "Search keywords (none means all documents)"
+#: paperwork-shell/src/paperwork_shell/cmd/reset.py:118
+msgid "Reseted:"
 msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/cmd/move.py:58
@@ -477,20 +203,164 @@ msgstr ""
 msgid "Target page number"
 msgstr ""
 
-#: paperwork-shell/src/paperwork_shell/cmd/rename.py:50
-msgid "Change a document identifier"
+#: paperwork-shell/src/paperwork_shell/cmd/ocr.py:50
+msgid "OCR document or pages"
 msgstr ""
 
-#: paperwork-shell/src/paperwork_shell/cmd/rename.py:54
-msgid "Document to rename"
+#: paperwork-shell/src/paperwork_shell/cmd/ocr.py:55
+msgid "Document on which OCR must be run"
 msgstr ""
 
-#: paperwork-shell/src/paperwork_shell/cmd/rename.py:58
-msgid "New name for the document"
+#: paperwork-shell/src/paperwork_shell/cmd/ocr.py:60
+msgid ""
+"Pages to OCR (single integer, range or comma-separated list, default: all "
+"pages)"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/ocr.py:91
+#, python-brace-format
+msgid "Running OCR on document {doc_id} page {page_idx} ..."
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/label.py:58
+msgid "Commands to manage labels"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/label.py:61
+msgid "label command"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/label.py:68
+#: paperwork-shell/src/paperwork_shell/cmd/delete.py:74
+msgid "Target documents"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/label.py:72
+#: paperwork-shell/src/paperwork_shell/cmd/label.py:80
+msgid "Target document"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/label.py:73
+msgid "Label to add"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/label.py:76
+msgid "Label color (ex: '#aa22cc')"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/label.py:81
+msgid "Label to remove"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/label.py:85
+msgid "Label to delete from *all* documents"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/label.py:90
+msgid "Loading all labels ... "
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/label.py:178
+#, python-format
+msgid "Are you sure you want to delete label '%s' from all documents ?"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:62
+msgid ""
+"Export a document, a page, or a set of pages. Example: paperwork-cli export "
+"20150303_2314_39 -p 2 -f img_boxes -f grayscale -f jpeg -o ~/tmp/pouet.jpg"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:68
+msgid "Document to export"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:72
+msgid ""
+"Pages to export (single integer, range or comma-separated list, default: all "
+"pages)"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:81
+msgid ""
+"Export filters. Specify this option once for each filter to apply (ex: '-f "
+"grayscale -f jpeg')."
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:88
+msgid ""
+"Output file/directory. If not specified, will list the filters that could be "
+"chained after those already specified."
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:98
+msgid "Next possible filters are:"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:106
+msgid "a document list"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:108
+msgid "a document"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:110
+msgid "pages"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:112
+msgid "Images and text boxes"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:129
+msgid "Need at least one filter."
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:133
+msgid "First filter cannot be '{}'"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:146
+#, python-brace-format
+msgid "Filter mismatch: {0} expects {1} as input. Got {2} instead"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:163
+msgid "Last filter will output {}."
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:204
+#, python-format
+msgid "Unknown filters: %s"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:209
+msgid ""
+"Run the command without any filter to have a list of possible filters to "
+"start with."
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:223
+msgid "Filter list is complete, but no output file specified (-o)"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:244
+#, python-format
+msgid "Exporting to %s ... "
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/export.py:253
+msgid "Export failed !"
 msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:43
 msgid "Manage additional text attached to documents"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:48
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:62
+msgid "sub-command"
 msgstr ""
 
 #: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:52
@@ -501,31 +371,196 @@ msgstr ""
 msgid "Set a document additional text"
 msgstr ""
 
-#: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:79
-#: paperwork-shell/src/paperwork_shell/display/docrendering/extra_text.py:32
-msgid "Additional text:"
-msgstr ""
-
 #: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:82
 msgid "No additional text"
 msgstr ""
 
-#: paperwork-shell/src/paperwork_shell/main.py:68
-msgid "command"
+#: paperwork-shell/src/paperwork_shell/cmd/scan.py:51
+msgid "Scan pages"
 msgstr ""
 
-#: paperwork-shell/src/paperwork_shell/display/scan.py:86
-msgid "Scanning page {} (expected size: {}x{}) ..."
+#: paperwork-shell/src/paperwork_shell/cmd/scan.py:55
+msgid "Document to which the scanned pages must be added"
 msgstr ""
 
-#: paperwork-shell/src/paperwork_shell/display/scan.py:127
-msgid "Page {} scanned (actual size: {}x{})"
+#: paperwork-shell/src/paperwork_shell/cmd/sync.py:57
+msgid "Synchronize the index(es) with the content of the work directory"
 msgstr ""
 
-#: paperwork-shell/src/paperwork_shell/display/scan.py:135
-msgid "End of paper feed"
+#: paperwork-shell/src/paperwork_shell/cmd/sync.py:68
+#: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:115
+msgid "Synchronizing with work directory ..."
 msgstr ""
 
-#: paperwork-shell/src/paperwork_shell/display/scan.py:151
-msgid "Page {} in document {} created"
+#: paperwork-shell/src/paperwork_shell/cmd/about/__init__.py:82
+msgid "Version: "
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/about/__init__.py:84
+msgid "Because sorting documents is a machine's job."
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/about/__init__.py:158
+msgid "About Paperwork"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/search.py:63
+msgid "Search keywords in documents"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/search.py:67
+msgid "Maximum number of results (default: 50)"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/search.py:71
+msgid "Search keywords (none means all documents)"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:59
+msgid "Manage scanner configuration"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:66
+msgid "List all scanners and their possible settings"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:71
+msgid "Show the currently selected scanner and its settings"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:76
+msgid "Define which scanner and which settings to use"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:79
+msgid "Scanner to use"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:84
+msgid ""
+"Default source on the scanner to use (if not specified, one will be selected "
+"randomly)"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:90
+msgid "Default resolution (dpi ; default=300)"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:95
+msgid "Examining scanner {} ..."
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:150
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:172
+msgid "ID:"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:152
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:173
+msgid "Source:"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:154
+msgid "Resolutions:"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:174
+msgid "Resolution:"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:202
+msgid "Source {} not found on device. Using another source"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:222
+msgid "Default source:"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/scanner.py:236
+msgid "Resolution {} not available. Adjusted to {}."
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:41
+msgid "Check and fix work directory integrity"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:45
+msgid "Don't ask to fix things, just fix them"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:63
+msgid "Checking work directory ..."
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:70
+msgid "No problem found"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:75
+#, python-format
+msgid "%d problems found:"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:90
+msgid "- Problem: "
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:94
+msgid "- Possible solution: "
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:103
+msgid ""
+"Do you want to fix those problems automatically using the indicated "
+"solutions ?"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:111
+msgid "Fixing ..."
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/chkworkdir.py:114
+msgid "All fixed !"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/delete.py:62
+msgid "Delete a document or a page"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/delete.py:67
+msgid ""
+"Pages to delete (single integer, range or comma-separated list, default: all "
+"pages)"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/delete.py:90
+#, python-brace-format
+msgid "Deleting document {doc_id} ..."
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/delete.py:91
+#, python-brace-format
+msgid "Deleting page {page_idx} of document {doc_id} ..."
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/delete.py:97
+#, python-format
+msgid "Delete document %s ?"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/delete.py:103
+#, python-brace-format
+msgid "Delete page(s) {page_indexes} of document {doc_id} ?"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/rename.py:50
+msgid "Change a document identifier"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/rename.py:54
+msgid "Document to rename"
+msgstr ""
+
+#: paperwork-shell/src/paperwork_shell/cmd/rename.py:58
+msgid "New name for the document"
 msgstr ""
