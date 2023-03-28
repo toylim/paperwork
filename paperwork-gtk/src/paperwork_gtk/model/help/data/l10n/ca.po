@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2021-10-09 12:56+0200\n"
+"POT-Creation-Date: 2023-02-10 18:54+0100\n"
 "PO-Revision-Date: 2022-05-08 09:41+0000\n"
 "Last-Translator: Víctor Fancelli Capdevila <vfc@uber.space>\n"
 "Language-Team: Catalan <http://translations.openpaper.work/projects/"
@@ -336,7 +336,8 @@ msgstr "Pàgina"
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:82
-msgid "In Paperwork, a page is just an image and the word positions on this image."
+msgid ""
+"In Paperwork, a page is just an image and the word positions on this image."
 msgstr ""
 "Al Paperwork, una pàgina és senzillament una imatge i la posició de les "
 "paraules en aquesta imatge."
@@ -614,13 +615,13 @@ msgstr "Calibratge de l'escàner"
 msgid ""
 "Scanners tend to provide images actually bigger than the scanned pages.  "
 "Since most of the time, you will always scan pages having the same size (A4 "
-"or Letter usually), Paperwork provides an option called scanner "
-"calibration. Scanner calibration in Paperwork is simply an area that will "
-"always be cropped out of images coming from the scanner."
+"or Letter usually), Paperwork provides an option called scanner calibration. "
+"Scanner calibration in Paperwork is simply an area that will always be "
+"cropped out of images coming from the scanner."
 msgstr ""
 "Els escàners solen produïr imatges més grosses que les pàgines escanejades. "
-"Gairebé sempre escanejareu pàgines de la mateixa mida (noralment A4 o Carta)"
-", per això Paperwork ofereix l'opció de calibratge de l'escàner. Això "
+"Gairebé sempre escanejareu pàgines de la mateixa mida (noralment A4 o "
+"Carta), per això Paperwork ofereix l'opció de calibratge de l'escàner. Això "
 "permetrà que determineu quina és l'àrea sobrant que s'ha de retallar cada "
 "vegada."
 
@@ -690,8 +691,7 @@ msgid ""
 "flatpak config --user --set languages \"<langs>\"\n"
 "flatpak update --user"
 msgstr ""
-"# <langs> és una llista de codis de 2 lletres dels idiomes, separats per ';'"
-"\n"
+"# <langs> és una llista de codis de 2 lletres dels idiomes, separats per ';'\n"
 "# ex: en;fr;de\n"
 "flatpak config --user --set languages \"<langs>\"\n"
 "flatpak update --user"
@@ -803,8 +803,8 @@ msgstr ""
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:336
 msgid "If an update is found, it will notify you but it won't install it."
 msgstr ""
-"Si es troba una actualització, apareixerà una notificació, però no s'instal·"
-"larà res."
+"Si es troba una actualització, apareixerà una notificació, però no "
+"s'instal·larà res."
 
 #. type: section{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:339
@@ -834,8 +834,8 @@ msgid ""
 "replaced by this date, and a new \"New document\" will be added to the "
 "document list."
 msgstr ""
-"Tan bon punt hi poseu algun contingut, aquest document obtindrà una data ("
-"per efecte, la actual). A la llista de documents, el «Document nou» passarà "
+"Tan bon punt hi poseu algun contingut, aquest document obtindrà una data "
+"(per efecte, la actual). A la llista de documents, el «Document nou» passarà "
 "a ser el d'aquesta data i s'afegirà un nou «Document nou» a la llista."
 
 #. type: document
@@ -859,8 +859,7 @@ msgstr "Escanejant"
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:368
 msgid ""
-"If a scanner has been selected in the settings, you can use it to scan "
-"pages."
+"If a scanner has been selected in the settings, you can use it to scan pages."
 msgstr ""
 "Si s'ha configurat un escàner, podeu fer-lo servir per escanejar les pàgines "
 "d'un document."
@@ -1044,9 +1043,9 @@ msgstr "Molts PDFs a la vegada"
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:445
 msgid ""
 "When importing, if you select a folder, Paperwork will browse this folder "
-"and look for PDFs to import. Already-imported PDFs are simply "
-"ignored. Folder is browsed recursively (all the folders inside the folder "
-"are also examined)."
+"and look for PDFs to import. Already-imported PDFs are simply ignored. "
+"Folder is browsed recursively (all the folders inside the folder are also "
+"examined)."
 msgstr ""
 "Si seleccionau una carpeta a importar, el Paperwork buscarà aquí PDFs per "
 "importar. Els PDFs que ja hagin estat importats s'ignoraran. La carpetà serà "
@@ -1257,10 +1256,9 @@ msgstr ""
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:562
 msgid ""
-"You can also use "
-"\\href{https://whoosh.readthedocs.io/en/latest/querylang.html}{Whoosh query "
-"language} to make more complex queries. If you want examples, you can use "
-"the advanced search dialog described below."
+"You can also use \\href{https://whoosh.readthedocs.io/en/latest/querylang."
+"html}{Whoosh query language} to make more complex queries. If you want "
+"examples, you can use the advanced search dialog described below."
 msgstr ""
 
 #. type: subsection{#2}
@@ -1289,7 +1287,8 @@ msgstr "Nivell de zoom"
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:597
-msgid "You can change the scale at which pages are displayed using this control."
+msgid ""
+"You can change the scale at which pages are displayed using this control."
 msgstr ""
 "Podeu canviar l'escala en la que es mostren els documents amb aquest panell."
 
@@ -1353,8 +1352,7 @@ msgstr ""
 msgid ""
 "You can then grab a page (hold the left click button), drag it and drop it "
 "wherever you want in a document. While dragging, a blue marker will show you "
-"where the page would drop if you release the left click button of your "
-"mouse."
+"where the page would drop if you release the left click button of your mouse."
 msgstr ""
 "Podeu agafar una pàgina (premeu el botó esquerre del ratolí), arrossegar-la "
 "i deixar-la anar on vulgueu dins del document. Mentre arrossegueu, una marca "
@@ -1379,7 +1377,8 @@ msgstr "Copiant el text"
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:655
-msgid "You must display the document pages as a list (See \\ref{layout:paged})."
+msgid ""
+"You must display the document pages as a list (See \\ref{layout:paged})."
 msgstr ""
 
 #. type: document
@@ -1551,7 +1550,8 @@ msgstr ""
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:741
-msgid "Beware: You should backup your USB key from time to time on another one."
+msgid ""
+"Beware: You should backup your USB key from time to time on another one."
 msgstr ""
 
 #. type: subsection{#2}
@@ -1583,8 +1583,8 @@ msgstr ""
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:758
 msgid ""
 "Paperwork is tested daily with Nextcloud. While this is not the easiest one "
-"to install, Nextcloud let you host your files yourself. There are other "
-"self-hosted alternatives that exist: SparkleShare, Syncthing, etc."
+"to install, Nextcloud let you host your files yourself. There are other self-"
+"hosted alternatives that exist: SparkleShare, Syncthing, etc."
 msgstr ""
 "El Paperwork és verificat diàriament amb Nextcloud. Tot i que no és el més "
 "senzill d'instal·lar, Nextcloud us permet auto-allotjar els vostres fitxers. "
@@ -1594,8 +1594,8 @@ msgstr ""
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:761
 msgid ""
-"Using DropBox or OneDrive can make sense if you're sharing "
-"not-so-confidential documents with others (associations, etc)."
+"Using DropBox or OneDrive can make sense if you're sharing not-so-"
+"confidential documents with others (associations, etc)."
 msgstr ""
 "Utilitzat DropBox o OneDrive pot tenir sentit si compartiu documents no "
 "massa confidencials amb altres (associacions, etc.)."
@@ -1634,7 +1634,8 @@ msgstr "GNU/Linux"
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:779
-msgid "GNU/Linux distributions include many tools to encrypt whole directories."
+msgid ""
+"GNU/Linux distributions include many tools to encrypt whole directories."
 msgstr ""
 "Les distribucions GNU/LInux inclouen moltes eines per encriptar carpetes."
 
@@ -1700,8 +1701,8 @@ msgstr ""
 msgid ""
 "Beware that Encfs seems to have some security weaknesses. So, while it's "
 "probably enough to prevent a laptop thief from accessing your documents, "
-"it's likely to be not enough to prevent the NSA or the police from doing so "
-";-)."
+"it's likely to be not enough to prevent the NSA or the police from doing "
+"so ;-)."
 msgstr ""
 
 #. type: verbatim
@@ -1841,8 +1842,7 @@ msgstr ""
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:875
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:892
 msgid ""
-"labels (optional): a text file containing the labels applied on this "
-"document"
+"labels (optional): a text file containing the labels applied on this document"
 msgstr ""
 
 #. type: itemize
@@ -1877,8 +1877,8 @@ msgstr ""
 #. type: itemize
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:892
 msgid ""
-"doc.docx / doc.odt / ... (optional): Original file.  Converted into PDF "
-"(doc.pdf) so Paperwork can parse and display it more quickly."
+"doc.docx / doc.odt / ... (optional): Original file.  Converted into PDF (doc."
+"pdf) so Paperwork can parse and display it more quickly."
 msgstr ""
 
 #. type: document
@@ -1936,9 +1936,7 @@ msgstr ""
 #. type: verbatim
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:933
 #, no-wrap
-msgid ""
-"tesseract paper.<X>.jpg paper.<X> -l <lang> hocr && mv paper.<X>.html "
-"paper.<X>.words"
+msgid "tesseract paper.<X>.jpg paper.<X> -l <lang> hocr && mv paper.<X>.html paper.<X>.words"
 msgstr ""
 
 #. type: document
@@ -1983,15 +1981,15 @@ msgstr ""
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:953
 msgid ""
-"A forum dedicated to Paperwork exists: "
-"\\href{https://forum.openpaper.work}{https://forum.openpaper.work}."
+"A forum dedicated to Paperwork exists: \\href{https://forum.openpaper.work}"
+"{https://forum.openpaper.work}."
 msgstr ""
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:956
 msgid ""
-"There is also an IRC channel for live discussions: "
-"\\href{https://webchat.freenode.net/}{Freenode}, channel \\#openpaperwork"
+"There is also an IRC channel for live discussions: \\href{https://web.libera."
+"chat/}{Liberachat}, channel \\#paperwork"
 msgstr ""
 
 #. type: document
@@ -2021,9 +2019,9 @@ msgstr ""
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:969
 msgid ""
-"One way to create bug reports is to create tickets on "
-"\\href{https://gitlab.gnome.org/World/OpenPaperwork/paperwork/issues}{Paperwork "
-"bug tracker: https://gitlab.gnome.org/World/OpenPaperwork/paperwork/issues}."
+"One way to create bug reports is to create tickets on \\href{https://gitlab."
+"gnome.org/World/OpenPaperwork/paperwork/issues}{Paperwork bug tracker: "
+"https://gitlab.gnome.org/World/OpenPaperwork/paperwork/issues}."
 msgstr ""
 
 #. type: document
