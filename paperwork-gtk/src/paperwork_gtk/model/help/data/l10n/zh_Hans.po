@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2023-02-10 18:54+0100\n"
+"POT-Creation-Date: 2021-10-09 12:56+0200\n"
 "PO-Revision-Date: 2021-03-24 23:17+0000\n"
 "Last-Translator: 玉堂白鹤 <yjwork@qq.com>\n"
 "Language-Team: Chinese (Simplified) <http://translations.openpaper.work/"
@@ -1563,9 +1563,9 @@ msgstr ""
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:860
 msgid ""
-"The folder names are (usually) the scan/import date of the document: "
-"YYYYMMDD\\_hhmm\\_ss{[}\\_<idx>{]}. The suffix 'idx' is optional and is just "
-"a number added in case of name collision."
+"The folder names are (usually) the scan/import date of the document: YYYYMMDD"
+"\\_hhmm\\_ss{[}\\_<idx>{]}. The suffix 'idx' is optional and is just a "
+"number added in case of name collision."
 msgstr ""
 
 #. type: document
@@ -1756,8 +1756,8 @@ msgstr ""
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:956
 msgid ""
-"There is also an IRC channel for live discussions: \\href{https://web.libera."
-"chat/}{Liberachat}, channel \\#paperwork"
+"There is also an IRC channel for live discussions: \\href{https://webchat."
+"freenode.net/}{Freenode}, channel \\#openpaperwork"
 msgstr ""
 
 #. type: document
