@@ -66,6 +66,7 @@ if ! xgettext --from-code=UTF-8 \
 		-k_ \
 		-kN_ \
 		--keyword="pgettext:1c,2" \
+		--keyword="npgettext:1c,2,3" \
 		-o "${dst_dir}/messages.pot" \
 		$(find "${src_dir}" -name \*.py) \
 		$(find "${src_dir}" -name \*.glade.h) ; then

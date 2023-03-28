@@ -1,3 +1,4 @@
+import gettext
 import logging
 
 try:
@@ -160,7 +161,13 @@ class Plugin(openpaperwork_core.PluginBase):
             LOGGER.info("Moving %s to trash ...", file_uri)
             self.core.call_success("fs_unlink", file_uri)
         notification = self.core.call_success(
-            "get_notification_builder", _("Imported file(s) deleted"),
+            "get_notification_builder",
+            gettext.npgettext(
+                "import dialog",
+                "Imported file deleted",
+                "Imported files deleted",
+                len(file_uris)
+            ),
         )
         if notification is None:
             return
