@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-30 11:53+0100\n"
+"POT-Creation-Date: 2023-03-28 18:09+0200\n"
 "PO-Revision-Date: 2021-11-28 20:35+0000\n"
 "Last-Translator: Jerome Flesch <jflesch@openpaper.work>\n"
 "Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
@@ -20,21 +20,26 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
 "X-Generator: Weblate 4.9\n"
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/zip.py:56
-msgid "ZIP file"
-msgstr "Fichier ZIP"
+#: openpaperwork-gtk/src/openpaperwork_gtk/widgets/charts/lines.py:417
+msgid "Total: {}"
+msgstr "Total : {}"
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/zip.py:61
-#, python-format
-msgid ""
-"Build a ZIP file containing all the attachments.\n"
-" If you want, you can then submit a bug report manually on <a href=\"%s"
-"\">Paperwork's bug tracker</a> and attach this ZIP file to the ticket."
-msgstr ""
-"Crée un fichier ZIP qui contient tous les documents.\n"
-"Si vous le souhaitez, vous pouvez soumettre un rapport de bogue manuellement "
-"sur <a href=\"%s\">le suivi de bogue de paperwork</a> et joignez ce fichier "
-"ZIP au ticket."
+#: openpaperwork-gtk/src/openpaperwork_gtk/widgets/charts/lines.py:427
+msgid "Total"
+msgstr "Total"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:258
+#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:266
+msgid "App. screenshots"
+msgstr "Captures d'écran de l'app."
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:267
+msgid "Select to generate"
+msgstr "Sélectionnez pour générer"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/__init__.py:77
+msgid "Now"
+msgstr "Maintenant"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/http.py:40
 msgid "Creating bug report ..."
@@ -71,26 +76,26 @@ msgstr ""
 msgid "FAILED"
 msgstr "ÉCHEC"
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/__init__.py:77
-msgid "Now"
-msgstr "Maintenant"
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/zip.py:56
+msgid "ZIP file"
+msgstr "Fichier ZIP"
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:258
-#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:266
-msgid "App. screenshots"
-msgstr "Captures d'écran de l'app."
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/zip.py:61
+#, python-format
+msgid ""
+"Build a ZIP file containing all the attachments.\n"
+" If you want, you can then submit a bug report manually on <a "
+"href=\"%s\">Paperwork's bug tracker</a> and attach this ZIP file to the "
+"ticket."
+msgstr ""
+"Crée un fichier ZIP qui contient tous les documents.\n"
+"Si vous le souhaitez, vous pouvez soumettre un rapport de bogue manuellement "
+"sur <a href=\"%s\">le suivi de bogue de paperwork</a> et joignez ce fichier "
+"ZIP au ticket."
 
-#: openpaperwork-gtk/src/openpaperwork_gtk/screenshots.py:267
-msgid "Select to generate"
-msgstr "Sélectionnez pour générer"
-
-#: openpaperwork-gtk/src/openpaperwork_gtk/widgets/charts/lines.py:417
-msgid "Total: {}"
-msgstr "Total : {}"
-
-#: openpaperwork-gtk/src/openpaperwork_gtk/widgets/charts/lines.py:427
-msgid "Total"
-msgstr "Total"
+#: openpaperwork-gtk/src/openpaperwork_gtk/widgets/progress/progress_button.glade.h:1
+msgid "Show background tasks"
+msgstr "Afficher les tâches de fond"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:1
 msgid "Unexpected Error"
@@ -103,6 +108,62 @@ msgstr "Signaler"
 #: openpaperwork-gtk/src/openpaperwork_gtk/uncaught_exception/uncaught_exception.glade.h:3
 msgid "An unexpected error occured."
 msgstr "Une erreur inattendue s'est produite."
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/wait_for_background_tasks/wait_for_background_tasks.glade.h:1
+msgid "Background tasks"
+msgstr ""
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/wait_for_background_tasks/wait_for_background_tasks.glade.h:2
+msgid "Force quit now"
+msgstr ""
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/wait_for_background_tasks/wait_for_background_tasks.glade.h:3
+msgid ""
+"Some background tasks are still running.\n"
+"Please wait ..."
+msgstr ""
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:1
+msgid "Bug description"
+msgstr "Description du bogue"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:2
+msgid "Required if you agree to be contacted regarding this bug report"
+msgstr "Requis si vous acceptez d'être contacté au sujet de ce rapport de bug"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:3
+msgid "Your email address"
+msgstr "Votre adresse email"
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:4
+msgid ""
+"Bug report successfully submitted.\n"
+"\n"
+"You can find below the private link to your bug report.\n"
+"\n"
+"<b>Be careful before sharing it.</b> Bug report attachments (logs, "
+"screenshots, …) do not contain any private information. Still you're "
+"strongly advised to check them all before sharing this link.\n"
+"\n"
+"You can request deletion of your bug report by sending an email to <a "
+"href=\"mailto:jflesch@openpaper.work\">jflesch@openpaper.work</a>."
+msgstr ""
+"Le rapport de bogue a été envoyé avec succès.\n"
+"\n"
+"Vous pouvez trouver le lien privé de votre rapport de bogue ci-dessous.\n"
+"\n"
+"<b>Soyez prudent en partageant ce lien.</b> Les fichiers joints au rapport "
+"de bogue (journaux, captures d'écran,…) ne contiennent pas d'informations "
+"privées. Mais il est vivement conseillé de les vérifier avant de partager ce "
+"lien.\n"
+"\n"
+"Vous pouvez demander la suppression de votre rapport de bogue en envoyant un "
+"courriel à cette adresse <a href=\"mailto:jflesch@openpaper."
+"work\">jflesch@openpaper.work</a>."
+
+#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_zip.glade.h:1
+msgid "Please select where to save the ZIP file"
+msgstr "Veuillez sélectionner la destination où sauvegarder le fichier ZIP"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:3
 msgid "Date"
@@ -129,52 +190,6 @@ msgstr ""
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report.glade.h:9
 msgid "Attachments to include in the bug report"
 msgstr "Fichiers à joindre à votre rapport de bogue"
-
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:1
-msgid "Bug description"
-msgstr "Description du bogue"
-
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:2
-msgid "Required if you agree to be contacted regarding this bug report"
-msgstr "Requis si vous acceptez d'être contacté au sujet de ce rapport de bug"
-
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:3
-msgid "Your email address"
-msgstr "Votre adresse email"
-
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:4
-msgid ""
-"Bug report successfully submitted.\n"
-"\n"
-"You can find below the private link to your bug report.\n"
-"\n"
-"<b>Be careful before sharing it.</b> Bug report attachments (logs, "
-"screenshots, …) do not contain any private information. Still you're "
-"strongly advised to check them all before sharing this link.\n"
-"\n"
-"You can request deletion of your bug report by sending an email to <a href="
-"\"mailto:jflesch@openpaper.work\">jflesch@openpaper.work</a>."
-msgstr ""
-"Le rapport de bogue a été envoyé avec succès.\n"
-"\n"
-"Vous pouvez trouver le lien privé de votre rapport de bogue ci-dessous.\n"
-"\n"
-"<b>Soyez prudent en partageant ce lien.</b> Les fichiers joints au rapport "
-"de bogue (journaux, captures d'écran,…) ne contiennent pas d'informations "
-"privées. Mais il est vivement conseillé de les vérifier avant de partager ce "
-"lien.\n"
-"\n"
-"Vous pouvez demander la suppression de votre rapport de bogue en envoyant un "
-"courriel à cette adresse <a href=\"mailto:jflesch@openpaper.work"
-"\">jflesch@openpaper.work</a>."
-
-#: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_zip.glade.h:1
-msgid "Please select where to save the ZIP file"
-msgstr "Veuillez sélectionner la destination où sauvegarder le fichier ZIP"
-
-#: openpaperwork-gtk/src/openpaperwork_gtk/widgets/progress/progress_button.glade.h:1
-msgid "Show background tasks"
-msgstr "Afficher les tâches de fond"
 
 #~ msgid "Anonymous"
 #~ msgstr "Anonyme"

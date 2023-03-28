@@ -1,6 +1,6 @@
-import openpaperwork_core
+import gettext
 
-from ... import _
+import openpaperwork_core
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -29,6 +29,9 @@ class Plugin(openpaperwork_core.PluginBase):
     def on_gtk_initialized(self):
         self.core.call_all(
             "app_shortcut_add",
-            _("Page"), _("Copy selected text to clipboard"),
+            gettext.pgettext("keyboard shortcut categories", "Page"),
+            gettext.pgettext(
+                "keyboard shortcut names", "Copy selected text to clipboard"
+            ),
             "<Control>c", "win.page_copy_text"
         )
