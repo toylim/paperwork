@@ -1,6 +1,6 @@
-import openpaperwork_core
+import gettext
 
-from ... import _
+import openpaperwork_core
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -27,6 +27,7 @@ class Plugin(openpaperwork_core.PluginBase):
         super().init(core)
         self.core.call_all(
             "app_shortcut_add",
-            _("Page"), _("Edit"),
+            gettext.pgettext("keyboard shortcut categories", "Page"),
+            gettext.pgettext("keyboard shortcut names", "Edit"),
             "<Control><Shift>e", "win.page_edit"
         )

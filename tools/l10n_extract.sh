@@ -62,7 +62,11 @@ done
 
 rm -f "${dst_dir}/messages.pot"
 echo "Extracting strings from .py and .h files ..."
-if ! xgettext -k_ -kN_ --from-code=UTF-8 -o "${dst_dir}/messages.pot" \
+if ! xgettext --from-code=UTF-8 \
+		-k_ \
+		-kN_ \
+		--keyword="pgettext:1c,2" \
+		-o "${dst_dir}/messages.pot" \
 		$(find "${src_dir}" -name \*.py) \
 		$(find "${src_dir}" -name \*.glade.h) ; then
 	echo "xgettext failed ! Unable to extract strings to translate !"
