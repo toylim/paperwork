@@ -7,12 +7,10 @@ install: install_py install_c
 
 uninstall: uninstall_py
 
-build_py: ${VERSION_FILE} l10n_compile
+build_py: l10n_compile
 	${PYTHON} ./setup.py build
 
 build_c:
-
-version: ${VERSION_FILE}
 
 ${VERSION_FILE}:
 	echo "# -*- coding: utf-8 -*-" >| $@
@@ -31,14 +29,16 @@ data:
 	$(MAKE) -C src/paperwork_gtk/model/help data
 
 check:
+	${PYTHON} -m pip install ${PIP_ARGS} .[lint]
 	flake8 --exclude=_version.py src/paperwork_gtk
 
 test: install
+	${PYTHON} -m pip install ${PIP_ARGS} .[dev]
 	python3 -m pytest -xv tests/
 
-windows_exe:
+windows_exe: ${VERSION_FILE}
 	${PYTHON} /mingw64/bin/pip3-script.py install .
-	${PYTHON} ./setup.py build_exe
+	${PYTHON} ./setup_cxfreeze.py build_exe
 	mkdir -p $(CURDIR)/../build/exe
 	mv $$(find $(CURDIR)/build -type d -name exe\*)/* $(CURDIR)/../build/exe
 	# ugly, but "import pkg_resources" doesn't work in frozen environments
@@ -73,13 +73,13 @@ else
 endif
 
 release_pypi:
-	@echo "Releasing paperwork-gtk (paperwork) ..."
-	${PYTHON} ./setup.py sdist
-	twine upload dist/paperwork-${RELEASE}.tar.gz
+	@echo "Releasing paperwork-gtk ..."
+	pip install build
+	${PYTHON} -m build -s
+	twine upload --repository paperwork-gtk $(CURDIR)/dist/*.tar.gz
 	@echo "All done"
 
 clean:
-	rm -f ${VERSION_FILE}
 	rm -rf build dist src/*.egg-info
 	rm -rf AppDir appimage-build
 	rm -f *.AppImage
@@ -87,7 +87,7 @@ clean:
 	$(MAKE) -C src/paperwork_gtk/icon clean
 
 # PIP_ARGS is used by Flatpak build
-install_py: ${VERSION_FILE} l10n_compile
+install_py: l10n_compile
 	${PYTHON} -m pip install ${PIP_ARGS} .
 
 install_c:
@@ -131,5 +131,4 @@ help:
 	release_pypi \
 	test \
 	uninstall \
-	uninstall_c \
-	version
+	uninstall_c

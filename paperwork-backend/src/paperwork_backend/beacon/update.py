@@ -1,6 +1,7 @@
 import datetime
 import logging
 import os
+import re
 
 import openpaperwork_core
 import openpaperwork_core.beacon
@@ -61,8 +62,13 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def _parse_version(self, version):
-        version = version.split("-", 1)
-        return tuple([int(x) for x in version[0].split(".")])
+        version = re.split('[^0-9]', version)[:3]
+        version = tuple([
+            int(x.strip())
+            for x in version
+            if x.strip() != ''
+        ])
+        return version
 
     def update_check(self):
         LOGGER.info("Looking for updates...")

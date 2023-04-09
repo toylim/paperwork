@@ -1,4 +1,3 @@
-VERSION_FILE = src/openpaperwork_gtk/_version.py
 PYTHON ?= python3
 
 build: build_c build_py
@@ -7,17 +6,12 @@ install: install_py install_c
 
 uninstall: uninstall_py
 
-build_py: ${VERSION_FILE} l10n_compile
+build_py: l10n_compile
 	${PYTHON} ./setup.py build
 
 build_c:
 
-version: ${VERSION_FILE}
-
-${VERSION_FILE}:
-	echo -n "version = \"" >| $@
-	echo -n $(shell git describe --always) >> $@
-	echo "\"" >> $@
+version:
 
 doc: install_py
 	$(MAKE) -C doc html
@@ -30,9 +24,11 @@ upload_doc: doc/_build/html/index.html
 	cd .. && ./ci/deliver_doc.sh ${CURDIR}/doc/_build/html openpaperwork_gtk
 
 check:
+	${PYTHON} -m pip install ${PIP_ARGS} .[lint]
 	flake8 src/openpaperwork_gtk
 
 test: install
+	${PYTHON} -m pip install ${PIP_ARGS} .[test]
 	python3 -m pytest -xv tests/
 
 linux_exe:
@@ -58,18 +54,18 @@ else
 endif
 
 release_pypi:
-	@echo "Releasing paperwork-backend ..."
-	${PYTHON} ./setup.py sdist
-	twine upload $(CURDIR)/dist/openpaperwork-gtk-${RELEASE}.tar.gz
+	@echo "Releasing openpaperwork-gtk ..."
+	pip install build
+	${PYTHON} -m build -s
+	twine upload --repository openpaperwork-gtk $(CURDIR)/dist/*.tar.gz
 	@echo "All done"
 
 clean:
 	rm -rf doc/_build
-	rm -f ${VERSION_FILE}
 	rm -rf build dist *.egg-info
 
 # PIP_ARGS is used by Flatpak build
-install_py: ${VERSION_FILE} l10n_compile
+install_py: l10n_compile
 	${PYTHON} -m pip install ${PIP_ARGS} .
 
 install_c:
@@ -112,5 +108,4 @@ help:
 	release \
 	test \
 	uninstall \
-	uninstall_c \
-	version
+	uninstall_c

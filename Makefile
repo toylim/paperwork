@@ -37,8 +37,6 @@ uninstall_py: $(ALL_COMPONENTS:%=%_uninstall_py)
 
 uninstall_c: $(ALL_COMPONENTS:%=%_uninstall_c)
 
-version: $(ALL_COMPONENTS:%=%_version)
-
 check: $(ALL_COMPONENTS:%=%_check)
 
 test: $(ALL_COMPONENTS:%=%_test)
@@ -62,7 +60,7 @@ doc: $(ALL_COMPONENTS:%=%_doc)
 
 upload_doc: $(ALL_COMPONENTS:%=%_upload_doc)
 
-release_pypi: version download_data l10n_compile
+release_pypi: download_data l10n_compile
 	$(MAKE) $(ALL_COMPONENTS:%=%_release_pypi) RELEASE=${RELEASE}
 
 release: $(ALL_COMPONENTS:%=%_release)
@@ -76,7 +74,6 @@ else
 	git tag -a ${RELEASE} -m ${RELEASE}
 	git push origin ${RELEASE}
 	make clean
-	make version
 	make release_pypi
 	@echo "All done"
 	@echo "IMPORTANT: Don't forgot to add the latest release on Flathub !"
@@ -136,10 +133,6 @@ help:
 	@echo "make l10n_compile"
 	@echo "Components:" ${ALL_COMPONENTS}
 
-%_version:
-	echo "Making version file $(@:%_version=%)"
-	$(MAKE) -C $(@:%_version=%) version
-
 %_check:
 	echo "Checking $(@:%_check=%)"
 	$(MAKE) -C $(@:%_check=%) check
@@ -188,7 +181,7 @@ help:
 	echo "Building Linux exe for $(@:%_linux_exe=%)"
 	$(MAKE) -C $(@:%_linux_exe=%) linux_exe
 
-%_windows_exe: version l10n_compile download_data libinsane_win64 pyocr_win64 libpillowfight_win64
+%_windows_exe: l10n_compile download_data libinsane_win64 pyocr_win64 libpillowfight_win64
 	echo "Building Windows exe for $(@:%_windows_exe=%)"
 	$(MAKE) -C $(@:%_windows_exe=%) windows_exe
 

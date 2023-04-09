@@ -1,0 +1,40 @@
+[project]
+name = "paperwork-gtk"
+description = "Paperwork's GTK interface"
+dynamic = ["version"]
+authors = [
+  {name = "Jerome Flesch", email = "jflesch@openpaper.work" },
+]
+license = {text = "GPL-3.0-or-later"}
+readme = {file = "README.markdown", content-type = "text/markdown"}
+
+dependencies = [
+  "openpaperwork-core",
+  "openpaperwork-gtk",
+  "paperwork-backend",
+
+  "distro",
+  "pycountry",
+  "pyocr >= 0.3.0",
+  "python-Levenshtein",
+  "pyxdg >= 0.25",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest",
+]
+lint = [
+  "flake8",
+]
+
+[project.gui-scripts]
+paperwork-gtk = 'paperwork_gtk.main:main'
+
+[tool.setuptools_scm]
+root = ".."
+relative_to = "__file__"
+write_to = "paperwork-gtk/src/paperwork_gtk/_version.py"
+
+[build-system]
+requires = ["setuptools>=45", "setuptools_scm[toml]>=6.2"]

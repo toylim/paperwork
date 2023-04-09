@@ -1,4 +1,3 @@
-VERSION_FILE = src/paperwork_backend/_version.py
 PYTHON ?= python3
 
 build: build_c build_py
@@ -7,17 +6,10 @@ install: install_py install_c
 
 uninstall: uninstall_py
 
-build_py: ${VERSION_FILE} l10n_compile
+build_py: l10n_compile
 	${PYTHON} ./setup.py build
 
 build_c:
-
-version: ${VERSION_FILE}
-
-${VERSION_FILE}:
-	echo -n "version = \"" >| $@
-	echo -n $(shell git describe --always) >> $@
-	echo "\"" >> $@
 
 doc: install_py
 	$(MAKE) -C doc html
@@ -31,9 +23,11 @@ data:
 	$(MAKE) -C $(CURDIR)/src/paperwork_backend/authors data
 
 check:
+	${PYTHON} -m pip install ${PIP_ARGS} .[lint]
 	flake8 src/paperwork_backend
 
 test: install
+	${PYTHON} -m pip install ${PIP_ARGS} .[dev]
 	python3 -m pytest -xv tests/
 
 linux_exe:
@@ -58,17 +52,17 @@ endif
 
 release_pypi:
 	@echo "Releasing paperwork-backend ..."
-	${PYTHON} ./setup.py sdist
-	twine upload dist/paperwork-backend-${RELEASE}.tar.gz
+	pip install build
+	${PYTHON} -m build -s
+	twine upload --repository paperwork-backend $(CURDIR)/dist/*.tar.gz
 	@echo "All done"
 
 clean:
-	rm -f ${VERSION_FILE}
 	rm -rf build dist *.egg-info
 	$(MAKE) -C $(CURDIR)/src/paperwork_backend/authors clean
 
 # PIP_ARGS is used by Flatpak build
-install_py: ${VERSION_FILE} l10n_compile
+install_py: l10n_compile
 	${PYTHON} -m pip install ${PIP_ARGS} .
 
 install_c:
@@ -114,5 +108,4 @@ help:
 	upload_data \
 	upload_doc \
 	uninstall \
-	uninstall_c \
-	version
+	uninstall_c
