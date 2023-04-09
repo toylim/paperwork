@@ -15,14 +15,11 @@
 #    along with Paperwork.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import sys
-import subprocess
 
 import openpaperwork_core
 
 
 class Plugin(openpaperwork_core.PluginBase):
-    MIN_LINES_FOR_PAGING = 25
-
     def __init__(self):
         self.output = []
 
@@ -37,20 +34,5 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def print_flush(self):
         output = "".join(self.output)
+        sys.stdout.write(output)
         self.output = []
-        nb_lines = output.count("\n")
-        isatty = os.isatty(sys.stdout.fileno())
-
-        if nb_lines < self.MIN_LINES_FOR_PAGING or not isatty:
-            sys.stdout.write(output)
-        else:
-            # we always use 'less -R' because it's the only one we are sure
-            # that handles correctly our ANSI colors
-            process = subprocess.Popen(('less', '-R'), stdin=subprocess.PIPE)
-            # TODO(Jflesch): Charset. For now we assume the system is UTF-8
-            with process:
-                try:
-                    process.stdin.write(output.encode("utf-8"))
-                    process.communicate()
-                except BrokenPipeError:
-                    pass
