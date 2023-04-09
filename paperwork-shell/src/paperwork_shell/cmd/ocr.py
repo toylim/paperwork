@@ -13,8 +13,6 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with Paperwork.  If not, see <http://www.gnu.org/licenses/>.
-import sys
-
 import openpaperwork_core
 
 from . import util
@@ -80,21 +78,18 @@ class Plugin(openpaperwork_core.PluginBase):
         out = []
 
         for page_idx in pages:
-            if self.interactive:
-                sys.stdout.write(
-                    _(
-                        "Running OCR on"
-                        " document {doc_id} page {page_idx} ...".format(
-                            doc_id=doc_id, page_idx=(page_idx + 1)
-                        )
-                    ) + " "
+            console.print(
+                _(
+                    "Running OCR on"
+                    " document {doc_id} page {page_idx} ..."
+                ).format(
+                    doc_id=doc_id, page_idx=(page_idx + 1)
                 )
-                sys.stdout.flush()
+            )
 
             self.core.call_all("ocr_page_by_url", doc_url, page_idx)
 
-            if self.interactive:
-                sys.stdout.write(_("Done") + "\n")
+            console.print(_("Done"))
 
             out.append((doc_id, page_idx))
 

@@ -1,7 +1,5 @@
 import logging
 
-import rich.text
-
 import openpaperwork_core
 
 
@@ -21,7 +19,7 @@ class _LogHandler(logging.Handler):
         if record.levelno < self.log_level:
             return
         line = self.formatter.format(record)
-        self.plugin.console.print(rich.text.Text(line))
+        self.plugin.console.print(line)
 
 
 class Plugin(openpaperwork_core.PluginBase):
@@ -54,7 +52,7 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def cmd_set_interactive(self, console):
+    def cmd_set_console(self, console):
         self.console = console
 
     def init_logs(self, app_name, default_log_level):

@@ -25,10 +25,6 @@ LOGGER = logging.getLogger(__name__)
 
 
 class Plugin(openpaperwork_core.PluginBase):
-    def __init__(self):
-        super().__init__()
-        self.interactive = False
-
     def get_interfaces(self):
         return ['shell']
 
@@ -55,9 +51,6 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def cmd_set_interactive(self, console):
-        self.interactive = console is not None
-
     def cmd_complete_argparse(self, parser):
         p = parser.add_parser(
             'search', help=_("Search keywords in documents")
@@ -81,34 +74,30 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all("index_search", docs, keywords, args.limit)
         docs.sort(reverse=True)
 
-        if self.interactive:
-            renderers = []
-            self.core.call_all("doc_renderer_get", renderers)
-            renderer = renderers[-1]
-        else:
-            renderer = None
+        renderers = []
+        self.core.call_all("doc_renderer_get", renderers)
+        renderer = renderers[-1]
 
-        if self.interactive:
-            for (doc_id, doc_url) in docs:
-                header = _("Document id: %s") % doc_id
-                self.core.call_all("print", header + "\n")
+        for (doc_id, doc_url) in docs:
+            header = _("Document id: %s") % doc_id
+            self.core.call_all("print", header)
 
-                doc_date = self.core.call_success("doc_get_date_by_id", doc_id)
-                doc_date = self.core.call_success("i18n_date_short", doc_date)
-                header = _("Document date: %s") % doc_date
-                self.core.call_all("print", header + "\n")
+            doc_date = self.core.call_success("doc_get_date_by_id", doc_id)
+            doc_date = self.core.call_success("i18n_date_short", doc_date)
+            header = _("Document date: %s") % doc_date
+            self.core.call_all("print", header)
 
-                if renderer is None:
-                    continue
-                if doc_url is None:
-                    LOGGER.warning("Failed to get URL of document %s", doc_id)
-                    continue
-                lines = renderer.get_preview_output(
-                    doc_id, doc_url, shutil.get_terminal_size()
-                )
-                for line in lines:
-                    self.core.call_all("print", line + "\n")
-                self.core.call_all("print", "\n")
-            self.core.call_success("print_flush")
+            if renderer is None:
+                continue
+            if doc_url is None:
+                LOGGER.warning("Failed to get URL of document %s", doc_id)
+                continue
+            lines = renderer.get_preview_output(
+                doc_id, doc_url, shutil.get_terminal_size()
+            )
+            for line in lines:
+                self.core.call_all("print", line)
+            self.core.call_all("print", "")
+        self.core.call_success("print_flush")
 
         return [doc[0] for doc in docs]

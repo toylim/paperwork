@@ -1,10 +1,9 @@
-import os
 import random
-import subprocess
-import sys
 
 import fabulous.image
 import fabulous.text
+
+import rich.text
 
 import openpaperwork_core
 
@@ -51,7 +50,7 @@ class Paperwork(object):
         self.core = core
         self.fonts = fonts
 
-    def show(self, file=sys.stdout):
+    def show(self, console):
         nb_lines = 0
 
         logo = self.core.call_success(
@@ -62,7 +61,7 @@ class Paperwork(object):
         logo = fabulous.image.Image(logo, width=60)
         logo = logo.reduce(logo.convert())
         for line in logo:
-            print(16 * " ", line, file=file, sep="")
+            console.print(rich.text.Text.from_ansi((16 * " ") + line))
             nb_lines += 1
 
         font = "FreeSans"
@@ -74,15 +73,18 @@ class Paperwork(object):
             skew=5, color="#abcdef", font=font, fsize=25, shadow=False
         )
         for line in txt:
-            print(line, file=file)
+            console.print(rich.text.Text.from_ansi(line))
             nb_lines += 1
 
-        print("Paperwork", file=file)
-        print(8 * " ",
-              _('Version: ') + self.core.call_success("app_get_version"),
-              file=file, sep="")
-        print(8 * " ", _("Because sorting documents is a machine's job."),
-              file=file, sep="")
+        console.print("Paperwork")
+        console.print(
+            (8 * " ")
+            + _('Version: ') + self.core.call_success("app_get_version")
+        )
+        console.print(
+            (8 * " ")
+            + _("Because sorting documents is a machine's job.")
+        )
         nb_lines += 3
         return nb_lines
 
@@ -104,7 +106,7 @@ class Section(object):
         if len(buf) > 0:
             yield " ".join(buf)
 
-    def show(self, file=sys.stdout):
+    def show(self, console):
         nb_lines = 0
         color = random.choice(COLORS)
         font = random.choice(self.fonts)
@@ -115,16 +117,16 @@ class Section(object):
                 word, skew=0, color=color, font=font, fsize=18, shadow=False
             )
             for line in txt:
-                print(line, file=file)
+                console.print(rich.text.Text.from_ansi(line))
                 nb_lines += 1
 
-        print(self.name, file=file)
+        console.print(self.name)
         nb_lines += 1
         for author in self.authors:
             txt = author[1]
             if author[2] > 0:
                 txt += " ({})".format(author[2])
-            print(8 * " ", txt, file=file, sep="")
+            console.print((8 * " ") + txt)
             nb_lines += 1
 
         return nb_lines
@@ -173,29 +175,13 @@ class Plugin(openpaperwork_core.PluginBase):
             [Section(k, v, fonts) for (k, v) in sections if len(v) >= 0]
         )
 
-        pager = os.environ.get('PAGER', 'less')
-        try:
-            pager = subprocess.Popen([pager, '-R'], universal_newlines=True,
-                                     stdin=subprocess.PIPE, stdout=sys.stdout)
-        except OSError:
-            # Just output regularly, without a pager.
-            output = sys.stdout
-            pager = None
-        else:
-            output = pager.stdin
-
-        try:
-            for section in sections:
-                section.show(file=output)
-                if section != sections[-1]:
-                    for x in range(0, 7):
-                        print(file=output)
-            print(file=output)
-            print(file=output)
-        finally:
-            if pager is not None:
-                pager.stdin.close()
-                pager.wait()
+        for section in sections:
+            section.show(console)
+            if section != sections[-1]:
+                for x in range(0, 7):
+                    console.print("")
+        console.print("")
+        console.print("")
 
     def _get_available_fonts(self):
         all_fonts = fabulous.text.get_font_files()

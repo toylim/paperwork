@@ -45,9 +45,8 @@ class Plugin(PluginBase):
             )
         return distribution
 
-    def cmd_set_interactive(self, console):
+    def cmd_set_console(self, console):
         self.console = console
-        self.interactive = console is not None
 
     def cmd_complete_argparse(self, parser):
         p = parser.add_parser(
@@ -72,7 +71,7 @@ class Plugin(PluginBase):
         missing = collections.defaultdict(dict)
         self.core.call_all("chkdeps", missing)
 
-        if self.interactive and len(missing) > 0:
+        if len(missing) > 0:
             console.print(_("Missing dependencies:"))
             for (dep_name, distrib_packages) in missing.items():
                 console.print(_("- {dep_name} (package: {pkg_name})").format(
@@ -102,21 +101,23 @@ class Plugin(PluginBase):
             console.print(_("Suggested command:"))
             console.print("  " + command)
             console.print("")
-            if self.interactive and not auto:
+            if not auto:
                 r = util.ask_confirmation(
-                    _("Do you want to run this command now ?")
+                    console,
+                    _("Do you want to run this command now ?"),
+                    default_interactive='n',
+                    default_non_interactive='n',
                 )
                 if r != 'y':
                     return {
                         "missing": missing,
                         "command": command,
                     }
-            if self.interactive:
-                console.print("Running command ...")
-                r = os.system(command)
-                console.print("Command returned {}".format(r))
-                if r != 0:
-                    sys.exit(r)
+            console.print("Running command ...")
+            r = os.system(command)
+            console.print("Command returned {}".format(r))
+            if r != 0:
+                sys.exit(r)
         elif len(missing) > 0:
             console.print(
                 _("Don't know how to install missing dependencies. Sorry.")

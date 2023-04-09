@@ -27,7 +27,7 @@ from .. import _
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
-        self.interactive = False
+        self.console = None
 
     def get_interfaces(self):
         return ['shell']
@@ -53,8 +53,8 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def cmd_set_interactive(self, console):
-        self.interactive = console is not None
+    def cmd_set_console(self, console):
+        self.console = console
 
     def cmd_complete_argparse(self, parser):
         p = parser.add_parser(
@@ -94,10 +94,9 @@ class Plugin(openpaperwork_core.PluginBase):
     def _print_possible_pipes(self, next_pipes):
         next_pipes = [pipe.name for pipe in next_pipes]
         next_pipes.sort()
-        if self.interactive:
-            sys.stderr.write(_("Next possible filters are:") + "\n")
-            for pipe in next_pipes:
-                sys.stderr.write(f"- {pipe}\n")
+        self.console.print(_("Next possible filters are:"))
+        for pipe in next_pipes:
+            self.console.print(f"- {pipe}")
         return next_pipes
 
     @staticmethod
@@ -125,8 +124,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 "export_get_pipes_by_doc_url", next_pipes, doc_url
             )
         if len(filters) <= 0:
-            if self.interactive:
-                sys.stderr.write(_("Need at least one filter.") + "\n")
+            self.console.print(_("Need at least one filter."))
             return self._print_possible_pipes(next_pipes)
         if not filters[0] in next_pipes:
             sys.stderr.write(
@@ -158,12 +156,11 @@ class Plugin(openpaperwork_core.PluginBase):
             paperwork_backend.docexport.ExportDataType.OUTPUT_URL_FILE
         )
         if output_type != expected_output_type:
-            if self.interactive:
-                sys.stderr.write(
-                    _("Last filter will output {}.").format(
-                        self._data_type_to_str(output_type)
-                    ) + "\n"
-                )
+            self.console.print(
+                _("Last filter will output {}.").format(
+                    self._data_type_to_str(output_type)
+                ) + "\n"
+            )
             next_pipes = []
             self.core.call_all(
                 "export_get_pipes_by_input", next_pipes, output_type
@@ -240,14 +237,11 @@ class Plugin(openpaperwork_core.PluginBase):
                 pipe.get_promise(result='final', target_file_url=out)
             )
 
-        if self.interactive:
-            sys.stdout.write(_("Exporting to %s ... ") % out)
-            sys.stdout.flush()
+        self.console.print(_("Exporting to %s ... ") % out)
         self.core.call_one("mainloop_schedule", promise.schedule)
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
-        if self.interactive:
-            sys.stdout.write(_("Done") + "\n")
+        self.console.print(_("Done") + "\n")
         r = (self.core.call_success("fs_exists", out) is not None)
         if not r:
             sys.stderr.write(_("Export failed !") + "\n")

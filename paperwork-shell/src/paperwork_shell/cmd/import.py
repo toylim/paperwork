@@ -14,7 +14,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with Paperwork.  If not, see <http://www.gnu.org/licenses/>.
 import logging
-import sys
 
 import rich.text
 
@@ -108,13 +107,6 @@ class Plugin(openpaperwork_core.PluginBase):
             return self._file_import_to_dict(file_import)
 
         if len(importers) > 1:
-            if not self.interactive:
-                LOGGER.warning(
-                    "Found many ways to import file(s) %s. Running in"
-                    " non-interactive mode. Cannot request which method"
-                    " must be used", args.files
-                )
-                return self._file_import_to_dict(file_import)
             console.print(
                 _("Found many ways to import file(s) %s.") % args.files
             )
@@ -125,9 +117,10 @@ class Plugin(openpaperwork_core.PluginBase):
             while choice not in range(0, len(importers)):
                 for (idx, importer) in enumerate(importers):
                     console.print(f"  {idx + 1} - {importer.get_name()}")
-                sys.stdout.write("? ")
-                sys.stdout.flush()
-                choice = int(input()) - 1
+                choice = console.input("? ")
+                if choice is None:
+                    return self._file_import_to_dict(file_import)
+                choice = int(choice) - 1
 
         importer = importers[choice]
         del importers

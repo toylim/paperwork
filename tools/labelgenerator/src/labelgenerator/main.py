@@ -2,6 +2,7 @@ import random
 import sys
 
 import openpaperwork_core
+import openpaperwork_core.cmd
 import paperwork_backend
 import paperwork_shell.main
 
@@ -45,7 +46,7 @@ def main():
         labels.append(label)
     print()
 
-    core.call_all("cmd_set_interactive", False)
+    core.call_all("cmd_set_console", openpaperwork_core.cmd.DummyConsole())
     work_dir = core.call_success("fs_safe", work_dir)
 
     print("Switching work directory to {} ...".format(work_dir))

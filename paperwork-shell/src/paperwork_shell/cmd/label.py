@@ -23,10 +23,6 @@ from .. import _
 
 
 class Plugin(openpaperwork_core.PluginBase):
-    def __init__(self):
-        super().__init__()
-        self.interactive = False
-
     def get_interfaces(self):
         return ['shell']
 
@@ -49,9 +45,6 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['paperwork_backend.sync'],
             },
         ]
-
-    def cmd_set_interactive(self, console):
-        self.interactive = console is not None
 
     def cmd_complete_argparse(self, parser):
         label_parser = parser.add_parser(
@@ -112,9 +105,10 @@ class Plugin(openpaperwork_core.PluginBase):
             labels.sort()
             out[doc_id] = labels
 
-            if self.interactive:
-                sys.stdout.write("{}: ".format(doc_id))
-                self.core.call_all("print_labels", labels, separator=" ")
+            labels_str = self.core.call_success(
+                "format_labels", labels, separator=" "
+            )
+            console.print(f"{doc_id}: {labels_str}")
         return out
 
     def cmd_run(self, console, args):
@@ -129,9 +123,11 @@ class Plugin(openpaperwork_core.PluginBase):
             labels = list(labels)
             labels.sort()
 
-            if self.interactive:
-                print()
-                self.core.call_all("print_labels", labels)
+            console.print()
+            labels_str = self.core.call_success(
+                "format_labels", labels, separator=" "
+            )
+            console.print(labels_str)
             return labels
 
         elif args.sub_command == 'show':
@@ -169,16 +165,17 @@ class Plugin(openpaperwork_core.PluginBase):
 
             label = args.label_name
 
-            if self.interactive:
-                r = ask_confirmation(
-                    _(
-                        "Are you sure you want to delete label '%s' from all"
-                        " documents ?"
-                    ) % label,
-                    default='n'
-                )
-                if r != 'y':
-                    sys.exit(1)
+            r = ask_confirmation(
+                console,
+                _(
+                    "Are you sure you want to delete label '%s' from all"
+                    " documents ?"
+                ) % label,
+                default_interactive='n',
+                default_non_interactive='y',
+            )
+            if r != 'y':
+                sys.exit(1)
 
             all_docs = []
             self.core.call_all("storage_get_all_docs", all_docs)

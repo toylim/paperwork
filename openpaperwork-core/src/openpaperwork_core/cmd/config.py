@@ -109,13 +109,13 @@ class Plugin(PluginBase):
         if v is None:
             LOGGER.warning("No such option '%s'", opt_name)
             return None
-        self.core.call_all("print", "{} = {}\n".format(opt_name, v))
+        self.core.call_all("print", f"{opt_name} = {v}")
         self.core.call_success("print_flush")
         return {opt_name: v}
 
     def _cmd_put(self, opt_name, vtype, value):
         value = CMD_VALUE_TYPES[vtype](value)
-        self.core.call_success("print", "{} = {}\n".format(opt_name, value))
+        self.core.call_success("print", f"{opt_name} = {value}")
         self.core.call_success("print_flush")
         self.core.call_all("config_put", opt_name, value)
         self.core.call_all("config_save")
@@ -130,12 +130,12 @@ class Plugin(PluginBase):
             if type(v) in TO_JSON:
                 v = TO_JSON[type(v)](v)
             out[opt] = v
-            self.core.call_success("print", "{} = {}\n".format(opt, out[opt]))
+            self.core.call_success("print", f"{opt} = {out[opt]}")
         self.core.call_success("print_flush")
         return out
 
     def _cmd_list_types(self):
         r = list(CMD_VALUE_TYPES.keys())
-        self.core.call_success("print", str(r) + "\n")
+        self.core.call_success("print", str(r))
         self.core.call_success("print_flush")
         return r

@@ -6,6 +6,8 @@ except (ValueError, ImportError):
 
 import openpaperwork_core
 
+import rich.text
+
 
 def color_labels(core, labels):
     labels = [
@@ -135,14 +137,16 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def print_labels(self, labels, separator='\n'):
+    def format_labels(self, labels, separator='\n'):
         if FABULOUS_AVAILABLE:
             labels = color_labels(self.core, labels)
             labels = [label for (l_label, label) in labels]
+            labels = separator.join(labels)
+            labels = rich.text.Text.from_ansi(labels)
         else:
             labels = [label for (label, color) in labels]
-        labels = separator.join(labels)
-        print(labels)
+            labels = separator.join(labels)
+        return labels
 
     def doc_renderer_get(self, out):
         r = LabelsRenderer(self.core)

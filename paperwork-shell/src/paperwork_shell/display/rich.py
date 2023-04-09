@@ -28,7 +28,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def get_interfaces(self):
         return ['print']
 
-    def cmd_set_interactive(self, console):
+    def cmd_set_console(self, console):
         self.console = console
 
     def print(self, txt):
@@ -48,5 +48,5 @@ class Plugin(openpaperwork_core.PluginBase):
             for line in self.output
         ])
         self.output = []
-        self.console.print(output)
+        self.console.console.print(output)
         return True

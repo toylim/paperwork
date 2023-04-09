@@ -15,9 +15,6 @@ from .. import _
 
 
 class Plugin(openpaperwork_core.PluginBase):
-    def __init__(self):
-        super().__init__()
-
     def get_interfaces(self):
         return ['shell']
 
@@ -90,27 +87,28 @@ class Plugin(openpaperwork_core.PluginBase):
             console.print()
 
         if not args.yes:
-            if not self.interactive:
-                return problems
             msg = _(
                 "Do you want to fix those problems automatically"
                 " using the indicated solutions ?"
             )
-            r = openpaperwork_core.cmd.util.ask_confirmation(msg, default='n')
+            r = openpaperwork_core.cmd.util.ask_confirmation(
+                console,
+                msg,
+                default_interactive='n',
+                default_non_interactive='n',
+            )
             if r != 'y':
-                print("OK, nothing changed.")
+                console.print("OK, nothing changed.")
                 return problems
 
         console.print(_("Fixing ..."))
         self.core.call_all("fix_work_dir", problems)
-        if self.interactive:
-            console.print(_("All fixed !"))
-            console.print(_("Synchronizing with work directory ..."))
+        console.print(_("All fixed !"))
+        console.print(_("Synchronizing with work directory ..."))
 
         self.core.call_all("transaction_sync_all")
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
-        if self.interactive:
-            console.print(_("All done !"))
+        console.print(_("All done !"))
 
         return problems

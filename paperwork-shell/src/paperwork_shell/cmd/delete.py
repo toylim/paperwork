@@ -23,10 +23,6 @@ from .. import _
 
 
 class Plugin(openpaperwork_core.PluginBase):
-    def __init__(self):
-        super().__init__()
-        self.interactive = False
-
     def get_interfaces(self):
         return ['shell']
 
@@ -53,9 +49,6 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['paperwork_backend.sync'],
             },
         ]
-
-    def cmd_set_interactive(self, console):
-        self.interactive = console is not None
 
     def cmd_complete_argparse(self, parser):
         p = parser.add_parser(
@@ -91,38 +84,39 @@ class Plugin(openpaperwork_core.PluginBase):
         del_page_msg = _("Deleting page {page_idx} of document {doc_id} ...")
 
         for doc_id in doc_ids:
-            if self.interactive:
-                if pages is None:
-                    r = ask_confirmation(
-                        _("Delete document %s ?") % str(doc_id),
-                        default='n'
-                    )
-                else:
-                    r = ask_confirmation(
-                        _(
-                            "Delete page(s)"
-                            " {page_indexes} of document {doc_id} ?".format(
-                                page_indexes=str([p + 1 for p in pages]),
-                                doc_id=str(doc_id)
-                            )
-                        ), default='n'
-                    )
-                if r != 'y':
-                    continue
+            if pages is None:
+                r = ask_confirmation(
+                    console,
+                    _("Delete document %s ?") % str(doc_id),
+                    default_interactive='n',
+                    default_non_interactive='y',
+                )
+            else:
+                r = ask_confirmation(
+                    _(
+                        "Delete page(s)"
+                        " {page_indexes} of document {doc_id} ?".format(
+                            page_indexes=str([p + 1 for p in pages]),
+                            doc_id=str(doc_id)
+                        )
+                    ),
+                    default_interactive='n',
+                    default_non_interactive='y',
+                )
+            if r != 'y':
+                continue
 
             if pages is None:
-                if self.interactive:
-                    print(del_doc_msg.format(doc_id=doc_id))
+                console.print(del_doc_msg.format(doc_id=doc_id))
                 self.core.call_all("storage_delete_doc_id", doc_id)
             else:
                 for page in pages:
                     doc_url = self.core.call_success(
                         "doc_id_to_url", doc_id
                     )
-                    if self.interactive:
-                        print(del_page_msg.format(
-                            page_idx=(page + 1), doc_id=doc_id)
-                        )
+                    console.print(del_page_msg.format(
+                        page_idx=(page + 1), doc_id=doc_id)
+                    )
                     self.core.call_all("page_delete_by_url", doc_url, page)
 
         self.core.call_success(

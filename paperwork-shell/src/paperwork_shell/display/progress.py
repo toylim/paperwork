@@ -36,14 +36,16 @@ class Plugin(openpaperwork_core.PluginBase):
             'progress_listener',
         ]
 
-    def cmd_set_interactive(self, console):
+    def cmd_set_console(self, console):
         if console is None:
             return
-        self.progress = rich.progress.Progress(console=console)
-        self.progress.start()
 
     def on_progress(self, upd_type, progress, description=None):
         if self.progress is None:
+            self.progress = rich.progress.Progress(
+                console=self.console.console
+            )
+            self.progress.start()
             return
         if upd_type not in self.tasks:
             if progress >= 1.0:

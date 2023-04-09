@@ -253,10 +253,6 @@ class Plugin(openpaperwork_core.PluginBase):
     paperwork_backend.guesswork.label.sklearn
     heuristically and based on the user's documents.
     """
-    def __init__(self):
-        super().__init__()
-        self.interactive = False
-
     def get_interfaces(self):
         return [
             'shell',
@@ -284,9 +280,6 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_core.i18n.python'],
             },
         ]
-
-    def cmd_set_interactive(self, console):
-        self.interactive = console is not None
 
     def cmd_complete_argparse(self, parser):
         parser.add_parser('compute_sklearn_label_guessing_backlog')

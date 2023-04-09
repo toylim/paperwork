@@ -221,10 +221,6 @@ class Plugin(openpaperwork_core.PluginBase):
     OBSOLETE: Now that we are using sklearn.GaussianNB, there is no need for
     a threshold anymore.
     """
-    def __init__(self):
-        super().__init__()
-        self.interactive = False
-
     def get_interfaces(self):
         return [
             'shell',
@@ -252,9 +248,6 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_core.i18n.python'],
             },
         ]
-
-    def cmd_set_interactive(self, interactive):
-        self.interactive = interactive
 
     def cmd_complete_argparse(self, parser):
         parser.add_parser('compute_sklearn_label_guessing_threshold')

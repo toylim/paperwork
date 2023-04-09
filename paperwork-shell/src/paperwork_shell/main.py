@@ -4,6 +4,7 @@ import sys
 import traceback
 
 import rich.console
+import rich.text
 
 import openpaperwork_core
 import openpaperwork_core.cmd
@@ -51,6 +52,17 @@ DEFAULT_CLI_PLUGINS = DEFAULT_SHELL_PLUGINS + [
 DEFAULT_JSON_PLUGINS = DEFAULT_SHELL_PLUGINS
 
 
+class RichConsole:
+    def __init__(self):
+        self.console = rich.console.Console()
+
+    def print(self, line):
+        self.console.print(rich.text.Text(line))
+
+    def input(self, prompt=""):
+        return self.console.input(rich.text.Text(prompt))
+
+
 def main_main(in_args, application_name, default_plugins, interactive):
     # To load the plugins, we need first to load the configuration plugin
     # to get the list of plugins to load.
@@ -78,11 +90,11 @@ def main_main(in_args, application_name, default_plugins, interactive):
     args = parser.parse_args(in_args)
 
     if interactive:
-        console = rich.console.Console()
+        console = RichConsole()
     else:
         console = openpaperwork_core.cmd.DummyConsole()
 
-    core.call_all("cmd_set_interactive", console)
+    core.call_all("cmd_set_console", console)
     if interactive:
         r = core.call_all("cmd_run", console=console, args=args)
     else:

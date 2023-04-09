@@ -79,7 +79,7 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def cmd_set_interactive(self, console):
+    def cmd_set_console(self, console):
         self.console = console
 
     def on_scan_feed_start(self, scan_id):

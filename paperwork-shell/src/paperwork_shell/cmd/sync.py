@@ -23,7 +23,6 @@ from .. import _
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
-        self.interactive = True
         self.changes = collections.defaultdict(
             # we cannot use sets here because sets are not JSON-serializable
             lambda: collections.defaultdict(list)
@@ -49,9 +48,6 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def cmd_set_interactive(self, interactive):
-        self.interactive = interactive
-
     def cmd_complete_argparse(self, parser):
         parser.add_parser('sync', help=_(
             "Synchronize the index(es) with the content of the work directory"
@@ -64,8 +60,7 @@ class Plugin(openpaperwork_core.PluginBase):
         if args.command != 'sync':
             return None
 
-        if self.interactive:
-            console.print(_("Synchronizing with work directory ..."))
+        console.print(_("Synchronizing with work directory ..."))
 
         self.changes = collections.defaultdict(
             # we cannot use sets here because sets are not JSON-serializable
@@ -75,8 +70,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all("transaction_sync_all")
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
-        if self.interactive:
-            console.print(_("All done !"))
+        console.print(_("All done !"))
 
         # ensure order of documents to make testing easier and ensure
         # behaviour consistency

@@ -22,9 +22,6 @@ from .. import _
 
 
 class Plugin(openpaperwork_core.PluginBase):
-    def __init__(self):
-        self.interactive = False
-
     def get_interfaces(self):
         return ['shell']
 
@@ -42,9 +39,6 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['openpaperwork_core.i18n.python'],
             },
         ]
-
-    def cmd_set_interactive(self, console):
-        self.interactive = console is not None
 
     def cmd_complete_argparse(self, parser):
         p = parser.add_parser('show', help=_(
@@ -77,36 +71,35 @@ class Plugin(openpaperwork_core.PluginBase):
         assert len(renderers) > 0
         renderer = renderers[-1]
 
-        if self.interactive:
-            header = _("Document id: %s") % doc_id
-            self.core.call_success("print", header + "\n")
-            self.core.call_success("print", "=" * len(header) + "\n")
+        header = _("Document id: %s") % doc_id
+        self.core.call_success("print", header)
+        self.core.call_success("print", "=" * len(header))
 
-            doc_date = self.core.call_success("doc_get_date_by_id", doc_id)
-            doc_date = self.core.call_success("i18n_date_short", doc_date)
-            header = _("Document date: %s") % doc_date
-            self.core.call_success("print", header + "\n")
+        doc_date = self.core.call_success("doc_get_date_by_id", doc_id)
+        doc_date = self.core.call_success("i18n_date_short", doc_date)
+        header = _("Document date: %s") % doc_date
+        self.core.call_success("print", header)
 
-            lines = renderer.get_doc_output(
-                doc_id, doc_url, shutil.get_terminal_size()
+        lines = renderer.get_doc_output(
+            doc_id, doc_url, shutil.get_terminal_size()
+        )
+        for line in lines:
+            self.core.call_success("print", line)
+        self.core.call_success("print", "")
+
+        for page_nb in pages:
+            self.core.call_success("print", "")
+            header = _("Page %d") % (page_nb + 1)
+            self.core.call_success("print", header)
+            self.core.call_success("print", ("-" * len(header)) + "\n")
+            lines = renderer.get_page_output(
+                doc_id, doc_url, page_nb, shutil.get_terminal_size()
             )
             for line in lines:
-                self.core.call_success("print", line + "\n")
-            self.core.call_success("print", "\n")
+                self.core.call_success("print", line)
+            self.core.call_success("print", "")
 
-            for page_nb in pages:
-                self.core.call_success("print", "\n")
-                header = _("Page %d") % (page_nb + 1)
-                self.core.call_success("print", header + "\n")
-                self.core.call_success("print", ("-" * len(header)) + "\n\n")
-                lines = renderer.get_page_output(
-                    doc_id, doc_url, page_nb, shutil.get_terminal_size()
-                )
-                for line in lines:
-                    self.core.call_success("print", line + "\n")
-                self.core.call_success("print", "\n")
-
-            self.core.call_success("print_flush")
+        self.core.call_success("print_flush")
 
         return {
             'document': renderer.get_doc_infos(doc_id, doc_url),

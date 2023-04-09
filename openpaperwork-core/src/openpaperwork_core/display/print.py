@@ -13,7 +13,6 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with Paperwork.  If not, see <http://www.gnu.org/licenses/>.
-import os
 import sys
 
 import openpaperwork_core
@@ -29,10 +28,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def print(self, txt):
         self.output.append(txt)
 
-    def print_isatty(self):
-        return os.isatty(sys.stdout.fileno())
-
     def print_flush(self):
-        output = "".join(self.output)
+        output = "\n".join(self.output)
         sys.stdout.write(output)
         self.output = []

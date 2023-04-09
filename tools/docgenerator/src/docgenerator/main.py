@@ -7,6 +7,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk  # noqa: E402
 
 import openpaperwork_core  # noqa: E402
+import openpaperwork_core.cmd  # noqa: E402
 import paperwork_backend  # noqa: E402
 import paperwork_backend.docimport  # noqa: E402
 import paperwork_backend.model.workdir  # noqa: E402
@@ -97,7 +98,7 @@ def main_generate_workdir():
     work_dir = core.call_success("fs_safe", sys.argv[1])
     nb_docs = int(sys.argv[2])
 
-    core.call_all("cmd_set_interactive", False)
+    core.call_all("cmd_set_console", openpaperwork_core.cmd.DummyConsole())
 
     print("Creating {}...".format(work_dir))
     core.call_success("fs_mkdir_p", work_dir)
@@ -151,7 +152,7 @@ def main_generate_workdir():
             importers = []
             core.call_all("get_importer", importers, file_import)
             print("Importers: {}".format(importers))
-            assert(len(importers) > 0)
+            assert len(importers) > 0
             importer = importers[0]
 
             promise = importer.get_import_promise()

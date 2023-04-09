@@ -89,8 +89,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def _get_scanner_info(self, console, dev, dev_id, dev_name):
-        if self.interactive:
-            console.print(_("Examining scanner {} ...").format(dev_id))
+        console.print(_("Examining scanner {} ...").format(dev_id))
         dev_out = {
             'id': dev_id,
             'name': dev_name,
@@ -141,22 +140,21 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_one("mainloop")
 
     def _print_scanners(self, console):
-        if self.interactive:
-            console.print()
-            for dev in self.out:
-                console.print(rich.text.Text(dev['name']))
+        console.print()
+        for dev in self.out:
+            console.print(rich.text.Text(dev['name']))
+            console.print(rich.text.Text(
+                " |-- " + _("ID:") + " " + dev['id']
+            ))
+            for source in dev['sources']:
                 console.print(rich.text.Text(
-                    " |-- " + _("ID:") + " " + dev['id']
+                    " |-- " + _("Source:") + " " + source['id']
                 ))
-                for source in dev['sources']:
-                    console.print(rich.text.Text(
-                        " |-- " + _("Source:") + " " + source['id']
-                    ))
-                    console.print(rich.text.Text(
-                        " |    |-- " + _("Resolutions:")
-                        + " " + str(source['resolutions'])
-                    ))
-                console.print()
+                console.print(rich.text.Text(
+                    " |    |-- " + _("Resolutions:")
+                    + " " + str(source['resolutions'])
+                ))
+            console.print()
 
     def _get_scanner(self, console):
         out = {
@@ -170,10 +168,9 @@ class Plugin(openpaperwork_core.PluginBase):
                 "config_get", "scanner_resolution"
             ),
         }
-        if self.interactive:
-            print(_("ID:") + " " + str(out['id']))
-            print(_("Source:") + " " + str(out['source']))
-            print(_("Resolution:") + " " + str(out['resolution']))
+        console.print(_("ID:") + " " + str(out['id']))
+        console.print(_("Source:") + " " + str(out['source']))
+        console.print(_("Resolution:") + " " + str(out['resolution']))
         return out
 
     def _set_scanner(self, console, args):
@@ -199,11 +196,10 @@ class Plugin(openpaperwork_core.PluginBase):
                         dev_settings['source'] is not None
                         and dev_settings['source'] not in sources
                     ):
-                if self.interactive:
-                    print(_(
-                        "Source {} not found on device."
-                        " Using another source"
-                    ).format(dev_settings['source']))
+                console.print(_(
+                    "Source {} not found on device."
+                    " Using another source"
+                ).format(dev_settings['source']))
                 dev_settings['source'] = None
 
             if dev_settings['source'] is None:
@@ -220,8 +216,7 @@ class Plugin(openpaperwork_core.PluginBase):
                     sources[dev_settings['source']]
                 )
 
-            if self.interactive:
-                print(_("Default source:") + " " + dev_settings['source'])
+            console.print(_("Default source:") + " " + dev_settings['source'])
 
             return source[1]
 
@@ -234,10 +229,11 @@ class Plugin(openpaperwork_core.PluginBase):
             resolution = min(
                 resolutions, key=lambda x: abs(x - dev_settings['resolution'])
             )
-            if self.interactive:
-                print(_("Resolution {} not available. Adjusted to {}.").format(
+            console.print(
+                _("Resolution {} not available. Adjusted to {}.").format(
                     dev_settings['resolution'], resolution
-                ))
+                )
+            )
             dev_settings['resolution'] = resolution
             return source
 

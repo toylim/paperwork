@@ -172,6 +172,9 @@ class DefaultConsole:
     def print(self, text):
         print(text)
 
+    def input(self, prompt=""):
+        return input(prompt)
+
 
 def gtk_main(app, options, core):
     app = core.call_success("gtk_get_app")
@@ -215,7 +218,7 @@ def main_main(in_args):
         core.call_all("cmd_complete_argparse", cmd_parser)
         args = parser.parse_args(in_args)
         console = DefaultConsole()
-        core.call_all("cmd_set_interactive", console)
+        core.call_all("cmd_set_console", console)
         core.call_all("cmd_run", console, args)
 
     return 0
