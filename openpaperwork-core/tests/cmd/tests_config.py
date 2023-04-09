@@ -107,7 +107,9 @@ class TestConfig(unittest.TestCase):
         args = parser.parse_args(
             ['config', 'put', 'workdir', 'str', 'file:///pouet/path']
         )
-        self.core.call_all("cmd_set_interactive", False)
+        self.core.call_all(
+            "cmd_set_console", openpaperwork_core.cmd.DummyConsole()
+        )
         r = self.core.call_success(
             "cmd_run", openpaperwork_core.cmd.DummyConsole(), args
         )

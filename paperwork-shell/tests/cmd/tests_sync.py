@@ -59,7 +59,9 @@ class TestSync(unittest.TestCase):
         self.core.call_all("cmd_complete_argparse", cmd_parser)
 
         args = parser.parse_args(['sync'])
-        self.core.call_all("cmd_set_interactive", False)
+        self.core.call_all(
+            "cmd_set_console", openpaperwork_core.cmd.DummyConsole()
+        )
 
         # start with an empty work directory
 

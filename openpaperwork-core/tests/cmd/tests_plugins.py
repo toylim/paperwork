@@ -42,7 +42,9 @@ class TestConfig(unittest.TestCase):
         )
         self.core.call_all("cmd_complete_argparse", cmd_parser)
 
-        self.core.call_all("cmd_set_interactive", False)
+        self.core.call_all(
+            "cmd_set_console", openpaperwork_core.cmd.DummyConsole()
+        )
         args = parser.parse_args(
             ['plugins', 'add', 'plugin_a', '--no_auto']
         )

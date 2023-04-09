@@ -59,7 +59,9 @@ class TestSync(unittest.TestCase):
         shutil.rmtree(self.tmp_out_dir)
 
     def test_export_doc(self):
-        self.core.call_all("cmd_set_interactive", False)
+        self.core.call_all(
+            "cmd_set_console", openpaperwork_core.cmd.DummyConsole()
+        )
 
         parser = argparse.ArgumentParser()
         cmd_parser = parser.add_subparsers(
@@ -162,7 +164,9 @@ class TestSync(unittest.TestCase):
         )
 
     def test_export_page(self):
-        self.core.call_all("cmd_set_interactive", False)
+        self.core.call_all(
+            "cmd_set_console", openpaperwork_core.cmd.DummyConsole()
+        )
 
         parser = argparse.ArgumentParser()
         cmd_parser = parser.add_subparsers(
@@ -265,7 +269,9 @@ class TestSync(unittest.TestCase):
         )
 
     def test_export_invalid_pipeline(self):
-        self.core.call_all("cmd_set_interactive", False)
+        self.core.call_all(
+            "cmd_set_console", openpaperwork_core.cmd.DummyConsole()
+        )
 
         parser = argparse.ArgumentParser()
         cmd_parser = parser.add_subparsers(

@@ -52,7 +52,9 @@ class TestSync(unittest.TestCase):
         args = parser.parse_args([
             'import', '--doc_id', '29991010_1212_33', self.test_pdf
         ])
-        self.core.call_all("cmd_set_interactive", False)
+        self.core.call_all(
+            "cmd_set_console", openpaperwork_core.cmd.DummyConsole()
+        )
         r = self.core.call_success("cmd_run", self.console, args)
         self.assertEqual(r['ignored'], [])
         self.assertEqual(r['imported'], [self.core.call_success(
