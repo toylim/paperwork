@@ -14,6 +14,12 @@ from paperwork_gtk import _  # noqa: E402
 
 LOGGER = logging.getLogger(__name__)
 
+REQUIRED_PLUGINS = (
+    'openpaperwork_core.logs.print',
+    # plugin 'uncaught_exceptions' requires a mainloop plugin
+    'openpaperwork_gtk.mainloop.glib',
+)
+
 DEFAULT_GUI_PLUGINS = (
     paperwork_backend.DEFAULT_PLUGINS +
     openpaperwork_gtk.GUI_PLUGINS +
@@ -193,8 +199,8 @@ def main_main(in_args):
     # enable and configure the plugin logs.print first.
 
     core = openpaperwork_core.Core()
-    # plugin 'uncaught_exceptions' requires a mainloop plugin
-    core.load('openpaperwork_gtk.mainloop.glib')
+    for module_name in REQUIRED_PLUGINS:
+        core.load(module_name)
     for module_name in paperwork_backend.DEFAULT_CONFIG_PLUGINS:
         core.load(module_name)
     core.init()
