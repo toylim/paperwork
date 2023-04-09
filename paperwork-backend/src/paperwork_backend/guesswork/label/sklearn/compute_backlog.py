@@ -292,7 +292,7 @@ class Plugin(openpaperwork_core.PluginBase):
         corpus.load_all()
 
         for backlog in (1, 10, 25, 50, 75, 100, 150, 200, 250, 300, 500, 2500):
-            console.print()
+            console.print("")
             console.print("Backlog {}:".format(backlog))
             corpus.reset()
             if not corpus.fit(backlog):

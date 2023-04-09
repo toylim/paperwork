@@ -294,7 +294,7 @@ class Plugin(PluginBase):
             for default in dep['defaults']:
                 console.print("    - " + (_("suggested: %s") % default))
 
-        console.print()
+        console.print("")
 
         deps = list(self._get_printable_deps(plugin_name))
 

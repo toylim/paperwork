@@ -86,7 +86,7 @@ class Plugin(openpaperwork_core.PluginBase):
         pass
 
     def on_scan_page_start(self, scan_id, page_nb, scan_params):
-        self.console.print()
+        self.console.print("")
         self.console.print(
             _("Scanning page {} (expected size: {}x{}) ...").format(
                 page_nb + 1, scan_params.get_width(), scan_params.get_height()
@@ -123,7 +123,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 "img_render", img, terminal_width=self.terminal_size[0]
             )
             for line in img:
-                self.console.print(rich.text.Text(line))
+                self.console.print(rich.text.Text.from_ansi(line))
             self.last_line_displayed = current_usable_line
 
     def on_scan_page_end(self, scan_id, page_nb, img):
@@ -135,8 +135,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
 
     def on_scan_feed_end(self, scan_id):
-        self.core.call_all("shell_show_progress", True)
-        self.console.print()
+        self.console.print("")
         self.console.print(_("End of paper feed"))
 
     def on_scan2doc_start(self, scan_id, doc_id, doc_url):
@@ -181,10 +180,10 @@ class Plugin(openpaperwork_core.PluginBase):
             lines = self.doc_renderer.get_preview_output(
                 self.doc_id, self.doc_url, self.terminal_size, page_idx
             )
-            self.console.print()
+            self.console.print("")
             for line in lines:
-                self.console.print(line)
-            self.console.print()
+                self.console.print(rich.text.Text.from_ansi(line))
+            self.console.print("")
 
     def on_progress(self, upd_type, progress, description=None):
         self._show_last_page()

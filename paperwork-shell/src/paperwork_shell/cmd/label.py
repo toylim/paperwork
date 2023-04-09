@@ -123,7 +123,7 @@ class Plugin(openpaperwork_core.PluginBase):
             labels = list(labels)
             labels.sort()
 
-            console.print()
+            console.print("")
             labels_str = self.core.call_success(
                 "format_labels", labels, separator=" "
             )

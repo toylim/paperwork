@@ -84,7 +84,7 @@ class Plugin(openpaperwork_core.PluginBase):
             return
         for line in img:
             console.print(rich.text.Text(line))
-        console.print()
+        console.print("")
 
     def cmd_run(self, console, args):
         if args.command != 'reset':

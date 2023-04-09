@@ -57,7 +57,9 @@ class RichConsole:
         self.console = rich.console.Console()
 
     def print(self, line):
-        self.console.print(rich.text.Text(line))
+        if isinstance(line, str):
+            line = rich.text.Text(line)
+        self.console.print(line)
 
     def input(self, prompt=""):
         return self.console.input(rich.text.Text(prompt))

@@ -39,6 +39,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def cmd_set_console(self, console):
         if console is None:
             return
+        self.console = console
 
     def on_progress(self, upd_type, progress, description=None):
         if self.progress is None:
@@ -54,8 +55,12 @@ class Plugin(openpaperwork_core.PluginBase):
             self.tasks[upd_type] = self.progress.add_task(
                 description=description, total=1.0
             )
-        task_id = self.tasks[upd_type]
-        self.progress.update(task_id, completed=progress)
+        if progress >= 1.0:
+            task_id = self.tasks.pop(upd_type)
+            self.progress.remove_task(task_id)
+        else:
+            task_id = self.tasks[upd_type]
+            self.progress.update(task_id, completed=progress)
 
     def on_quit(self):
         if self.progress is None:

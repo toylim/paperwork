@@ -50,7 +50,7 @@ class CliUI(paperwork_backend.pageedit.AbstractPageEditorUI):
             return
         for line in img:
             self.console.print(rich.text.Text.from_ansi(line))
-        self.console.print()
+        self.console.print("")
 
 
 class Plugin(openpaperwork_core.PluginBase):

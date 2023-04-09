@@ -61,7 +61,7 @@ class Plugin(openpaperwork_core.PluginBase):
             console.print(_("No problem found"))
             return problems
 
-        console.print()
+        console.print("")
         console.print(_("%d problems found:") % len(problems))
         for problem in problems:
             problem_color = (
@@ -84,7 +84,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 _("- Possible solution: ") + solution_color +
                 problem['human_description']['solution']
             )
-            console.print()
+            console.print("")
 
         if not args.yes:
             msg = _(

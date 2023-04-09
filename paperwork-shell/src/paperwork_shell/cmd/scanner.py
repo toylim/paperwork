@@ -18,7 +18,7 @@ import logging
 import openpaperwork_core
 import openpaperwork_core.promise
 
-import rich.text
+import rich.tree
 
 from .. import _
 
@@ -88,7 +88,7 @@ class Plugin(openpaperwork_core.PluginBase):
             help=_("Default resolution (dpi ; default=300)")
         )
 
-    def _get_scanner_info(self, console, dev, dev_id, dev_name):
+    def _get_scanner_info(self, dev, console, dev_id, dev_name):
         console.print(_("Examining scanner {} ...").format(dev_id))
         dev_out = {
             'id': dev_id,
@@ -111,7 +111,7 @@ class Plugin(openpaperwork_core.PluginBase):
             scanner_dev_id, exc_info=exception
         )
 
-    def _get_scanners_info(self, console, devs):
+    def _get_scanners_info(self, devs, console):
         for dev in devs:
             # Schedule the promises to examine each scanner separately,
             # so if one failed (for instance on Windows when a scanner is
@@ -125,7 +125,9 @@ class Plugin(openpaperwork_core.PluginBase):
                 "scan_get_scanner_promise", dev_id
             ))
             promise.catch(self._on_get_scanner_error, dev_id)
-            promise = promise.then(self._get_scanner_info, dev_id, dev_name)
+            promise = promise.then(
+                self._get_scanner_info, console, dev_id, dev_name
+            )
             promise = promise.then(lambda scanner: scanner.close())
             promise = promise.then(lambda *args, **kwargs: None)
             self.core.call_success("scan_schedule", promise)
@@ -134,27 +136,25 @@ class Plugin(openpaperwork_core.PluginBase):
         self.out = []
 
         promise = self.core.call_success("scan_list_scanners_promise")
-        promise = promise.then(self._get_scanners_info)
+        promise = promise.then(self._get_scanners_info, console)
         self.core.call_success("scan_schedule", promise)
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
 
     def _print_scanners(self, console):
-        console.print()
+        console.print("")
+        tree = rich.tree.Tree("Scanners")
         for dev in self.out:
-            console.print(rich.text.Text(dev['name']))
-            console.print(rich.text.Text(
-                " |-- " + _("ID:") + " " + dev['id']
-            ))
+            dev_tree = tree.add(dev['name'])
+            dev_tree.add(_("ID:") + " " + dev['id'])
             for source in dev['sources']:
-                console.print(rich.text.Text(
-                    " |-- " + _("Source:") + " " + source['id']
-                ))
-                console.print(rich.text.Text(
-                    " |    |-- " + _("Resolutions:")
-                    + " " + str(source['resolutions'])
-                ))
-            console.print()
+                source_tree = dev_tree.add(_("Source:") + " " + source['id'])
+                source_tree.add(
+                    _("Resolutions:")
+                    + " "
+                    + str(source['resolutions'])
+                )
+        console.print(tree)
 
     def _get_scanner(self, console):
         out = {
@@ -256,14 +256,17 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         self.core.call_all("config_save")
 
-        return self._get_scanner()
+        return self._get_scanner(console)
 
     def cmd_run(self, console, args):
         if args.command != 'scanner':
             return None
 
         if args.subcommand == 'list':
+            console.print("Looking for scanners ...")
             self._list_scanners(console)
+            console.print(f"{len(self.out)} scanners found")
+            console.print("")
             self._print_scanners(console)
             return self.out
         elif args.subcommand == 'set':
