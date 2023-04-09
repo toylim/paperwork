@@ -150,6 +150,30 @@
             ]
         },
         {
+            "name": "python3-rich",
+            "buildsystem": "simple",
+            "build-commands": [
+                "pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"rich\" --no-build-isolation"
+            ],
+            "sources": [
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/bf/25/2d88e8feee8e055d015343f9b86e370a1ccbec546f2865c98397aaef24af/markdown_it_py-2.2.0-py3-none-any.whl",
+                    "sha256": "5a35f8d1870171d9acc47b99612dc146129b631baf04970128b568f190d0cc30"
+                },
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/b3/38/89ba8ad64ae25be8de66a6d463314cf1eb366222074cfda9ee839c56a4b4/mdurl-0.1.2-py3-none-any.whl",
+                    "sha256": "84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8"
+                },
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/42/5c/f44fc88bad850c4a20711a3349ec0e8bc50fece8d8b32c962d2aab70ea2b/rich-13.3.3-py3-none-any.whl",
+                    "sha256": "540c7d6d26a1178e8e8b37e9ba44573a3cd1464ff6348b99ee7061b95d1c6333"
+                }
+            ]
+        },
+        {
             "name": "python-whoosh",
             "buildsystem": "simple",
             "build-commands": ["python3 setup.py install --prefix=/app --root=/"],
