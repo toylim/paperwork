@@ -55,8 +55,8 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def cmd_set_interactive(self, interactive):
-        self.interactive = interactive
+    def cmd_set_interactive(self, console):
+        self.interactive = console is not None
 
     def cmd_complete_argparse(self, parser):
         p = parser.add_parser(
@@ -71,7 +71,7 @@ class Plugin(openpaperwork_core.PluginBase):
             help=_("Search keywords (none means all documents)")
         )
 
-    def cmd_run(self, args):
+    def cmd_run(self, console, args):
         if args.command != 'search':
             return None
 
@@ -109,6 +109,6 @@ class Plugin(openpaperwork_core.PluginBase):
                 for line in lines:
                     self.core.call_all("print", line + "\n")
                 self.core.call_all("print", "\n")
-            self.core.call_all("print_flush")
+            self.core.call_success("print_flush")
 
         return [doc[0] for doc in docs]

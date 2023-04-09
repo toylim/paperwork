@@ -2,6 +2,7 @@ import argparse
 import unittest
 
 import openpaperwork_core
+import openpaperwork_core.cmd
 
 
 class MockConfigBackendModule(object):
@@ -107,7 +108,9 @@ class TestConfig(unittest.TestCase):
             ['config', 'put', 'workdir', 'str', 'file:///pouet/path']
         )
         self.core.call_all("cmd_set_interactive", False)
-        r = self.core.call_success("cmd_run", args)
+        r = self.core.call_success(
+            "cmd_run", openpaperwork_core.cmd.DummyConsole(), args
+        )
         self.assertTrue(r)
         self.assertEqual(
             self.core.get_by_name(
@@ -124,7 +127,9 @@ class TestConfig(unittest.TestCase):
         )
 
         args = parser.parse_args(['config', 'get', 'workdir'])
-        r = self.core.call_success("cmd_run", args)
+        r = self.core.call_success(
+            "cmd_run", openpaperwork_core.cmd.DummyConsole(), args
+        )
         self.assertEqual(r, {"workdir": "file:///pouet/path"})
         self.assertEqual(
             self.core.get_by_name(

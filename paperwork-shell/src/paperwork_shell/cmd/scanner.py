@@ -18,6 +18,8 @@ import logging
 import openpaperwork_core
 import openpaperwork_core.promise
 
+import rich.text
+
 from .. import _
 
 
@@ -29,7 +31,6 @@ DEFAULT_RESOLUTION = 300
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
-        self.interactive = False
         self.out = []
 
     def get_interfaces(self):
@@ -50,9 +51,6 @@ class Plugin(openpaperwork_core.PluginBase):
                 "defaults": ['paperwork_backend.docscan.libinsane'],
             },
         ]
-
-    def cmd_set_interactive(self, interactive):
-        self.interactive = interactive
 
     def cmd_complete_argparse(self, parser):
         scanner_parser = parser.add_parser(
@@ -90,9 +88,9 @@ class Plugin(openpaperwork_core.PluginBase):
             help=_("Default resolution (dpi ; default=300)")
         )
 
-    def _get_scanner_info(self, dev, dev_id, dev_name):
+    def _get_scanner_info(self, console, dev, dev_id, dev_name):
         if self.interactive:
-            print(_("Examining scanner {} ...").format(dev_id))
+            console.print(_("Examining scanner {} ...").format(dev_id))
         dev_out = {
             'id': dev_id,
             'name': dev_name,
@@ -114,7 +112,7 @@ class Plugin(openpaperwork_core.PluginBase):
             scanner_dev_id, exc_info=exception
         )
 
-    def _get_scanners_info(self, devs):
+    def _get_scanners_info(self, console, devs):
         for dev in devs:
             # Schedule the promises to examine each scanner separately,
             # so if one failed (for instance on Windows when a scanner is
@@ -133,7 +131,7 @@ class Plugin(openpaperwork_core.PluginBase):
             promise = promise.then(lambda *args, **kwargs: None)
             self.core.call_success("scan_schedule", promise)
 
-    def _list_scanners(self):
+    def _list_scanners(self, console):
         self.out = []
 
         promise = self.core.call_success("scan_list_scanners_promise")
@@ -142,21 +140,25 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
 
-    def _print_scanners(self):
+    def _print_scanners(self, console):
         if self.interactive:
-            print("")
+            console.print()
             for dev in self.out:
-                print(dev['name'])
-                print(" |-- " + _("ID:") + " " + dev['id'])
+                console.print(rich.text.Text(dev['name']))
+                console.print(rich.text.Text(
+                    " |-- " + _("ID:") + " " + dev['id']
+                ))
                 for source in dev['sources']:
-                    print(" |-- " + _("Source:") + " " + source['id'])
-                    print(
+                    console.print(rich.text.Text(
+                        " |-- " + _("Source:") + " " + source['id']
+                    ))
+                    console.print(rich.text.Text(
                         " |    |-- " + _("Resolutions:")
                         + " " + str(source['resolutions'])
-                    )
-                print("")
+                    ))
+                console.print()
 
-    def _get_scanner(self):
+    def _get_scanner(self, console):
         out = {
             'id': self.core.call_success(
                 "config_get", "scanner_dev_id"
@@ -174,7 +176,7 @@ class Plugin(openpaperwork_core.PluginBase):
             print(_("Resolution:") + " " + str(out['resolution']))
         return out
 
-    def _set_scanner(self, args):
+    def _set_scanner(self, console, args):
         dev_settings = {
             'id': args.device_id,
             'source': args.source,
@@ -260,16 +262,16 @@ class Plugin(openpaperwork_core.PluginBase):
 
         return self._get_scanner()
 
-    def cmd_run(self, args):
+    def cmd_run(self, console, args):
         if args.command != 'scanner':
             return None
 
         if args.subcommand == 'list':
-            self._list_scanners()
-            self._print_scanners()
+            self._list_scanners(console)
+            self._print_scanners(console)
             return self.out
         elif args.subcommand == 'set':
-            return self._set_scanner(args)
+            return self._set_scanner(console, args)
         elif args.subcommand == 'get':
-            return self._get_scanner()
+            return self._get_scanner(console)
         assert False

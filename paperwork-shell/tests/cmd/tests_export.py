@@ -5,11 +5,14 @@ import tempfile
 import unittest
 
 import openpaperwork_core
+import openpaperwork_core.cmd
 import openpaperwork_core.fs
 
 
 class TestSync(unittest.TestCase):
     def setUp(self):
+        self.console = openpaperwork_core.cmd.DummyConsole()
+
         self.test_img = "{}/test_img.jpeg".format(
             os.path.dirname(os.path.abspath(__file__))
         )
@@ -67,7 +70,7 @@ class TestSync(unittest.TestCase):
         args = parser.parse_args([
             'export', '20190830_1916_32'  # img doc
         ])
-        r = self.core.call_success("cmd_run", args)
+        r = self.core.call_success("cmd_run", self.console, args)
         self.assertEqual(sorted(r), [
             'doc_to_pages',
         ])
@@ -75,7 +78,7 @@ class TestSync(unittest.TestCase):
         args = parser.parse_args([
             'export', '20190801_1733_23'  # pdf doc
         ])
-        r = self.core.call_success("cmd_run", args)
+        r = self.core.call_success("cmd_run", self.console, args)
         self.assertEqual(sorted(r), [
             'doc_to_pages',
             'unmodified_pdf',
@@ -85,7 +88,7 @@ class TestSync(unittest.TestCase):
             'export', '20190830_1916_32',
             '-f', 'doc_to_pages',
         ])
-        r = self.core.call_success("cmd_run", args)
+        r = self.core.call_success("cmd_run", self.console, args)
         self.assertEqual(sorted(r), [
             'img_boxes',
         ])
@@ -95,7 +98,7 @@ class TestSync(unittest.TestCase):
             '-f', 'doc_to_pages',
             '-f', 'img_boxes',
         ])
-        r = self.core.call_success("cmd_run", args)
+        r = self.core.call_success("cmd_run", self.console, args)
         self.assertEqual(sorted(r), [
             'bmp',
             'bw',
@@ -116,7 +119,7 @@ class TestSync(unittest.TestCase):
             '-f', 'img_boxes',
             '-f', 'grayscale',
         ])
-        r = self.core.call_success("cmd_run", args)
+        r = self.core.call_success("cmd_run", self.console, args)
         self.assertEqual(sorted(r), [
             'bmp',
             'bw',
@@ -137,7 +140,7 @@ class TestSync(unittest.TestCase):
             '-f', 'grayscale',
             '-f', 'generated_pdf',
         ])
-        r = self.core.call_success("cmd_run", args)
+        r = self.core.call_success("cmd_run", self.console, args)
         self.assertEqual(sorted(r), [])
 
         args = parser.parse_args([
@@ -148,7 +151,7 @@ class TestSync(unittest.TestCase):
             '-f', 'generated_pdf',
             '-o', os.path.join(self.tmp_out_dir, 'out.pdf')
         ])
-        r = self.core.call_success("cmd_run", args)
+        r = self.core.call_success("cmd_run", self.console, args)
         self.assertTrue(r)
         self.assertTrue(
             os.path.exists(
@@ -171,7 +174,7 @@ class TestSync(unittest.TestCase):
             'export', '20190830_1916_32',  # img doc
             '-p', '1',
         ])
-        r = self.core.call_success("cmd_run", args)
+        r = self.core.call_success("cmd_run", self.console, args)
         self.assertEqual(sorted(r), [
             'img_boxes',
         ])
@@ -180,7 +183,7 @@ class TestSync(unittest.TestCase):
             'export', '20190801_1733_23',  # pdf doc
             '-p', '1',
         ])
-        r = self.core.call_success("cmd_run", args)
+        r = self.core.call_success("cmd_run", self.console, args)
         self.assertEqual(sorted(r), [
             'img_boxes',
         ])
@@ -190,7 +193,7 @@ class TestSync(unittest.TestCase):
             '-p', '1',
             '-f', 'doc_to_pages',
         ])
-        r = self.core.call_success("cmd_run", args)
+        r = self.core.call_success("cmd_run", self.console, args)
         self.assertFalse(r)
 
         args = parser.parse_args([
@@ -198,7 +201,7 @@ class TestSync(unittest.TestCase):
             '-p', '1',
             '-f', 'img_boxes',
         ])
-        r = self.core.call_success("cmd_run", args)
+        r = self.core.call_success("cmd_run", self.console, args)
         self.assertEqual(sorted(r), [
             'bmp',
             'bw',
@@ -219,7 +222,7 @@ class TestSync(unittest.TestCase):
             '-f', 'img_boxes',
             '-f', 'grayscale',
         ])
-        r = self.core.call_success("cmd_run", args)
+        r = self.core.call_success("cmd_run", self.console, args)
         self.assertEqual(sorted(r), [
             'bmp',
             'bw',
@@ -240,7 +243,7 @@ class TestSync(unittest.TestCase):
             '-f', 'grayscale',
             '-f', 'generated_pdf',
         ])
-        r = self.core.call_success("cmd_run", args)
+        r = self.core.call_success("cmd_run", self.console, args)
         self.assertEqual(sorted(r), [])
 
         args = parser.parse_args([
@@ -251,7 +254,7 @@ class TestSync(unittest.TestCase):
             '-f', 'generated_pdf',
             '-o', os.path.join(self.tmp_out_dir, 'out.pdf')
         ])
-        r = self.core.call_success("cmd_run", args)
+        r = self.core.call_success("cmd_run", self.console, args)
         self.assertTrue(r)
         self.assertTrue(
             os.path.exists(
@@ -278,7 +281,7 @@ class TestSync(unittest.TestCase):
             '-o', os.path.join(self.tmp_out_dir, 'out.pdf')
         ])
         # must not crash
-        r = self.core.call_success("cmd_run", args)
+        r = self.core.call_success("cmd_run", self.console, args)
         self.assertFalse(r)
         self.assertFalse(
             os.path.exists(
@@ -295,7 +298,7 @@ class TestSync(unittest.TestCase):
             '-o', os.path.join(self.tmp_out_dir, 'out.pdf')
         ])
         # must not crash
-        r = self.core.call_success("cmd_run", args)
+        r = self.core.call_success("cmd_run", self.console, args)
         self.assertFalse(r)
         self.assertFalse(
             os.path.exists(

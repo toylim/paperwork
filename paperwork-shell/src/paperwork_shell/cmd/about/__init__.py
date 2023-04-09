@@ -157,7 +157,7 @@ class Plugin(openpaperwork_core.PluginBase):
     def cmd_complete_argparse(self, parser):
         parser.add_parser('about', help=_("About Paperwork"))
 
-    def cmd_run(self, args):
+    def cmd_run(self, console, args):
         if args.command != 'about':
             return None
 

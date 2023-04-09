@@ -24,7 +24,6 @@ from .. import _
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
-        self.interactive = False
 
     def get_interfaces(self):
         return ['shell']
@@ -40,9 +39,6 @@ class Plugin(openpaperwork_core.PluginBase):
                 "defaults": ['paperwork_backend.pyocr'],
             },
         ]
-
-    def cmd_set_interactive(self, interactive):
-        self.interactive = interactive
 
     def cmd_complete_argparse(self, parser):
         p = parser.add_parser(
@@ -63,13 +59,12 @@ class Plugin(openpaperwork_core.PluginBase):
             )
         )
 
-    def cmd_run(self, args):
+    def cmd_run(self, console, args):
         if args.command != 'ocr':
             return None
 
         if self.core.call_success("ocr_is_enabled") is None:
-            if self.interactive:
-                print("OCR is disabled")
+            console.print("OCR is disabled")
             return []
 
         doc_id = args.doc_id
@@ -103,7 +98,6 @@ class Plugin(openpaperwork_core.PluginBase):
 
             out.append((doc_id, page_idx))
 
-        if self.interactive:
-            print(_("All done !"))
+        console.print(_("All done !"))
 
         return out

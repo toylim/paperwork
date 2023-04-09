@@ -23,6 +23,9 @@ PACKAGE_TOOLS = {
 
 
 class Plugin(PluginBase):
+    def __init__(self):
+        self.console = None
+
     def get_interfaces(self):
         return ['shell']
 
@@ -33,8 +36,7 @@ class Plugin(PluginBase):
 
     def _get_distribution(self):
         distribution = distro.linux_distribution(full_distribution_name=False)
-        if self.interactive:
-            print("Detected system: {}".format(" ".join(distribution)))
+        self.console.print(f"Detected system: {' '.join(distribution)}")
         distribution = distribution[0].lower()
         if distribution not in PACKAGE_TOOLS:
             LOGGER.warning(
@@ -43,8 +45,9 @@ class Plugin(PluginBase):
             )
         return distribution
 
-    def cmd_set_interactive(self, interactive):
-        self.interactive = interactive
+    def cmd_set_interactive(self, console):
+        self.console = console
+        self.interactive = console is not None
 
     def cmd_complete_argparse(self, parser):
         p = parser.add_parser(
@@ -56,7 +59,7 @@ class Plugin(PluginBase):
             required=False, default=False, action='store_true'
         )
 
-    def cmd_run(self, args):
+    def cmd_run(self, console, args):
         if args.command != 'chkdeps':
             return None
         auto = args.yes
@@ -70,9 +73,9 @@ class Plugin(PluginBase):
         self.core.call_all("chkdeps", missing)
 
         if self.interactive and len(missing) > 0:
-            print(_("Missing dependencies:"))
+            console.print(_("Missing dependencies:"))
             for (dep_name, distrib_packages) in missing.items():
-                print(_("- {dep_name} (package: {pkg_name})").format(
+                console.print(_("- {dep_name} (package: {pkg_name})").format(
                     dep_name=dep_name,
                     pkg_name=(
                         distrib_packages[distribution]
@@ -94,32 +97,32 @@ class Plugin(PluginBase):
                     command += " " + distrib_packages[distribution]
                 has_pkg = True
 
-        if self.interactive:
-            if has_pkg and command is not None:
-                print("")
-                print(_("Suggested command:"))
-                print("  " + command)
-                print("")
-                if not auto:
-                    r = util.ask_confirmation(
-                        _("Do you want to run this command now ?")
-                    )
-                    if r != 'y':
-                        return {
-                            "missing": missing,
-                            "command": command,
-                        }
-                print("Running command ...")
+        if has_pkg and command is not None:
+            console.print("")
+            console.print(_("Suggested command:"))
+            console.print("  " + command)
+            console.print("")
+            if self.interactive and not auto:
+                r = util.ask_confirmation(
+                    _("Do you want to run this command now ?")
+                )
+                if r != 'y':
+                    return {
+                        "missing": missing,
+                        "command": command,
+                    }
+            if self.interactive:
+                console.print("Running command ...")
                 r = os.system(command)
-                print("Command returned {}".format(r))
+                console.print("Command returned {}".format(r))
                 if r != 0:
                     sys.exit(r)
-            elif len(missing) > 0:
-                print(
-                    _("Don't know how to install missing dependencies. Sorry.")
-                )
-            else:
-                print(_("Nothing to do."))
+        elif len(missing) > 0:
+            console.print(
+                _("Don't know how to install missing dependencies. Sorry.")
+            )
+        else:
+            console.print(_("Nothing to do."))
 
         return {
             "missing": missing,

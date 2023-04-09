@@ -6,11 +6,14 @@ import tempfile
 import unittest
 
 import openpaperwork_core
+import openpaperwork_core.cmd
 import openpaperwork_core.fs
 
 
 class TestSync(unittest.TestCase):
     def setUp(self):
+        self.console = openpaperwork_core.cmd.DummyConsole()
+
         self.test_img = "{}/test_img.jpeg".format(
             os.path.dirname(os.path.abspath(__file__))
         )
@@ -60,7 +63,7 @@ class TestSync(unittest.TestCase):
 
         # start with an empty work directory
 
-        r = self.core.call_success("cmd_run", args)
+        r = self.core.call_success("cmd_run", self.console, args)
         self.assertEqual(r, {})
 
         # add 2 documents, one PDF and one img+hocr
@@ -74,7 +77,7 @@ class TestSync(unittest.TestCase):
         shutil.copyfile(self.test_img, os.path.join(doc_b, "paper.1.jpg"))
         shutil.copyfile(self.test_hocr, os.path.join(doc_b, "paper.1.words"))
 
-        r = self.core.call_success("cmd_run", args)
+        r = self.core.call_success("cmd_run", self.console, args)
         self.assertEqual(r, {
             'whoosh': {
                 'added': ['20190801_1733_23', '20190830_1916_32'],
@@ -105,7 +108,7 @@ class TestSync(unittest.TestCase):
         self.core._load_module("fake_module", FakeModule())
         self.core.init()
 
-        r = self.core.call_success("cmd_run", args)
+        r = self.core.call_success("cmd_run", self.console, args)
         self.assertEqual(r, {
             'whoosh': {
                 'updated': ['20190830_1916_32'],
@@ -125,7 +128,7 @@ class TestSync(unittest.TestCase):
 
         shutil.rmtree(doc_a)
 
-        r = self.core.call_success("cmd_run", args)
+        r = self.core.call_success("cmd_run", self.console, args)
         self.assertEqual(r, {
             'whoosh': {
                 'deleted': ['20190801_1733_23'],

@@ -19,10 +19,6 @@ from .. import _
 
 
 class Plugin(openpaperwork_core.PluginBase):
-    def __init__(self):
-        super().__init__()
-        self.interactive = False
-
     def get_interfaces(self):
         return ['shell']
 
@@ -33,9 +29,6 @@ class Plugin(openpaperwork_core.PluginBase):
                 "defaults": ['paperwork_backend.model.extra_text'],
             },
         ]
-
-    def cmd_set_interactive(self, interactive):
-        self.interactive = interactive
 
     def cmd_complete_argparse(self, parser):
         extra_text_parser = parser.add_parser(
@@ -59,32 +52,30 @@ class Plugin(openpaperwork_core.PluginBase):
         parser.add_argument('doc_id')
         parser.add_argument('text')
 
-    def cmd_run(self, args):
+    def cmd_run(self, console, args):
         if args.command != 'extra_text':
             return None
         doc_id = args.doc_id
         doc_url = self.core.call_success("doc_id_to_url", doc_id)
         if args.subcommand == "get":
-            return self._cmd_get(doc_id, doc_url)
+            return self._cmd_get(console, doc_id, doc_url)
         elif args.subcommand == "set":
-            return self._cmd_set(doc_id, doc_url, args.text)
+            return self._cmd_set(console, doc_id, doc_url, args.text)
         else:
             return None
 
-    def _cmd_get(self, doc_id, doc_url):
+    def _cmd_get(self, console, doc_id, doc_url):
         text = []
         self.core.call_success("doc_get_extra_text_by_url", text, doc_url)
-        if self.interactive:
-            if len(text) > 0:
-                print("  " + _("Additional text:"))
-                print("\n".join(text))
-            else:
-                print(_("No additional text"))
+        if len(text) > 0:
+            console.print("  " + _("Additional text:"))
+            console.print("\n".join(text))
+        else:
+            console.print(_("No additional text"))
         return text
 
-    def _cmd_set(self, doc_id, doc_url, text):
+    def _cmd_set(self, console, doc_id, doc_url, text):
         text = text.strip()
         self.core.call_success("doc_set_extra_text_by_url", doc_url, text)
-        if self.interactive:
-            print(_("Done"))
+        console.print(_("Done"))
         return True

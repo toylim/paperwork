@@ -47,7 +47,6 @@ TO_JSON = {
 class Plugin(PluginBase):
     def __init__(self):
         super().__init__()
-        self.interactive = True
 
     def get_interfaces(self):
         return ['shell']
@@ -91,10 +90,7 @@ class Plugin(PluginBase):
             )
         )
 
-    def cmd_set_interactive(self, interactive):
-        self.interactive = interactive
-
-    def cmd_run(self, args):
+    def cmd_run(self, console, args):
         if args.command != 'config':
             return None
         if args.subcommand == "get":
@@ -113,16 +109,14 @@ class Plugin(PluginBase):
         if v is None:
             LOGGER.warning("No such option '%s'", opt_name)
             return None
-        if self.interactive:
-            self.core.call_all("print", "{} = {}\n".format(opt_name, v))
-            self.core.call_all("print_flush")
+        self.core.call_all("print", "{} = {}\n".format(opt_name, v))
+        self.core.call_success("print_flush")
         return {opt_name: v}
 
     def _cmd_put(self, opt_name, vtype, value):
         value = CMD_VALUE_TYPES[vtype](value)
-        if self.interactive:
-            self.core.call_all("print", "{} = {}\n".format(opt_name, value))
-            self.core.call_all("print_flush")
+        self.core.call_success("print", "{} = {}\n".format(opt_name, value))
+        self.core.call_success("print_flush")
         self.core.call_all("config_put", opt_name, value)
         self.core.call_all("config_save")
         return {opt_name: value}
@@ -136,15 +130,12 @@ class Plugin(PluginBase):
             if type(v) in TO_JSON:
                 v = TO_JSON[type(v)](v)
             out[opt] = v
-            if self.interactive:
-                self.core.call_all("print", "{} = {}\n".format(opt, out[opt]))
-        if self.interactive:
-            self.core.call_all("print_flush")
+            self.core.call_success("print", "{} = {}\n".format(opt, out[opt]))
+        self.core.call_success("print_flush")
         return out
 
     def _cmd_list_types(self):
         r = list(CMD_VALUE_TYPES.keys())
-        if self.interactive:
-            self.core.call_all("print", str(r) + "\n")
-            self.core.call_all("print_flush")
+        self.core.call_success("print", str(r) + "\n")
+        self.core.call_success("print_flush")
         return r

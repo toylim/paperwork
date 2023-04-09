@@ -274,7 +274,7 @@ class Plugin(openpaperwork_core.PluginBase):
             )
         return [m[0] for m in middles]
 
-    def cmd_run(self, args):
+    def cmd_run(self, console, args):
         if args.command != 'compute_sklearn_label_guessing_threshold':
             return None
 
@@ -291,11 +291,13 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
         for iteration in range(0, iterations):
-            print("")
+            console.print("")
             best = max(thresholds, key=lambda x: x[1])
-            print("Iteration {}: best accuracy={}, best threshold={}".format(
-                iteration, best[1], best[0]
-            ))
+            console.print(
+                "Iteration {}: best accuracy={}, best threshold={}".format(
+                    iteration, best[1], best[0]
+                )
+            )
 
             start = time.time()
             next_thresholds = self._get_next_thresholds(thresholds)
@@ -314,15 +316,15 @@ class Plugin(openpaperwork_core.PluginBase):
 
             s = int(stop - start)
             ms = int(((stop - start) * 1000) % 1000)
-            print("Iteration took {}s {}ms".format(s, ms))
+            console.print("Iteration took {}s {}ms".format(s, ms))
 
-        print("")
+        console.print("")
         for threshold in thresholds:
-            print("Threshold: {}".format(threshold))
+            console.print("Threshold: {}".format(threshold))
 
-        print("")
+        console.print("")
         best = max(thresholds, key=lambda x: x[1])
-        print("RESULT: best accuraccy={}, best threshold={}".format(
+        console.print("RESULT: best accuraccy={}, best threshold={}".format(
             best[1], best[0]
         ))
 

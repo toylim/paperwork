@@ -13,16 +13,14 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with Paperwork.  If not, see <http://www.gnu.org/licenses/>.
+import rich.text
+
 import openpaperwork_core
 
 from .. import _
 
 
 class Plugin(openpaperwork_core.PluginBase):
-    def __init__(self):
-        super().__init__()
-        self.interactive = False
-
     def get_interfaces(self):
         return ['shell']
 
@@ -42,9 +40,6 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def cmd_set_interactive(self, interactive):
-        self.interactive = interactive
-
     def cmd_complete_argparse(self, parser):
         p = parser.add_parser(
             'rename', help=_("Change a document identifier")
@@ -58,7 +53,7 @@ class Plugin(openpaperwork_core.PluginBase):
             help=_("New name for the document")
         )
 
-    def cmd_run(self, args):
+    def cmd_run(self, console, args):
         if args.command != 'rename':
             return None
 
@@ -70,8 +65,9 @@ class Plugin(openpaperwork_core.PluginBase):
             "doc_id_to_url", dest_doc_id, existing=False
         )
 
-        if self.interactive:
-            print("Renaming: {} --> {}".format(source_doc_url, dest_doc_url))
+        console.print(rich.text.Text(
+            f"Renaming: {source_doc_url} --> {dest_doc_url}"
+        ))
 
         self.core.call_all("doc_rename_by_url", source_doc_url, dest_doc_url)
         self.core.call_success(
@@ -84,7 +80,8 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_success("mainloop_quit_graceful")
         self.core.call_success("mainloop")
 
-        if self.interactive:
-            print("{} renamed into {}".format(source_doc_id, dest_doc_id))
+        console.print(rich.text.Text(
+            f"{source_doc_id} renamed into {dest_doc_id}"
+        ))
 
         return True

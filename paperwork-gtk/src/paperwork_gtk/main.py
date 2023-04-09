@@ -18,6 +18,7 @@ DEFAULT_GUI_PLUGINS = (
     paperwork_backend.DEFAULT_PLUGINS +
     openpaperwork_gtk.GUI_PLUGINS +
     [
+        'openpaperwork_core.logs.print',
         'openpaperwork_core.spatial.rtree',
         'openpaperwork_gtk.drawer.pillow',
         'openpaperwork_gtk.drawer.scan',
@@ -167,6 +168,11 @@ DEFAULT_GUI_PLUGINS = (
 )
 
 
+class DefaultConsole:
+    def print(self, text):
+        print(text)
+
+
 def gtk_main(app, options, core):
     app = core.call_success("gtk_get_app")
     if app.get_is_remote():
@@ -208,8 +214,9 @@ def main_main(in_args):
         )
         core.call_all("cmd_complete_argparse", cmd_parser)
         args = parser.parse_args(in_args)
-        core.call_all("cmd_set_interactive", True)
-        core.call_all("cmd_run", args)
+        console = DefaultConsole()
+        core.call_all("cmd_set_interactive", console)
+        core.call_all("cmd_run", console, args)
 
     return 0
 

@@ -3,7 +3,10 @@ import json
 import sys
 import traceback
 
+import rich.console
+
 import openpaperwork_core
+import openpaperwork_core.cmd
 
 import paperwork_backend
 
@@ -31,6 +34,7 @@ DEFAULT_SHELL_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
     'paperwork_shell.cmd.search',
     'paperwork_shell.cmd.show',
     'paperwork_shell.cmd.sync',
+    'paperwork_shell.logs.print',
     'paperwork_shell.display.docrendering.extra_text',
     'paperwork_shell.display.docrendering.img',
     'paperwork_shell.display.docrendering.labels',
@@ -40,8 +44,9 @@ DEFAULT_SHELL_PLUGINS = paperwork_backend.DEFAULT_PLUGINS + [
 
 DEFAULT_CLI_PLUGINS = DEFAULT_SHELL_PLUGINS + [
     "paperwork_shell.cmd.about",
-    'paperwork_shell.display.progress',
+    "paperwork_shell.display.rich",
     "paperwork_shell.display.scan",
+    'paperwork_shell.display.progress',
 ]
 DEFAULT_JSON_PLUGINS = DEFAULT_SHELL_PLUGINS
 
@@ -58,10 +63,11 @@ def main_main(in_args, application_name, default_plugins, interactive):
     for module_name in paperwork_backend.DEFAULT_CONFIG_PLUGINS:
         core.load(module_name)
     core.init()
-    core.call_all("init_logs", application_name, "warning")
 
     core.call_all("config_load")
     core.call_all("config_load_plugins", application_name, default_plugins)
+
+    core.call_all("init_logs", application_name, "warning")
 
     parser = argparse.ArgumentParser()
     cmd_parser = parser.add_subparsers(
@@ -71,12 +77,16 @@ def main_main(in_args, application_name, default_plugins, interactive):
     core.call_all("cmd_complete_argparse", cmd_parser)
     args = parser.parse_args(in_args)
 
-    core.call_all("cmd_set_interactive", interactive)
-
     if interactive:
-        r = core.call_all("cmd_run", args)
+        console = rich.console.Console()
     else:
-        r = core.call_success("cmd_run", args)
+        console = openpaperwork_core.cmd.DummyConsole()
+
+    core.call_all("cmd_set_interactive", console)
+    if interactive:
+        r = core.call_all("cmd_run", console=console, args=args)
+    else:
+        r = core.call_success("cmd_run", console=console, args=args)
 
     core.call_all("on_quit")
     return r

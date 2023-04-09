@@ -54,8 +54,8 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def cmd_set_interactive(self, interactive):
-        self.interactive = interactive
+    def cmd_set_interactive(self, console):
+        self.interactive = console is not None
 
     def cmd_complete_argparse(self, parser):
         p = parser.add_parser(
@@ -74,7 +74,7 @@ class Plugin(openpaperwork_core.PluginBase):
             help=_("Target documents")
         )
 
-    def cmd_run(self, args):
+    def cmd_run(self, console, args):
         if args.command != 'delete':
             return None
 
@@ -82,7 +82,7 @@ class Plugin(openpaperwork_core.PluginBase):
 
         for doc_id in doc_ids:
             if "/" in doc_id or "\\" in doc_id or ".." in doc_id:
-                print("Invalid doc_id: {}".format(doc_id))
+                sys.stderr.write(f"Invalid doc_id: {doc_id}")
                 sys.exit(2)
 
         pages = parse_page_list(args)

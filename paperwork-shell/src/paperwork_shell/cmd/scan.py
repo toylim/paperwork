@@ -25,7 +25,6 @@ DEFAULT_RESOLUTION = 300
 class Plugin(openpaperwork_core.PluginBase):
     def __init__(self):
         super().__init__()
-        self.interactive = False
         self.out = []
 
     def get_interfaces(self):
@@ -43,9 +42,6 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def cmd_set_interactive(self, interactive):
-        self.interactive = interactive
-
     def cmd_complete_argparse(self, parser):
         scan_parser = parser.add_parser(
             'scan', help=_("Scan pages")
@@ -57,7 +53,7 @@ class Plugin(openpaperwork_core.PluginBase):
         )
         scan_parser.add_argument("source_id")
 
-    def cmd_run(self, args):
+    def cmd_run(self, console, args):
         if args.command != 'scan':
             return None
 

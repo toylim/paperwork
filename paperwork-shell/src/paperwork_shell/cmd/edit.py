@@ -78,8 +78,8 @@ class Plugin(openpaperwork_core.PluginBase):
             },
         ]
 
-    def cmd_set_interactive(self, interactive):
-        self.interactive = interactive
+    def cmd_set_interactive(self, console):
+        self.interactive = console is not None
 
     def cmd_complete_argparse(self, parser):
         # just so we can get the modifier list
@@ -106,7 +106,7 @@ class Plugin(openpaperwork_core.PluginBase):
         edit_parser.add_argument('--pages', '-p', type=str, required=True)
         edit_parser.add_argument('doc_id')
 
-    def cmd_run(self, args):
+    def cmd_run(self, console, args):
         if args.command != 'edit':
             return None
         doc_id = args.doc_id

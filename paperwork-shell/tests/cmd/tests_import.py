@@ -5,11 +5,14 @@ import tempfile
 import unittest
 
 import openpaperwork_core
+import openpaperwork_core.cmd
 import openpaperwork_core.fs
 
 
 class TestSync(unittest.TestCase):
     def setUp(self):
+        self.console = openpaperwork_core.cmd.DummyConsole()
+
         self.test_pdf = "{}/test_doc.pdf".format(
             os.path.dirname(os.path.abspath(__file__))
         )
@@ -50,7 +53,7 @@ class TestSync(unittest.TestCase):
             'import', '--doc_id', '29991010_1212_33', self.test_pdf
         ])
         self.core.call_all("cmd_set_interactive", False)
-        r = self.core.call_success("cmd_run", args)
+        r = self.core.call_success("cmd_run", self.console, args)
         self.assertEqual(r['ignored'], [])
         self.assertEqual(r['imported'], [self.core.call_success(
             "fs_safe", self.test_pdf

@@ -60,12 +60,12 @@ class Plugin(openpaperwork_core.PluginBase):
     def on_sync(self, name, status, key):
         self.changes[name][status].append(key)
 
-    def cmd_run(self, args):
+    def cmd_run(self, console, args):
         if args.command != 'sync':
             return None
 
         if self.interactive:
-            print(_("Synchronizing with work directory ..."))
+            console.print(_("Synchronizing with work directory ..."))
 
         self.changes = collections.defaultdict(
             # we cannot use sets here because sets are not JSON-serializable
@@ -76,7 +76,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all("mainloop_quit_graceful")
         self.core.call_one("mainloop")
         if self.interactive:
-            print(_("All done !"))
+            console.print(_("All done !"))
 
         # ensure order of documents to make testing easier and ensure
         # behaviour consistency
