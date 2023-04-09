@@ -109,6 +109,6 @@ class Plugin(openpaperwork_core.PluginBase):
                 for line in lines:
                     self.core.call_all("print", line + "\n")
                 self.core.call_all("print", "\n")
-            self.core.call_all("print_flush")
+            self.core.call_success("print_flush")
 
         return [doc[0] for doc in docs]
