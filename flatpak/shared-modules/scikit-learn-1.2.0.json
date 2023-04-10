@@ -18,7 +18,7 @@
             "name": "python3-meson-python",
             "buildsystem": "simple",
             "build-commands": [
-                "pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"meson-python\" --no-build-isolation"
+                "pip3 install --disable-pip-version-check --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"meson-python\" --no-build-isolation"
             ],
             "sources": [
                 {
@@ -52,7 +52,7 @@
             "name": "python3-numpy",
             "buildsystem": "simple",
             "build-commands": [
-                "pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"numpy\" --no-build-isolation"
+                "pip3 install --disable-pip-version-check --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"numpy\" --no-build-isolation"
             ],
             "build-options": {
                 "env": {
@@ -73,7 +73,7 @@
             "name": "python3-pythran",
             "buildsystem": "simple",
             "build-commands": [
-                "pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"pythran\" --no-build-isolation"
+                "pip3 install --disable-pip-version-check --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"pythran\" --no-build-isolation"
             ],
             "sources": [
                 {
@@ -102,7 +102,7 @@
             "name": "python3-pybind11",
             "buildsystem": "simple",
             "build-commands": [
-                "pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"pybind11\" --no-build-isolation"
+                "pip3 install --disable-pip-version-check --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"pybind11\" --no-build-isolation"
             ],
             "sources": [
                 {
@@ -160,7 +160,7 @@
             "name": "python3-scikit-learn",
             "buildsystem": "simple",
             "build-commands": [
-                "pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"scikit-learn\" --no-build-isolation"
+                "pip3 install --disable-pip-version-check --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"scikit-learn\" --no-build-isolation"
             ],
             "sources": [
                 {

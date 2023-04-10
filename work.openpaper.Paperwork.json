@@ -34,7 +34,7 @@
             "name": "python-distro",
             "buildsystem": "simple",
             "build-commands": [
-                "pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"distro\" --no-build-isolation"
+                "pip3 install --disable-pip-version-check --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"distro\" --no-build-isolation"
             ],
             "sources": [
                 {
@@ -48,7 +48,7 @@
             "name": "python3-scikit-build",
             "buildsystem": "simple",
             "build-commands": [
-                "pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"scikit-build\" --no-build-isolation"
+                "pip3 install --disable-pip-version-check --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"scikit-build\" --no-build-isolation"
             ],
             "sources": [
                 {
@@ -153,7 +153,7 @@
             "name": "python3-rich",
             "buildsystem": "simple",
             "build-commands": [
-                "pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"rich\" --no-build-isolation"
+                "pip3 install --disable-pip-version-check --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"rich\" --no-build-isolation"
             ],
             "sources": [
                 {
@@ -280,7 +280,7 @@
             "buildsystem": "simple",
             "build-commands": [
                 "make version",
-                "pip3 install --prefix=/app --no-deps ."
+                "pip3 install --disable-pip-version-check --prefix=/app --no-deps ."
             ],
             "sources": [
                 {
@@ -293,7 +293,7 @@
         },
         {
             "name": "python-paperwork",
-            "make-install-args": ["PIP_ARGS=--prefix=/app --root=/"],
+            "make-install-args": ["PIP_ARGS=--disable-pip-version-check --prefix=/app --root=/"],
             "no-autogen": true,
             "ensure-writable": ["/lib/python*/site-packages/easy-install.pth","/lib/python*/site-packages/setuptools.pth"],
             "post-install": ["paperwork-gtk install --icon_base_dir=/app/share/icons --data_base_dir=/app/share"],
