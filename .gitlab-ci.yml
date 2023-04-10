@@ -105,7 +105,7 @@ linux_flatpak:
 
 linux_appimage:
   stage: deploy
-  timeout: 2h
+  timeout: 3h
   script:
     - virtualenv -p python3 /venv
     - source /venv/bin/activate && pip3 install -U setuptools
