@@ -107,7 +107,8 @@ class Plugin(openpaperwork_core.PluginBase):
                 LOGGER.info(
                     "Thumbnail for %s page %d doesn't have the expected size"
                     " (%s instead of %s). Regenerating.",
-                    doc_url, page_idx, size, (THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT)
+                    doc_url, page_idx, size,
+                    (THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT)
                 )
             except Exception as exc:
                 LOGGER.warning(
