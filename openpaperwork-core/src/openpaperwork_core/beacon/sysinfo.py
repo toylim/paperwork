@@ -22,8 +22,10 @@ class Plugin(openpaperwork_core.PluginBase):
         if os.name == 'nt':
             distribution = str(platform.win32_ver())
         else:
-            distribution = str(distro.linux_distribution(
-                full_distribution_name=False
+            distribution = str((
+                distro.id(),
+                distro.version(),
+                distro.name()
             ))
         processor = ""
         os_name = os.name
