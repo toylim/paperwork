@@ -25,7 +25,8 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def _check_mainloop_instantiated(self):
         if self.loop is None:
-            self.loop = asyncio.get_event_loop()
+            self.loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(self.loop)
             self.task_count = 0
 
     def get_interfaces(self):
