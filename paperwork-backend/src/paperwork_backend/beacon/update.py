@@ -79,7 +79,11 @@ class Plugin(openpaperwork_core.PluginBase):
         promise = openpaperwork_core.promise.Promise(self.core, lambda: "")
         promise = promise.then(self.http.get_request_promise(UPDATE_PATH))
         promise = promise.then(on_success, self.core)
+        promise = promise.catch(self._on_upd_check_error)
         promise.schedule()
+
+    def _on_upd_check_error(self, exc):
+        LOGGER.warning("Failed to look for update", exc_info=exc)
 
     def update_compare(self):
         remote_version = self.core.call_success(

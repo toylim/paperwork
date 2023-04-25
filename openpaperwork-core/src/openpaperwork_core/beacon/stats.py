@@ -117,7 +117,11 @@ class Plugin(openpaperwork_core.PluginBase):
             self.core.call_all('on_stats_sent')
 
         promise = promise.then(on_request_done)
+        promise = promise.catch(self._on_stats_send_error)
         promise.schedule()
+
+    def _on_stats_send_error(self, exc):
+        LOGGER.warning("Failed to send stats", exc_info=exc)
 
     def bug_report_get_attachments(self, out: dict):
         out['stats'] = {
