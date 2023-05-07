@@ -9,16 +9,16 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-28 18:09+0200\n"
-"PO-Revision-Date: 2021-11-28 20:35+0000\n"
-"Last-Translator: Jerome Flesch <jflesch@openpaper.work>\n"
-"Language-Team: French <http://translations.openpaper.work/projects/paperwork/"
-"openpaperwork-gtk/fr/>\n"
+"PO-Revision-Date: 2023-05-07 17:07+0000\n"
+"Last-Translator: Frédéric S <frederic@secchi.fr>\n"
+"Language-Team: French <https://translations.openpaper.work/projects/"
+"paperwork/openpaperwork-gtk/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.9\n"
+"X-Generator: Weblate 4.17\n"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/widgets/charts/lines.py:417
 msgid "Total: {}"
@@ -111,7 +111,7 @@ msgstr "Une erreur inattendue s'est produite."
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/wait_for_background_tasks/wait_for_background_tasks.glade.h:1
 msgid "Background tasks"
-msgstr ""
+msgstr "Taches de fond"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/wait_for_background_tasks/wait_for_background_tasks.glade.h:2
 msgid "Force quit now"
