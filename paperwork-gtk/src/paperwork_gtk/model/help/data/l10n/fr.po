@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-10 18:54+0100\n"
-"PO-Revision-Date: 2023-05-07 17:12+0000\n"
+"PO-Revision-Date: 2023-05-07 17:17+0000\n"
 "Last-Translator: Frédéric S <frederic@secchi.fr>\n"
 "Language-Team: French <https://translations.openpaper.work/projects/"
 "paperwork/paperwork-gtk-help/fr/>\n"
@@ -441,7 +441,7 @@ msgstr "Réglages"
 #. type: subsection{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:139
 msgid "Accessing the settings"
-msgstr ""
+msgstr "Accéder aux réglages"
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:166
