@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-28 18:09+0200\n"
-"PO-Revision-Date: 2023-05-07 17:07+0000\n"
+"PO-Revision-Date: 2023-05-07 17:12+0000\n"
 "Last-Translator: Frédéric S <frederic@secchi.fr>\n"
 "Language-Team: French <https://translations.openpaper.work/projects/"
 "paperwork/openpaperwork-gtk/fr/>\n"
@@ -115,13 +115,15 @@ msgstr "Taches de fond"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/wait_for_background_tasks/wait_for_background_tasks.glade.h:2
 msgid "Force quit now"
-msgstr ""
+msgstr "Forcer à quitter"
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/wait_for_background_tasks/wait_for_background_tasks.glade.h:3
 msgid ""
 "Some background tasks are still running.\n"
 "Please wait ..."
 msgstr ""
+"Des tâches de fond sont en cours.\n"
+"Merci de patienter..."
 
 #: openpaperwork-gtk/src/openpaperwork_gtk/bug_report/bug_report_http.glade.h:1
 msgid "Bug description"
