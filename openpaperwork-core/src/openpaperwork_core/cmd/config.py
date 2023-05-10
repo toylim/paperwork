@@ -130,7 +130,9 @@ class Plugin(PluginBase):
             if type(v) in TO_JSON:
                 v = TO_JSON[type(v)](v)
             out[opt] = v
-            self.core.call_success("print", f"{opt} = {out[opt]}")
+            self.core.call_success(
+                "print", f"{opt} = {out[opt]} ({type(v).__name__})"
+            )
         self.core.call_success("print_flush")
         return out
 
