@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-10 18:54+0100\n"
-"PO-Revision-Date: 2023-05-07 17:17+0000\n"
+"PO-Revision-Date: 2023-05-13 18:21+0000\n"
 "Last-Translator: Frédéric S <frederic@secchi.fr>\n"
 "Language-Team: French <https://translations.openpaper.work/projects/"
 "paperwork/paperwork-gtk-help/fr/>\n"
@@ -494,16 +494,21 @@ msgstr "Mode du scanner"
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:202
+#, fuzzy
 msgid ""
 "Most modern scanners scan in color in a reasonable time. However some older "
 "scanners scan much faster in grayscale or even in black\\&white. Here you "
 "can select the mode to use."
 msgstr ""
+"La plupart des scanners récents scannent en couleur dans un temps "
+"raisonnable.  Cependant certains ancien scanners peuvent scanner plus "
+"rapidement en échelle de gris ou même en noir et blanc. Ici vous pouvez "
+"choisir la méthode à utiliser"
 
 #. type: subsubsection{#2}
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:205
 msgid "Scan Resolution"
-msgstr ""
+msgstr "Résolution du scan"
 
 #. type: document
 #: /home/jflesch/git/paperwork/paperwork-gtk/src/paperwork_gtk/model/help/data/usage.tex:212
