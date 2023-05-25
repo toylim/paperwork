@@ -1003,10 +1003,18 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all("doc_get_text_by_url", doc_txt, doc_url)
         doc_txt = "\n\n".join(doc_txt).strip()
         if doc_txt == u"":
+            LOGGER.info("Can't guess. Text is empty")
             return
 
         vector = vectorizer.transform([doc_txt])
-        vector = vector.toarray()[0]
+        vector = vector.toarray()
+        if len(vector) <= 0:
+            LOGGER.info(
+                "Failed to vectorize text (text length=%d)",
+                len(doc_txt)
+            )
+            return
+        vector = vector[0]
         vector = reductor.reduce_features(vector)
 
         min_features = self.config.get("min_features")
