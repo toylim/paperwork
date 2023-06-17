@@ -68,6 +68,7 @@ def pillow_to_surface(core, img, intermediate="pixbuf", quality=90):
         ))
 
     else:
+        img = img.convert("RGB")
 
         if not hasattr(cairo.ImageSurface, 'set_mime_data'):
             LOGGER.warning(
