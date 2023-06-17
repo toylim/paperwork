@@ -68,6 +68,7 @@ def pillow_to_surface(core, img, intermediate="pixbuf", quality=90):
         ))
 
     else:
+        img = img.convert("RGB")
 
         if not hasattr(cairo.ImageSurface, 'set_mime_data'):
             LOGGER.warning(
@@ -89,13 +90,6 @@ def pillow_to_surface(core, img, intermediate="pixbuf", quality=90):
             img_io.seek(0)
             data = img_io.read()
             img_surface.surface.set_mime_data(cairo.MIME_TYPE_JPEG, data)
-
-    if intermediate == "png":
-
-        img_io = io.BytesIO()
-        img.save(img_io, format="PNG")
-        img_io.seek(0)
-        img_surface = ImgSurface(cairo.ImageSurface.create_from_png(img_io))
 
     if img_surface is None:
         raise Exception(

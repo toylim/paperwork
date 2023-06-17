@@ -1,5 +1,6 @@
 import faulthandler
 import logging
+import os
 
 from .. import (_, PluginBase)
 
@@ -138,6 +139,7 @@ class Plugin(PluginBase):
 
         LOGGER.info("Flushing logs to disk")
         self.log_handler.out_fd.flush()
+        os.fsync(self.log_handler.out_fd.fileno())
         file_url = self.log_handler.out_file_url
         inputs[file_url] = {
             'date': None,  # now

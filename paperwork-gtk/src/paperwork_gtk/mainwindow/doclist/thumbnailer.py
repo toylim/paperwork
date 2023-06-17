@@ -42,6 +42,15 @@ class ThumbnailTask(object):
         if doc_url is None:
             return openpaperwork_core.promise.Promise(self.core)
 
+        def on_error(exc):
+            # catch any error, otherwise if a document is corrupted,
+            # the user will get far too many error messages during
+            # thumbnailing
+            LOGGER.error(
+                "Failed to generate thumbnail of document %s",
+                self.doc_id, exc_info=exc
+            )
+
         promise = openpaperwork_core.promise.Promise(
             self.core,
             LOGGER.debug, args=("Thumbnailing of document %s", self.doc_id,)
@@ -51,6 +60,7 @@ class ThumbnailTask(object):
             self.core.call_success("thumbnail_get_doc_promise", doc_url)
         )
         promise = promise.then(self.set_thumbnail)
+        promise = promise.catch(on_error)
         return promise
 
 
