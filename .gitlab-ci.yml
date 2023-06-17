@@ -44,7 +44,7 @@ test:
 
 
 test_chkdeps:
-  image: debian:sid
+  image: debian:testing
   stage: tests
   script:
     - apt-get update
