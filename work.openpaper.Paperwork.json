@@ -7,7 +7,7 @@
     "command": "paperwork-gtk",
     "copy-icon": true,
     "sdk-extensions": [
-        "org.freedesktop.Sdk.Extension.openjdk11"
+        "org.freedesktop.Sdk.Extension.openjdk17"
     ],
     "finish-args": [
         "--share=ipc",
