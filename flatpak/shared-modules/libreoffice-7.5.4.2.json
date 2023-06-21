@@ -34,7 +34,7 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://gerrit.libreoffice.org/core",
+                    "url": "https://git.libreoffice.org/core",
                     "tag": "libreoffice-7.5.4.2",
                     "disable-fsckobjects": true
                 },
