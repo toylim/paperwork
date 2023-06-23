@@ -5,13 +5,6 @@ import sys
 
 from setuptools import setup, find_packages
 
-if os.name == "nt":
-    extra_deps = []
-else:
-    extra_deps = [
-        "python-Levenshtein",
-    ]
-
 quiet = '--quiet' in sys.argv or '-q' in sys.argv
 
 try:
@@ -75,6 +68,7 @@ There is no GUI here. The GUI is
     zip_safe=(os.name != 'nt'),
     install_requires=[
         "openpaperwork-core",
+        "levenshtein",
         "Pillow",
         "psutil",
         "pycountry",
@@ -85,7 +79,7 @@ There is no GUI here. The GUI is
         # paperwork-shell chkdeps take care of all the dependencies that can't
         # be handled here. Mainly, dependencies using gobject introspection
         # (libpoppler, etc)
-    ] + extra_deps
+    ]
 )
 
 if quiet:
