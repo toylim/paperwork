@@ -141,7 +141,6 @@ linux_appimage:
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-gdk-pixbuf2
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-gettext
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-gtk3
-    - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-python-levenshtein
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-libhandy
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-libnotify
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-nsis
