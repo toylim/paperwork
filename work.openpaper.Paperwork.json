@@ -70,8 +70,8 @@
             "sources": [
                  {
                     "type": "archive",
-                    "url": "https://files.pythonhosted.org/packages/ff/2a/f90caf823d1f751b4c604d1839402e4c7a59f45f5c4d98e3737c5a8dd117/Levenshtein-0.21.0.tar.gz",
-                    "sha256": "545635d9e857711d049dcdb0b8609fb707b34b032517376c531ca159fcd46265"
+                    "url": "https://pypi.python.org/packages/42/a9/d1785c85ebf9b7dfacd08938dd028209c34a0ea3b1bcdb895208bd40a67d/python-Levenshtein-0.12.0.tar.gz",
+                    "sha256": "033a11de5e3d19ea25c9302d11224e1a1898fe5abd23c61c7c360c25195e3eb1"
                  }
             ]
         },

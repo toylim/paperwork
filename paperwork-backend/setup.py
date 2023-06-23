@@ -68,7 +68,7 @@ There is no GUI here. The GUI is
     zip_safe=(os.name != 'nt'),
     install_requires=[
         "openpaperwork-core",
-        "levenshtein==0.21.0",  # pinned to MSYS2 version
+        "levenshtein",
         "Pillow",
         "psutil",
         "pycountry",
