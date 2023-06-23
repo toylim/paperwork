@@ -68,7 +68,6 @@ There is no GUI here. The GUI is
     zip_safe=(os.name != 'nt'),
     install_requires=[
         "openpaperwork-core",
-        "levenshtein",
         "Pillow",
         "psutil",
         "pycountry",

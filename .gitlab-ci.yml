@@ -190,7 +190,7 @@ windows_tests:
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-tesseract-data-eng
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-tesseract-data-fra
     # Build
-    - c:\msys64\usr\bin\bash -lc "export TESSDATA_PREFIX=/mingw64/share/tessdata && make install test"
+    - c:\msys64\usr\bin\bash -lc "export TESSDATA_PREFIX=/mingw64/share/tessdata && export PIP_IGNORE_INSTALLED=0 && make install test"
     - c:\msys64\usr\bin\bash -lc "make uninstall"
 
 
@@ -211,6 +211,6 @@ windows_exe:
     - c:\msys64\usr\bin\unzip rclone-v1.53.3-windows-386.zip
     - c:\msys64\usr\bin\cp rclone-v1.53.3-windows-386/rclone.exe /usr/bin
     # Build
-    - c:\msys64\usr\bin\bash -lc "make windows_exe"
+    - c:\msys64\usr\bin\bash -lc "export PIP_IGNORE_INSTALLED=0 && make windows_exe"
     - c:\msys64\usr\bin\bash -lc "./ci/deliver.sh dist/paperwork.zip windows .zip"
     - c:\msys64\usr\bin\bash -lc "make uninstall"

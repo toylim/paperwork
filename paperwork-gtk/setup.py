@@ -88,7 +88,6 @@ Main features are:
         "distro",
         "pycountry",
         "pyocr >= 0.3.0",
-        "python-Levenshtein",
         "pyxdg >= 0.25",
 
         "openpaperwork-core",
