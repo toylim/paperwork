@@ -138,6 +138,7 @@ linux_appimage:
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-python3-gobject
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-vala
     # Paperwork build dependencies
+    - c:\msys64\usr\bin\pacman --needed --noconfirm -S git  # for 'make version'
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-ca-certificates
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-cairo
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-gdk-pixbuf2
@@ -145,19 +146,19 @@ linux_appimage:
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-gtk3
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-libhandy
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-libnotify
+    - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-nsis
+    - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-nsis-nsisunz
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-poppler
+    - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-python-levenshtein
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-python-psutil
+    - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-python-scikit-learn
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-python3-cairo
+    - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-python3-cx_Freeze
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-python3-pillow
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-python3-pip
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-python3-setuptools
-    - c:\msys64\usr\bin\pacman --needed --noconfirm -S git  # for 'make version'
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S wget  # for downloading data files
-    - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-python3-cx_Freeze
     - c:\msys64\usr\bin\pacman --needed --noconfirm -S zip unzip
-    - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-nsis
-    - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-nsis-nsisunz
-    - c:\msys64\usr\bin\pacman --needed --noconfirm -S mingw-w64-x86_64-python-scikit-learn
     # Workaround for pycountry and Cx_freeze
     # See https://github.com/marcelotduarte/cx_Freeze/issues/930
     - c:\msys64\usr\bin\bash -lc "pip3 uninstall -y pycountry"
