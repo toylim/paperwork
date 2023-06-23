@@ -43,3 +43,24 @@ def rm_rf(path):
                     os.rmdir(dirpath)
         LOGGER.info("Deleting dir %s", path)
         os.rmdir(path)
+
+
+def levenshtein_distance(
+            str_a: str, str_b: str,
+            str_a_idx: int = 0, str_b_idx: int = 0
+        ):
+    if str_a_idx == len(str_a) or str_b_idx == len(str_b):
+        return len(str_a) - str_a_idx + len(str_b) - str_b_idx
+
+    # no change required
+    if str_a[str_a_idx] == str_b[str_b_idx]:
+        return levenshtein_distance(str_a, str_b, str_a_idx + 1, str_b_idx + 1)
+
+    return 1 + min(
+        # insert character
+        levenshtein_distance(str_a, str_b, str_a_idx, str_b_idx + 1),
+        # delete character
+        levenshtein_distance(str_a, str_b, str_a_idx + 1, str_b_idx),
+        # replace character
+        levenshtein_distance(str_a, str_b, str_a_idx + 1, str_b_idx + 1),
+    )

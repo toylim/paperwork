@@ -16,7 +16,6 @@ dependencies = [
   "pycountry",
   "pyocr",
   "pypillowfight>=0.3.0",
-  "Levenshtein",
   "scikit-learn",
   "Whoosh",
 ]
