@@ -7,9 +7,9 @@ it tends to mess up some Sane backend like the Brother one for instance.
 """
 import logging
 
-import Levenshtein
-
 import openpaperwork_core
+
+import paperwork_backend.util
 
 
 LOGGER = logging.getLogger(__name__)
@@ -90,7 +90,12 @@ class Plugin(openpaperwork_core.PluginBase):
             LOGGER.info("Previously selected scanner: %s", current_dev_id)
             # look for the closest scanner ID
             devs = [
-                (Levenshtein.distance(dev, current_dev_id), dev)
+                (
+                    paperwork_backend.util.levenshtein_distance(
+                        dev, current_dev_id
+                    ),
+                    dev
+                )
                 for dev in devs
             ]
             devs.sort()
