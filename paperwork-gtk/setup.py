@@ -203,13 +203,13 @@ else:
     kwargs['executables'] = [
         cx_Freeze.Executable(
             script="src/paperwork_gtk/main.py",
-            targetName="paperwork.exe",
+            target_name="paperwork.exe",
             base=("Console" if os.name != "nt" else "Win32GUI"),
         ),
         cx_Freeze.Executable(
             # UGLY
             script="../paperwork-shell/src/paperwork_shell/main.py",
-            targetName="paperwork-json.exe",
+            target_name="paperwork-json.exe",
             base="Console",
         ),
     ]
