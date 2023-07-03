@@ -28,7 +28,7 @@ check:
 	flake8 src/openpaperwork_gtk
 
 test: install
-	${PYTHON} -m pip install ${PIP_ARGS} .[test]
+	${PYTHON} -m pip install ${PIP_ARGS} .[dev]
 	python3 -m pytest -xv tests/
 
 linux_exe:

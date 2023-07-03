@@ -26,7 +26,7 @@ check:
 	flake8 src/openpaperwork_core
 
 test: install
-	${PYTHON} -m pip install ${PIP_ARGS} .[test]
+	${PYTHON} -m pip install ${PIP_ARGS} .[dev]
 	python3 -m pytest -xv tests/
 
 linux_exe:
