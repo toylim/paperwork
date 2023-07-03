@@ -42,7 +42,7 @@ AppDir:
     - amd64
     allow_unauthenticated: true
     sources:
-    - sourceline: deb http://deb.debian.org/debian/ sid main contrib non-free
+    - sourceline: deb http://deb.debian.org/debian/ sid main contrib
     include:
     - bash
     - coreutils
@@ -54,7 +54,6 @@ AppDir:
     - libexpat1
     - libgirepository1.0-dev
     - librsvg2-common  # for libpixbufloader-svg.so
-    - libsane
     - libwayland-cursor0  # missing Debian dependency for GTK ?
     - libwayland-egl1  # missing Debian dependency for GTK ?
     - locales
@@ -64,6 +63,7 @@ AppDir:
     - python3-gi-cairo
     - python3-pip
     - python3-pkg-resources
+    - sane
     - shared-mime-info
     - zlib1g
   files:
