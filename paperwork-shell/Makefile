@@ -37,8 +37,7 @@ linux_exe:
 	rm -rf AppDir appimage-build
 	appimage-builder --skip-tests --recipe AppImageBuilder.json.yml
 
-windows_exe:
-	${PYTHON} /mingw64/bin/pip3-script.py install .
+windows_exe: install
 	# ugly, but "import pkg_resources" doesn't work in frozen environments
 	# and I don't want to have to patch the build machine to fix it every
 	# time.
