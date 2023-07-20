@@ -61,7 +61,10 @@ class Plugin(openpaperwork_core.PluginBase):
 
     def get_dir_mtime(self, dir_url):
         mtime = 0
-        for file_url in self.core.call_success("fs_recurse", dir_url, dir_included=True):
+        file_urls = self.core.call_success(
+            "fs_recurse", dir_url, dir_included=True
+        )
+        for file_url in file_urls:
             file_mtime = self.core.call_success("fs_get_mtime", file_url)
             if file_mtime > mtime:
                 mtime = file_mtime
