@@ -452,7 +452,7 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
                 # On Windows+MSYS2, it seems Gio.File.query_info()
                 # return always 0 for Gio.FILE_ATTRIBUTE_TIME_CHANGED.
                 path = self.fs_unsafe(url)
-                return os.stat(path).st_mtime
+                return int(os.stat(path).st_mtime)
             fi = f.query_info(
                 Gio.FILE_ATTRIBUTE_TIME_CHANGED, Gio.FileQueryInfoFlags.NONE
             )
