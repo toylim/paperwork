@@ -1,4 +1,4 @@
-2022/01/08 - 2.1.2:
+2023/01/08 - 2.1.2:
 - Fine-tune sqlite settings
 - Fix: TIFF images can have the file extension ".tiff" but ".tif" too
 - Fix: Report *all* uncaught exceptions

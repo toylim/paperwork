@@ -36,8 +36,7 @@ test: install
 	${PYTHON} -m pip install ${PIP_ARGS} .[dev]
 	python3 -m pytest -xv tests/
 
-windows_exe: ${VERSION_FILE}
-	${PYTHON} /mingw64/bin/pip3-script.py install .
+windows_exe: install
 	${PYTHON} ./setup_cxfreeze.py build_exe
 	mkdir -p $(CURDIR)/../build/exe
 	mv $$(find $(CURDIR)/build -type d -name exe\*)/* $(CURDIR)/../build/exe
@@ -87,7 +86,7 @@ clean:
 	$(MAKE) -C src/paperwork_gtk/icon clean
 
 # PIP_ARGS is used by Flatpak build
-install_py: l10n_compile
+install_py: ${VERSION_FILE} l10n_compile
 	${PYTHON} -m pip install ${PIP_ARGS} .
 
 install_c:

@@ -1,4 +1,4 @@
-2022/01/08 - 2.1.2:
+2023/01/08 - 2.1.2:
 - import: honor the flag --doc_id.
 - fix 'scanner list'
 

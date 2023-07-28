@@ -447,17 +447,18 @@ class Plugin(openpaperwork_core.fs.CommonFsPluginBase):
             f = self.vfs.get_file_for_uri(url)
             if not f.query_exists():
                 raise IOError("File {} does not exist".format(str(url)))
+            if os.name == "nt":
+                # WORKAROUND(Jflesch):
+                # On Windows+MSYS2, it seems Gio.File.query_info()
+                # return always 0 for Gio.FILE_ATTRIBUTE_TIME_CHANGED.
+                path = self.fs_unsafe(url)
+                return int(os.stat(path).st_mtime)
             fi = f.query_info(
                 Gio.FILE_ATTRIBUTE_TIME_CHANGED, Gio.FileQueryInfoFlags.NONE
             )
             r = fi.get_attribute_uint64(Gio.FILE_ATTRIBUTE_TIME_CHANGED)
             if int(r) != 0:
                 return r
-            # WORKAROUND(Jflesch):
-            # On Windows+MSYS2, it seems Gio.File.query_info()
-            # return always 0 for Gio.FILE_ATTRIBUTE_TIME_CHANGED.
-            path = self.fs_unsafe(url)
-            return os.stat(path).st_mtime
         except GLib.GError as exc:
             LOGGER.warning("Gio.Gerror", exc_info=exc)
 
