@@ -36,8 +36,7 @@ check:
 test: install
 	python3 -m unittest discover -f --verbose -s tests
 
-windows_exe:
-	${PYTHON} /mingw64/bin/pip3-script.py install .
+windows_exe: install
 	${PYTHON} ./setup.py build_exe
 	mkdir -p $(CURDIR)/../build/exe
 	mv $$(find $(CURDIR)/build -type d -name exe\*)/* $(CURDIR)/../build/exe
