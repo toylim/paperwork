@@ -92,7 +92,7 @@ class Plugin(openpaperwork_core.PluginBase):
             return
         out.append(nb_pages)
 
-    def page_get_img_url(self, doc_url, page_idx, write=False):
+    def page_get_img_url(self, doc_url, page_idx, write=False, **kwargs):
         if write:
             self.core.call_success("fs_mkdir_p", doc_url)
         for filename_fmt in PAGE_FILENAME_FMTS:

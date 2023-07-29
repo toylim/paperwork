@@ -122,7 +122,7 @@ class Plugin(openpaperwork_core.PluginBase):
         self.core.call_all("on_progress", "converting", 1.0)
         return True
 
-    def page_get_img_url(self, doc_url, page_idx, write=False):
+    def page_get_img_url(self, doc_url, page_idx, write=False, **kwargs):
         if page_idx != 0:
             return
         # prevent double conversion

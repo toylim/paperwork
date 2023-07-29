@@ -8,7 +8,7 @@ import openpaperwork_core
 import openpaperwork_core.fs
 
 
-class TestAll(unittest.TestCase):
+class BaseTest(unittest.TestCase):
     def setUp(self):
         self.int_generator = itertools.count()
 
@@ -32,6 +32,25 @@ class TestAll(unittest.TestCase):
         self.work_dir = tempfile.mkdtemp(prefix="paperwork_tests_all_")
         self.work_dir_url = self.core.call_success("fs_safe", self.work_dir)
         self.core.call_all("config_put", "workdir", self.work_dir_url)
+
+    def tearDown(self):
+        shutil.rmtree(self.work_dir)
+
+    def _copy_pdf(self, out_pdf_url):
+        dirname = self.core.call_success("fs_dirname", out_pdf_url)
+        self.core.call_success("fs_mkdir_p", dirname)
+        self.core.call_success("fs_copy", self.pdf, out_pdf_url)
+
+    def _make_file(self, out_file_url):
+        dirname = self.core.call_success("fs_dirname", out_file_url)
+        self.core.call_success("fs_mkdir_p", dirname)
+        with self.core.call_success("fs_open", out_file_url, 'w') as fd:
+            fd.write("Generated content {}\n".format(next(self.int_generator)))
+
+
+class TestAll(BaseTest):
+    def setUp(self):
+        super().setUp()
 
         self.doc_pdf = self.core.call_success(
             "fs_join", self.work_dir_url, "20200525_1241_05"
@@ -64,20 +83,6 @@ class TestAll(unittest.TestCase):
         self._make_file(self.doc_b + "/paper.2.edited.jgg")
         self._make_file(self.doc_c + "/paper.3.jpg")
         self._make_file(self.doc_c + "/paper.3.words")
-
-    def tearDown(self):
-        shutil.rmtree(self.work_dir)
-
-    def _copy_pdf(self, out_pdf_url):
-        dirname = self.core.call_success("fs_dirname", out_pdf_url)
-        self.core.call_success("fs_mkdir_p", dirname)
-        self.core.call_success("fs_copy", self.pdf, out_pdf_url)
-
-    def _make_file(self, out_file_url):
-        dirname = self.core.call_success("fs_dirname", out_file_url)
-        self.core.call_success("fs_mkdir_p", dirname)
-        with self.core.call_success("fs_open", out_file_url, 'w') as fd:
-            fd.write("Generated content {}\n".format(next(self.int_generator)))
 
     def test_basic_nb_pages(self):
         nb = self.core.call_success("doc_get_nb_pages_by_url", self.doc_pdf)
@@ -811,3 +816,42 @@ class TestAll(unittest.TestCase):
         self.assertTrue(self.core.call_success(  # bug #245: returned None here
             "page_get_img_url", self.doc_pdf, 4
         ).endswith("20200525_1241_05/doc.pdf#page=4"))
+
+
+class TestBug1(BaseTest):
+    def setUp(self):
+        super().setUp()
+
+        self.doc_a = self.core.call_success(
+            "fs_join", self.work_dir_url, "20200525_1241_05"
+        )
+        self._copy_pdf(self.doc_a + "/doc.pdf")
+        self._make_file(self.doc_a + "/paper.1.edited.png")
+        self._make_file(self.doc_a + "/paper.1.words")
+        self._make_file(self.doc_a + "/paper.2.edited.png")
+        self._make_file(self.doc_a + "/paper.2.words")
+        self._make_file(self.doc_a + "/paper.3.edited.png")
+        self._make_file(self.doc_a + "/paper.3.words")
+
+        self.doc_b = self.core.call_success(
+            "fs_join", self.work_dir_url, "20200525_1441_05"
+        )
+        self._make_file(self.doc_b + "/paper.1.png")
+        self._make_file(self.doc_b + "/paper.1.edited.png")
+        self._make_file(self.doc_b + "/paper.1.words")
+
+    def test_bug_1(self):
+        nb = self.core.call_success("doc_get_nb_pages_by_url", self.doc_a)
+        self.assertEqual(nb, 4)
+        nb = self.core.call_success("doc_get_nb_pages_by_url", self.doc_b)
+        self.assertEqual(nb, 1)
+
+        self.core.call_all(
+            "page_move_by_url",
+            self.doc_a, 1,
+            self.doc_b, 1
+        )
+        nb = self.core.call_success("doc_get_nb_pages_by_url", self.doc_a)
+        self.assertEqual(nb, 3)
+        nb = self.core.call_success("doc_get_nb_pages_by_url", self.doc_b)
+        self.assertEqual(nb, 2)

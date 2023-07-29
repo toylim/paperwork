@@ -161,7 +161,7 @@ class Plugin(openpaperwork_core.PluginBase):
         # We must force a rebuild of the thumbnail
         self.page_delete_by_url(doc_url, page_idx)
 
-    def page_get_img_url(self, doc_url, page_idx, write=False):
+    def page_get_img_url(self, doc_url, page_idx, write=False, **kwargs):
         if not write:
             return None
         # Image is going to be updated --> We must force a rebuild of the

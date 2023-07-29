@@ -182,7 +182,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 doc['text'] = text
         return None
 
-    def page_get_img_url(self, doc_url, page_idx, write=False):
+    def page_get_img_url(self, doc_url, page_idx, write=False, **kwargs):
         for doc in self.docs:
             if doc['url'] == doc_url:
                 for k in [

@@ -531,7 +531,7 @@ class Plugin(openpaperwork_core.PluginBase):
             return
         out.append(r)
 
-    def page_get_img_url(self, doc_url, page_idx, write=False):
+    def page_get_img_url(self, doc_url, page_idx, write=False, **kwargs):
         if write:
             return None
         pdf_url = self._get_pdf_url(doc_url)
@@ -942,7 +942,7 @@ class Plugin(openpaperwork_core.PluginBase):
                 # implementation of this method won't reply
                 dest_img = self.core.call_success(
                     "page_get_img_url", dest_doc_url, target_dest_page_idx,
-                    write=True
+                    write=True, original=True
                 )
                 LOGGER.info("Writting page image back as %s", dest_img)
                 self.core.call_success("pillow_to_url", source_img, dest_img)

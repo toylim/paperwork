@@ -77,7 +77,14 @@ class Plugin(openpaperwork_core.PluginBase):
                 out.append(h)
                 break
 
-    def page_get_img_url(self, doc_url, page_idx, write=False):
+    def page_get_img_url(
+                self, doc_url, page_idx, write=False, original=False,
+                **kwargs
+            ):
+        if original:
+            # caller want the URL of the original image, not the edited one
+            return None
+
         for filename_fmt in PAGE_FILENAME_FMTS:
             page_url = self.core.call_success(
                 "fs_join", doc_url, filename_fmt.format(page_idx + 1)
