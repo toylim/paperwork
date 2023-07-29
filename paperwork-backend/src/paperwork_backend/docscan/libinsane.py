@@ -71,9 +71,11 @@ class LibinsaneLogger(GObject.GObject, Libinsane.Logger):
 def raw_to_img(params, img_bytes):
     fmt = params.get_format()
     assert fmt == Libinsane.ImgFormat.RAW_RGB_24
-    (w, h) = (
-        params.get_width(),
-        int(len(img_bytes) / 3 / params.get_width())
+    w = params.get_width()
+    h = int(len(img_bytes) / 3 / w)
+    LOGGER.info(
+        "raw_to_img(): w=%s, h=%d, len(img_bytes)=%d",
+        w, h, len(img_bytes)
     )
     mode = "RGB"
     return PIL.Image.frombuffer(mode, (w, h), img_bytes, "raw", mode, 0, 1)

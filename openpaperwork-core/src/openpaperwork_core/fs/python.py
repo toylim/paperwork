@@ -90,7 +90,7 @@ class Plugin(CommonFsPluginBase):
         if path is None:
             return
 
-        return os.stat(path).st_mtime
+        return int(os.stat(path).st_mtime)
 
     def fs_getsize(self, uri):
         path = self._uri_to_path(uri)
