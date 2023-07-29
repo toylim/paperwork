@@ -11,6 +11,8 @@
   page'.
 - fix import of password-protected PDF files.
 - doclist thumbnails: handle gracefully corrupted thumbnails/documents.
+- Flatpak workaround: when running in Flatpak, always run first 'fc-cache -f'
+  to make sure that text will be rendered correctly in PDF pages.
 
 2023/01/08 - 2.1.2:
 - Optim: mainwindow.docproperties: optim reload doc properties only if the doc properties are actually visible (it was a huge CPU waste) (thanks to pie@#openpaperwork)
