@@ -127,7 +127,7 @@ class Plugin(openpaperwork_core.PluginBase):
             return
         # prevent double conversion
         if doc_url in self.pending_doc_urls:
-            LOGGER.debug("Doc %s will already be checked", doc_url)
+            LOGGER.debug("Doc %s has already been checked", doc_url)
             return
         self.pending_doc_urls.add(doc_url)
 
