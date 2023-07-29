@@ -1,3 +1,17 @@
+2023/07/30 - 2.2.0:
+- setup.py has been replaced by pyproject.toml
+- doclist: optimization: Now that Gtk.Template are available. Use them
+  instead of reloading Gtk widget trees.
+- doclist: optimization: only load thumbnails and labels of documents actually
+  visible in the document list.
+- settings.storage: try to warn users that using an already existing folder
+  with Paperwork is a bad idea (unless it has the file structure expected by
+  Paperwork, of course)
+- fix uncaught exception when the user clicks many times the button 'next
+  page'.
+- fix import of password-protected PDF files.
+- doclist thumbnails: handle gracefully corrupted thumbnails/documents.
+
 2023/01/08 - 2.1.2:
 - Optim: mainwindow.docproperties: optim reload doc properties only if the doc properties are actually visible (it was a huge CPU waste) (thanks to pie@#openpaperwork)
 - Fix: docview: make sure the currently-active page is always the currently-highlighted one

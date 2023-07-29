@@ -1,3 +1,8 @@
+2023/07/30 - 2.2.0:
+- setup.py has been replaced by pyproject.toml
+- fs.gio.fs_get_mtime(): do not trust Gio.File.query_info(TIME_CHANGED) on
+  Windows. Prefer os.stat()
+
 2023/01/08 - 2.1.2:
 - dependencies: fix: depends on openpaperwork-core
 - autoscrolling: take into account that Gdk.Cursor.new_for_display() may fail

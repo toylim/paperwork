@@ -1,3 +1,25 @@
+2023/07/30 - 2.2.0:
+- By default, use PNG instead of JPEG (See issue #1021 for rationale).
+- setup.py has been replaced by pyproject.toml
+- drop dependency on python-Levenshtein.
+- model.pdf: Fix: When moving an edited PDF page from one document to another,
+  make sure to export the PDF page as the original image page (paper.X.png)
+  instead of the edited one (paper.X.edited.png).
+- cairo.pillow: optimization: use cairo.ImageSurface.create_from_data() now
+  that it's available.
+- beacon: if openpaper.work is unreachable, catch the exception to not bother
+  the user uselessly
+- guesswork.labels.sklearn: store the model on-disk to reload it more quickly
+  as long as nothing has changed.
+- Help documents: Help documents are read-only. Therefore if the user tries
+  to add pages to them, redirect the new pages to a new document.
+- model.thumbnail: handle gracefully corrupted thumbnails.
+- cairo.pillow: do not assume that on-disk images are RGB/RGBA (they may have
+  been optimized by scripts with 'convert' for instance).
+- PDF: Handle gracefully UnicodeDecodeError that happen sometimes on Windows.
+- Handle images too big for pillow as gracefully as possible: do not crash
+  but replace them by a tile with a text explaining the image is too big.
+
 2023/01/08 - 2.1.2:
 - Cairo renderers (Image/PDF): optimisation: add a cache
 - Cairo image renderer: optimisation: cairo.ImageSurface.create_for_data() has been implemented and can now be used

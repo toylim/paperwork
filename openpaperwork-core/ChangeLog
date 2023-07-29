@@ -1,3 +1,14 @@
+2023/07/30 - 2.2.0:
+- setup.py has been replaced by pyproject.toml
+- fix various depreciation warnings
+- beacon: if openpaper.work is unreachable, catch the exception to not bother
+  the user uselessly
+- pillow.img: make sure Pillow optimize the PNG files as much as possible
+- pillow.img: pillow_to_url(): If unspecified, guess the expected file format
+  based on the output file name instead of assuming JPEG.
+- config: do not crash on empty values (shouldn't happen unless the
+  configuration file has been manually edited)
+
 2023/01/08 - 2.1.2:
 - Fine-tune sqlite settings
 - Fix: TIFF images can have the file extension ".tiff" but ".tif" too

@@ -1,3 +1,10 @@
+2023/07/30 - 2.2.0:
+- setup.py has been replaced by pyproject.toml
+- paperwork-cli: Use Python Rich to prettify the output of some commands
+- paperwork-cli export: Make sure export pipelines make sense, otherwise
+  explain to the user why they don't.
+- paperwork-cli export: Fix listing pipes when exporting a single page
+
 2023/01/08 - 2.1.2:
 - import: honor the flag --doc_id.
 - fix 'scanner list'
