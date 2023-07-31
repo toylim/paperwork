@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-28 18:09+0200\n"
-"PO-Revision-Date: 2023-04-02 15:24+0000\n"
-"Last-Translator: Matthias Preiss <matthias@beischl-preiss.de>\n"
+"PO-Revision-Date: 2023-07-31 15:31+0000\n"
+"Last-Translator: Jannik Wilhelm <jannik.wilhelm@outlook.de>\n"
 "Language-Team: German <https://translations.openpaper.work/projects/"
 "paperwork/paperwork-shell/de/>\n"
 "Language: de\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.16.4\n"
+"X-Generator: Weblate 4.18.2\n"
 
 #: paperwork-shell/src/paperwork_shell/display/docrendering/extra_text.py:32
 #: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:79
@@ -340,10 +340,12 @@ msgstr "Der erste Filter kann nicht '{}' sein"
 #, python-brace-format
 msgid "Filter mismatch: {0} expects {1} as input. Got {2} instead"
 msgstr ""
+"Filter Unstimmigkeit: {0} erwartet {1} als Eingabe. Hat stattdessen {2} "
+"erhalten."
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:163
 msgid "Last filter will output {}."
-msgstr ""
+msgstr "Letzter Filter gibt {} aus."
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:204
 #, python-format
@@ -355,10 +357,12 @@ msgid ""
 "Run the command without any filter to have a list of possible filters to "
 "start with."
 msgstr ""
+"Führen Sie den Befehl ohne einen Filter aus, um eine Liste möglicher Filter "
+"zu erhalten, mit denen Sie beginnen können."
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:223
 msgid "Filter list is complete, but no output file specified (-o)"
-msgstr ""
+msgstr "Filterliste ist vollständig, aber keine Ausgabedatei angegeben (-o)"
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:244
 #, python-format
@@ -367,7 +371,7 @@ msgstr "Exportiere nach %s ... "
 
 #: paperwork-shell/src/paperwork_shell/cmd/export.py:253
 msgid "Export failed !"
-msgstr ""
+msgstr "Export fehlgeschlagen!"
 
 #: paperwork-shell/src/paperwork_shell/cmd/extra_text.py:43
 msgid "Manage additional text attached to documents"
