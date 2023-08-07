@@ -55,6 +55,9 @@ def init_flatpak(core):
 def find_language(lang_str=None, allow_none=False):
     if lang_str is None:
         lang_str = locale.getdefaultlocale()[0]
+        if lang_str == "C":
+            LOGGER.warning("Locale is C. Assuming english !")
+            return find_language(DEFAULT_OCR_LANG)
         if lang_str is None and not allow_none:
             LOGGER.warning("Unable to figure out locale. Assuming english !")
             return find_language(DEFAULT_OCR_LANG)
