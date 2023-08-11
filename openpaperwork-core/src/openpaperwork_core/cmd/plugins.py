@@ -185,7 +185,7 @@ class Plugin(PluginBase):
                             )
                         )
                         self._cmd_remove_plugin(
-                            other_plugin, auto=auto, removed=removed,
+                            console, other_plugin, auto=auto, removed=removed,
                             save=False
                         )
                         break
