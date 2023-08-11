@@ -9,9 +9,9 @@ LOGGER = logging.getLogger(__name__)
 
 
 class BaseLayoutController(BaseDocViewController):
-    def __init__(self, core, plugin):
+    def __init__(self, plugin):
         super().__init__(plugin)
-        self.core = core
+        self.core = plugin.core
         self.real_nb_pages = self.core.call_success(
             "doc_get_nb_pages_by_url", self.plugin.active_doc[1]
         )
@@ -78,8 +78,8 @@ class BaseLayoutController(BaseDocViewController):
 
 
 class LayoutControllerLoading(BaseLayoutController):
-    def __init__(self, core, plugin):
-        super().__init__(core, plugin)
+    def __init__(self, plugin):
+        super().__init__(plugin)
         self.nb_loaded = 0
 
         # page instantiation must be done before the calls to enter()
@@ -103,8 +103,7 @@ class LayoutControllerLoading(BaseLayoutController):
         self.nb_loaded += 1
         if self.nb_loaded >= len(self.plugin.pages):
             self.plugin.docview_switch_controller(
-                'layout',
-                lambda plugin: LayoutControllerLoaded(self.core, plugin)
+                'layout', LayoutControllerLoaded
             )
 
     def exit(self):
@@ -132,4 +131,4 @@ class Plugin(openpaperwork_core.PluginBase):
         ]
 
     def gtk_docview_get_controllers(self, out: dict, docview):
-        out['layout'] = LayoutControllerLoading(self.core, docview)
+        out['layout'] = LayoutControllerLoading(docview)
