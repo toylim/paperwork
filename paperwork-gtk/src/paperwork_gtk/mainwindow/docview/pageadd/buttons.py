@@ -38,10 +38,6 @@ class Plugin(openpaperwork_core.PluginBase):
                 'defaults': ['paperwork_gtk.new_doc'],
             },
             {
-                'interface': 'scan2doc',
-                'defaults': ['paperwork_backend.docscan.scan2doc'],
-            },
-            {
                 'interface': 'screenshot',
                 'defaults': ['openpaperwork_gtk.screenshots'],
             },
